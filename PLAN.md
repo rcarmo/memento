@@ -18,26 +18,26 @@
 - [x] Add project instructions and local Python guidance.
 - [x] Preserve the detailed implementation document.
 - [x] Create this executable delivery plan.
-- [ ] Define concept schema v1 and strict validation models.
-- [ ] Define canonical Markdown fixtures and controlled vocabularies.
-- [ ] Document MCP tools, envelopes, errors and pagination.
-- [ ] Add threat model and trust-boundary diagram.
-- [ ] Add sample knowledge bundle.
-- [ ] Add MIT licence.
+- [x] Define concept schema v1 and strict validation models.
+- [x] Define canonical Markdown fixtures and controlled vocabularies.
+- [x] Document MCP tools, envelopes, errors and pagination.
+- [x] Add threat model and trust-boundary diagram.
+- [x] Add sample knowledge bundle.
+- [x] Add MIT licence.
 - [ ] Add Docker, Compose and systemd skeletons without claiming production readiness.
 
 **Exit:** Schemas, contracts, authority boundaries and examples are reviewed before repository implementation begins.
 
 ## Milestone 1 — deterministic repository core
 
-- [ ] Implement safe path normalization and containment.
-- [ ] Reject traversal, symlinks, special files and reserved-file writes.
-- [ ] Parse frontmatter and Markdown with established libraries.
-- [ ] Implement strict concept validation and stable service-generated IDs.
-- [ ] Implement canonical serialization with golden fixtures.
-- [ ] Extract and resolve links without regular-expression Markdown rewriting.
-- [ ] Generate deterministic directory indexes and root mutation log.
-- [ ] Implement full repository audit.
+- [x] Implement safe path normalization and containment.
+- [x] Reject traversal, symlinks, special files and reserved-file writes.
+- [x] Parse frontmatter and Markdown with established libraries.
+- [x] Implement strict concept validation and stable service-generated IDs.
+- [x] Implement canonical serialization with golden fixtures.
+- [x] Extract and resolve links without regular-expression Markdown rewriting.
+- [x] Generate deterministic directory indexes and root mutation log.
+- [x] Implement full repository audit.
 
 **Required evidence:** serialization determinism; malformed frontmatter; duplicate IDs; containment attacks; rename/link rewriting; deterministic generated output.
 
