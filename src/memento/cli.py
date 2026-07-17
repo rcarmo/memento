@@ -41,6 +41,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     status = subparsers.add_parser("status", help="Show operational status")
     status.add_argument("--format", choices=("json", "prometheus"), default="json")
+
+    dream = subparsers.add_parser("dream", help="Run Dream scanner/proposal mode once")
+    dream.add_argument("--mode", choices=("disabled", "report_only", "propose"))
     return parser
 
 
@@ -85,6 +88,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(render_prometheus_text(runtime), end="")
                 logger.info("status_rendered", format=args.format)
                 return 0
+        elif args.command == "dream":
+            payload = runtime.service.run_dream(mode=args.mode)
         else:  # pragma: no cover
             raise AssertionError(f"unsupported command {args.command}")
         _emit_json(payload)

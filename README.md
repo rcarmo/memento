@@ -41,6 +41,7 @@ See:
 - CI workflow for Python 3.10-3.12, wheel build/install and container build validation
 - feature-gated deep read-only answers, exact answer cache and hot working memory with bounded trace persistence
 - feature-gated model-assisted proposal drafting through `memory_propose_freeform` and `memory_propose_update`, with deterministic search context, strict citations, diff validation and secret blocking
+- durable Dream report-only scanning and bounded proposal mode with revision watermarks, signal deduplication and no direct writes
 - sample bundle and contract/threat/operations documentation
 
 ## Development

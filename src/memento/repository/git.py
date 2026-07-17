@@ -186,6 +186,22 @@ def exact_staged_paths(worktree_path: Path) -> tuple[str, ...]:
     return tuple(sorted(f"/{line}" for line in output.splitlines() if line))
 
 
+def diff_main_paths(
+    paths: GitRepositoryPaths, *, base_revision: str, end_revision: str
+) -> tuple[str, ...]:
+    output = _git_stdout(
+        "--git-dir",
+        paths.bare_dir,
+        "diff",
+        "--name-only",
+        base_revision,
+        end_revision,
+        "--",
+        "*.md",
+    )
+    return tuple(sorted(f"/{line}" for line in output.splitlines() if line))
+
+
 def _tracked_paths(root: Path) -> list[str]:
     output = _git_stdout("-C", root, "ls-files")
     return [f"/{line}" for line in output.splitlines() if line]

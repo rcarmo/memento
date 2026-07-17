@@ -112,8 +112,8 @@ Start each tier behind an independent feature flag and only after Milestone 6.
 2. [x] **Exact answer cache:** keys include revision, authorization scope, policy, prompt and tool versions behind an independent feature flag.
 3. [x] **Hot working memory:** fresh concept reads, scoped recent answers and safe `UNKNOWN` fall-through behind an independent feature flag.
 4. [x] **Model-assisted proposals:** models may draft proposals but cannot approve or write.
-5. **Dream report-only scanner:** deterministic signals, revision watermarks and durable deduplication.
-6. **Dream proposal mode:** bounded model proposals, never direct model-authored writes.
+5. [x] **Dream report-only scanner:** deterministic signals, revision watermarks and durable deduplication.
+6. [x] **Dream proposal mode:** bounded model proposals, never direct model-authored writes.
 7. **Provider slots and fallback:** task-specific policies, explicit trust boundaries and transient model-level fallback only.
 
 ## Pilot acceptance checklist

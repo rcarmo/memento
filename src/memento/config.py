@@ -133,6 +133,37 @@ class ModelProposalsConfig(BaseModel):
     limits: ModelProposalLimitsConfig = Field(default_factory=ModelProposalLimitsConfig)
 
 
+class DreamBudgetsConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    max_signals_per_run: int = Field(default=25, ge=1, le=100)
+    max_model_proposals_per_run: int = Field(default=5, ge=0, le=20)
+    max_runtime_seconds: float = Field(default=30.0, gt=0)
+    daily_proposal_limit: int = Field(default=20, ge=0, le=200)
+
+
+class DreamScannerConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    oversized_body_chars: int = Field(default=6000, ge=256)
+    oversized_top_level_sections: int = Field(default=6, ge=1)
+    max_oversized_candidates: int = Field(default=3, ge=1, le=3)
+    duplicate_similarity_threshold: float = Field(default=0.86, ge=0.5, le=1.0)
+
+
+class DreamConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    mode: Literal["disabled", "report_only", "propose"] = "disabled"
+    model_policy_revision: str = Field(default="disabled", min_length=1)
+    prompt_version: str = Field(default="v1", min_length=1)
+    tool_version: str = Field(default="v1", min_length=1)
+    interval_seconds: int = Field(default=21600, ge=300)
+    quiet_period_seconds: int = Field(default=300, ge=0)
+    scanner: DreamScannerConfig = Field(default_factory=DreamScannerConfig)
+    budgets: DreamBudgetsConfig = Field(default_factory=DreamBudgetsConfig)
+
+
 class IntelligentTiersConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -140,6 +171,7 @@ class IntelligentTiersConfig(BaseModel):
     exact_answer_cache: ExactAnswerCacheConfig = Field(default_factory=ExactAnswerCacheConfig)
     hot_working_memory: HotWorkingMemoryConfig = Field(default_factory=HotWorkingMemoryConfig)
     model_proposals: ModelProposalsConfig = Field(default_factory=ModelProposalsConfig)
+    dream: DreamConfig = Field(default_factory=DreamConfig)
 
 
 class ServiceConfig(BaseModel):

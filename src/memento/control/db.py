@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-SCHEMA_VERSION = "2"
+SCHEMA_VERSION = "3"
 
 MIGRATIONS_V1 = (
     """
@@ -74,6 +74,23 @@ MIGRATIONS_V1 = (
         updated_at TEXT NOT NULL
     )
     """,
+    """
+    CREATE TABLE IF NOT EXISTS dream_signals (
+        signal_id TEXT PRIMARY KEY,
+        signal_type TEXT NOT NULL,
+        entity_refs_json TEXT NOT NULL,
+        severity TEXT NOT NULL,
+        repo_revision TEXT NOT NULL,
+        dedupe_key TEXT NOT NULL UNIQUE,
+        status TEXT NOT NULL,
+        evidence_hash TEXT NOT NULL,
+        evidence_json TEXT NOT NULL,
+        first_detected_at TEXT NOT NULL,
+        last_detected_at TEXT NOT NULL,
+        resolved_revision TEXT
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_dream_signals_status ON dream_signals(status, signal_type)",
 )
 
 
@@ -106,7 +123,7 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
             return
         if schema_row["value"] == SCHEMA_VERSION:
             return
-        if schema_row["value"] == "1":
+        if schema_row["value"] in {"1", "2"}:
             connection.execute(
                 "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
                 (SCHEMA_VERSION,),

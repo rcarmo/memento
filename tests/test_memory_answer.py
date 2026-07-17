@@ -9,11 +9,14 @@ from typing import Any, cast
 
 import pytest
 
-from memento.answers import UNKNOWN_ANSWER, ModelRequest, ModelResponse
+from memento.answers import UNKNOWN_ANSWER, ModelClient, ModelRequest, ModelResponse
 from memento.config import (
     AuthorizationConfig,
     DeepAnswerLimitsConfig,
     DeepAnswersConfig,
+    DreamBudgetsConfig,
+    DreamConfig,
+    DreamScannerConfig,
     ExactAnswerCacheConfig,
     HotWorkingMemoryConfig,
     IntelligentTiersConfig,
@@ -24,6 +27,9 @@ from memento.config import (
     ServiceConfig,
 )
 from memento.control.db import connect_control_db, migrate_control_db
+from memento.control.proposals import list_proposals
+from memento.control.scheduler import claim_scheduler_run
+from memento.control.signals import get_service_state, list_signals, set_service_state
 from memento.derived.index import DerivedIndex
 from memento.repository.frontmatter import serialize_concept
 from memento.repository.git import GitRepositoryPaths, bootstrap_repository, get_main_revision
@@ -48,6 +54,8 @@ class FakeModelClient:
         ]
         if request.task == "memory_proposal_draft":
             return self._proposal_response(request.prompt, prompt_citations)
+        if request.task == "dream_proposal_draft":
+            return self._dream_response(prompt_citations)
         if request.task == "memory_answer_hot":
             if question == "What changed recently?":
                 return self._response(
@@ -170,6 +178,33 @@ class FakeModelClient:
         }
         return ModelResponse(model_name="fake-model-v1", output_text=json.dumps(payload), usage={})
 
+    def _dream_response(self, citations: list[dict[str, str]]) -> ModelResponse:
+        consulted = [
+            {
+                "id": item["id"],
+                "path": item["path"],
+                "revision": item["revision"],
+                "title": item.get("title", item["path"].split("/")[-1]),
+            }
+            for item in citations
+        ]
+        target_path = consulted[0]["path"] if consulted else "/projects/piclaw.md"
+        payload = {
+            "intent": "dream maintenance proposal",
+            "rationale": "Repair the surfaced Dream signal with a normal proposal only.",
+            "consulted_concepts": consulted,
+            "contradictions": [],
+            "reciprocal_links": [],
+            "changes": [
+                {
+                    "kind": "patch",
+                    "path": target_path,
+                    "body": f"# {target_path.split('/')[-1].removesuffix('.md').title()}\n\nUpdated by Dream proposal.\n",
+                }
+            ],
+        }
+        return ModelResponse(model_name="fake-model-v1", output_text=json.dumps(payload), usage={})
+
     def _response(
         self,
         *,
@@ -281,6 +316,24 @@ def answer_config(tmp_path: Path) -> ServiceConfig:
                 max_excerpt_chars=1_500,
             ),
             model_proposals=ModelProposalsConfig(enabled=True),
+            dream=DreamConfig(
+                mode="report_only",
+                model_policy_revision="fake-dream-policy-v1",
+                prompt_version="dream-prompt-v1",
+                tool_version="dream-tool-v1",
+                interval_seconds=300,
+                quiet_period_seconds=0,
+                scanner=DreamScannerConfig(
+                    oversized_body_chars=256,
+                    oversized_top_level_sections=3,
+                ),
+                budgets=DreamBudgetsConfig(
+                    max_signals_per_run=25,
+                    max_model_proposals_per_run=1,
+                    max_runtime_seconds=5.0,
+                    daily_proposal_limit=5,
+                ),
+            ),
         ),
     )
 
@@ -577,6 +630,304 @@ def test_model_proposals_resolve_update_target_from_hint(
     proposal = success_data(result)["proposal"]
     assert proposal["changes"][0]["path"] == "/instances/smith.md"
     assert any(item["path"] == "/instances/smith.md" for item in proposal["consulted_concepts"])
+
+
+def test_dream_scanner_detects_signals_dedupes_and_updates_watermark(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+) -> None:
+    revision = get_main_revision(repo_paths)
+    created = service.memory_create(
+        smith,
+        path="/projects/piclaw-copy.md",
+        concept_type="project",
+        title="Piclaw",
+        description="Visible project.",
+        body="# Piclaw\n\nVisible project.\n",
+        expected_revision=revision,
+        idempotency_key="dream-create-duplicate",
+    )
+    assert created.status == "success"
+    revision = get_main_revision(repo_paths)
+    broken = service.memory_create(
+        smith,
+        path="/projects/broken.md",
+        concept_type="project",
+        title="Broken",
+        description="Broken link holder.",
+        body="# Broken\n\nSee [Missing](/projects/missing.md).\n",
+        expected_revision=revision,
+        idempotency_key="dream-create-broken",
+    )
+    assert broken.status == "success"
+    revision = get_main_revision(repo_paths)
+    oversized_body = "# Big\n\n" + "x" * 300
+    oversized = service.memory_create(
+        smith,
+        path="/projects/big.md",
+        concept_type="project",
+        title="Big",
+        description="Large concept.",
+        body=oversized_body,
+        expected_revision=revision,
+        idempotency_key="dream-create-big",
+    )
+    assert oversized.status == "success"
+
+    before_calls = len(service._deps.model_client.calls)  # type: ignore[union-attr]
+    result = service.run_dream(
+        mode="report_only", now=datetime(2026, 7, 17, 12, 55, tzinfo=timezone.utc)
+    )
+    assert result["state"] == "succeeded"
+    assert result["proposal_count"] == 0
+    assert len(service._deps.model_client.calls) == before_calls  # type: ignore[union-attr]
+
+    signal_types = {signal.signal_type for signal in list_signals(service._deps.control_connection)}
+    assert {"orphan", "broken_link", "likely_duplicate", "oversized_concept"} <= signal_types
+    assert get_service_state(
+        service._deps.control_connection, key="last_dream_revision"
+    ) == get_main_revision(repo_paths)
+
+    rerun = service.run_dream(
+        mode="report_only", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
+    )
+    assert rerun["state"] == "succeeded"
+    assert len(list_signals(service._deps.control_connection)) >= 4
+
+
+def test_dream_recent_activity_is_bounded_by_last_successful_revision(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+) -> None:
+    baseline = get_main_revision(repo_paths)
+    set_service_state(service._deps.control_connection, key="last_dream_revision", value=baseline)
+    revised = service.memory_patch(
+        smith,
+        path="/projects/piclaw.md",
+        expected_revision=baseline,
+        idempotency_key="dream-recent-activity",
+        body="# Piclaw\n\nChanged for Dream.\n",
+    )
+    assert revised.status == "success"
+    result = service.run_dream(
+        mode="report_only", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
+    )
+    assert result["state"] == "succeeded"
+    assert any(
+        signal.signal_type == "recent_activity"
+        for signal in list_signals(service._deps.control_connection)
+    )
+    followup = service.run_dream(
+        mode="report_only", now=datetime(2026, 7, 17, 13, 5, tzinfo=timezone.utc)
+    )
+    assert followup["state"] == "succeeded"
+    recent = [
+        signal
+        for signal in list_signals(service._deps.control_connection)
+        if signal.signal_type == "recent_activity" and signal.status != "resolved"
+    ]
+    assert not recent
+
+
+def test_dream_no_signal_means_no_model_call(
+    tmp_path: Path,
+    control_connection: sqlite3.Connection,
+    fake_model: FakeModelClient,
+) -> None:
+    seed = tmp_path / "seed-dream-clean"
+    write_concept(
+        seed / "projects" / "alpha.md",
+        concept_id="alpha-id",
+        concept_type="project",
+        title="Alpha",
+        description="Alpha project.",
+        tags=("alpha",),
+        body="# Alpha\n\nSee [Beta](/projects/beta.md).\n",
+    )
+    write_concept(
+        seed / "projects" / "beta.md",
+        concept_id="beta-id",
+        concept_type="project",
+        title="Beta",
+        description="Beta project.",
+        tags=("beta",),
+        body="# Beta\n\nSee [Alpha](/projects/alpha.md).\n",
+    )
+    repo_paths = GitRepositoryPaths(
+        bare_dir=tmp_path / "repo-dream-clean.git",
+        current_dir=tmp_path / "current-dream-clean",
+        worktrees_dir=tmp_path / "worktrees-dream-clean",
+    )
+    bootstrap_repository(repo_paths, seed)
+    config = ServiceConfig(
+        schema_version=1,
+        repository=RepositoryConfig(root_path=str(tmp_path / "state-dream-clean")),
+        authorization=AuthorizationConfig(
+            principals={
+                "smith": NamespacePolicy(
+                    roles=("reader", "proposer", "curator"),
+                    read_prefixes=("/projects/",),
+                    write_prefixes=("/projects/",),
+                )
+            }
+        ),
+        intelligent_tiers=IntelligentTiersConfig(
+            model_proposals=ModelProposalsConfig(enabled=True),
+            dream=DreamConfig(mode="propose", interval_seconds=300, quiet_period_seconds=0),
+        ),
+    )
+    derived_index = DerivedIndex(tmp_path / "derived-dream-clean.sqlite")
+    derived_index.rebuild(repo_paths.current_dir, repo_revision=get_main_revision(repo_paths))
+    clean_service = MemoryService(
+        ServiceDependencies(
+            config=config,
+            repo_paths=repo_paths,
+            control_connection=control_connection,
+            derived_index=derived_index,
+            transaction_manager=TransactionManager(
+                control_connection, repo_paths, derived_update=lambda *_: None
+            ),
+            model_client=fake_model,
+        )
+    )
+    set_service_state(
+        control_connection, key="last_dream_revision", value=get_main_revision(repo_paths)
+    )
+    result = clean_service.run_dream(
+        mode="propose", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
+    )
+    assert result["state"] == "succeeded"
+    assert result["actionable_signal_count"] == 0
+    assert not any(call.task == "dream_proposal_draft" for call in fake_model.calls)
+
+
+def test_dream_propose_creates_proposal_without_git_mutation(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+) -> None:
+    before_revision = get_main_revision(repo_paths)
+    before_text = (repo_paths.current_dir / "instances" / "smith.md").read_text(encoding="utf-8")
+    result = service.run_dream(
+        mode="propose", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
+    )
+    assert result["state"] == "succeeded"
+    assert result["proposal_count"] == 1
+    proposals = list_proposals(service._deps.control_connection)
+    assert proposals
+    assert proposals[-1].author_principal == "dream"
+    assert get_main_revision(repo_paths) == before_revision
+    assert (repo_paths.current_dir / "instances" / "smith.md").read_text(
+        encoding="utf-8"
+    ) == before_text
+
+
+def test_dream_duplicate_window_and_no_overlap(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+) -> None:
+    now = datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
+    first = service.run_dream(mode="report_only", now=now)
+    assert first["state"] == "succeeded"
+    duplicate = service.run_dream(mode="report_only", now=now)
+    assert duplicate["state"] == "skipped_duplicate_window"
+    claim_scheduler_run(
+        service._deps.control_connection,
+        job_name="dream",
+        window_key="manual-running",
+        base_revision=get_main_revision(repo_paths),
+    )
+    overlap = service.run_dream(
+        mode="report_only", now=datetime(2026, 7, 17, 13, 10, tzinfo=timezone.utc)
+    )
+    assert overlap["state"] == "skipped_overlap"
+
+
+def test_dream_budgets_cap_oversized_candidates_and_daily_proposals(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+) -> None:
+    revision = get_main_revision(repo_paths)
+    for index in range(4):
+        created = service.memory_create(
+            smith,
+            path=f"/projects/huge-{index}.md",
+            concept_type="project",
+            title=f"Huge {index}",
+            description="Huge concept.",
+            body="# Huge\n\n" + ("x" * (300 + index)),
+            expected_revision=revision,
+            idempotency_key=f"dream-budget-{index}",
+        )
+        assert created.status == "success"
+        revision = get_main_revision(repo_paths)
+    service.run_dream(mode="report_only", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc))
+    oversized = [
+        signal
+        for signal in list_signals(service._deps.control_connection)
+        if signal.signal_type == "oversized_concept" and signal.status != "resolved"
+    ]
+    assert len(oversized) == 3
+    set_service_state(
+        service._deps.control_connection,
+        key="last_dream_revision",
+        value=get_main_revision(repo_paths),
+    )
+    limited_service = _service_with_config(
+        tmp_path=repo_paths.current_dir.parent,
+        control_connection=service._deps.control_connection,
+        repo_paths=repo_paths,
+        model_client=service._deps.model_client,
+        config=service._deps.config.model_copy(
+            update={
+                "intelligent_tiers": service._deps.config.intelligent_tiers.model_copy(
+                    update={
+                        "dream": DreamConfig(
+                            mode="propose",
+                            interval_seconds=300,
+                            quiet_period_seconds=0,
+                            budgets=DreamBudgetsConfig(
+                                max_signals_per_run=25,
+                                max_model_proposals_per_run=1,
+                                max_runtime_seconds=5.0,
+                                daily_proposal_limit=0,
+                            ),
+                        ),
+                    }
+                )
+            }
+        ),
+    )
+    limited = limited_service.run_dream(
+        mode="propose", now=datetime(2026, 7, 17, 14, 0, tzinfo=timezone.utc)
+    )
+    assert limited["proposal_count"] == 0
+
+
+def _service_with_config(
+    *,
+    tmp_path: Path,
+    control_connection: sqlite3.Connection,
+    repo_paths: GitRepositoryPaths,
+    model_client: ModelClient | None,
+    config: ServiceConfig,
+) -> MemoryService:
+    derived_index = DerivedIndex(tmp_path / "derived-dream-override.sqlite")
+    derived_index.rebuild(repo_paths.current_dir, repo_revision=get_main_revision(repo_paths))
+    return MemoryService(
+        ServiceDependencies(
+            config=config,
+            repo_paths=repo_paths,
+            control_connection=control_connection,
+            derived_index=derived_index,
+            transaction_manager=TransactionManager(
+                control_connection, repo_paths, derived_update=lambda *_: None
+            ),
+            model_client=model_client,
+        )
+    )
 
 
 def write_concept(
