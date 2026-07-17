@@ -70,6 +70,34 @@ Stable error classes for the deterministic core:
 - `queue_full`
 - `temporarily_read_only`
 
+## `memory_answer`
+
+`memory_answer(question, answer_mode?)` is a separate read-only API layered over deterministic repository traversal.
+
+Success payload shape:
+
+```json
+{
+  "answer": "... or UNKNOWN",
+  "answer_source": "exact_cache | hot_memory | deep_agent | disabled",
+  "confidence": "low | medium | high",
+  "unresolved": ["..."],
+  "citations": [
+    {"id": "<concept-id>", "path": "/projects/piclaw.md", "revision": "<git-sha>"}
+  ],
+  "trace_id": "<uuid-or-null>",
+  "model_chain": ["deterministic-fake-or-provider-name"]
+}
+```
+
+Contract rules:
+
+- exact-cache keys include repository revision, normalized question, authorization-scope fingerprint, answer mode, model-policy revision, prompt version and tool version
+- hot working memory and exact cache are scope-isolated and independently feature-gated
+- deep answers may only cite concepts actually read during that traversal at the exact reported revision
+- invalid or missing citations degrade to `UNKNOWN` with unresolved validation markers
+- traversal traces are persisted outside Git with bounded retention
+
 ## Pagination
 
 List and search responses will use deterministic cursors derived from sorted result order and validated limits. Pagination is documented now and implemented in later milestones.

@@ -69,6 +69,54 @@ class LimitsConfig(BaseModel):
     max_search_results: int = Field(default=100, ge=1)
 
 
+class DeepAnswerLimitsConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    max_steps: int = Field(default=8, ge=1, le=12)
+    max_time_seconds: float = Field(default=3.0, gt=0)
+    max_concepts: int = Field(default=6, ge=1)
+    max_chars: int = Field(default=12_000, ge=256)
+    max_answer_chars: int = Field(default=2_000, ge=32)
+
+
+class DeepAnswersConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    enabled: bool = False
+    model_policy_revision: str = Field(default="disabled", min_length=1)
+    prompt_version: str = Field(default="v1", min_length=1)
+    tool_version: str = Field(default="v1", min_length=1)
+    trace_max_entries: int = Field(default=50, ge=1)
+    trace_max_age_days: int = Field(default=30, ge=1)
+    limits: DeepAnswerLimitsConfig = Field(default_factory=DeepAnswerLimitsConfig)
+
+
+class ExactAnswerCacheConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    enabled: bool = False
+    ttl_seconds: int = Field(default=86_400, ge=1)
+    max_entries: int = Field(default=200, ge=1)
+
+
+class HotWorkingMemoryConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    enabled: bool = False
+    ttl_seconds: int = Field(default=3_600, ge=1)
+    max_changed_concepts: int = Field(default=10, ge=1, le=10)
+    max_answers: int = Field(default=10, ge=1, le=10)
+    max_excerpt_chars: int = Field(default=4_000, ge=128)
+
+
+class IntelligentTiersConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    deep_answers: DeepAnswersConfig = Field(default_factory=DeepAnswersConfig)
+    exact_answer_cache: ExactAnswerCacheConfig = Field(default_factory=ExactAnswerCacheConfig)
+    hot_working_memory: HotWorkingMemoryConfig = Field(default_factory=HotWorkingMemoryConfig)
+
+
 class ServiceConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -76,3 +124,4 @@ class ServiceConfig(BaseModel):
     repository: RepositoryConfig
     authorization: AuthorizationConfig
     limits: LimitsConfig = Field(default_factory=LimitsConfig)
+    intelligent_tiers: IntelligentTiersConfig = Field(default_factory=IntelligentTiersConfig)

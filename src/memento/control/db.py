@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-SCHEMA_VERSION = "1"
+SCHEMA_VERSION = "2"
 
 MIGRATIONS_V1 = (
     """
@@ -104,5 +104,12 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
                 (SCHEMA_VERSION,),
             )
             return
-        if schema_row["value"] != SCHEMA_VERSION:
-            raise MigrationError(f"unsupported control schema version: {schema_row['value']}")
+        if schema_row["value"] == SCHEMA_VERSION:
+            return
+        if schema_row["value"] == "1":
+            connection.execute(
+                "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
+                (SCHEMA_VERSION,),
+            )
+            return
+        raise MigrationError(f"unsupported control schema version: {schema_row['value']}")

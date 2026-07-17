@@ -91,6 +91,17 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     async def tool_memory_audit(self, path: str | None = None) -> dict[str, Any]:
         return self._service.memory_audit(self._context(), path=path).model_dump(mode="json")
 
+    async def tool_memory_answer(
+        self,
+        question: str,
+        answer_mode: str = "summary",
+    ) -> dict[str, Any]:
+        return self._service.memory_answer(
+            self._context(),
+            question=question,
+            answer_mode=answer_mode,
+        ).model_dump(mode="json")
+
     async def tool_memory_propose(
         self,
         intent: str,

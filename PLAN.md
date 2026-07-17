@@ -108,9 +108,9 @@
 
 Start each tier behind an independent feature flag and only after Milestone 6.
 
-1. **Deep read-only answers:** bounded traversal, exact citations and retained traces.
-2. **Exact answer cache:** keys include revision, authorization scope, policy, prompt and tool versions.
-3. **Hot working memory:** fresh concept reads, scoped recent answers and safe `UNKNOWN` fall-through.
+1. [x] **Deep read-only answers:** bounded traversal, exact citations and retained traces behind an independent feature flag.
+2. [x] **Exact answer cache:** keys include revision, authorization scope, policy, prompt and tool versions behind an independent feature flag.
+3. [x] **Hot working memory:** fresh concept reads, scoped recent answers and safe `UNKNOWN` fall-through behind an independent feature flag.
 4. **Model-assisted proposals:** models may draft proposals but cannot approve or write.
 5. **Dream report-only scanner:** deterministic signals, revision watermarks and durable deduplication.
 6. **Dream proposal mode:** bounded model proposals, never direct model-authored writes.

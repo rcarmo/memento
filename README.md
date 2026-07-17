@@ -2,7 +2,7 @@
 
 Memento will provide several Piclaw instances with shared, durable knowledge over the Model Context Protocol (MCP). Git-backed Markdown will be authoritative for knowledge, SQLite will track operations, and rebuildable FTS5 and graph indexes will support retrieval.
 
-The project is at **Milestone 6: production operations (implementation complete, deployment examples not live verified)**. Deterministic repository primitives, Git publication, derived indexing, read/write service flows and local production-operations tooling are implemented.
+The project is at **Milestone 6: production operations (implementation complete, deployment examples not live verified)**, with deferred intelligent tiers 1–3 now implemented behind independent feature flags. Deterministic repository primitives, Git publication, derived indexing, read/write service flows and local production-operations tooling are implemented.
 
 ## Core rules
 
@@ -33,12 +33,13 @@ See:
 - POSIX writer lease, bare Git bootstrap, temporary worktrees and compare-and-swap publication of `main`
 - materialized `current/` checkout, startup recovery classification and deterministic transaction checkpoints
 - rebuildable derived FTS/graph index with parity check and quarantine handling
-- MCP service read tools, proposal workflow and curator write pipeline
+- MCP service read tools, `memory_answer`, proposal workflow and curator write pipeline
 - operational CLI commands: `serve`, `audit`, `rebuild-index`, `backup`, `restore`, `status`
 - structured JSON logs with redaction and dependency-free Prometheus text metrics output
 - backup/restore support for bare Git and SQLite with manifest checksums
 - Docker, Compose, systemd and reverse-proxy examples
 - CI workflow for Python 3.10-3.12, wheel build/install and container build validation
+- feature-gated deep read-only answers, exact answer cache and hot working memory with bounded trace persistence
 - sample bundle and contract/threat/operations documentation
 
 ## Development

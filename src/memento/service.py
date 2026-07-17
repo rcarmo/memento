@@ -3,14 +3,30 @@ from __future__ import annotations
 import difflib
 import json
 import sqlite3
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from time import monotonic
 from typing import Any, Literal
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict
 
+from memento.answers import (
+    UNKNOWN_ANSWER,
+    AnswerCitation,
+    AnswerRecord,
+    AnswerStore,
+    DeepAnswerResult,
+    ModelClient,
+    ModelRequest,
+    ReadConcept,
+    SearchStep,
+    exact_cache_key,
+    normalize_question,
+    scope_fingerprint,
+)
 from memento.authz import (
     AuthorizationError,
     EffectivePolicy,
@@ -124,11 +140,14 @@ class ServiceDependencies:
     control_connection: sqlite3.Connection
     derived_index: DerivedIndex
     transaction_manager: TransactionManager
+    model_client: ModelClient | None = None
 
 
 class MemoryService:
     def __init__(self, deps: ServiceDependencies) -> None:
         self._deps = deps
+        self._answers = AnswerStore(deps.control_connection)
+        self._answers.migrate()
 
     def memory_help(
         self, context: ServiceContext
@@ -137,7 +156,7 @@ class MemoryService:
         envelope = self._success(
             {
                 "goals": {
-                    "read": ["memory_search", "memory_read", "memory_graph"],
+                    "read": ["memory_search", "memory_read", "memory_graph", "memory_answer"],
                     "browse": ["memory_list", "memory_read"],
                     "propose": ["memory_propose", "memory_proposal_get"],
                     "curate": [
@@ -150,6 +169,7 @@ class MemoryService:
                     ],
                 },
                 "formats": ("summary", "detailed"),
+                "answer_sources": ("exact_cache", "hot_memory", "deep_agent", "disabled"),
             }
         )
         return envelope
@@ -310,6 +330,111 @@ class MemoryService:
                 repo_revision=graph.repo_revision,
                 index_revision=graph.index_revision,
             )
+        except Exception as exc:
+            return self._failure(exc)
+
+    def memory_answer(
+        self,
+        context: ServiceContext,
+        *,
+        question: str,
+        answer_mode: str = "summary",
+        cancelled: Callable[[], bool] | None = None,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        try:
+            policy = self._policy(context)
+            normalized = normalize_question(question)
+            if not normalized:
+                raise ServiceError("question must not be empty")
+            scope_key = scope_fingerprint(
+                principal=policy.principal,
+                roles=policy.roles,
+                read_prefixes=policy.read_prefixes,
+            )
+            now = self._now()
+            tier_config = self._deps.config.intelligent_tiers
+            deep_config = tier_config.deep_answers
+            cache_config = tier_config.exact_answer_cache
+            hot_config = tier_config.hot_working_memory
+            revision = get_main_revision(self._deps.repo_paths)
+            cache_key = exact_cache_key(
+                repo_revision=revision,
+                normalized_question=normalized,
+                scope_key=scope_key,
+                answer_mode=answer_mode,
+                model_policy_revision=deep_config.model_policy_revision,
+                prompt_version=deep_config.prompt_version,
+                tool_version=deep_config.tool_version,
+            )
+            if cache_config.enabled:
+                cached = self._answers.get_exact_cache(cache_key=cache_key, now=now)
+                if cached is not None:
+                    return self._success(cached.model_dump(mode="json"), repo_revision=revision)
+            if hot_config.enabled and self._deps.model_client is not None:
+                hot = self._answer_from_hot_memory(
+                    policy=policy,
+                    question=question,
+                    normalized_question=normalized,
+                    scope_key=scope_key,
+                    answer_mode=answer_mode,
+                    cancelled=cancelled,
+                )
+                if hot is not None and hot.answer != UNKNOWN_ANSWER:
+                    return self._success(hot.model_dump(mode="json"), repo_revision=revision)
+            if not deep_config.enabled or self._deps.model_client is None:
+                disabled = AnswerRecord(
+                    answer=UNKNOWN_ANSWER,
+                    answer_source="disabled",
+                    confidence="low",
+                    unresolved=("memory_answer is disabled",),
+                    citations=(),
+                    trace_id=None,
+                    model_chain=(),
+                )
+                return self._success(disabled.model_dump(mode="json"), repo_revision=revision)
+            deep = self._answer_from_deep_traversal(
+                policy=policy,
+                question=question,
+                normalized_question=normalized,
+                scope_key=scope_key,
+                answer_mode=answer_mode,
+                cancelled=cancelled,
+            )
+            trace_id = self._answers.insert_trace(
+                principal=policy.principal,
+                scope_key=scope_key,
+                question=normalized,
+                repo_revision=revision,
+                result=deep,
+                max_traces=deep_config.trace_max_entries,
+                max_age_days=deep_config.trace_max_age_days,
+            )
+            record = deep.record.model_copy(update={"trace_id": trace_id})
+            if cache_config.enabled:
+                self._answers.put_exact_cache(
+                    cache_key=cache_key,
+                    scope_key=scope_key,
+                    repo_revision=revision,
+                    normalized_question=normalized,
+                    answer_mode=answer_mode,
+                    record=record,
+                    cited_ids=[citation.id for citation in record.citations],
+                    read_ids=[concept.concept_id for concept in deep.read_concepts],
+                    now=now,
+                    ttl_seconds=cache_config.ttl_seconds,
+                    max_entries=cache_config.max_entries,
+                )
+            if hot_config.enabled and record.answer != UNKNOWN_ANSWER:
+                self._answers.put_hot_answer(
+                    scope_key=scope_key,
+                    normalized_question=normalized,
+                    record=record,
+                    concept_ids=[concept.concept_id for concept in deep.read_concepts],
+                    now=now,
+                    ttl_seconds=hot_config.ttl_seconds,
+                    max_entries=hot_config.max_answers,
+                )
+            return self._success(record.model_dump(mode="json"), repo_revision=revision)
         except Exception as exc:
             return self._failure(exc)
 
@@ -478,6 +603,7 @@ class MemoryService:
                 applied_operation_id=result.operation.op_id,
                 applied_revision=result.result_revision,
             )
+            self._record_changed_concepts(policy, result.changed_paths)
             return self._success(
                 {
                     "proposal": self._proposal_payload(updated, self._preview_changes(changes)),
@@ -605,6 +731,7 @@ class MemoryService:
                 request,
                 lambda worktree: self._apply_changes(worktree, changes, actor=policy.principal),
             )
+            self._record_changed_concepts(policy, result.changed_paths)
             return self._success(
                 {
                     "changed_paths": result.changed_paths,
@@ -880,6 +1007,352 @@ class MemoryService:
             return id_or_path
         entry = read_bundle_entry(self._deps.repo_paths.current_dir, id_or_path)
         return entry.document.frontmatter.id
+
+    def _answer_from_hot_memory(
+        self,
+        *,
+        policy: EffectivePolicy,
+        question: str,
+        normalized_question: str,
+        scope_key: str,
+        answer_mode: str,
+        cancelled: Callable[[], bool] | None,
+    ) -> AnswerRecord | None:
+        hot_config = self._deps.config.intelligent_tiers.hot_working_memory
+        changed_ids, exact_hot = self._answers.get_hot_context(
+            scope_key=scope_key,
+            normalized_question=normalized_question,
+            now=self._now(),
+        )
+        if exact_hot is not None:
+            return exact_hot.model_copy(update={"answer_source": "hot_memory"})
+        if not changed_ids:
+            return None
+        concepts = [
+            concept
+            for concept_id in changed_ids
+            if (concept := self._read_concept_by_id(policy, concept_id)) is not None
+        ]
+        if not concepts:
+            return None
+        prompt = self._hot_prompt(question, concepts[: hot_config.max_changed_concepts])
+        response = self._run_model(
+            task="memory_answer_hot",
+            prompt=prompt[: hot_config.max_excerpt_chars],
+            max_output_chars=min(
+                self._deps.config.intelligent_tiers.deep_answers.limits.max_answer_chars,
+                hot_config.max_excerpt_chars,
+            ),
+            timeout_seconds=min(
+                self._deps.config.intelligent_tiers.deep_answers.limits.max_time_seconds,
+                1.0,
+            ),
+            cancelled=cancelled,
+            metadata={"answer_mode": answer_mode},
+        )
+        record = self._parse_model_answer(response.output_text, source="hot_memory")
+        if record.answer == UNKNOWN_ANSWER:
+            return None
+        return self._validated_record(
+            record,
+            read_concepts=tuple(concepts),
+            revision=get_main_revision(self._deps.repo_paths),
+            source_on_repair="hot_memory",
+        )
+
+    def _answer_from_deep_traversal(
+        self,
+        *,
+        policy: EffectivePolicy,
+        question: str,
+        normalized_question: str,
+        scope_key: str,
+        answer_mode: str,
+        cancelled: Callable[[], bool] | None,
+    ) -> DeepAnswerResult:
+        del scope_key
+        deep_config = self._deps.config.intelligent_tiers.deep_answers
+        limits = deep_config.limits
+        start = monotonic()
+        steps: list[SearchStep] = []
+        read_concepts: list[ReadConcept] = []
+        self._check_cancel(cancelled)
+        search = self._deps.derived_index.search(
+            policy=policy,
+            query=self._search_query(question),
+            limit=min(limits.max_concepts, 5),
+            freshness=SearchFreshness.STRICT,
+            timeout_seconds=limits.max_time_seconds,
+        )
+        steps.append(SearchStep(action="search_knowledge", detail=question[:200]))
+        self._check_cancel(cancelled)
+        for item in search.results:
+            if len(steps) >= limits.max_steps or len(read_concepts) >= limits.max_concepts:
+                break
+            concept = self._read_concept_by_path(policy, item.path, revision=search.repo_revision)
+            read_concepts.append(concept)
+            steps.append(SearchStep(action="read_concept", detail=item.path))
+            if len(read_concepts) == 1 and len(steps) < limits.max_steps:
+                graph = self._deps.derived_index.graph(
+                    policy=policy,
+                    concept_id=item.concept_id,
+                    depth=1,
+                    freshness=SearchFreshness.EVENTUAL,
+                )
+                steps.append(SearchStep(action="graph_neighbors", detail=item.path))
+                for edge in graph.outbound + graph.inbound:
+                    if len(steps) >= limits.max_steps or len(read_concepts) >= limits.max_concepts:
+                        break
+                    if any(existing.concept_id == edge.concept_id for existing in read_concepts):
+                        continue
+                    read_concepts.append(
+                        self._read_concept_by_path(policy, edge.path, revision=graph.repo_revision)
+                    )
+                    steps.append(SearchStep(action="read_concept", detail=edge.path))
+            self._check_cancel(cancelled)
+        if not read_concepts and len(steps) < limits.max_steps:
+            bundle = scan_bundle(self._deps.repo_paths.current_dir)
+            steps.append(SearchStep(action="list_directory", detail="/"))
+            for entry in bundle.entries:
+                if len(read_concepts) >= limits.max_concepts or len(steps) >= limits.max_steps:
+                    break
+                if not self._is_authorized(policy, entry.bundle_path, action="read"):
+                    continue
+                read_concepts.append(
+                    ReadConcept(
+                        concept_id=entry.document.frontmatter.id,
+                        path=entry.bundle_path,
+                        title=entry.document.frontmatter.title,
+                        body=entry.document.body,
+                        revision=search.repo_revision,
+                    )
+                )
+                steps.append(SearchStep(action="read_concept", detail=entry.bundle_path))
+        prompt = self._deep_prompt(question, read_concepts, limits.max_chars)
+        response = self._run_model(
+            task="memory_answer_deep",
+            prompt=prompt,
+            max_output_chars=limits.max_answer_chars,
+            timeout_seconds=limits.max_time_seconds,
+            cancelled=cancelled,
+            metadata={"answer_mode": answer_mode},
+        )
+        record = self._validated_record(
+            self._parse_model_answer(response.output_text, source="deep_agent"),
+            read_concepts=tuple(read_concepts),
+            revision=search.repo_revision,
+            source_on_repair="deep_agent",
+        )
+        return DeepAnswerResult(
+            record=record.model_copy(update={"trace_id": str(uuid4())}),
+            read_concepts=tuple(read_concepts),
+            steps=tuple(steps),
+            duration_ms=max(0, int((monotonic() - start) * 1000)),
+            usage=response.usage,
+        )
+
+    def _validated_record(
+        self,
+        record: AnswerRecord,
+        *,
+        read_concepts: tuple[ReadConcept, ...],
+        revision: str,
+        source_on_repair: str,
+    ) -> AnswerRecord:
+        concept_by_id = {concept.concept_id: concept for concept in read_concepts}
+        concept_by_path = {concept.path: concept for concept in read_concepts}
+        if record.answer == UNKNOWN_ANSWER:
+            return record.model_copy(update={"citations": (), "trace_id": None})
+        citations: list[AnswerCitation] = []
+        for citation in record.citations:
+            concept_from_id = concept_by_id.get(citation.id)
+            concept_from_path = concept_by_path.get(citation.path)
+            if concept_from_id is None or concept_from_path is None:
+                return AnswerRecord(
+                    answer=UNKNOWN_ANSWER,
+                    answer_source=source_on_repair,
+                    confidence="low",
+                    unresolved=("citation_validation_failed",),
+                    citations=(),
+                    trace_id=None,
+                    model_chain=record.model_chain,
+                )
+            if concept_from_id.concept_id != concept_from_path.concept_id:
+                return AnswerRecord(
+                    answer=UNKNOWN_ANSWER,
+                    answer_source=source_on_repair,
+                    confidence="low",
+                    unresolved=("citation_validation_failed",),
+                    citations=(),
+                    trace_id=None,
+                    model_chain=record.model_chain,
+                )
+            if citation.revision != revision:
+                return AnswerRecord(
+                    answer=UNKNOWN_ANSWER,
+                    answer_source=source_on_repair,
+                    confidence="low",
+                    unresolved=("citation_validation_failed",),
+                    citations=(),
+                    trace_id=None,
+                    model_chain=record.model_chain,
+                )
+            citations.append(
+                AnswerCitation(
+                    id=concept_from_id.concept_id,
+                    path=concept_from_id.path,
+                    revision=revision,
+                )
+            )
+        if not citations:
+            return AnswerRecord(
+                answer=UNKNOWN_ANSWER,
+                answer_source=source_on_repair,
+                confidence="low",
+                unresolved=("missing_citations",),
+                citations=(),
+                trace_id=None,
+                model_chain=record.model_chain,
+            )
+        return record.model_copy(update={"citations": tuple(citations), "trace_id": None})
+
+    def _parse_model_answer(self, payload: str, *, source: str) -> AnswerRecord:
+        try:
+            data = json.loads(payload)
+        except json.JSONDecodeError as exc:
+            raise ServiceError(f"model output is not valid JSON: {exc}") from exc
+        citations = tuple(AnswerCitation.model_validate(item) for item in data.get("citations", []))
+        unresolved = tuple(str(item) for item in data.get("unresolved", []))
+        model_chain = tuple(str(item) for item in data.get("model_chain", []))
+        return AnswerRecord(
+            answer=str(data.get("answer", UNKNOWN_ANSWER)),
+            answer_source=source,
+            confidence=str(data.get("confidence", "low")),
+            unresolved=unresolved,
+            citations=citations,
+            trace_id=None,
+            model_chain=model_chain,
+        )
+
+    def _run_model(
+        self,
+        *,
+        task: str,
+        prompt: str,
+        max_output_chars: int,
+        timeout_seconds: float,
+        cancelled: Callable[[], bool] | None,
+        metadata: dict[str, str],
+    ) -> Any:
+        self._check_cancel(cancelled)
+        client = self._deps.model_client
+        if client is None:
+            raise ServiceError("model client is unavailable")
+        response = client.complete(
+            ModelRequest(
+                task=task,
+                prompt=prompt,
+                max_output_chars=max_output_chars,
+                timeout_seconds=timeout_seconds,
+                metadata=metadata,
+                cancelled=cancelled,
+            )
+        )
+        self._check_cancel(cancelled)
+        return response
+
+    def _hot_prompt(self, question: str, concepts: list[ReadConcept]) -> str:
+        excerpts = []
+        for concept in concepts:
+            excerpts.append(
+                f"ID: {concept.concept_id}\nPATH: {concept.path}\nREVISION: {concept.revision}\nTITLE: {concept.title}\nBODY:\n{concept.body}\n"
+            )
+        return (
+            "You must answer only from the supplied excerpts. If unsupported, answer UNKNOWN. "
+            "Return JSON with answer, confidence, unresolved, citations, model_chain.\n\n"
+            f"QUESTION: {question}\n\n" + "\n---\n".join(excerpts)
+        )
+
+    def _deep_prompt(self, question: str, concepts: list[ReadConcept], max_chars: int) -> str:
+        parts = [
+            "Answer only from the supplied repository excerpts.",
+            "Return JSON with answer, confidence, unresolved, citations, model_chain.",
+            f"QUESTION: {question}",
+        ]
+        remaining = max_chars
+        for concept in concepts:
+            excerpt = f"ID: {concept.concept_id}\nPATH: {concept.path}\nREVISION: {concept.revision}\nTITLE: {concept.title}\nBODY:\n{concept.body}\n"
+            if len(excerpt) > remaining:
+                excerpt = excerpt[:remaining]
+            parts.append(excerpt)
+            remaining -= len(excerpt)
+            if remaining <= 0:
+                break
+        return "\n\n".join(parts)
+
+    def _search_query(self, question: str) -> str:
+        terms = [item for item in normalize_question(question).replace("?", "").split(" ") if item]
+        if not terms:
+            raise ServiceError("question must not be empty")
+        return " OR ".join(f'"{term}"' for term in terms)
+
+    def _record_changed_concepts(
+        self, policy: EffectivePolicy, changed_paths: tuple[str, ...]
+    ) -> None:
+        hot_config = self._deps.config.intelligent_tiers.hot_working_memory
+        if not hot_config.enabled:
+            return
+        changed_ids = {
+            read_bundle_entry(self._deps.repo_paths.current_dir, path).document.frontmatter.id
+            for path in changed_paths
+            if (self._deps.repo_paths.current_dir / path.removeprefix("/")).exists()
+            and self._is_authorized(policy, path, action="read")
+        }
+        scope_key = scope_fingerprint(
+            principal=policy.principal,
+            roles=policy.roles,
+            read_prefixes=policy.read_prefixes,
+        )
+        self._answers.put_hot_changed_concepts(
+            scope_key=scope_key,
+            concept_ids=sorted(changed_ids),
+            now=self._now(),
+            max_entries=hot_config.max_changed_concepts,
+        )
+        self._answers.invalidate_hot_answers(changed_concept_ids=changed_ids)
+
+    def _read_concept_by_id(self, policy: EffectivePolicy, concept_id: str) -> ReadConcept | None:
+        bundle = scan_bundle(self._deps.repo_paths.current_dir)
+        for entry in bundle.entries:
+            if entry.document.frontmatter.id != concept_id:
+                continue
+            if not self._is_authorized(policy, entry.bundle_path, action="read"):
+                return None
+            return ReadConcept(
+                concept_id=entry.document.frontmatter.id,
+                path=entry.bundle_path,
+                title=entry.document.frontmatter.title,
+                body=entry.document.body,
+                revision=get_main_revision(self._deps.repo_paths),
+            )
+        return None
+
+    def _read_concept_by_path(
+        self, policy: EffectivePolicy, path: str, *, revision: str
+    ) -> ReadConcept:
+        authorize_path(policy, path, action="read")
+        entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
+        return ReadConcept(
+            concept_id=entry.document.frontmatter.id,
+            path=path,
+            title=entry.document.frontmatter.title,
+            body=entry.document.body,
+            revision=revision,
+        )
+
+    def _check_cancel(self, cancelled: Callable[[], bool] | None) -> None:
+        if cancelled is not None and cancelled():
+            raise ServiceError("memory_answer cancelled")
 
     def _policy(self, context: ServiceContext) -> EffectivePolicy:
         return resolve_policy(self._deps.config.authorization, context.principal)

@@ -21,5 +21,34 @@
   "limits": {
     "max_concept_bytes": 262144,
     "max_search_results": 100
+  },
+  "intelligent_tiers": {
+    "deep_answers": {
+      "enabled": false,
+      "model_policy_revision": "disabled",
+      "prompt_version": "v1",
+      "tool_version": "v1",
+      "trace_max_entries": 50,
+      "trace_max_age_days": 30,
+      "limits": {
+        "max_steps": 8,
+        "max_time_seconds": 3.0,
+        "max_concepts": 6,
+        "max_chars": 12000,
+        "max_answer_chars": 2000
+      }
+    },
+    "exact_answer_cache": {
+      "enabled": false,
+      "ttl_seconds": 86400,
+      "max_entries": 200
+    },
+    "hot_working_memory": {
+      "enabled": false,
+      "ttl_seconds": 3600,
+      "max_changed_concepts": 10,
+      "max_answers": 10,
+      "max_excerpt_chars": 4000
+    }
   }
 }
