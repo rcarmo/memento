@@ -2,7 +2,7 @@
 
 Memento will provide several Piclaw instances with shared, durable knowledge over the Model Context Protocol (MCP). Git-backed Markdown will be authoritative for knowledge, SQLite will track operations, and rebuildable FTS5 and graph indexes will support retrieval.
 
-The project is at **Milestone 1: deterministic repository core**. Contracts and the first deterministic repository primitives are implemented.
+The project is at **Milestone 2: Git transactions and control plane**. Deterministic repository primitives, Git publication and durable control-plane state are implemented.
 
 ## Core rules
 
@@ -28,6 +28,10 @@ See:
 - Markdown structural link extraction and safe rename rewriting
 - deterministic directory index and root log generation
 - bundle scan, concept read and repository audit
+- SQLite WAL control-plane schema v1 for operations, proposals, scheduler runs and service state
+- principal-scoped durable idempotency records
+- POSIX writer lease, bare Git bootstrap, temporary worktrees and compare-and-swap publication of `main`
+- materialized `current/` checkout, startup recovery classification and deterministic transaction checkpoints
 - sample bundle and contract/threat documentation
 
 ## Development

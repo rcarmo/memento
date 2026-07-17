@@ -43,14 +43,14 @@
 
 ## Milestone 2 — Git transactions and control plane
 
-- [ ] Bootstrap bare authoritative repository and materialized checkout.
-- [ ] Add SQLite WAL migrations for operations, proposals, scheduler runs and service state.
-- [ ] Acquire one OS-level writer lease and expose read-only degradation.
-- [ ] Journal operations and enforce principal-scoped idempotency.
-- [ ] Apply mutations in temporary worktrees and stage exact paths.
-- [ ] Publish `main` with `git update-ref` compare-and-swap.
-- [ ] Materialize the committed revision and update operation results.
-- [ ] Reconcile interrupted operations and abandoned worktrees at startup.
+- [x] Bootstrap bare authoritative repository and materialized checkout.
+- [x] Add SQLite WAL migrations for operations, proposals, scheduler runs and service state.
+- [x] Acquire one OS-level writer lease and expose read-only degradation.
+- [x] Journal operations and enforce principal-scoped idempotency.
+- [x] Apply mutations in temporary worktrees and stage exact paths.
+- [x] Publish `main` with `git update-ref` compare-and-swap.
+- [x] Materialize the committed revision and update operation results.
+- [x] Reconcile interrupted operations and abandoned worktrees at startup.
 
 **Required evidence:** concurrent stale-write conflict; replay behavior; mismatched idempotency payload; injected crash recovery at every transaction boundary.
 
