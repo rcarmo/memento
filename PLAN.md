@@ -56,53 +56,53 @@
 
 ## Milestone 3 — derived search and graph
 
-- [ ] Add rebuildable SQLite metadata and FTS5 schemas.
-- [ ] Implement weighted lexical search with bounded snippets and cursors.
-- [ ] Build links, backlinks, graph metrics, orphan and broken-link state.
-- [ ] Add full rebuild and exact changed-path incremental update.
-- [ ] Track repository and index revisions and strict freshness waits.
-- [ ] Add clean-scan parity checker and corruption quarantine/rebuild.
-- [ ] Apply authorization filters before ranking and output.
+- [x] Add rebuildable SQLite metadata and FTS5 schemas.
+- [x] Implement weighted lexical search with bounded snippets and cursors.
+- [x] Build links, backlinks, graph metrics, orphan and broken-link state.
+- [x] Add full rebuild and exact changed-path incremental update.
+- [x] Track repository and index revisions and strict freshness waits.
+- [x] Add clean-scan parity checker and corruption quarantine/rebuild.
+- [x] Apply authorization filters before ranking and output.
 
 **Required evidence:** full/incremental parity; no hidden-result ranking leakage; index deletion and rebuild from Git alone.
 
 ## Milestone 4 — read-only MCP service
 
-- [ ] Pin a released/tested uMCP version with Streamable HTTP support.
-- [ ] Integrate `AsyncMCPServer` and trusted request-local principals.
-- [ ] Implement standard success/error envelopes.
-- [ ] Implement `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_list`, `memory_graph` and `memory_audit`.
-- [ ] Add read-only MCP resources and bounded health/readiness endpoints.
-- [ ] Enforce role and namespace policy on every result.
-- [ ] Run Piclaw adapter compatibility smoke tests.
+- [x] Pin a released/tested uMCP version with Streamable HTTP support.
+- [x] Integrate `AsyncMCPServer` and trusted request-local principals.
+- [x] Implement standard success/error envelopes.
+- [x] Implement `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_list`, `memory_graph` and `memory_audit`.
+- [x] Add read-only MCP resources and bounded health/readiness endpoints.
+- [x] Enforce role and namespace policy on every result.
+- [x] Run Piclaw adapter compatibility smoke tests.
 
 **Exit:** One read-only canary serves Smith with revision-aware deterministic reads.
 
 ## Milestone 5 — proposals and curated writes
 
-- [ ] Implement proposal create/get/list/review state transitions.
-- [ ] Generate deterministic validation and exact diff previews.
-- [ ] Enforce expiry, staleness, self-approval and namespace policies.
-- [ ] Implement reviewed apply through the canonical Git transaction pipeline.
-- [ ] Add curator-only create, patch and rename operations.
-- [ ] Update inbound links atomically on rename.
-- [ ] Emit resource update/list-change notifications after successful publication.
-- [ ] Link principal, proposal, operation and Git revision in durable audit data.
+- [x] Implement proposal create/get/list/review state transitions.
+- [x] Generate deterministic validation and exact diff previews.
+- [x] Enforce expiry, staleness, self-approval and namespace policies.
+- [x] Implement reviewed apply through the canonical Git transaction pipeline.
+- [x] Add curator-only create, patch and rename operations.
+- [x] Update inbound links atomically on rename.
+- [x] Emit resource update/list-change notifications after successful publication.
+- [x] Link principal, proposal, operation and Git revision in durable audit data.
 
 **Exit:** Smith can curate; Flint can read and propose; stale and conflicting writes fail safely.
 
 ## Milestone 6 — production operations
 
-- [ ] Build a non-root, read-only-root-filesystem container with one writable data mount.
-- [ ] Add Portainer/Compose and hardened systemd deployment paths.
-- [ ] Add TLS/reverse-proxy guidance and distinct principal configuration.
-- [ ] Add structured logs, metrics, liveness and tiered readiness.
-- [ ] Add graceful write draining and bounded recovery startup.
-- [ ] Add backup, restore, retention, migration and rollback procedures.
+- [x] Build a non-root, read-only-root-filesystem container with one writable data mount.
+- [x] Add Portainer/Compose and hardened systemd deployment paths.
+- [x] Add TLS/reverse-proxy guidance and distinct principal configuration.
+- [x] Add structured logs, metrics, liveness and tiered readiness.
+- [x] Add graceful write draining and bounded recovery startup.
+- [x] Add backup, restore, retention, migration and rollback procedures.
 - [ ] Produce SBOM, provenance, immutable image digest and release evidence.
 - [ ] Run Docker/systemd parity and clean-host restore drills.
 
-**Exit:** At least two Piclaw clients use distinct principals; backup/restore and crash drills pass; curated writes are monitored.
+**Exit:** Local implementation and tests are complete. Live deployment evidence for multi-client production use, artifact publication, and restore drills is still pending.
 
 ## Deferred roadmap
 

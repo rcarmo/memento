@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "repository": {
+    "root_path": "/var/lib/memento",
+    "bundle_root": "/"
+  },
+  "authorization": {
+    "principals": {
+      "smith": {
+        "roles": ["reader", "proposer", "curator"],
+        "read_prefixes": ["/instances/", "/projects/"],
+        "write_prefixes": ["/instances/", "/projects/"]
+      },
+      "flint": {
+        "roles": ["reader", "proposer"],
+        "read_prefixes": ["/instances/", "/projects/"],
+        "write_prefixes": ["/projects/"]
+      }
+    }
+  },
+  "limits": {
+    "max_concept_bytes": 262144,
+    "max_search_results": 100
+  }
+}

@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Memento backup daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+Unit=memento-backup.service
+
+[Install]
+WantedBy=timers.target

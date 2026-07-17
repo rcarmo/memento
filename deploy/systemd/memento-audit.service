@@ -1,0 +1,13 @@
+[Unit]
+Description=Memento repository audit
+
+[Service]
+Type=oneshot
+User=memento
+Group=memento
+ExecStart=/opt/memento/.venv/bin/memento --config /etc/memento/config.json audit
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/memento

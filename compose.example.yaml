@@ -1,0 +1,21 @@
+services:
+  memento:
+    build: .
+    image: memento:local
+    user: "65532:65532"
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - ./examples/config.v1.json:/etc/memento/config.json:ro
+      - memento-data:/var/lib/memento
+    command: ["--config", "/etc/memento/config.json", "serve", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  memento-data:

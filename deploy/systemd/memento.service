@@ -1,0 +1,30 @@
+[Unit]
+Description=Memento MCP service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=memento
+Group=memento
+WorkingDirectory=/opt/memento
+ExecStart=/opt/memento/.venv/bin/memento --config /etc/memento/config.json serve --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+ReadWritePaths=/var/lib/memento
+StateDirectory=memento
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

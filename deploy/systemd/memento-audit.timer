@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Memento audit every hour
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+Unit=memento-audit.service
+
+[Install]
+WantedBy=timers.target
