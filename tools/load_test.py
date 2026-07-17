@@ -20,7 +20,7 @@ from collections import Counter
 from collections.abc import Callable, Iterable, Sequence
 from contextlib import AbstractContextManager
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, TypeVar, cast
 from uuid import uuid4
@@ -368,7 +368,7 @@ def compile_scenario(
 
 
 def _now() -> datetime:
-    return datetime.now(tz=timezone.utc)
+    return datetime.now(tz=UTC)
 
 
 def _git_revision(path: Path) -> str:
@@ -387,7 +387,7 @@ def _write_concept(
     path: Path, *, concept_id: str, concept_type: str, title: str, body: str
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    now = datetime.now(tz=timezone.utc).replace(microsecond=0)
+    now = datetime.now(tz=UTC).replace(microsecond=0)
     document = ConceptDocument(
         frontmatter=ConceptFrontmatter(
             schema_version=1,

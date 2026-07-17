@@ -4,7 +4,7 @@ import asyncio
 import json
 import sqlite3
 from collections.abc import Generator
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -588,7 +588,7 @@ def test_proposal_list_visibility_and_expiry(
     control_connection.execute(
         "UPDATE proposals SET expires_at = ? WHERE proposal_id = ?",
         (
-            (datetime.now(tz=timezone.utc) - timedelta(days=1))
+            (datetime.now(tz=UTC) - timedelta(days=1))
             .replace(microsecond=0)
             .isoformat()
             .replace("+00:00", "Z"),
@@ -630,8 +630,8 @@ def write_concept(
             source_refs=(),
             supersedes=(),
             status=ConceptStatus.ACTIVE,
-            created_at=datetime(2026, 7, 17, 12, 0, tzinfo=timezone.utc),
-            updated_at=datetime(2026, 7, 17, 12, 0, tzinfo=timezone.utc),
+            created_at=datetime(2026, 7, 17, 12, 0, tzinfo=UTC),
+            updated_at=datetime(2026, 7, 17, 12, 0, tzinfo=UTC),
             updated_by="rui/tests",
         ),
         body=body,

@@ -4,7 +4,7 @@ import sqlite3
 import threading
 import time
 from collections.abc import Generator
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -341,8 +341,8 @@ def write_concept(
             source_refs=(),
             supersedes=(),
             status=ConceptStatus.ACTIVE,
-            created_at=datetime(2026, 7, 17, 12, 0, tzinfo=timezone.utc),
-            updated_at=datetime(2026, 7, 17, 12, 0, tzinfo=timezone.utc),
+            created_at=datetime(2026, 7, 17, 12, 0, tzinfo=UTC),
+            updated_at=datetime(2026, 7, 17, 12, 0, tzinfo=UTC),
             updated_by="rui/tests",
         ),
         body=body,

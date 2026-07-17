@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -25,7 +25,7 @@ CONTROLLED_TYPES = (
 )
 
 
-class ConceptStatus(str, Enum):
+class ConceptStatus(StrEnum):
     ACTIVE = "active"
     DEPRECATED = "deprecated"
     TOMBSTONE = "tombstone"
@@ -79,7 +79,7 @@ class ConceptFrontmatter(BaseModel):
     def require_utc(cls, value: datetime) -> datetime:
         if value.tzinfo is None:
             raise ValueError("timestamps must be timezone-aware")
-        return value.astimezone(timezone.utc)
+        return value.astimezone(UTC)
 
 
 class ConceptDocument(BaseModel):
@@ -92,7 +92,7 @@ class ConceptDocument(BaseModel):
 def new_concept_frontmatter(
     *, title: str, concept_type: str, updated_by: str
 ) -> ConceptFrontmatter:
-    now = datetime.now(tz=timezone.utc).replace(microsecond=0)
+    now = datetime.now(tz=UTC).replace(microsecond=0)
     return ConceptFrontmatter(
         id=str(uuid4()),
         type=concept_type,

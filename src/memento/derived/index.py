@@ -8,7 +8,7 @@ import time
 from collections.abc import Callable, Sequence
 from contextlib import suppress
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -131,12 +131,12 @@ class DerivedSearchError(ValueError):
     """Raised when a user-supplied search query is invalid."""
 
 
-class SearchFreshness(str, Enum):
+class SearchFreshness(StrEnum):
     EVENTUAL = "eventual"
     STRICT = "strict"
 
 
-class SearchMode(str, Enum):
+class SearchMode(StrEnum):
     LEXICAL = "lexical"
     SEMANTIC = "semantic"
     HYBRID = "hybrid"

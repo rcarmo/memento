@@ -4,12 +4,12 @@ import hashlib
 import json
 import sqlite3
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
-from enum import Enum
+from datetime import UTC, datetime, timedelta
+from enum import StrEnum
 from typing import Any
 
 
-class ProposalStatus(str, Enum):
+class ProposalStatus(StrEnum):
     DRAFT = "draft"
     SUBMITTED = "submitted"
     APPROVED = "approved"
@@ -54,7 +54,7 @@ DEFAULT_PROPOSAL_TTL_DAYS = 30
 
 
 def utcnow() -> str:
-    return datetime.now(tz=timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    return datetime.now(tz=UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def create_proposal(
@@ -73,7 +73,7 @@ def create_proposal(
     patch_hash = hashlib.sha256(patch_json.encode("utf-8")).hexdigest()
     now = utcnow()
     expires_at = (
-        (datetime.now(tz=timezone.utc).replace(microsecond=0) + timedelta(days=expires_in_days))
+        (datetime.now(tz=UTC).replace(microsecond=0) + timedelta(days=expires_in_days))
         .isoformat()
         .replace("+00:00", "Z")
     )

@@ -7,10 +7,15 @@ name = "memento"
 version = "0.1.0"
 description = "A deterministic shared-memory MCP service backed by Git Markdown."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12,<3.15"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Rui Carmo", email = "rui.carmo@gmail.com" }]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
 dependencies = [
     "markdown-it-py>=3,<4",
     "pydantic>=2.8,<3",
@@ -41,17 +46,17 @@ testpaths = ["tests"]
 addopts = "--strict-markers"
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.12"
 strict = true
 packages = ["memento"]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py312"
 line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
-ignore = ["E501"]
+ignore = ["E501", "UP046", "UP047"]
 
 [tool.ruff.lint.per-file-ignores]
 "tools/*.py" = ["E402"]

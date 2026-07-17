@@ -8,7 +8,7 @@ WORKDIR /build
 COPY rust /build/rust
 RUN cd rust && cargo build --release -p memento-ffi -p memento-sqlite-vector -p memento-embed
 
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

@@ -7,7 +7,7 @@ import re
 import sqlite3
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from time import monotonic
 from typing import Any, Literal
@@ -1188,7 +1188,7 @@ class MemoryService:
         return "".join(diffs)
 
     def _preview_create_document(self, change: CreateChange) -> ConceptDocument:
-        now = datetime(2026, 1, 1, tzinfo=timezone.utc)
+        now = datetime(2026, 1, 1, tzinfo=UTC)
         return ConceptDocument(
             frontmatter=ConceptFrontmatter(
                 schema_version=1,
@@ -2124,7 +2124,7 @@ class MemoryService:
             return None
         quiet_until = latest.timestamp() + seconds
         return (
-            datetime.fromtimestamp(quiet_until, tz=timezone.utc)
+            datetime.fromtimestamp(quiet_until, tz=UTC)
             .replace(microsecond=0)
             .isoformat()
             .replace("+00:00", "Z")
@@ -2548,4 +2548,4 @@ class MemoryService:
 
     @staticmethod
     def _now() -> datetime:
-        return datetime.now(tz=timezone.utc).replace(microsecond=0)
+        return datetime.now(tz=UTC).replace(microsecond=0)

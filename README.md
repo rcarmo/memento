@@ -108,7 +108,7 @@ Tool arguments, Markdown, links, retrieved text and model output are all untrust
 
 ## Running It
 
-Memento supports Python 3.10-3.12 and uses a Makefile as the stable development and CI interface:
+Memento supports Python 3.12-3.14 and uses a Makefile as the stable development and CI interface:
 
 ```bash
 make install-dev
@@ -139,7 +139,7 @@ Start with [`examples/config.v1.json`](examples/config.v1.json), then read [`doc
 
 The deterministic repository, transaction journal, FTS/graph indexes, authenticated MCP service, proposal workflow, backup/restore tooling, compact tool catalog, bounded executor, optional model tiers and Rust semantic-search runtime are implemented and covered by local tests.
 
-Local validation includes Python 3.10-3.12, wheel installation, container builds, authenticated Streamable HTTP calls through Piclaw's bundled MCP SDK, crash-boundary recovery tests and Rust FFI/SQLite-extension parity tests.
+Local validation includes Python 3.12-3.14, wheel installation, container builds, authenticated Streamable HTTP calls through Piclaw's bundled MCP SDK, crash-boundary recovery tests and Rust FFI/SQLite-extension parity tests.
 
 Published SBOM/provenance, production image digests, live Docker/systemd parity and a clean-host production restore drill still require deployment evidence. They are tracked in [`PLAN.md`](PLAN.md) and are not presented as completed work. Repository-owned local load testing is documented in [`docs/load-testing.md`](docs/load-testing.md); its thresholds are local checks, not universal service SLOs.
 
