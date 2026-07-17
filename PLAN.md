@@ -5,15 +5,17 @@
 **Initial scope:** Deterministic shared-memory MCP service  
 **Python:** 3.10–3.12
 
+This file is the current delivery and acceptance record. Architecture, rationale and longer design notes stay in [docs/implementation.md](docs/implementation.md).
+
 ## Delivery rules
 
-- Complete milestones in order unless a prerequisite can be isolated safely.
-- Keep optional model tiers out of the runtime until the deterministic service is proven.
-- Every mutation path must preserve authorization, expected revision, idempotency, audit and crash recovery.
-- Each milestone ends with `make check`, `make typecheck`, package installation evidence and the milestone-specific tests.
-- Mark behavior implemented only after tests pass; mark it deployed or live-verified only with deployment evidence.
+* Complete milestones in order unless a prerequisite can be isolated safely.
+* Keep optional model tiers out of the runtime until the deterministic service is proven.
+* Every mutation path must preserve authorization, expected revision, idempotency, audit and crash recovery.
+* Each milestone ends with `make check`, `make typecheck`, package installation evidence and the milestone-specific tests.
+* Mark behaviour implemented only after tests pass; mark it deployed or live-verified only with deployment evidence.
 
-## Milestone 0 — contracts and repository bootstrap
+## Milestone 0 -- contracts and repository bootstrap
 
 - [x] Add project instructions and local Python guidance.
 - [x] Preserve the detailed implementation document.
@@ -28,7 +30,7 @@
 
 **Exit:** Schemas, contracts, authority boundaries and examples are reviewed before repository implementation begins.
 
-## Milestone 1 — deterministic repository core
+## Milestone 1 -- deterministic repository core
 
 - [x] Implement safe path normalization and containment.
 - [x] Reject traversal, symlinks, special files and reserved-file writes.
@@ -41,7 +43,7 @@
 
 **Required evidence:** serialization determinism; malformed frontmatter; duplicate IDs; containment attacks; rename/link rewriting; deterministic generated output.
 
-## Milestone 2 — Git transactions and control plane
+## Milestone 2 -- Git transactions and control plane
 
 - [x] Bootstrap bare authoritative repository and materialized checkout.
 - [x] Add SQLite WAL migrations for operations, proposals, scheduler runs and service state.
@@ -52,9 +54,9 @@
 - [x] Materialize the committed revision and update operation results.
 - [x] Reconcile interrupted operations and abandoned worktrees at startup.
 
-**Required evidence:** concurrent stale-write conflict; replay behavior; mismatched idempotency payload; injected crash recovery at every transaction boundary.
+**Required evidence:** concurrent stale-write conflict; replay behaviour; mismatched idempotency payload; injected crash recovery at every transaction boundary.
 
-## Milestone 3 — derived search and graph
+## Milestone 3 -- derived search and graph
 
 - [x] Add rebuildable SQLite metadata and FTS5 schemas.
 - [x] Implement weighted lexical search with bounded snippets and cursors.
@@ -66,7 +68,7 @@
 
 **Required evidence:** full/incremental parity; no hidden-result ranking leakage; index deletion and rebuild from Git alone.
 
-## Milestone 4 — read-only MCP service
+## Milestone 4 -- read-only MCP service
 
 - [x] Pin a released/tested uMCP version with Streamable HTTP support.
 - [x] Integrate `AsyncMCPServer` and trusted request-local principals.
@@ -79,7 +81,7 @@
 
 **Exit:** One read-only canary serves Smith with revision-aware deterministic reads.
 
-## Milestone 5 — proposals and curated writes
+## Milestone 5 -- proposals and curated writes
 
 - [x] Implement proposal create/get/list/review state transitions.
 - [x] Generate deterministic validation and exact diff previews.
@@ -92,7 +94,7 @@
 
 **Exit:** Smith can curate; Flint can read and propose; stale and conflicting writes fail safely.
 
-## Milestone 6 — production operations
+## Milestone 6 -- production operations
 
 - [x] Build a non-root, read-only-root-filesystem container with one writable data mount.
 - [x] Add Portainer/Compose and hardened systemd deployment paths.
@@ -103,7 +105,7 @@
 - [ ] Produce SBOM, provenance, immutable image digest and release evidence.
 - [ ] Run Docker/systemd parity and clean-host restore drills.
 
-**Exit:** Local implementation and tests are complete. Live deployment evidence for multi-client production use, artifact publication, and restore drills is still pending.
+**Exit:** Local implementation and tests are complete. Live deployment evidence for multi-client production use, artifact publication and restore drills is still pending.
 
 ## Semantic and progressive retrieval
 

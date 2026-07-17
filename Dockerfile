@@ -26,11 +26,13 @@ COPY src /app/src
 COPY --from=rust-builder /build/rust/target/release/libmemento_ffi.so /usr/local/lib/memento/
 COPY --from=rust-builder /build/rust/target/release/libmemento_sqlite_vector.so /usr/local/lib/memento/
 COPY --from=rust-builder /build/rust/target/release/memento-embed /usr/local/bin/
+COPY rust/tests/fixtures/gte-small.gtemodel /usr/local/share/memento/models/gte-small.gtemodel
 RUN python -m pip install --upgrade pip \
     && python -m pip install .
 
 ENV MEMENTO_FFI_LIBRARY=/usr/local/lib/memento/libmemento_ffi.so \
-    MEMENTO_SQLITE_VECTOR_EXTENSION=/usr/local/lib/memento/libmemento_sqlite_vector.so
+    MEMENTO_SQLITE_VECTOR_EXTENSION=/usr/local/lib/memento/libmemento_sqlite_vector.so \
+    MEMENTO_GTE_MODEL=/usr/local/share/memento/models/gte-small.gtemodel
 
 USER 65532:65532
 VOLUME ["/var/lib/memento", "/models"]

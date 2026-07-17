@@ -1,20 +1,21 @@
 # Migration
 
-Status: documented and covered by local rebuild/restore tests; **not live verified**.
+Memento upgrades are conservative by design: preserve the canonical repository and control plane first, then rebuild anything derived. The procedure below is covered by local rebuild and restore tests, but still needs live verification in production.
 
 ## Upgrade procedure
 
-1. `memento --config CONFIG backup --output BACKUP_DIR`
-2. Stop the service.
-3. Install the new wheel or container image.
-4. Start the new service.
-5. Run `memento --config CONFIG status`.
-6. Run `memento --config CONFIG rebuild-index` if the derived index revision is stale or quarantined.
+* `memento --config CONFIG backup --output BACKUP_DIR`
+* Stop the service.
+* Install the new wheel or container image.
+* Start the new service.
+* Run `memento --config CONFIG status`.
+* Run `memento --config CONFIG rebuild-index` if the derived index revision is stale or quarantined.
 
-## Control DB
+## What changes safely
 
-The control database uses explicit schema version checks and rejects unknown versions rather than applying unsafe implicit migrations.
+* `control.sqlite` uses explicit schema version checks and rejects unknown versions. There is no implicit best-effort migration path, which is exactly what you want when state gates leases, idempotency and recovery.
+* `derived.sqlite` is rebuildable from Git. Treat it as disposable when quarantine, restore or version drift leaves any doubt.
 
-## Derived DB
+## Pending verification
 
-The derived database is rebuildable from Git. Treat it as disposable if restore or quarantine is required.
+Wheel upgrades, container-image swaps and post-upgrade service health have local test coverage. Production orchestration behaviour is still pending verification.

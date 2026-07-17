@@ -39,7 +39,12 @@ from memento.authz import (
     resolve_policy,
 )
 from memento.config import Principal, ServiceConfig
-from memento.control.operations import IdempotencyConflictError, OperationRequest
+from memento.control.operations import (
+    IdempotencyConflictError,
+    OperationRequest,
+    OperationState,
+    get_operation_by_idempotency,
+)
 from memento.control.proposals import (
     ProposalRecord,
     ProposalStatus,
@@ -70,6 +75,7 @@ from memento.derived.index import (
 )
 from memento.envelopes import ErrorEnvelope, SuccessEnvelope, error_envelope, success_envelope
 from memento.executor import ExecuteLimits, MemoryExecutor
+from memento.mcp_registry import OPERATION_SPECS, WORKFLOW_TEMPLATES, tool_names_for_surface
 from memento.repository.bundle import (
     BundleError,
     audit_repository,
@@ -217,39 +223,58 @@ class MemoryService:
         self, context: ServiceContext
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         self._policy(context)
-        compact_tools = [
-            "memory_help",
-            "memory_status",
-            "memory_search",
-            "memory_read",
-            "memory_execute",
-        ]
-        if (
+        answer_enabled = (
             self._deps.config.mcp.compact_answer_enabled
             and self._deps.config.intelligent_tiers.deep_answers.enabled
-        ):
-            compact_tools.insert(4, "memory_answer")
-        envelope = self._success(
+        )
+        visible_tools = set(
+            tool_names_for_surface(
+                self._deps.config.mcp.tool_surface, answer_enabled=answer_enabled
+            )
+        )
+        execute_visible = "memory_execute" in visible_tools
+        goals: dict[str, list[str]] = {}
+        for goal, tools in {
+            "read": ["memory_search", "memory_read", "memory_graph", "memory_answer"],
+            "browse": ["memory_list", "memory_read"],
+            "propose": [
+                "memory_propose",
+                "memory_propose_freeform",
+                "memory_propose_update",
+                "memory_proposal_get",
+            ],
+            "curate": [
+                "memory_proposal_list",
+                "memory_proposal_review",
+                "memory_proposal_apply",
+                "memory_create",
+                "memory_patch",
+                "memory_rename",
+            ],
+            "compact": [
+                spec.tool_name for spec in OPERATION_SPECS if spec.tool_name in visible_tools
+            ],
+        }.items():
+            filtered = [tool for tool in tools if tool in visible_tools]
+            if filtered:
+                goals[goal] = filtered
+        execute_only_operations: dict[str, tuple[str, ...]] = {}
+        if execute_visible:
+            for goal, meta in WORKFLOW_TEMPLATES.items():
+                extra = tuple(
+                    op_name
+                    for op_name in meta["operations"]
+                    if next(
+                        (spec.tool_name for spec in OPERATION_SPECS if spec.op_name == op_name),
+                        None,
+                    )
+                    not in visible_tools
+                )
+                if extra:
+                    execute_only_operations[goal] = extra
+        return self._success(
             {
-                "goals": {
-                    "read": ["memory_search", "memory_read", "memory_graph", "memory_answer"],
-                    "browse": ["memory_list", "memory_read"],
-                    "propose": [
-                        "memory_propose",
-                        "memory_propose_freeform",
-                        "memory_propose_update",
-                        "memory_proposal_get",
-                    ],
-                    "curate": [
-                        "memory_proposal_list",
-                        "memory_proposal_review",
-                        "memory_proposal_apply",
-                        "memory_create",
-                        "memory_patch",
-                        "memory_rename",
-                    ],
-                    "compact": compact_tools,
-                },
+                "goals": goals,
                 "formats": ("summary", "detailed"),
                 "answer_sources": ("exact_cache", "hot_memory", "deep_agent", "disabled"),
                 "search_modes": ("lexical", "semantic", "hybrid"),
@@ -259,12 +284,13 @@ class MemoryService:
                 },
                 "mcp": {
                     "tool_surface": self._deps.config.mcp.tool_surface,
+                    "direct_tools": tuple(sorted(visible_tools)),
                     "compact_instructions": "Use memory_search, then memory_read, or use memory_execute with saved references like $hits.results.0.path.",
                     "execute_limits": self._deps.config.mcp.execute.model_dump(mode="python"),
+                    "execute_only_operations": execute_only_operations,
                 },
             }
         )
-        return envelope
 
     def memory_status(
         self, context: ServiceContext
@@ -779,6 +805,46 @@ class MemoryService:
             proposal = get_proposal(self._deps.control_connection, proposal_id)
             self._require_proposal_access(policy, proposal, require_write=True)
             proposal = self._refresh_proposal_status(proposal)
+            existing = get_operation_by_idempotency(
+                self._deps.control_connection, policy.principal, idempotency_key
+            )
+            request_json = self._proposal_apply_request_json(
+                proposal_id=proposal_id,
+                expected_revision=expected_revision,
+            )
+            if proposal.status is ProposalStatus.APPLIED and existing is not None:
+                probe = OperationRequest(
+                    op_id=existing.op_id,
+                    principal=policy.principal,
+                    idempotency_key=idempotency_key,
+                    tool_name="memory_proposal_apply",
+                    request_json=request_json,
+                )
+                if existing.request_hash != probe.request_hash:
+                    raise IdempotencyConflictError(
+                        "idempotency key already used for a different request"
+                    )
+                if existing.state is OperationState.SUCCEEDED and existing.result_revision:
+                    replay = existing.replay_payload or {}
+                    changes = self._normalize_changes(proposal.patch["changes"])
+                    replay_paths = replay.get("changed_paths", [])
+                    changed_paths = (
+                        tuple(str(path) for path in replay_paths if isinstance(path, str))
+                        if isinstance(replay_paths, list)
+                        else ()
+                    )
+                    return self._success(
+                        {
+                            "proposal": self._proposal_payload(
+                                proposal, self._preview_changes(changes)
+                            ),
+                            "changed_paths": changed_paths,
+                            "replayed": True,
+                        },
+                        repo_revision=existing.result_revision,
+                        index_revision=existing.result_revision,
+                        operation_id=existing.op_id,
+                    )
             if proposal.status is not ProposalStatus.APPROVED:
                 raise ConflictError(f"proposal {proposal.proposal_id} is {proposal.status.value}")
             changes = self._normalize_changes(proposal.patch["changes"])
@@ -788,7 +854,7 @@ class MemoryService:
                 idempotency_key=idempotency_key,
                 tool_name="memory_proposal_apply",
                 expected_revision=expected_revision,
-                request_json=json.dumps({"proposal_id": proposal_id}, sort_keys=True),
+                request_json=request_json,
                 commit_message=f"proposal: apply {proposal_id}",
             )
             result = self._deps.transaction_manager.apply(
@@ -2438,6 +2504,13 @@ class MemoryService:
         if isinstance(exc, GitError):
             return error_envelope("repo_unavailable", str(exc))
         raise exc
+
+    @staticmethod
+    def _proposal_apply_request_json(*, proposal_id: str, expected_revision: str) -> str:
+        return json.dumps(
+            {"expected_revision": expected_revision, "proposal_id": proposal_id},
+            sort_keys=True,
+        )
 
     def _transaction_request(
         self,

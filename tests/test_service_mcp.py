@@ -232,8 +232,19 @@ def test_proposal_lifecycle_self_approval_stale_apply_and_idempotency(
         expected_revision=base_revision,
         idempotency_key="apply-proposal-1",
     )
-    assert replay.status == "error"
-    assert replay.error_class == "conflict"
+    assert replay.status == "success"
+    replay_data = success_data(replay)
+    assert replay_data["replayed"] is True
+    assert replay_data["proposal"]["status"] == "applied"
+
+    same_key_different_payload = service.memory_proposal_apply(
+        smith,
+        proposal_id=proposal_id,
+        expected_revision="different-revision",
+        idempotency_key="apply-proposal-1",
+    )
+    assert same_key_different_payload.status == "error"
+    assert same_key_different_payload.error_class == "idempotency_conflict"
 
     stale_proposal = service.memory_propose(
         flint,
@@ -309,6 +320,7 @@ def _server_for(service: MemoryService, config: ServiceConfig) -> MementoMCPServ
 def test_tool_discovery_surfaces_and_catalog_resources(
     service: MemoryService,
     service_config: ServiceConfig,
+    smith: ServiceContext,
 ) -> None:
     expected_counts: tuple[
         tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
@@ -329,11 +341,50 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     server = _server_for(service, service_config)
     catalog = json.loads(asyncio.run(server.resource_catalog())["text"])
     assert "operations" in catalog
-    assert any(item["operation"] == "execute" for item in catalog["operations"])
-    operation = json.loads(asyncio.run(server.resource_template_catalog("search"))["text"])
-    assert operation["tool"] == "memory_search"
+    assert [item["operation"] for item in catalog["operations"]] == [
+        "help",
+        "status",
+        "search",
+        "read",
+        "execute",
+    ]
+    assert any(item["operation"] == "proposal_apply" for item in catalog["execute_only_operations"])
+    operation = json.loads(asyncio.run(server.resource_template_catalog("propose"))["text"])
+    assert operation["tool"] == "memory_propose"
+    assert operation["direct_tool_available"] is False
+    assert operation["available_via_execute"] is True
+    changes_schema = operation["input_schema"]["properties"]["changes"]
+    assert changes_schema["type"] == "array"
+    assert "anyOf" in changes_schema["items"]
+    help_payload = success_data(service.memory_help(smith))
+    assert "memory_execute" in help_payload["mcp"]["direct_tools"]
+    assert help_payload["mcp"]["execute_only_operations"]["propose"] == (
+        "propose",
+        "propose_freeform",
+        "propose_update",
+    )
     workflow = json.loads(asyncio.run(server.resource_template_workflow("inspect"))["text"])
     assert [item["operation"] for item in workflow["operations"]] == ["search", "read"]
+    propose_workflow = json.loads(asyncio.run(server.resource_template_workflow("propose"))["text"])
+    assert [item["operation"] for item in propose_workflow["operations"]] == ["search", "read"]
+    assert [item["operation"] for item in propose_workflow["execute_only_operations"]] == [
+        "propose",
+        "propose_freeform",
+        "propose_update",
+    ]
+
+
+def test_server_rejects_duplicate_principal_names(
+    service: MemoryService, service_config: ServiceConfig
+) -> None:
+    with pytest.raises(ValueError, match="duplicate principal name"):
+        MementoMCPServer(
+            service,
+            bearer_tokens={
+                "smith-a": Principal(name="smith", roles=("reader",)),
+                "smith-b": Principal(name="smith", roles=("reader", "curator")),
+            },
+        )
 
 
 def test_execute_search_read_and_projection(service: MemoryService, flint: ServiceContext) -> None:
@@ -486,6 +537,33 @@ def test_execute_limits_auth_and_error_control(
     )
     assert too_large.status == "error"
     assert too_large.error_class == "validation_error"
+
+    committed = limited_service.memory_execute(
+        smith,
+        plan={
+            "operations": [
+                {
+                    "op": "create",
+                    "args": {
+                        "path": "/projects/large-trace.md",
+                        "concept_type": "project",
+                        "title": "Large Trace",
+                        "body": "# Large Trace\n\n" + ("x" * 2000),
+                        "expected_revision": get_main_revision(service._deps.repo_paths),
+                        "idempotency_key": "large-trace-1",
+                    },
+                    "save_as": "created",
+                }
+            ],
+            "returns": [{"name": "created", "ref": "$created"}],
+        },
+    )
+    assert committed.status == "success"
+    assert "memory_execute_output_truncated_after_commit" in committed.warnings
+    committed_data = success_data(committed)
+    assert committed_data["truncated"] is True
+    assert committed_data["returns"] == {"truncated": True}
+    assert (service._deps.repo_paths.current_dir / "projects" / "large-trace.md").exists()
 
 
 def test_proposal_list_visibility_and_expiry(

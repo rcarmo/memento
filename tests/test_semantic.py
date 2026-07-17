@@ -24,7 +24,13 @@ from memento.config import (
 )
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.derived.index import DerivedIndex, SearchMode
-from memento.ffi import FfiCancelledError, FfiFiniteError, RustFfiLibrary
+from memento.ffi import (
+    FfiCancelledError,
+    FfiClosedError,
+    FfiFiniteError,
+    FfiModelError,
+    RustFfiLibrary,
+)
 from memento.repository.frontmatter import serialize_concept
 from memento.repository.git import GitRepositoryPaths, bootstrap_repository, get_main_revision
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter, ConceptStatus
@@ -559,6 +565,29 @@ def test_transaction_succeeds_when_embedding_update_degrades_but_lexical_advance
     control.close()
 
 
+@pytest.mark.parametrize(
+    ("field_index", "value", "message"),
+    (
+        (0, 103, "vocab_size must include reserved token id 103"),
+        (3, 0, "num_heads must be positive and divide hidden_size"),
+        (5, 1, "max_seq_len must be at least 2"),
+    ),
+)
+def test_ctypes_wrapper_rejects_malformed_model_headers(
+    tmp_path: Path,
+    field_index: int,
+    value: int,
+    message: str,
+) -> None:
+    ffi_library_path = build_rust_cdylib("memento-ffi", "libmemento_ffi")
+    library = RustFfiLibrary(ffi_library_path)
+    model_path = tmp_path / f"malformed-{field_index}.gte"
+    model_path.write_bytes(synthetic_model_bytes(header_overrides={field_index: value}))
+
+    with pytest.raises(FfiModelError, match=message):
+        library.load_model(model_path)
+
+
 def test_ctypes_wrapper_abi_lifecycle_info_embed_batch_cancel_and_errors(tmp_path: Path) -> None:
     ffi_library_path = build_rust_cdylib("memento-ffi", "libmemento_ffi")
     library = RustFfiLibrary(ffi_library_path)
@@ -579,6 +608,7 @@ def test_ctypes_wrapper_abi_lifecycle_info_embed_batch_cancel_and_errors(tmp_pat
         assert info.dimensions == 4
         assert model_info.dimensions == 4
         assert model_info.model_id == "synthetic.gte"
+        assert model_info.revision == hashlib.sha256(model_path.read_bytes()).hexdigest()
 
         hello = model.embed("hello")
         world = model.embed("world")
@@ -591,10 +621,48 @@ def test_ctypes_wrapper_abi_lifecycle_info_embed_batch_cancel_and_errors(tmp_pat
         with pytest.raises(FfiCancelledError):
             model.embed("hello", cancelled=lambda: True)
 
+    closed_model = library.load_model(model_path)
+    closed_model.close()
+    with pytest.raises(FfiClosedError):
+        closed_model.info()
+    with pytest.raises(FfiClosedError):
+        closed_model.embed("hello")
+    with pytest.raises(FfiClosedError):
+        closed_model.embed_batch(("hello",))
+
+    other_path = tmp_path / "synthetic-copy.gte"
+    other_path.write_bytes(synthetic_model_bytes(body_seed=7.0))
+    with library.load_model(other_path) as other_model:
+        assert other_model.model_info().model_id == "synthetic-copy.gte"
+        assert (
+            other_model.model_info().revision != hashlib.sha256(model_path.read_bytes()).hexdigest()
+        )
+
     with pytest.raises(FfiFiniteError):
         library.vector_cosine((1.0, float("nan")), (1.0, 0.0))
 
     model_path.unlink()
+
+
+def test_model_info_revision_differs_for_same_basename_with_different_contents(
+    tmp_path: Path,
+) -> None:
+    ffi_library_path = build_rust_cdylib("memento-ffi", "libmemento_ffi")
+    library = RustFfiLibrary(ffi_library_path)
+    left_dir = tmp_path / "left"
+    right_dir = tmp_path / "right"
+    left_dir.mkdir()
+    right_dir.mkdir()
+    left_path = left_dir / "synthetic.gte"
+    right_path = right_dir / "synthetic.gte"
+    left_path.write_bytes(synthetic_model_bytes())
+    right_path.write_bytes(synthetic_model_bytes(body_seed=9.0))
+
+    with library.load_model(left_path) as left_model, library.load_model(right_path) as right_model:
+        left_info = left_model.model_info()
+        right_info = right_model.model_info()
+        assert left_info.model_id == right_info.model_id == "synthetic.gte"
+        assert left_info.revision != right_info.revision
 
 
 def test_python_ctypes_wrapper_surfaces_vector_errors_and_sqlite_vector_matches_python_and_rust(
@@ -642,8 +710,25 @@ def test_python_ctypes_wrapper_surfaces_vector_errors_and_sqlite_vector_matches_
     connection.close()
 
 
+def test_failed_sqlite_extension_load_disables_further_extension_loading(tmp_path: Path) -> None:
+    index = DerivedIndex(
+        tmp_path / "derived.sqlite",
+        semantic_config=SemanticSearchConfig(
+            enabled=True, sqlite_extension_path="/missing/extension"
+        ),
+    )
+    connection = index._connect()
+    try:
+        with pytest.raises(sqlite3.OperationalError, match="not authorized"):
+            connection.execute("SELECT load_extension('/missing/extension')").fetchone()
+    finally:
+        connection.close()
+
+
 # Synthetic model fixture ported from the Rust FFI tests.
-def synthetic_model_bytes() -> bytes:
+def synthetic_model_bytes(
+    *, header_overrides: dict[int, int] | None = None, body_seed: float = 1.0
+) -> bytes:
     vocab = [
         "[PAD]",
         "[unused1]",
@@ -756,14 +841,17 @@ def synthetic_model_bytes() -> bytes:
     ]
     hidden_size = 4
     max_seq_len = 8
+    header = [len(vocab), hidden_size, 0, 1, hidden_size, max_seq_len]
+    for index, override in (header_overrides or {}).items():
+        header[index] = override
     out = bytearray(b"GTE1")
-    out.extend(struct.pack("<6I", len(vocab), hidden_size, 0, 1, hidden_size, max_seq_len))
+    out.extend(struct.pack("<6I", *header))
     for token in vocab:
         encoded = token.encode("utf-8")
         out.extend(struct.pack("<H", len(encoded)))
         out.extend(encoded)
     for token_id in range(len(vocab)):
-        base = float(token_id + 1)
+        base = body_seed + float(token_id)
         out.extend(struct.pack("<4f", base, 0.0, 0.0, 0.0))
     out.extend(
         struct.pack(f"<{max_seq_len * hidden_size}f", *([0.0] * (max_seq_len * hidden_size)))
@@ -784,12 +872,11 @@ def build_rust_cdylib(package: str, stem: str) -> Path:
     target_dir = rust_dir / "target" / "debug"
     suffix = ".dylib" if sys.platform == "darwin" else ".dll" if sys.platform == "win32" else ".so"
     library_path = target_dir / f"{stem}{suffix}"
-    if not library_path.exists():
-        subprocess.run(
-            ["cargo", "build", "-p", package],
-            cwd=rust_dir,
-            check=True,
-        )
+    subprocess.run(
+        ["cargo", "build", "-p", package],
+        cwd=rust_dir,
+        check=True,
+    )
     return library_path
 
 

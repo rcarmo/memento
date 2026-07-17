@@ -324,6 +324,8 @@ class MemoryExecutor:
             last_success: dict[str, Any] | None = None
             stopped = False
             stop_reason: str | None = None
+            warnings: list[str] = []
+            commit_succeeded = False
             for index, item in enumerate(parsed.operations, start=1):
                 self._check_time(started)
                 if item.save_as is not None:
@@ -357,6 +359,8 @@ class MemoryExecutor:
                             "operation_id": envelope.operation_id,
                         }
                     )
+                    if OPERATION_SPEC_BY_OP[item.op].commit_capable:
+                        commit_succeeded = True
                 else:
                     entry["error_class"] = envelope.error_class
                     entry["message"] = envelope.message
@@ -364,7 +368,10 @@ class MemoryExecutor:
                         stopped = True
                         stop_reason = f"operation {index} failed"
                 trace.append(entry)
-                self._ensure_output_size({"trace": trace, "revisions": revisions, "saved": saved})
+                self._ensure_output_size(
+                    {"trace": trace, "revisions": revisions, "saved": saved},
+                    commit_succeeded=commit_succeeded,
+                )
                 self._check_time(started)
                 if entry["status"] == "error" and parsed.stop_on_error:
                     break
@@ -376,9 +383,12 @@ class MemoryExecutor:
                 "stopped": stopped,
                 "stop_reason": stop_reason,
             }
-            self._ensure_output_size(payload)
+            payload = self._fit_output_payload(payload, commit_succeeded=commit_succeeded)
+            if payload.get("truncated"):
+                warnings.append("memory_execute_output_truncated_after_commit")
             return cast(
-                SuccessEnvelope[dict[str, Any]] | ErrorEnvelope, self._service._success(payload)
+                SuccessEnvelope[dict[str, Any]] | ErrorEnvelope,
+                self._service._success(payload, warnings=tuple(warnings)),
             )
         except ValidationError as exc:
             return error_envelope("validation_error", str(exc))
@@ -417,10 +427,54 @@ class MemoryExecutor:
         if monotonic() - started > self._limits.max_time_seconds:
             raise ValueError("plan exceeded configured max_time_seconds")
 
-    def _ensure_output_size(self, payload: dict[str, Any]) -> None:
-        size = len(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8"))
-        if size > self._limits.max_output_bytes:
+    def _ensure_output_size(self, payload: dict[str, Any], *, commit_succeeded: bool) -> None:
+        if self._payload_size(payload) <= self._limits.max_output_bytes:
+            return
+        if commit_succeeded:
+            return
+        raise ValueError("plan exceeded configured max_output_bytes")
+
+    def _fit_output_payload(
+        self, payload: dict[str, Any], *, commit_succeeded: bool
+    ) -> dict[str, Any]:
+        if self._payload_size(payload) <= self._limits.max_output_bytes:
+            return {str(key): value for key, value in payload.items()}
+        if not commit_succeeded:
             raise ValueError("plan exceeded configured max_output_bytes")
+        loaded = json.loads(json.dumps(payload))
+        if not isinstance(loaded, dict):
+            raise ValueError("executor payload must remain an object")
+        fitted: dict[str, Any] = {str(key): value for key, value in loaded.items()}
+        fitted["truncated"] = True
+        for entry in fitted.get("trace", []):
+            if isinstance(entry, dict) and "data" in entry:
+                entry["data"] = {"truncated": True}
+        if self._payload_size(fitted) <= self._limits.max_output_bytes:
+            return fitted
+        fitted["returns"] = {"truncated": True}
+        if self._payload_size(fitted) <= self._limits.max_output_bytes:
+            return fitted
+        trace = fitted.get("trace")
+        if isinstance(trace, list) and len(trace) > 4:
+            fitted["trace"] = [trace[0], {"truncated": True}, *trace[-2:]]
+        if self._payload_size(fitted) <= self._limits.max_output_bytes:
+            return fitted
+        revisions = fitted.get("revisions")
+        if isinstance(revisions, list) and len(revisions) > 2:
+            fitted["revisions"] = [revisions[-1]]
+        if self._payload_size(fitted) <= self._limits.max_output_bytes:
+            return fitted
+        fitted["trace"] = [{"truncated": True}]
+        fitted["returns"] = {"truncated": True}
+        fitted["revisions"] = (
+            fitted.get("revisions", [])[-1:] if isinstance(fitted.get("revisions"), list) else []
+        )
+        if self._payload_size(fitted) <= self._limits.max_output_bytes:
+            return fitted
+        raise ValueError("plan exceeded configured max_output_bytes")
+
+    def _payload_size(self, payload: dict[str, Any]) -> int:
+        return len(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8"))
 
 
 def _resolve_references(value: Any, saved: dict[str, Any]) -> Any:

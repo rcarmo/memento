@@ -4,6 +4,7 @@ import hashlib
 import json
 import shutil
 import sqlite3
+import subprocess
 import tarfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -96,6 +97,20 @@ def restore_backup(
             }
         )
         staged_paths = runtime_paths_for(staged_config)
+        archived_head = subprocess.run(
+            [
+                "git",
+                "--git-dir",
+                str(staged_paths.repo_paths.bare_dir),
+                "rev-parse",
+                "refs/heads/main",
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        if archived_head != manifest.repo_revision:
+            raise ValueError("backup manifest revision does not match archived main")
         materialize_current_checkout(staged_paths.repo_paths, revision=manifest.repo_revision)
         if rebuild_derived:
             from memento.derived.index import DerivedIndex
@@ -140,7 +155,7 @@ def _safe_extract_tar(archive: tarfile.TarFile, destination: Path) -> None:
             raise ValueError(
                 f"refusing to restore archive member outside destination: {member.name}"
             )
-    archive.extractall(destination)
+    archive.extractall(destination, filter="data")
 
 
 def _sha256(path: Path) -> str:
