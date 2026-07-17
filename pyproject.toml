@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "memento"
 version = "0.1.0"
-description = "A Python project awaiting its implementation briefing."
+description = "A deterministic shared-memory MCP service backed by Git Markdown."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -14,7 +14,9 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
+    "mypy>=1.11",
     "pytest>=8",
+    "pytest-cov>=5",
     "ruff>=0.9",
 ]
 
@@ -23,6 +25,12 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "--strict-markers"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+packages = ["memento"]
 
 [tool.ruff]
 target-version = "py310"
