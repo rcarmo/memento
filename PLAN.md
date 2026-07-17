@@ -102,8 +102,8 @@ This file is the current delivery and acceptance record. Architecture, rationale
 - [x] Add structured logs, metrics, liveness and tiered readiness.
 - [x] Add graceful write draining and bounded recovery startup.
 - [x] Add backup, restore, retention, migration and rollback procedures.
-- [ ] Produce SBOM, provenance, immutable image digest and release evidence.
-- [ ] Run Docker/systemd parity and clean-host restore drills.
+- [ ] Produce published SBOM, provenance and registry digest evidence. A local immutable image ID is recorded in the load/release evidence.
+- [x] Run a local read-only-root Docker smoke and clean temporary-root backup/restore drill; live systemd parity remains pending.
 
 **Exit:** Local implementation and tests are complete. Live deployment evidence for multi-client production use, artifact publication and restore drills is still pending.
 
@@ -117,7 +117,9 @@ This file is the current delivery and acceptance record. Architecture, rationale
 - [x] Filter authorization scopes before semantic ranking and preserve lexical degradation.
 - [x] Add compact progressive MCP disclosure, catalog/workflow resources and bounded `memory_execute` plans.
 - [x] Preserve standard/full MCP tool surfaces as configuration modes.
-- [ ] Benchmark the production GTE-small model on deployed AMD64 and ARM64 hosts.
+- [x] Add repository-owned local load harnesses for direct reads, write contention, idempotent replay, proposals, backup/restore and optional authenticated HTTP drills.
+- [x] Benchmark the vendored GTE-small model on the local AMD64 host with recorded semantic-load evidence.
+- [ ] Repeat the production model benchmark on a deployed ARM64 host.
 
 ## Deferred roadmap
 
@@ -142,4 +144,5 @@ Start each tier behind an independent feature flag and only after Milestone 6.
 - [x] Proposal review and apply are fully attributable in the control plane.
 - [x] Piclaw's bundled MCP SDK connects through Streamable HTTP without legacy fallback in a local authenticated smoke test.
 - [x] Python 3.10, 3.11 and 3.12 validation passes in clean containers.
+- [x] Repository-owned load reports cover local scenario counts, percentiles, invariants and bounded CI-friendly checks.
 - [ ] One primary deployment mode and the restore procedure are live-verified.

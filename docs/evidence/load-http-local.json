@@ -1,0 +1,278 @@
+{
+  "environment": {
+    "cwd": "/srv/piclaw-dev/workspace/projects/memento",
+    "platform": "Linux-6.8.0-134-generic-x86_64-with-glibc2.39",
+    "profile": "check",
+    "python": "3.14.5 (main, May 10 2026, 10:21:34) [GCC 12.3.0]",
+    "seed": 7
+  },
+  "generated_at": "2026-07-17T23:27:10.948796+00:00",
+  "git_revision": "51f0b06442dc71f59fe744391fe0820a3f9e6bc4",
+  "notes": [
+    "Thresholds in this report are local development checks, not universal service SLOs.",
+    "All repository activity uses temporary directories; canonical fixtures are not modified."
+  ],
+  "passed": true,
+  "scenario_count": 6,
+  "scenarios": [
+    {
+      "count": 200,
+      "details": {
+        "concepts": 50,
+        "requests": 200,
+        "workers": 8
+      },
+      "duration_seconds": 0.346263,
+      "ended_at": "2026-07-17T23:27:00.238088+00:00",
+      "error_count": 0,
+      "errors": {},
+      "invariant_failures": [],
+      "latency": {
+        "max_ms": 332.965,
+        "p50_ms": 2.67,
+        "p95_ms": 55.277,
+        "p99_ms": 233.412
+      },
+      "name": "direct_functional_load",
+      "ok_count": 200,
+      "passed": true,
+      "started_at": "2026-07-17T23:26:59.891825+00:00",
+      "thresholds": [
+        {
+          "actual": 0,
+          "comparator": "==",
+          "expected": 0,
+          "name": "error_count",
+          "note": "Local direct read/search check.",
+          "passed": true
+        },
+        {
+          "actual": 233.41180727817027,
+          "comparator": "<=",
+          "expected": 2500.0,
+          "name": "p99_ms",
+          "note": "Local threshold, not a universal SLO.",
+          "passed": true
+        }
+      ],
+      "throughput_per_second": 577.595643
+    },
+    {
+      "count": 8,
+      "details": {
+        "base_revision": "0ec36b9407b2a111b2b0d006ecefe1effdf7c655",
+        "final_body": "# Project 000\n\nWinner contention-worker-1.",
+        "target_path": "/projects/project-000.md",
+        "workers": 8
+      },
+      "duration_seconds": 0.081047,
+      "ended_at": "2026-07-17T23:27:00.319393+00:00",
+      "error_count": 7,
+      "errors": {
+        "conflict": 7
+      },
+      "invariant_failures": [],
+      "latency": {
+        "max_ms": 68.434,
+        "p50_ms": 47.934,
+        "p95_ms": 64.497,
+        "p99_ms": 67.647
+      },
+      "name": "write_contention",
+      "ok_count": 1,
+      "passed": true,
+      "started_at": "2026-07-17T23:27:00.238346+00:00",
+      "thresholds": [
+        {
+          "actual": 1,
+          "comparator": "==",
+          "expected": 1,
+          "name": "success_count",
+          "note": "Single compare-and-swap winner expected.",
+          "passed": true
+        },
+        {
+          "actual": 7,
+          "comparator": "==",
+          "expected": 7,
+          "name": "conflict_count",
+          "note": "Remaining writes should conflict from same base.",
+          "passed": true
+        }
+      ],
+      "throughput_per_second": 98.708157
+    },
+    {
+      "count": 8,
+      "details": {
+        "idempotency_key": "replay-storm-key",
+        "target_path": "/projects/project-001.md",
+        "workers": 8
+      },
+      "duration_seconds": 0.073613,
+      "ended_at": "2026-07-17T23:27:00.393110+00:00",
+      "error_count": 0,
+      "errors": {},
+      "invariant_failures": [],
+      "latency": {
+        "max_ms": 51.464,
+        "p50_ms": 45.626,
+        "p95_ms": 50.887,
+        "p99_ms": 51.349
+      },
+      "name": "idempotent_replay_storm",
+      "ok_count": 8,
+      "passed": true,
+      "started_at": "2026-07-17T23:27:00.319497+00:00",
+      "thresholds": [
+        {
+          "actual": 1,
+          "comparator": "==",
+          "expected": 1,
+          "name": "distinct_operation_ids",
+          "note": "Idempotent storm should collapse to one recorded operation.",
+          "passed": true
+        },
+        {
+          "actual": 1,
+          "comparator": "==",
+          "expected": 1,
+          "name": "initial_results",
+          "note": "Exactly one initial execution expected.",
+          "passed": true
+        },
+        {
+          "actual": 0,
+          "comparator": "==",
+          "expected": 0,
+          "name": "error_count",
+          "note": "Every caller should converge on the recorded result after retries.",
+          "passed": true
+        }
+      ],
+      "throughput_per_second": 108.676457
+    },
+    {
+      "count": 8,
+      "details": {
+        "created_proposals": 8,
+        "curator_visible": 8,
+        "workers": 8
+      },
+      "duration_seconds": 0.192693,
+      "ended_at": "2026-07-17T23:27:00.585918+00:00",
+      "error_count": 0,
+      "errors": {},
+      "invariant_failures": [],
+      "latency": {
+        "max_ms": 150.477,
+        "p50_ms": 120.872,
+        "p95_ms": 148.571,
+        "p99_ms": 150.096
+      },
+      "name": "proposal_concurrency",
+      "ok_count": 8,
+      "passed": true,
+      "started_at": "2026-07-17T23:27:00.393225+00:00",
+      "thresholds": [
+        {
+          "actual": 0,
+          "comparator": "==",
+          "expected": 0,
+          "name": "error_count",
+          "note": "Create/list/read triplets should complete locally.",
+          "passed": true
+        }
+      ],
+      "throughput_per_second": 41.516817
+    },
+    {
+      "count": 2,
+      "details": {
+        "backup_dir": "/tmp/memento-load-xmzc3wkz/backup-output",
+        "manifest": {
+          "files": {
+            "control.sqlite": "c5bc05ffbc0f6d73653b62adc1473076e39d81deb55acd04695aea1f9b2308bb",
+            "derived.sqlite": "1a2736817a67d86f536465360d9fa71dff0d70f8a6a735dc8951fbe299861e9d",
+            "repo.git.tar.gz": "7b66b7e421e4fd6b4a2e67897539bceff3827e6cec4193151f3687e050f00e33"
+          },
+          "repo_revision": "3044ce1d82997413784c84b36625d40b87dc3d89",
+          "schema_version": 1
+        }
+      },
+      "duration_seconds": 0.338896,
+      "ended_at": "2026-07-17T23:27:00.924916+00:00",
+      "error_count": 0,
+      "errors": {},
+      "invariant_failures": [],
+      "latency": {
+        "max_ms": 148.378,
+        "p50_ms": 108.598,
+        "p95_ms": 144.4,
+        "p99_ms": 147.582
+      },
+      "name": "backup_restore_drill",
+      "ok_count": 2,
+      "passed": true,
+      "started_at": "2026-07-17T23:27:00.586020+00:00",
+      "thresholds": [
+        {
+          "actual": 0,
+          "comparator": "==",
+          "expected": 0,
+          "name": "error_count",
+          "note": "Local backup/restore drill should complete without explicit errors.",
+          "passed": true
+        },
+        {
+          "actual": 217.1961038839072,
+          "comparator": "<=",
+          "expected": 30000.0,
+          "name": "duration_ms",
+          "note": "Local threshold, not a universal SLO.",
+          "passed": true
+        }
+      ],
+      "throughput_per_second": 5.901516
+    },
+    {
+      "count": 3010,
+      "details": {
+        "base_url": "http://127.0.0.1:18768/mcp",
+        "concurrency": 8,
+        "duration_seconds": 10.0,
+        "mix": {
+          "read": 0,
+          "search": 60,
+          "status": 40
+        }
+      },
+      "duration_seconds": 10.019081,
+      "ended_at": "2026-07-17T23:27:10.945449+00:00",
+      "error_count": 0,
+      "errors": {},
+      "invariant_failures": [],
+      "latency": {
+        "max_ms": 76.072,
+        "p50_ms": 24.555,
+        "p95_ms": 40.292,
+        "p99_ms": 52.057
+      },
+      "name": "http_streamable_jsonrpc",
+      "ok_count": 3010,
+      "passed": true,
+      "started_at": "2026-07-17T23:27:00.926368+00:00",
+      "thresholds": [
+        {
+          "actual": 0,
+          "comparator": "==",
+          "expected": 0,
+          "name": "error_count",
+          "note": "Local authenticated HTTP smoke/load threshold.",
+          "passed": true
+        }
+      ],
+      "throughput_per_second": 300.426756
+    }
+  ]
+}

@@ -2,7 +2,7 @@ PYTHON ?= python3
 VENV ?= .venv
 BIN := $(VENV)/bin
 
-.PHONY: install install-dev lint format format-check typecheck test coverage rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check clean
+.PHONY: install install-dev lint format format-check typecheck test coverage rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check load-functional load-operational load-check clean
 
 $(BIN)/python:
 	$(PYTHON) -m venv $(VENV)
@@ -52,6 +52,15 @@ install-wheel: build-wheel
 
 diff-check:
 	git diff --exit-code -- . ':(exclude).coverage'
+
+load-functional:
+	PYTHONPATH=src $(BIN)/python tools/load_test.py --profile functional --concepts 12 --workers 4 --requests 24 --output build/load-functional.json
+
+load-operational:
+	PYTHONPATH=src $(BIN)/python tools/load_test.py --profile operational --concepts 12 --workers 4 --requests 24 --output build/load-operational.json
+
+load-check:
+	PYTHONPATH=src $(BIN)/python tools/load_test.py --profile check --concepts 8 --workers 3 --requests 12 --output build/load-check.json
 
 clean:
 	rm -rf $(VENV) .pytest_cache .ruff_cache .mypy_cache .coverage htmlcov build dist *.egg-info src/*.egg-info
