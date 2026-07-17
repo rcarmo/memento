@@ -100,6 +100,16 @@ def create_operation(connection: sqlite3.Connection, request: OperationRequest) 
     return get_operation(connection, request.op_id)
 
 
+def get_operation_by_idempotency(
+    connection: sqlite3.Connection, principal: str, idempotency_key: str
+) -> OperationRecord | None:
+    row = connection.execute(
+        "SELECT * FROM operations WHERE principal = ? AND idempotency_key = ?",
+        (principal, idempotency_key),
+    ).fetchone()
+    return operation_from_row(row) if row is not None else None
+
+
 def get_operation(connection: sqlite3.Connection, op_id: str) -> OperationRecord:
     row = connection.execute("SELECT * FROM operations WHERE op_id = ?", (op_id,)).fetchone()
     if row is None:

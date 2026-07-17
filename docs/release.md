@@ -1,20 +1,26 @@
 # Release
 
-Status: CI/build steps implemented; **not live verified** for published artifacts.
+The release path proves the project can be built, checked and installed locally and in CI. It does not yet prove published artefacts, registry state or supply-chain evidence end to end, and that gap should stay explicit.
 
 ## Local release checklist
 
-1. `make install-dev`
-2. `make check`
-3. `make coverage`
-4. `make build-wheel`
-5. `make install-wheel`
-6. `make diff-check`
+* `make install-dev`
+* `make check`
+* `make coverage`
+* `make build-wheel`
+* `make install-wheel`
+* `make diff-check`
 
 ## CI
 
-GitHub Actions runs Python 3.10-3.12 validation through Make targets, builds a wheel, installs it, and performs a container build check.
+GitHub Actions validates Python 3.10--3.12 through the Make targets, builds a wheel, installs it, and performs a container build check.
 
-## Artifact notes
+## Pending publication evidence
 
-The workflow performs build validation only. Registry push, SBOM publication, provenance attestation and immutable digest publication remain documented follow-up work and are not claimed as live verified.
+The current workflow is build validation only.
+
+* Registry push remains pending.
+* SBOM publication remains pending.
+* Provenance attestation remains pending.
+* Immutable digest publication remains pending.
+* Live verification of published artefacts remains pending.

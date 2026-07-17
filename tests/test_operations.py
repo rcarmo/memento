@@ -106,6 +106,28 @@ def test_cli_prometheus_output(seeded_root: tuple[Path, Path]) -> None:
     assert "memento_visible_concepts 2" in text
 
 
+def test_backup_restore_rejects_manifest_revision_mismatch(
+    seeded_root: tuple[Path, Path], tmp_path: Path
+) -> None:
+    config_path, seed = seeded_root
+    runtime = build_runtime(config_path, bootstrap_seed=seed)
+    backup_dir = tmp_path / "backup-mismatch"
+    try:
+        create_backup(runtime, backup_dir)
+    finally:
+        runtime.close()
+
+    manifest_path = backup_dir / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["repo_revision"] = "0" * 40
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+
+    with pytest.raises(ValueError, match="backup manifest revision does not match archived main"):
+        restore_backup(load_service_config(config_path), backup_dir)
+
+
 def test_backup_restore_and_audit(seeded_root: tuple[Path, Path], tmp_path: Path) -> None:
     config_path, seed = seeded_root
     runtime = build_runtime(config_path, bootstrap_seed=seed)

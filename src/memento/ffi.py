@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ctypes
+import hashlib
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,6 +26,10 @@ class FfiAbiError(FfiError):
 
 
 class FfiNullError(FfiError):
+    pass
+
+
+class FfiClosedError(FfiError):
     pass
 
 
@@ -261,7 +266,12 @@ class RustFfiModel(EmbeddingClient):
     def model_path(self) -> Path:
         return self._model_path
 
+    def _require_open(self) -> None:
+        if self._closed or not self._handle:
+            raise FfiClosedError("model is closed")
+
     def info(self) -> RustModelInfo:
+        self._require_open()
         raw = _ModelInfo()
         status = self._library._lib.memento_ffi_model_info(self._handle, ctypes.byref(raw))
         _raise_for_status(self._library._lib, status)
@@ -280,12 +290,13 @@ class RustFfiModel(EmbeddingClient):
         return EmbeddingModelInfo(
             model_id=self._model_path.name,
             dimensions=info.dimensions,
-            revision=self._model_path.name,
+            revision=_sha256_file(self._model_path),
             max_batch=1024,
             max_input_chars=max(1, info.max_seq_len),
         )
 
     def embed(self, text: str, *, cancelled: Callable[[], bool] | None = None) -> tuple[float, ...]:
+        self._require_open()
         info = self.info()
         output = (ctypes.c_float * info.dimensions)()
         encoded, encoded_ptr, encoded_len = _encode_bytes(text)
@@ -316,6 +327,7 @@ class RustFfiModel(EmbeddingClient):
     def embed_batch(
         self, texts: Sequence[str], *, cancelled: Callable[[], bool] | None = None
     ) -> tuple[tuple[float, ...], ...]:
+        self._require_open()
         if not texts:
             return ()
         info = self.info()
@@ -358,6 +370,7 @@ class RustFfiModel(EmbeddingClient):
         _raise_for_status(
             self._library._lib, self._library._lib.memento_ffi_model_free(self._handle)
         )
+        self._handle = ctypes.POINTER(_ModelHandle)()
         self._closed = True
 
     def __enter__(self) -> RustFfiModel:
@@ -365,6 +378,14 @@ class RustFfiModel(EmbeddingClient):
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
         self.close()
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def _encode_bytes(value: str) -> tuple[object, object, int]:

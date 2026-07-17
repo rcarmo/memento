@@ -5,15 +5,42 @@ from collections.abc import Mapping
 from inspect import Parameter, signature
 from typing import Any, cast, get_args, get_origin
 
+from pydantic import BaseModel, ConfigDict
+
 from memento.config import Principal
-from memento.executor import execute_plan_schema
+from memento.executor import (
+    AnswerArgs,
+    AuditArgs,
+    CreateArgs,
+    EmptyArgs,
+    GraphArgs,
+    ListArgs,
+    PatchArgs,
+    ProposalApplyArgs,
+    ProposalGetArgs,
+    ProposalListArgs,
+    ProposalReviewArgs,
+    ProposeFreeformArgs,
+    ProposeUpdateArgs,
+    ReadArgs,
+    RenameArgs,
+    SearchArgs,
+    execute_plan_schema,
+)
 from memento.mcp_registry import (
     OPERATION_SPEC_BY_OP,
     OPERATION_SPECS,
     WORKFLOW_TEMPLATES,
+    OperationSpec,
     tool_names_for_surface,
 )
-from memento.service import MemoryService, ServiceContext
+from memento.service import (
+    CreateChange,
+    MemoryService,
+    PatchChange,
+    RenameChange,
+    ServiceContext,
+)
 
 try:  # pragma: no cover - optional runtime dependency
     from aioumcp import AsyncMCPServer  # type: ignore[import-not-found]
@@ -24,6 +51,37 @@ except ImportError:  # pragma: no cover - optional runtime dependency
 
     def get_request_context() -> Any:
         raise RuntimeError("uMCP is not installed")
+
+
+class _ProposeArgsSchema(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    intent: str
+    base_revision: str
+    changes: list[CreateChange | PatchChange | RenameChange]
+    rationale: str | None = None
+
+
+_TOOL_INPUT_MODELS: dict[str, type[BaseModel]] = {
+    "memory_help": EmptyArgs,
+    "memory_status": EmptyArgs,
+    "memory_search": SearchArgs,
+    "memory_read": ReadArgs,
+    "memory_list": ListArgs,
+    "memory_graph": GraphArgs,
+    "memory_audit": AuditArgs,
+    "memory_answer": AnswerArgs,
+    "memory_propose": _ProposeArgsSchema,
+    "memory_propose_freeform": ProposeFreeformArgs,
+    "memory_propose_update": ProposeUpdateArgs,
+    "memory_proposal_get": ProposalGetArgs,
+    "memory_proposal_list": ProposalListArgs,
+    "memory_proposal_review": ProposalReviewArgs,
+    "memory_proposal_apply": ProposalApplyArgs,
+    "memory_create": CreateArgs,
+    "memory_patch": PatchArgs,
+    "memory_rename": RenameArgs,
+}
 
 
 def _annotation_schema(annotation: Any) -> dict[str, Any]:
@@ -50,43 +108,47 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         super().__init__()
         self._service = service
         self._bearer_tokens = dict(bearer_tokens)
+        self._principals_by_name: dict[str, Principal] = {}
+        for principal in self._bearer_tokens.values():
+            if principal.name in self._principals_by_name:
+                raise ValueError(
+                    f"duplicate principal name configured for bearer tokens: {principal.name}"
+                )
+            self._principals_by_name[principal.name] = principal
 
     def get_instructions(self) -> str:
-        compact = "memory_help, memory_status, memory_search, memory_read, memory_execute"
-        return (
+        visible_specs = self._visible_operation_specs()
+        visible_tools = ", ".join(spec.tool_name for spec in visible_specs)
+        message = (
             "Deterministic shared memory service backed by Git Markdown. "
             f"Configured tool surface: {self._service._deps.config.mcp.tool_surface}. "
-            f"Compact workflow: {compact}. See memory://catalog and memory://workflow/inspect."
+            f"Direct tools: {visible_tools}. See memory://catalog and memory://workflow/inspect."
         )
+        if self._execute_tool_available():
+            message += " memory_execute can compose additional execute-only operations listed in the catalog."
+        return message
 
     def discover_tools(self) -> dict[str, Any]:
-        answer_enabled = (
-            self._service._deps.config.mcp.compact_answer_enabled
-            and self._service._deps.config.intelligent_tiers.deep_answers.enabled
-        )
-        names = set(
-            tool_names_for_surface(
-                self._service._deps.config.mcp.tool_surface,
-                answer_enabled=answer_enabled,
-            )
-        )
         tools: list[dict[str, Any]] = []
-        for spec in OPERATION_SPECS:
-            if spec.tool_name not in names:
-                continue
+        for spec in self._visible_operation_specs():
             method = getattr(self, f"tool_{spec.tool_name}")
-            tool_def = {
-                "name": spec.tool_name,
-                "description": spec.description,
-                "inputSchema": execute_plan_schema()
-                if spec.tool_name == "memory_execute"
-                else self._tool_input_schema(method),
-                "annotations": {"roles": list(spec.roles), "operation": spec.op_name},
-            }
-            tools.append(tool_def)
+            tools.append(
+                {
+                    "name": spec.tool_name,
+                    "description": spec.description,
+                    "inputSchema": self._tool_input_schema(method, spec.tool_name),
+                    "annotations": {"roles": list(spec.roles), "operation": spec.op_name},
+                }
+            )
         return {"tools": tools}
 
-    def _tool_input_schema(self, method: Any) -> dict[str, Any]:
+    def _tool_input_schema(self, method: Any, tool_name: str) -> dict[str, Any]:
+        if tool_name == "memory_execute":
+            return execute_plan_schema()
+        model = _TOOL_INPUT_MODELS.get(tool_name)
+        if model is not None:
+            generated = model.model_json_schema()
+            return {str(key): value for key, value in generated.items()}
         extractor = getattr(self, "_extract_parameters_from_signature", None)
         if extractor is not None:
             extracted = extractor(signature(method), method)
@@ -134,10 +196,10 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     def _resolve_request_principal(self, name: str | None) -> Principal:
         if name is None:
             raise RuntimeError("missing authenticated principal")
-        for principal in self._bearer_tokens.values():
-            if principal.name == name:
-                return principal
-        raise RuntimeError(f"unknown request principal: {name}")
+        principal = self._principals_by_name.get(name)
+        if principal is None:
+            raise RuntimeError(f"unknown request principal: {name}")
+        return principal
 
     async def tool_memory_help(self) -> dict[str, Any]:
         return self._service.memory_help(self._context()).model_dump(mode="json")
@@ -326,38 +388,42 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         return {"mimeType": "application/json", "text": json.dumps(payload, sort_keys=True)}
 
     async def resource_catalog(self) -> dict[str, Any]:
-        payload = {
+        payload: dict[str, Any] = {
             "tool_surface": self._service._deps.config.mcp.tool_surface,
-            "operations": [self._catalog_operation(spec.op_name) for spec in OPERATION_SPECS],
-            "workflows": {
-                goal: {
-                    "uri": f"memory://workflow/{goal}",
-                    "description": meta["description"],
-                    "operations": meta["operations"],
-                }
-                for goal, meta in WORKFLOW_TEMPLATES.items()
-            },
+            "operations": [
+                self._catalog_operation(spec.op_name, direct_tool_available=True)
+                for spec in self._visible_operation_specs()
+            ],
+            "workflows": {goal: self._workflow_payload(goal) for goal in WORKFLOW_TEMPLATES},
         }
+        execute_only = self._execute_only_specs()
+        if execute_only:
+            payload["execute_only_operations"] = [
+                self._catalog_operation(spec.op_name, direct_tool_available=False)
+                for spec in execute_only
+            ]
         return {"mimeType": "application/json", "text": json.dumps(payload, sort_keys=True)}
 
     async def resource_template_catalog(self, operation: str) -> dict[str, Any]:
+        spec = OPERATION_SPEC_BY_OP.get(operation)
+        if spec is None:
+            raise RuntimeError(f"unknown operation: {operation}")
         return {
             "mimeType": "application/json",
-            "text": json.dumps(self._catalog_operation(operation), sort_keys=True),
+            "text": json.dumps(
+                self._catalog_operation(
+                    operation,
+                    direct_tool_available=spec in self._visible_operation_specs(),
+                ),
+                sort_keys=True,
+            ),
         }
 
     async def resource_template_workflow(self, goal: str) -> dict[str, Any]:
-        meta = WORKFLOW_TEMPLATES.get(goal)
-        if meta is None:
-            raise RuntimeError(f"unknown workflow: {goal}")
-        payload = {
-            "goal": goal,
-            "description": meta["description"],
-            "operations": [self._catalog_operation(name) for name in meta["operations"]],
-        }
+        payload = self._workflow_payload(goal)
         return {"mimeType": "application/json", "text": json.dumps(payload, sort_keys=True)}
 
-    def _catalog_operation(self, operation: str) -> dict[str, Any]:
+    def _catalog_operation(self, operation: str, *, direct_tool_available: bool) -> dict[str, Any]:
         spec = OPERATION_SPEC_BY_OP.get(operation)
         if spec is None:
             raise RuntimeError(f"unknown operation: {operation}")
@@ -368,11 +434,61 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             "description": spec.description,
             "roles": list(spec.roles),
             "commit_capable": spec.commit_capable,
+            "direct_tool_available": direct_tool_available,
+            "available_via_execute": not direct_tool_available and self._execute_tool_available(),
             "examples": list(spec.examples),
-            "input_schema": execute_plan_schema()
-            if spec.tool_name == "memory_execute"
-            else self._extract_parameters_from_signature(signature(method), method)
-            or {"type": "object", "properties": {}, "additionalProperties": False},
+            "input_schema": self._tool_input_schema(method, spec.tool_name),
+        }
+
+    def _visible_operation_specs(self) -> tuple[OperationSpec, ...]:
+        answer_enabled = (
+            self._service._deps.config.mcp.compact_answer_enabled
+            and self._service._deps.config.intelligent_tiers.deep_answers.enabled
+        )
+        names = set(
+            tool_names_for_surface(
+                self._service._deps.config.mcp.tool_surface,
+                answer_enabled=answer_enabled,
+            )
+        )
+        return tuple(spec for spec in OPERATION_SPECS if spec.tool_name in names)
+
+    def _execute_tool_available(self) -> bool:
+        return any(spec.op_name == "execute" for spec in self._visible_operation_specs())
+
+    def _execute_only_specs(self) -> tuple[OperationSpec, ...]:
+        if not self._execute_tool_available():
+            return ()
+        visible = {spec.op_name for spec in self._visible_operation_specs()}
+        return tuple(
+            spec
+            for spec in OPERATION_SPECS
+            if spec.op_name not in visible and spec.op_name != "execute"
+        )
+
+    def _workflow_payload(self, goal: str) -> dict[str, Any]:
+        meta = WORKFLOW_TEMPLATES.get(goal)
+        if meta is None:
+            raise RuntimeError(f"unknown workflow: {goal}")
+        visible = {spec.op_name for spec in self._visible_operation_specs()}
+        direct = [
+            self._catalog_operation(name, direct_tool_available=True)
+            for name in meta["operations"]
+            if name in visible
+        ]
+        execute_only = []
+        if self._execute_tool_available():
+            execute_only = [
+                self._catalog_operation(name, direct_tool_available=False)
+                for name in meta["operations"]
+                if name not in visible
+            ]
+        return {
+            "goal": goal,
+            "uri": f"memory://workflow/{goal}",
+            "description": meta["description"],
+            "operations": direct,
+            "execute_only_operations": execute_only,
         }
 
     async def _notify_for_envelope(self, envelope: Mapping[str, Any]) -> None:

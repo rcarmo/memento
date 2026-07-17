@@ -1,6 +1,6 @@
 # Memento
 
-Piclaw instances are deliberately independent. Smith can have one set of conversations, schedules and local Dream memories while Flint has another--which is exactly what you want until both need to remember the same durable fact.
+[`piclaw`][piclaw] instances are deliberately independent. Smith can have one set of conversations, schedules and local Dream memories while Flint has another--which is exactly what you want until both need to remember the same durable fact.
 
 Copying notes between workspaces does not scale. It creates several versions of the truth, makes updates hard to attribute and leaves every instance guessing whether its local copy is current. Sharing Piclaw's message database would be worse: conversations, credentials, reminders and runtime state have different ownership and retention rules.
 
@@ -81,7 +81,7 @@ Optional semantic search uses a local Rust port of GTE-small:
 * scalar plus runtime-selected AMD64 AVX2/FMA and ARM64 NEON kernels;
 * deterministic reciprocal-rank fusion for hybrid retrieval.
 
-The model is local and is not included in the repository or container image. Operators mount a reviewed model file and record its source, licence and SHA-256 digest. If model loading or vector indexing fails, lexical search remains available and semantic readiness becomes degraded; canonical writes still complete.
+The reviewed FP32 model is vendored at `rust/tests/fixtures/gte-small.gtemodel` and copied into the container at `/usr/local/share/memento/models/gte-small.gtemodel`. Its SHA-256 digest is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; provenance and licensing are recorded in `docs/attribution.md`. If model loading or vector indexing fails, lexical search remains available and semantic readiness becomes degraded; canonical writes still complete.
 
 See [`docs/semantic-search.md`](docs/semantic-search.md) for configuration and packaging details.
 
@@ -131,7 +131,7 @@ memento-serve --config /etc/memento/config.json restore --input /path/to/backup
 memento-serve --config /etc/memento/config.json dream --mode report_only
 ```
 
-Docker, Compose/Portainer, nginx and hardened systemd examples are included. The container runs as a non-root user with a read-only root filesystem, writable state under `/var/lib/memento` and an optional read-only model mount under `/models`.
+Docker, Compose/Portainer, nginx and hardened systemd examples are included. The container runs as a non-root user with a read-only root filesystem, writable state under `/var/lib/memento`; the default GTE-small model is already installed read-only in the image.
 
 Start with [`examples/config.v1.json`](examples/config.v1.json), then read [`docs/operations.md`](docs/operations.md) before enabling writes.
 
@@ -154,3 +154,5 @@ Published SBOM/provenance, production image digests, live Docker/systemd parity 
 * [`AGENTS.md`](AGENTS.md) defines contribution and validation rules.
 
 Memento is MIT licensed. Third-party runtime and model attribution is recorded in [`docs/attribution.md`](docs/attribution.md).
+
+[piclaw]: https://github.com/rcarmo/piclaw

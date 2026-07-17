@@ -109,11 +109,26 @@ impl Model {
             intermediate: read_u32(&mut cursor)? as usize,
             max_seq_len: read_u32(&mut cursor)? as usize,
         };
-        if !config.hidden_size.is_multiple_of(config.num_heads) {
+        if config.vocab_size <= TOKEN_MASK as usize {
             return Err(GteError::InvalidModel(format!(
-                "hidden_size % num_heads != 0: {} % {}",
-                config.hidden_size, config.num_heads
+                "vocab_size must include reserved token id {TOKEN_MASK}"
             )));
+        }
+        if config.hidden_size == 0 || config.intermediate == 0 {
+            return Err(GteError::InvalidModel(
+                "hidden_size and intermediate must be positive".to_string(),
+            ));
+        }
+        if config.num_heads == 0 || !config.hidden_size.is_multiple_of(config.num_heads) {
+            return Err(GteError::InvalidModel(format!(
+                "num_heads must be positive and divide hidden_size: {} heads, {} hidden",
+                config.num_heads, config.hidden_size
+            )));
+        }
+        if config.max_seq_len < 2 {
+            return Err(GteError::InvalidModel(
+                "max_seq_len must be at least 2".to_string(),
+            ));
         }
 
         let mut vocab = Vec::with_capacity(config.vocab_size);
@@ -749,5 +764,78 @@ mod tests {
         );
         assert_eq!(TOKEN_PAD, 0);
         assert_eq!(TOKEN_MASK, 103);
+    }
+
+    fn synthetic_model_bytes(header_overrides: &[(usize, u32)]) -> Vec<u8> {
+        let vocab = vec![
+            "[PAD]", "[unused1]", "[unused2]", "[unused3]", "[unused4]", "[unused5]",
+            "[unused6]", "[unused7]", "[unused8]", "[unused9]", "[unused10]",
+            "[unused11]", "[unused12]", "[unused13]", "[unused14]", "[unused15]",
+            "[unused16]", "[unused17]", "[unused18]", "[unused19]", "[unused20]",
+            "[unused21]", "[unused22]", "[unused23]", "[unused24]", "[unused25]",
+            "[unused26]", "[unused27]", "[unused28]", "[unused29]", "[unused30]",
+            "[unused31]", "[unused32]", "[unused33]", "[unused34]", "[unused35]",
+            "[unused36]", "[unused37]", "[unused38]", "[unused39]", "[unused40]",
+            "[unused41]", "[unused42]", "[unused43]", "[unused44]", "[unused45]",
+            "[unused46]", "[unused47]", "[unused48]", "[unused49]", "[unused50]",
+            "[unused51]", "[unused52]", "[unused53]", "[unused54]", "[unused55]",
+            "[unused56]", "[unused57]", "[unused58]", "[unused59]", "[unused60]",
+            "[unused61]", "[unused62]", "[unused63]", "[unused64]", "[unused65]",
+            "[unused66]", "[unused67]", "[unused68]", "[unused69]", "[unused70]",
+            "[unused71]", "[unused72]", "[unused73]", "[unused74]", "[unused75]",
+            "[unused76]", "[unused77]", "[unused78]", "[unused79]", "[unused80]",
+            "[unused81]", "[unused82]", "[unused83]", "[unused84]", "[unused85]",
+            "[unused86]", "[unused87]", "[unused88]", "[unused89]", "[unused90]",
+            "[unused91]", "[unused92]", "[unused93]", "[unused94]", "[unused95]",
+            "[unused96]", "[unused97]", "[unused98]", "[unused99]", "[UNK]", "[CLS]",
+            "[SEP]", "[MASK]", "hello", "world", ",", "!",
+        ];
+        let hidden_size = 4_u32;
+        let max_seq_len = 8_u32;
+        let mut header = [vocab.len() as u32, hidden_size, 0, 1, hidden_size, max_seq_len];
+        for (index, value) in header_overrides {
+            header[*index] = *value;
+        }
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(b"GTE1");
+        for value in header {
+            bytes.extend_from_slice(&value.to_le_bytes());
+        }
+        for token in &vocab {
+            let raw = token.as_bytes();
+            bytes.extend_from_slice(&(raw.len() as u16).to_le_bytes());
+            bytes.extend_from_slice(raw);
+        }
+        for token_id in 0..vocab.len() {
+            let base = (token_id as f32) + 1.0;
+            for value in [base, 0.0, 0.0, 0.0] {
+                bytes.extend_from_slice(&value.to_le_bytes());
+            }
+        }
+        bytes.extend_from_slice(&vec![0_u8; (max_seq_len as usize) * (hidden_size as usize) * 4]);
+        bytes.extend_from_slice(&vec![0_u8; 2 * (hidden_size as usize) * 4]);
+        bytes.extend_from_slice(&vec![0_u8; hidden_size as usize * 4]);
+        bytes.extend_from_slice(&vec![0_u8; hidden_size as usize * 4]);
+        bytes.extend_from_slice(&vec![0_u8; hidden_size as usize * hidden_size as usize * 4]);
+        bytes.extend_from_slice(&vec![0_u8; hidden_size as usize * 4]);
+        bytes
+    }
+
+    #[test]
+    fn rejects_models_with_small_max_seq_len() {
+        let err = Model::from_bytes(&synthetic_model_bytes(&[(5, 1)])).expect_err("invalid model");
+        assert!(matches!(err, GteError::InvalidModel(message) if message.contains("max_seq_len must be at least 2")));
+    }
+
+    #[test]
+    fn rejects_models_with_reserved_vocab_missing() {
+        let err = Model::from_bytes(&synthetic_model_bytes(&[(0, TOKEN_MASK)])).expect_err("invalid model");
+        assert!(matches!(err, GteError::InvalidModel(message) if message.contains("vocab_size must include reserved token id")));
+    }
+
+    #[test]
+    fn rejects_models_with_zero_heads() {
+        let err = Model::from_bytes(&synthetic_model_bytes(&[(3, 0)])).expect_err("invalid model");
+        assert!(matches!(err, GteError::InvalidModel(message) if message.contains("num_heads must be positive and divide hidden_size")));
     }
 }

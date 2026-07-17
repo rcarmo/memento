@@ -1,5 +1,7 @@
 # Threat model
 
+Memento's deterministic core owns identity, authorisation, paths, validation and writes. Everything crossing into it should be treated as untrusted until proven otherwise.
+
 ## Trust boundaries
 
 ```text
@@ -10,21 +12,25 @@ client tool input (untrusted)
   -> canonical markdown bundle
 ```
 
-## Deterministic-core threats
+## Primary threats
 
-1. **Path traversal**: reject absolute paths, `..`, symlink components and unsafe targets.
-2. **Reserved-file overwrite**: reject direct writes to generated files such as `index.md` and root `log.md`.
-3. **Special-file abuse**: reject writes to device files, FIFOs and non-regular existing targets.
-4. **Malformed frontmatter**: parse with `python-frontmatter`, validate with strict Pydantic models.
-5. **Schema confusion**: reject unknown frontmatter keys and out-of-vocabulary `type` values.
-6. **Markdown rewrite corruption**: use `markdown-it-py` token structure instead of regular expressions.
-7. **Link integrity drift**: audit broken links and duplicate IDs on every repository scan.
-8. **Authorization bypass**: consume principal identity from trusted request context, never from tool arguments.
+* Path traversal: reject absolute paths, `..`, symlink components and unsafe targets.
+* Reserved-file overwrite: reject direct writes to generated files such as `index.md` and root `log.md`.
+* Special-file abuse: reject writes to device files, FIFOs and non-regular existing targets.
+* Malformed frontmatter: parse with `python-frontmatter`, then validate with strict Pydantic models.
+* Schema confusion: reject unknown frontmatter keys and out-of-vocabulary `type` values.
+* Markdown rewrite corruption: use `markdown-it-py` token structure instead of regular expressions.
+* Link integrity drift: audit broken links and duplicate IDs on every repository scan.
+* Authorisation bypass: take principal identity from trusted request context, never from tool arguments.
 
-## Initial mitigations
+## Current mitigations
 
-- strict Pydantic v2 models for config, principals, envelopes and concept frontmatter
-- deterministic serialization with `ruamel.yaml`
-- reserved-path enforcement before filesystem writes
-- bundle scan and repository audit over every concept file
-- role and namespace-based authorization configuration
+* Strict Pydantic v2 models cover config, principals, envelopes and concept frontmatter.
+* `ruamel.yaml` keeps deterministic serialisation under control.
+* Reserved-path enforcement happens before filesystem writes.
+* Bundle scan and repository audit cover every concept file.
+* Authorisation is configured by role and namespace.
+
+## Pending evidence
+
+These controls are implemented as described in code and tests. Production deployment evidence -- especially around reverse proxies, transport context handling and operator hardening -- is still pending.

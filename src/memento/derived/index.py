@@ -6,6 +6,7 @@ import shutil
 import sqlite3
 import time
 from collections.abc import Callable, Sequence
+from contextlib import suppress
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -1226,12 +1227,14 @@ class DerivedIndex:
         try:
             connection.enable_load_extension(True)
             connection.load_extension(extension_path)
-            connection.enable_load_extension(False)
             self._sqlite_vector_enabled = True
             self._sqlite_vector_warning = None
         except (AttributeError, sqlite3.DatabaseError) as exc:
             self._sqlite_vector_enabled = False
             self._sqlite_vector_warning = f"sqlite_vector_extension_unavailable: {exc}"
+        finally:
+            with suppress(AttributeError):
+                connection.enable_load_extension(False)
 
     def _migrate(self, connection: sqlite3.Connection) -> None:
         with connection:
