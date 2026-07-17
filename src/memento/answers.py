@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Protocol
 from uuid import uuid4
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 UNKNOWN_ANSWER = "UNKNOWN"
 
@@ -21,8 +21,17 @@ class ModelRequest(BaseModel):
     prompt: str
     max_output_chars: int = Field(ge=1)
     timeout_seconds: float = Field(gt=0)
+    slot_name: str | None = None
+    data_classification: str = Field(default="internal", min_length=1)
     metadata: dict[str, str] = Field(default_factory=dict)
     cancelled: Callable[[], bool] | None = None
+
+
+class ModelAttempt(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    model: str
+    outcome: str
 
 
 class ModelResponse(BaseModel):
@@ -31,6 +40,7 @@ class ModelResponse(BaseModel):
     model_name: str
     output_text: str
     usage: dict[str, int] = Field(default_factory=dict)
+    model_chain: tuple[ModelAttempt, ...] = ()
 
 
 class ModelClient(Protocol):
@@ -54,7 +64,22 @@ class AnswerRecord(BaseModel):
     unresolved: tuple[str, ...] = ()
     citations: tuple[AnswerCitation, ...] = ()
     trace_id: str | None = None
-    model_chain: tuple[str, ...] = ()
+    model_chain: tuple[ModelAttempt, ...] = ()
+
+    @field_validator("model_chain", mode="before")
+    @classmethod
+    def normalize_model_chain(cls, value: object) -> tuple[ModelAttempt, ...]:
+        if value in (None, ""):
+            return ()
+        if not isinstance(value, (list, tuple)):
+            raise ValueError("model_chain must be a sequence")
+        attempts: list[ModelAttempt] = []
+        for item in value:
+            if isinstance(item, str):
+                attempts.append(ModelAttempt(model=item, outcome="success"))
+            else:
+                attempts.append(ModelAttempt.model_validate(item))
+        return tuple(attempts)
 
 
 @dataclass(frozen=True, slots=True)
@@ -367,7 +392,9 @@ class AnswerStore:
                         [{"action": step.action, "detail": step.detail} for step in result.steps]
                     ),
                     json.dumps([concept.path for concept in result.read_concepts]),
-                    json.dumps(list(result.record.model_chain)),
+                    json.dumps(
+                        [item.model_dump(mode="json") for item in result.record.model_chain]
+                    ),
                     json.dumps(result.usage, sort_keys=True),
                     result.duration_ms,
                     _iso(_now()),

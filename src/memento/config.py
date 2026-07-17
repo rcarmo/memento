@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Literal
+from urllib.parse import urlparse
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -164,6 +165,96 @@ class DreamConfig(BaseModel):
     budgets: DreamBudgetsConfig = Field(default_factory=DreamBudgetsConfig)
 
 
+class ModelEndpointConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    base_url: str = Field(min_length=1)
+    api_format: Literal["openai", "anthropic"]
+    api_key_env: str | None = None
+    model: str = Field(min_length=1)
+    headers: dict[str, str] = Field(default_factory=dict)
+
+    @field_validator("base_url")
+    @classmethod
+    def validate_base_url(cls, value: str) -> str:
+        parsed = urlparse(value)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError("base_url must be an absolute http or https URL")
+        return value.rstrip("/")
+
+    @field_validator("api_key_env")
+    @classmethod
+    def validate_api_key_env(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("api_key_env must not be empty")
+        return normalized
+
+    @field_validator("headers")
+    @classmethod
+    def validate_headers(cls, value: dict[str, str]) -> dict[str, str]:
+        normalized: dict[str, str] = {}
+        for key, item in value.items():
+            header = key.strip()
+            if not header:
+                raise ValueError("header names must not be empty")
+            normalized[header] = item
+        return normalized
+
+
+class ModelSlotConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    primary: ModelEndpointConfig | None = None
+    fallbacks: tuple[ModelEndpointConfig, ...] = ()
+    timeout_seconds: float = Field(default=3.0, gt=0, le=120)
+    max_output_chars: int = Field(default=2000, ge=32)
+    retry_budget: int = Field(default=0, ge=0, le=5)
+    concurrency_limit: int = Field(default=1, ge=1, le=32)
+    allowed_data_classifications: tuple[str, ...] = Field(default=("internal",), min_length=1)
+    allow_cross_trust_boundary: bool = False
+    fallback_enabled: bool = True
+    fallback_on_rate_limit: bool = False
+    overload_status_codes: tuple[int, ...] = Field(default=(529,), max_length=16)
+
+    @field_validator("allowed_data_classifications", mode="before")
+    @classmethod
+    def normalize_allowed_data_classifications(cls, value: object) -> tuple[str, ...]:
+        if value is None:
+            return ("internal",)
+        if not isinstance(value, (list, tuple, set, frozenset)):
+            raise ValueError("allowed_data_classifications must be a sequence")
+        items = tuple(str(item).strip() for item in value if str(item).strip())
+        if not items:
+            raise ValueError("allowed_data_classifications must not be empty")
+        return tuple(dict.fromkeys(items))
+
+    @field_validator("overload_status_codes")
+    @classmethod
+    def validate_overload_status_codes(cls, value: tuple[int, ...]) -> tuple[int, ...]:
+        for item in value:
+            if item < 100 or item > 599:
+                raise ValueError("overload status codes must be valid HTTP status codes")
+        return tuple(dict.fromkeys(value))
+
+
+class ModelProviderSlotsConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    hot_query: ModelSlotConfig = Field(
+        default_factory=lambda: ModelSlotConfig(fallback_enabled=True)
+    )
+    deep_query: ModelSlotConfig = Field(
+        default_factory=lambda: ModelSlotConfig(fallback_enabled=True)
+    )
+    proposal: ModelSlotConfig = Field(
+        default_factory=lambda: ModelSlotConfig(fallback_enabled=False)
+    )
+    dream: ModelSlotConfig = Field(default_factory=lambda: ModelSlotConfig(fallback_enabled=False))
+
+
 class IntelligentTiersConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -172,6 +263,7 @@ class IntelligentTiersConfig(BaseModel):
     hot_working_memory: HotWorkingMemoryConfig = Field(default_factory=HotWorkingMemoryConfig)
     model_proposals: ModelProposalsConfig = Field(default_factory=ModelProposalsConfig)
     dream: DreamConfig = Field(default_factory=DreamConfig)
+    model_provider_slots: ModelProviderSlotsConfig = Field(default_factory=ModelProviderSlotsConfig)
 
 
 class ServiceConfig(BaseModel):

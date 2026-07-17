@@ -114,7 +114,7 @@ Start each tier behind an independent feature flag and only after Milestone 6.
 4. [x] **Model-assisted proposals:** models may draft proposals but cannot approve or write.
 5. [x] **Dream report-only scanner:** deterministic signals, revision watermarks and durable deduplication.
 6. [x] **Dream proposal mode:** bounded model proposals, never direct model-authored writes.
-7. **Provider slots and fallback:** task-specific policies, explicit trust boundaries and transient model-level fallback only.
+7. [x] **Provider slots and fallback:** task-specific policies, explicit trust boundaries and transient model-level fallback only.
 
 ## Pilot acceptance checklist
 

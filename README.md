@@ -2,7 +2,7 @@
 
 Memento will provide several Piclaw instances with shared, durable knowledge over the Model Context Protocol (MCP). Git-backed Markdown will be authoritative for knowledge, SQLite will track operations, and rebuildable FTS5 and graph indexes will support retrieval.
 
-The project is at **Milestone 6: production operations (implementation complete, deployment examples not live verified)**, with deferred intelligent tiers 1–4 now implemented behind independent feature flags. Deterministic repository primitives, Git publication, derived indexing, read/write service flows and local production-operations tooling are implemented.
+The project is at **Milestone 7: provider slots and model-level fallback (implementation complete, deployment examples not live verified)**, with deferred intelligent tiers now including task-specific provider slots, bounded model-level fallback and trust-boundary policy controls behind configuration. Deterministic repository primitives, Git publication, derived indexing, read/write service flows and local production-operations tooling are implemented.
 
 ## Core rules
 
@@ -42,6 +42,7 @@ See:
 - feature-gated deep read-only answers, exact answer cache and hot working memory with bounded trace persistence
 - feature-gated model-assisted proposal drafting through `memory_propose_freeform` and `memory_propose_update`, with deterministic search context, strict citations, diff validation and secret blocking
 - durable Dream report-only scanning and bounded proposal mode with revision watermarks, signal deduplication and no direct writes
+- task-specific model provider slots (`hot_query`, `deep_query`, `proposal`, `dream`) with bounded concurrency, explicit data classifications and single-generation fallback across approved transient failures only
 - sample bundle and contract/threat/operations documentation
 
 ## Development
@@ -71,5 +72,7 @@ Deployment examples are provided for local review and CI build validation, but a
 ## Sample bundle
 
 A minimal audited sample bundle lives under [`sample-bundle/`](sample-bundle/).
+
+Model endpoint secrets must be supplied only through environment variables referenced by config `api_key_env` names; Memento does not persist provider secrets in Git-tracked config.
 
 Use Make targets as the stable local and CI interface.

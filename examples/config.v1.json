@@ -66,6 +66,100 @@
         "max_rationale_chars": 4000,
         "max_secret_entropy_chars": 32
       }
+    },
+    "dream": {
+      "mode": "disabled",
+      "model_policy_revision": "disabled",
+      "prompt_version": "v1",
+      "tool_version": "v1",
+      "interval_seconds": 21600,
+      "quiet_period_seconds": 300,
+      "scanner": {
+        "oversized_body_chars": 6000,
+        "oversized_top_level_sections": 6,
+        "max_oversized_candidates": 3,
+        "duplicate_similarity_threshold": 0.86
+      },
+      "budgets": {
+        "max_signals_per_run": 25,
+        "max_model_proposals_per_run": 5,
+        "max_runtime_seconds": 30.0,
+        "daily_proposal_limit": 20
+      }
+    },
+    "model_provider_slots": {
+      "hot_query": {
+        "primary": {
+          "base_url": "http://127.0.0.1:11434",
+          "api_format": "openai",
+          "api_key_env": null,
+          "model": "local/llama",
+          "headers": {}
+        },
+        "fallbacks": [],
+        "timeout_seconds": 1.0,
+        "max_output_chars": 2000,
+        "retry_budget": 0,
+        "concurrency_limit": 2,
+        "allowed_data_classifications": ["internal"],
+        "allow_cross_trust_boundary": false,
+        "fallback_enabled": true,
+        "fallback_on_rate_limit": false,
+        "overload_status_codes": [529]
+      },
+      "deep_query": {
+        "primary": {
+          "base_url": "http://127.0.0.1:11434",
+          "api_format": "openai",
+          "api_key_env": null,
+          "model": "local/llama",
+          "headers": {}
+        },
+        "fallbacks": [
+          {
+            "base_url": "https://api.openai.example",
+            "api_format": "openai",
+            "api_key_env": "MEMENTO_OPENAI_API_KEY",
+            "model": "gpt-4o-mini",
+            "headers": {}
+          }
+        ],
+        "timeout_seconds": 3.0,
+        "max_output_chars": 2000,
+        "retry_budget": 1,
+        "concurrency_limit": 2,
+        "allowed_data_classifications": ["internal"],
+        "allow_cross_trust_boundary": true,
+        "fallback_enabled": true,
+        "fallback_on_rate_limit": false,
+        "overload_status_codes": [529]
+      },
+      "proposal": {
+        "primary": null,
+        "fallbacks": [],
+        "timeout_seconds": 5.0,
+        "max_output_chars": 8000,
+        "retry_budget": 0,
+        "concurrency_limit": 1,
+        "allowed_data_classifications": ["restricted"],
+        "allow_cross_trust_boundary": false,
+        "fallback_enabled": false,
+        "fallback_on_rate_limit": false,
+        "overload_status_codes": [529]
+      },
+      "dream": {
+        "primary": null,
+        "fallbacks": [],
+        "timeout_seconds": 5.0,
+        "max_output_chars": 8000,
+        "retry_budget": 0,
+        "concurrency_limit": 1,
+        "allowed_data_classifications": ["restricted"],
+        "allow_cross_trust_boundary": false,
+        "fallback_enabled": false,
+        "fallback_on_rate_limit": false,
+        "overload_status_codes": [529]
+      }
     }
   }
 }

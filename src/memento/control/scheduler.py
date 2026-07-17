@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from uuid import uuid4
 
+from memento.answers import ModelAttempt
+
 
 @dataclass(frozen=True, slots=True)
 class SchedulerRunRecord:
@@ -17,7 +19,7 @@ class SchedulerRunRecord:
     state: str
     signal_count: int
     proposal_count: int
-    model_chain: tuple[str, ...]
+    model_chain: tuple[ModelAttempt, ...]
     started_at: str
     finished_at: str | None
     error_message: str | None
@@ -85,7 +87,7 @@ def finish_scheduler_run(
     end_revision: str | None,
     signal_count: int,
     proposal_count: int,
-    model_chain: tuple[str, ...] = (),
+    model_chain: tuple[ModelAttempt, ...] = (),
     error_message: str | None = None,
 ) -> SchedulerRunRecord:
     with connection:
@@ -101,7 +103,7 @@ def finish_scheduler_run(
                 end_revision,
                 signal_count,
                 proposal_count,
-                json.dumps(list(model_chain)),
+                json.dumps([item.model_dump(mode="json") for item in model_chain]),
                 error_message,
                 utcnow(),
                 run_id,
@@ -112,6 +114,12 @@ def finish_scheduler_run(
 
 def _row_to_run(row: sqlite3.Row) -> SchedulerRunRecord:
     chain = json.loads(row["model_chain_json"] or "[]")
+    attempts = tuple(
+        ModelAttempt(model=str(item), outcome="success")
+        if isinstance(item, str)
+        else ModelAttempt.model_validate(item)
+        for item in chain
+    )
     return SchedulerRunRecord(
         run_id=row["run_id"],
         job_name=row["job_name"],
@@ -121,7 +129,7 @@ def _row_to_run(row: sqlite3.Row) -> SchedulerRunRecord:
         state=row["state"],
         signal_count=int(row["signal_count"]),
         proposal_count=int(row["proposal_count"]),
-        model_chain=tuple(str(item) for item in chain),
+        model_chain=attempts,
         started_at=row["started_at"],
         finished_at=row["finished_at"],
         error_message=row["error_message"],

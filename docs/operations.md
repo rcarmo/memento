@@ -6,6 +6,8 @@ Status: implemented in code and tests for local workflows; **not live verified**
 
 Use [`examples/config.v1.json`](../examples/config.v1.json) as the versioned starting point.
 
+Provider endpoints are configured per slot under `intelligent_tiers.model_provider_slots`. Supply any remote credentials only through environment variables named by each endpoint's `api_key_env` field. Query fallback may cross trust boundaries only when the slot explicitly sets `allow_cross_trust_boundary: true`; proposal and Dream fallback remain disabled by default.
+
 ## CLI
 
 - `memento --config CONFIG serve`

@@ -21,8 +21,10 @@ from memento.answers import (
     AnswerRecord,
     AnswerStore,
     DeepAnswerResult,
+    ModelAttempt,
     ModelClient,
     ModelRequest,
+    ModelResponse,
     ReadConcept,
     SearchStep,
     exact_cache_key,
@@ -1117,6 +1119,8 @@ class MemoryService:
                 "tool_version": config.tool_version,
                 "model_policy_revision": config.model_policy_revision,
             },
+            slot_name="proposal",
+            data_classification="restricted",
         )
         draft = self._parse_model_proposal(response.output_text)
         self._validate_model_proposal_draft(policy=policy, consulted=consulted, draft=draft)
@@ -1437,8 +1441,10 @@ class MemoryService:
             ),
             cancelled=cancelled,
             metadata={"answer_mode": answer_mode},
+            slot_name="hot_query",
+            data_classification="internal",
         )
-        record = self._parse_model_answer(response.output_text, source="hot_memory")
+        record = self._parse_model_answer(response, source="hot_memory")
         if record.answer == UNKNOWN_ANSWER:
             return None
         return self._validated_record(
@@ -1524,9 +1530,11 @@ class MemoryService:
             timeout_seconds=limits.max_time_seconds,
             cancelled=cancelled,
             metadata={"answer_mode": answer_mode},
+            slot_name="deep_query",
+            data_classification="internal",
         )
         record = self._validated_record(
-            self._parse_model_answer(response.output_text, source="deep_agent"),
+            self._parse_model_answer(response, source="deep_agent"),
             read_concepts=tuple(read_concepts),
             revision=search.repo_revision,
             source_on_repair="deep_agent",
@@ -1604,14 +1612,19 @@ class MemoryService:
             )
         return record.model_copy(update={"citations": tuple(citations), "trace_id": None})
 
-    def _parse_model_answer(self, payload: str, *, source: str) -> AnswerRecord:
+    def _parse_model_answer(self, response: ModelResponse, *, source: str) -> AnswerRecord:
         try:
-            data = json.loads(payload)
+            data = json.loads(response.output_text)
         except json.JSONDecodeError as exc:
             raise ServiceError(f"model output is not valid JSON: {exc}") from exc
         citations = tuple(AnswerCitation.model_validate(item) for item in data.get("citations", []))
         unresolved = tuple(str(item) for item in data.get("unresolved", []))
-        model_chain = tuple(str(item) for item in data.get("model_chain", []))
+        model_chain = response.model_chain or tuple(
+            ModelAttempt(model=str(item), outcome="success")
+            if isinstance(item, str)
+            else ModelAttempt.model_validate(item)
+            for item in data.get("model_chain", [])
+        )
         return AnswerRecord(
             answer=str(data.get("answer", UNKNOWN_ANSWER)),
             answer_source=source,
@@ -1631,7 +1644,9 @@ class MemoryService:
         timeout_seconds: float,
         cancelled: Callable[[], bool] | None,
         metadata: dict[str, str],
-    ) -> Any:
+        slot_name: str,
+        data_classification: str,
+    ) -> ModelResponse:
         self._check_cancel(cancelled)
         client = self._deps.model_client
         if client is None:
@@ -1642,6 +1657,8 @@ class MemoryService:
                 prompt=prompt,
                 max_output_chars=max_output_chars,
                 timeout_seconds=timeout_seconds,
+                slot_name=slot_name,
+                data_classification=data_classification,
                 metadata=metadata,
                 cancelled=cancelled,
             )
@@ -1850,7 +1867,7 @@ class MemoryService:
                 "run_id": claim.record.run_id,
             }
         started = monotonic()
-        model_chain: tuple[str, ...] = ()
+        model_chain: tuple[ModelAttempt, ...] = ()
         proposal_count = 0
         try:
             detections = self._detect_dream_signals(repo_revision=repo_revision)
@@ -2101,7 +2118,7 @@ class MemoryService:
 
     def _dream_generate_proposals(
         self, *, actionable: tuple[Any, ...], repo_revision: str, timeout_seconds: float
-    ) -> tuple[int, tuple[str, ...]]:
+    ) -> tuple[int, tuple[ModelAttempt, ...]]:
         dream = self._deps.config.intelligent_tiers.dream
         if self._deps.model_client is None or timeout_seconds <= 0:
             return 0, ()
@@ -2118,6 +2135,8 @@ class MemoryService:
                 "tool_version": dream.tool_version,
                 "model_policy_revision": dream.model_policy_revision,
             },
+            slot_name="dream",
+            data_classification="restricted",
         )
         draft = self._parse_model_proposal(response.output_text)
         changes = list(draft.changes)
@@ -2150,7 +2169,9 @@ class MemoryService:
             dedupe_keys=tuple(item.dedupe_key for item in actionable),
             status="proposed",
         )
-        return 1, (response.model_name,)
+        return 1, response.model_chain or (
+            ModelAttempt(model=response.model_name, outcome="success"),
+        )
 
     def _dream_prompt(self, *, actionable: tuple[Any, ...], repo_revision: str) -> str:
         evidence = []

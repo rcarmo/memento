@@ -12,6 +12,7 @@ from memento.config import Principal, ServiceConfig
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.proposals import ProposalStatus, list_proposals
 from memento.derived.index import DerivedIndex
+from memento.model_clients import RoutedFallbackModelClient, build_endpoint_clients
 from memento.repository.bundle import scan_bundle
 from memento.repository.git import (
     GitRepositoryPaths,
@@ -135,6 +136,17 @@ def runtime_paths_for(config: ServiceConfig) -> RuntimePaths:
     )
 
 
+def _resolve_model_api_keys(config: ServiceConfig) -> dict[str, str]:
+    slots = config.intelligent_tiers.model_provider_slots
+    keys: dict[str, str] = {}
+    for slot in (slots.hot_query, slots.deep_query, slots.proposal, slots.dream):
+        for endpoint in ([slot.primary] if slot.primary is not None else []) + list(slot.fallbacks):
+            if endpoint.api_key_env is None:
+                continue
+            keys[endpoint.api_key_env] = os.environ.get(endpoint.api_key_env, "")
+    return keys
+
+
 def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> MementoRuntime:
     config = load_service_config(config_path)
     paths = runtime_paths_for(config)
@@ -176,6 +188,18 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             paths.repo_paths,
             derived_update=apply_update,
         )
+        endpoint_clients = build_endpoint_clients(
+            config.intelligent_tiers.model_provider_slots,
+            api_keys=_resolve_model_api_keys(config),
+        )
+        routed_client = (
+            RoutedFallbackModelClient(
+                config.intelligent_tiers.model_provider_slots,
+                endpoint_clients=endpoint_clients,
+            )
+            if endpoint_clients
+            else None
+        )
         service = MemoryService(
             ServiceDependencies(
                 config=config,
@@ -183,6 +207,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                 control_connection=control_connection,
                 derived_index=derived_index,
                 transaction_manager=manager,
+                model_client=routed_client,
             )
         )
         manager.recover_startup()

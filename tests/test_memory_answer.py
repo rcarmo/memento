@@ -9,7 +9,7 @@ from typing import Any, cast
 
 import pytest
 
-from memento.answers import UNKNOWN_ANSWER, ModelClient, ModelRequest, ModelResponse
+from memento.answers import UNKNOWN_ANSWER, ModelAttempt, ModelClient, ModelRequest, ModelResponse
 from memento.config import (
     AuthorizationConfig,
     DeepAnswerLimitsConfig,
@@ -20,7 +20,10 @@ from memento.config import (
     ExactAnswerCacheConfig,
     HotWorkingMemoryConfig,
     IntelligentTiersConfig,
+    ModelEndpointConfig,
     ModelProposalsConfig,
+    ModelProviderSlotsConfig,
+    ModelSlotConfig,
     NamespacePolicy,
     Principal,
     RepositoryConfig,
@@ -31,6 +34,14 @@ from memento.control.proposals import list_proposals
 from memento.control.scheduler import claim_scheduler_run
 from memento.control.signals import get_service_state, list_signals, set_service_state
 from memento.derived.index import DerivedIndex
+from memento.model_clients import (
+    ModelCancelledError,
+    ModelConnectionError,
+    ModelHTTPError,
+    ModelPolicyError,
+    ModelValidationError,
+    RoutedFallbackModelClient,
+)
 from memento.repository.frontmatter import serialize_concept
 from memento.repository.git import GitRepositoryPaths, bootstrap_repository, get_main_revision
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter, ConceptStatus
@@ -928,6 +939,338 @@ def _service_with_config(
             model_client=model_client,
         )
     )
+
+
+class FakeEndpointClient:
+    def __init__(self, model_name: str, outcomes: list[object], *, trust_boundary: str) -> None:
+        self.model_name = model_name
+        self._outcomes = outcomes
+        self.trust_boundary = trust_boundary
+        self.calls: list[ModelRequest] = []
+
+    def complete(self, request: ModelRequest) -> ModelResponse:
+        self.calls.append(request)
+        outcome = self._outcomes.pop(0)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return cast(ModelResponse, outcome)
+
+
+def _slot_router(
+    *,
+    hot: list[object] | None = None,
+    deep: list[object] | None = None,
+    proposal: list[object] | None = None,
+    dream: list[object] | None = None,
+    allow_cross_trust_boundary: bool = True,
+    proposal_fallback_enabled: bool = False,
+    dream_fallback_enabled: bool = False,
+    fallback_on_rate_limit: bool = False,
+) -> tuple[RoutedFallbackModelClient, dict[str, FakeEndpointClient]]:
+    slots = ModelProviderSlotsConfig(
+        hot_query=ModelSlotConfig(
+            primary=ModelEndpointConfig(
+                base_url="http://localhost:8001", api_format="openai", model="hot-primary"
+            ),
+            fallbacks=(
+                ModelEndpointConfig(
+                    base_url="http://remote.example", api_format="openai", model="hot-fallback"
+                ),
+            ),
+            allowed_data_classifications=("internal",),
+            allow_cross_trust_boundary=allow_cross_trust_boundary,
+            fallback_enabled=True,
+            fallback_on_rate_limit=fallback_on_rate_limit,
+        ),
+        deep_query=ModelSlotConfig(
+            primary=ModelEndpointConfig(
+                base_url="http://localhost:8002", api_format="openai", model="deep-primary"
+            ),
+            fallbacks=(
+                ModelEndpointConfig(
+                    base_url="http://remote.example", api_format="openai", model="deep-fallback"
+                ),
+            ),
+            allowed_data_classifications=("internal",),
+            allow_cross_trust_boundary=allow_cross_trust_boundary,
+            fallback_enabled=True,
+            fallback_on_rate_limit=fallback_on_rate_limit,
+        ),
+        proposal=ModelSlotConfig(
+            primary=ModelEndpointConfig(
+                base_url="http://localhost:8003", api_format="openai", model="proposal-primary"
+            ),
+            fallbacks=(
+                ModelEndpointConfig(
+                    base_url="http://remote.example", api_format="openai", model="proposal-fallback"
+                ),
+            ),
+            allowed_data_classifications=("restricted",),
+            allow_cross_trust_boundary=allow_cross_trust_boundary,
+            fallback_enabled=proposal_fallback_enabled,
+        ),
+        dream=ModelSlotConfig(
+            primary=ModelEndpointConfig(
+                base_url="http://localhost:8004", api_format="openai", model="dream-primary"
+            ),
+            fallbacks=(
+                ModelEndpointConfig(
+                    base_url="http://remote.example", api_format="openai", model="dream-fallback"
+                ),
+            ),
+            allowed_data_classifications=("restricted",),
+            allow_cross_trust_boundary=allow_cross_trust_boundary,
+            fallback_enabled=dream_fallback_enabled,
+        ),
+    )
+    clients = {
+        "hot-primary": FakeEndpointClient("hot-primary", hot or [], trust_boundary="local"),
+        "hot-fallback": FakeEndpointClient("hot-fallback", [], trust_boundary="remote"),
+        "deep-primary": FakeEndpointClient("deep-primary", deep or [], trust_boundary="local"),
+        "deep-fallback": FakeEndpointClient("deep-fallback", [], trust_boundary="remote"),
+        "proposal-primary": FakeEndpointClient(
+            "proposal-primary", proposal or [], trust_boundary="local"
+        ),
+        "proposal-fallback": FakeEndpointClient("proposal-fallback", [], trust_boundary="remote"),
+        "dream-primary": FakeEndpointClient("dream-primary", dream or [], trust_boundary="local"),
+        "dream-fallback": FakeEndpointClient("dream-fallback", [], trust_boundary="remote"),
+    }
+    endpoint_clients = {
+        json.dumps(slot.primary.model_dump(mode="json"), sort_keys=True): clients[
+            slot.primary.model
+        ]
+        for slot in (slots.hot_query, slots.deep_query, slots.proposal, slots.dream)
+        if slot.primary is not None
+    }
+    for slot in (slots.hot_query, slots.deep_query, slots.proposal, slots.dream):
+        for endpoint in slot.fallbacks:
+            endpoint_clients[json.dumps(endpoint.model_dump(mode="json"), sort_keys=True)] = (
+                clients[endpoint.model]
+            )
+    return RoutedFallbackModelClient(slots, endpoint_clients=endpoint_clients), clients
+
+
+def test_routed_model_fallback_tracks_attempts_and_routes_by_slot() -> None:
+    deep_success = ModelResponse(
+        model_name="deep-fallback",
+        output_text='{"answer":"ok","confidence":"high","citations":[],"unresolved":[]}',
+        usage={},
+    )
+    hot_success = ModelResponse(
+        model_name="hot-primary",
+        output_text='{"answer":"ok","confidence":"high","citations":[],"unresolved":[]}',
+        usage={},
+    )
+    router, clients = _slot_router(
+        deep=[ModelConnectionError("down")],
+        hot=[hot_success],
+        allow_cross_trust_boundary=True,
+    )
+    clients["deep-fallback"]._outcomes = [deep_success]
+    deep_response = router.complete(
+        ModelRequest(
+            task="memory_answer_deep",
+            prompt="q",
+            max_output_chars=200,
+            timeout_seconds=2.0,
+            data_classification="internal",
+        )
+    )
+    hot_response = router.complete(
+        ModelRequest(
+            task="memory_answer_hot",
+            prompt="q",
+            max_output_chars=200,
+            timeout_seconds=2.0,
+            data_classification="internal",
+        )
+    )
+    assert [item.model for item in deep_response.model_chain] == ["deep-primary", "deep-fallback"]
+    assert [item.outcome for item in deep_response.model_chain] == ["connection_failed", "success"]
+    assert hot_response.model_chain[-1].model == "hot-primary"
+    assert len(clients["deep-primary"].calls) == 1
+    assert len(clients["deep-fallback"].calls) == 1
+    assert len(clients["hot-primary"].calls) == 1
+
+
+def test_routed_model_no_fallback_on_auth_validation_cancel_or_429() -> None:
+    router, clients = _slot_router(
+        deep=[ModelHTTPError(401, "nope", retryable=False)],
+        allow_cross_trust_boundary=True,
+    )
+    with pytest.raises(ModelHTTPError):
+        router.complete(
+            ModelRequest(
+                task="memory_answer_deep",
+                prompt="q",
+                max_output_chars=200,
+                timeout_seconds=2.0,
+                data_classification="internal",
+            )
+        )
+    assert not clients["deep-fallback"].calls
+
+    router, clients = _slot_router(
+        deep=[ModelValidationError("bad")],
+        allow_cross_trust_boundary=True,
+    )
+    with pytest.raises(ModelValidationError):
+        router.complete(
+            ModelRequest(
+                task="memory_answer_deep",
+                prompt="q",
+                max_output_chars=200,
+                timeout_seconds=2.0,
+                data_classification="internal",
+            )
+        )
+    assert not clients["deep-fallback"].calls
+
+    router, clients = _slot_router(
+        deep=[ModelCancelledError("cancel")],
+        allow_cross_trust_boundary=True,
+    )
+    with pytest.raises(ModelCancelledError):
+        router.complete(
+            ModelRequest(
+                task="memory_answer_deep",
+                prompt="q",
+                max_output_chars=200,
+                timeout_seconds=2.0,
+                data_classification="internal",
+            )
+        )
+    assert not clients["deep-fallback"].calls
+
+    router, clients = _slot_router(
+        deep=[ModelHTTPError(429, "rate", retryable=False)],
+        allow_cross_trust_boundary=True,
+        fallback_on_rate_limit=False,
+    )
+    with pytest.raises(ModelHTTPError):
+        router.complete(
+            ModelRequest(
+                task="memory_answer_deep",
+                prompt="q",
+                max_output_chars=200,
+                timeout_seconds=2.0,
+                data_classification="internal",
+            )
+        )
+    assert not clients["deep-fallback"].calls
+
+
+def test_routed_model_enforces_privacy_boundary_and_slot_classification() -> None:
+    router, clients = _slot_router(
+        deep=[ModelConnectionError("down")], allow_cross_trust_boundary=False
+    )
+    with pytest.raises(ModelConnectionError):
+        router.complete(
+            ModelRequest(
+                task="memory_answer_deep",
+                prompt="q",
+                max_output_chars=200,
+                timeout_seconds=2.0,
+                data_classification="internal",
+            )
+        )
+    assert not clients["deep-fallback"].calls
+
+    with pytest.raises(ModelPolicyError):
+        router.complete(
+            ModelRequest(
+                task="memory_answer_deep",
+                prompt="q",
+                max_output_chars=200,
+                timeout_seconds=2.0,
+                data_classification="restricted",
+            )
+        )
+
+
+def test_proposal_and_dream_fallback_default_disabled() -> None:
+    router, clients = _slot_router(
+        proposal=[ModelConnectionError("down")],
+        dream=[ModelConnectionError("down")],
+        allow_cross_trust_boundary=True,
+        proposal_fallback_enabled=False,
+        dream_fallback_enabled=False,
+    )
+    clients["proposal-fallback"]._outcomes = [
+        ModelResponse(model_name="proposal-fallback", output_text="{}", usage={})
+    ]
+    clients["dream-fallback"]._outcomes = [
+        ModelResponse(model_name="dream-fallback", output_text="{}", usage={})
+    ]
+    with pytest.raises(ModelConnectionError):
+        router.complete(
+            ModelRequest(
+                task="memory_proposal_draft",
+                prompt="q",
+                max_output_chars=200,
+                timeout_seconds=2.0,
+                data_classification="restricted",
+            )
+        )
+    with pytest.raises(ModelConnectionError):
+        router.complete(
+            ModelRequest(
+                task="dream_proposal_draft",
+                prompt="q",
+                max_output_chars=200,
+                timeout_seconds=2.0,
+                data_classification="restricted",
+            )
+        )
+    assert not clients["proposal-fallback"].calls
+    assert not clients["dream-fallback"].calls
+
+
+def test_memory_answer_model_fallback_does_not_replay_whole_agent(
+    service: MemoryService,
+    smith: ServiceContext,
+) -> None:
+    answer_json = json.dumps(
+        {
+            "answer": "Piclaw is a visible project.",
+            "confidence": "high",
+            "citations": [],
+            "unresolved": [],
+        }
+    )
+    router, clients = _slot_router(
+        deep=[ModelConnectionError("down")], allow_cross_trust_boundary=True
+    )
+    clients["deep-fallback"]._outcomes = [
+        ModelResponse(
+            model_name="deep-fallback",
+            output_text=answer_json,
+            usage={},
+            model_chain=(ModelAttempt(model="deep-fallback", outcome="success"),),
+        )
+    ]
+    instrumented = service
+    instrumented._deps = ServiceDependencies(
+        config=service._deps.config,
+        repo_paths=service._deps.repo_paths,
+        control_connection=service._deps.control_connection,
+        derived_index=service._deps.derived_index,
+        transaction_manager=service._deps.transaction_manager,
+        model_client=router,
+    )
+    reads = {"count": 0}
+    original = instrumented._read_concept_by_path
+
+    def counted(*args: Any, **kwargs: Any) -> Any:
+        reads["count"] += 1
+        return original(*args, **kwargs)
+
+    instrumented._read_concept_by_path = counted  # type: ignore[method-assign]
+    payload = success_data(instrumented.memory_answer(smith, question="What is Piclaw?"))
+    assert payload["answer"] == "UNKNOWN"
+    assert reads["count"] > 0
+    assert len(clients["deep-primary"].calls) == 1
+    assert len(clients["deep-fallback"].calls) == 1
 
 
 def write_concept(

@@ -121,7 +121,10 @@ Success payload shape:
     {"id": "<concept-id>", "path": "/projects/piclaw.md", "revision": "<git-sha>"}
   ],
   "trace_id": "<uuid-or-null>",
-  "model_chain": ["deterministic-fake-or-provider-name"]
+  "model_chain": [
+    {"model": "local/llama", "outcome": "timeout"},
+    {"model": "cloud/model", "outcome": "success"}
+  ]
 }
 ```
 
@@ -130,6 +133,10 @@ Contract rules:
 - exact-cache keys include repository revision, normalized question, authorization-scope fingerprint, answer mode, model-policy revision, prompt version and tool version
 - hot working memory and exact cache are scope-isolated and independently feature-gated
 - deep answers may only cite concepts actually read during that traversal at the exact reported revision
+- task routing is fixed: `memory_answer_hot` -> `hot_query`, `memory_answer_deep` -> `deep_query`, proposal drafting -> `proposal`, Dream drafting -> `dream`
+- retries/fallbacks apply only to one model generation step and only for configured transient failures
+- auth, policy, malformed output, caller cancellation and 429-by-default never fallback
+- every answer trace discloses the ordered attempted model chain with per-attempt outcomes
 - invalid or missing citations degrade to `UNKNOWN` with unresolved validation markers
 - traversal traces are persisted outside Git with bounded retention
 - internal prompts wrap repository content in explicit untrusted-content delimiters
