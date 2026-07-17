@@ -1,0 +1,97 @@
+{
+  "environment": {
+    "cwd": "/srv/piclaw-dev/workspace/projects/memento",
+    "platform": "Linux-6.8.0-134-generic-x86_64-with-glibc2.39",
+    "profile": "functional",
+    "python": "3.14.5 (main, May 10 2026, 10:21:34) [GCC 12.3.0]",
+    "seed": 7
+  },
+  "generated_at": "2026-07-17T23:30:08.802197+00:00",
+  "git_revision": "51f0b06442dc71f59fe744391fe0820a3f9e6bc4",
+  "notes": [
+    "Thresholds in this report are local development checks, not universal service SLOs.",
+    "All repository activity uses temporary directories; canonical fixtures are not modified."
+  ],
+  "passed": true,
+  "scenario_count": 2,
+  "scenarios": [
+    {
+      "count": 200,
+      "details": {
+        "concepts": 100,
+        "requests": 200,
+        "workers": 8
+      },
+      "duration_seconds": 0.541427,
+      "ended_at": "2026-07-17T23:30:07.692840+00:00",
+      "error_count": 0,
+      "errors": {},
+      "invariant_failures": [],
+      "latency": {
+        "max_ms": 342.047,
+        "p50_ms": 3.494,
+        "p95_ms": 108.723,
+        "p99_ms": 186.623
+      },
+      "name": "direct_functional_load",
+      "ok_count": 200,
+      "passed": true,
+      "started_at": "2026-07-17T23:30:07.151413+00:00",
+      "thresholds": [
+        {
+          "actual": 0,
+          "comparator": "==",
+          "expected": 0,
+          "name": "error_count",
+          "note": "Local direct read/search check.",
+          "passed": true
+        },
+        {
+          "actual": 186.62292324006512,
+          "comparator": "<=",
+          "expected": 2500.0,
+          "name": "p99_ms",
+          "note": "Local threshold, not a universal SLO.",
+          "passed": true
+        }
+      ],
+      "throughput_per_second": 369.394212
+    },
+    {
+      "count": 200,
+      "details": {
+        "requests": 200,
+        "semantic_enabled": true,
+        "semantic_ready": true,
+        "warnings": [],
+        "workers": 8
+      },
+      "duration_seconds": 1.081603,
+      "ended_at": "2026-07-17T23:30:08.774789+00:00",
+      "error_count": 0,
+      "errors": {},
+      "invariant_failures": [],
+      "latency": {
+        "max_ms": 938.028,
+        "p50_ms": 5.229,
+        "p95_ms": 147.355,
+        "p99_ms": 637.469
+      },
+      "name": "semantic_query_load",
+      "ok_count": 200,
+      "passed": true,
+      "started_at": "2026-07-17T23:30:07.693186+00:00",
+      "thresholds": [
+        {
+          "actual": 0,
+          "comparator": "==",
+          "expected": 0,
+          "name": "error_count",
+          "note": "Scenario should degrade gracefully even without vendored semantic runtime.",
+          "passed": true
+        }
+      ],
+      "throughput_per_second": 184.91073
+    }
+  ]
+}

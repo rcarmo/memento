@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
+import threading
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -30,6 +31,15 @@ from memento.repository.git import (
     remove_operation_worktree,
     resolve_worktree_revision,
 )
+
+_TRANSACTION_LOCKS: dict[str, threading.Lock] = {}
+_TRANSACTION_LOCKS_GUARD = threading.Lock()
+
+
+def _transaction_lock(paths: GitRepositoryPaths) -> threading.Lock:
+    key = str(paths.bare_dir.resolve())
+    with _TRANSACTION_LOCKS_GUARD:
+        return _TRANSACTION_LOCKS.setdefault(key, threading.Lock())
 
 
 class TransactionConflictError(RuntimeError):
@@ -90,6 +100,12 @@ class TransactionManager:
         self._derived_update = derived_update
 
     def apply(self, request: TransactionRequest, mutate: MutationCallback) -> TransactionResult:
+        with _transaction_lock(self._paths):
+            return self._apply_locked(request, mutate)
+
+    def _apply_locked(
+        self, request: TransactionRequest, mutate: MutationCallback
+    ) -> TransactionResult:
         operation = create_operation(self._connection, request.operation)
         if operation.state is OperationState.SUCCEEDED and operation.result_revision is not None:
             payload = operation.replay_payload or {}

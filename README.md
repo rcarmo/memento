@@ -141,7 +141,7 @@ The deterministic repository, transaction journal, FTS/graph indexes, authentica
 
 Local validation includes Python 3.10-3.12, wheel installation, container builds, authenticated Streamable HTTP calls through Piclaw's bundled MCP SDK, crash-boundary recovery tests and Rust FFI/SQLite-extension parity tests.
 
-Published SBOM/provenance, production image digests, live Docker/systemd parity and a clean-host production restore drill still require deployment evidence. They are tracked in [`PLAN.md`](PLAN.md) and are not presented as completed work.
+Published SBOM/provenance, production image digests, live Docker/systemd parity and a clean-host production restore drill still require deployment evidence. They are tracked in [`PLAN.md`](PLAN.md) and are not presented as completed work. Repository-owned local load testing is documented in [`docs/load-testing.md`](docs/load-testing.md); its thresholds are local checks, not universal service SLOs.
 
 ## Documentation
 
@@ -151,6 +151,8 @@ Published SBOM/provenance, production image digests, live Docker/systemd parity 
 * [`docs/threat-model.md`](docs/threat-model.md) records trust boundaries and abuse cases.
 * [`docs/semantic-search.md`](docs/semantic-search.md) covers the Rust GTE and SQLite vector tier.
 * [`docs/operations.md`](docs/operations.md) covers deployment, health, backup and recovery.
+* [`docs/load-testing.md`](docs/load-testing.md) covers the repository-owned load harness and local thresholds.
+* [`docs/evidence/`](docs/evidence/README.md) contains reviewed local operational, HTTP and semantic reports.
 * [`AGENTS.md`](AGENTS.md) defines contribution and validation rules.
 
 Memento is MIT licensed. Third-party runtime and model attribution is recorded in [`docs/attribution.md`](docs/attribution.md).
