@@ -4,6 +4,7 @@ import sqlite3
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Protocol
 
 from memento.control.checkpoints import CheckpointError, CheckpointHook
 from memento.control.operations import (
@@ -35,6 +36,15 @@ class TransactionConflictError(RuntimeError):
 
 
 MutationCallback = Callable[[Path], tuple[str, ...]]
+
+
+class DerivedUpdateCallback(Protocol):
+    def __call__(
+        self,
+        materialized_root: Path,
+        repo_revision: str,
+        changed_paths: tuple[str, ...],
+    ) -> None: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -71,10 +81,12 @@ class TransactionManager:
         paths: GitRepositoryPaths,
         *,
         checkpoints: CheckpointHook | None = None,
+        derived_update: DerivedUpdateCallback | None = None,
     ) -> None:
         self._connection = connection
         self._paths = paths
         self._checkpoints = checkpoints or CheckpointHook()
+        self._derived_update = derived_update
 
     def apply(self, request: TransactionRequest, mutate: MutationCallback) -> TransactionResult:
         operation = create_operation(self._connection, request.operation)
@@ -143,6 +155,9 @@ class TransactionManager:
             self._checkpoints.hit("publication_complete")
             materialized = materialize_current_checkout(self._paths, revision=commit.revision)
             self._checkpoints.hit("current_materialized")
+            if self._derived_update is not None:
+                self._derived_update(materialized.path, commit.revision, commit.changed_paths)
+            self._checkpoints.hit("derived_updated")
             operation = mark_operation_succeeded(
                 self._connection,
                 request.operation.op_id,
@@ -219,7 +234,9 @@ class TransactionManager:
                     )
                 )
             remove_operation_worktree(self._paths, operation.op_id)
-        materialize_current_checkout(self._paths, revision=head_revision)
+        materialized = materialize_current_checkout(self._paths, revision=head_revision)
+        if self._derived_update is not None:
+            self._derived_update(materialized.path, head_revision, tuple())
         return tuple(recovered)
 
 
