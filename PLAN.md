@@ -118,13 +118,13 @@ Start each tier behind an independent feature flag and only after Milestone 6.
 
 ## Pilot acceptance checklist
 
-- [ ] Git is the only canonical knowledge source.
-- [ ] Control state and idempotency survive restart.
-- [ ] Derived state rebuilds without knowledge loss.
-- [ ] Distinct clients authenticate as distinct principals.
-- [ ] Namespace policy prevents search and metadata leakage.
-- [ ] Concurrent stale writes conflict without lost updates.
-- [ ] Proposal review and apply are fully attributable.
-- [ ] Piclaw connects through Streamable HTTP without legacy fallback.
-- [ ] Python 3.10, 3.11 and 3.12 validation passes.
+- [x] Git is the only canonical knowledge source in implementation and tests.
+- [x] Control state and idempotency survive simulated restart.
+- [x] Derived state rebuilds without knowledge loss in local tests.
+- [ ] Distinct deployed clients authenticate as distinct principals.
+- [x] Namespace policy prevents search and metadata leakage in adversarial tests.
+- [x] Concurrent stale writes conflict without lost updates.
+- [x] Proposal review and apply are fully attributable in the control plane.
+- [ ] Piclaw connects through Streamable HTTP without legacy fallback in a deployed canary.
+- [x] Python 3.10, 3.11 and 3.12 validation passes in clean containers.
 - [ ] One primary deployment mode and the restore procedure are live-verified.
