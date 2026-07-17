@@ -1,14 +1,25 @@
-.venv/
+# Python
 __pycache__/
 *.py[cod]
+*.egg-info/
+.venv/
+venv/
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
 .coverage
+.coverage.*
 htmlcov/
 build/
 dist/
-*.egg-info/
+
+# Rust
 rust/target/
 rust/tests/fixtures/*.gtemodel
+
+# Local configuration and editors
 .env
+.envrc
 .DS_Store
+.vscode/
+.idea/
