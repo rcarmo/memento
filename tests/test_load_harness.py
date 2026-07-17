@@ -3,7 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 _LOAD_TEST_PATH = Path(__file__).parents[1] / "tools" / "load_test.py"
@@ -40,7 +40,7 @@ def test_percentile_and_latency_summary_are_stable() -> None:
 
 
 def test_compile_scenario_tracks_thresholds_and_failures() -> None:
-    started = ended = datetime.now(timezone.utc)
+    started = ended = datetime.now(UTC)
     scenario = compile_scenario(
         "unit",
         started,
@@ -87,8 +87,8 @@ def test_operational_scenarios_enforce_invariants() -> None:
 def test_build_report_serializes_expected_shape(tmp_path: Path) -> None:
     scenario = compile_scenario(
         "shape",
-        datetime.now(timezone.utc),
-        datetime.now(timezone.utc),
+        datetime.now(UTC),
+        datetime.now(UTC),
         records=[],
         thresholds=(build_threshold("errors", 0, "==", 0, "ok"),),
     )

@@ -633,7 +633,7 @@ These pieces are implemented and exercised by local tests:
 * authenticated MCP server with compact catalog resources and `memory_execute`
 * exact-cache, hot-memory, deep-answer, model-proposal and Dream code paths behind configuration
 * backup, restore, audit and rebuild commands
-* Python 3.10-3.12 support, wheel build and container build coverage
+* Python 3.12-3.14 support, wheel build and container build coverage
 
 ### Pending deployment evidence or live verification
 

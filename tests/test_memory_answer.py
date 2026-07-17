@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from collections.abc import Generator
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
 
@@ -691,9 +691,7 @@ def test_dream_scanner_detects_signals_dedupes_and_updates_watermark(
     assert oversized.status == "success"
 
     before_calls = len(service._deps.model_client.calls)  # type: ignore[union-attr]
-    result = service.run_dream(
-        mode="report_only", now=datetime(2026, 7, 17, 12, 55, tzinfo=timezone.utc)
-    )
+    result = service.run_dream(mode="report_only", now=datetime(2026, 7, 17, 12, 55, tzinfo=UTC))
     assert result["state"] == "succeeded"
     assert result["proposal_count"] == 0
     assert len(service._deps.model_client.calls) == before_calls  # type: ignore[union-attr]
@@ -704,9 +702,7 @@ def test_dream_scanner_detects_signals_dedupes_and_updates_watermark(
         service._deps.control_connection, key="last_dream_revision"
     ) == get_main_revision(repo_paths)
 
-    rerun = service.run_dream(
-        mode="report_only", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
-    )
+    rerun = service.run_dream(mode="report_only", now=datetime(2026, 7, 17, 13, 0, tzinfo=UTC))
     assert rerun["state"] == "succeeded"
     assert len(list_signals(service._deps.control_connection)) >= 4
 
@@ -726,17 +722,13 @@ def test_dream_recent_activity_is_bounded_by_last_successful_revision(
         body="# Piclaw\n\nChanged for Dream.\n",
     )
     assert revised.status == "success"
-    result = service.run_dream(
-        mode="report_only", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
-    )
+    result = service.run_dream(mode="report_only", now=datetime(2026, 7, 17, 13, 0, tzinfo=UTC))
     assert result["state"] == "succeeded"
     assert any(
         signal.signal_type == "recent_activity"
         for signal in list_signals(service._deps.control_connection)
     )
-    followup = service.run_dream(
-        mode="report_only", now=datetime(2026, 7, 17, 13, 5, tzinfo=timezone.utc)
-    )
+    followup = service.run_dream(mode="report_only", now=datetime(2026, 7, 17, 13, 5, tzinfo=UTC))
     assert followup["state"] == "succeeded"
     recent = [
         signal
@@ -811,9 +803,7 @@ def test_dream_no_signal_means_no_model_call(
     set_service_state(
         control_connection, key="last_dream_revision", value=get_main_revision(repo_paths)
     )
-    result = clean_service.run_dream(
-        mode="propose", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
-    )
+    result = clean_service.run_dream(mode="propose", now=datetime(2026, 7, 17, 13, 0, tzinfo=UTC))
     assert result["state"] == "succeeded"
     assert result["actionable_signal_count"] == 0
     assert not any(call.task == "dream_proposal_draft" for call in fake_model.calls)
@@ -825,9 +815,7 @@ def test_dream_propose_creates_proposal_without_git_mutation(
 ) -> None:
     before_revision = get_main_revision(repo_paths)
     before_text = (repo_paths.current_dir / "instances" / "smith.md").read_text(encoding="utf-8")
-    result = service.run_dream(
-        mode="propose", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
-    )
+    result = service.run_dream(mode="propose", now=datetime(2026, 7, 17, 13, 0, tzinfo=UTC))
     assert result["state"] == "succeeded"
     assert result["proposal_count"] == 1
     proposals = list_proposals(service._deps.control_connection)
@@ -843,7 +831,7 @@ def test_dream_duplicate_window_and_no_overlap(
     service: MemoryService,
     repo_paths: GitRepositoryPaths,
 ) -> None:
-    now = datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc)
+    now = datetime(2026, 7, 17, 13, 0, tzinfo=UTC)
     first = service.run_dream(mode="report_only", now=now)
     assert first["state"] == "succeeded"
     duplicate = service.run_dream(mode="report_only", now=now)
@@ -854,9 +842,7 @@ def test_dream_duplicate_window_and_no_overlap(
         window_key="manual-running",
         base_revision=get_main_revision(repo_paths),
     )
-    overlap = service.run_dream(
-        mode="report_only", now=datetime(2026, 7, 17, 13, 10, tzinfo=timezone.utc)
-    )
+    overlap = service.run_dream(mode="report_only", now=datetime(2026, 7, 17, 13, 10, tzinfo=UTC))
     assert overlap["state"] == "skipped_overlap"
 
 
@@ -879,7 +865,7 @@ def test_dream_budgets_cap_oversized_candidates_and_daily_proposals(
         )
         assert created.status == "success"
         revision = get_main_revision(repo_paths)
-    service.run_dream(mode="report_only", now=datetime(2026, 7, 17, 13, 0, tzinfo=timezone.utc))
+    service.run_dream(mode="report_only", now=datetime(2026, 7, 17, 13, 0, tzinfo=UTC))
     oversized = [
         signal
         for signal in list_signals(service._deps.control_connection)
@@ -917,7 +903,7 @@ def test_dream_budgets_cap_oversized_candidates_and_daily_proposals(
         ),
     )
     limited = limited_service.run_dream(
-        mode="propose", now=datetime(2026, 7, 17, 14, 0, tzinfo=timezone.utc)
+        mode="propose", now=datetime(2026, 7, 17, 14, 0, tzinfo=UTC)
     )
     assert limited["proposal_count"] == 0
 
@@ -1301,8 +1287,8 @@ def write_concept(
             source_refs=(),
             supersedes=(),
             status=ConceptStatus.ACTIVE,
-            created_at=datetime(2026, 7, 17, 12, 0, tzinfo=timezone.utc),
-            updated_at=datetime(2026, 7, 17, 12, 0, tzinfo=timezone.utc),
+            created_at=datetime(2026, 7, 17, 12, 0, tzinfo=UTC),
+            updated_at=datetime(2026, 7, 17, 12, 0, tzinfo=UTC),
             updated_by="rui/tests",
         ),
         body=body,

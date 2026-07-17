@@ -13,7 +13,7 @@ The release path proves the project can be built, checked and installed locally 
 
 ## CI
 
-GitHub Actions validates Python 3.10--3.12 through the Make targets, builds a wheel, installs it, and performs a container build check.
+GitHub Actions validates Python 3.12--3.14 through the Make targets, builds a wheel, installs it, and performs a container build check.
 
 ## Pending publication evidence
 

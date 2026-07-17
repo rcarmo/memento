@@ -3,7 +3,7 @@
 **Status:** Proposed  
 **Architecture:** [docs/implementation.md](docs/implementation.md)  
 **Initial scope:** Deterministic shared-memory MCP service  
-**Python:** 3.10–3.12
+**Python:** 3.12-3.14
 
 This file is the current delivery and acceptance record. Architecture, rationale and longer design notes stay in [docs/implementation.md](docs/implementation.md).
 
@@ -143,6 +143,6 @@ Start each tier behind an independent feature flag and only after Milestone 6.
 - [x] Concurrent stale writes conflict without lost updates.
 - [x] Proposal review and apply are fully attributable in the control plane.
 - [x] Piclaw's bundled MCP SDK connects through Streamable HTTP without legacy fallback in a local authenticated smoke test.
-- [x] Python 3.10, 3.11 and 3.12 validation passes in clean containers.
+- [x] Python 3.12, 3.13 and 3.14 validation passes in clean containers.
 - [x] Repository-owned load reports cover local scenario counts, percentiles, invariants and bounded CI-friendly checks.
 - [ ] One primary deployment mode and the restore procedure are live-verified.

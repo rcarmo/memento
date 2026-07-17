@@ -6,7 +6,7 @@ import json
 import shutil
 import sqlite3
 from contextlib import redirect_stdout
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -241,8 +241,8 @@ def write_concept(path: Path, *, title: str, body: str) -> None:
             source_refs=(),
             supersedes=(),
             status=ConceptStatus.ACTIVE,
-            created_at=datetime(2026, 7, 17, tzinfo=timezone.utc),
-            updated_at=datetime(2026, 7, 17, tzinfo=timezone.utc),
+            created_at=datetime(2026, 7, 17, tzinfo=UTC),
+            updated_at=datetime(2026, 7, 17, tzinfo=UTC),
             updated_by="tests",
         ),
         body=body,

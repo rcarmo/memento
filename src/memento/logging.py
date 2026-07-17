@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, TextIO
 
 _DEFAULT_REDACT_KEYS = frozenset(
@@ -27,7 +27,7 @@ class JsonLogger:
 
     def log(self, level: str, event: str, **fields: Any) -> None:
         payload = {
-            "ts": datetime.now(tz=timezone.utc).replace(microsecond=0).isoformat(),
+            "ts": datetime.now(tz=UTC).replace(microsecond=0).isoformat(),
             "service": self.service,
             "level": level.lower(),
             "event": event,

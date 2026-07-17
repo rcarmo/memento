@@ -67,7 +67,7 @@ Type all new and changed Python code. Prefer typed functions, frozen internal da
 * Add negative coverage for authorization, path containment, malformed content, replay, stale revisions, idempotency conflicts, partial failure and recovery.
 * Keep unit tests offline and deterministic.
 * Mark integration, live, crash and deployment tests explicitly.
-* Cover Python 3.10–3.12 and Piclaw/uMCP Streamable HTTP in compatibility work.
+* Cover Python 3.12–3.14 and Piclaw/uMCP Streamable HTTP in compatibility work.
 
 ## Git workflow
 
