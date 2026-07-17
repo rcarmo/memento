@@ -64,6 +64,20 @@ def test_config_loading_and_composition_root(seeded_root: tuple[Path, Path]) -> 
         runtime.close()
 
 
+def test_systemd_units_use_installed_console_script() -> None:
+    root = Path(__file__).parents[1]
+    units = (
+        root / "deploy/systemd/memento.service",
+        root / "deploy/systemd/memento-audit.service",
+        root / "deploy/systemd/memento-backup.service",
+    )
+    for unit in units:
+        content = unit.read_text(encoding="utf-8")
+        assert "ExecStart=/opt/memento/.venv/bin/memento-serve " in content
+        assert "NoNewPrivileges=true" in content
+        assert "ProtectSystem=strict" in content
+
+
 def test_cli_status_and_rebuild_index(seeded_root: tuple[Path, Path]) -> None:
     config_path, seed = seeded_root
     build_runtime(config_path, bootstrap_seed=seed).close()
