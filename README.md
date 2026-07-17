@@ -2,7 +2,7 @@
 
 Memento will provide several Piclaw instances with shared, durable knowledge over the Model Context Protocol (MCP). Git-backed Markdown will be authoritative for knowledge, SQLite will track operations, and rebuildable FTS5 and graph indexes will support retrieval.
 
-The project is at **Milestone 6: production operations (implementation complete, deployment examples not live verified)**, with deferred intelligent tiers 1–3 now implemented behind independent feature flags. Deterministic repository primitives, Git publication, derived indexing, read/write service flows and local production-operations tooling are implemented.
+The project is at **Milestone 6: production operations (implementation complete, deployment examples not live verified)**, with deferred intelligent tiers 1–4 now implemented behind independent feature flags. Deterministic repository primitives, Git publication, derived indexing, read/write service flows and local production-operations tooling are implemented.
 
 ## Core rules
 
@@ -40,6 +40,7 @@ See:
 - Docker, Compose, systemd and reverse-proxy examples
 - CI workflow for Python 3.10-3.12, wheel build/install and container build validation
 - feature-gated deep read-only answers, exact answer cache and hot working memory with bounded trace persistence
+- feature-gated model-assisted proposal drafting through `memory_propose_freeform` and `memory_propose_update`, with deterministic search context, strict citations, diff validation and secret blocking
 - sample bundle and contract/threat/operations documentation
 
 ## Development
@@ -58,6 +59,7 @@ make diff-check
 ## Operations
 
 - example config: [`examples/config.v1.json`](examples/config.v1.json)
+- MCP/data contracts: [`docs/contracts.md`](docs/contracts.md)
 - operations guide: [`docs/operations.md`](docs/operations.md)
 - migration guide: [`docs/migration.md`](docs/migration.md)
 - rollback guide: [`docs/rollback.md`](docs/rollback.md)

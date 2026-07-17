@@ -109,12 +109,37 @@ class HotWorkingMemoryConfig(BaseModel):
     max_excerpt_chars: int = Field(default=4_000, ge=128)
 
 
+class ModelProposalLimitsConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    max_search_results: int = Field(default=5, ge=1, le=10)
+    max_consulted_concepts: int = Field(default=6, ge=1, le=10)
+    max_context_chars: int = Field(default=12_000, ge=512)
+    max_output_chars: int = Field(default=8_000, ge=256)
+    max_diff_chars: int = Field(default=2_000_000, ge=1)
+    max_changes: int = Field(default=20, ge=1, le=100)
+    max_body_chars: int = Field(default=32_000, ge=1)
+    max_rationale_chars: int = Field(default=4_000, ge=1)
+    max_secret_entropy_chars: int = Field(default=32, ge=8)
+
+
+class ModelProposalsConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    enabled: bool = False
+    model_policy_revision: str = Field(default="disabled", min_length=1)
+    prompt_version: str = Field(default="v1", min_length=1)
+    tool_version: str = Field(default="v1", min_length=1)
+    limits: ModelProposalLimitsConfig = Field(default_factory=ModelProposalLimitsConfig)
+
+
 class IntelligentTiersConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     deep_answers: DeepAnswersConfig = Field(default_factory=DeepAnswersConfig)
     exact_answer_cache: ExactAnswerCacheConfig = Field(default_factory=ExactAnswerCacheConfig)
     hot_working_memory: HotWorkingMemoryConfig = Field(default_factory=HotWorkingMemoryConfig)
+    model_proposals: ModelProposalsConfig = Field(default_factory=ModelProposalsConfig)
 
 
 class ServiceConfig(BaseModel):

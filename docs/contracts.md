@@ -70,6 +70,41 @@ Stable error classes for the deterministic core:
 - `queue_full`
 - `temporarily_read_only`
 
+## `memory_propose_freeform` and `memory_propose_update`
+
+`memory_propose_freeform(content, suggested_path?, intent?)` and `memory_propose_update(instruction, target_hint?)` are feature-gated model-assisted proposal tools.
+
+Contract rules:
+
+- when disabled, they fail deterministically with `validation_error`
+- they may search, read and inspect graph state internally, but may not review, apply or write
+- they must consult deterministic repository context before drafting a proposal
+- model output must be strict JSON containing `intent`, `rationale`, `consulted_concepts`, `contradictions`, `reciprocal_links` and `changes`
+- every consulted concept must be cited with exact `id`, `path`, `revision` and `title`
+- only `create` and `patch` proposal changes are accepted from the model; rename is rejected
+- proposal paths remain subject to normal authorization, schema, diff-size and secret-scanner validation
+- successful calls store an ordinary submitted proposal; Git state and repository revision do not change
+
+Successful proposal payloads include the stored deterministic `diff` preview plus:
+
+```json
+{
+  "consulted_concepts": [
+    {"id": "...", "path": "/projects/piclaw.md", "revision": "<git-sha>", "title": "Piclaw"}
+  ],
+  "contradictions": [
+    {"path": "/projects/piclaw.md", "summary": "Existing summary may be stale."}
+  ],
+  "reciprocal_links": [
+    {
+      "source_path": "/projects/piclaw.md",
+      "target_path": "/instances/smith.md",
+      "justification": "Cross-reference related concepts."
+    }
+  ]
+}
+```
+
 ## `memory_answer`
 
 `memory_answer(question, answer_mode?)` is a separate read-only API layered over deterministic repository traversal.
@@ -97,6 +132,7 @@ Contract rules:
 - deep answers may only cite concepts actually read during that traversal at the exact reported revision
 - invalid or missing citations degrade to `UNKNOWN` with unresolved validation markers
 - traversal traces are persisted outside Git with bounded retention
+- internal prompts wrap repository content in explicit untrusted-content delimiters
 
 ## Pagination
 

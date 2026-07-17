@@ -117,6 +117,30 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             rationale=rationale,
         ).model_dump(mode="json")
 
+    async def tool_memory_propose_freeform(
+        self,
+        content: str,
+        suggested_path: str | None = None,
+        intent: str | None = None,
+    ) -> dict[str, Any]:
+        return self._service.memory_propose_freeform(
+            self._context(),
+            content=content,
+            suggested_path=suggested_path,
+            intent=intent,
+        ).model_dump(mode="json")
+
+    async def tool_memory_propose_update(
+        self,
+        instruction: str,
+        target_hint: str | None = None,
+    ) -> dict[str, Any]:
+        return self._service.memory_propose_update(
+            self._context(),
+            instruction=instruction,
+            target_hint=target_hint,
+        ).model_dump(mode="json")
+
     async def tool_memory_proposal_get(self, proposal_id: str) -> dict[str, Any]:
         return self._service.memory_proposal_get(
             self._context(), proposal_id=proposal_id

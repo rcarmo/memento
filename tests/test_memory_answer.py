@@ -17,6 +17,7 @@ from memento.config import (
     ExactAnswerCacheConfig,
     HotWorkingMemoryConfig,
     IntelligentTiersConfig,
+    ModelProposalsConfig,
     NamespacePolicy,
     Principal,
     RepositoryConfig,
@@ -40,7 +41,13 @@ class FakeModelClient:
             raise RuntimeError("cancelled before model call")
         self.calls.append(request)
         question = _extract_question(request.prompt)
-        citations = _extract_citations(request.prompt)
+        prompt_citations = _extract_citations(request.prompt)
+        citations = [
+            {key: value for key, value in item.items() if key in {"id", "path", "revision"}}
+            for item in prompt_citations
+        ]
+        if request.task == "memory_proposal_draft":
+            return self._proposal_response(request.prompt, prompt_citations)
         if request.task == "memory_answer_hot":
             if question == "What changed recently?":
                 return self._response(
@@ -87,6 +94,81 @@ class FakeModelClient:
             confidence="low",
             unresolved=["unsupported_question"],
         )
+
+    def _proposal_response(self, prompt: str, citations: list[dict[str, str]]) -> ModelResponse:
+        consulted = [
+            {
+                "id": item["id"],
+                "path": item["path"],
+                "revision": item["revision"],
+                "title": item.get("title", item["path"].split("/")[-1]),
+            }
+            for item in citations
+        ]
+        if "MALFORMED_OUTPUT" in prompt:
+            return ModelResponse(model_name="fake-model-v1", output_text="{", usage={})
+        if "FORBIDDEN_NAMESPACE" in prompt:
+            payload = {
+                "intent": "forbidden",
+                "rationale": "bad namespace",
+                "consulted_concepts": consulted,
+                "contradictions": [],
+                "reciprocal_links": [],
+                "changes": [
+                    {
+                        "kind": "create",
+                        "path": "/secret/forbidden.md",
+                        "concept_type": "project",
+                        "title": "Forbidden",
+                        "body": "# Forbidden\n",
+                    }
+                ],
+            }
+            return ModelResponse(
+                model_name="fake-model-v1", output_text=json.dumps(payload), usage={}
+            )
+        if "SECRET_BLOCK" in prompt:
+            payload = {
+                "intent": "secret",
+                "rationale": "bad secret",
+                "consulted_concepts": consulted,
+                "contradictions": [],
+                "reciprocal_links": [],
+                "changes": [
+                    {
+                        "kind": "patch",
+                        "path": "/projects/piclaw.md",
+                        "body": "# Piclaw\n\napi_key=AKIA1234567890ABCDEF\n",
+                    }
+                ],
+            }
+            return ModelResponse(
+                model_name="fake-model-v1", output_text=json.dumps(payload), usage={}
+            )
+        target_path = "/projects/piclaw.md"
+        if "TARGET_HINT: Smith" in prompt or "SUGGESTED_PATH: /instances/smith.md" in prompt:
+            target_path = "/instances/smith.md"
+        payload = {
+            "intent": "model drafted proposal",
+            "rationale": "Prefer enriching the owning concept and add reciprocal links if justified.",
+            "consulted_concepts": consulted,
+            "contradictions": [{"path": target_path, "summary": "Existing summary may be stale."}],
+            "reciprocal_links": [
+                {
+                    "source_path": target_path,
+                    "target_path": "/projects/piclaw.md",
+                    "justification": "Cross-reference related concepts.",
+                }
+            ],
+            "changes": [
+                {
+                    "kind": "patch",
+                    "path": target_path,
+                    "body": f"# {target_path.split('/')[-1].removesuffix('.md').title()}\n\nUpdated by model proposal.\n",
+                }
+            ],
+        }
+        return ModelResponse(model_name="fake-model-v1", output_text=json.dumps(payload), usage={})
 
     def _response(
         self,
@@ -198,6 +280,7 @@ def answer_config(tmp_path: Path) -> ServiceConfig:
                 max_answers=10,
                 max_excerpt_chars=1_500,
             ),
+            model_proposals=ModelProposalsConfig(enabled=True),
         ),
     )
 
@@ -382,6 +465,120 @@ def test_memory_answer_honors_cancellation_before_model_call(
     assert "cancelled" in result.message
 
 
+def test_model_proposals_return_disabled_when_flag_is_off(
+    tmp_path: Path,
+    control_connection: sqlite3.Connection,
+    repo_paths: GitRepositoryPaths,
+    fake_model: FakeModelClient,
+) -> None:
+    config = ServiceConfig(
+        schema_version=1,
+        repository=RepositoryConfig(root_path=str(tmp_path / "state-model-proposals-off")),
+        authorization=AuthorizationConfig(
+            principals={
+                "smith": NamespacePolicy(
+                    roles=("reader", "proposer", "curator"),
+                    read_prefixes=("/instances/", "/projects/"),
+                    write_prefixes=("/instances/", "/projects/"),
+                )
+            }
+        ),
+    )
+    derived_index = DerivedIndex(tmp_path / "derived-model-proposals-off.sqlite")
+    derived_index.rebuild(repo_paths.current_dir, repo_revision=get_main_revision(repo_paths))
+    service = MemoryService(
+        ServiceDependencies(
+            config=config,
+            repo_paths=repo_paths,
+            control_connection=control_connection,
+            derived_index=derived_index,
+            transaction_manager=TransactionManager(
+                control_connection, repo_paths, derived_update=lambda *_: None
+            ),
+            model_client=fake_model,
+        )
+    )
+    context = ServiceContext(Principal(name="smith", roles=("reader", "proposer", "curator")))
+    result = service.memory_propose_freeform(context, content="New fact")
+    assert result.status == "error"
+    assert result.error_class == "validation_error"
+    assert "disabled" in result.message
+
+
+def test_model_proposals_require_search_context_and_store_consulted_citations(
+    service: MemoryService,
+    fake_model: FakeModelClient,
+    smith: ServiceContext,
+) -> None:
+    result = service.memory_propose_update(
+        smith,
+        instruction="Refresh the Piclaw summary.",
+        target_hint="Piclaw",
+    )
+    assert result.status == "success"
+    proposal = success_data(result)["proposal"]
+    assert proposal["changes"][0]["path"] == "/projects/piclaw.md"
+    assert proposal["consulted_concepts"]
+    assert any(call.task == "memory_proposal_draft" for call in fake_model.calls)
+    prompt = next(call.prompt for call in fake_model.calls if call.task == "memory_proposal_draft")
+    assert "UNTRUSTED_CONCEPT_BEGIN" in prompt
+    assert "PATH: /projects/piclaw.md" in prompt
+
+
+def test_model_proposals_reject_malformed_output_forbidden_namespace_and_secrets(
+    service: MemoryService,
+    smith: ServiceContext,
+) -> None:
+    malformed = service.memory_propose_freeform(smith, content="MALFORMED_OUTPUT")
+    assert malformed.status == "error"
+    assert malformed.error_class == "validation_error"
+
+    forbidden = service.memory_propose_freeform(smith, content="FORBIDDEN_NAMESPACE")
+    assert forbidden.status == "error"
+    assert forbidden.error_class == "forbidden"
+
+    secret = service.memory_propose_freeform(smith, content="SECRET_BLOCK")
+    assert secret.status == "error"
+    assert secret.error_class == "validation_error"
+    assert "secret scanner" in secret.message
+
+
+def test_model_proposals_only_store_submitted_proposals_without_git_mutation(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+) -> None:
+    before_revision = get_main_revision(repo_paths)
+    before_text = (repo_paths.current_dir / "projects" / "piclaw.md").read_text(encoding="utf-8")
+    result = service.memory_propose_freeform(
+        smith,
+        content="Please update the Piclaw summary with a fresher description.",
+        suggested_path="/projects/piclaw.md",
+    )
+    assert result.status == "success"
+    proposal = success_data(result)["proposal"]
+    assert proposal["status"] == "submitted"
+    assert get_main_revision(repo_paths) == before_revision
+    after_text = (repo_paths.current_dir / "projects" / "piclaw.md").read_text(encoding="utf-8")
+    assert after_text == before_text
+    assert "Updated by model proposal" in proposal["diff"]
+
+
+def test_model_proposals_resolve_update_target_from_hint(
+    service: MemoryService,
+    smith: ServiceContext,
+) -> None:
+    result = service.memory_propose_update(
+        smith,
+        instruction="Update Smith details.",
+        target_hint="Smith",
+    )
+    assert result.status == "success"
+    proposal = success_data(result)["proposal"]
+    assert proposal["changes"][0]["path"] == "/instances/smith.md"
+    assert any(item["path"] == "/instances/smith.md" for item in proposal["consulted_concepts"])
+
+
 def write_concept(
     path: Path,
     *,
@@ -433,6 +630,8 @@ def _extract_citations(prompt: str) -> list[dict[str, str]]:
             current["path"] = line.removeprefix("PATH: ").strip()
         elif line.startswith("REVISION: ") and current:
             current["revision"] = line.removeprefix("REVISION: ").strip()
+        elif line.startswith("TITLE: ") and current:
+            current["title"] = line.removeprefix("TITLE: ").strip()
     if current:
         citations.append(current)
     return citations

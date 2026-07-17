@@ -49,6 +49,23 @@
       "max_changed_concepts": 10,
       "max_answers": 10,
       "max_excerpt_chars": 4000
+    },
+    "model_proposals": {
+      "enabled": false,
+      "model_policy_revision": "disabled",
+      "prompt_version": "v1",
+      "tool_version": "v1",
+      "limits": {
+        "max_search_results": 5,
+        "max_consulted_concepts": 6,
+        "max_context_chars": 12000,
+        "max_output_chars": 8000,
+        "max_diff_chars": 2000000,
+        "max_changes": 20,
+        "max_body_chars": 32000,
+        "max_rationale_chars": 4000,
+        "max_secret_entropy_chars": 32
+      }
     }
   }
 }
