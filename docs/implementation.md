@@ -386,6 +386,14 @@ This is the part Memento cannot get wrong.
 * Docker replica count is `1`
 * systemd uses one unit instance
 
+### Why each mutation uses a worktree
+
+Memento deliberately pays the cost of a detached worktree for commit-capable operations. Create, patch and rename logic expects a complete filesystem tree, and rename processing scans Markdown files to rewrite inbound links. The isolated tree keeps those intermediate changes away from readers and gives startup recovery a durable commit to inspect after a crash.
+
+Local measurements put worktree add+remove p50 at 6.73 ms for 100 concepts, 23.25 ms for 1,000 and 180.40 ms for 10,000. Since writes are serialized and 10,000 concepts is the initial ceiling, that cost is preferable to replacing the mutation layer with Git plumbing or exposing partial writes through `current/`.
+
+The full decision and alternatives are recorded in [ADR 0001](decisions/0001-keep-operation-worktrees.md). Reader-visible refresh of `current/` is a separate atomicity concern and remains a follow-up.
+
 ### Per-operation transaction flow
 
 For every accepted commit-capable mutation:

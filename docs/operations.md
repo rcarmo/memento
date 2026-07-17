@@ -36,6 +36,12 @@ Memento runs local operator workflows today. Docker, Compose, systemd and revers
 
 `serve` installs SIGINT and SIGTERM handlers, drains requests, closes the server when a compatible `shutdown`, `aclose` or `close` method exists, and releases both the SQLite control connection and the writer lease on every exit path. That recovery sequencing matters more than a fast stop.
 
+## Worktree housekeeping
+
+Detached worktrees are intentional isolation and recovery artefacts, not disposable copies of `current/`. Startup recovery classifies interrupted operations before removing their worktrees. Do not delete `worktrees/` while the service is running, and do not add cleanup scripts that bypass the operation journal.
+
+The measured local add+remove cost remains below roughly 211 ms at 10,000 small concepts. See [ADR 0001](decisions/0001-keep-operation-worktrees.md) for the decision and alternatives.
+
 ## Deployment references
 
 These artefacts exist and are useful for local packaging checks, but they are still pending production verification:
