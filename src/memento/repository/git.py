@@ -161,17 +161,21 @@ def materialize_current_checkout(
     if paths.current_dir.exists():
         shutil.rmtree(paths.current_dir)
     paths.current_dir.mkdir(parents=True, exist_ok=True)
-    _git(
-        "--git-dir",
-        paths.bare_dir,
-        "--work-tree",
-        paths.current_dir,
-        "checkout",
-        "--force",
-        target_revision,
-        "--",
-        ".",
+    tracked = _git_stdout(
+        "--git-dir", paths.bare_dir, "ls-tree", "-r", "--name-only", target_revision
     )
+    if tracked.strip():
+        _git(
+            "--git-dir",
+            paths.bare_dir,
+            "--work-tree",
+            paths.current_dir,
+            "checkout",
+            "--force",
+            target_revision,
+            "--",
+            ".",
+        )
     return MaterializedCheckout(revision=target_revision, path=paths.current_dir)
 
 

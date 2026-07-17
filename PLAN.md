@@ -24,7 +24,7 @@
 - [x] Add threat model and trust-boundary diagram.
 - [x] Add sample knowledge bundle.
 - [x] Add MIT licence.
-- [ ] Add Docker, Compose and systemd skeletons without claiming production readiness.
+- [x] Add Docker, Compose and systemd skeletons without claiming production readiness.
 
 **Exit:** Schemas, contracts, authority boundaries and examples are reviewed before repository implementation begins.
 
@@ -125,6 +125,6 @@ Start each tier behind an independent feature flag and only after Milestone 6.
 - [x] Namespace policy prevents search and metadata leakage in adversarial tests.
 - [x] Concurrent stale writes conflict without lost updates.
 - [x] Proposal review and apply are fully attributable in the control plane.
-- [ ] Piclaw connects through Streamable HTTP without legacy fallback in a deployed canary.
+- [x] Piclaw's bundled MCP SDK connects through Streamable HTTP without legacy fallback in a local authenticated smoke test.
 - [x] Python 3.10, 3.11 and 3.12 validation passes in clean containers.
 - [ ] One primary deployment mode and the restore procedure are live-verified.

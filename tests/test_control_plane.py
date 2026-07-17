@@ -49,6 +49,25 @@ def repo_paths(tmp_path: Path) -> GitRepositoryPaths:
     return paths
 
 
+def test_empty_repository_bootstrap_materializes_and_recovers(tmp_path: Path) -> None:
+    paths = GitRepositoryPaths(
+        bare_dir=tmp_path / "empty.git",
+        current_dir=tmp_path / "current-empty",
+        worktrees_dir=tmp_path / "worktrees-empty",
+    )
+    result = bootstrap_repository(paths)
+    assert result.changed_paths == ()
+    assert paths.current_dir.is_dir()
+    connection = connect_control_db(tmp_path / "empty-control.sqlite")
+    try:
+        migrate_control_db(connection)
+        recovered = TransactionManager(connection, paths).recover_startup()
+        assert recovered == ()
+        assert paths.current_dir.is_dir()
+    finally:
+        connection.close()
+
+
 def test_control_db_migrations_enable_wal_and_v1_tables(
     control_connection: sqlite3.Connection,
 ) -> None:
