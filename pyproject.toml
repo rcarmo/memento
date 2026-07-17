@@ -17,12 +17,18 @@ dependencies = [
     "ruamel.yaml>=0.18,<0.19",
 ]
 
+[project.scripts]
+memento-serve = "memento.cli:main"
+
 [project.optional-dependencies]
 dev = [
     "mypy>=1.11",
     "pytest>=8",
     "pytest-cov>=5",
     "ruff>=0.9",
+]
+mcp = [
+    "umcp==0.2.0",
 ]
 
 [tool.setuptools.packages.find]
