@@ -22,6 +22,7 @@ from memento.repository.git import (
     GitRepositoryPaths,
     commit_exact_paths,
     create_operation_worktree,
+    diff_main_paths,
     exact_staged_paths,
     get_main_revision,
     materialize_current_checkout,
@@ -200,7 +201,15 @@ class TransactionManager:
                     self._connection,
                     operation.op_id,
                     result_revision=head_revision,
-                    result={"changed_paths": _worktree_tracked_paths(worktree_path)},
+                    result={
+                        "changed_paths": list(
+                            _recover_changed_paths(
+                                self._paths,
+                                base_revision=operation.base_revision,
+                                head_revision=head_revision,
+                            )
+                        )
+                    },
                 )
                 recovered.append(
                     RecoveryRecord(
@@ -240,10 +249,9 @@ class TransactionManager:
         return tuple(recovered)
 
 
-def _worktree_tracked_paths(worktree_path: Path) -> list[str]:
-    if not worktree_path.exists():
-        return []
-    tracked: list[str] = []
-    for path in sorted(worktree_path.rglob("*.md")):
-        tracked.append("/" + path.relative_to(worktree_path).as_posix())
-    return tracked
+def _recover_changed_paths(
+    paths: GitRepositoryPaths, *, base_revision: str | None, head_revision: str
+) -> tuple[str, ...]:
+    if base_revision is None:
+        return ()
+    return diff_main_paths(paths, base_revision=base_revision, end_revision=head_revision)

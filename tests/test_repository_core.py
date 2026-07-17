@@ -56,12 +56,13 @@ Smith links to [Piclaw](/projects/piclaw.md#overview).
 def test_strict_config_and_authorization() -> None:
     config = ServiceConfig.model_validate(
         {
-            "schema_version": 1,
+            "schema_version": 2,
             "repository": {"root_path": "/tmp/repo", "bundle_root": "/"},
             "authorization": {
                 "principals": {
                     "smith": {
                         "roles": ["reader", "proposer"],
+                        "token_env": "MEMENTO_TOKEN_SMITH",
                         "read_prefixes": ["/instances/", "/shared/"],
                         "write_prefixes": ["/instances/"],
                     }
@@ -81,7 +82,7 @@ def test_strict_config_and_authorization() -> None:
     with pytest.raises(ValidationError):
         ServiceConfig.model_validate(
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "repository": {"root_path": "/tmp/repo", "bundle_root": "/"},
                 "authorization": {"principals": {}},
                 "extra": True,
@@ -182,6 +183,20 @@ def test_deterministic_index_and_log_generation(tmp_path: Path) -> None:
     assert "[Smith](/instances/smith.md)" in log_output
 
 
+def test_generated_indexes_and_log_escape_markdown_titles_and_authors(tmp_path: Path) -> None:
+    bundle_root = tmp_path / "bundle-escaped"
+    (bundle_root / "projects").mkdir(parents=True)
+    escaped = VALID_CONCEPT.replace("title: Smith", "title: Link [trap](x)").replace(
+        "updated_by: rui/tablet", "updated_by: agent_*`demo`"
+    )
+    (bundle_root / "projects" / "escaped.md").write_text(escaped, encoding="utf-8")
+    bundle = scan_bundle(bundle_root)
+    indexes = generate_directory_indexes(bundle)
+    log_output = generate_root_log(bundle)
+    assert "[Link \\[trap\\]\(x\)](/projects/escaped.md)" in indexes["/projects/"]
+    assert "agent\\_\\*\\`demo\\`" in log_output
+
+
 def test_repository_audit_reports_duplicates_and_broken_links(tmp_path: Path) -> None:
     bundle_root = tmp_path / "bundle"
     (bundle_root / "instances").mkdir(parents=True)
@@ -227,5 +242,29 @@ def test_concept_schema_validation_model() -> None:
                 "created_at": "2026-07-16T19:00:00Z",
                 "updated_at": "2026-07-16T19:20:00Z",
                 "updated_by": "rui/tablet",
+            }
+        )
+    with pytest.raises(ValidationError):
+        ConceptFrontmatter.model_validate(
+            {
+                "schema_version": 1,
+                "id": "ok",
+                "type": "instance",
+                "title": "Bad\nTitle",
+                "created_at": "2026-07-16T19:00:00Z",
+                "updated_at": "2026-07-16T19:20:00Z",
+                "updated_by": "rui/tablet",
+            }
+        )
+    with pytest.raises(ValidationError):
+        ConceptFrontmatter.model_validate(
+            {
+                "schema_version": 1,
+                "id": "ok",
+                "type": "instance",
+                "title": "Smith",
+                "created_at": "2026-07-16T19:00:00Z",
+                "updated_at": "2026-07-16T19:20:00Z",
+                "updated_by": "rui\noperator",
             }
         )

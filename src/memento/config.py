@@ -26,6 +26,7 @@ class NamespacePolicy(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     roles: tuple[str, ...] = Field(min_length=1)
+    token_env: str = Field(min_length=1)
     read_prefixes: tuple[str, ...] = Field(min_length=1)
     write_prefixes: tuple[str, ...] = Field(default_factory=tuple)
 
@@ -33,6 +34,14 @@ class NamespacePolicy(BaseModel):
     @classmethod
     def normalize_unique_items(cls, value: tuple[str, ...]) -> tuple[str, ...]:
         return tuple(sorted(dict.fromkeys(value)))
+
+    @field_validator("token_env")
+    @classmethod
+    def validate_token_env(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("token_env must not be empty")
+        return normalized
 
     @field_validator("read_prefixes", "write_prefixes")
     @classmethod
@@ -269,7 +278,7 @@ class IntelligentTiersConfig(BaseModel):
 class ServiceConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    schema_version: Literal[1]
+    schema_version: Literal[2]
     repository: RepositoryConfig
     authorization: AuthorizationConfig
     limits: LimitsConfig = Field(default_factory=LimitsConfig)

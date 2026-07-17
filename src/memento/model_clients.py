@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import socket
 import threading
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -222,10 +223,34 @@ class RoutedFallbackModelClient(ModelClient):
                 f"slot {slot_name} disallows data classification {request.data_classification}"
             )
         semaphore = self._semaphores[slot_name]
-        with semaphore:
+        with self._acquire_slot(semaphore, request=request, slot_name=slot_name):
             return self._complete_with_slot(
                 request, slot_name=slot_name, slot=slot, chain=configured
             )
+
+    def _acquire_slot(
+        self, semaphore: threading.BoundedSemaphore, *, request: ModelRequest, slot_name: str
+    ) -> Any:
+        deadline = time.monotonic() + request.timeout_seconds
+
+        class _SemaphoreLease:
+            def __enter__(inner_self) -> None:
+                while True:
+                    if request.cancelled is not None and request.cancelled():
+                        raise ModelCancelledError(
+                            f"cancelled while waiting for model slot {slot_name}"
+                        )
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise ModelTimeoutError(f"timed out waiting for model slot {slot_name}")
+                    if semaphore.acquire(timeout=min(0.05, remaining)):
+                        return None
+
+            def __exit__(inner_self, exc_type: object, exc: object, tb: object) -> None:
+                semaphore.release()
+                return None
+
+        return _SemaphoreLease()
 
     def _configured_chain(self, slot: ModelSlotConfig) -> list[_ConfiguredEndpoint]:
         endpoints = []

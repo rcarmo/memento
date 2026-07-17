@@ -34,22 +34,25 @@ def success_data(result: object) -> dict[str, Any]:
 @pytest.fixture()
 def service_config(tmp_path: Path) -> ServiceConfig:
     return ServiceConfig(
-        schema_version=1,
+        schema_version=2,
         repository=RepositoryConfig(root_path=str(tmp_path / "state")),
         authorization=AuthorizationConfig(
             principals={
                 "smith": NamespacePolicy(
                     roles=("reader", "proposer", "curator"),
+                    token_env="MEMENTO_TOKEN_SMITH",
                     read_prefixes=("/instances/", "/projects/"),
                     write_prefixes=("/instances/", "/projects/"),
                 ),
                 "flint": NamespacePolicy(
                     roles=("reader", "proposer"),
+                    token_env="MEMENTO_TOKEN_FLINT",
                     read_prefixes=("/instances/", "/projects/"),
                     write_prefixes=("/projects/",),
                 ),
                 "ghost": NamespacePolicy(
                     roles=("reader",),
+                    token_env="MEMENTO_TOKEN_GHOST",
                     read_prefixes=("/secret/",),
                     write_prefixes=(),
                 ),

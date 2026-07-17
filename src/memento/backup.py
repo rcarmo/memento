@@ -44,14 +44,17 @@ def create_backup(runtime: MementoRuntime, destination: Path) -> BackupManifest:
     if runtime.paths.derived_db.exists():
         _sqlite_backup(runtime.paths.derived_db, derived_copy)
 
+    files = {
+        repo_tar.name: _sha256(repo_tar),
+        control_copy.name: _sha256(control_copy),
+    }
+    if derived_copy.exists():
+        files[derived_copy.name] = _sha256(derived_copy)
+
     manifest = BackupManifest(
         schema_version=1,
         repo_revision=runtime.status_snapshot()["repo_revision"],
-        files={
-            repo_tar.name: _sha256(repo_tar),
-            control_copy.name: _sha256(control_copy),
-            derived_copy.name: _sha256(derived_copy) if derived_copy.exists() else "",
-        },
+        files=files,
     )
     (destination / MANIFEST_NAME).write_text(
         json.dumps(manifest.as_dict(), indent=2, sort_keys=True) + "\n",
@@ -69,9 +72,9 @@ def restore_backup(
     manifest_path = backup_dir / MANIFEST_NAME
     manifest = BackupManifest(**json.loads(manifest_path.read_text(encoding="utf-8")))
     for name, digest in manifest.files.items():
-        if not digest:
-            continue
         path = backup_dir / name
+        if not path.exists():
+            raise ValueError(f"backup file is missing: {name}")
         if _sha256(path) != digest:
             raise ValueError(f"checksum mismatch for {name}")
 
@@ -81,10 +84,11 @@ def restore_backup(
         staging_root = Path(temp_dir) / "state"
         staging_root.mkdir(parents=True, exist_ok=True)
         with tarfile.open(backup_dir / "repo.git.tar.gz", "r:gz") as archive:
-            archive.extractall(staging_root)
+            _safe_extract_tar(archive, staging_root)
         shutil.copy2(backup_dir / "control.sqlite", staging_root / "control.sqlite")
         derived_backup = backup_dir / "derived.sqlite"
-        if derived_backup.exists() and not rebuild_derived:
+        derived_verified = manifest.files.get("derived.sqlite")
+        if not rebuild_derived and derived_verified is not None:
             shutil.copy2(derived_backup, staging_root / "derived.sqlite")
         staged_config = config.model_copy(
             update={
@@ -124,6 +128,19 @@ def _sqlite_backup(source_path: Path, target_path: Path) -> None:
     finally:
         target.close()
         source.close()
+
+
+def _safe_extract_tar(archive: tarfile.TarFile, destination: Path) -> None:
+    destination = destination.resolve()
+    for member in archive.getmembers():
+        if member.issym() or member.islnk():
+            raise ValueError(f"refusing to restore linked archive member: {member.name}")
+        target = (destination / member.name).resolve()
+        if destination not in target.parents and target != destination:
+            raise ValueError(
+                f"refusing to restore archive member outside destination: {member.name}"
+            )
+    archive.extractall(destination)
 
 
 def _sha256(path: Path) -> str:

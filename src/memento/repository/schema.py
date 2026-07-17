@@ -6,6 +6,15 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+
+def _validate_plain_text(value: str, *, field_name: str) -> str:
+    if any(ord(char) < 32 or ord(char) == 127 for char in value):
+        raise ValueError(f"{field_name} must not contain control characters")
+    if "\n" in value or "\r" in value:
+        raise ValueError(f"{field_name} must not contain newlines")
+    return value
+
+
 CONTROLLED_TYPES = (
     "concept",
     "instance",
@@ -52,6 +61,12 @@ class ConceptFrontmatter(BaseModel):
         if value not in CONTROLLED_TYPES:
             raise ValueError(f"type must be one of: {', '.join(CONTROLLED_TYPES)}")
         return value
+
+    @field_validator("title", "updated_by")
+    @classmethod
+    def validate_plain_text_fields(cls, value: str, info: object) -> str:
+        field_name = getattr(info, "field_name", "value")
+        return _validate_plain_text(value, field_name=field_name)
 
     @field_validator("aliases", "tags", "source_refs", "supersedes")
     @classmethod

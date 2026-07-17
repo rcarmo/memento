@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-SCHEMA_VERSION = "3"
+SCHEMA_VERSION = "4"
 
 MIGRATIONS_V1 = (
     """
@@ -123,7 +123,7 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
             return
         if schema_row["value"] == SCHEMA_VERSION:
             return
-        if schema_row["value"] in {"1", "2"}:
+        if schema_row["value"] in {"1", "2", "3"}:
             connection.execute(
                 "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
                 (SCHEMA_VERSION,),

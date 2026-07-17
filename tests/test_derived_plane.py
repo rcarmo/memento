@@ -211,6 +211,25 @@ def test_strict_freshness_waits_until_index_matches_repo_revision(
     assert results == ["done"]
 
 
+def test_fts_syntax_error_returns_validation_error_without_quarantine(
+    tmp_path: Path,
+    repo_paths: GitRepositoryPaths,
+    policy: EffectivePolicy,
+) -> None:
+    index = DerivedIndex(tmp_path / "syntax.sqlite")
+    index.rebuild(repo_paths.current_dir, repo_revision=get_main_revision(repo_paths))
+
+    with pytest.raises(ValueError, match="invalid FTS query"):
+        index.search(policy=policy, query='"unterminated')
+
+    state = index.get_state()
+    assert state.status == "ready"
+    assert state.quarantine_path is None
+    assert [result.path for result in index.search(policy=policy, query="visible").results] == [
+        "/instances/smith.md"
+    ]
+
+
 def test_corruption_is_quarantined_and_rebuild_recovers(
     tmp_path: Path,
     repo_paths: GitRepositoryPaths,

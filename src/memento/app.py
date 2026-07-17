@@ -105,10 +105,19 @@ class MementoRuntime:
     def _bearer_tokens(self) -> dict[str, Principal]:
         tokens: dict[str, Principal] = {}
         for principal_name, principal_policy in self.config.authorization.principals.items():
-            tokens[principal_name] = Principal(
+            token = os.environ.get(principal_policy.token_env, "").strip()
+            if not token:
+                raise RuntimeError(
+                    f"missing bearer token environment variable {principal_policy.token_env}"
+                )
+            if token in tokens:
+                raise RuntimeError(
+                    f"duplicate bearer token configured for {principal_policy.token_env}"
+                )
+            tokens[token] = Principal(
                 name=principal_name,
                 roles=principal_policy.roles,
-                metadata={},
+                metadata={"token_env": principal_policy.token_env},
             )
         return tokens
 

@@ -104,8 +104,8 @@ def generate_root_log(bundle: RepositoryBundle) -> str:
         frontmatter = entry.document.frontmatter
         updated_at = frontmatter.updated_at.isoformat().replace("+00:00", "Z")
         lines.append(
-            f"- {updated_at} — [{frontmatter.title}]({entry.bundle_path})"
-            f" — {frontmatter.updated_by}"
+            f"- {updated_at} — [{_escape_markdown_text(frontmatter.title)}]({entry.bundle_path})"
+            f" — {_escape_markdown_text(frontmatter.updated_by)}"
         )
     return "\n".join(lines) + "\n"
 
@@ -187,5 +187,12 @@ def _collect_directory_children(bundle: RepositoryBundle, directory: str) -> lis
             results.add(f"[{first_part}](/{child_directory}/index.md)")
             continue
         title = bundle.get("/" + entry_path).document.frontmatter.title
-        results.add(f"[{title}](/{entry_path})")
+        results.add(f"[{_escape_markdown_text(title)}](/{entry_path})")
     return list(results)
+
+
+def _escape_markdown_text(value: str) -> str:
+    escaped = value.replace("\\", "\\\\")
+    for char in ("[", "]", "(", ")", "*", "_", "`", "#", ">", "|"):
+        escaped = escaped.replace(char, f"\\{char}")
+    return escaped

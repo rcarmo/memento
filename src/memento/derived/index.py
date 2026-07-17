@@ -93,6 +93,10 @@ class DerivedIndexCorruptionError(RuntimeError):
     """Raised when the derived database cannot be used safely."""
 
 
+class DerivedSearchError(ValueError):
+    """Raised when a user-supplied search query is invalid."""
+
+
 class SearchFreshness(str, Enum):
     EVENTUAL = "eventual"
     STRICT = "strict"
@@ -277,6 +281,10 @@ class DerivedIndex:
                     """,
                     (*parameters, bounded_limit + 1, offset),
                 ).fetchall()
+        except sqlite3.OperationalError as exc:
+            if self._is_search_query_error(exc):
+                raise DerivedSearchError("invalid FTS query") from exc
+            self._handle_corruption(exc)
         except sqlite3.DatabaseError as exc:
             self._handle_corruption(exc)
         page_rows = rows[:bounded_limit]
@@ -740,6 +748,15 @@ class DerivedIndex:
                 self._set_state(connection, "status", "quarantined")
                 self._set_state(connection, "quarantine_path", str(quarantine_path))
         raise DerivedIndexCorruptionError(str(exc)) from exc
+
+    def _is_search_query_error(self, exc: sqlite3.OperationalError) -> bool:
+        message = str(exc).casefold()
+        return (
+            "unterminated string" in message
+            or "malformed match expression" in message
+            or "fts5: syntax error" in message
+            or "no such column" in message
+        )
 
     def _quarantine_db(self) -> Path:
         if not self._db_path.exists():

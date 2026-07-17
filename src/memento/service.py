@@ -62,7 +62,7 @@ from memento.control.signals import (
     set_service_state,
     upsert_detected_signals,
 )
-from memento.derived.index import DerivedIndex, SearchFreshness
+from memento.derived.index import DerivedIndex, DerivedSearchError, SearchFreshness
 from memento.envelopes import ErrorEnvelope, SuccessEnvelope, error_envelope, success_envelope
 from memento.repository.bundle import (
     BundleError,
@@ -250,6 +250,12 @@ class MemoryService:
                 if self._is_authorized(policy, entry.bundle_path, action="read")
             ]
             proposals = list_proposals(self._deps.control_connection)
+            visible_proposals = [
+                item
+                for item in proposals
+                if item.status in {ProposalStatus.SUBMITTED, ProposalStatus.APPROVED}
+                and self._can_access_proposal(policy, item, require_write=False)
+            ]
             return self._success(
                 {
                     "service_version": "0.1.0",
@@ -259,13 +265,7 @@ class MemoryService:
                     "index_stale": state.index_revision != state.repo_revision,
                     "principal": policy.principal,
                     "visible_concepts": len(visible_paths),
-                    "proposal_backlog": len(
-                        [
-                            item
-                            for item in proposals
-                            if item.status in {ProposalStatus.SUBMITTED, ProposalStatus.APPROVED}
-                        ]
-                    ),
+                    "proposal_backlog": len(visible_proposals),
                     "limits": self._deps.config.limits.model_dump(mode="python"),
                     "roles": policy.roles,
                     "features": {
@@ -493,6 +493,8 @@ class MemoryService:
                 self._answers.put_hot_answer(
                     scope_key=scope_key,
                     normalized_question=normalized,
+                    answer_mode=answer_mode,
+                    repo_revision=revision,
                     record=record,
                     concept_ids=[concept.concept_id for concept in deep.read_concepts],
                     now=now,
@@ -662,7 +664,7 @@ class MemoryService:
             proposals = list_proposals(self._deps.control_connection, status=requested_status)
             visible: list[dict[str, Any]] = []
             for proposal in proposals:
-                if proposal.author_principal != policy.principal and "curator" not in policy.roles:
+                if not self._can_access_proposal(policy, proposal, require_write=True):
                     continue
                 refreshed = self._refresh_proposal_status(proposal)
                 preview = self._preview_changes(self._normalize_changes(refreshed.patch["changes"]))
@@ -683,6 +685,7 @@ class MemoryService:
             policy = self._policy(context)
             require_role(policy, "curator")
             proposal = get_proposal(self._deps.control_connection, proposal_id)
+            self._require_proposal_access(policy, proposal, require_write=True)
             proposal = self._refresh_proposal_status(proposal)
             if proposal.author_principal == policy.principal and decision == "approve":
                 raise ForbiddenError("proposal authors cannot self-approve")
@@ -721,10 +724,12 @@ class MemoryService:
             policy = self._policy(context)
             require_role(policy, "curator")
             proposal = get_proposal(self._deps.control_connection, proposal_id)
+            self._require_proposal_access(policy, proposal, require_write=True)
             proposal = self._refresh_proposal_status(proposal)
             if proposal.status is not ProposalStatus.APPROVED:
                 raise ConflictError(f"proposal {proposal.proposal_id} is {proposal.status.value}")
             changes = self._normalize_changes(proposal.patch["changes"])
+            self._validate_change_auth(policy, changes, action="write")
             request = self._transaction_request(
                 context,
                 idempotency_key=idempotency_key,
@@ -1359,9 +1364,36 @@ class MemoryService:
 
     def _visible_proposal(self, policy: EffectivePolicy, proposal_id: str) -> ProposalRecord:
         proposal = get_proposal(self._deps.control_connection, proposal_id)
-        if proposal.author_principal != policy.principal and "curator" not in policy.roles:
-            raise ForbiddenError(f"principal {policy.principal} cannot read proposal {proposal_id}")
+        self._require_proposal_access(policy, proposal, require_write=False)
         return proposal
+
+    def _require_proposal_access(
+        self, policy: EffectivePolicy, proposal: ProposalRecord, *, require_write: bool
+    ) -> None:
+        if not self._can_access_proposal(policy, proposal, require_write=require_write):
+            action = "review" if require_write else "read"
+            raise ForbiddenError(
+                f"principal {policy.principal} cannot {action} proposal {proposal.proposal_id}"
+            )
+
+    def _can_access_proposal(
+        self, policy: EffectivePolicy, proposal: ProposalRecord, *, require_write: bool
+    ) -> bool:
+        if proposal.author_principal != policy.principal and "curator" not in policy.roles:
+            return False
+        try:
+            self._validate_change_auth(
+                policy,
+                self._normalize_changes(proposal.patch["changes"]),
+                action="write" if require_write else "read",
+            )
+            if not require_write:
+                self._validate_change_auth(
+                    policy, self._normalize_changes(proposal.patch["changes"]), action="write"
+                )
+            return True
+        except (AuthorizationError, ServiceError):
+            return False
 
     def _normalize_changes(self, changes: list[dict[str, Any]]) -> list[ProposalChange]:
         normalized: list[ProposalChange] = []
@@ -1381,9 +1413,11 @@ class MemoryService:
         self, policy: EffectivePolicy, changes: list[ProposalChange], *, action: str
     ) -> None:
         for change in changes:
-            authorize_path(policy, change.path, action=action)
-            if isinstance(change, RenameChange):
-                authorize_path(policy, change.new_path, action=action)
+            actions = (action,) if action in {"read", "write"} else ("read", "write")
+            for item_action in actions:
+                authorize_path(policy, change.path, action=item_action)
+                if isinstance(change, RenameChange):
+                    authorize_path(policy, change.new_path, action=item_action)
 
     def _resolve_path(self, id_or_path: str) -> str:
         if id_or_path.startswith("/"):
@@ -1411,9 +1445,12 @@ class MemoryService:
         cancelled: Callable[[], bool] | None,
     ) -> AnswerRecord | None:
         hot_config = self._deps.config.intelligent_tiers.hot_working_memory
+        revision = get_main_revision(self._deps.repo_paths)
         changed_ids, exact_hot = self._answers.get_hot_context(
             scope_key=scope_key,
             normalized_question=normalized_question,
+            answer_mode=answer_mode,
+            repo_revision=revision,
             now=self._now(),
         )
         if exact_hot is not None:
@@ -1450,7 +1487,7 @@ class MemoryService:
         return self._validated_record(
             record,
             read_concepts=tuple(concepts),
-            revision=get_main_revision(self._deps.repo_paths),
+            revision=revision,
             source_on_repair="hot_memory",
         )
 
@@ -2140,10 +2177,9 @@ class MemoryService:
         )
         draft = self._parse_model_proposal(response.output_text)
         changes = list(draft.changes)
-        for change in changes:
-            if isinstance(change, RenameChange):
-                raise ServiceError("Dream may only create normal proposals")
-            validate_repository_write_path(self._deps.repo_paths.current_dir, change.path)
+        self._validate_dream_proposal_draft(
+            draft=draft, changes=changes, repo_revision=repo_revision
+        )
         create_proposal(
             self._deps.control_connection,
             proposal_id=str(uuid4()),
@@ -2200,28 +2236,80 @@ class MemoryService:
             ]
         )
 
+    def _validate_dream_proposal_draft(
+        self, *, draft: ModelProposalDraft, changes: list[ProposalChange], repo_revision: str
+    ) -> None:
+        limits = self._deps.config.intelligent_tiers.model_proposals.limits
+        if not draft.rationale:
+            raise ServiceError("Dream proposal rationale must not be empty")
+        if not changes:
+            raise ServiceError("Dream proposal must include at least one change")
+        if len(changes) > limits.max_changes:
+            raise ServiceError("Dream proposal exceeds configured change limits")
+        consulted = self._dream_consulted_concepts(
+            actionable=tuple(),
+            revision=repo_revision,
+            explicit=draft.consulted_concepts,
+        )
+        consulted_by_id = {concept.concept_id: concept for concept in consulted}
+        if len(draft.consulted_concepts) != len(consulted_by_id):
+            raise ServiceError("Dream proposal must cite every consulted concept")
+        for citation in draft.consulted_concepts:
+            consulted_concept = consulted_by_id.get(citation.id)
+            if consulted_concept is None:
+                raise ServiceError("Dream proposal cited an unconsulted concept")
+            if (
+                citation.path != consulted_concept.path
+                or citation.revision != consulted_concept.revision
+            ):
+                raise ServiceError("Dream proposal citations must match consulted concepts")
+        for change in changes:
+            if isinstance(change, RenameChange):
+                raise ServiceError("Dream may only create normal proposals")
+            validate_repository_write_path(self._deps.repo_paths.current_dir, change.path)
+            self._scan_change_for_secrets(change)
+            if isinstance(change, CreateChange) and len(change.body) > limits.max_body_chars:
+                raise ServiceError("proposal body exceeds configured limits")
+            if (
+                isinstance(change, PatchChange)
+                and change.body is not None
+                and len(change.body) > limits.max_body_chars
+            ):
+                raise ServiceError("proposal body exceeds configured limits")
+        if len(draft.consulted_concepts) > limits.max_consulted_concepts:
+            raise ServiceError("Dream proposal exceeds consulted concept limits")
+
     def _dream_consulted_concepts(
-        self, *, actionable: tuple[Any, ...], revision: str
+        self,
+        *,
+        actionable: tuple[Any, ...],
+        revision: str,
+        explicit: tuple[ProposalCitation, ...] | None = None,
     ) -> tuple[ReadConcept, ...]:
         bundle = scan_bundle(self._deps.repo_paths.current_dir)
         by_path = {entry.bundle_path: entry for entry in bundle.entries}
         consulted: list[ReadConcept] = []
         seen: set[str] = set()
-        for signal in actionable:
-            for entity in signal.entity_refs:
-                if not entity.startswith("/") or entity not in by_path or entity in seen:
-                    continue
-                entry = by_path[entity]
-                consulted.append(
-                    ReadConcept(
-                        concept_id=entry.document.frontmatter.id,
-                        path=entity,
-                        title=entry.document.frontmatter.title,
-                        body=entry.document.body,
-                        revision=revision,
-                    )
+        source_paths = [citation.path for citation in explicit] if explicit is not None else []
+        if not source_paths:
+            for signal in actionable:
+                source_paths.extend(
+                    entity for entity in signal.entity_refs if entity.startswith("/")
                 )
-                seen.add(entity)
+        for entity in source_paths:
+            if entity not in by_path or entity in seen:
+                continue
+            entry = by_path[entity]
+            consulted.append(
+                ReadConcept(
+                    concept_id=entry.document.frontmatter.id,
+                    path=entity,
+                    title=entry.document.frontmatter.title,
+                    body=entry.document.body,
+                    revision=revision,
+                )
+            )
+            seen.add(entity)
         return tuple(
             consulted[
                 : self._deps.config.intelligent_tiers.model_proposals.limits.max_consulted_concepts
@@ -2264,7 +2352,9 @@ class MemoryService:
             return error_envelope(exc.error_class, str(exc))
         if isinstance(exc, NotFoundError | KeyError):
             return error_envelope("not_found", str(exc))
-        if isinstance(exc, (ServiceError, FrontmatterError, BundleError, PathSafetyError)):
+        if isinstance(
+            exc, (ServiceError, FrontmatterError, BundleError, PathSafetyError, DerivedSearchError)
+        ):
             return error_envelope(getattr(exc, "error_class", "validation_error"), str(exc))
         if isinstance(exc, IdempotencyConflictError):
             return error_envelope("idempotency_conflict", str(exc))

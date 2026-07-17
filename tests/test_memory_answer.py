@@ -286,17 +286,19 @@ def fake_model() -> FakeModelClient:
 @pytest.fixture()
 def answer_config(tmp_path: Path) -> ServiceConfig:
     return ServiceConfig(
-        schema_version=1,
+        schema_version=2,
         repository=RepositoryConfig(root_path=str(tmp_path / "state")),
         authorization=AuthorizationConfig(
             principals={
                 "smith": NamespacePolicy(
                     roles=("reader", "proposer", "curator"),
+                    token_env="MEMENTO_TOKEN_SMITH",
                     read_prefixes=("/instances/", "/projects/"),
                     write_prefixes=("/instances/", "/projects/"),
                 ),
                 "flint": NamespacePolicy(
                     roles=("reader", "proposer"),
+                    token_env="MEMENTO_TOKEN_FLINT",
                     read_prefixes=("/instances/", "/projects/"),
                     write_prefixes=("/projects/",),
                 ),
@@ -399,12 +401,13 @@ def test_memory_answer_returns_deterministic_unknown_when_flags_are_off(
     repo_paths: GitRepositoryPaths,
 ) -> None:
     config = ServiceConfig(
-        schema_version=1,
+        schema_version=2,
         repository=RepositoryConfig(root_path=str(tmp_path / "state-off")),
         authorization=AuthorizationConfig(
             principals={
                 "smith": NamespacePolicy(
                     roles=("reader", "proposer", "curator"),
+                    token_env="MEMENTO_TOKEN_SMITH",
                     read_prefixes=("/instances/", "/projects/"),
                     write_prefixes=("/instances/", "/projects/"),
                 )
@@ -536,12 +539,13 @@ def test_model_proposals_return_disabled_when_flag_is_off(
     fake_model: FakeModelClient,
 ) -> None:
     config = ServiceConfig(
-        schema_version=1,
+        schema_version=2,
         repository=RepositoryConfig(root_path=str(tmp_path / "state-model-proposals-off")),
         authorization=AuthorizationConfig(
             principals={
                 "smith": NamespacePolicy(
                     roles=("reader", "proposer", "curator"),
+                    token_env="MEMENTO_TOKEN_SMITH",
                     read_prefixes=("/instances/", "/projects/"),
                     write_prefixes=("/instances/", "/projects/"),
                 )
@@ -773,12 +777,13 @@ def test_dream_no_signal_means_no_model_call(
     )
     bootstrap_repository(repo_paths, seed)
     config = ServiceConfig(
-        schema_version=1,
+        schema_version=2,
         repository=RepositoryConfig(root_path=str(tmp_path / "state-dream-clean")),
         authorization=AuthorizationConfig(
             principals={
                 "smith": NamespacePolicy(
                     roles=("reader", "proposer", "curator"),
+                    token_env="MEMENTO_TOKEN_SMITH",
                     read_prefixes=("/projects/",),
                     write_prefixes=("/projects/",),
                 )

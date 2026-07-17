@@ -145,11 +145,13 @@ class AnswerStore:
                     scope_key TEXT NOT NULL,
                     question_hash TEXT NOT NULL,
                     normalized_question TEXT NOT NULL,
+                    answer_mode TEXT NOT NULL,
+                    repo_revision TEXT NOT NULL,
                     response_json TEXT NOT NULL,
                     concept_ids_json TEXT NOT NULL,
                     created_at TEXT NOT NULL,
                     expires_at TEXT NOT NULL,
-                    PRIMARY KEY(scope_key, question_hash)
+                    PRIMARY KEY(scope_key, question_hash, answer_mode, repo_revision)
                 )
                 """
             )
@@ -178,8 +180,30 @@ class AnswerStore:
             self._connection.execute(
                 "CREATE INDEX IF NOT EXISTS idx_hot_changed_scope ON hot_changed_concepts(scope_key, observed_at DESC)"
             )
+            columns = {
+                str(row[1])
+                for row in self._connection.execute("PRAGMA table_info(hot_answers)").fetchall()
+            }
+            if {"answer_mode", "repo_revision"} - columns:
+                self._connection.execute("DROP TABLE hot_answers")
+                self._connection.execute(
+                    """
+                    CREATE TABLE hot_answers (
+                        scope_key TEXT NOT NULL,
+                        question_hash TEXT NOT NULL,
+                        normalized_question TEXT NOT NULL,
+                        answer_mode TEXT NOT NULL,
+                        repo_revision TEXT NOT NULL,
+                        response_json TEXT NOT NULL,
+                        concept_ids_json TEXT NOT NULL,
+                        created_at TEXT NOT NULL,
+                        expires_at TEXT NOT NULL,
+                        PRIMARY KEY(scope_key, question_hash, answer_mode, repo_revision)
+                    )
+                    """
+                )
             self._connection.execute(
-                "CREATE INDEX IF NOT EXISTS idx_hot_answers_scope ON hot_answers(scope_key, created_at DESC)"
+                "CREATE INDEX IF NOT EXISTS idx_hot_answers_scope ON hot_answers(scope_key, answer_mode, repo_revision, created_at DESC)"
             )
             self._connection.execute(
                 "CREATE INDEX IF NOT EXISTS idx_answer_traces_created ON answer_traces(created_at DESC)"
@@ -253,6 +277,8 @@ class AnswerStore:
         *,
         scope_key: str,
         normalized_question: str,
+        answer_mode: str,
+        repo_revision: str,
         now: datetime,
     ) -> tuple[list[str], AnswerRecord | None]:
         with self._connection:
@@ -266,8 +292,8 @@ class AnswerStore:
             (scope_key,),
         ).fetchall()
         hot_row = self._connection.execute(
-            "SELECT response_json FROM hot_answers WHERE scope_key = ? AND question_hash = ? AND expires_at > ?",
-            (scope_key, _hash_text(normalized_question), _iso(now)),
+            "SELECT response_json FROM hot_answers WHERE scope_key = ? AND question_hash = ? AND answer_mode = ? AND repo_revision = ? AND expires_at > ?",
+            (scope_key, _hash_text(normalized_question), answer_mode, repo_revision, _iso(now)),
         ).fetchone()
         changed_ids = [str(row["concept_id"]) for row in changed_rows]
         hot_answer = (
@@ -277,11 +303,13 @@ class AnswerStore:
         )
         return changed_ids, hot_answer
 
-    def list_hot_answers(self, *, scope_key: str, now: datetime, limit: int) -> list[AnswerRecord]:
+    def list_hot_answers(
+        self, *, scope_key: str, answer_mode: str, repo_revision: str, now: datetime, limit: int
+    ) -> list[AnswerRecord]:
         self._connection.execute("DELETE FROM hot_answers WHERE expires_at <= ?", (_iso(now),))
         rows = self._connection.execute(
-            "SELECT response_json FROM hot_answers WHERE scope_key = ? ORDER BY created_at DESC LIMIT ?",
-            (scope_key, limit),
+            "SELECT response_json FROM hot_answers WHERE scope_key = ? AND answer_mode = ? AND repo_revision = ? ORDER BY created_at DESC LIMIT ?",
+            (scope_key, answer_mode, repo_revision, limit),
         ).fetchall()
         return [AnswerRecord.model_validate_json(str(row["response_json"])) for row in rows]
 
@@ -309,6 +337,8 @@ class AnswerStore:
         *,
         scope_key: str,
         normalized_question: str,
+        answer_mode: str,
+        repo_revision: str,
         record: AnswerRecord,
         concept_ids: Sequence[str],
         now: datetime,
@@ -320,14 +350,16 @@ class AnswerStore:
             self._connection.execute(
                 """
                 INSERT OR REPLACE INTO hot_answers(
-                    scope_key, question_hash, normalized_question, response_json,
-                    concept_ids_json, created_at, expires_at
-                ) VALUES(?, ?, ?, ?, ?, ?, ?)
+                    scope_key, question_hash, normalized_question, answer_mode, repo_revision,
+                    response_json, concept_ids_json, created_at, expires_at
+                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     scope_key,
                     _hash_text(normalized_question),
                     normalized_question,
+                    answer_mode,
+                    repo_revision,
                     record.model_dump_json(),
                     json.dumps(sorted(dict.fromkeys(concept_ids))),
                     _iso(now),
@@ -335,28 +367,38 @@ class AnswerStore:
                 ),
             )
             rows = self._connection.execute(
-                "SELECT question_hash FROM hot_answers WHERE scope_key = ? ORDER BY created_at DESC",
+                "SELECT question_hash, answer_mode, repo_revision FROM hot_answers WHERE scope_key = ? ORDER BY created_at DESC",
                 (scope_key,),
             ).fetchall()
             for row in rows[max_entries:]:
                 self._connection.execute(
-                    "DELETE FROM hot_answers WHERE scope_key = ? AND question_hash = ?",
-                    (scope_key, str(row["question_hash"])),
+                    "DELETE FROM hot_answers WHERE scope_key = ? AND question_hash = ? AND answer_mode = ? AND repo_revision = ?",
+                    (
+                        scope_key,
+                        str(row["question_hash"]),
+                        str(row["answer_mode"]),
+                        str(row["repo_revision"]),
+                    ),
                 )
 
     def invalidate_hot_answers(self, *, changed_concept_ids: set[str]) -> None:
         if not changed_concept_ids:
             return
         rows = self._connection.execute(
-            "SELECT scope_key, question_hash, concept_ids_json FROM hot_answers"
+            "SELECT scope_key, question_hash, answer_mode, repo_revision, concept_ids_json FROM hot_answers"
         ).fetchall()
         with self._connection:
             for row in rows:
                 concept_ids = set(json.loads(str(row["concept_ids_json"])))
                 if concept_ids & changed_concept_ids:
                     self._connection.execute(
-                        "DELETE FROM hot_answers WHERE scope_key = ? AND question_hash = ?",
-                        (str(row["scope_key"]), str(row["question_hash"])),
+                        "DELETE FROM hot_answers WHERE scope_key = ? AND question_hash = ? AND answer_mode = ? AND repo_revision = ?",
+                        (
+                            str(row["scope_key"]),
+                            str(row["question_hash"]),
+                            str(row["answer_mode"]),
+                            str(row["repo_revision"]),
+                        ),
                     )
 
     def insert_trace(

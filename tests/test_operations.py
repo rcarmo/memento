@@ -32,12 +32,13 @@ def seeded_root(tmp_path: Path) -> tuple[Path, Path]:
     config_path.write_text(
         json.dumps(
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "repository": {"root_path": str(root), "bundle_root": "/"},
                 "authorization": {
                     "principals": {
                         "smith": {
                             "roles": ["reader", "proposer", "curator"],
+                            "token_env": "MEMENTO_TOKEN_SMITH",
                             "read_prefixes": ["/instances/", "/projects/"],
                             "write_prefixes": ["/instances/", "/projects/"],
                         }

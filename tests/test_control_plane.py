@@ -67,7 +67,7 @@ def test_control_db_migrations_enable_wal_and_v1_tables(
     assert mode.lower() == "wal"
     assert foreign_keys == 1
     assert {"operations", "proposals", "scheduler_runs", "service_state", "dream_signals"} <= tables
-    assert schema_version == "3"
+    assert schema_version == "4"
 
 
 def test_idempotency_replays_per_principal_and_rejects_payload_conflicts(
@@ -262,6 +262,41 @@ def test_startup_recovery_classifies_publication_after_crash(
         .read_text(encoding="utf-8")
         .endswith("Published before crash.\n")
     )
+
+
+def test_startup_recovery_uses_committed_diff_not_worktree_scan(
+    control_connection: sqlite3.Connection,
+    repo_paths: GitRepositoryPaths,
+) -> None:
+    manager = TransactionManager(
+        control_connection,
+        repo_paths,
+        checkpoints=CheckpointHook(callback=FailAtCheckpoint("publication_complete")),
+    )
+
+    with pytest.raises(CheckpointError):
+        manager.apply(
+            TransactionRequest(
+                operation=OperationRequest(
+                    op_id="op-crash-diff",
+                    principal="smith",
+                    idempotency_key="idem-crash-diff",
+                    tool_name="memory_patch",
+                    request_json='{"path":"/instances/smith.md"}',
+                ),
+                expected_revision=get_main_revision(repo_paths),
+                commit_message="memory: crash after publication exact diff",
+                author_name="Rui Carmo",
+                author_email="rui.carmo@gmail.com",
+            ),
+            _mutate_with_extra_unstaged_file,
+        )
+
+    recovered = TransactionManager(control_connection, repo_paths).recover_startup()
+    assert recovered[0].classification == "published"
+    payload = get_operation(control_connection, "op-crash-diff").replay_payload
+    assert payload == {"changed_paths": ["/instances/smith.md"]}
+    assert not (repo_paths.current_dir / "instances" / "ignored.md").exists()
 
 
 def _write_file(worktree: Path, bundle_path: str, content: str) -> tuple[str, ...]:

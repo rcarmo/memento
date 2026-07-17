@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "repository": {
     "root_path": "/var/lib/memento",
     "bundle_root": "/"
@@ -8,11 +8,13 @@
     "principals": {
       "smith": {
         "roles": ["reader", "proposer", "curator"],
+        "token_env": "MEMENTO_TOKEN_SMITH",
         "read_prefixes": ["/instances/", "/projects/"],
         "write_prefixes": ["/instances/", "/projects/"]
       },
       "flint": {
         "roles": ["reader", "proposer"],
+        "token_env": "MEMENTO_TOKEN_FLINT",
         "read_prefixes": ["/instances/", "/projects/"],
         "write_prefixes": ["/projects/"]
       }
