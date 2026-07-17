@@ -147,6 +147,7 @@ Published SBOM/provenance, production image digests, live Docker/systemd parity 
 
 * [`PLAN.md`](PLAN.md) tracks implementation and acceptance evidence.
 * [`docs/implementation.md`](docs/implementation.md) contains the complete architecture and roadmap.
+* [`docs/decisions/`](docs/decisions/0001-keep-operation-worktrees.md) records consequential design decisions and measurements.
 * [`docs/contracts.md`](docs/contracts.md) defines schemas, envelopes and MCP operations.
 * [`docs/threat-model.md`](docs/threat-model.md) records trust boundaries and abuse cases.
 * [`docs/semantic-search.md`](docs/semantic-search.md) covers the Rust GTE and SQLite vector tier.
