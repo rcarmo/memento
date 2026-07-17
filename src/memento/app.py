@@ -12,6 +12,7 @@ from memento.config import Principal, ServiceConfig
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.proposals import ProposalStatus, list_proposals
 from memento.derived.index import DerivedIndex
+from memento.ffi import RustFfiLibrary
 from memento.model_clients import RoutedFallbackModelClient, build_endpoint_clients
 from memento.repository.bundle import scan_bundle
 from memento.repository.git import (
@@ -60,6 +61,7 @@ class MementoRuntime:
         state = self.derived_index.get_state()
         visible_concepts = len(scan_bundle(self.paths.repo_paths.current_dir).entries)
         proposals = list_proposals(self.control_connection)
+        semantic = self.derived_index.semantic_status()
         return {
             "service_version": "0.1.0",
             "schema_version": self.config.schema_version,
@@ -67,6 +69,15 @@ class MementoRuntime:
             "index_revision": state.index_revision,
             "index_stale": state.index_revision != state.repo_revision,
             "visible_concepts": visible_concepts,
+            "semantic_search": {
+                "enabled": semantic.enabled,
+                "ready": semantic.ready,
+                "model_id": semantic.model_id,
+                "dimensions": semantic.dimensions,
+                "embedding_revision": semantic.embedding_revision,
+                "sqlite_vector_enabled": semantic.sqlite_vector_enabled,
+                "warnings": list(semantic.warnings),
+            },
             "proposal_backlog": len(
                 [
                     item
@@ -98,6 +109,10 @@ class MementoRuntime:
     def close(self) -> None:
         if self.closed:
             return
+        embedding_client = getattr(self.derived_index, "_embedding_client", None)
+        close = getattr(embedding_client, "close", None)
+        if close is not None:
+            close()
         self.control_connection.close()
         self.lease.release()
         self.closed = True
@@ -171,7 +186,33 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             materialize_current_checkout(paths.repo_paths)
         control_connection = connect_control_db(paths.control_db)
         migrate_control_db(control_connection)
-        derived_index = DerivedIndex(paths.derived_db)
+        semantic = config.intelligent_tiers.semantic_search
+        embedding_client = None
+        if semantic.enabled:
+            ffi_path = semantic.ffi_library_path or os.environ.get("MEMENTO_FFI_LIBRARY", "")
+            model_path = semantic.model_path or os.environ.get("MEMENTO_GTE_MODEL", "")
+            sqlite_path = semantic.sqlite_extension_path or os.environ.get(
+                "MEMENTO_SQLITE_VECTOR_EXTENSION"
+            )
+            if not ffi_path or not model_path:
+                raise RuntimeError(
+                    "semantic search requires ffi_library_path/MEMENTO_FFI_LIBRARY "
+                    "and model_path/MEMENTO_GTE_MODEL"
+                )
+            semantic = semantic.model_copy(
+                update={
+                    "ffi_library_path": ffi_path,
+                    "model_path": model_path,
+                    "sqlite_extension_path": sqlite_path,
+                }
+            )
+            library = RustFfiLibrary(ffi_path)
+            embedding_client = library.load_model(model_path)
+        derived_index = DerivedIndex(
+            paths.derived_db,
+            semantic_config=semantic,
+            embedding_client=embedding_client,
+        )
         if not derived_index.db_path.exists() or derived_index.get_state().index_revision == "":
             derived_index.rebuild(
                 paths.repo_paths.current_dir,

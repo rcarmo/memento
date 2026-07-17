@@ -8,5 +8,7 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+rust/target/
+rust/tests/fixtures/*.gtemodel
 .env
 .DS_Store

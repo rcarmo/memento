@@ -1,0 +1,14 @@
+[package]
+name = "memento-vector"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+authors = ["Rui Carmo <rui.carmo@gmail.com>"]
+description = "Shared vector kernels for Memento semantic search"
+
+[dependencies]
+thiserror.workspace = true
+
+[lints]
+workspace = true

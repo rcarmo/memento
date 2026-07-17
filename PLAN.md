@@ -75,6 +75,7 @@
 - [x] Add read-only MCP resources and bounded health/readiness endpoints.
 - [x] Enforce role and namespace policy on every result.
 - [x] Run Piclaw adapter compatibility smoke tests.
+- [x] Add compact progressive MCP tool disclosure, catalog resources and bounded declarative `memory_execute` plans.
 
 **Exit:** One read-only canary serves Smith with revision-aware deterministic reads.
 
@@ -103,6 +104,18 @@
 - [ ] Run Docker/systemd parity and clean-host restore drills.
 
 **Exit:** Local implementation and tests are complete. Live deployment evidence for multi-client production use, artifact publication, and restore drills is still pending.
+
+## Semantic and progressive retrieval
+
+- [x] Port GTE-small inference to a portable Rust runtime with FP32 model compatibility.
+- [x] Add shared scalar/SIMD vector validation and cosine ranking kernels.
+- [x] Add a stable C ABI and Python `ctypes` integration with cancellation and bounded batches.
+- [x] Add a loadable SQLite `vector_cosine` extension over packed float32 fields.
+- [x] Add revision-aware concept embeddings, semantic search and deterministic hybrid rank fusion.
+- [x] Filter authorization scopes before semantic ranking and preserve lexical degradation.
+- [x] Add compact progressive MCP disclosure, catalog/workflow resources and bounded `memory_execute` plans.
+- [x] Preserve standard/full MCP tool surfaces as configuration modes.
+- [ ] Benchmark the production GTE-small model on deployed AMD64 and ARM64 hosts.
 
 ## Deferred roadmap
 

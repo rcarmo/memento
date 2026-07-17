@@ -1,0 +1,19 @@
+[package]
+name = "memento-gte"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+authors = ["Rui Carmo <rui.carmo@gmail.com>"]
+description = "Rust GTE1 parser/tokenizer/inference for Memento"
+
+[dependencies]
+memento-vector = { path = "../memento-vector" }
+serde.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

@@ -62,8 +62,14 @@ from memento.control.signals import (
     set_service_state,
     upsert_detected_signals,
 )
-from memento.derived.index import DerivedIndex, DerivedSearchError, SearchFreshness
+from memento.derived.index import (
+    DerivedIndex,
+    DerivedSearchError,
+    SearchFreshness,
+    SearchMode,
+)
 from memento.envelopes import ErrorEnvelope, SuccessEnvelope, error_envelope, success_envelope
+from memento.executor import ExecuteLimits, MemoryExecutor
 from memento.repository.bundle import (
     BundleError,
     audit_repository,
@@ -211,6 +217,18 @@ class MemoryService:
         self, context: ServiceContext
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         self._policy(context)
+        compact_tools = [
+            "memory_help",
+            "memory_status",
+            "memory_search",
+            "memory_read",
+            "memory_execute",
+        ]
+        if (
+            self._deps.config.mcp.compact_answer_enabled
+            and self._deps.config.intelligent_tiers.deep_answers.enabled
+        ):
+            compact_tools.insert(4, "memory_answer")
         envelope = self._success(
             {
                 "goals": {
@@ -230,9 +248,20 @@ class MemoryService:
                         "memory_patch",
                         "memory_rename",
                     ],
+                    "compact": compact_tools,
                 },
                 "formats": ("summary", "detailed"),
                 "answer_sources": ("exact_cache", "hot_memory", "deep_agent", "disabled"),
+                "search_modes": ("lexical", "semantic", "hybrid"),
+                "catalog": {
+                    "resources": ("memory://help", "memory://status", "memory://catalog"),
+                    "templates": ("memory://catalog/{operation}", "memory://workflow/{goal}"),
+                },
+                "mcp": {
+                    "tool_surface": self._deps.config.mcp.tool_surface,
+                    "compact_instructions": "Use memory_search, then memory_read, or use memory_execute with saved references like $hits.results.0.path.",
+                    "execute_limits": self._deps.config.mcp.execute.model_dump(mode="python"),
+                },
             }
         )
         return envelope
@@ -256,6 +285,7 @@ class MemoryService:
                 if item.status in {ProposalStatus.SUBMITTED, ProposalStatus.APPROVED}
                 and self._can_access_proposal(policy, item, require_write=False)
             ]
+            semantic = self._deps.derived_index.semantic_status()
             return self._success(
                 {
                     "service_version": "0.1.0",
@@ -274,10 +304,21 @@ class MemoryService:
                         "proposal_rebase": False,
                         "model_proposals": self._deps.config.intelligent_tiers.model_proposals.enabled,
                         "dream_mode": self._deps.config.intelligent_tiers.dream.mode,
+                        "semantic_search": semantic.enabled,
+                    },
+                    "readiness": {
+                        "semantic_search": {
+                            "ready": semantic.ready,
+                            "model_id": semantic.model_id,
+                            "dimensions": semantic.dimensions,
+                            "embedding_revision": semantic.embedding_revision,
+                            "sqlite_vector_enabled": semantic.sqlite_vector_enabled,
+                        }
                     },
                 },
                 index_revision=state.index_revision,
                 index_stale=state.index_revision != state.repo_revision,
+                warnings=semantic.warnings,
             )
         except Exception as exc:
             return self._failure(exc)
@@ -290,9 +331,18 @@ class MemoryService:
         concept_type: str | None = None,
         limit: int = 20,
         cursor: str | None = None,
+        search_mode: str | None = None,
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
+            mode_name = (
+                search_mode
+                or self._deps.config.intelligent_tiers.semantic_search.default_search_mode
+            )
+            try:
+                resolved_mode = SearchMode(mode_name)
+            except ValueError as exc:
+                raise DerivedSearchError(f"unsupported search_mode: {mode_name}") from exc
             page = self._deps.derived_index.search(
                 policy=policy,
                 query=query,
@@ -300,9 +350,11 @@ class MemoryService:
                 limit=limit,
                 cursor=cursor,
                 freshness=SearchFreshness.EVENTUAL,
+                search_mode=resolved_mode,
             )
             return self._success(
                 {
+                    "search_mode": mode_name,
                     "results": [
                         {
                             "id": item.concept_id,
@@ -320,6 +372,7 @@ class MemoryService:
                 },
                 repo_revision=page.repo_revision,
                 index_revision=page.index_revision,
+                warnings=page.warnings,
             )
         except Exception as exc:
             return self._failure(exc)
@@ -850,6 +903,18 @@ class MemoryService:
             tool_name="memory_rename",
             commit_message=f"memory: rename {path} -> {new_path}",
         )
+
+    def memory_execute(
+        self,
+        context: ServiceContext,
+        *,
+        plan: dict[str, Any],
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        executor = MemoryExecutor(
+            self,
+            ExecuteLimits.model_validate(self._deps.config.mcp.execute.model_dump(mode="python")),
+        )
+        return executor.run(context, plan=plan)
 
     def _commit_changes(
         self,
@@ -2335,6 +2400,7 @@ class MemoryService:
         index_revision: str | None = None,
         index_stale: bool = False,
         operation_id: str | None = None,
+        warnings: tuple[str, ...] = (),
     ) -> SuccessEnvelope[dict[str, Any]]:
         revision = repo_revision or get_main_revision(self._deps.repo_paths)
         return success_envelope(
@@ -2343,6 +2409,7 @@ class MemoryService:
             index_revision=index_revision or revision,
             index_stale=index_stale,
             operation_id=operation_id,
+            warnings=warnings,
         )
 
     def _failure(self, exc: Exception) -> ErrorEnvelope:
@@ -2353,7 +2420,15 @@ class MemoryService:
         if isinstance(exc, NotFoundError | KeyError):
             return error_envelope("not_found", str(exc))
         if isinstance(
-            exc, (ServiceError, FrontmatterError, BundleError, PathSafetyError, DerivedSearchError)
+            exc,
+            (
+                ServiceError,
+                FrontmatterError,
+                BundleError,
+                PathSafetyError,
+                DerivedSearchError,
+                ValueError,
+            ),
         ):
             return error_envelope(getattr(exc, "error_class", "validation_error"), str(exc))
         if isinstance(exc, IdempotencyConflictError):

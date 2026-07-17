@@ -1,0 +1,21 @@
+[package]
+name = "memento-ffi"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+authors = ["Rui Carmo <rui.carmo@gmail.com>"]
+description = "C FFI for Memento embeddings and vector helpers"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+memento-gte = { path = "../memento-gte" }
+memento-vector = { path = "../memento-vector" }
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

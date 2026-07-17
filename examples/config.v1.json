@@ -24,6 +24,17 @@
     "max_concept_bytes": 262144,
     "max_search_results": 100
   },
+  "mcp": {
+    "tool_surface": "compact",
+    "compact_answer_enabled": true,
+    "execute": {
+      "max_operations": 12,
+      "max_intermediates": 12,
+      "max_records": 50,
+      "max_output_bytes": 65536,
+      "max_time_seconds": 3.0
+    }
+  },
   "intelligent_tiers": {
     "deep_answers": {
       "enabled": false,
@@ -88,6 +99,18 @@
         "max_runtime_seconds": 30.0,
         "daily_proposal_limit": 20
       }
+    },
+    "semantic_search": {
+      "enabled": false,
+      "ffi_library_path": null,
+      "sqlite_extension_path": null,
+      "model_path": null,
+      "model_id": "gte-small-fp32",
+      "dimensions": 384,
+      "max_input_chars": 4096,
+      "max_batch_size": 16,
+      "max_candidates": 200,
+      "default_search_mode": "lexical"
     },
     "model_provider_slots": {
       "hot_query": {

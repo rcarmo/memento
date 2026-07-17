@@ -5,23 +5,38 @@ import json
 import shutil
 import sqlite3
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from memento.authz import EffectivePolicy
+from memento.config import SemanticSearchConfig
 from memento.repository.bundle import scan_bundle
 from memento.repository.frontmatter import parse_concept_file
 from memento.repository.links import extract_structural_links
 from memento.repository.paths import is_reserved_bundle_path
+from memento.repository.schema import ConceptDocument
+from memento.semantic import (
+    EmbeddingClient,
+    EmbeddingModelInfo,
+    SemanticSearchError,
+    ValidatedEmbedding,
+    cosine_similarity,
+    embedding_content_hash,
+    embedding_text,
+    pack_f32le,
+    unpack_f32le,
+    validate_embedding,
+)
 
-SCHEMA_VERSION = "1"
+SCHEMA_VERSION = "2"
 DEFAULT_SEARCH_LIMIT = 20
 MAX_SEARCH_LIMIT = 100
 MAX_GRAPH_DEPTH = 2
 POLL_INTERVAL_SECONDS = 0.02
+RRF_K = 60
 
 MIGRATIONS = (
     """
@@ -86,6 +101,24 @@ MIGRATIONS = (
     "CREATE INDEX IF NOT EXISTS idx_concepts_status ON concepts(status)",
     "CREATE INDEX IF NOT EXISTS idx_links_source ON links(source_id)",
     "CREATE INDEX IF NOT EXISTS idx_links_target ON links(target_id)",
+    """
+    CREATE TABLE IF NOT EXISTS concept_embeddings (
+        concept_id TEXT PRIMARY KEY,
+        path TEXT NOT NULL,
+        embedding_text_hash TEXT NOT NULL,
+        model_id TEXT NOT NULL,
+        dimensions INTEGER NOT NULL,
+        embedding_revision TEXT NOT NULL,
+        status TEXT NOT NULL,
+        model_revision TEXT NOT NULL,
+        embedding_blob BLOB,
+        embedding_norm REAL,
+        updated_at TEXT NOT NULL,
+        error_message TEXT
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_concept_embeddings_path ON concept_embeddings(path)",
+    "CREATE INDEX IF NOT EXISTS idx_concept_embeddings_status ON concept_embeddings(status)",
 )
 
 
@@ -100,6 +133,12 @@ class DerivedSearchError(ValueError):
 class SearchFreshness(str, Enum):
     EVENTUAL = "eventual"
     STRICT = "strict"
+
+
+class SearchMode(str, Enum):
+    LEXICAL = "lexical"
+    SEMANTIC = "semantic"
+    HYBRID = "hybrid"
 
 
 @dataclass(frozen=True, slots=True)
@@ -129,6 +168,7 @@ class SearchPage:
     next_cursor: str | None
     repo_revision: str
     index_revision: str
+    warnings: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -169,9 +209,30 @@ class ParityReport:
     details: str
 
 
+@dataclass(frozen=True, slots=True)
+class SemanticStatus:
+    enabled: bool
+    ready: bool
+    model_id: str | None
+    dimensions: int | None
+    embedding_revision: str | None
+    sqlite_vector_enabled: bool
+    warnings: tuple[str, ...] = ()
+
+
 class DerivedIndex:
-    def __init__(self, db_path: Path) -> None:
+    def __init__(
+        self,
+        db_path: Path,
+        *,
+        semantic_config: SemanticSearchConfig | None = None,
+        embedding_client: EmbeddingClient | None = None,
+    ) -> None:
         self._db_path = db_path
+        self._semantic_config = semantic_config or SemanticSearchConfig()
+        self._embedding_client = embedding_client
+        self._sqlite_vector_enabled = False
+        self._sqlite_vector_warning: str | None = None
 
     @property
     def db_path(self) -> Path:
@@ -191,6 +252,7 @@ class DerivedIndex:
     ) -> None:
         def run(connection: sqlite3.Connection) -> None:
             self._ensure_ready(connection)
+            changed_documents: list[tuple[str, object]] = []
             with connection:
                 self._set_state(connection, "repo_revision", repo_revision)
                 for bundle_path in sorted(dict.fromkeys(changed_paths)):
@@ -201,12 +263,18 @@ class DerivedIndex:
                         and absolute.is_file()
                         and not is_reserved_bundle_path(bundle_path)
                     ):
-                        self._upsert_entry(
-                            connection, bundle_path, parse_concept_file(absolute), repo_revision
-                        )
+                        document = parse_concept_file(absolute)
+                        changed_documents.append((bundle_path, document))
+                        self._upsert_entry(connection, bundle_path, document, repo_revision)
                 connection.execute("UPDATE concepts SET repo_revision = ?", (repo_revision,))
                 self._recompute_links(connection, repo_revision)
                 self._recompute_metrics(connection)
+                self._update_embeddings(
+                    connection,
+                    repo_revision=repo_revision,
+                    changed_documents=tuple(changed_documents),
+                    full_rebuild=False,
+                )
                 self._set_state(connection, "index_revision", repo_revision)
                 self._set_state(connection, "status", "ready")
 
@@ -225,6 +293,7 @@ class DerivedIndex:
         cursor: str | None = None,
         freshness: SearchFreshness = SearchFreshness.EVENTUAL,
         timeout_seconds: float = 1.0,
+        search_mode: SearchMode = SearchMode.LEXICAL,
     ) -> SearchPage:
         if freshness is SearchFreshness.STRICT:
             self.wait_for_freshness(timeout_seconds=timeout_seconds)
@@ -240,47 +309,38 @@ class DerivedIndex:
                     status=self._get_state(connection, "status"),
                     quarantine_path=self._get_state_optional(connection, "quarantine_path"),
                 )
-                conditions = [
-                    "f.rowid IN (SELECT rowid FROM concept_fts WHERE concept_fts MATCH ?)"
-                ]
-                parameters: list[object] = [query]
-                prefix_conditions = _authorized_prefix_conditions(policy.read_prefixes)
-                conditions.append(prefix_conditions.sql)
-                parameters.extend(prefix_conditions.parameters)
-                if concept_type is not None:
-                    conditions.append("c.type = ?")
-                    parameters.append(concept_type)
-                if status is not None:
-                    conditions.append("c.status = ?")
-                    parameters.append(status)
-                if path_prefix is not None:
-                    conditions.append("c.path LIKE ? ESCAPE '\\'")
-                    parameters.append(f"{_escape_like(path_prefix)}%")
-                for tag in tags:
-                    conditions.append(
-                        "EXISTS (SELECT 1 FROM json_each(c.tags_json) WHERE value = ?)"
-                    )
-                    parameters.append(tag)
-                where_clause = " AND ".join(f"({condition})" for condition in conditions)
-                rows = connection.execute(
-                    f"""
-                    SELECT
-                        c.id,
-                        c.path,
-                        c.title,
-                        c.type,
-                        c.status,
-                        c.tags_json,
-                        snippet(concept_fts, 5, '', '', ' … ', 16) AS snippet,
-                        bm25(concept_fts, 10.0, 5.0, 5.0, 4.0, 1.0, 5.0) AS score
-                    FROM concept_fts AS f
-                    JOIN concepts AS c ON c.id = f.concept_id
-                    WHERE {where_clause}
-                    ORDER BY score, c.id
-                    LIMIT ? OFFSET ?
-                    """,
-                    (*parameters, bounded_limit + 1, offset),
-                ).fetchall()
+                lexical_rows = self._search_lexical_rows(
+                    connection,
+                    policy=policy,
+                    query=query,
+                    concept_type=concept_type,
+                    tags=tags,
+                    status=status,
+                    path_prefix=path_prefix,
+                    limit=max(bounded_limit + offset + 1, self._semantic_config.max_candidates),
+                    offset=0,
+                )
+                warnings: list[str] = []
+                if search_mode is SearchMode.LEXICAL:
+                    rows = lexical_rows[offset : offset + bounded_limit + 1]
+                else:
+                    try:
+                        rows = self._search_semantic_rows(
+                            connection,
+                            policy=policy,
+                            query=query,
+                            concept_type=concept_type,
+                            tags=tags,
+                            status=status,
+                            path_prefix=path_prefix,
+                            limit=bounded_limit,
+                            offset=offset,
+                            search_mode=search_mode,
+                            lexical_rows=lexical_rows,
+                        )
+                    except SemanticSearchError as exc:
+                        warnings.append(f"semantic_search_unavailable: {exc}")
+                        rows = lexical_rows[offset : offset + bounded_limit + 1]
         except sqlite3.OperationalError as exc:
             if self._is_search_query_error(exc):
                 raise DerivedSearchError("invalid FTS query") from exc
@@ -290,22 +350,11 @@ class DerivedIndex:
         page_rows = rows[:bounded_limit]
         next_cursor = _encode_cursor(offset + bounded_limit) if len(rows) > bounded_limit else None
         return SearchPage(
-            results=tuple(
-                SearchResult(
-                    concept_id=row["id"],
-                    path=row["path"],
-                    title=row["title"],
-                    concept_type=row["type"],
-                    status=row["status"],
-                    tags=tuple(json.loads(row["tags_json"])),
-                    score=float(-row["score"]),
-                    snippet=_bounded_snippet(row["snippet"] or row["title"]),
-                )
-                for row in page_rows
-            ),
+            results=tuple(self._row_to_search_result(row) for row in page_rows),
             next_cursor=next_cursor,
             repo_revision=state.repo_revision,
             index_revision=state.index_revision,
+            warnings=tuple(warnings),
         )
 
     def graph(
@@ -403,6 +452,43 @@ class DerivedIndex:
             with connection:
                 self._set_state(connection, "repo_revision", repo_revision)
 
+    def semantic_status(self) -> SemanticStatus:
+        if not self._semantic_config.enabled:
+            return SemanticStatus(
+                enabled=False,
+                ready=False,
+                model_id=None,
+                dimensions=None,
+                embedding_revision=None,
+                sqlite_vector_enabled=False,
+            )
+        with self._connect() as connection:
+            self._migrate(connection)
+            row = connection.execute(
+                "SELECT COUNT(*) AS total, "
+                "SUM(CASE WHEN status = 'ready' THEN 1 ELSE 0 END) AS ready_count "
+                "FROM concept_embeddings"
+            ).fetchone()
+            revision = self._get_state_optional(connection, "semantic_embedding_revision")
+        total = int(row["total"] or 0)
+        ready_count = int(row["ready_count"] or 0)
+        warnings = [item for item in (self._sqlite_vector_warning,) if item is not None]
+        if self._embedding_client is None:
+            warnings.append("semantic_embedding_client_unavailable")
+        if total > ready_count:
+            warnings.append(
+                f"semantic_embeddings_degraded: {total - ready_count} of {total} embeddings not ready"
+            )
+        return SemanticStatus(
+            enabled=True,
+            ready=self._embedding_client is not None and total == ready_count,
+            model_id=self._semantic_config.model_id,
+            dimensions=self._semantic_config.dimensions,
+            embedding_revision=revision,
+            sqlite_vector_enabled=self._sqlite_vector_enabled,
+            warnings=tuple(warnings),
+        )
+
     def wait_for_freshness(self, *, timeout_seconds: float) -> DerivedIndexState:
         deadline = time.monotonic() + timeout_seconds
         while True:
@@ -457,7 +543,15 @@ class DerivedIndex:
                     "FROM graph_metrics ORDER BY concept_id"
                 ).fetchall()
             ]
-        return {"concepts": concepts, "links": links, "metrics": metrics}
+            embeddings = [
+                dict(row)
+                for row in connection.execute(
+                    "SELECT concept_id, path, embedding_text_hash, model_id, dimensions, "
+                    "embedding_revision, status, model_revision, embedding_norm, error_message "
+                    "FROM concept_embeddings ORDER BY path"
+                ).fetchall()
+            ]
+        return {"concepts": concepts, "links": links, "metrics": metrics, "embeddings": embeddings}
 
     def _rebuild(
         self, connection: sqlite3.Connection, bundle_root: Path, repo_revision: str
@@ -465,14 +559,28 @@ class DerivedIndex:
         bundle = scan_bundle(bundle_root)
         self._migrate(connection)
         with connection:
-            for table in ("concepts", "concept_fts", "links", "graph_metrics"):
+            for table in (
+                "concepts",
+                "concept_fts",
+                "links",
+                "graph_metrics",
+                "concept_embeddings",
+            ):
                 connection.execute(f"DELETE FROM {table}")
             self._set_state(connection, "status", "rebuilding")
             self._set_state(connection, "repo_revision", repo_revision)
+            changed_documents: list[tuple[str, object]] = []
             for entry in bundle.entries:
+                changed_documents.append((entry.bundle_path, entry.document))
                 self._upsert_entry(connection, entry.bundle_path, entry.document, repo_revision)
             self._recompute_links(connection, repo_revision)
             self._recompute_metrics(connection)
+            self._update_embeddings(
+                connection,
+                repo_revision=repo_revision,
+                changed_documents=tuple(changed_documents),
+                full_rebuild=True,
+            )
             self._set_state(connection, "index_revision", repo_revision)
             self._set_state(connection, "status", "ready")
 
@@ -554,6 +662,7 @@ class DerivedIndex:
             "DELETE FROM links WHERE source_id = ? OR target_id = ?", (concept_id, concept_id)
         )
         connection.execute("DELETE FROM graph_metrics WHERE concept_id = ?", (concept_id,))
+        connection.execute("DELETE FROM concept_embeddings WHERE concept_id = ?", (concept_id,))
         connection.execute("DELETE FROM concepts WHERE id = ?", (concept_id,))
 
     def _recompute_links(self, connection: sqlite3.Connection, repo_revision: str) -> None:
@@ -612,6 +721,418 @@ class DerivedIndex:
                 ") VALUES(?, ?, ?, ?, ?)",
                 (concept_id, inbound, outbound, broken, orphan),
             )
+
+    def _update_embeddings(
+        self,
+        connection: sqlite3.Connection,
+        *,
+        repo_revision: str,
+        changed_documents: tuple[tuple[str, object], ...],
+        full_rebuild: bool,
+    ) -> None:
+        if not self._semantic_config.enabled:
+            self._set_state(connection, "semantic_embedding_revision", "disabled")
+            return
+        if self._embedding_client is None:
+            self._set_state(connection, "semantic_embedding_revision", "unavailable")
+            return
+        model_info = self._embedding_client.model_info()
+        self._validate_model_info(model_info)
+        stale_rows = connection.execute(
+            "SELECT concept_id FROM concept_embeddings WHERE model_id != ? OR dimensions != ? OR model_revision != ?",
+            (self._semantic_config.model_id, self._semantic_config.dimensions, model_info.revision),
+        ).fetchall()
+        for row in stale_rows:
+            connection.execute(
+                "UPDATE concept_embeddings SET status='stale', embedding_revision=?, model_id=?, dimensions=?, model_revision=? WHERE concept_id=?",
+                (
+                    repo_revision,
+                    self._semantic_config.model_id,
+                    self._semantic_config.dimensions,
+                    model_info.revision,
+                    row["concept_id"],
+                ),
+            )
+        pending: list[tuple[str, ConceptDocument, str, str]] = []
+        for bundle_path, document in changed_documents:
+            if not isinstance(document, ConceptDocument):
+                raise TypeError("document must be a ConceptDocument")
+            text = embedding_text(
+                title=document.frontmatter.title,
+                description=document.frontmatter.description,
+                body=document.body,
+            )
+            text_hash = embedding_content_hash(text)
+            existing = connection.execute(
+                "SELECT embedding_text_hash, model_id, dimensions, model_revision, status FROM concept_embeddings WHERE concept_id = ?",
+                (document.frontmatter.id,),
+            ).fetchone()
+            if (
+                existing is not None
+                and not full_rebuild
+                and existing["embedding_text_hash"] == text_hash
+                and existing["model_id"] == self._semantic_config.model_id
+                and int(existing["dimensions"]) == self._semantic_config.dimensions
+                and existing["model_revision"] == model_info.revision
+                and existing["status"] == "ready"
+            ):
+                connection.execute(
+                    "UPDATE concept_embeddings SET path=?, embedding_revision=? WHERE concept_id=?",
+                    (bundle_path, repo_revision, document.frontmatter.id),
+                )
+                continue
+            pending.append((bundle_path, document, text, text_hash))
+        if pending:
+            for start in range(0, len(pending), self._semantic_config.max_batch_size):
+                batch = pending[start : start + self._semantic_config.max_batch_size]
+                vectors = self._embed_pending_batch(batch)
+                for (bundle_path, document, _text, text_hash), vector in zip(
+                    batch, vectors, strict=True
+                ):
+                    if isinstance(vector, Exception):
+                        self._write_degraded_embedding(
+                            connection,
+                            bundle_path=bundle_path,
+                            document=document,
+                            text_hash=text_hash,
+                            repo_revision=repo_revision,
+                            model_revision=model_info.revision,
+                            error_message=str(vector),
+                        )
+                        continue
+                    try:
+                        validated = validate_embedding(
+                            vector, dimensions=self._semantic_config.dimensions
+                        )
+                    except SemanticSearchError as exc:
+                        self._write_degraded_embedding(
+                            connection,
+                            bundle_path=bundle_path,
+                            document=document,
+                            text_hash=text_hash,
+                            repo_revision=repo_revision,
+                            model_revision=model_info.revision,
+                            error_message=str(exc),
+                        )
+                        continue
+                    self._write_ready_embedding(
+                        connection,
+                        bundle_path=bundle_path,
+                        document=document,
+                        text_hash=text_hash,
+                        repo_revision=repo_revision,
+                        model_revision=model_info.revision,
+                        validated=validated,
+                    )
+        self._set_state(connection, "semantic_embedding_revision", repo_revision)
+
+    def _embed_pending_batch(
+        self, pending: Sequence[tuple[str, ConceptDocument, str, str]]
+    ) -> tuple[tuple[float, ...] | Exception, ...]:
+        assert self._embedding_client is not None
+        texts = [item[2] for item in pending]
+        try:
+            vectors = self._embedding_client.embed_batch(texts)
+            if len(vectors) != len(pending):
+                raise SemanticSearchError("embedding client returned mismatched batch length")
+            return vectors
+        except Exception as exc:
+            if len(pending) == 1:
+                return (SemanticSearchError(str(exc)),)
+        results: list[tuple[float, ...] | Exception] = []
+        for _bundle_path, _document, text, _text_hash in pending:
+            try:
+                results.append(self._embedding_client.embed(text))
+            except Exception as exc:
+                results.append(SemanticSearchError(str(exc)))
+        return tuple(results)
+
+    def _write_ready_embedding(
+        self,
+        connection: sqlite3.Connection,
+        *,
+        bundle_path: str,
+        document: ConceptDocument,
+        text_hash: str,
+        repo_revision: str,
+        model_revision: str,
+        validated: ValidatedEmbedding,
+    ) -> None:
+        connection.execute(
+            """
+            INSERT INTO concept_embeddings(
+                concept_id, path, embedding_text_hash, model_id, dimensions,
+                embedding_revision, status, model_revision, embedding_blob,
+                embedding_norm, updated_at, error_message
+            )
+            VALUES(?, ?, ?, ?, ?, ?, 'ready', ?, ?, ?, datetime('now'), NULL)
+            ON CONFLICT(concept_id) DO UPDATE SET
+                path=excluded.path,
+                embedding_text_hash=excluded.embedding_text_hash,
+                model_id=excluded.model_id,
+                dimensions=excluded.dimensions,
+                embedding_revision=excluded.embedding_revision,
+                status=excluded.status,
+                model_revision=excluded.model_revision,
+                embedding_blob=excluded.embedding_blob,
+                embedding_norm=excluded.embedding_norm,
+                updated_at=datetime('now'),
+                error_message=NULL
+            """,
+            (
+                document.frontmatter.id,
+                bundle_path,
+                text_hash,
+                self._semantic_config.model_id,
+                self._semantic_config.dimensions,
+                repo_revision,
+                model_revision,
+                pack_f32le(validated.values),
+                validated.norm,
+            ),
+        )
+
+    def _write_degraded_embedding(
+        self,
+        connection: sqlite3.Connection,
+        *,
+        bundle_path: str,
+        document: ConceptDocument,
+        text_hash: str,
+        repo_revision: str,
+        model_revision: str,
+        error_message: str,
+    ) -> None:
+        connection.execute(
+            """
+            INSERT INTO concept_embeddings(
+                concept_id, path, embedding_text_hash, model_id, dimensions,
+                embedding_revision, status, model_revision, embedding_blob,
+                embedding_norm, updated_at, error_message
+            )
+            VALUES(?, ?, ?, ?, ?, ?, 'degraded', ?, NULL, NULL, datetime('now'), ?)
+            ON CONFLICT(concept_id) DO UPDATE SET
+                path=excluded.path,
+                embedding_text_hash=excluded.embedding_text_hash,
+                model_id=excluded.model_id,
+                dimensions=excluded.dimensions,
+                embedding_revision=excluded.embedding_revision,
+                status=excluded.status,
+                model_revision=excluded.model_revision,
+                embedding_blob=NULL,
+                embedding_norm=NULL,
+                updated_at=datetime('now'),
+                error_message=excluded.error_message
+            """,
+            (
+                document.frontmatter.id,
+                bundle_path,
+                text_hash,
+                self._semantic_config.model_id,
+                self._semantic_config.dimensions,
+                repo_revision,
+                model_revision,
+                error_message[:1000],
+            ),
+        )
+
+    def _validate_model_info(self, model_info: EmbeddingModelInfo) -> None:
+        if model_info.dimensions != self._semantic_config.dimensions:
+            raise SemanticSearchError(
+                f"embedding dimensions mismatch: model={model_info.dimensions} config={self._semantic_config.dimensions}"
+            )
+        if len(model_info.model_id.strip()) == 0:
+            raise SemanticSearchError("embedding model id must not be empty")
+
+    def _search_lexical_rows(
+        self,
+        connection: sqlite3.Connection,
+        *,
+        policy: EffectivePolicy,
+        query: str,
+        concept_type: str | None,
+        tags: tuple[str, ...],
+        status: str | None,
+        path_prefix: str | None,
+        limit: int,
+        offset: int,
+    ) -> list[sqlite3.Row]:
+        conditions = ["f.rowid IN (SELECT rowid FROM concept_fts WHERE concept_fts MATCH ?)"]
+        parameters: list[object] = [query]
+        prefix_conditions = _authorized_prefix_conditions(policy.read_prefixes)
+        conditions.append(prefix_conditions.sql)
+        parameters.extend(prefix_conditions.parameters)
+        if concept_type is not None:
+            conditions.append("c.type = ?")
+            parameters.append(concept_type)
+        if status is not None:
+            conditions.append("c.status = ?")
+            parameters.append(status)
+        if path_prefix is not None:
+            conditions.append("c.path LIKE ? ESCAPE '\\'")
+            parameters.append(f"{_escape_like(path_prefix)}%")
+        for tag in tags:
+            conditions.append("EXISTS (SELECT 1 FROM json_each(c.tags_json) WHERE value = ?)")
+            parameters.append(tag)
+        where_clause = " AND ".join(f"({condition})" for condition in conditions)
+        return list(
+            connection.execute(
+                f"""
+                SELECT
+                    c.id,
+                    c.path,
+                    c.title,
+                    c.type,
+                    c.status,
+                    c.tags_json,
+                    snippet(concept_fts, 5, '', '', ' … ', 16) AS snippet,
+                    bm25(concept_fts, 10.0, 5.0, 5.0, 4.0, 1.0, 5.0) AS score
+                FROM concept_fts AS f
+                JOIN concepts AS c ON c.id = f.concept_id
+                WHERE {where_clause}
+                ORDER BY score, c.id
+                LIMIT ? OFFSET ?
+                """,
+                (*parameters, limit, offset),
+            ).fetchall()
+        )
+
+    def _search_semantic_rows(
+        self,
+        connection: sqlite3.Connection,
+        *,
+        policy: EffectivePolicy,
+        query: str,
+        concept_type: str | None,
+        tags: tuple[str, ...],
+        status: str | None,
+        path_prefix: str | None,
+        limit: int,
+        offset: int,
+        search_mode: SearchMode,
+        lexical_rows: Sequence[sqlite3.Row],
+    ) -> list[sqlite3.Row]:
+        if self._embedding_client is None:
+            raise SemanticSearchError("semantic search embedding client is unavailable")
+        query_vector = validate_embedding(
+            self._embedding_client.embed(query),
+            dimensions=self._semantic_config.dimensions,
+        ).values
+        lexical_rank = {row["id"]: rank for rank, row in enumerate(lexical_rows, start=1)}
+        candidate_rows = self._semantic_candidate_rows(
+            connection,
+            policy=policy,
+            concept_type=concept_type,
+            tags=tags,
+            status=status,
+            path_prefix=path_prefix,
+        )
+        semantic_scored = [
+            (self._embedding_cosine(connection, query_vector, row["embedding_blob"]), row)
+            for row in candidate_rows
+        ]
+        semantic_ordered = sorted(
+            semantic_scored,
+            key=lambda item: (-item[0], item[1]["path"], item[1]["id"]),
+        )
+        semantic_rank = {
+            row["id"]: rank for rank, (_score, row) in enumerate(semantic_ordered, start=1)
+        }
+        scored: list[tuple[float, float, int, sqlite3.Row]] = []
+        for cosine_score, row in semantic_ordered:
+            if search_mode is SearchMode.SEMANTIC:
+                final_score = cosine_score
+            else:
+                lexical_component = 1.0 / (
+                    RRF_K + lexical_rank.get(row["id"], len(lexical_rows) + 1)
+                )
+                semantic_component = 1.0 / (RRF_K + semantic_rank[row["id"]])
+                final_score = lexical_component + semantic_component
+            scored.append((final_score, cosine_score, lexical_rank.get(row["id"], 10**9), row))
+        ordered = [
+            item[3]
+            for item in sorted(
+                scored,
+                key=lambda item: (-item[0], -item[1], item[2], item[3]["path"], item[3]["id"]),
+            )
+        ]
+        return ordered[offset : offset + limit + 1]
+
+    def _semantic_candidate_rows(
+        self,
+        connection: sqlite3.Connection,
+        *,
+        policy: EffectivePolicy,
+        concept_type: str | None,
+        tags: tuple[str, ...],
+        status: str | None,
+        path_prefix: str | None,
+    ) -> list[sqlite3.Row]:
+        conditions = ["e.status = 'ready'"]
+        parameters: list[object] = []
+        prefix_conditions = _authorized_prefix_conditions(policy.read_prefixes)
+        conditions.append(prefix_conditions.sql.replace("c.", "e."))
+        parameters.extend(prefix_conditions.parameters)
+        if concept_type is not None:
+            conditions.append("c.type = ?")
+            parameters.append(concept_type)
+        if status is not None:
+            conditions.append("c.status = ?")
+            parameters.append(status)
+        if path_prefix is not None:
+            conditions.append("e.path LIKE ? ESCAPE '\\'")
+            parameters.append(f"{_escape_like(path_prefix)}%")
+        for tag in tags:
+            conditions.append("EXISTS (SELECT 1 FROM json_each(c.tags_json) WHERE value = ?)")
+            parameters.append(tag)
+        where_clause = " AND ".join(f"({condition})" for condition in conditions)
+        return list(
+            connection.execute(
+                f"""
+                SELECT c.id, c.path, c.title, c.type, c.status, c.tags_json, c.title AS snippet,
+                       e.embedding_blob, e.embedding_norm
+                FROM concept_embeddings AS e
+                JOIN concepts AS c ON c.id = e.concept_id
+                WHERE {where_clause}
+                ORDER BY e.path, c.id
+                LIMIT ?
+                """,
+                (*parameters, self._semantic_config.max_candidates),
+            ).fetchall()
+        )
+
+    def _embedding_cosine(
+        self, connection: sqlite3.Connection, query_vector: Sequence[float], blob: bytes
+    ) -> float:
+        if self._sqlite_vector_enabled:
+            try:
+                row = connection.execute(
+                    "SELECT vector_cosine(?, ?) AS cosine",
+                    (pack_f32le(query_vector), blob),
+                ).fetchone()
+                if row is not None and row["cosine"] is not None:
+                    return float(row["cosine"])
+            except sqlite3.DatabaseError:
+                pass
+        return cosine_similarity(query_vector, unpack_f32le(blob))
+
+    @staticmethod
+    def _row_to_search_result(row: sqlite3.Row) -> SearchResult:
+        try:
+            raw_score = row["score"]
+        except IndexError:
+            raw_score = None
+        score = float(-raw_score) if raw_score is not None else 0.0
+        return SearchResult(
+            concept_id=row["id"],
+            path=row["path"],
+            title=row["title"],
+            concept_type=row["type"],
+            status=row["status"],
+            tags=tuple(json.loads(row["tags_json"])),
+            score=score,
+            snippet=_bounded_snippet(row["snippet"] or row["title"]),
+        )
 
     def _collect_neighbors(
         self,
@@ -694,7 +1215,23 @@ class DerivedIndex:
         connection.execute("PRAGMA application_id=1296646996")
         connection.execute("PRAGMA journal_mode=WAL")
         connection.execute("PRAGMA foreign_keys=ON")
+        self._configure_sqlite_vector(connection)
         return connection
+
+    def _configure_sqlite_vector(self, connection: sqlite3.Connection) -> None:
+        extension_path = self._semantic_config.sqlite_extension_path
+        if not extension_path:
+            self._sqlite_vector_enabled = False
+            return
+        try:
+            connection.enable_load_extension(True)
+            connection.load_extension(extension_path)
+            connection.enable_load_extension(False)
+            self._sqlite_vector_enabled = True
+            self._sqlite_vector_warning = None
+        except (AttributeError, sqlite3.DatabaseError) as exc:
+            self._sqlite_vector_enabled = False
+            self._sqlite_vector_warning = f"sqlite_vector_extension_unavailable: {exc}"
 
     def _migrate(self, connection: sqlite3.Connection) -> None:
         with connection:
@@ -708,6 +1245,7 @@ class DerivedIndex:
                 ("repo_revision", ""),
                 ("index_revision", ""),
                 ("status", "ready"),
+                ("semantic_embedding_revision", ""),
             ):
                 if self._get_state_optional(connection, key) is None:
                     self._set_state(connection, key, value)

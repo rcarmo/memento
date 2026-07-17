@@ -79,6 +79,24 @@ class LimitsConfig(BaseModel):
     max_search_results: int = Field(default=100, ge=1)
 
 
+class MCPExecuteLimitsConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    max_operations: int = Field(default=12, ge=1, le=32)
+    max_intermediates: int = Field(default=12, ge=1, le=64)
+    max_records: int = Field(default=50, ge=1, le=500)
+    max_output_bytes: int = Field(default=65_536, ge=512)
+    max_time_seconds: float = Field(default=3.0, gt=0, le=30)
+
+
+class MCPConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    tool_surface: Literal["compact", "standard", "read_only", "curator", "admin"] = "compact"
+    compact_answer_enabled: bool = True
+    execute: MCPExecuteLimitsConfig = Field(default_factory=MCPExecuteLimitsConfig)
+
+
 class DeepAnswerLimitsConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -264,6 +282,39 @@ class ModelProviderSlotsConfig(BaseModel):
     dream: ModelSlotConfig = Field(default_factory=lambda: ModelSlotConfig(fallback_enabled=False))
 
 
+class SemanticSearchConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    enabled: bool = False
+    ffi_library_path: str | None = None
+    sqlite_extension_path: str | None = None
+    model_path: str | None = None
+    model_id: str = Field(default="rust-gte", min_length=1)
+    dimensions: int = Field(default=384, ge=1)
+    max_input_chars: int = Field(default=4096, ge=1)
+    max_batch_size: int = Field(default=16, ge=1)
+    max_candidates: int = Field(default=200, ge=1)
+    default_search_mode: Literal["lexical", "semantic", "hybrid"] = "lexical"
+
+    @field_validator("ffi_library_path", "sqlite_extension_path", "model_path")
+    @classmethod
+    def validate_optional_paths(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("path values must not be empty")
+        return normalized
+
+    @field_validator("model_id")
+    @classmethod
+    def validate_model_id(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("model_id must not be empty")
+        return normalized
+
+
 class IntelligentTiersConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -273,6 +324,7 @@ class IntelligentTiersConfig(BaseModel):
     model_proposals: ModelProposalsConfig = Field(default_factory=ModelProposalsConfig)
     dream: DreamConfig = Field(default_factory=DreamConfig)
     model_provider_slots: ModelProviderSlotsConfig = Field(default_factory=ModelProviderSlotsConfig)
+    semantic_search: SemanticSearchConfig = Field(default_factory=SemanticSearchConfig)
 
 
 class ServiceConfig(BaseModel):
@@ -282,4 +334,5 @@ class ServiceConfig(BaseModel):
     repository: RepositoryConfig
     authorization: AuthorizationConfig
     limits: LimitsConfig = Field(default_factory=LimitsConfig)
+    mcp: MCPConfig = Field(default_factory=MCPConfig)
     intelligent_tiers: IntelligentTiersConfig = Field(default_factory=IntelligentTiersConfig)

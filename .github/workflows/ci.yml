@@ -21,6 +21,10 @@ jobs:
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@6d6534a43cfbdfb0f2a63f01e816f3d553f64f34 # stable
+        with:
+          components: clippy,rustfmt
       - name: Install dev dependencies
         run: make install-dev
       - name: Validate

@@ -1,15 +1,19 @@
 from __future__ import annotations
 
+import asyncio
+import json
 import sqlite3
 from collections.abc import Generator
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 import pytest
 
 from memento.config import (
     AuthorizationConfig,
+    MCPConfig,
+    MCPExecuteLimitsConfig,
     NamespacePolicy,
     Principal,
     RepositoryConfig,
@@ -22,6 +26,7 @@ from memento.repository.frontmatter import serialize_concept
 from memento.repository.git import GitRepositoryPaths, bootstrap_repository, get_main_revision
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter, ConceptStatus
 from memento.repository.transactions import TransactionManager
+from memento.server import MementoMCPServer
 from memento.service import MemoryService, ServiceContext, ServiceDependencies
 
 
@@ -284,6 +289,203 @@ def test_direct_rename_rewrites_inbound_links_atomically(
     updated = (repo_paths.current_dir / "instances" / "smith.md").read_text(encoding="utf-8")
     assert "/projects/shared-piclaw.md" in updated
     assert "/projects/piclaw.md" not in updated
+
+
+def _server_for(service: MemoryService, config: ServiceConfig) -> MementoMCPServer:
+    tokens = {"smith-token": Principal(name="smith", roles=("curator", "proposer", "reader"))}
+    variant_service = MemoryService(
+        ServiceDependencies(
+            config=config,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            model_client=service._deps.model_client,
+        )
+    )
+    return MementoMCPServer(variant_service, bearer_tokens=tokens)
+
+
+def test_tool_discovery_surfaces_and_catalog_resources(
+    service: MemoryService,
+    service_config: ServiceConfig,
+) -> None:
+    expected_counts: tuple[
+        tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
+    ] = (
+        ("compact", 5),
+        ("standard", 18),
+        ("read_only", 8),
+        ("curator", 9),
+        ("admin", 19),
+    )
+    for surface, count in expected_counts:
+        server = _server_for(
+            service,
+            service_config.model_copy(update={"mcp": MCPConfig(tool_surface=surface)}),
+        )
+        tools = server.discover_tools()["tools"]
+        assert len(tools) == count
+    server = _server_for(service, service_config)
+    catalog = json.loads(asyncio.run(server.resource_catalog())["text"])
+    assert "operations" in catalog
+    assert any(item["operation"] == "execute" for item in catalog["operations"])
+    operation = json.loads(asyncio.run(server.resource_template_catalog("search"))["text"])
+    assert operation["tool"] == "memory_search"
+    workflow = json.loads(asyncio.run(server.resource_template_workflow("inspect"))["text"])
+    assert [item["operation"] for item in workflow["operations"]] == ["search", "read"]
+
+
+def test_execute_search_read_and_projection(service: MemoryService, flint: ServiceContext) -> None:
+    result = service.memory_execute(
+        flint,
+        plan={
+            "operations": [
+                {"op": "search", "args": {"query": "Piclaw"}, "save_as": "hits"},
+                {"op": "read", "args": {"id_or_path": "$hits.results.0.path"}, "save_as": "doc"},
+            ],
+            "returns": [{"name": "title", "ref": "$doc.frontmatter.title"}],
+        },
+    )
+    assert result.status == "success"
+    assert success_data(result)["returns"]["title"] == "Piclaw"
+
+
+def test_execute_rejects_invalid_references_and_multiple_commit_ops(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+    repo_paths: GitRepositoryPaths,
+) -> None:
+    invalid = service.memory_execute(
+        flint,
+        plan={
+            "operations": [
+                {"op": "search", "args": {"query": "Piclaw"}, "save_as": "hits"},
+                {"op": "read", "args": {"id_or_path": "$hits.results[0].path"}},
+            ]
+        },
+    )
+    assert invalid.status == "error"
+    assert invalid.error_class == "validation_error"
+
+    revision = get_main_revision(repo_paths)
+    commit_heavy = service.memory_execute(
+        smith,
+        plan={
+            "operations": [
+                {
+                    "op": "create",
+                    "args": {
+                        "path": "/projects/a.md",
+                        "concept_type": "project",
+                        "title": "A",
+                        "body": "# A\n",
+                        "expected_revision": revision,
+                        "idempotency_key": "a-1",
+                    },
+                },
+                {
+                    "op": "patch",
+                    "args": {
+                        "path": "/projects/piclaw.md",
+                        "expected_revision": revision,
+                        "idempotency_key": "p-1",
+                        "description": "x",
+                    },
+                },
+            ]
+        },
+    )
+    assert commit_heavy.status == "error"
+    assert commit_heavy.error_class == "validation_error"
+
+
+def test_execute_limits_auth_and_error_control(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    forbidden = service.memory_execute(
+        flint,
+        plan={
+            "operations": [
+                {
+                    "op": "create",
+                    "args": {
+                        "path": "/projects/nope.md",
+                        "concept_type": "project",
+                        "title": "Nope",
+                        "body": "# Nope\n",
+                        "expected_revision": service.memory_status(flint).repo_revision,
+                        "idempotency_key": "nope-1",
+                    },
+                }
+            ]
+        },
+    )
+    assert forbidden.status == "success"
+    trace = success_data(forbidden)["trace"]
+    assert trace[0]["status"] == "error"
+    assert trace[0]["error_class"] == "forbidden"
+
+    continued = service.memory_execute(
+        flint,
+        plan={
+            "stop_on_error": False,
+            "operations": [
+                {"op": "read", "args": {"id_or_path": "/secret/ghost.md"}},
+                {"op": "read", "args": {"id_or_path": "/projects/piclaw.md"}, "save_as": "doc"},
+            ],
+            "returns": [{"name": "path", "ref": "$doc.path"}],
+        },
+    )
+    assert continued.status == "success"
+    continued_data = success_data(continued)
+    assert continued_data["trace"][0]["status"] == "error"
+    assert continued_data["returns"]["path"] == "/projects/piclaw.md"
+
+    limited_service = MemoryService(
+        ServiceDependencies(
+            config=service_config.model_copy(
+                update={
+                    "mcp": MCPConfig(
+                        tool_surface="compact",
+                        execute=MCPExecuteLimitsConfig(
+                            max_operations=1, max_output_bytes=512, max_time_seconds=3.0
+                        ),
+                    )
+                }
+            ),
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            model_client=service._deps.model_client,
+        )
+    )
+    too_many = limited_service.memory_execute(
+        flint,
+        plan={
+            "operations": [
+                {"op": "status", "args": {}},
+                {"op": "status", "args": {}},
+            ]
+        },
+    )
+    assert too_many.status == "error"
+    assert too_many.error_class == "validation_error"
+
+    too_large = limited_service.memory_execute(
+        flint,
+        plan={
+            "operations": [{"op": "search", "args": {"query": "Piclaw"}, "save_as": "hits"}],
+            "returns": [{"name": "hits", "ref": "$hits"}],
+        },
+    )
+    assert too_large.status == "error"
+    assert too_large.error_class == "validation_error"
 
 
 def test_proposal_list_visibility_and_expiry(

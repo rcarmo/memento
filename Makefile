@@ -2,7 +2,7 @@ PYTHON ?= python3
 VENV ?= .venv
 BIN := $(VENV)/bin
 
-.PHONY: install install-dev lint format format-check typecheck test coverage check build-wheel install-wheel diff-check clean
+.PHONY: install install-dev lint format format-check typecheck test coverage rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check clean
 
 $(BIN)/python:
 	$(PYTHON) -m venv $(VENV)
@@ -31,7 +31,18 @@ test:
 coverage:
 	$(BIN)/pytest --cov=memento --cov-branch --cov-report=term-missing
 
-check: lint format-check typecheck test
+rust-format-check:
+	cd rust && cargo fmt --all --check
+
+rust-lint:
+	cd rust && cargo clippy --workspace --all-targets -- -D warnings
+
+rust-test:
+	cd rust && cargo test --workspace
+
+rust-check: rust-format-check rust-lint rust-test
+
+check: lint format-check typecheck test rust-check
 
 build-wheel:
 	$(BIN)/python -m build --wheel

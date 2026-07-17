@@ -70,6 +70,39 @@ Stable error classes for the deterministic core:
 - `queue_full`
 - `temporarily_read_only`
 
+## MCP discovery surfaces and catalog resources
+
+Configured `mcp.tool_surface` controls stable tool discovery without depending on request-time identity:
+
+- `compact` (default): `memory_help`, `memory_status`, `memory_search`, `memory_read`, optional `memory_answer` when enabled, and `memory_execute`
+- `standard`: the existing 18 direct tools for compatibility
+- `read_only`: discovery and read tools only
+- `curator`: compact surface plus proposal review/apply workflows
+- `admin`: full direct surface plus `memory_execute`
+
+Catalog resources are available at:
+
+- `memory://catalog`
+- `memory://catalog/{operation}`
+- `memory://workflow/{goal}`
+
+These expose generated descriptions, roles, examples and input schemas from one server-side registry.
+
+## `memory_execute`
+
+`memory_execute(plan)` runs a typed declarative plan through the existing public `MemoryService` methods.
+
+Contract rules:
+
+- plans are strict JSON objects with typed `operations`, optional `stop_on_error` and optional `returns`
+- operation names are stable literals such as `search`, `read`, `propose`, `proposal_apply`, `create`, `patch` and `rename`
+- `save_as` identifiers are bounded and may only be referenced as `$name` or safe dotted paths like `$hits.results.0.path`
+- there is no arbitrary code, import, loop, filesystem or network access
+- auth, validation and write policy remain enforced by the underlying service methods
+- at most one commit-capable operation (`proposal_apply`, `create`, `patch`, `rename`) is allowed per plan
+- output is bounded by configured limits for operation count, intermediates, records, bytes and total runtime
+- success returns a bounded operation trace, revision summary and requested projections
+
 ## `memory_propose_freeform` and `memory_propose_update`
 
 `memory_propose_freeform(content, suggested_path?, intent?)` and `memory_propose_update(instruction, target_hint?)` are feature-gated model-assisted proposal tools.
