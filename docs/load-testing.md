@@ -2,7 +2,7 @@
 
 Memento includes a repository-owned load harness at [`tools/load_test.py`](../tools/load_test.py). It exercises the Python service directly in temporary repositories and can also drive a running authenticated Streamable HTTP endpoint with stdlib JSON-RPC requests.
 
-The harness is intentionally local-first:
+The harness is local-first:
 
 * it creates temporary repositories and control databases;
 * it never mutates canonical test fixtures in place;
@@ -21,7 +21,7 @@ The harness currently covers:
 * timed backup/restore drills in temporary state roots;
 * optional HTTP load against a running authenticated Streamable HTTP endpoint using JSON-RPC `initialize` and `tools/call`.
 
-Graceful shutdown and longer soak runs are intentionally left to shell wrappers or external orchestration so the in-repo harness stays small and deterministic.
+Shell wrappers or external orchestration handle graceful shutdown and longer soak runs; the repository harness covers bounded test scenarios.
 
 ## Report format
 
@@ -34,7 +34,7 @@ Each run writes a JSON report containing:
 * invariant failures;
 * threshold checks and overall pass/fail.
 
-The tests in [`tests/test_load_harness.py`](../tests/test_load_harness.py) validate report structure, percentile calculations and scenario invariants. They do **not** assert performance numbers. Reviewed local reports live under [`docs/evidence/`](evidence/README.md).
+The tests in [`tests/test_load_harness.py`](../tests/test_load_harness.py) validate report structure, percentile calculations and scenario invariants. They do **not** assert performance numbers. Example local reports are in [`docs/evidence/`](evidence/README.md).
 
 ## Usage
 

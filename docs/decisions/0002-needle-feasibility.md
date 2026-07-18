@@ -154,12 +154,10 @@ The exact passing checkpoint was converted to the deterministic NDL1 format and 
 * release-container packaging with local model artefacts; and
 * a clean-volume MCP SDK smoke that discovered the opt-in `memory_route` tool and executed a routed read through the Rust runtime.
 
-On 2026-07-18, the release binary pinned to one logical CPU of an Intel Core i7-12700 processed all 360 held-out requests serially with 510.8 ms p50, 554.6 ms p95, 1.95 requests/s and 163.4 MiB peak RSS. Cold process start, model/tokenizer load and one request took 669 ms. CPU frequency and host contention were not fixed, so these are local observations rather than cross-machine guarantees. Full evidence is in `docs/evidence/needle/rust-router-single-core-i7-12700.json`.
+On 2026-07-18, the release binary pinned to one logical CPU of an Intel Core i7-12700 processed all 360 held-out requests serially with 510.8 ms p50, 554.6 ms p95, 1.95 requests/s and 163.4 MiB peak RSS. Cold process start, model/tokenizer load and one request took 669 ms. CPU frequency and host contention were not fixed, so these numbers apply to that run. The full report is in `docs/evidence/needle/rust-router-single-core-i7-12700.json`.
 
-ARM64 correctness is covered by portable and NEON code paths, but measured ARM64 latency remains a deployment follow-up. A runtime/model mismatch, malformed artefact or invalid model result fails closed.
+Portable and NEON paths cover ARM64, but no ARM64 latency measurements are included. Runtime/model mismatches, malformed artefacts and invalid output stop the request.
 
 ## Consequences
 
-Memento works exactly as before unless an operator enables the router. GTE-small remains the local retrieval model. Existing completion-model slots remain optional, and no remote API is required by the deterministic service.
-
-Needle is a specialist for local shallow orchestration, not a general answer model and never a source of authority. Deterministic Memento code owns authorisation, path validation, proposal review, Git publication, indexing and completion claims.
+The router is opt-in. When it is off, Memento uses the existing retrieval and completion paths. Needle classifies shallow actions only; Memento handles authorisation, paths, proposal review, Git publication and indexing.
