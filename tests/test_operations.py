@@ -274,7 +274,8 @@ def test_runtime_server_uses_writable_state_log(
         server = runtime.build_server()
         expected_log = runtime.paths.root / "logs" / "umcp.log"
         assert server._umcp_log_file == expected_log
-        assert expected_log.exists()
+        assert expected_log.parent.is_dir()
+        assert expected_log.parent.stat().st_mode & 0o200
     finally:
         runtime.close()
 
