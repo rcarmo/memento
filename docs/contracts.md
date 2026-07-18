@@ -120,11 +120,11 @@ Configured `mcp.tool_surface` controls stable discovery without depending on req
 
 | Surface | Exposed direct tools |
 |---|---|
-| `compact` | core help/status/search/read/execute plus `memory_skill_search`, `memory_skill_get`, optional `memory_answer` and optional `memory_route` (**7** to **9**) |
-| `standard` | the **26** direct compatibility tools, including skill-pack operations |
-| `read_only` | the **10** discovery, concept-read and skill-read tools |
-| `curator` | compact tools plus concept and skill proposal lifecycle tools; direct create/patch/rename remain execute-only (**16** or **17** with `memory_answer`) |
-| `admin` | the **27**-tool full direct surface plus `memory_execute` |
+| `compact` | core help/status/search/read/execute plus `memory_asset_get`, `memory_skill_get`, optional `memory_answer` and optional `memory_route` (**7** to **9**) |
+| `standard` | the **23** direct compatibility tools, including generic asset and skill convenience operations |
+| `read_only` | the **10** discovery, concept-read and asset-read tools |
+| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**13** or **14** with `memory_answer`) |
+| `admin` | the **24**-tool full direct surface plus `memory_execute` |
 
 ### Catalog resources
 
@@ -335,32 +335,31 @@ Returns:
 
 Audit issues are filtered to the caller's readable namespace.
 
-## Versioned skill packs
+## Versioned memory asset packs
 
-Skill packs are a dedicated artifact contract rather than generic concept attachments. Accepted content uses:
+Ordinary concepts can carry immutable, versioned ZIP assets. Proposal metadata remains in the standard proposal row while pending bytes live in `proposal_assets`; review and apply use the ordinary proposal lifecycle. Accepted content uses concept-ID-based paths so concept renames do not break assets:
 
 ```text
-/skills/<name>.md                              latest searchable document
-/skills/.versions/<name>/<version>.md          immutable metadata and exact SKILL.md
-/skills/.versions/<name>/<version>.zip         immutable Git LFS artifact
+/<ordinary concept path>.md
+/.assets/<concept-id>/<asset-kind>/<version>.json
+/.assets/<concept-id>/<asset-kind>/<version>.zip
 ```
 
-Names match `^[a-z0-9]+(?:-[a-z0-9]+)*$`. Versions are stable `MAJOR.MINOR.PATCH`; prerelease and build metadata are rejected. ZIPs require `SKILL.md` at the root and that file must exactly match the searchable text. Maximum decoded/uncompressed size is 50 MiB, with additional per-file, entry-count and compression-ratio limits. Traversal, absolute paths, backslashes, links, special files, encrypted entries, nested archives and native executables are rejected. Scripts and ordinary binary assets are allowed.
+Asset kinds and versions use lowercase/hyphen names and stable `MAJOR.MINOR.PATCH`. ZIPs are bounded to 50 MiB encoded and uncompressed, with per-file, entry-count and compression-ratio limits. Traversal, absolute paths, backslashes, links, special files, encrypted entries, nested archives and native executables are rejected.
+
+`memory_propose` accepts an `attach_asset_pack` change containing `path`, `asset_kind`, `version` and `zip_base64`. Stored proposal JSON replaces bytes with an asset ID, digest and generated manifest. `memory_proposal_get/list/review/apply` remain the only proposal lifecycle.
 
 | Tool | Required role | Purpose |
 |---|---|---|
-| `memory_skill_search` | `reader` | search only the highest accepted version of visible skills |
-| `memory_skill_get` | `reader` | retrieve latest or explicit version, manifest and ZIP as base64 |
-| `memory_skill_propose` | `proposer` | validate and submit a new immutable version |
-| `memory_skill_proposal_get` | `proposer` | inspect one visible pending skill proposal without ZIP bytes |
-| `memory_skill_proposal_list` | `proposer` | list visible skill proposals by optional status |
-| `memory_skill_proposal_review` | `curator` | approve, reject or request changes |
-| `memory_skill_proposal_apply` | `curator` | publish an approved version through the Git transaction pipeline |
-| `memory_skill_prune` | `curator` | remove retained versions beyond the configured keep count |
+| `memory_asset_get` | `reader` | retrieve latest or explicit version, manifest and ZIP as base64 |
+| `memory_asset_prune` | `curator` | remove retained versions beyond the keep count |
+| `memory_skill_get` | `reader` | convenience wrapper for `/skills/<name>.md`, kind `skill` |
+| `memory_skill_propose` | `proposer` | create/update a normal skill concept and attach a skill ZIP in one proposal |
+| `memory_skill_prune` | `curator` | convenience wrapper around generic asset pruning |
 
-Skill ZIPs are never accepted through `memory_execute`. Apply and prune require expected revision and idempotency key. Default recall omits `version` and resolves the numerically highest accepted stable version. The latest five are retained by default; active proposal references and the latest version are protected. Recall never extracts files server-side.
+Skills are ordinary concepts tagged `skill`; their body must byte-match ZIP-root `SKILL.md`. Search and read use `memory_search` and `memory_read`. Omitted asset versions resolve to the highest accepted stable version. The latest five are retained by default; active proposal references are protected. Recall never extracts files server-side.
 
-The Streamable HTTP request limit defaults to 72 MiB so a 50 MiB decoded ZIP fits after base64 and JSON overhead. Operators may raise it deliberately, but decoded ZIP and archive safety limits remain fixed independently.
+The Streamable HTTP request limit defaults to 72 MiB so a 50 MiB decoded ZIP fits after base64 and JSON overhead. Operators may raise it deliberately, but decoded ZIP and archive safety limits remain independent.
 
 ## Proposal records and lifecycle
 

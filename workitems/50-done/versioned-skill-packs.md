@@ -29,11 +29,11 @@ Store complete Piclaw skills as immutable stable-semver ZIP packs while indexing
 - Retrieval returns the ZIP and never extracts it server-side.
 
 ## Implementation Paths
-### Path A — Dedicated skill artifact contract (recommended)
-Add isolated validator/storage models, explicit skill proposal/retrieval operations and derived latest-version indexing. Keep binary handling out of ordinary concept mutation APIs.
+### Path A — Generic versioned asset packs (implemented)
+Extend ordinary proposals with binary-backed `attach_asset_pack` changes, store accepted assets by immutable concept ID, and treat skills as normal tagged concepts with exact `SKILL.md` binding.
 
-### Path B — General binary attachments
-Generalise concepts to attachments, then specialise skills. Rejected for v1 because it expands the trust and migration surface without another use case.
+### Path B — Dedicated skill lifecycle (superseded)
+A separate skill proposal queue and search model was implemented first, then removed because it duplicated ordinary memory semantics and could not serve other attachment use cases cleanly.
 
 ## Test Plan
 - Unit: hostile ZIP corpus, semver ordering, exact SKILL.md match, generated manifest and retention eligibility.
@@ -54,7 +54,8 @@ Generalise concepts to attachments, then specialise skills. Rejected for v1 beca
 
 ## Updates
 ### 2026-07-18 — implementation complete
-- Added hostile ZIP validation, immutable stable-semver Git/LFS storage, dedicated durable proposals, role-aware MCP lifecycle, latest-only search, exact ZIP recall, idempotent apply, protected five-version pruning, LFS-aware materialisation and bounded 72 MiB transport configuration.
+- Added hostile ZIP validation, immutable stable-semver Git/LFS storage, generic proposal-asset persistence, ordinary proposal lifecycle integration, concept-ID-based retrieval, protected five-version pruning, LFS-aware materialisation and bounded 72 MiB transport configuration.
+- Refactored skills into ordinary searchable concepts tagged `skill`; convenience calls now translate to standard proposals and generic assets rather than maintaining a second queue.
 - Added `memento-skill-import`, which revalidates and atomically imports a recalled pack into `.pi/skills/<name>/`, refuses existing destinations and symlinked parents, and normalises permissions.
 - Updated README/contracts/operations/release docs and clarified that any MCP-enabled agent can use Memento; Piclaw is the motivating use case.
 - Evidence: focused skill/security/lifecycle tests pass; full gate reached 169 Python tests plus Rust workspace and all load profiles before final hardening.

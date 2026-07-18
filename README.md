@@ -97,12 +97,12 @@ The compact MCP surface is intentionally small. It exposes:
 
 Skill search and recall add two direct tools, giving a compact surface count of **7** without answers and **8** with answers enabled; enabling the Needle router adds `memory_route`.
 
-Other configured surfaces include the dedicated skill-pack operations and are explicit and fixed:
+Other configured surfaces include generic asset retrieval/pruning and skill convenience operations:
 
-* `standard`: **26** direct tools
+* `standard`: **23** direct tools
 * `read_only`: **10** direct tools
-* `curator`: **16** direct tools without `memory_answer`, **17** with it
-* `admin`: **27** direct tools
+* `curator`: **13** direct tools without `memory_answer`, **14** with it
+* `admin`: **24** direct tools
 
 `memory_help()` takes no arguments. It returns a filtered payload that reflects the active tool surface and answer setting: available goals, supported formats, answer sources, search modes, catalog resources, workflow templates, visible direct tools, execute limits and any execute-only operations.
 
@@ -182,23 +182,23 @@ These are single-core measurements from one host, not portable SLOs. CPU frequen
 
 The full methodology, caveats and per-platform planning table are in [`docs/needle-performance.md`](docs/needle-performance.md); the machine-readable run is in [`docs/evidence/needle/rust-router-single-core-i7-12700.json`](docs/evidence/needle/rust-router-single-core-i7-12700.json).
 
-## Complete Skill Packs
+## Memory Asset Packs And Complete Skills
 
-Memento can store complete, versioned agent skills rather than reducing them to searchable prose. Each accepted version consists of ordinary searchable Markdown containing the exact `SKILL.md` text plus an immutable ZIP stored through Git LFS. The ZIP may contain scripts, references and binary assets, but not executable binaries, links, nested archives or unsafe paths.
+Ordinary memories may carry immutable, versioned asset packs stored through Git LFS. This keeps searchable knowledge in standard Markdown and uses the normal proposal/review/apply lifecycle, while allowing diagrams, templates, datasets or complete agent skills to travel with it.
 
-The skill workflow is deliberately storage-only:
+A skill is therefore just a normal concept under `/skills/`, tagged `skill`, whose body is the exact `SKILL.md` text. Its attached `asset_kind="skill"` ZIP may contain scripts, references and binary assets, but not executable binaries, links, nested archives or unsafe paths.
 
 ```text
-proposer submits ZIP + exact SKILL.md
-    -> curator reviews and applies
-    -> readers search the latest accepted version
-    -> reader recalls latest or an explicit version
+standard concept + attach_asset_pack proposal
+    -> ordinary curator review and apply
+    -> readers find it with memory_search and memory_read
+    -> memory_asset_get (or memory_skill_get) recalls a version
     -> client imports into .pi/skills/<name>/
 ```
 
-Names use lowercase words and hyphens; versions are stable semantic versions. Search returns only the highest accepted version, while explicit recall can fetch any retained version. The newest five are retained by default, and pruning never removes the latest or a version referenced by an active proposal.
+Asset versions use stable semantic versions and are stored by immutable concept ID, so renaming a memory does not break attachments. Omitted versions resolve to the highest accepted version. The newest five are retained by default, and pruning protects the latest version and versions referenced by active proposals.
 
-`memory_skill_get` returns the validated ZIP and generated manifest. The included Python helper `memento.skill_import.import_skill_pack` revalidates and atomically imports it into a workspace, normalises files as non-executable and refuses to overwrite an existing skill directory. Memento itself never installs, merges, enables or executes a skill.
+`memory_asset_get` returns the validated ZIP and generated manifest. The convenience `memory_skill_propose`, `memory_skill_get` and `memory_skill_prune` calls merely translate the Piclaw skill convention into ordinary concepts and generic assets; they do not create a second proposal queue. The included `memento-skill-import` command revalidates and atomically imports into a workspace, normalises files as non-executable and refuses to overwrite an existing skill directory. Memento itself never installs, merges, enables or executes a skill.
 
 ## Safety And Recovery
 
