@@ -17,6 +17,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          lfs: true
+      - name: Verify model artefacts
+        shell: bash
+        run: |
+          git lfs ls-files
+          if head -n 1 rust/tests/fixtures/gte-small.gtemodel | grep -q '^version https://git-lfs.github.com/spec/'; then
+            echo "GTE model is still a Git LFS pointer" >&2
+            exit 1
+          fi
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
@@ -43,6 +53,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          lfs: true
+      - name: Verify model artefacts
+        shell: bash
+        run: |
+          git lfs ls-files
+          if head -n 1 models/needle/memento-router.ndl | grep -q '^version https://git-lfs.github.com/spec/'; then
+            echo "Needle model is still a Git LFS pointer" >&2
+            exit 1
+          fi
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4
       - name: Build container
