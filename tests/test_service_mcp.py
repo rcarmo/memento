@@ -508,6 +508,16 @@ def test_skill_pack_propose_review_apply_search_and_recall(
     applied_data = success_data(applied)
     assert applied_data["proposal"]["status"] == "applied"
     assert "/skills/.versions/demo-skill/1.0.0.zip" in applied_data["changed_paths"]
+    replayed = success_data(
+        service.memory_skill_proposal_apply(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="skill-demo-1",
+        )
+    )
+    assert replayed["replayed"] is True
+    assert replayed["changed_paths"] == applied_data["changed_paths"]
 
     searched = success_data(service.memory_skill_search(flint, query="Demo Skill"))
     assert [(item["skill_name"], item["version"]) for item in searched["results"]] == [

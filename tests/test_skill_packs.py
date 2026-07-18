@@ -13,6 +13,7 @@ from memento.skill_packs import (
     MAX_FILE_BYTES,
     MAX_FILE_COUNT,
     MAX_UNCOMPRESSED_BYTES,
+    MAX_ZIP_BYTES,
     SKILL_MD_PATH,
     SkillPackValidationError,
     validate_skill_pack,
@@ -323,6 +324,16 @@ def test_validate_skill_pack_accepts_non_native_binary_payloads() -> None:
         zip_bytes=zip_bytes,
     )
     assert validated.manifest.file_count == 3
+
+
+def test_validate_skill_pack_rejects_raw_zip_larger_than_limit() -> None:
+    with pytest.raises(SkillPackValidationError, match="encoded size"):
+        validate_skill_pack(
+            skill_name="good-name",
+            version="1.2.3",
+            skill_md="# ok\n",
+            zip_bytes=b"x" * (MAX_ZIP_BYTES + 1),
+        )
 
 
 def test_validate_skill_pack_rejects_invalid_zip_bytes() -> None:

@@ -1,6 +1,6 @@
 # Release
 
-The release path proves the project can be built, checked and installed locally and in CI. It does not yet prove published artefacts, registry state or supply-chain evidence end to end, and that gap should stay explicit.
+The release path validates Python, Rust, the wheel and the container, then publishes tagged multi-architecture images and a GitHub release.
 
 ## Local release checklist
 
@@ -10,27 +10,21 @@ The release path proves the project can be built, checked and installed locally 
 * `make build-wheel`
 * `make install-wheel`
 * `make diff-check`
+* build and smoke the release container with a fresh non-root state directory
 
 ## Packaging notes
 
-* The wheel path validates the Python package, but platform-specific Rust semantic libraries are still deployment artefacts built separately.
-* The container build currently copies the vendored `rust/tests/fixtures/gte-small.gtemodel` into `/usr/local/share/memento/models/gte-small.gtemodel` and sets default semantic-library environment variables. Semantic search still depends on config enablement.
-* Principal bearer tokens remain mandatory runtime configuration. Provider API keys and semantic path overrides are optional environment variables, used only when the config calls for them.
+* The Python wheel contains the service and safe client-side skill import helper. Platform-specific Rust libraries remain deployment artifacts built separately.
+* The container packages the Rust GTE and Needle runtimes, vendored models, Git and Git LFS. Git LFS is required for accepted versioned skill ZIPs.
+* Principal bearer tokens remain mandatory runtime configuration. Provider API keys and model path overrides are optional and used only when enabled.
+* Skill submission can require up to the configured 72 MiB MCP request limit; reverse proxies must permit the same bounded request size.
 
-## CI
+## CI and publication
 
-GitHub Actions validates Python 3.12--3.14 through the Make targets, builds a wheel, installs it, and performs a container build check.
+GitHub Actions validates Python 3.12--3.14 through the Make targets, runs Rust formatting/Clippy/workspace tests, builds and installs a wheel, and builds the container. Stable `v*` tags publish native `linux/amd64` and `linux/arm64` images to GHCR, create a multi-architecture OCI index, publish a GitHub release and retain five releases. Fresh untagged architecture manifests are protected for seven days so cleanup cannot break a tagged index.
 
-## Image provenance limits
+Published tags include the full version, major/minor, major and stable-only `latest`.
 
-The current Dockerfile uses floating base images (`rust:1-slim` and `python:3.14-slim`). That means a locally observed image ID is useful as a point-in-time build note, but it is not a reproducible published digest claim. Until release automation pins base-image digests and publishes immutable outputs, do not present local image IDs as if they were stable release artefacts.
+## Remaining provenance limits
 
-## Pending publication evidence
-
-The current workflow is build validation only.
-
-* Registry push remains pending.
-* SBOM publication remains pending.
-* Provenance attestation remains pending.
-* Immutable digest publication remains pending.
-* Live verification of published artefacts remains pending.
+The Dockerfile still uses floating base-image tags (`rust:1-slim` and `python:3.14-slim`). Published image digests are immutable observations of a completed build, but rebuilding the same source later may produce a different digest until base images are pinned. SBOM attachment remains a future release improvement; BuildKit provenance attestations are included in the OCI index.

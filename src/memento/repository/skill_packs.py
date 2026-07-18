@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from memento.skill_packs import (
+    SKILL_NAME_PATTERN,
     SkillPackManifest,
     SkillPackValidationError,
     ValidatedSkillPack,
@@ -22,6 +23,7 @@ class SkillPackPaths:
 
 
 def skill_pack_paths(skill_name: str, version: str) -> SkillPackPaths:
+    validate_skill_name(skill_name)
     parse_stable_semver(version)
     return SkillPackPaths(
         latest_document=f"/skills/{skill_name}.md",
@@ -116,7 +118,16 @@ def parse_skill_pack_document(text: str) -> tuple[dict[str, object], str]:
     return metadata, skill_md
 
 
+def validate_skill_name(skill_name: str) -> str:
+    if not SKILL_NAME_PATTERN.fullmatch(skill_name):
+        raise SkillPackValidationError(
+            "skill_name must be lowercase alphanumeric words joined by hyphens"
+        )
+    return skill_name
+
+
 def list_skill_pack_versions(root: Path, skill_name: str) -> tuple[str, ...]:
+    validate_skill_name(skill_name)
     directory = root / "skills" / ".versions" / skill_name
     if not directory.exists():
         return ()

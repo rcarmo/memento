@@ -1,6 +1,6 @@
 # Memento implementation
 
-Memento exists because shared durable facts do not belong in Piclaw's per-instance chat history, reminders or local Dream state. Smith and Flint stay operationally independent while still reading and curating one common body of knowledge.
+Memento exists because shared durable facts do not belong in an agent's chat history, reminders or local maintenance state. It was designed around independent Piclaw instances such as Smith and Flint, but its boundary is authenticated MCP: any compatible agent can use the same read, proposal, curation and skill-pack contracts.
 
 What is in this repository is not a sketch. It is the implemented architecture: a standalone Python daemon, a Git-backed Markdown repository for canonical knowledge, `control.sqlite` for durable operational state, rebuildable derived indexes for search and graph work and an MCP surface that remains useful when every model feature is turned off.
 
@@ -26,7 +26,7 @@ Piclaw clients
 
 | Plane | Authority | Implemented responsibilities |
 |---|---|---|
-| Knowledge plane | Git repository | canonical Markdown concepts, deterministic serialisation, inbound-link rewrites on rename, audit-friendly history |
+| Knowledge plane | Git repository | canonical Markdown concepts, searchable skill metadata, immutable Git LFS skill ZIPs, deterministic serialisation, inbound-link rewrites on rename, audit-friendly history |
 | Control plane | `control.sqlite` | operation journal, idempotency, proposal lifecycle, scheduler runs, service checkpoints |
 | Derived plane | rebuildable SQLite/files | FTS5, graph metadata, semantic vectors, answer cache, hot working memory, traces and signals as configured |
 | Execution plane | service process | MCP tools, authn/authz, transaction pipeline, recovery, notifications, optional model tiers |

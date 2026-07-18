@@ -27,6 +27,7 @@
   "mcp": {
     "tool_surface": "compact",
     "compact_answer_enabled": true,
+    "max_request_bytes": 75497472,
     "execute": {
       "max_operations": 12,
       "max_intermediates": 12,

@@ -85,6 +85,14 @@ def test_git_lfs_tracks_zip_and_checkout_restores_bytes(tmp_path: Path) -> None:
     assert (root / "skills/.versions/demo/1.0.0.zip").read_bytes() == pack.zip_bytes
 
 
+@pytest.mark.parametrize("skill_name", ["../escape", "a/b", "Bad_Name", ""])
+def test_paths_reject_unsafe_skill_names(skill_name: str) -> None:
+    with pytest.raises(ValueError, match="skill_name"):
+        skill_pack_paths(skill_name, "1.0.0")
+    with pytest.raises(ValueError, match="skill_name"):
+        list_skill_pack_versions(Path("/tmp"), skill_name)
+
+
 def test_paths_are_deterministic() -> None:
     paths = skill_pack_paths("go-pprof", "2.3.4")
     assert paths.latest_document == "/skills/go-pprof.md"

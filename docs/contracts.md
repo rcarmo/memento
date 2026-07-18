@@ -4,7 +4,7 @@ Memento exposes a deterministic MCP surface over a Git-backed Markdown repositor
 
 ## Core rules
 
-* Git Markdown is authoritative for knowledge.
+* Git Markdown is authoritative for concepts and searchable skill metadata; accepted immutable skill ZIPs in Git LFS are authoritative skill artifacts.
 * `control.sqlite` is authoritative for operations, idempotency, proposals, leases and scheduler state.
 * FTS, graph indexes, caches and signals are derived and rebuildable.
 * The daemon is the sole canonical repository writer. One active process holds the write lease.
@@ -121,10 +121,10 @@ Configured `mcp.tool_surface` controls stable discovery without depending on req
 | Surface | Exposed direct tools |
 |---|---|
 | `compact` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_execute`, plus optional `memory_answer` and optional `memory_route` when the Needle router is enabled (**5** to **7**) |
-| `standard` | the existing **18** direct tools for compatibility |
-| `read_only` | the **8** discovery and read tools |
-| `curator` | compact direct tools plus `memory_proposal_get`, `memory_proposal_list`, `memory_proposal_review`, `memory_proposal_apply`; `create`, `patch` and `rename` are execute-only here (**9** or **10**) |
-| `admin` | the **19**-tool full direct surface plus `memory_execute` |
+| `standard` | the **26** direct compatibility tools, including skill-pack operations |
+| `read_only` | the **10** discovery, concept-read and skill-read tools |
+| `curator` | compact tools plus concept and skill proposal lifecycle tools; direct create/patch/rename remain execute-only (**16** or **17** with `memory_answer`) |
+| `admin` | the **27**-tool full direct surface plus `memory_execute` |
 
 ### Catalog resources
 
@@ -334,6 +334,33 @@ Returns:
 * `issues[]`
 
 Audit issues are filtered to the caller's readable namespace.
+
+## Versioned skill packs
+
+Skill packs are a dedicated artifact contract rather than generic concept attachments. Accepted content uses:
+
+```text
+/skills/<name>.md                              latest searchable document
+/skills/.versions/<name>/<version>.md          immutable metadata and exact SKILL.md
+/skills/.versions/<name>/<version>.zip         immutable Git LFS artifact
+```
+
+Names match `^[a-z0-9]+(?:-[a-z0-9]+)*$`. Versions are stable `MAJOR.MINOR.PATCH`; prerelease and build metadata are rejected. ZIPs require `SKILL.md` at the root and that file must exactly match the searchable text. Maximum decoded/uncompressed size is 50 MiB, with additional per-file, entry-count and compression-ratio limits. Traversal, absolute paths, backslashes, links, special files, encrypted entries, nested archives and native executables are rejected. Scripts and ordinary binary assets are allowed.
+
+| Tool | Required role | Purpose |
+|---|---|---|
+| `memory_skill_search` | `reader` | search only the highest accepted version of visible skills |
+| `memory_skill_get` | `reader` | retrieve latest or explicit version, manifest and ZIP as base64 |
+| `memory_skill_propose` | `proposer` | validate and submit a new immutable version |
+| `memory_skill_proposal_get` | `proposer` | inspect one visible pending skill proposal without ZIP bytes |
+| `memory_skill_proposal_list` | `proposer` | list visible skill proposals by optional status |
+| `memory_skill_proposal_review` | `curator` | approve, reject or request changes |
+| `memory_skill_proposal_apply` | `curator` | publish an approved version through the Git transaction pipeline |
+| `memory_skill_prune` | `curator` | remove retained versions beyond the configured keep count |
+
+Skill ZIPs are never accepted through `memory_execute`. Apply and prune require expected revision and idempotency key. Default recall omits `version` and resolves the numerically highest accepted stable version. The latest five are retained by default; active proposal references and the latest version are protected. Recall never extracts files server-side.
+
+The Streamable HTTP request limit defaults to 72 MiB so a 50 MiB decoded ZIP fits after base64 and JSON overhead. Operators may raise it deliberately, but decoded ZIP and archive safety limits remain fixed independently.
 
 ## Proposal records and lifecycle
 
