@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import sqlite3
 from pathlib import Path
 
-SCHEMA_VERSION = "5"
+SCHEMA_VERSION = "6"
 
 MIGRATIONS_V1 = (
     """
@@ -91,31 +93,27 @@ MIGRATIONS_V1 = (
     )
     """,
     "CREATE INDEX IF NOT EXISTS idx_dream_signals_status ON dream_signals(status, signal_type)",
+)
+
+MIGRATIONS_V6 = (
     """
-    CREATE TABLE IF NOT EXISTS skill_pack_proposals (
-        proposal_id TEXT PRIMARY KEY,
-        author_principal TEXT NOT NULL,
-        base_revision TEXT NOT NULL,
-        skill_name TEXT NOT NULL,
+    CREATE TABLE IF NOT EXISTS proposal_assets (
+        proposal_id TEXT NOT NULL,
+        asset_id TEXT NOT NULL,
+        concept_path TEXT NOT NULL,
+        asset_kind TEXT NOT NULL,
         version TEXT NOT NULL,
-        rationale TEXT,
-        skill_md TEXT NOT NULL,
-        zip_sha256 TEXT NOT NULL,
-        zip_bytes BLOB NOT NULL,
+        media_type TEXT NOT NULL,
+        sha256 TEXT NOT NULL,
+        blob_bytes BLOB NOT NULL,
         manifest_json TEXT NOT NULL,
-        status TEXT NOT NULL,
-        reviewed_by TEXT,
-        review_comment TEXT,
-        applied_operation_id TEXT,
-        applied_revision TEXT,
         created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL,
-        expires_at TEXT,
-        FOREIGN KEY(applied_operation_id) REFERENCES operations(op_id)
+        PRIMARY KEY (proposal_id, asset_id),
+        FOREIGN KEY(proposal_id) REFERENCES proposals(proposal_id) ON DELETE CASCADE
     )
     """,
-    "CREATE INDEX IF NOT EXISTS idx_skill_pack_proposals_status ON skill_pack_proposals(status, created_at)",
-    "CREATE INDEX IF NOT EXISTS idx_skill_pack_proposals_skill ON skill_pack_proposals(skill_name, version)",
+    "CREATE INDEX IF NOT EXISTS idx_proposal_assets_concept ON proposal_assets(concept_path, asset_kind, version)",
+    "CREATE INDEX IF NOT EXISTS idx_proposal_assets_created ON proposal_assets(created_at, proposal_id)",
 )
 
 
@@ -140,18 +138,126 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
             "SELECT value FROM service_state WHERE key = 'schema_version'"
         ).fetchone()
         if schema_row is None:
+            for statement in MIGRATIONS_V6:
+                connection.execute(statement)
             connection.execute(
                 "INSERT INTO service_state(key, value, updated_at) "
                 "VALUES('schema_version', ?, datetime('now'))",
                 (SCHEMA_VERSION,),
             )
             return
-        if schema_row["value"] == SCHEMA_VERSION:
+        current_version = schema_row["value"]
+        if current_version == SCHEMA_VERSION:
+            for statement in MIGRATIONS_V6:
+                connection.execute(statement)
             return
-        if schema_row["value"] in {"1", "2", "3", "4"}:
+        if current_version in {"1", "2", "3", "4"}:
+            for statement in MIGRATIONS_V6:
+                connection.execute(statement)
             connection.execute(
                 "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
                 (SCHEMA_VERSION,),
             )
             return
-        raise MigrationError(f"unsupported control schema version: {schema_row['value']}")
+        if current_version == "5":
+            _migrate_v5_to_v6(connection)
+            connection.execute(
+                "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
+                (SCHEMA_VERSION,),
+            )
+            return
+        raise MigrationError(f"unsupported control schema version: {current_version}")
+
+
+def _migrate_v5_to_v6(connection: sqlite3.Connection) -> None:
+    for statement in MIGRATIONS_V6:
+        connection.execute(statement)
+    rows = connection.execute(
+        "SELECT * FROM skill_pack_proposals ORDER BY created_at, proposal_id"
+    ).fetchall()
+    for row in rows:
+        proposal_id = str(row["proposal_id"])
+        existing = connection.execute(
+            "SELECT proposal_id FROM proposals WHERE proposal_id = ?", (proposal_id,)
+        ).fetchone()
+        if existing is not None:
+            continue
+        concept_path = f"/skills/{row['skill_name']}.md"
+        asset_id = _skill_pack_asset_id(str(row["skill_name"]), str(row["version"]))
+        patch = {
+            "changes": [
+                {
+                    "kind": "create",
+                    "path": concept_path,
+                    "concept_type": "concept",
+                    "title": str(row["skill_name"]).replace("-", " ").title(),
+                    "body": str(row["skill_md"]),
+                    "description": f"Versioned agent skill {row['skill_name']}.",
+                    "tags": ["skill"],
+                    "aliases": [],
+                },
+                {
+                    "kind": "attach_asset_pack",
+                    "path": concept_path,
+                    "asset_id": asset_id,
+                    "asset_kind": "skill",
+                    "zip_sha256": str(row["zip_sha256"]),
+                    "version": str(row["version"]),
+                    "manifest": json.loads(str(row["manifest_json"])),
+                },
+            ]
+        }
+        patch_json = json.dumps(patch, sort_keys=True)
+        patch_hash = hashlib.sha256(patch_json.encode("utf-8")).hexdigest()
+        connection.execute(
+            """
+            INSERT INTO proposals(
+                proposal_id, author_principal, client_instance_id, base_revision,
+                intent, rationale, patch_json, patch_hash, status,
+                reviewed_by, review_comment, applied_operation_id, applied_revision,
+                created_at, updated_at, expires_at
+            ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                proposal_id,
+                str(row["author_principal"]),
+                None,
+                str(row["base_revision"]),
+                f"Attach skill asset {row['skill_name']} {row['version']}",
+                row["rationale"],
+                patch_json,
+                patch_hash,
+                str(row["status"]),
+                row["reviewed_by"],
+                row["review_comment"],
+                row["applied_operation_id"],
+                row["applied_revision"],
+                str(row["created_at"]),
+                str(row["updated_at"]),
+                row["expires_at"],
+            ),
+        )
+        connection.execute(
+            """
+            INSERT INTO proposal_assets(
+                proposal_id, asset_id, concept_path, asset_kind, version,
+                media_type, sha256, blob_bytes, manifest_json, created_at
+            ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                proposal_id,
+                asset_id,
+                concept_path,
+                "skill",
+                str(row["version"]),
+                "application/zip",
+                str(row["zip_sha256"]),
+                bytes(row["zip_bytes"]),
+                str(row["manifest_json"]),
+                str(row["created_at"]),
+            ),
+        )
+
+
+def _skill_pack_asset_id(skill_name: str, version: str) -> str:
+    return f"skill-pack:{skill_name}:{version}"

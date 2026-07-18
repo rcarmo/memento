@@ -10,11 +10,13 @@ from typing import Any
 
 from memento.config import Principal, ServiceConfig
 from memento.control.db import connect_control_db, migrate_control_db
+from memento.control.operations import OperationRequest
 from memento.control.proposals import ProposalStatus, list_proposals
 from memento.derived.index import DerivedIndex
 from memento.ffi import RustFfiLibrary
 from memento.model_clients import RoutedFallbackModelClient, build_endpoint_clients
 from memento.needle_ffi import NeedleFfiLibrary
+from memento.repository.asset_migration import migrate_legacy_skill_packs
 from memento.repository.bundle import scan_bundle
 from memento.repository.git import (
     GitRepositoryPaths,
@@ -23,7 +25,7 @@ from memento.repository.git import (
     materialize_current_checkout,
 )
 from memento.repository.lease import WriterLease, acquire_writer_lease
-from memento.repository.transactions import TransactionManager
+from memento.repository.transactions import TransactionManager, TransactionRequest
 from memento.server import MementoMCPServer
 from memento.service import MemoryService, ServiceDependencies
 
@@ -71,7 +73,7 @@ class MementoRuntime:
         proposals = list_proposals(self.control_connection)
         semantic = self.derived_index.semantic_status()
         return {
-            "service_version": "0.1.0",
+            "service_version": "0.2.0",
             "schema_version": self.config.schema_version,
             "repo_revision": get_main_revision(self.paths.repo_paths),
             "index_revision": state.index_revision,
@@ -306,6 +308,24 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             )
         )
         manager.recover_startup()
+        if (paths.repo_paths.current_dir / "skills" / ".versions").exists():
+            revision = get_main_revision(paths.repo_paths)
+            manager.apply(
+                TransactionRequest(
+                    operation=OperationRequest(
+                        op_id="migrate-generic-asset-packs-v1",
+                        principal="memento-migration",
+                        idempotency_key="migrate-generic-asset-packs-v1",
+                        tool_name="internal_asset_migration",
+                        request_json=json.dumps({"base_revision": revision}),
+                    ),
+                    expected_revision=revision,
+                    commit_message="memory: migrate skills to generic assets",
+                    author_name="Rui Carmo",
+                    author_email="rui.carmo@gmail.com",
+                ),
+                migrate_legacy_skill_packs,
+            )
         return MementoRuntime(
             config_path=config_path,
             config=config,
