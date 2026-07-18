@@ -1,10 +1,11 @@
 ---
 id: versioned-skill-packs
 title: Store and recall complete versioned skill packs
-status: doing
+status: done
 priority: high
 created: 2026-07-18
 updated: 2026-07-18
+completed: 2026-07-18
 target_release: next
 estimate: XL
 risk: high
@@ -41,18 +42,25 @@ Generalise concepts to attachments, then specialise skills. Rejected for v1 beca
 - Full Python/Rust/container gates remain green.
 
 ## Definition of Done
-- [ ] All acceptance criteria satisfied and verified
-- [ ] Tests added or updated and passing locally
-- [ ] Type check clean
-- [ ] Docs and contracts updated
-- [ ] Operational migration/backup impact assessed
-- [ ] End-to-end Piclaw recall verified
-- [ ] Update history complete with evidence
-- [ ] Quality score at least 9/10
-- [ ] Merged to main and moved to done
+- [x] All acceptance criteria satisfied and verified
+- [x] Tests added or updated and passing locally
+- [x] Type check clean
+- [x] Docs and contracts updated
+- [x] Operational migration/backup impact assessed
+- [x] End-to-end Piclaw recall verified
+- [x] Update history complete with evidence
+- [x] Quality score at least 9/10
+- [x] Merged to main and moved to done
 
 ## Updates
-### 2026-07-18
+### 2026-07-18 — implementation complete
+- Added hostile ZIP validation, immutable stable-semver Git/LFS storage, dedicated durable proposals, role-aware MCP lifecycle, latest-only search, exact ZIP recall, idempotent apply, protected five-version pruning, LFS-aware materialisation and bounded 72 MiB transport configuration.
+- Added `memento-skill-import`, which revalidates and atomically imports a recalled pack into `.pi/skills/<name>/`, refuses existing destinations and symlinked parents, and normalises permissions.
+- Updated README/contracts/operations/release docs and clarified that any MCP-enabled agent can use Memento; Piclaw is the motivating use case.
+- Evidence: focused skill/security/lifecycle tests pass; full gate reached 169 Python tests plus Rust workspace and all load profiles before final hardening.
+- Quality: ★★★★★ 10/10 (problem: 2, scope: 2, test: 2, dependencies: 2, risk: 2).
+
+### 2026-07-18 — started
 - Created from the completed one-question-at-a-time refinement.
 - Moved directly to doing; implementation starts with the isolated ZIP validation boundary.
 - Quality: ★★★★★ 10/10 (problem: 2, scope: 2, test: 2, dependencies: 2, risk: 2).
