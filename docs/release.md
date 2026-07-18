@@ -14,8 +14,8 @@ The release path validates Python, Rust, the wheel and the container, then publi
 
 ## Packaging notes
 
-* The Python wheel contains the service and safe client-side skill import helper. Platform-specific Rust libraries remain deployment artifacts built separately.
-* The container packages the Rust GTE and Needle runtimes, vendored models, Git and Git LFS. Git LFS is required for accepted versioned skill ZIPs.
+* The Python wheel contains the service and the client-side skill import command. Platform-specific Rust libraries are built separately.
+* The container packages the Rust GTE and Needle runtimes, vendored models, Git and Git LFS. Git LFS stores accepted versioned asset ZIPs.
 * Principal bearer tokens remain mandatory runtime configuration. Provider API keys and model path overrides are optional and used only when enabled.
 * Skill submission can require up to the configured 72 MiB MCP request limit; reverse proxies must permit the same bounded request size.
 

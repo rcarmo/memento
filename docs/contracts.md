@@ -4,7 +4,7 @@ Memento exposes a deterministic MCP surface over a Git-backed Markdown repositor
 
 ## Core rules
 
-* Git Markdown is authoritative for concepts and searchable skill metadata; accepted immutable skill ZIPs in Git LFS are authoritative skill artifacts.
+* Git Markdown is authoritative for concepts; accepted immutable asset ZIPs in Git LFS are part of the same canonical history.
 * `control.sqlite` is authoritative for operations, idempotency, proposals, leases and scheduler state.
 * FTS, graph indexes, caches and signals are derived and rebuildable.
 * The daemon is the sole canonical repository writer. One active process holds the write lease.
@@ -337,6 +337,8 @@ Returns:
 Audit issues are filtered to the caller's readable namespace.
 
 ## Versioned memory asset packs
+
+The storage model and the decision to treat skills as ordinary concepts are recorded in [ADR 0007](decisions/0007-attach-generic-versioned-assets.md).
 
 Ordinary concepts can carry immutable, versioned ZIP assets. Proposal metadata remains in the standard proposal row while pending bytes live in `proposal_assets`; review and apply use the ordinary proposal lifecycle. Accepted content uses concept-ID-based paths so concept renames do not break assets:
 
