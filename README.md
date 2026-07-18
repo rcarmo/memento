@@ -8,6 +8,8 @@ A conversation is short-lived working context. A reminder belongs to the agent t
 
 Memento stores that last category: shared, durable knowledge. It was designed to solve this across multiple Piclaw instances, but Piclaw is not required: any MCP-enabled agent or client can connect, authenticate, search, read, submit proposals and--when granted the appropriate role--curate shared memory.
 
+Two small local models help without becoming sources of authority. [`cactus-compute/needle`][needle] routes simple natural-language requests into bounded read actions, while [`rcarmo/go-gte`][go-gte] and the [`thenlper/gte-small`][gte-small] weights provide semantic search when wording differs. Deterministic Memento code validates their output and owns policy, Git and persistence.
+
 ```mermaid
 flowchart LR
     request[Agent request] --> core[Deterministic Memento core]
