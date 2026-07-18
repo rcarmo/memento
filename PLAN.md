@@ -121,6 +121,14 @@ This file is the current delivery and acceptance record. Architecture, rationale
 - [x] Benchmark the vendored GTE-small model on the local AMD64 host with recorded semantic-load evidence.
 - [ ] Repeat the production model benchmark on a deployed ARM64 host.
 
+## Local orchestration model study
+
+- [x] Pin and run the public Needle checkpoint and tokenizer fully offline on the local AMD64 host.
+- [x] Measure checkpoint load, warm latency, peak RSS, environment size, JSON validity, routing accuracy, determinism and UNKNOWN behaviour.
+- [x] Record the go/no-go decision in ADR 0002; the base checkpoint does not meet production thresholds.
+- [ ] Fine-tune Needle on the reviewed Memento routing/plan/UNKNOWN corpus and rerun held-out AMD64 gates.
+- [ ] Validate any passing fine-tuned checkpoint on ARM64 and the pinned Cactus runtime before integration.
+
 ## Deferred roadmap
 
 Start each tier behind an independent feature flag and only after Milestone 6.
