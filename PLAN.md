@@ -126,8 +126,10 @@ This file is the current delivery and acceptance record. Architecture, rationale
 - [x] Pin and run the public Needle checkpoint and tokenizer fully offline on the local AMD64 host.
 - [x] Measure checkpoint load, warm latency, peak RSS, environment size, JSON validity, routing accuracy, determinism and UNKNOWN behaviour.
 - [x] Record the go/no-go decision in ADR 0002; the base checkpoint does not meet production thresholds.
-- [ ] Fine-tune Needle on the reviewed Memento routing/plan/UNKNOWN corpus and rerun held-out AMD64 gates.
-- [ ] Validate any passing fine-tuned checkpoint on ARM64 and the pinned Cactus runtime before integration.
+- [x] Fine-tune Needle for two epochs on a free, deterministic 1,500-example Memento routing/plan/UNKNOWN corpus using the local RTX 3060.
+- [x] Rerun unchanged and unseen-family AMD64 gates; the experimental checkpoint remains below routing, abstention and plan-validity thresholds and is not shipped.
+- [ ] Add explicit family-separated training support and nested plan constraints before considering another fine-tune.
+- [ ] Validate only a passing checkpoint on ARM64 and the pinned Cactus runtime before integration.
 
 ## Deferred roadmap
 

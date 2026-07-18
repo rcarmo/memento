@@ -1,0 +1,82 @@
+{
+  "base_eval": {
+    "args_acc": 0.6923,
+    "call_f1": 0.2903,
+    "exact_match": 0.2167,
+    "n": 60,
+    "name_f1": 0.4228,
+    "parse_rate": 1.0,
+    "per_tool": {
+      "UNKNOWN": {
+        "correct": 0,
+        "total": 10
+      },
+      "memory_execute": {
+        "correct": 0,
+        "total": 10
+      },
+      "memory_help": {
+        "correct": 6,
+        "total": 10
+      },
+      "memory_read": {
+        "correct": 7,
+        "total": 10
+      },
+      "memory_search": {
+        "correct": 1,
+        "total": 10
+      },
+      "memory_status": {
+        "correct": 4,
+        "total": 10
+      }
+    }
+  },
+  "checkpoint_sha256": "c1025f0b8f3b2ab18af01c50e6729d8edbf3d15e5ae932c99588c35ec0e05aeb",
+  "finetuned_eval": {
+    "args_acc": 0.9322,
+    "call_f1": 0.9167,
+    "exact_match": 0.9167,
+    "n": 60,
+    "name_f1": 0.9833,
+    "parse_rate": 1.0,
+    "per_tool": {
+      "UNKNOWN": {
+        "correct": 9,
+        "total": 10
+      },
+      "memory_execute": {
+        "correct": 10,
+        "total": 10
+      },
+      "memory_help": {
+        "correct": 10,
+        "total": 10
+      },
+      "memory_read": {
+        "correct": 10,
+        "total": 10
+      },
+      "memory_search": {
+        "correct": 6,
+        "total": 10
+      },
+      "memory_status": {
+        "correct": 10,
+        "total": 10
+      }
+    }
+  },
+  "training": {
+    "base_checkpoint_revision": "5f89b4307696d669c3df1d38ae057e6e1728b107",
+    "batch_size": 32,
+    "corpus_examples": 1500,
+    "device": "NVIDIA GeForce RTX 3060 12GB",
+    "epochs": 2,
+    "needle_source_commit": "ffb1c51",
+    "random_test_examples": 60,
+    "train_examples": 1380,
+    "validation_examples": 60
+  }
+}
