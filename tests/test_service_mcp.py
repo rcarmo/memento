@@ -30,6 +30,20 @@ from memento.server import MementoMCPServer
 from memento.service import MemoryService, ServiceContext, ServiceDependencies
 
 
+class FakeNeedleRouter:
+    def __init__(self, output: str) -> None:
+        self.output = output
+        self.calls: list[tuple[str, str]] = []
+        self.closed = False
+
+    def generate(self, query: str, tools_json: str, **_: Any) -> str:
+        self.calls.append((query, tools_json))
+        return self.output
+
+    def close(self) -> None:
+        self.closed = True
+
+
 def success_data(result: object) -> dict[str, Any]:
     payload = cast(Any, result)
     assert payload.status == "success"
@@ -302,7 +316,9 @@ def test_direct_rename_rewrites_inbound_links_atomically(
     assert "/projects/piclaw.md" not in updated
 
 
-def _server_for(service: MemoryService, config: ServiceConfig) -> MementoMCPServer:
+def _server_for(
+    service: MemoryService, config: ServiceConfig, *, needle_router: FakeNeedleRouter | None = None
+) -> MementoMCPServer:
     tokens = {"smith-token": Principal(name="smith", roles=("curator", "proposer", "reader"))}
     variant_service = MemoryService(
         ServiceDependencies(
@@ -312,6 +328,7 @@ def _server_for(service: MemoryService, config: ServiceConfig) -> MementoMCPServ
             derived_index=service._deps.derived_index,
             transaction_manager=service._deps.transaction_manager,
             model_client=service._deps.model_client,
+            needle_router=needle_router or service._deps.needle_router,
         )
     )
     return MementoMCPServer(variant_service, bearer_tokens=tokens)
@@ -372,6 +389,160 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "propose_freeform",
         "propose_update",
     ]
+
+
+def test_memory_route_direct_execute_unknown_auth_and_malformed(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    enabled = service_config.model_copy(
+        update={
+            "intelligent_tiers": service_config.intelligent_tiers.model_copy(
+                update={
+                    "needle_router": service_config.intelligent_tiers.needle_router.model_copy(
+                        update={"enabled": True}
+                    )
+                }
+            )
+        }
+    )
+
+    search_router = FakeNeedleRouter(
+        '[{"name":"search_paths","arguments":{"query":"Piclaw","limit":1}}]'
+    )
+    routed_service = MemoryService(
+        ServiceDependencies(
+            config=enabled,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            model_client=service._deps.model_client,
+            needle_router=search_router,
+        )
+    )
+    result = routed_service.memory_route(smith, request="Find Piclaw")
+    assert result.status == "success"
+    data = success_data(result)
+    assert data["executed"] is True
+    assert data["action"]["action"] == "search_paths"
+    assert data["result"]["status"] == "success"
+    assert data["result"]["data"]["value"] == [{"path": "/projects/piclaw.md"}]
+    assert search_router.calls[0][0] == "Find Piclaw"
+
+    plan_router = FakeNeedleRouter('[{"name":"search_then_read","arguments":{"query":"Piclaw"}}]')
+    plan_service = MemoryService(
+        ServiceDependencies(
+            config=enabled,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            model_client=service._deps.model_client,
+            needle_router=plan_router,
+        )
+    )
+    preview = plan_service.memory_route(smith, request="show Piclaw", execute=False)
+    assert preview.status == "success"
+    preview_data = success_data(preview)
+    assert preview_data["executed"] is False
+    assert preview_data["expansion"]["tool"] == "memory_execute"
+    executed = plan_service.memory_route(smith, request="show Piclaw")
+    assert executed.status == "success"
+    assert success_data(executed)["result"]["status"] == "success"
+
+    unknown_service = MemoryService(
+        ServiceDependencies(
+            config=enabled,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            model_client=service._deps.model_client,
+            needle_router=FakeNeedleRouter('[{"name":"UNKNOWN","arguments":{}}]'),
+        )
+    )
+    unknown = unknown_service.memory_route(smith, request="book a flight")
+    assert unknown.status == "success"
+    unknown_data = success_data(unknown)
+    assert unknown_data["abstained"] is True
+    assert unknown_data["executed"] is False
+
+    read_service = MemoryService(
+        ServiceDependencies(
+            config=enabled,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            model_client=service._deps.model_client,
+            needle_router=FakeNeedleRouter(
+                '[{"name":"read_field","arguments":{"id_or_path":"/secret/ghost.md","field":"title"}}]'
+            ),
+        )
+    )
+    forbidden = read_service.memory_route(flint, request="show /secret/ghost.md title")
+    assert forbidden.status == "success"
+    assert success_data(forbidden)["result"]["status"] == "error"
+    assert success_data(forbidden)["result"]["error_class"] == "forbidden"
+
+    malformed_service = MemoryService(
+        ServiceDependencies(
+            config=enabled,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            model_client=service._deps.model_client,
+            needle_router=FakeNeedleRouter('{"name":"search_paths"}'),
+        )
+    )
+    malformed = malformed_service.memory_route(smith, request="bad")
+    assert malformed.status == "error"
+    assert malformed.error_class == "validation_error"
+
+
+def test_memory_route_disabled_and_server_discovery(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+) -> None:
+    disabled = service.memory_route(smith, request="find Piclaw")
+    assert disabled.status == "error"
+    assert disabled.error_class == "validation_error"
+
+    enabled = service_config.model_copy(
+        update={
+            "intelligent_tiers": service_config.intelligent_tiers.model_copy(
+                update={
+                    "needle_router": service_config.intelligent_tiers.needle_router.model_copy(
+                        update={"enabled": True}
+                    )
+                }
+            )
+        }
+    )
+    server = _server_for(
+        service,
+        enabled.model_copy(update={"mcp": MCPConfig(tool_surface="compact")}),
+        needle_router=FakeNeedleRouter('[{"name":"UNKNOWN","arguments":{}}]'),
+    )
+    tools = [item["name"] for item in server.discover_tools()["tools"]]
+    assert tools == [
+        "memory_help",
+        "memory_status",
+        "memory_search",
+        "memory_read",
+        "memory_route",
+        "memory_execute",
+    ]
+    catalog = json.loads(asyncio.run(server.resource_catalog())["text"])
+    assert any(
+        item["operation"] == "route" and item["tool"] == "memory_route"
+        for item in catalog["operations"]
+    )
 
 
 def test_server_rejects_duplicate_principal_names(

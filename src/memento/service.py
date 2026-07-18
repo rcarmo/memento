@@ -5,15 +5,15 @@ import json
 import math
 import re
 import sqlite3
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from time import monotonic
-from typing import Any, Literal
+from typing import Any, Literal, Protocol
 from uuid import uuid4
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from memento.answers import (
     UNKNOWN_ANSWER,
@@ -96,6 +96,13 @@ from memento.repository.transactions import (
     TransactionConflictError,
     TransactionManager,
     TransactionRequest,
+)
+from memento.router import (
+    CANONICAL_TRAINED_SHALLOW_TOOLS_JSON,
+    DirectToolExpansion,
+    ProjectionSpec,
+    expand_router_action,
+    parse_needle_router_output,
 )
 
 
@@ -203,6 +210,21 @@ class ServiceContext:
     source_chat: str | None = None
 
 
+class NeedleRouterProtocol(Protocol):
+    def generate(
+        self,
+        query: str,
+        tools_json: str,
+        *,
+        max_enc_len: int = 1024,
+        max_gen_len: int = 128,
+        constrained: bool = True,
+        cancelled: Callable[[], bool] | None = None,
+    ) -> str: ...
+
+    def close(self) -> None: ...
+
+
 @dataclass(frozen=True, slots=True)
 class ServiceDependencies:
     config: ServiceConfig
@@ -211,6 +233,7 @@ class ServiceDependencies:
     derived_index: DerivedIndex
     transaction_manager: TransactionManager
     model_client: ModelClient | None = None
+    needle_router: NeedleRouterProtocol | None = None
 
 
 class MemoryService:
@@ -229,7 +252,9 @@ class MemoryService:
         )
         visible_tools = set(
             tool_names_for_surface(
-                self._deps.config.mcp.tool_surface, answer_enabled=answer_enabled
+                self._deps.config.mcp.tool_surface,
+                answer_enabled=answer_enabled,
+                route_enabled=self._route_tool_enabled(),
             )
         )
         execute_visible = "memory_execute" in visible_tools
@@ -285,7 +310,7 @@ class MemoryService:
                 "mcp": {
                     "tool_surface": self._deps.config.mcp.tool_surface,
                     "direct_tools": tuple(sorted(visible_tools)),
-                    "compact_instructions": "Use memory_search, then memory_read, or use memory_execute with saved references like $hits.results.0.path.",
+                    "compact_instructions": "Use memory_search, then memory_read, or use memory_execute with saved references like $hits.results.0.path. If enabled, memory_route can classify one shallow read request into a deterministic action.",
                     "execute_limits": self._deps.config.mcp.execute.model_dump(mode="python"),
                     "execute_only_operations": execute_only_operations,
                 },
@@ -331,6 +356,7 @@ class MemoryService:
                         "model_proposals": self._deps.config.intelligent_tiers.model_proposals.enabled,
                         "dream_mode": self._deps.config.intelligent_tiers.dream.mode,
                         "semantic_search": semantic.enabled,
+                        "needle_router": self._deps.config.intelligent_tiers.needle_router.enabled,
                     },
                     "readiness": {
                         "semantic_search": {
@@ -339,7 +365,13 @@ class MemoryService:
                             "dimensions": semantic.dimensions,
                             "embedding_revision": semantic.embedding_revision,
                             "sqlite_vector_enabled": semantic.sqlite_vector_enabled,
-                        }
+                        },
+                        "needle_router": {
+                            "enabled": self._deps.config.intelligent_tiers.needle_router.enabled,
+                            "loaded": self._deps.needle_router is not None,
+                            "runtime": "rust-ffi" if self._deps.needle_router is not None else None,
+                            "model_path": self._deps.config.intelligent_tiers.needle_router.model_path,
+                        },
                     },
                 },
                 index_revision=state.index_revision,
@@ -969,6 +1001,62 @@ class MemoryService:
             tool_name="memory_rename",
             commit_message=f"memory: rename {path} -> {new_path}",
         )
+
+    def memory_route(
+        self,
+        context: ServiceContext,
+        *,
+        request: str,
+        execute: bool = True,
+        cancelled: Callable[[], bool] | None = None,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        try:
+            self._policy(context)
+            router_config = self._deps.config.intelligent_tiers.needle_router
+            if not router_config.enabled:
+                raise ServiceError("needle router is disabled")
+            if self._deps.needle_router is None:
+                raise ServiceError("needle router is not loaded")
+            normalized_request = request.strip()
+            if not normalized_request:
+                raise ServiceError("request must not be empty")
+            if len(normalized_request) > 200:
+                raise ServiceError("request must be at most 200 characters")
+            raw_output = self._deps.needle_router.generate(
+                normalized_request,
+                CANONICAL_TRAINED_SHALLOW_TOOLS_JSON,
+                cancelled=cancelled,
+            )
+            action = parse_needle_router_output(raw_output)
+            expansion = expand_router_action(action, request=normalized_request)
+            payload: dict[str, Any] = {
+                "request": normalized_request,
+                "router_output": self._bounded_route_output(raw_output),
+                "action": action.model_dump(mode="python"),
+                "executed": False,
+            }
+            if expansion is None:
+                payload["abstained"] = True
+                return self._success(payload)
+            payload["expansion"] = expansion.model_dump(mode="python")
+            if not execute:
+                return self._success(payload)
+            if isinstance(expansion, DirectToolExpansion):
+                result = self._execute_direct_route(context, expansion)
+            else:
+                result = self.memory_execute(context, plan=expansion.args["plan"])
+            payload["executed"] = True
+            payload["result"] = result.model_dump(mode="python")
+            return self._success(
+                payload,
+                repo_revision=result.repo_revision or None,
+                index_revision=result.index_revision or None,
+                index_stale=result.index_stale,
+                warnings=result.warnings,
+                operation_id=result.operation_id,
+            )
+        except Exception as exc:
+            return self._failure(exc)
 
     def memory_execute(
         self,
@@ -2455,6 +2543,66 @@ class MemoryService:
         ).fetchone()
         return int(row[0] or 0)
 
+    def _route_tool_enabled(self) -> bool:
+        return self._deps.config.intelligent_tiers.needle_router.enabled
+
+    def _execute_direct_route(
+        self, context: ServiceContext, expansion: DirectToolExpansion
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        if expansion.tool == "memory_search":
+            result = self.memory_search(context, **expansion.args)
+        elif expansion.tool == "memory_status":
+            result = self.memory_status(context)
+        elif expansion.tool == "memory_read":
+            result = self.memory_read(context, **expansion.args)
+        else:  # pragma: no cover
+            raise ServiceError(f"unsupported direct routed tool: {expansion.tool}")
+        if result.status == "success" and expansion.projection is not None:
+            result = result.model_copy(
+                update={"data": self._project_route_result(result.data, expansion.projection)}
+            )
+        return result
+
+    def _project_route_result(
+        self, payload: dict[str, Any], projection: ProjectionSpec
+    ) -> dict[str, Any]:
+        value = self._resolve_projection_ref(payload, projection.ref)
+        if projection.fields and isinstance(value, list):
+            projected = []
+            for item in value[: projection.limit] if projection.limit is not None else value:
+                if not isinstance(item, Mapping):
+                    continue
+                projected.append(
+                    {field: item[field] for field in projection.fields if field in item}
+                )
+            return {"value": projected}
+        if projection.limit is not None and isinstance(value, list):
+            value = value[: projection.limit]
+        return {"value": value}
+
+    def _resolve_projection_ref(self, payload: Any, ref: str) -> Any:
+        current = payload
+        for part in ref.split("."):
+            if isinstance(current, Mapping):
+                if part not in current:
+                    raise ServiceError(f"routed projection field not found: {ref}")
+                current = current[part]
+                continue
+            if isinstance(current, list):
+                if not part.isdigit():
+                    raise ServiceError(f"routed projection field not found: {ref}")
+                index = int(part)
+                if index >= len(current):
+                    raise ServiceError(f"routed projection field not found: {ref}")
+                current = current[index]
+                continue
+            raise ServiceError(f"routed projection field not found: {ref}")
+        return current
+
+    @staticmethod
+    def _bounded_route_output(raw_output: str) -> str:
+        return raw_output[:200]
+
     def _policy(self, context: ServiceContext) -> EffectivePolicy:
         return resolve_policy(self._deps.config.authorization, context.principal)
 
@@ -2493,6 +2641,7 @@ class MemoryService:
                 BundleError,
                 PathSafetyError,
                 DerivedSearchError,
+                ValidationError,
                 ValueError,
             ),
         ):

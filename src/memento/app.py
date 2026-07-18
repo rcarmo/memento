@@ -14,6 +14,7 @@ from memento.control.proposals import ProposalStatus, list_proposals
 from memento.derived.index import DerivedIndex
 from memento.ffi import RustFfiLibrary
 from memento.model_clients import RoutedFallbackModelClient, build_endpoint_clients
+from memento.needle_ffi import NeedleFfiLibrary
 from memento.repository.bundle import scan_bundle
 from memento.repository.git import (
     GitRepositoryPaths,
@@ -50,11 +51,16 @@ class MementoRuntime:
     transaction_manager: TransactionManager
     service: MemoryService
     lease: WriterLease
+    needle_library: NeedleFfiLibrary | None = None
     closed: bool = False
 
     def build_server(self) -> MementoMCPServer:
         self._require_open()
-        return MementoMCPServer(self.service, bearer_tokens=self._bearer_tokens())
+        return MementoMCPServer(
+            self.service,
+            bearer_tokens=self._bearer_tokens(),
+            log_file=self.paths.root / "logs" / "umcp.log",
+        )
 
     def status_snapshot(self) -> dict[str, Any]:
         self._require_open()
@@ -77,6 +83,12 @@ class MementoRuntime:
                 "embedding_revision": semantic.embedding_revision,
                 "sqlite_vector_enabled": semantic.sqlite_vector_enabled,
                 "warnings": list(semantic.warnings),
+            },
+            "needle_router": {
+                "enabled": self.config.intelligent_tiers.needle_router.enabled,
+                "loaded": self.service._deps.needle_router is not None,
+                "runtime": "rust-ffi" if self.service._deps.needle_router is not None else None,
+                "model_path": self.config.intelligent_tiers.needle_router.model_path,
             },
             "proposal_backlog": len(
                 [
@@ -113,6 +125,9 @@ class MementoRuntime:
         close = getattr(embedding_client, "close", None)
         if close is not None:
             close()
+        needle_router = self.service._deps.needle_router
+        if needle_router is not None:
+            needle_router.close()
         self.control_connection.close()
         self.lease.release()
         self.closed = True
@@ -179,6 +194,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
         paths.writer_lock,
         owner=f"memento[{os.getpid()}]@{socket.gethostname()}",
     )
+    needle_router = None
     try:
         if not paths.repo_paths.bare_dir.exists():
             bootstrap_repository(paths.repo_paths, bootstrap_seed)
@@ -188,6 +204,8 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
         migrate_control_db(control_connection)
         semantic = config.intelligent_tiers.semantic_search
         embedding_client = None
+        needle_library = None
+        needle_router = None
         if semantic.enabled:
             ffi_path = semantic.ffi_library_path or os.environ.get("MEMENTO_FFI_LIBRARY", "")
             model_path = semantic.model_path or os.environ.get("MEMENTO_GTE_MODEL", "")
@@ -208,6 +226,30 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             )
             library = RustFfiLibrary(ffi_path)
             embedding_client = library.load_model(model_path)
+        needle = config.intelligent_tiers.needle_router
+        if needle.enabled:
+            ffi_path = os.environ.get("MEMENTO_NEEDLE_FFI_LIBRARY", needle.ffi_library_path).strip()
+            model_path = os.environ.get("MEMENTO_NEEDLE_MODEL", needle.model_path).strip()
+            tokenizer_path = os.environ.get(
+                "MEMENTO_NEEDLE_TOKENIZER", needle.tokenizer_path
+            ).strip()
+            needle_library = NeedleFfiLibrary(ffi_path)
+            needle_router = needle_library.load_router(model_path, tokenizer_path)
+            config = config.model_copy(
+                update={
+                    "intelligent_tiers": config.intelligent_tiers.model_copy(
+                        update={
+                            "needle_router": needle.model_copy(
+                                update={
+                                    "ffi_library_path": ffi_path,
+                                    "model_path": model_path,
+                                    "tokenizer_path": tokenizer_path,
+                                }
+                            )
+                        }
+                    )
+                }
+            )
         derived_index = DerivedIndex(
             paths.derived_db,
             semantic_config=semantic,
@@ -258,6 +300,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                 derived_index=derived_index,
                 transaction_manager=manager,
                 model_client=routed_client,
+                needle_router=needle_router,
             )
         )
         manager.recover_startup()
@@ -270,7 +313,10 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             transaction_manager=manager,
             service=service,
             lease=lease,
+            needle_library=needle_library,
         )
     except Exception:
+        if needle_router is not None:
+            needle_router.close()
         lease.release()
         raise

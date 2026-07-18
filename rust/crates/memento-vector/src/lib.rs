@@ -57,6 +57,17 @@ pub fn dot(left: &[f32], right: &[f32]) -> Result<f32, VectorError> {
     Ok(dot_runtime(left, right))
 }
 
+pub fn axpy(alpha: f32, values: &[f32], output: &mut [f32]) -> Result<(), VectorError> {
+    if values.len() != output.len() {
+        return Err(VectorError::DimensionMismatch {
+            left: values.len(),
+            right: output.len(),
+        });
+    }
+    axpy_runtime(alpha, values, output);
+    Ok(())
+}
+
 pub fn cosine(left: &[f32], right: &[f32]) -> Result<f32, VectorError> {
     if left.len() != right.len() {
         return Err(VectorError::DimensionMismatch {
@@ -74,6 +85,35 @@ pub fn cosine(left: &[f32], right: &[f32]) -> Result<f32, VectorError> {
 
 fn dot_scalar(left: &[f32], right: &[f32]) -> f32 {
     left.iter().zip(right).map(|(a, b)| a * b).sum()
+}
+
+fn axpy_scalar(alpha: f32, values: &[f32], output: &mut [f32]) {
+    for (dst, value) in output.iter_mut().zip(values) {
+        *dst += alpha * value;
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+fn axpy_runtime(alpha: f32, values: &[f32], output: &mut [f32]) {
+    if std::is_x86_feature_detected!("avx2") && std::is_x86_feature_detected!("fma") {
+        // SAFETY: feature detection guarantees required instructions.
+        unsafe { return axpy_x86_avx2_fma(alpha, values, output) }
+    }
+    axpy_scalar(alpha, values, output);
+}
+
+#[cfg(target_arch = "aarch64")]
+fn axpy_runtime(alpha: f32, values: &[f32], output: &mut [f32]) {
+    if std::arch::is_aarch64_feature_detected!("neon") {
+        // SAFETY: feature detection guarantees required instructions.
+        unsafe { return axpy_neon(alpha, values, output) }
+    }
+    axpy_scalar(alpha, values, output);
+}
+
+#[cfg(not(any(target_arch = "x86_64", target_arch = "aarch64")))]
+fn axpy_runtime(alpha: f32, values: &[f32], output: &mut [f32]) {
+    axpy_scalar(alpha, values, output);
 }
 
 #[cfg(target_arch = "x86_64")]
@@ -97,6 +137,39 @@ fn dot_runtime(left: &[f32], right: &[f32]) -> f32 {
 #[cfg(not(any(target_arch = "x86_64", target_arch = "aarch64")))]
 fn dot_runtime(left: &[f32], right: &[f32]) -> f32 {
     dot_scalar(left, right)
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "avx2")]
+#[target_feature(enable = "fma")]
+unsafe fn axpy_x86_avx2_fma(alpha: f32, values: &[f32], output: &mut [f32]) {
+    use std::arch::x86_64::{_mm256_fmadd_ps, _mm256_loadu_ps, _mm256_set1_ps, _mm256_storeu_ps};
+    let factor = _mm256_set1_ps(alpha);
+    let chunks = values.len() / 8;
+    for i in 0..chunks {
+        let offset = i * 8;
+        let value = _mm256_loadu_ps(values.as_ptr().add(offset));
+        let current = _mm256_loadu_ps(output.as_ptr().add(offset));
+        let next = _mm256_fmadd_ps(factor, value, current);
+        _mm256_storeu_ps(output.as_mut_ptr().add(offset), next);
+    }
+    axpy_scalar(alpha, &values[chunks * 8..], &mut output[chunks * 8..]);
+}
+
+#[cfg(target_arch = "aarch64")]
+#[target_feature(enable = "neon")]
+unsafe fn axpy_neon(alpha: f32, values: &[f32], output: &mut [f32]) {
+    use std::arch::aarch64::{vdupq_n_f32, vfmaq_f32, vld1q_f32, vst1q_f32};
+    let factor = vdupq_n_f32(alpha);
+    let chunks = values.len() / 4;
+    for i in 0..chunks {
+        let offset = i * 4;
+        let value = vld1q_f32(values.as_ptr().add(offset));
+        let current = vld1q_f32(output.as_ptr().add(offset));
+        let next = vfmaq_f32(current, factor, value);
+        vst1q_f32(output.as_mut_ptr().add(offset), next);
+    }
+    axpy_scalar(alpha, &values[chunks * 4..], &mut output[chunks * 4..]);
 }
 
 #[cfg(target_arch = "x86_64")]

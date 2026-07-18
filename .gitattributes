@@ -1,3 +1,6 @@
 rust/tests/fixtures/*.gtemodel filter=lfs diff=lfs merge=lfs -text
 models/needle/*.pkl filter=lfs diff=lfs merge=lfs -text
 models/needle/*.jsonl filter=lfs diff=lfs merge=lfs -text
+models/needle/*.ndl filter=lfs diff=lfs merge=lfs -text
+models/needle/*.model filter=lfs diff=lfs merge=lfs -text
+models/needle/*.vocab filter=lfs diff=lfs merge=lfs -text

@@ -14,13 +14,13 @@ install-dev: $(BIN)/python
 	$(BIN)/python -m pip install -e '.[dev]' build
 
 lint:
-	$(BIN)/ruff check src tests
+	$(BIN)/ruff check src tests tools
 
 format:
-	$(BIN)/ruff format src tests
+	$(BIN)/ruff format src tests tools
 
 format-check:
-	$(BIN)/ruff format --check src tests
+	$(BIN)/ruff format --check src tests tools
 
 typecheck:
 	$(BIN)/mypy src tests

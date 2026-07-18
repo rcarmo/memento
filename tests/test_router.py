@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import cast
 
 import pytest
@@ -7,17 +8,27 @@ from pydantic import ValidationError
 
 from memento.executor import ExecutePlan, GraphOperation, ReadOperation, SearchOperation
 from memento.router import (
+    CANONICAL_TRAINED_SHALLOW_TOOLS_JSON,
     READ_FIELD_PROJECTIONS,
     READ_FIELDS,
     ROUTER_ACTION_ADAPTER,
     STATUS_FIELD_PROJECTIONS,
     STATUS_FIELDS,
+    ExpandedRouterAction,
+    ReadFieldAction,
     RouterAction,
     SearchMode,
     SearchPathsAction,
     SearchThenGraphAction,
+    StatusFieldAction,
     expand_router_action,
+    parse_needle_router_output,
 )
+
+
+def _expand(action: RouterAction) -> ExpandedRouterAction:
+    request = getattr(action, "query", getattr(action, "id_or_path", "status request"))
+    return expand_router_action(action, request=request)
 
 
 def _parse(payload: dict[str, object]) -> RouterAction:
@@ -26,7 +37,7 @@ def _parse(payload: dict[str, object]) -> RouterAction:
 
 def test_expand_search_then_read() -> None:
     action = _parse({"action": "search_then_read", "query": "Piclaw"})
-    expanded = expand_router_action(action)
+    expanded = _expand(action)
     assert expanded is not None
     assert expanded.kind == "execute"
     assert expanded.tool == "memory_execute"
@@ -52,7 +63,7 @@ def test_expand_search_paths() -> None:
             "search_mode": "semantic",
         }
     )
-    expanded = expand_router_action(action)
+    expanded = _expand(action)
     assert expanded is not None
     assert expanded.kind == "direct"
     assert expanded.tool == "memory_search"
@@ -82,7 +93,7 @@ def test_expand_search_paths() -> None:
 )
 def test_expand_status_field(field: str, expected_ref: str) -> None:
     action = _parse({"action": "status_field", "field": field})
-    expanded = expand_router_action(action)
+    expanded = _expand(action)
     assert expanded is not None
     assert expanded.kind == "direct"
     assert expanded.tool == "memory_status"
@@ -100,7 +111,7 @@ def test_expand_search_then_graph() -> None:
             "search_mode": "hybrid",
         }
     )
-    expanded = expand_router_action(action)
+    expanded = _expand(action)
     assert expanded is not None
     assert expanded.kind == "execute"
     plan = ExecutePlan.model_validate(expanded.args["plan"])
@@ -128,7 +139,7 @@ def test_expand_search_then_graph() -> None:
 )
 def test_expand_read_field(field: str, expected_ref: str) -> None:
     action = _parse({"action": "read_field", "id_or_path": "/projects/piclaw.md", "field": field})
-    expanded = expand_router_action(action)
+    expanded = _expand(action)
     assert expanded is not None
     assert expanded.kind == "direct"
     assert expanded.tool == "memory_read"
@@ -139,7 +150,7 @@ def test_expand_read_field(field: str, expected_ref: str) -> None:
 
 def test_unknown_has_no_execution() -> None:
     action = _parse({"action": "UNKNOWN"})
-    assert expand_router_action(action) is None
+    assert _expand(action) is None
 
 
 def test_execute_plan_validation_for_two_step_actions() -> None:
@@ -154,7 +165,7 @@ def test_execute_plan_validation_for_two_step_actions() -> None:
     )
     for payload in payloads:
         action = _parse(payload)
-        expanded = expand_router_action(action)
+        expanded = _expand(action)
         assert expanded is not None
         assert expanded.kind == "execute"
         plan = ExecutePlan.model_validate(expanded.args["plan"])
@@ -184,8 +195,8 @@ def test_defaults_are_deterministic() -> None:
     assert graph_action.depth == 1
     assert graph_action.search_mode is SearchMode.LEXICAL
 
-    a = expand_router_action(_parse({"action": "search_paths", "query": "Piclaw"}))
-    b = expand_router_action(_parse({"action": "search_paths", "query": "Piclaw"}))
+    a = _expand(_parse({"action": "search_paths", "query": "Piclaw"}))
+    b = _expand(_parse({"action": "search_paths", "query": "Piclaw"}))
     assert a is not None and b is not None
     assert a.model_dump(mode="python") == b.model_dump(mode="python")
 
@@ -267,9 +278,43 @@ def test_status_and_read_field_mappings_match_sample_payload_shapes() -> None:
     assert set(read_payload) == {"path", "frontmatter", "body"}
 
 
+def test_parse_needle_router_output_normalizes_bounded_field_aliases() -> None:
+    status = parse_needle_router_output('[{"name":"status_field","arguments":{"field":"indexed"}}]')
+    assert status == StatusFieldAction(action="status_field", field="index_revision")
+    read = parse_needle_router_output(
+        '[{"name":"read_field","arguments":{"id_or_path":"x","field":"contents"}}]'
+    )
+    assert read == ReadFieldAction(action="read_field", id_or_path="x", field="body")
+
+
+def test_parse_needle_router_output_requires_exactly_one_call() -> None:
+    action = parse_needle_router_output(
+        '[{"name":"search_paths","arguments":{"query":"Piclaw","limit":3}}]'
+    )
+    assert action.action == "search_paths"
+    with pytest.raises(ValueError):
+        parse_needle_router_output("[]")
+    with pytest.raises(ValueError):
+        parse_needle_router_output(
+            '[{"name":"UNKNOWN","arguments":{}},{"name":"UNKNOWN","arguments":{}}]'
+        )
+
+
+def test_canonical_trained_shallow_tools_json_is_valid() -> None:
+    payload = json.loads(CANONICAL_TRAINED_SHALLOW_TOOLS_JSON)
+    assert [item["name"] for item in payload] == [
+        "search_then_read",
+        "search_paths",
+        "status_field",
+        "search_then_graph",
+        "read_field",
+        "UNKNOWN",
+    ]
+
+
 def test_injection_like_strings_remain_data_not_code() -> None:
     payload = '"}; $doc.path; ${evil}; ../../etc/passwd'
-    expanded = expand_router_action(
+    expanded = _expand(
         _parse({"action": "search_then_read", "query": payload, "search_mode": "semantic"})
     )
     assert expanded is not None

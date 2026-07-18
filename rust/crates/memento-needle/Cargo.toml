@@ -1,0 +1,19 @@
+[package]
+name = "memento-needle"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+authors = ["Rui Carmo <rui.carmo@gmail.com>"]
+description = "Rust NDL1 loader/parser for Memento Needle router artefacts"
+
+[dependencies]
+memento-vector = { path = "../memento-vector" }
+sentencepiece-rust = "0.1.1"
+serde.workspace = true
+serde_json.workspace = true
+sha2 = "0.10"
+thiserror.workspace = true
+
+[lints]
+workspace = true

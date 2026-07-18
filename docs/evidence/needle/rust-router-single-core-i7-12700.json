@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "date": "2026-07-18",
+  "command": "taskset -c 0 rust/target/release/needle-eval models/needle/memento-router.ndl models/needle/needle.model < models/needle/test.jsonl",
+  "environment": {
+    "cpu": "12th Gen Intel(R) Core(TM) i7-12700",
+    "architecture": "x86_64",
+    "logical_cpus_visible": 6,
+    "affinity": "CPU 0 only",
+    "runtime": "pure-rust-ndl1-avx2-fma",
+    "build_profile": "release"
+  },
+  "corpus": {
+    "cases": 360,
+    "sha256": "9ffeb303574fa6bd24718adc42c7a3d8c4632e3cf78685d14886c7b24b2ddca9",
+    "tool_decision_matches": 360,
+    "routing_accuracy": 1.0
+  },
+  "latency_ms": {
+    "min": 448.165578,
+    "p50": 510.771475,
+    "p95": 554.5644612500001,
+    "max": 575.6886129999999,
+    "mean": 511.8250367611111
+  },
+  "run": {
+    "wall_seconds": 184.421460423,
+    "throughput_requests_per_second": 1.9520504781508758,
+    "peak_rss_mib": 163.4375,
+    "cold_single_request_wall_seconds": 0.669069876,
+    "cold_single_request_peak_rss_mib": 162.28515625
+  },
+  "notes": [
+    "One process loaded the model once, then processed all 360 requests serially.",
+    "Per-request latency excludes initial model/tokenizer load; run wall time and peak RSS include them.",
+    "Cold single-request wall time includes process startup, model/tokenizer load, and one generation.",
+    "CPU frequency and host contention were not fixed; values are local observations, not cross-machine guarantees."
+  ]
+}

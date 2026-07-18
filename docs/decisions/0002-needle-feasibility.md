@@ -1,6 +1,6 @@
-# ADR 0002: Needle is a routing candidate, not a production runtime
+# ADR 0002: Use Needle only as an embedded shallow router
 
-**Status:** accepted  
+**Status:** accepted, implemented behind an opt-in flag
 **Date:** 2026-07-18
 
 ## Question
@@ -9,13 +9,11 @@ Can [`cactus-compute/needle`](https://github.com/cactus-compute/needle) replace 
 
 ## Decision
 
-Not yet.
+Memento uses the fine-tuned Needle checkpoint only as an optional, embedded shallow router into deterministic Memento actions. The feature is implemented behind `intelligent_tiers.needle_router.enabled` and remains disabled by default.
 
-Memento keeps its deterministic core, GTE-small retrieval and existing optional model-provider boundary unchanged. Needle is promising for local orchestration, but only in a narrow role: shallow routing into deterministic Memento actions.
+Memento keeps its deterministic core, GTE-small retrieval and existing optional model-provider boundary unchanged. Needle can classify six shallow actions, but it cannot author mutations, authoritative paths or nested `memory_execute` plans. Every model result crosses strict schema validation and ordinary service authorisation; invalid output and `UNKNOWN` abstain without invoking an operation.
 
-The first idea -- having Needle route and emit bounded full `memory_execute` plans directly -- does not clear the bar. The later shallow-router design does clear the AMD64 routing and abstention gates, but the passing checkpoint still remains disabled because the embedded runtime story is not finished.
-
-Proposal and Dream drafting remain outside this decision until routing, abstention, runtime footprint and exact-schema handling are proven under the same offline constraints.
+The first idea -- having Needle route and emit bounded full `memory_execute` plans directly -- did not clear the bar. The later shallow-router design did, and now runs through a dependency-light pure-Rust NDL1 runtime exposed by a bounded C ABI and Python wrapper. Proposal and Dream drafting remain outside this decision.
 
 ## What was tested
 
@@ -145,18 +143,23 @@ Argument exact match remained 54.17%, which confirms the intended boundary: Need
 
 The passing checkpoint and family-separated corpora are vendored through Git LFS under `models/needle/`. The checkpoint SHA-256 is `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
 
-## Updated decision
+## Embedded runtime acceptance
 
-The shallow router passes the AMD64 held-out routing and abstention gates.
+The exact passing checkpoint was converted to the deterministic NDL1 format and implemented in pure Rust with scalar kernels plus runtime-selected AVX2/FMA and ARM64 NEON paths. The repository now contains:
 
-It still remains disabled.
+* a hashed NDL1 loader and pinned SentencePiece tokenizer;
+* constrained generation with scalar/SIMD decision parity on all 360 untouched cases;
+* a dedicated C ABI and Python wrapper with lifecycle, bounded-output and cooperative-cancellation tests;
+* deterministic expansion and strict argument normalisation in the ordinary Memento service;
+* release-container packaging with local model artefacts; and
+* a clean-volume MCP SDK smoke that discovered the opt-in `memory_route` tool and executed a routed read through the Rust runtime.
 
-The reason is practical, not conceptual: the available JAX environment is 1.1 GB and peaked above 2 GB RSS. Integration now depends on proving the exact checkpoint through a pinned embedded or Cactus runtime on AMD64 and ARM64, with cancellation, offline artefacts and equivalent outputs.
+On 2026-07-18, the release binary pinned to one logical CPU of an Intel Core i7-12700 processed all 360 held-out requests serially with 510.8 ms p50, 554.6 ms p95, 1.95 requests/s and 163.4 MiB peak RSS. Cold process start, model/tokenizer load and one request took 669 ms. CPU frequency and host contention were not fixed, so these are local observations rather than cross-machine guarantees. Full evidence is in `docs/evidence/needle/rust-router-single-core-i7-12700.json`.
 
-In other words: passing the router checkpoint is necessary, not sufficient.
+ARM64 correctness is covered by portable and NEON code paths, but measured ARM64 latency remains a deployment follow-up. A runtime/model mismatch, malformed artefact or invalid model result fails closed.
 
 ## Consequences
 
-Memento keeps working exactly as before. GTE-small remains the local retrieval model. Existing completion-model slots remain optional, and no remote API is required by the deterministic service.
+Memento works exactly as before unless an operator enables the router. GTE-small remains the local retrieval model. Existing completion-model slots remain optional, and no remote API is required by the deterministic service.
 
-Needle remains a promising specialist for local orchestration after fine-tuning, not a general answer model and not a source of authority. Even if adopted later, deterministic Memento code will continue to own authorisation, path validation, proposal review, Git publication, indexing and completion claims.
+Needle is a specialist for local shallow orchestration, not a general answer model and never a source of authority. Deterministic Memento code owns authorisation, path validation, proposal review, Git publication, indexing and completion claims.

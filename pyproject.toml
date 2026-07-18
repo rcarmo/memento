@@ -35,7 +35,7 @@ dev = [
     "ruff>=0.9",
 ]
 mcp = [
-    "umcp==0.2.0",
+    "umcp @ git+https://github.com/rcarmo/umcp.git@691af9f159757d45c180856ec0dfb89da7aa341c",
 ]
 
 [tool.setuptools.packages.find]
@@ -49,6 +49,7 @@ addopts = "--strict-markers"
 python_version = "3.12"
 strict = true
 packages = ["memento"]
+exclude = ["tools/experiments/needle/convert_needle.py"]
 
 [tool.ruff]
 target-version = "py312"
@@ -59,4 +60,4 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 ignore = ["E501", "UP046", "UP047"]
 
 [tool.ruff.lint.per-file-ignores]
-"tools/*.py" = ["E402"]
+"tools/**/*.py" = ["E402"]
