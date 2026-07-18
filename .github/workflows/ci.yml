@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@6d6534a43cfbdfb0f2a63f01e816f3d553f64f34 # stable
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
         with:
           components: clippy,rustfmt
       - name: Install dev dependencies
