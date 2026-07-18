@@ -26,6 +26,14 @@ from memento.executor import (
     ReadArgs,
     RenameArgs,
     SearchArgs,
+    SkillGetArgs,
+    SkillProposalApplyArgs,
+    SkillProposalGetArgs,
+    SkillProposalListArgs,
+    SkillProposalReviewArgs,
+    SkillProposeArgs,
+    SkillPruneArgs,
+    SkillSearchArgs,
     execute_plan_schema,
 )
 from memento.mcp_registry import (
@@ -70,7 +78,7 @@ class RouteArgs(BaseModel):
     execute: bool = True
 
 
-_TOOL_INPUT_MODELS: dict[str, type[BaseModel]] = {
+_TOOL_ARG_MODELS: dict[str, type[BaseModel]] = {
     "memory_help": EmptyArgs,
     "memory_status": EmptyArgs,
     "memory_search": SearchArgs,
@@ -87,6 +95,14 @@ _TOOL_INPUT_MODELS: dict[str, type[BaseModel]] = {
     "memory_proposal_list": ProposalListArgs,
     "memory_proposal_review": ProposalReviewArgs,
     "memory_proposal_apply": ProposalApplyArgs,
+    "memory_skill_search": SkillSearchArgs,
+    "memory_skill_get": SkillGetArgs,
+    "memory_skill_propose": SkillProposeArgs,
+    "memory_skill_proposal_get": SkillProposalGetArgs,
+    "memory_skill_proposal_list": SkillProposalListArgs,
+    "memory_skill_proposal_review": SkillProposalReviewArgs,
+    "memory_skill_proposal_apply": SkillProposalApplyArgs,
+    "memory_skill_prune": SkillPruneArgs,
     "memory_create": CreateArgs,
     "memory_patch": PatchArgs,
     "memory_rename": RenameArgs,
@@ -190,7 +206,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     def _tool_input_schema(self, method: Any, tool_name: str) -> dict[str, Any]:
         if tool_name == "memory_execute":
             return execute_plan_schema()
-        model = _TOOL_INPUT_MODELS.get(tool_name)
+        model = _TOOL_ARG_MODELS.get(tool_name)
         if model is not None:
             generated = model.model_json_schema()
             return {str(key): value for key, value in generated.items()}
@@ -351,6 +367,91 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         envelope = self._service.memory_proposal_apply(
             self._context(),
             proposal_id=proposal_id,
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+        )
+        await self._notify_for_envelope(envelope.model_dump(mode="json"))
+        return envelope.model_dump(mode="json")
+
+    async def tool_memory_skill_search(self, query: str, limit: int = 20) -> dict[str, Any]:
+        return self._service.memory_skill_search(
+            self._context(),
+            query=query,
+            limit=limit,
+        ).model_dump(mode="json")
+
+    async def tool_memory_skill_get(
+        self, skill_name: str, version: str | None = None
+    ) -> dict[str, Any]:
+        return self._service.memory_skill_get(
+            self._context(),
+            skill_name=skill_name,
+            version=version,
+        ).model_dump(mode="json")
+
+    async def tool_memory_skill_propose(
+        self,
+        skill_name: str,
+        version: str,
+        skill_md: str,
+        zip_base64: str,
+        rationale: str | None = None,
+    ) -> dict[str, Any]:
+        return self._service.memory_skill_propose(
+            self._context(),
+            skill_name=skill_name,
+            version=version,
+            skill_md=skill_md,
+            zip_base64=zip_base64,
+            rationale=rationale,
+        ).model_dump(mode="json")
+
+    async def tool_memory_skill_proposal_get(self, proposal_id: str) -> dict[str, Any]:
+        return self._service.memory_skill_proposal_get(
+            self._context(),
+            proposal_id=proposal_id,
+        ).model_dump(mode="json")
+
+    async def tool_memory_skill_proposal_list(self, status: str | None = None) -> dict[str, Any]:
+        return self._service.memory_skill_proposal_list(
+            self._context(),
+            status=status,
+        ).model_dump(mode="json")
+
+    async def tool_memory_skill_proposal_review(
+        self, proposal_id: str, decision: str, comment: str | None = None
+    ) -> dict[str, Any]:
+        return self._service.memory_skill_proposal_review(
+            self._context(),
+            proposal_id=proposal_id,
+            decision=decision,
+            comment=comment,
+        ).model_dump(mode="json")
+
+    async def tool_memory_skill_proposal_apply(
+        self, proposal_id: str, expected_revision: str, idempotency_key: str
+    ) -> dict[str, Any]:
+        envelope = self._service.memory_skill_proposal_apply(
+            self._context(),
+            proposal_id=proposal_id,
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+        )
+        await self._notify_for_envelope(envelope.model_dump(mode="json"))
+        return envelope.model_dump(mode="json")
+
+    async def tool_memory_skill_prune(
+        self,
+        skill_name: str,
+        *,
+        keep: int = 5,
+        expected_revision: str,
+        idempotency_key: str,
+    ) -> dict[str, Any]:
+        envelope = self._service.memory_skill_prune(
+            self._context(),
+            skill_name=skill_name,
+            keep=keep,
             expected_revision=expected_revision,
             idempotency_key=idempotency_key,
         )

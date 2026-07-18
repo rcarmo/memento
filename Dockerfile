@@ -16,7 +16,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     TMPDIR=/var/lib/memento/tmp
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git \
+    && apt-get install -y --no-install-recommends git git-lfs \
     && rm -rf /var/lib/apt/lists/* \
     && addgroup --system --gid 65532 memento \
     && adduser --system --uid 65532 --ingroup memento memento \
