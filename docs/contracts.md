@@ -120,11 +120,11 @@ Configured `mcp.tool_surface` controls stable discovery without depending on req
 
 | Surface | Exposed direct tools |
 |---|---|
-| `compact` | core help/status/search/read/execute plus `memory_asset_get`, `memory_skill_get`, optional `memory_answer` and optional `memory_route` (**7** to **9**) |
-| `standard` | the **23** direct compatibility tools, including generic asset and skill convenience operations |
-| `read_only` | the **10** discovery, concept-read and asset-read tools |
-| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**13** or **14** with `memory_answer`) |
-| `admin` | the **24**-tool full direct surface plus `memory_execute` |
+| `compact` | core help/status/search/read/execute plus `memory_asset_get`, optional `memory_answer` and optional `memory_route` (**6** to **8**) |
+| `standard` | the **20** direct compatibility tools, including generic asset retrieval and pruning |
+| `read_only` | the **9** discovery, concept-read and asset-read tools |
+| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**11** or **12** with `memory_answer`) |
+| `admin` | the **21**-tool full direct surface plus `memory_execute` |
 
 ### Catalog resources
 
@@ -140,7 +140,8 @@ They expose generated descriptions, roles, examples and input schemas. Current w
 
 * `inspect` -> `search`, `read`
 * `propose` -> `search`, `read`, `propose`, `propose_freeform`, `propose_update`
-* `curate` -> `proposal_list`, `proposal_get`, `proposal_review`, `proposal_apply`, `create`, `patch`, `rename`
+* `curate` -> `proposal_list`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_prune`, `create`, `patch`, `rename`
+* `asset_pack` -> `search`, `read`, `propose`, `asset_get`, `asset_prune`
 
 ### `memory_help`
 
@@ -353,9 +354,6 @@ Asset kinds and versions use lowercase/hyphen names and stable `MAJOR.MINOR.PATC
 |---|---|---|
 | `memory_asset_get` | `reader` | retrieve latest or explicit version, manifest and ZIP as base64 |
 | `memory_asset_prune` | `curator` | remove retained versions beyond the keep count |
-| `memory_skill_get` | `reader` | convenience wrapper for `/skills/<name>.md`, kind `skill` |
-| `memory_skill_propose` | `proposer` | create/update a normal skill concept and attach a skill ZIP in one proposal |
-| `memory_skill_prune` | `curator` | convenience wrapper around generic asset pruning |
 
 Skills are ordinary concepts tagged `skill`; their body must byte-match ZIP-root `SKILL.md`. Search and read use `memory_search` and `memory_read`. Omitted asset versions resolve to the highest accepted stable version. The latest five are retained by default; active proposal references are protected. Recall never extracts files server-side.
 

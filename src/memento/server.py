@@ -28,9 +28,6 @@ from memento.executor import (
     ReadArgs,
     RenameArgs,
     SearchArgs,
-    SkillGetArgs,
-    SkillProposeArgs,
-    SkillPruneArgs,
     execute_plan_schema,
 )
 from memento.mcp_registry import (
@@ -41,6 +38,7 @@ from memento.mcp_registry import (
     tool_names_for_surface,
 )
 from memento.service import (
+    AttachAssetPackChange,
     CreateChange,
     MemoryService,
     PatchChange,
@@ -64,7 +62,7 @@ class _ProposeArgsSchema(BaseModel):
 
     intent: str
     base_revision: str
-    changes: list[CreateChange | PatchChange | RenameChange]
+    changes: list[CreateChange | PatchChange | RenameChange | AttachAssetPackChange]
     rationale: str | None = None
 
 
@@ -93,10 +91,7 @@ _TOOL_ARG_MODELS: dict[str, type[BaseModel]] = {
     "memory_proposal_review": ProposalReviewArgs,
     "memory_proposal_apply": ProposalApplyArgs,
     "memory_asset_get": AssetGetArgs,
-    "memory_skill_get": SkillGetArgs,
-    "memory_skill_propose": SkillProposeArgs,
     "memory_asset_prune": AssetPruneArgs,
-    "memory_skill_prune": SkillPruneArgs,
     "memory_create": CreateArgs,
     "memory_patch": PatchArgs,
     "memory_rename": RenameArgs,
@@ -377,33 +372,6 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             version=version,
         ).model_dump(mode="json")
 
-    async def tool_memory_skill_get(
-        self, skill_name: str, version: str | None = None
-    ) -> dict[str, Any]:
-        return self._service.memory_asset_get(
-            self._context(),
-            id_or_path=skill_name,
-            asset_kind="skill",
-            version=version,
-        ).model_dump(mode="json")
-
-    async def tool_memory_skill_propose(
-        self,
-        skill_name: str,
-        version: str,
-        skill_md: str,
-        zip_base64: str,
-        rationale: str | None = None,
-    ) -> dict[str, Any]:
-        return self._service.memory_skill_propose(
-            self._context(),
-            skill_name=skill_name,
-            version=version,
-            skill_md=skill_md,
-            zip_base64=zip_base64,
-            rationale=rationale,
-        ).model_dump(mode="json")
-
     async def tool_memory_asset_prune(
         self,
         id_or_path: str,
@@ -417,25 +385,6 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             self._context(),
             id_or_path=id_or_path,
             asset_kind=asset_kind,
-            keep=keep,
-            expected_revision=expected_revision,
-            idempotency_key=idempotency_key,
-        )
-        await self._notify_for_envelope(envelope.model_dump(mode="json"))
-        return envelope.model_dump(mode="json")
-
-    async def tool_memory_skill_prune(
-        self,
-        skill_name: str,
-        *,
-        keep: int = 5,
-        expected_revision: str,
-        idempotency_key: str,
-    ) -> dict[str, Any]:
-        envelope = self._service.memory_asset_prune(
-            self._context(),
-            id_or_path=skill_name,
-            asset_kind="skill",
             keep=keep,
             expected_revision=expected_revision,
             idempotency_key=idempotency_key,

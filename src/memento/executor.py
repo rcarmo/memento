@@ -120,37 +120,11 @@ class AssetGetArgs(BaseModel):
     version: str | None = None
 
 
-class SkillGetArgs(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    skill_name: str
-    version: str | None = None
-
-
-class SkillProposeArgs(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    skill_name: str
-    version: str
-    skill_md: str
-    zip_base64: str
-    rationale: str | None = None
-
-
 class AssetPruneArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     id_or_path: str
     asset_kind: str
-    keep: int = 5
-    expected_revision: str
-    idempotency_key: str
-
-
-class SkillPruneArgs(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    skill_name: str
     keep: int = 5
     expected_revision: str
     idempotency_key: str

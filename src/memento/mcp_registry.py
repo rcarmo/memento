@@ -178,38 +178,10 @@ OPERATION_SPECS: tuple[OperationSpec, ...] = (
         examples=({"id_or_path": "/skills/deploy.md", "asset_kind": "skill", "version": "1.2.0"},),
     ),
     OperationSpec(
-        op_name="skill_get",
-        tool_name="memory_skill_get",
-        method_name="memory_skill_get",
-        description="Read one skill pack by name and optional version.",
-        roles=("reader",),
-        discovery_surfaces=frozenset(
-            {COMPACT_SURFACE, READ_ONLY_SURFACE, STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}
-        ),
-        examples=({"skill_name": "deploy", "version": "1.2.0"},),
-    ),
-    OperationSpec(
-        op_name="skill_propose",
-        tool_name="memory_skill_propose",
-        method_name="memory_skill_propose",
-        description="Convenience wrapper that proposes a normal skill memory with a bundled asset.",
-        roles=("proposer",),
-        discovery_surfaces=frozenset({STANDARD_SURFACE, ADMIN_SURFACE}),
-    ),
-    OperationSpec(
         op_name="asset_prune",
         tool_name="memory_asset_prune",
         method_name="memory_asset_prune",
         description="Prune retained asset pack versions as curator.",
-        roles=("curator",),
-        discovery_surfaces=frozenset({STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}),
-        commit_capable=True,
-    ),
-    OperationSpec(
-        op_name="skill_prune",
-        tool_name="memory_skill_prune",
-        method_name="memory_skill_prune",
-        description="Prune retained skill pack versions as curator.",
         roles=("curator",),
         discovery_surfaces=frozenset({STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}),
         commit_capable=True,
@@ -286,22 +258,14 @@ WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
             "proposal_review",
             "proposal_apply",
             "asset_prune",
-            "skill_prune",
             "create",
             "patch",
             "rename",
         ],
     },
-    "skill_pack": {
-        "description": "Discover, inspect, propose, review, apply, and prune versioned skill packs.",
-        "operations": [
-            "search",
-            "asset_get",
-            "skill_get",
-            "skill_propose",
-            "asset_prune",
-            "skill_prune",
-        ],
+    "asset_pack": {
+        "description": "Discover, inspect, attach, retrieve, and prune versioned memory assets.",
+        "operations": ["search", "read", "propose", "asset_get", "asset_prune"],
     },
 }
 

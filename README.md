@@ -51,7 +51,7 @@ Project agent ───┘                              ├──────> o
                                                 └──────> search indexes
 ```
 
-MCP, the Model Context Protocol, is the interface the agents use to search, read and propose changes. An agent does not receive direct filesystem or Git access.
+[`rcarmo/umcp`][umcp] provides the MCP server and transport core used for search, reads and proposals. Clients never receive direct filesystem or Git access.
 
 ## What Goes Into Shared Memory
 
@@ -133,13 +133,13 @@ A skill is a normal concept under `/skills/`, tagged `skill`, whose body matches
 standard concept + attach_asset_pack proposal
     -> ordinary curator review and apply
     -> readers find it with memory_search and memory_read
-    -> memory_asset_get (or memory_skill_get) recalls a version
+    -> memory_asset_get recalls a version
     -> client imports into .pi/skills/<name>/
 ```
 
 Asset versions use stable semantic versions and are stored by immutable concept ID, so renaming a memory does not break attachments. Omitted versions resolve to the highest accepted version. The newest five are retained by default, and pruning protects the latest version and versions referenced by active proposals.
 
-`memory_asset_get` returns the ZIP and its file manifest. `memory_skill_propose`, `memory_skill_get` and `memory_skill_prune` are shortcuts for the same concept-and-asset operations. `memento-skill-import` checks the pack again, writes it into a workspace in one move and refuses to overwrite an existing skill. Memento does not install, merge or run skills.
+`memory_asset_get` returns the ZIP and its file manifest. `memento-skill-import` checks the pack again, writes it into a workspace in one move and refuses to overwrite an existing skill. Memento does not install, merge or run skills.
 
 ## Safety And Recovery
 
@@ -178,6 +178,8 @@ Tagged releases are published to `ghcr.io/rcarmo/memento`. Build notes are in [`
 
 ## Credits
 
+[`rcarmo/umcp`][umcp] supplies Memento's MCP server, Streamable HTTP transport, request context and authentication hooks.
+
 Memento's semantic-search runtime started from [`rcarmo/go-gte`][go-gte], whose model conversion, tokenizer and inference code provided the reference for the Rust port. The bundled GTE-small weights come from [`thenlper/gte-small`][gte-small].
 
 The shallow router builds on [`cactus-compute/needle`][needle] and its 26M-parameter checkpoint. Memento adds its routing dataset and checkpoint, NDL1 conversion, Rust inference code, SIMD kernels and C ABI.
@@ -188,3 +190,4 @@ Memento is MIT licensed. Third-party runtime, model and artefact details are rec
 [go-gte]: https://github.com/rcarmo/go-gte
 [gte-small]: https://huggingface.co/thenlper/gte-small
 [needle]: https://github.com/cactus-compute/needle
+[umcp]: https://github.com/rcarmo/umcp
