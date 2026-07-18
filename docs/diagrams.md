@@ -54,9 +54,55 @@ stateDiagram-v2
 
 Every dispatched operation still enters the ordinary service method, so compact execution cannot bypass authorisation or mutation rules.
 
-## Needle shallow router
+## Compact surfaces and execute-only operations
 
-Needle classifies a request into a shallow action. It does not generate Git mutations, arbitrary references or nested execution plans. Memento performs deterministic expansion.
+This is the part that is easy to blur in prose, so the diagram makes it explicit.
+
+```mermaid
+flowchart TD
+    compact[compact surface]
+    readonly[read_only surface]
+    standard[standard surface]
+    curator[curator surface]
+    admin[admin surface]
+
+    compact --> ctools[5 direct tools<br/>or 6 with memory_answer]
+    readonly --> rtools[8 direct tools]
+    standard --> stools[18 direct tools]
+    curator --> curtools[9 direct tools<br/>or 10 with memory_answer]
+    admin --> atools[19 direct tools]
+
+    curator --> execonly[create / patch / rename are execute-only here]
+    standard --> directmut[create / patch / rename are direct tools]
+    admin --> directmut2[create / patch / rename are direct tools]
+```
+
+## Needle router lifecycle
+
+Needle now has two distinct histories: the failed full-plan attempt and the later successful shallow router. The passing checkpoint is still not enabled.
+
+```mermaid
+stateDiagram-v2
+    [*] --> FullPlanBaseline
+    FullPlanBaseline --> FullPlanEvaluatedAMD64: offline baseline run
+    FullPlanEvaluatedAMD64 --> FullPlanRejected: low routing, weak UNKNOWN, invalid plans
+    FullPlanRejected --> FullPlanFineTuned: local fine-tune experiment
+    FullPlanFineTuned --> FullPlanStillRejected: unseen-family and plan gates still fail
+
+    FullPlanStillRejected --> ShallowRouterDesign: stop generating nested plans
+    ShallowRouterDesign --> ShallowRouterFineTuned: family-separated shallow corpus
+    ShallowRouterFineTuned --> RouterCheckpointPassed: 100% AMD64 held-out routing and UNKNOWN gates
+    RouterCheckpointPassed --> RuntimePending: embedded runtime and ARM64 parity still pending
+    RuntimePending --> Enabled: pinned embedded or Cactus runtime passes parity
+    Enabled --> Disabled: runtime or parity regression
+    Disabled --> RuntimePending: corrected runtime available
+```
+
+Passing the router checkpoint does not enable the runtime. The current repository state is `RuntimePending`.
+
+## Needle shallow router action boundary
+
+Needle classifies a request into a shallow action. It does not generate Git mutations, authoritative paths or nested execution plans. Memento expands those actions deterministically.
 
 ```mermaid
 flowchart TD
@@ -74,8 +120,8 @@ flowchart TD
     action -->|search_paths| search[Direct memory_search]
     action -->|status_field| status[Direct memory_status plus field projection]
     action -->|read_field| read[Direct memory_read plus field projection]
-    action -->|search_then_read| expandRead[Build fixed search then read plan]
-    action -->|search_then_graph| expandGraph[Build fixed search then graph plan]
+    action -->|search_then_read| expandRead[Build fixed search-then-read plan]
+    action -->|search_then_graph| expandGraph[Build fixed search-then-graph plan]
 
     expandRead --> executor[memory_execute validator]
     expandGraph --> executor
@@ -85,45 +131,35 @@ flowchart TD
     executor --> result
 ```
 
-```mermaid
-stateDiagram-v2
-    [*] --> Vendored
-    Vendored --> EvaluatedAMD64: JAX feasibility run
-    EvaluatedAMD64 --> FineTuned: family-separated corpus
-    FineTuned --> QualityPassed: 100% route and valid-call test
-    QualityPassed --> RuntimePending: JAX remains too heavy
-    RuntimePending --> Enabled: pinned embedded runtime passes AMD64 and ARM64 parity
-    Enabled --> Disabled: runtime or parity regression
-    Disabled --> RuntimePending: corrected runtime available
-```
-
-The current repository state is `RuntimePending`, not `Enabled`.
-
 ## Proposal lifecycle
 
-Models and ordinary clients may create proposals. Only authorised curators can approve and apply them.
+Models and ordinary clients may create proposals. Only authorised curators can review and apply them.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Submitted: memory_propose
+    [*] --> Draft
+    Draft --> Submitted: submit proposal
     Submitted --> Approved: curator approves
     Submitted --> Rejected: curator rejects
+    Submitted --> Draft: curator requests changes
     Submitted --> Stale: base revision changes
     Submitted --> Expired: TTL elapses
 
     Approved --> Applied: memory_proposal_apply succeeds
-    Approved --> Stale: expected revision no longer matches
+    Approved --> Draft: curator requests changes
     Approved --> Rejected: curator rejects before apply
+    Approved --> Stale: expected revision no longer matches
 
     Applied --> Applied: identical idempotent replay
 
+    Draft --> [*]
     Rejected --> [*]
     Stale --> [*]
     Expired --> [*]
     Applied --> [*]
 ```
 
-A model-generated draft enters the same `Submitted` state. It cannot approve or apply itself.
+Model-assisted proposal creation enters the same ordinary lifecycle. It does not gain review or apply powers.
 
 ## Canonical mutation publication
 

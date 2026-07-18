@@ -1,0 +1,32 @@
+# Needle shallow-router artefacts
+
+This directory holds the Git LFS artefacts for the passing shallow-router follow-up described in [ADR 0002](../../docs/decisions/0002-needle-feasibility.md).
+
+## Git LFS prerequisite
+
+These files are tracked with Git LFS. Install LFS and fetch the real objects before you try to inspect, hash or use them:
+
+```bash
+git lfs install
+git lfs pull
+```
+
+## Files
+
+* `memento-router.pkl` -- the passing fine-tuned shallow-router checkpoint. ADR 0002 records SHA-256 `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
+* `train.jsonl` -- family-separated training corpus for the shallow-router study.
+* `val.jsonl` -- family-separated validation corpus.
+* `test.jsonl` -- untouched family-separated held-out corpus used for the routing and abstention gate.
+* `train-hard.jsonl` -- additional training-only hard negatives used for the one-epoch continuation after the first shallow-router run still emitted false actions for direct-mutation prompts.
+
+## Provenance
+
+`train.jsonl`, `val.jsonl` and `test.jsonl` come from `tools/experiments/needle/generate_router_v2.py`, which writes the deterministic `router-v2-*.jsonl` splits under `/tmp/needle-study/` before they are reviewed and vendored here.
+
+`train-hard.jsonl` is the targeted hard-negative continuation set referenced by ADR 0002 and the `router-v2-training-summary.json` evidence.
+
+The earlier 1,500-example mixed routing/plan/UNKNOWN corpus is a different experiment. Its generator is `tools/experiments/needle/generate_corpus.py`, and its manifest and training evidence live under [`docs/evidence/needle/`](../../docs/evidence/needle/README.md).
+
+## Status
+
+These artefacts document a passed AMD64 quality gate for shallow routing only. They do not enable Needle in production, and they do not prove an embedded runtime, cancellation support or ARM64 parity.

@@ -1,6 +1,6 @@
 # Load testing
 
-Memento now includes a repository-owned load harness at [`tools/load_test.py`](../tools/load_test.py). It exercises the Python service directly in temporary repositories and can also drive a running authenticated Streamable HTTP endpoint with stdlib JSON-RPC requests.
+Memento includes a repository-owned load harness at [`tools/load_test.py`](../tools/load_test.py). It exercises the Python service directly in temporary repositories and can also drive a running authenticated Streamable HTTP endpoint with stdlib JSON-RPC requests.
 
 The harness is intentionally local-first:
 
@@ -62,7 +62,7 @@ Run the broader operational profile:
 make load-operational
 ```
 
-All three targets use bounded defaults intended to be CI-friendly. For heavier ad hoc local runs, invoke the harness directly:
+All three Make targets use bounded defaults intended to be CI-friendly. For heavier ad hoc local runs, invoke the harness directly:
 
 ```bash
 PYTHONPATH=src .venv/bin/python tools/load_test.py \
@@ -71,6 +71,63 @@ PYTHONPATH=src .venv/bin/python tools/load_test.py \
   --workers 16 \
   --requests 500 \
   --output build/load-heavy.json
+```
+
+## Reviewed evidence reproduction
+
+The checked-in reports under [`docs/evidence/`](evidence/README.md) were generated with these exact harness commands.
+
+### `load-operational-local.json`
+
+```bash
+PYTHONPATH=src .venv/bin/python tools/load_test.py \
+  --profile operational \
+  --concepts 250 \
+  --workers 16 \
+  --requests 1000 \
+  --output docs/evidence/load-operational-local.json
+```
+
+### `load-semantic-local.json`
+
+```bash
+PYTHONPATH=src .venv/bin/python tools/load_test.py \
+  --profile functional \
+  --concepts 100 \
+  --workers 8 \
+  --requests 200 \
+  --semantic-enabled \
+  --include-semantic \
+  --output docs/evidence/load-semantic-local.json
+```
+
+### `load-http-local.json`
+
+Start a local daemon first, with the normal bearer-token environment in place:
+
+```bash
+export MEMENTO_TOKEN_SMITH='replace-me'
+export MEMENTO_TOKEN_FLINT='replace-me-too'
+memento-serve --config /path/to/config.json serve --host 127.0.0.1 --port 18768
+```
+
+Then run the harness:
+
+```bash
+PYTHONPATH=src .venv/bin/python tools/load_test.py \
+  --profile check \
+  --concepts 50 \
+  --workers 8 \
+  --requests 200 \
+  --include-http \
+  --http-url http://127.0.0.1:18768/mcp \
+  --http-token "$MEMENTO_TOKEN_SMITH" \
+  --http-concurrency 8 \
+  --duration-seconds 10 \
+  --http-status-ratio 40 \
+  --http-search-ratio 60 \
+  --http-read-ratio 0 \
+  --output docs/evidence/load-http-local.json
 ```
 
 ## Optional HTTP scenario

@@ -12,7 +12,19 @@ This workspace holds the Rust runtime used by Memento's semantic search path. It
 
 ## Builds and tests
 
-Use the workspace root for formatting, linting and tests.
+Prefer the repository Makefile first:
+
+```bash
+make rust-check
+```
+
+If you are already working inside this directory, use:
+
+```bash
+make check
+```
+
+Those are the documented validation paths. Raw `cargo` commands remain available when you need them, but they are secondary:
 
 ```bash
 cd rust
@@ -21,9 +33,16 @@ cargo clippy --workspace --all-targets
 cargo test --workspace
 ```
 
-These commands cover every crate in the workspace. They do not fetch or generate model fixtures by themselves -- the golden artefacts are managed separately.
+These commands cover every crate in the workspace. They do not fetch or generate model fixtures by themselves, and they do not regenerate golden artefacts.
 
 ## Model fixtures
+
+Some model and corpus fixtures are stored with Git LFS. Install LFS and pull the tracked objects before working with them:
+
+```bash
+git lfs install
+git lfs pull
+```
 
 If `/tmp/go-gte/models/gte-small/model.safetensors` is present, run:
 
@@ -46,5 +65,7 @@ This generates:
 * Both crates also build as `rlib`, which keeps them usable from Rust tests and other internal Rust callers without introducing a second implementation path.
 
 ## Golden generation
+
+Golden generation is intentionally outside the standard `make rust-check` and `make check` paths. Fixture regeneration needs external inputs and is not part of ordinary validation. If that ever becomes practical and reliable enough to automate, add a dedicated target rather than folding it silently into the default checks.
 
 The parity inputs, outputs and script behaviour are documented in [docs/golden-generation.md](docs/golden-generation.md). Use that document when fixtures need to be regenerated or audited.

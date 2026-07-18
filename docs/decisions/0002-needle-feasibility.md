@@ -1,4 +1,4 @@
-# ADR 0002: Needle is an evaluation candidate, not a production model
+# ADR 0002: Needle is a routing candidate, not a production runtime
 
 **Status:** accepted  
 **Date:** 2026-07-18
@@ -9,9 +9,13 @@ Can [`cactus-compute/needle`](https://github.com/cactus-compute/needle) replace 
 
 ## Decision
 
-Do not add Needle to Memento's production model slots yet. Keep the deterministic core, GTE-small retrieval and existing optional model-provider boundary unchanged.
+Not yet.
 
-Needle is worth a separate Memento-specific fine-tuning experiment for compact tool routing and bounded `memory_execute` plan drafting. It must clear the acceptance thresholds below before integration is reconsidered. Proposal and Dream drafting remain out of scope until routing, abstention and strict-schema results are strong enough.
+Memento keeps its deterministic core, GTE-small retrieval and existing optional model-provider boundary unchanged. Needle is promising for local orchestration, but only in a narrow role: shallow routing into deterministic Memento actions.
+
+The first idea -- having Needle route and emit bounded full `memory_execute` plans directly -- does not clear the bar. The later shallow-router design does clear the AMD64 routing and abstention gates, but the passing checkpoint still remains disabled because the embedded runtime story is not finished.
+
+Proposal and Dream drafting remain outside this decision until routing, abstention, runtime footprint and exact-schema handling are proven under the same offline constraints.
 
 ## What was tested
 
@@ -25,7 +29,7 @@ The study pinned:
 
 Inference ran on Linux x86_64 with six visible CPUs on an Intel Core i7-12700. The process loaded local artefacts with Hugging Face and Transformers offline flags set, proxy variables removed and socket connections replaced by a guard that raises immediately. A constrained `memory_status` call completed successfully, proving that inference needs no API call once all artefacts are present.
 
-The evaluation exposed the five compact Memento tools plus an explicit `UNKNOWN` tool:
+The baseline evaluation exposed the five compact Memento tools plus an explicit `UNKNOWN` tool:
 
 * `memory_help`
 * `memory_status`
@@ -36,7 +40,7 @@ The evaluation exposed the five compact Memento tools plus an explicit `UNKNOWN`
 
 Twenty-one held-out queries covered help, readiness, search, read, compound plans and unsupported or unsafe requests. Every case ran twice with seed zero.
 
-## Baseline results
+## Baseline full-plan results
 
 | Measure | Result | Feasibility threshold |
 |---|---:|---:|
@@ -51,13 +55,13 @@ Twenty-one held-out queries covered help, readiness, search, read, compound plan
 | Subsequent two-tool call | 0.660 s | informational |
 | Checkpoint/tokenizer load | 0.205 s | informational |
 
-The base model handled direct search and read requests reasonably, but confused help/readiness, reduced compound requests to a single search and never selected `UNKNOWN`. Some constrained outputs were still not valid JSON.
+The base model handled direct search and read requests reasonably, but confused help with readiness, collapsed compound requests to a single search and never selected `UNKNOWN`. Some constrained outputs were still not valid JSON.
 
 The complete per-case output is stored in [`docs/evidence/needle/base-routing-amd64.json`](../evidence/needle/base-routing-amd64.json).
 
 ## Embeddability findings
 
-Needle is small at the model level--26.3 million parameters and a 53 MB checkpoint--but the checked-in Python/JAX inference path is not an embedded runtime:
+Needle is small at the model level -- 26.3 million parameters and a 53 MB checkpoint -- but the checked-in Python/JAX inference path is not an embedded runtime:
 
 * The isolated environment occupied 1.1 GB and contained 61 packages.
 * Importing generation pulled in `tqdm` and Hugging Face `datasets`, even though inference did not need training data.
@@ -65,19 +69,19 @@ Needle is small at the model level--26.3 million parameters and a 53 MB checkpoi
 * JAX compilation dominated the first call and peak RSS reached 1.2 GB during repeated evaluation.
 * The repository does not provide a stable C ABI, Cactus binding or embedded artefact manifest.
 
-A production candidate would need a split inference-only package or a verified Cactus library path with pinned local assets, no telemetry/download code, bounded cancellation and explicit AMD64/ARM64 evidence.
+A production candidate needs either a split inference-only package or a verified Cactus library path with pinned local assets, no telemetry or download code, bounded cancellation and explicit AMD64 and ARM64 evidence.
 
-## Constrained-output limits
+## Why the full-plan approach failed
 
-Needle's constrained decoder restricts tool names and top-level argument keys. It deliberately leaves argument values unconstrained, including nested objects and arrays. This is useful for ordinary function calling, but it cannot guarantee a valid nested `memory_execute` plan, proposal draft or Dream draft.
+Needle's constrained decoder can restrict tool names and top-level argument keys. It does not guarantee valid nested `memory_execute` plans, authoritative path extraction or stable abstention. That is tolerable for toy function calling and not tolerable for a service that must never invent a mutation path.
 
-Memento would still validate every result, but the base model's 85.71% valid-call rate and zero abstention make that validation path too noisy for production use.
+Memento would still validate every result, but the baseline model's 85.71% valid-call rate and zero abstention make that validation path too noisy for production use.
 
-## Fine-tuning experiment
+## Fine-tuning the full-plan attempt
 
 A free local fine-tune was completed on an NVIDIA RTX 3060 12 GB using a deterministic 1,500-example corpus: 180 help, 180 status, 240 search, 240 read, 360 execute and 300 UNKNOWN cases. No model API generated the data. Training used the pinned base checkpoint, two epochs, batch size 32, BF16 and Needle's default optimiser settings.
 
-Needle's built-in random per-tool split used 1,380 train, 60 validation and 60 test examples. It improved from 21.67% to 91.67% exact match, 42.28% to 98.33% name F1 and reached 100% parse rate. Those figures are useful training evidence but are not acceptance evidence because paraphrase families and slot patterns crossed the random split.
+Needle's built-in random per-tool split used 1,380 train, 60 validation and 60 test examples. It improved from 21.67% to 91.67% exact match, 42.28% to 98.33% name F1 and reached 100% parse rate. Useful training evidence, but not acceptance evidence, because paraphrase families and slot patterns crossed the random split.
 
 Two leakage-resistant checks remained below threshold:
 
@@ -98,7 +102,7 @@ A later follow-up may repeat fine-tuning with strict family-separated train/vali
 
 Proposal and Dream examples should only be added after those gates pass.
 
-The go/no-go thresholds are:
+The go/no-go thresholds for any full-plan design are:
 
 * routing accuracy >=97%;
 * routing macro-F1 >=95%;
@@ -112,7 +116,16 @@ Results must be repeated on AMD64 and ARM64. Claims about Cactus throughput requ
 
 ## Shallow-router follow-up
 
-A second experiment stopped asking Needle to generate nested plans or copy authoritative slots. It classified six shallow actions: `search_then_read`, `search_paths`, `status_field`, `search_then_graph`, `read_field` and `UNKNOWN`. Memento expands those actions deterministically; the model never supplies references or commit operations.
+A second experiment stopped asking Needle to generate nested plans or copy authoritative slots. It classified six shallow actions:
+
+* `search_then_read`
+* `search_paths`
+* `status_field`
+* `search_then_graph`
+* `read_field`
+* `UNKNOWN`
+
+Memento expands those actions deterministically. The model never supplies references, commit operations or publishable paths.
 
 The corpus used explicit family-separated files with disjoint entities and path shapes: 1,440 training, 360 validation and 360 untouched test examples, balanced across all six actions. Four epochs at batch 16 reached 99.3% tool-name F1, but five test cases from one direct-mutation family still truncated instead of abstaining. A one-epoch continuation added 288 training-only direct-mutation hard negatives without changing validation or test data.
 
@@ -128,13 +141,19 @@ The unchanged 360-case test then produced:
 | Median latency | 0.442 s | informational |
 | p95 latency | 0.579 s | informational |
 
-Argument exact match remained 54.17%, confirming that Needle should classify intent and fixed enums only. Memento must derive search text from the original request, parse exact paths/IDs and expand fixed plans in deterministic code. `src/memento/router.py` freezes and tests that boundary without adding a JAX dependency.
+Argument exact match remained 54.17%, which confirms the intended boundary: Needle may classify intent and fixed enums only. Memento still derives search text from the original request, parses exact paths and IDs and expands fixed plans in deterministic code. `src/memento/router.py` freezes and tests that boundary without adding a JAX dependency to the normal runtime.
 
 The passing checkpoint and family-separated corpora are vendored through Git LFS under `models/needle/`. The checkpoint SHA-256 is `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
 
 ## Updated decision
 
-The shallow router passes the AMD64 held-out routing and abstention gates. It remains disabled in production because the available JAX environment is 1.1 GB and peaked above 2 GB RSS. Integration now depends on proving the exact checkpoint through a pinned embedded/Cactus runtime on AMD64 and ARM64, with cancellation, offline artefacts and equivalent outputs.
+The shallow router passes the AMD64 held-out routing and abstention gates.
+
+It still remains disabled.
+
+The reason is practical, not conceptual: the available JAX environment is 1.1 GB and peaked above 2 GB RSS. Integration now depends on proving the exact checkpoint through a pinned embedded or Cactus runtime on AMD64 and ARM64, with cancellation, offline artefacts and equivalent outputs.
+
+In other words: passing the router checkpoint is necessary, not sufficient.
 
 ## Consequences
 

@@ -104,7 +104,7 @@ The composition root may:
 
 It should not contain the domain operation itself.
 
-`infra/` contains deployment and resource provisioning. `ops/` contains thin operator commands. Reusable application logic belongs under `src/`.
+`deploy/` contains deployment artefacts. Reusable application logic and CLI code belong under `src/memento/`. Repository tests live under `tests/`. Developer utilities and experiments belong under `tools/`.
 
 Do not perform I/O in module imports, validators, properties or hidden constructors.
 
@@ -218,18 +218,17 @@ Do not add a compatibility namespace unless a known external consumer requires i
 
 ## Repository layout
 
-Use one source root:
+Use the layout that exists in this repository:
 
 ```text
 src/
   memento/
+    cli.py       # service CLI entry points
     repository/  # canonical bundle and Git transactions
     control/     # operation and proposal state
     derived/     # rebuildable search and graph state
-    tools/       # MCP tool implementations
-infra/           # deployment and provisioning
-ops/             # thin operator commands
-tools/           # evaluation and developer utilities
+deploy/          # deployment artefacts
+tools/           # developer utilities and experiments
 tests/
 ```
 
@@ -275,6 +274,8 @@ make typecheck
 make coverage
 ```
 
+For Rust work, prefer `make rust-check` from the repository root or `make check` inside `rust/`. Raw `cargo` commands are secondary and should not replace the documented Make workflow.
+
 Update Make targets when source paths or tools change. CI should call Make targets instead of duplicating raw Ruff, pytest or Mypy commands.
 
 ## Tests
@@ -308,6 +309,15 @@ A Python change is complete when:
 - package moves pass mechanical reference checks and clean installation;
 - documentation matches the implementation;
 - `git diff --check` passes.
+
+Static analysis must stay clean on Python 3.12, the lowest supported version. Runtime compatibility evidence covers Python 3.12 through 3.14.
+
+If you need model or corpus fixtures, install and fetch Git LFS objects first:
+
+```bash
+git lfs install
+git lfs pull
+```
 
 ## Review checklist
 

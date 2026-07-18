@@ -42,7 +42,7 @@ Treat MCP arguments, Markdown, frontmatter, links, retrieved text, model output 
 
 Follow `PLAN.md`. Build the deterministic core before MCP writes or intelligent tiers. Do not add optional-tier modules, provider abstractions or dependencies before their milestone starts; document deferred interfaces instead.
 
-Use `src/memento/` as the single package root. Keep reusable logic in the package, deployment files in `infra/` or their dedicated top-level directories, operator commands in `ops/`, and developer utilities in `tools/`.
+Use `src/memento/` as the single package root. Keep reusable logic in the package, CLI entry points alongside that package, deployment files in `deploy/`, tests in `tests/`, and developer utilities in `tools/`.
 
 ## Python and Make workflow
 
@@ -58,6 +58,8 @@ Use the Makefile as the stable local and CI interface.
 * `make coverage` -- branch coverage.
 * `make check` -- required validation gate.
 
+Prefer Make targets in docs and day-to-day work. Raw `cargo` commands are secondary and mainly useful when working only inside `rust/`.
+
 Type all new and changed Python code. Prefer typed functions, frozen internal dataclasses and strict Pydantic models at untrusted or persisted boundaries. Apply YAGNI and keep side effects at explicit boundaries.
 
 ## Testing
@@ -67,7 +69,13 @@ Type all new and changed Python code. Prefer typed functions, frozen internal da
 * Add negative coverage for authorization, path containment, malformed content, replay, stale revisions, idempotency conflicts, partial failure and recovery.
 * Keep unit tests offline and deterministic.
 * Mark integration, live, crash and deployment tests explicitly.
-* Cover Python 3.12–3.14 and Piclaw/uMCP Streamable HTTP in compatibility work.
+* Keep static analysis clean on the lowest supported Python, 3.12.
+* Treat runtime compatibility across Python 3.12-3.14 and Piclaw/uMCP Streamable HTTP as CI and compatibility-work evidence.
+* Install Git LFS and pull LFS objects before working with model or corpus fixtures:
+  ```bash
+  git lfs install
+  git lfs pull
+  ```
 
 ## Git workflow
 
@@ -84,4 +92,4 @@ Write concise plain English. Distinguish planned, implemented, deployed and live
 
 ## Completion gate
 
-Treat a change as complete only when you followed the applicable instructions, tested security and failure paths, kept documentation aligned with implementation, and passed `make check`, `make typecheck` and `git diff --check`. Packaging changes must also pass wheel build and clean installation.
+Treat a change as complete only when you followed the applicable instructions, tested security and failure paths, kept documentation aligned with implementation, and passed `make check`, `make typecheck` and `git diff --check`. Packaging changes must also pass wheel build and clean installation. Golden fixture generation is intentionally outside the standard check path unless the repository grows an explicit target that makes it practical and reliable.

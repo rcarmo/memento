@@ -5,15 +5,15 @@
 
 ## Decision
 
-Memento will continue to assemble each commit-capable mutation in a detached Git worktree. It will not mutate the reader-visible `current/` checkout directly, nor replace the filesystem mutation path with a temporary Git index or in-memory tree builder.
+Memento keeps assembling each commit-capable mutation in a detached Git worktree. It does not mutate the reader-visible `current/` checkout directly, and it does not replace the filesystem mutation path with a temporary Git index or in-memory tree builder.
 
 ## Why
 
-The mutation layer operates on a real directory tree. Create and patch operations parse and rewrite files, while rename operations unlink the old path, create the new path and scan Markdown files to update inbound links. A detached worktree gives those operations a complete filesystem snapshot without exposing intermediate state to readers.
+The mutation layer operates on a real directory tree. Create and patch operations parse and rewrite files. Rename operations unlink the old path, create the new path and scan Markdown files to update inbound links. A detached worktree gives those operations a complete filesystem snapshot without exposing intermediate state to readers.
 
-The worktree also survives a process crash. Startup recovery can inspect its `HEAD`, compare it with canonical `main`, classify the operation and remove the worktree after the outcome is known. A temporary `GIT_INDEX_FILE` would be faster for a handful of blob replacements, but would require replacing the existing path-safety, rename, link-rewrite and recovery code with Git plumbing and additional durable metadata.
+The worktree also survives a process crash. Startup recovery can inspect its `HEAD`, compare it with canonical `main`, classify the operation and remove the worktree only after the outcome is known. A temporary `GIT_INDEX_FILE` would be faster for a handful of blob replacements, but it would also mean replacing the existing path-safety, rename, link-rewrite and recovery code with Git plumbing plus more durable metadata.
 
-Writing directly into `current/` would remove checkout overhead at the cost of exposing half-applied changes and leaving a dirty reader-visible tree after a crash. That is not an acceptable trade.
+Writing directly into `current/` would remove checkout overhead at the cost of visible half-applied changes and a dirty reader-facing tree after a crash. That is not a sensible trade.
 
 ## Measured cost
 
@@ -32,10 +32,10 @@ The documented initial ceiling is 10,000 concepts, and writes are serialized by 
 * **Mutate `current/` under the writer lock:** rejected because the lock does not protect concurrent readers, and a crash leaves visible partial state.
 * **Temporary Git index and `commit-tree`:** rejected for now because current mutations need whole-tree filesystem access and recovery would need a second durable state model.
 * **In-memory tree builder:** rejected as a large rewrite with no demonstrated need.
-* **Unregistered temporary checkout:** rejected because it retains checkout cost while losing Git-managed worktree state used by recovery.
+* **Unregistered temporary checkout:** rejected because it keeps checkout cost while discarding Git-managed worktree state used by recovery.
 
 ## Separate follow-up
 
-`materialize_current_checkout()` currently removes and repopulates `current/` after publishing a commit. Concurrent readers can therefore observe an empty or partially populated directory during refresh. This is independent of operation worktrees.
+`materialize_current_checkout()` currently removes and repopulates `current/` after publishing a commit. Concurrent readers may therefore observe an empty or partially populated directory during refresh. This is independent of operation worktrees.
 
-A future change should materialise immutable revision snapshots and atomically switch the reader-visible revision, or use another platform-safe indirection. That work must preserve read-your-writes behaviour and Windows/POSIX semantics. It does not require changing how mutation commits are assembled.
+A future change should materialise immutable revision snapshots and atomically switch the reader-visible revision, or use another platform-safe indirection. That work needs to preserve read-your-writes behaviour and Windows/POSIX semantics. It does not require changing how mutation commits are assembled.

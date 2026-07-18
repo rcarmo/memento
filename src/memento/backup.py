@@ -34,6 +34,7 @@ MANIFEST_NAME = "manifest.json"
 
 
 def create_backup(runtime: MementoRuntime, destination: Path) -> BackupManifest:
+    _reject_nested_state_path(destination, runtime.paths.root, kind="backup destination")
     destination.mkdir(parents=True, exist_ok=True)
     repo_tar = destination / "repo.git.tar.gz"
     control_copy = destination / "control.sqlite"
@@ -70,6 +71,8 @@ def restore_backup(
     *,
     rebuild_derived: bool = True,
 ) -> dict[str, Any]:
+    paths = runtime_paths_for(config)
+    _reject_nested_state_path(backup_dir, paths.root, kind="backup source")
     manifest_path = backup_dir / MANIFEST_NAME
     manifest = BackupManifest(**json.loads(manifest_path.read_text(encoding="utf-8")))
     for name, digest in manifest.files.items():
@@ -79,7 +82,6 @@ def restore_backup(
         if _sha256(path) != digest:
             raise ValueError(f"checksum mismatch for {name}")
 
-    paths = runtime_paths_for(config)
     temp_parent = paths.root.parent if paths.root.parent.exists() else backup_dir.parent
     with TemporaryDirectory(dir=str(temp_parent)) as temp_dir:
         staging_root = Path(temp_dir) / "state"
@@ -133,6 +135,13 @@ def restore_backup(
         "restored_root": str(paths.root),
         "rebuild_derived": rebuild_derived,
     }
+
+
+def _reject_nested_state_path(path: Path, state_root: Path, *, kind: str) -> None:
+    candidate = path.resolve(strict=False)
+    root = state_root.resolve(strict=False)
+    if candidate == root or root in candidate.parents:
+        raise ValueError(f"{kind} must be outside repository root_path")
 
 
 def _sqlite_backup(source_path: Path, target_path: Path) -> None:

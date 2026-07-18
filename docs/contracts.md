@@ -8,7 +8,7 @@ Memento exposes a deterministic MCP surface over a Git-backed Markdown repositor
 * `control.sqlite` is authoritative for operations, idempotency, proposals, leases and scheduler state.
 * FTS, graph indexes, caches and signals are derived and rebuildable.
 * The daemon is the sole canonical repository writer. One active process holds the write lease.
-* Models may answer, classify and propose. Deterministic code owns identity, authorization, paths, validation, hashes, concurrency, writes, audit and completion claims.
+* Models may answer, classify and draft proposals. Deterministic code owns identity, authorization, paths, validation, hashes, concurrency, writes, audit and completion claims.
 * Piclaw conversations, Dream memory, schedules, credentials and keychains remain outside Memento.
 * The deterministic service remains useful with every optional model tier disabled.
 
@@ -107,24 +107,24 @@ The deterministic core uses these machine-readable error classes:
 * `queue_full`
 * `temporarily_read_only`
 
-## Discovery, compact surface and catalog resources
+## Discovery, surfaces and catalog resources
 
-Memento supports two ways to discover operations:
+Memento supports two discovery patterns:
 
 * direct MCP tool discovery, controlled by `mcp.tool_surface`
-* read-only catalog resources, which expose generated descriptions, roles, examples and input schemas from one server-side registry
+* read-only catalog resources, generated from one server-side registry
 
 ### `mcp.tool_surface`
 
-Configured `mcp.tool_surface` controls stable tool discovery without depending on request-time identity:
+Configured `mcp.tool_surface` controls stable discovery without depending on request-time identity.
 
-| Surface | Exposed tools |
+| Surface | Exposed direct tools |
 |---|---|
-| `compact` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, optional `memory_answer` when enabled, and `memory_execute` |
-| `standard` | the existing 18 direct tools for compatibility |
-| `read_only` | discovery and read tools only |
-| `curator` | compact surface plus proposal review/apply workflows |
-| `admin` | full direct surface plus `memory_execute` |
+| `compact` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_execute`, plus optional `memory_answer` (**5** or **6**) |
+| `standard` | the existing **18** direct tools for compatibility |
+| `read_only` | the **8** discovery and read tools |
+| `curator` | compact direct tools plus `memory_proposal_get`, `memory_proposal_list`, `memory_proposal_review`, `memory_proposal_apply`; `create`, `patch` and `rename` are execute-only here (**9** or **10**) |
+| `admin` | the **19**-tool full direct surface plus `memory_execute` |
 
 ### Catalog resources
 
@@ -136,7 +136,7 @@ These MCP resources are always read-only:
 * `memory://catalog/{operation}`
 * `memory://workflow/{goal}`
 
-They expose generated descriptions, roles, examples and input schemas. The current workflow templates are:
+They expose generated descriptions, roles, examples and input schemas. Current workflow templates are:
 
 * `inspect` -> `search`, `read`
 * `propose` -> `search`, `read`, `propose`, `propose_freeform`, `propose_update`
@@ -144,38 +144,39 @@ They expose generated descriptions, roles, examples and input schemas. The curre
 
 ### `memory_help`
 
-`memory_help(goal?, format?)` is the compact discovery entry point.
+`memory_help()` is the compact discovery entry point. It takes no arguments.
 
 Returned data includes:
 
 * `goals`
-  * `read` -> `memory_search`, `memory_read`, `memory_graph`, `memory_answer`
-  * `browse` -> `memory_list`, `memory_read`
-  * `propose` -> `memory_propose`, `memory_propose_freeform`, `memory_propose_update`, `memory_proposal_get`
-  * `curate` -> `memory_proposal_list`, `memory_proposal_review`, `memory_proposal_apply`, `memory_create`, `memory_patch`, `memory_rename`
-  * `compact` -> `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_execute`, plus `memory_answer` when enabled
 * `formats` -> `summary`, `detailed`
 * `answer_sources` -> `exact_cache`, `hot_memory`, `deep_agent`, `disabled`
 * `search_modes` -> `lexical`, `semantic`, `hybrid`
 * `catalog.resources` -> `memory://help`, `memory://status`, `memory://catalog`
 * `catalog.templates` -> `memory://catalog/{operation}`, `memory://workflow/{goal}`
 * `mcp.tool_surface`
+* `mcp.direct_tools`
 * `mcp.compact_instructions`
 * `mcp.execute_limits`
+* `mcp.execute_only_operations`
 
-The compact surface exists to keep ordinary model context small. The detailed schemas remain available on demand through the catalog resources.
+`goals` is filtered to the visible direct tools for the active surface and answer setting. `mcp.execute_only_operations` lists workflow operations that are available through `memory_execute` but not exposed as direct tools on that surface.
+
+The compact surface exists to keep ordinary model context small. Detailed schemas remain available on demand through the catalog resources.
 
 ## Roles and authorisation
 
-### Roles
+### Roles are explicit, not inherited
 
-| Role | Permissions |
+Memento checks for explicit role strings. It does not infer that one role implies another. Deployments assign the exact role set each principal needs.
+
+| Role | Permission family |
 |---|---|
-| `reader` | status, list, search, read, graph, audit |
-| `proposer` | reader permissions plus create/update proposals |
-| `curator` | review and apply proposals; direct dry-run patches |
-| `maintainer` | graph maintenance and Dream execution |
-| `admin` | policy, tombstones, import, repair, and service operations |
+| `reader` | read/discovery operations |
+| `proposer` | proposal creation and proposal record access |
+| `curator` | proposal review/apply and direct mutation authority |
+| `maintainer` | Dream and maintenance execution |
+| `admin` | no extra imaginary tool family; any broader authority comes from explicit role assignment and configuration |
 
 ### Authorisation rules
 
@@ -192,10 +193,10 @@ All tool names below are exact.
 
 | Tool | Arguments | Notes |
 |---|---|---|
-| `memory_help` | `goal?`, `format?` | compact discovery and workflow hints |
+| `memory_help` | none | compact discovery and workflow hints |
 | `memory_status` | none | service readiness, revisions, features and limits |
 | `memory_search` | `query`, `concept_type?`, `limit=20`, `cursor?`, `search_mode?` | lexical, semantic or hybrid retrieval |
-| `memory_read` | `id_or_path` | path or concept id |
+| `memory_read` | `id_or_path` | path or concept ID; returns the whole concept payload |
 | `memory_list` | `path_prefix="/"` | visible concepts under a prefix |
 | `memory_graph` | `id_or_path`, `depth=1` | bounded graph neighbours and backlinks |
 | `memory_audit` | `path?` | repository audit for visible scope |
@@ -206,20 +207,20 @@ All tool names below are exact.
 | Tool | Arguments | Notes |
 |---|---|---|
 | `memory_propose` | `intent`, `base_revision`, `changes`, `rationale?` | deterministic proposal storage |
-| `memory_propose_freeform` | `content`, `suggested_path?`, `intent?` | optional model-assisted proposal drafting |
-| `memory_propose_update` | `instruction`, `target_hint?` | optional model-assisted proposal drafting |
+| `memory_propose_freeform` | `content`, `suggested_path?`, `intent?` | optional model-assisted proposal creation |
+| `memory_propose_update` | `instruction`, `target_hint?` | optional model-assisted proposal creation |
 | `memory_proposal_get` | `proposal_id` | returns one proposal |
 | `memory_proposal_list` | `status?` | visible proposal list |
 | `memory_proposal_review` | `proposal_id`, `decision`, `comment?` | curator review |
-| `memory_proposal_apply` | `proposal_id`, `expected_revision`, `idempotency_key` | curator apply through transaction pipeline |
-| `memory_create` | `path`, `concept_type`, `title`, `body`, `expected_revision`, `idempotency_key`, `description?`, `tags=()`, `aliases=()` | direct curator create |
-| `memory_patch` | `path`, `expected_revision`, `idempotency_key`, `title?`, `description?`, `body?`, `status?`, `tags?`, `aliases?` | direct curator patch |
-| `memory_rename` | `path`, `new_path`, `expected_revision`, `idempotency_key` | direct curator rename |
+| `memory_proposal_apply` | `proposal_id`, `expected_revision`, `idempotency_key` | curator apply through the transaction pipeline |
+| `memory_create` | `path`, `concept_type`, `title`, `body`, `expected_revision`, `idempotency_key`, `description?`, `tags=()`, `aliases=()` | direct create when the configured surface exposes it |
+| `memory_patch` | `path`, `expected_revision`, `idempotency_key`, `title?`, `description?`, `body?`, `status?`, `tags?`, `aliases?` | direct patch when the configured surface exposes it |
+| `memory_rename` | `path`, `new_path`, `expected_revision`, `idempotency_key` | direct rename when the configured surface exposes it |
 | `memory_execute` | `plan` | bounded declarative multi-step execution |
 
 ## `memory_status`
 
-`memory_status()` returns the implemented service state, not a marketing summary.
+`memory_status()` returns implemented service state, not a marketing summary.
 
 Current payload fields:
 
@@ -297,7 +298,7 @@ Successful `memory_search` returns:
 
 ### `memory_read`
 
-Returns:
+Returns the whole concept only:
 
 * `path`
 * `frontmatter`
@@ -374,6 +375,7 @@ Proposal records live in `control.sqlite`, but the tool contract exposes a stabl
 
 * `memory_propose` stores a deterministic proposal and does not mutate Git.
 * `memory_proposal_review` accepts `decision` values `approve`, `reject`, `request_changes`.
+* `request_changes` moves the proposal back to `draft`.
 * Proposal authors cannot self-approve.
 * Applied or expired proposals cannot be reviewed again.
 * `memory_proposal_apply` requires proposal status `approved`.
@@ -521,7 +523,7 @@ These limits are exact:
 * Exact-cache keys include repository revision, normalized question, authorization-scope fingerprint, answer mode, model-policy revision, prompt version and tool version.
 * Hot working memory and exact cache are scope-isolated and independently feature-gated.
 * Deep answers may only cite concepts actually read during that traversal at the exact reported revision.
-* Task routing is fixed: `memory_answer_hot` -> `hot_query`, `memory_answer_deep` -> `deep_query`, proposal drafting -> `proposal`, Dream drafting -> `dream`.
+* Task routing is fixed: `memory_answer_hot` -> `hot_query`, `memory_answer_deep` -> `deep_query`, `memory_proposal_draft` -> `proposal`, `dream_proposal_draft` -> `dream`.
 * Retries and fallbacks apply only to one model generation step and only for configured transient failures.
 * Auth, policy, malformed output, caller cancellation and 429-by-default never fallback.
 * Every answer trace discloses the ordered attempted model chain with per-attempt outcomes.
@@ -532,7 +534,7 @@ These limits are exact:
 
 ## `memory_propose_freeform` and `memory_propose_update`
 
-`memory_propose_freeform(content, suggested_path?, intent?)` and `memory_propose_update(instruction, target_hint?)` are feature-gated model-assisted proposal tools.
+`memory_propose_freeform(content, suggested_path?, intent?)` and `memory_propose_update(instruction, target_hint?)` are feature-gated model-assisted proposal creation tools.
 
 ### Model-proposal rules
 
