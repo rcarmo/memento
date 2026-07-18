@@ -173,7 +173,7 @@ OPERATION_SPECS: tuple[OperationSpec, ...] = (
         description="Search skill packs by name, metadata, or indexed content.",
         roles=("reader",),
         discovery_surfaces=frozenset(
-            {READ_ONLY_SURFACE, STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}
+            {COMPACT_SURFACE, READ_ONLY_SURFACE, STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}
         ),
         examples=({"query": "deploy", "limit": 5},),
     ),
@@ -184,7 +184,7 @@ OPERATION_SPECS: tuple[OperationSpec, ...] = (
         description="Read one skill pack by name and optional version.",
         roles=("reader",),
         discovery_surfaces=frozenset(
-            {READ_ONLY_SURFACE, STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}
+            {COMPACT_SURFACE, READ_ONLY_SURFACE, STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}
         ),
         examples=({"skill_name": "deploy", "version": "1.2.0"},),
     ),

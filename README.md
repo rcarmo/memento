@@ -95,7 +95,7 @@ The compact MCP surface is intentionally small. It exposes:
 * optional `memory_answer`
 * `memory_execute`
 
-That gives a compact surface count of **5** without answers and **6** with answers enabled; enabling the Needle router adds `memory_route`.
+Skill search and recall add two direct tools, giving a compact surface count of **7** without answers and **8** with answers enabled; enabling the Needle router adds `memory_route`.
 
 Other configured surfaces include the dedicated skill-pack operations and are explicit and fixed:
 
