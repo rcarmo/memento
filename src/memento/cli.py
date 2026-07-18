@@ -110,7 +110,15 @@ async def _serve(
     server = runtime.build_server()
     shutdown_event = asyncio.Event()
     install_signal_handlers(shutdown_event, logger)
-    serve_task = asyncio.create_task(run_server(server, host=host, port=port, endpoint=endpoint))
+    serve_task = asyncio.create_task(
+        run_server(
+            server,
+            host=host,
+            port=port,
+            endpoint=endpoint,
+            max_request_bytes=runtime.config.mcp.max_request_bytes,
+        )
+    )
     stop_task = asyncio.create_task(shutdown_event.wait())
     done, pending = await asyncio.wait({serve_task, stop_task}, return_when=asyncio.FIRST_COMPLETED)
     if stop_task in done:
@@ -157,8 +165,20 @@ def _request_shutdown(
     shutdown_event.set()
 
 
-async def run_server(server: MementoMCPServer, *, host: str, port: int, endpoint: str) -> Any:
-    return await server.run_streamable_http_async(host=host, port=port, endpoint=endpoint)
+async def run_server(
+    server: MementoMCPServer,
+    *,
+    host: str,
+    port: int,
+    endpoint: str,
+    max_request_bytes: int,
+) -> Any:
+    return await server.run_streamable_http_async(
+        host=host,
+        port=port,
+        endpoint=endpoint,
+        max_request_bytes=max_request_bytes,
+    )
 
 
 async def drain_server(server: object) -> None:
