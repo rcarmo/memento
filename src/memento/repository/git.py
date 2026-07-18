@@ -200,8 +200,6 @@ def diff_main_paths(
         "--name-only",
         base_revision,
         end_revision,
-        "--",
-        "*.md",
     )
     return tuple(sorted(f"/{line}" for line in output.splitlines() if line))
 
