@@ -19,10 +19,14 @@ fn fixture_root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures")
 }
 
+fn model_path() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../models/gte/gte-small.gtemodel")
+}
+
 #[test]
 fn parses_fixture_model_and_matches_go_parity() {
     let root = fixture_root();
-    let model_path = root.join("gte-small.gtemodel");
+    let model_path = model_path();
     let fixture_path = root.join("go_parity.json");
     if !(model_path.exists() && fixture_path.exists()) {
         eprintln!("skipping parity test; run rust/tests/scripts/generate_golden.sh");
@@ -55,8 +59,7 @@ fn parses_fixture_model_and_matches_go_parity() {
 
 #[test]
 fn batch_limits_and_cancellation_work() {
-    let root = fixture_root();
-    let model_path = root.join("gte-small.gtemodel");
+    let model_path = model_path();
     if !model_path.exists() {
         eprintln!("skipping fixture-dependent test; run rust/tests/scripts/generate_golden.sh");
         return;

@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 MODEL_DIR=/tmp/go-gte/models/gte-small
-OUT_MODEL=tests/fixtures/gte-small.gtemodel
+OUT_MODEL=../models/gte/gte-small.gtemodel
 OUT_JSON=tests/fixtures/go_parity.json
 TMP_GO=$(mktemp /tmp/memento-go-parity-XXXX.go)
 trap 'rm -f "$TMP_GO"' EXIT

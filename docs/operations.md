@@ -79,6 +79,27 @@ Keeping backups outside `repository.root_path` matters for two reasons:
 
 Treat the command as replacing the entire state root, not as merging files into an existing installation.
 
+## Upgrades
+
+1. Stop the service and create a backup outside `repository.root_path`.
+2. Install the new wheel or container image.
+3. Start Memento and check `memory_status`.
+4. Run `rebuild-index` offline if the index is stale or quarantined.
+
+Control database migrations reject unknown schema versions. Model and Rust library changes may require semantic re-indexing, but do not change canonical Git history.
+
+## Rollback
+
+Stop the service, select a known-good backup, and run:
+
+```bash
+memento-serve --config CONFIG restore --input BACKUP_DIR
+memento-serve --config CONFIG audit
+memento-serve --config CONFIG status
+```
+
+Restore verifies checksums, restores the bare repository and control database together, materialises the checkout, and rebuilds `derived.sqlite` unless `--no-rebuild-derived` is given. Keep the service stopped until audit and status checks finish.
+
 ## Shutdown behaviour
 
 `serve` installs SIGINT and SIGTERM handlers, drains requests, closes the server when a compatible `shutdown`, `aclose` or `close` method exists, and releases both the SQLite control connection and the writer lease on every exit path. That recovery sequencing matters more than a fast stop.

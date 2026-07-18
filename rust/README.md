@@ -53,10 +53,10 @@ cd rust
 
 This generates:
 
-* `tests/fixtures/gte-small.gtemodel`
+* `../models/gte/gte-small.gtemodel`
 * `tests/fixtures/go_parity.json`
 
-`tests/fixtures/gte-small.gtemodel` is the converted `GTE1` model used by Rust-side runtime tests. `tests/fixtures/go_parity.json` records token and embedding parity data generated through the upstream Go implementation. The generator preserves MIT attribution to the upstream Go implementation.
+`../models/gte/gte-small.gtemodel` is the converted `GTE1` model used by Rust-side runtime tests. `tests/fixtures/go_parity.json` records token and embedding parity data generated through the upstream Go implementation. The generator preserves MIT attribution to the upstream Go implementation.
 
 ## FFI and SQLite extension outputs
 
