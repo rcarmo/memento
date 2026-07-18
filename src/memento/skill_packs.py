@@ -69,6 +69,14 @@ class ValidatedSkillPack(BaseModel):
     manifest: SkillPackManifest
 
 
+def parse_stable_semver(version: str) -> tuple[int, int, int]:
+    """Parse a stable semantic version into a sortable tuple."""
+    match = STABLE_SEMVER_PATTERN.fullmatch(version)
+    if match is None:
+        raise SkillPackValidationError("version must be a stable semantic version")
+    return tuple(int(part) for part in match.groups())  # type: ignore[return-value]
+
+
 def validate_skill_pack(
     *, skill_name: str, version: str, skill_md: str, zip_bytes: bytes
 ) -> ValidatedSkillPack:
@@ -77,8 +85,7 @@ def validate_skill_pack(
         raise SkillPackValidationError(
             "skill_name must be lowercase alphanumeric words joined by hyphens"
         )
-    if not STABLE_SEMVER_PATTERN.fullmatch(version):
-        raise SkillPackValidationError("version must be a stable semantic version")
+    parse_stable_semver(version)
 
     expected_skill_md = skill_md.encode("utf-8")
     pack_sha256 = hashlib.sha256(zip_bytes).hexdigest()
