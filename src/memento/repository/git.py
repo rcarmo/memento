@@ -176,7 +176,30 @@ def materialize_current_checkout(
             "--",
             ".",
         )
+    _hydrate_lfs_checkout(paths)
     return MaterializedCheckout(revision=target_revision, path=paths.current_dir)
+
+
+def _hydrate_lfs_checkout(paths: GitRepositoryPaths) -> None:
+    attributes = paths.current_dir / ".gitattributes"
+    if not attributes.exists() or "filter=lfs" not in attributes.read_text(
+        encoding="utf-8", errors="replace"
+    ):
+        return
+    result = subprocess.run(
+        [
+            "git",
+            f"--git-dir={paths.bare_dir}",
+            f"--work-tree={paths.current_dir}",
+            "lfs",
+            "checkout",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise GitError(result.stderr.strip() or "git lfs checkout failed")
 
 
 def resolve_worktree_revision(worktree_path: Path) -> str | None:
@@ -200,8 +223,6 @@ def diff_main_paths(
         "--name-only",
         base_revision,
         end_revision,
-        "--",
-        "*.md",
     )
     return tuple(sorted(f"/{line}" for line in output.splitlines() if line))
 

@@ -94,6 +94,7 @@ class MCPConfig(BaseModel):
 
     tool_surface: Literal["compact", "standard", "read_only", "curator", "admin"] = "compact"
     compact_answer_enabled: bool = True
+    max_request_bytes: int = Field(default=72 * 1024 * 1024, ge=4 * 1024 * 1024)
     execute: MCPExecuteLimitsConfig = Field(default_factory=MCPExecuteLimitsConfig)
 
 

@@ -260,7 +260,8 @@ class DerivedIndex:
                     self._delete_path(connection, bundle_path)
                     absolute = bundle_root / bundle_path.removeprefix("/")
                     if (
-                        absolute.exists()
+                        bundle_path.endswith(".md")
+                        and absolute.exists()
                         and absolute.is_file()
                         and not is_reserved_bundle_path(bundle_path)
                     ):
