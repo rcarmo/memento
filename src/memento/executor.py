@@ -112,6 +112,67 @@ class ProposalApplyArgs(BaseModel):
     idempotency_key: str
 
 
+class SkillSearchArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    query: str
+    limit: int = 20
+
+
+class SkillGetArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    skill_name: str
+    version: str | None = None
+
+
+class SkillProposeArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    skill_name: str
+    version: str
+    skill_md: str
+    zip_base64: str
+    rationale: str | None = None
+
+
+class SkillProposalGetArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    proposal_id: str
+
+
+class SkillProposalListArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    status: str | None = None
+
+
+class SkillProposalReviewArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    proposal_id: str
+    decision: str
+    comment: str | None = None
+
+
+class SkillProposalApplyArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    proposal_id: str
+    expected_revision: str
+    idempotency_key: str
+
+
+class SkillPruneArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    skill_name: str
+    keep: int = 5
+    expected_revision: str
+    idempotency_key: str
+
+
 class CreateArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 

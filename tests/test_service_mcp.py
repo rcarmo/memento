@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import asyncio
+import base64
+import io
 import json
 import sqlite3
+import zipfile
 from collections.abc import Generator
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -60,14 +63,14 @@ def service_config(tmp_path: Path) -> ServiceConfig:
                 "smith": NamespacePolicy(
                     roles=("reader", "proposer", "curator"),
                     token_env="MEMENTO_TOKEN_SMITH",
-                    read_prefixes=("/instances/", "/projects/"),
-                    write_prefixes=("/instances/", "/projects/"),
+                    read_prefixes=("/instances/", "/projects/", "/skills/"),
+                    write_prefixes=("/instances/", "/projects/", "/skills/"),
                 ),
                 "flint": NamespacePolicy(
                     roles=("reader", "proposer"),
                     token_env="MEMENTO_TOKEN_FLINT",
-                    read_prefixes=("/instances/", "/projects/"),
-                    write_prefixes=("/projects/",),
+                    read_prefixes=("/instances/", "/projects/", "/skills/"),
+                    write_prefixes=("/projects/", "/skills/"),
                 ),
                 "ghost": NamespacePolicy(
                     roles=("reader",),
@@ -342,11 +345,11 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     expected_counts: tuple[
         tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
     ] = (
-        ("compact", 5),
-        ("standard", 18),
-        ("read_only", 8),
-        ("curator", 9),
-        ("admin", 19),
+        ("compact", 7),
+        ("standard", 26),
+        ("read_only", 10),
+        ("curator", 16),
+        ("admin", 27),
     )
     for surface, count in expected_counts:
         server = _server_for(
@@ -363,6 +366,8 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "status",
         "search",
         "read",
+        "skill_search",
+        "skill_get",
         "execute",
     ]
     assert any(item["operation"] == "proposal_apply" for item in catalog["execute_only_operations"])
@@ -375,6 +380,10 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     assert "anyOf" in changes_schema["items"]
     help_payload = success_data(service.memory_help(smith))
     assert "memory_execute" in help_payload["mcp"]["direct_tools"]
+    assert help_payload["goals"]["skills"] == [
+        "memory_skill_search",
+        "memory_skill_get",
+    ]
     assert help_payload["mcp"]["execute_only_operations"]["propose"] == (
         "propose",
         "propose_freeform",
@@ -389,6 +398,151 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "propose_freeform",
         "propose_update",
     ]
+
+
+def test_skill_pack_tool_discovery_and_catalog_schemas(
+    service: MemoryService,
+    service_config: ServiceConfig,
+) -> None:
+    standard_server = _server_for(
+        service,
+        service_config.model_copy(update={"mcp": MCPConfig(tool_surface="standard")}),
+    )
+    standard_tools = {item["name"]: item for item in standard_server.discover_tools()["tools"]}
+    assert "memory_skill_search" in standard_tools
+    assert "memory_skill_get" in standard_tools
+    assert "memory_skill_propose" in standard_tools
+    assert "memory_skill_prune" in standard_tools
+    assert "memory_execute" not in standard_tools
+    assert standard_tools["memory_skill_search"]["annotations"] == {
+        "roles": ["reader"],
+        "operation": "skill_search",
+    }
+    assert (
+        standard_tools["memory_skill_propose"]["inputSchema"]["properties"]["zip_base64"]["type"]
+        == "string"
+    )
+    assert set(standard_tools["memory_skill_prune"]["inputSchema"]["required"]) == {
+        "skill_name",
+        "expected_revision",
+        "idempotency_key",
+    }
+
+    read_only_server = _server_for(
+        service,
+        service_config.model_copy(update={"mcp": MCPConfig(tool_surface="read_only")}),
+    )
+    read_only_tools = {item["name"] for item in read_only_server.discover_tools()["tools"]}
+    assert "memory_skill_search" in read_only_tools
+    assert "memory_skill_get" in read_only_tools
+    assert "memory_skill_propose" not in read_only_tools
+    assert "memory_skill_prune" not in read_only_tools
+
+    catalog = json.loads(asyncio.run(standard_server.resource_catalog())["text"])
+    skill_ops = {item["operation"]: item for item in catalog["operations"]}
+    assert skill_ops["skill_search"]["tool"] == "memory_skill_search"
+    assert skill_ops["skill_search"]["commit_capable"] is False
+    assert skill_ops["skill_proposal_apply"]["commit_capable"] is True
+    assert skill_ops["skill_prune"]["commit_capable"] is True
+
+    skill_pack_workflow = json.loads(
+        asyncio.run(standard_server.resource_template_workflow("skill_pack"))["text"]
+    )
+    assert [item["operation"] for item in skill_pack_workflow["operations"]] == [
+        "skill_search",
+        "skill_get",
+        "skill_propose",
+        "skill_proposal_list",
+        "skill_proposal_get",
+        "skill_proposal_review",
+        "skill_proposal_apply",
+        "skill_prune",
+    ]
+
+
+def _skill_zip(skill_md: str, script: str = "console.log('ok')\n") -> tuple[str, bytes]:
+    stream = io.BytesIO()
+    with zipfile.ZipFile(stream, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr("SKILL.md", skill_md)
+        archive.writestr("scripts/run.ts", script)
+    data = stream.getvalue()
+    return base64.b64encode(data).decode("ascii"), data
+
+
+def test_skill_pack_propose_review_apply_search_and_recall(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    skill_md = "---\nname: demo-skill\ndescription: Demo\n---\n# Demo Skill\n"
+    encoded, zip_bytes = _skill_zip(skill_md)
+    proposed = service.memory_skill_propose(
+        flint,
+        skill_name="demo-skill",
+        version="1.0.0",
+        skill_md=skill_md,
+        zip_base64=encoded,
+        rationale="share complete skill",
+    )
+    proposal = success_data(proposed)["proposal"]
+    assert proposal["status"] == "submitted"
+    assert "zip_base64" not in proposal
+
+    self_review = service.memory_skill_proposal_review(
+        flint, proposal_id=proposal["proposal_id"], decision="approve"
+    )
+    assert self_review.status == "error"
+    assert self_review.error_class == "forbidden"
+
+    approved = service.memory_skill_proposal_review(
+        smith,
+        proposal_id=proposal["proposal_id"],
+        decision="approve",
+        comment="validated",
+    )
+    assert success_data(approved)["proposal"]["status"] == "approved"
+
+    revision = get_main_revision(repo_paths)
+    applied = service.memory_skill_proposal_apply(
+        smith,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="skill-demo-1",
+    )
+    assert applied.status == "success", applied.model_dump(mode="python")
+    applied_data = success_data(applied)
+    assert applied_data["proposal"]["status"] == "applied"
+    assert "/skills/.versions/demo-skill/1.0.0.zip" in applied_data["changed_paths"]
+    replayed = success_data(
+        service.memory_skill_proposal_apply(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="skill-demo-1",
+        )
+    )
+    assert replayed["replayed"] is True
+    assert replayed["changed_paths"] == applied_data["changed_paths"]
+
+    searched = success_data(service.memory_skill_search(flint, query="Demo Skill"))
+    assert [(item["skill_name"], item["version"]) for item in searched["results"]] == [
+        ("demo-skill", "1.0.0")
+    ]
+    recalled = success_data(service.memory_skill_get(flint, skill_name="demo-skill"))
+    assert recalled["version"] == "1.0.0"
+    assert recalled["versions"] == ["1.0.0"]
+    assert base64.b64decode(recalled["zip_base64"]) == zip_bytes
+
+    duplicate = service.memory_skill_propose(
+        flint,
+        skill_name="demo-skill",
+        version="1.0.0",
+        skill_md=skill_md,
+        zip_base64=encoded,
+    )
+    assert duplicate.status == "error"
+    assert duplicate.error_class == "conflict"
 
 
 def test_memory_route_direct_execute_unknown_auth_and_malformed(
@@ -536,6 +690,8 @@ def test_memory_route_disabled_and_server_discovery(
         "memory_search",
         "memory_read",
         "memory_route",
+        "memory_skill_search",
+        "memory_skill_get",
         "memory_execute",
     ]
     catalog = json.loads(asyncio.run(server.resource_catalog())["text"])

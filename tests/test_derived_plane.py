@@ -149,6 +149,25 @@ def test_graph_metrics_and_bounded_neighborhood(
     assert orphan_metrics.orphan_flag is True
 
 
+def test_incremental_update_ignores_non_markdown_artifacts(
+    tmp_path: Path, derived_index: DerivedIndex
+) -> None:
+    artifact = tmp_path / "skills" / ".versions" / "demo" / "1.0.0.zip"
+    artifact.parent.mkdir(parents=True)
+    artifact.write_bytes(b"PK-not-a-concept")
+
+    derived_index.rebuild(tmp_path, repo_revision="rev-empty")
+    derived_index.update_paths(
+        tmp_path,
+        repo_revision="rev-artifact",
+        changed_paths=("/skills/.versions/demo/1.0.0.zip", "/.gitattributes"),
+    )
+
+    state = derived_index.get_state()
+    assert state.repo_revision == "rev-artifact"
+    assert state.index_revision == "rev-artifact"
+
+
 def test_incremental_update_matches_clean_rebuild_and_supports_delete_then_rebuild(
     tmp_path: Path,
     repo_paths: GitRepositoryPaths,

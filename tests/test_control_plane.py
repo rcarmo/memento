@@ -86,7 +86,7 @@ def test_control_db_migrations_enable_wal_and_v1_tables(
     assert mode.lower() == "wal"
     assert foreign_keys == 1
     assert {"operations", "proposals", "scheduler_runs", "service_state", "dream_signals"} <= tables
-    assert schema_version == "4"
+    assert schema_version == "5"
 
 
 def test_idempotency_replays_per_principal_and_rejects_payload_conflicts(
