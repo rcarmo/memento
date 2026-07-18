@@ -178,7 +178,7 @@ flowchart TD
 
 ## Typical request processing
 
-This sequence shows the usual read path, including optional local routing and answer synthesis. The same deterministic service methods are used whether the client chose the tool directly or Needle classified the request.
+This sequence covers the read path, with local routing and answer synthesis when enabled. Direct tool calls and Needle-routed requests use the same service methods.
 
 ```mermaid
 sequenceDiagram

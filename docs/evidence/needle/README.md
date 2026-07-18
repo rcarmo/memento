@@ -7,7 +7,7 @@ This directory records the 2026-07-18 local AMD64 baseline used by [ADR 0002](..
 
 The model files are not committed here. The study ran from an isolated temporary directory and proved offline inference by removing proxy variables, setting Hugging Face and Transformers offline flags, and replacing socket connections with a guard that raises on use.
 
-The directory also contains the completed free GPU fine-tuning evidence:
+The directory also contains records from the free GPU fine-tuning run:
 
 * `finetune-corpus-manifest.json` records the deterministic 1,500-example corpus and SHA-256 produced by `tools/experiments/needle/generate_corpus.py`.
 * `finetune-training-summary.json` records GPU settings, base/random-split metrics and the experimental checkpoint digest.
@@ -29,4 +29,4 @@ git lfs install
 git lfs pull
 ```
 
-The embedded pure-Rust runtime is integrated behind `intelligent_tiers.needle_router.enabled`, which remains disabled by default. The NDL1 loader, SentencePiece tokenizer, constrained generator, C ABI and Python wrapper use vendored offline artefacts and enforce bounded output and cooperative cancellation. AMD64 held-out parity and an end-to-end MCP/container smoke pass are complete; ARM64 has portable/NEON implementation coverage but still needs measured hardware performance evidence.
+The embedded Rust runtime is enabled with `intelligent_tiers.needle_router.enabled` and is off by default. The NDL1 loader, SentencePiece tokenizer, generator, C ABI and Python wrapper use local artefacts, bounded output and cooperative cancellation. AMD64 parity and MCP/container tests passed. ARM64 uses the portable/NEON paths, but this repository does not yet include ARM64 performance measurements.

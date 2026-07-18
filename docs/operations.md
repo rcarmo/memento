@@ -2,7 +2,7 @@
 
 Memento runs as a single authoritative writer. The daemon is the normal live interface. The local maintenance CLI is for offline or otherwise exclusive operator work.
 
-Docker, Compose, systemd and reverse-proxy deployments are documented here, but they are still reference artefacts pending production verification.
+This document covers Docker, Compose, systemd and reverse-proxy deployments. The examples have local checks; production results are not included.
 
 ## Operator decisions
 

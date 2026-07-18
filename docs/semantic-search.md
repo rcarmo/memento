@@ -1,6 +1,6 @@
 # Semantic search
 
-Semantic search is optional, rebuildable and deliberately second to lexical search. Memento keeps FTS5 as the default because it is deterministic, cheap to recover and always available. Semantic search is implemented and locally verified; production model benchmarks and live operating evidence are still pending.
+Semantic search is optional and rebuildable. FTS5 stays the default because it is cheap to recover and always available. Local benchmark reports are included; production measurements are not.
 
 ## What operators decide
 

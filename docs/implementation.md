@@ -1,12 +1,12 @@
 # Memento implementation
 
-Memento exists because shared durable facts do not belong in an agent's chat history, reminders or local maintenance state. It was designed around independent Piclaw instances such as Smith and Flint, but its boundary is authenticated MCP: any compatible agent can use the same read, proposal, curation and skill-pack contracts.
+Memento separates shared facts from an agent's chats, reminders and local maintenance state. I wrote it for independent Piclaw instances such as Smith and Flint, but any authenticated MCP client can use the same read, proposal, curation and asset contracts.
 
-What is in this repository is not a sketch. It is the implemented architecture: a standalone Python daemon, a Git-backed Markdown repository for canonical knowledge, `control.sqlite` for durable operational state, rebuildable derived indexes for search and graph work and an MCP surface that remains useful when every model feature is turned off.
+The implementation is a Python daemon around a Git-backed Markdown repository, `control.sqlite` for operational state, and rebuildable search and graph indexes. Read, proposal and curation tools do not depend on optional model features.
 
 The request and state transitions are collected in [Memento transition diagrams](diagrams.md).
 
-The short version remains the right one:
+In short:
 
 > Git is authoritative for knowledge; `control.sqlite` is authoritative for operations; FTS, graph indexes, caches and signals are derived; models are advisory only.
 
