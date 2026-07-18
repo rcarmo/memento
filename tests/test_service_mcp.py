@@ -346,10 +346,10 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
     ] = (
         ("compact", 7),
-        ("standard", 26),
+        ("standard", 23),
         ("read_only", 10),
-        ("curator", 16),
-        ("admin", 27),
+        ("curator", 13),
+        ("admin", 24),
     )
     for surface, count in expected_counts:
         server = _server_for(
@@ -366,7 +366,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "status",
         "search",
         "read",
-        "skill_search",
+        "asset_get",
         "skill_get",
         "execute",
     ]
@@ -381,7 +381,8 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     help_payload = success_data(service.memory_help(smith))
     assert "memory_execute" in help_payload["mcp"]["direct_tools"]
     assert help_payload["goals"]["skills"] == [
-        "memory_skill_search",
+        "memory_search",
+        "memory_read",
         "memory_skill_get",
     ]
     assert help_payload["mcp"]["execute_only_operations"]["propose"] == (
@@ -409,19 +410,26 @@ def test_skill_pack_tool_discovery_and_catalog_schemas(
         service_config.model_copy(update={"mcp": MCPConfig(tool_surface="standard")}),
     )
     standard_tools = {item["name"]: item for item in standard_server.discover_tools()["tools"]}
-    assert "memory_skill_search" in standard_tools
+    assert "memory_asset_get" in standard_tools
     assert "memory_skill_get" in standard_tools
     assert "memory_skill_propose" in standard_tools
+    assert "memory_asset_prune" in standard_tools
     assert "memory_skill_prune" in standard_tools
     assert "memory_execute" not in standard_tools
-    assert standard_tools["memory_skill_search"]["annotations"] == {
+    assert standard_tools["memory_asset_get"]["annotations"] == {
         "roles": ["reader"],
-        "operation": "skill_search",
+        "operation": "asset_get",
     }
     assert (
         standard_tools["memory_skill_propose"]["inputSchema"]["properties"]["zip_base64"]["type"]
         == "string"
     )
+    assert set(standard_tools["memory_asset_prune"]["inputSchema"]["required"]) == {
+        "id_or_path",
+        "asset_kind",
+        "expected_revision",
+        "idempotency_key",
+    }
     assert set(standard_tools["memory_skill_prune"]["inputSchema"]["required"]) == {
         "skill_name",
         "expected_revision",
@@ -433,29 +441,28 @@ def test_skill_pack_tool_discovery_and_catalog_schemas(
         service_config.model_copy(update={"mcp": MCPConfig(tool_surface="read_only")}),
     )
     read_only_tools = {item["name"] for item in read_only_server.discover_tools()["tools"]}
-    assert "memory_skill_search" in read_only_tools
+    assert "memory_asset_get" in read_only_tools
     assert "memory_skill_get" in read_only_tools
     assert "memory_skill_propose" not in read_only_tools
+    assert "memory_asset_prune" not in read_only_tools
     assert "memory_skill_prune" not in read_only_tools
 
     catalog = json.loads(asyncio.run(standard_server.resource_catalog())["text"])
     skill_ops = {item["operation"]: item for item in catalog["operations"]}
-    assert skill_ops["skill_search"]["tool"] == "memory_skill_search"
-    assert skill_ops["skill_search"]["commit_capable"] is False
-    assert skill_ops["skill_proposal_apply"]["commit_capable"] is True
+    assert skill_ops["asset_get"]["tool"] == "memory_asset_get"
+    assert skill_ops["asset_get"]["commit_capable"] is False
+    assert skill_ops["asset_prune"]["commit_capable"] is True
     assert skill_ops["skill_prune"]["commit_capable"] is True
 
     skill_pack_workflow = json.loads(
         asyncio.run(standard_server.resource_template_workflow("skill_pack"))["text"]
     )
     assert [item["operation"] for item in skill_pack_workflow["operations"]] == [
-        "skill_search",
+        "search",
+        "asset_get",
         "skill_get",
         "skill_propose",
-        "skill_proposal_list",
-        "skill_proposal_get",
-        "skill_proposal_review",
-        "skill_proposal_apply",
+        "asset_prune",
         "skill_prune",
     ]
 
@@ -489,13 +496,13 @@ def test_skill_pack_propose_review_apply_search_and_recall(
     assert proposal["status"] == "submitted"
     assert "zip_base64" not in proposal
 
-    self_review = service.memory_skill_proposal_review(
+    self_review = service.memory_proposal_review(
         flint, proposal_id=proposal["proposal_id"], decision="approve"
     )
     assert self_review.status == "error"
     assert self_review.error_class == "forbidden"
 
-    approved = service.memory_skill_proposal_review(
+    approved = service.memory_proposal_review(
         smith,
         proposal_id=proposal["proposal_id"],
         decision="approve",
@@ -504,7 +511,7 @@ def test_skill_pack_propose_review_apply_search_and_recall(
     assert success_data(approved)["proposal"]["status"] == "approved"
 
     revision = get_main_revision(repo_paths)
-    applied = service.memory_skill_proposal_apply(
+    applied = service.memory_proposal_apply(
         smith,
         proposal_id=proposal["proposal_id"],
         expected_revision=revision,
@@ -513,9 +520,12 @@ def test_skill_pack_propose_review_apply_search_and_recall(
     assert applied.status == "success", applied.model_dump(mode="python")
     applied_data = success_data(applied)
     assert applied_data["proposal"]["status"] == "applied"
-    assert "/skills/.versions/demo-skill/1.0.0.zip" in applied_data["changed_paths"]
+    assert any(
+        path.startswith("/.assets/") and path.endswith("/skill/1.0.0.zip")
+        for path in applied_data["changed_paths"]
+    )
     replayed = success_data(
-        service.memory_skill_proposal_apply(
+        service.memory_proposal_apply(
             smith,
             proposal_id=proposal["proposal_id"],
             expected_revision=revision,
@@ -525,10 +535,8 @@ def test_skill_pack_propose_review_apply_search_and_recall(
     assert replayed["replayed"] is True
     assert replayed["changed_paths"] == applied_data["changed_paths"]
 
-    searched = success_data(service.memory_skill_search(flint, query="Demo Skill"))
-    assert [(item["skill_name"], item["version"]) for item in searched["results"]] == [
-        ("demo-skill", "1.0.0")
-    ]
+    searched = success_data(service.memory_search(flint, query="Demo Skill"))
+    assert [item["path"] for item in searched["results"]] == ["/skills/demo-skill.md"]
     recalled = success_data(service.memory_skill_get(flint, skill_name="demo-skill"))
     assert recalled["version"] == "1.0.0"
     assert recalled["versions"] == ["1.0.0"]
@@ -543,6 +551,54 @@ def test_skill_pack_propose_review_apply_search_and_recall(
     )
     assert duplicate.status == "error"
     assert duplicate.error_class == "conflict"
+
+
+def test_generic_asset_proposal_rejects_duplicate_and_rename_mix(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+) -> None:
+    encoded, _bytes = _skill_zip("# Template\n")
+    changes = [
+        {
+            "kind": "attach_asset_pack",
+            "path": "/projects/piclaw.md",
+            "asset_kind": "templates",
+            "version": "1.0.0",
+            "zip_base64": encoded,
+        }
+    ]
+    first = service.memory_propose(
+        flint,
+        intent="Attach templates",
+        base_revision=get_main_revision(repo_paths),
+        changes=changes,
+    )
+    assert first.status == "success"
+    duplicate = service.memory_propose(
+        flint,
+        intent="Duplicate templates",
+        base_revision=get_main_revision(repo_paths),
+        changes=changes,
+    )
+    assert duplicate.status == "error"
+    assert duplicate.error_class == "conflict"
+
+    mixed = service.memory_propose(
+        flint,
+        intent="Rename and attach",
+        base_revision=get_main_revision(repo_paths),
+        changes=[
+            {
+                "kind": "rename",
+                "path": "/projects/piclaw.md",
+                "new_path": "/projects/piclaw-new.md",
+            },
+            *changes,
+        ],
+    )
+    assert mixed.status == "error"
+    assert "separate proposals" in mixed.message
 
 
 def test_memory_route_direct_execute_unknown_auth_and_malformed(
@@ -690,7 +746,7 @@ def test_memory_route_disabled_and_server_discovery(
         "memory_search",
         "memory_read",
         "memory_route",
-        "memory_skill_search",
+        "memory_asset_get",
         "memory_skill_get",
         "memory_execute",
     ]
