@@ -281,12 +281,13 @@ jobs:
                 .filter(v => v.metadata?.container?.tags?.length)
                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
               const untagged = versions.filter(v => !v.metadata?.container?.tags?.length);
-              const oldestKept = tagged.length
-                ? new Date(tagged[Math.min(keep, tagged.length) - 1].created_at)
-                : new Date();
+              // Digest-first multi-arch builds create untagged platform manifests that
+              // remain referenced by the tagged index. Never reap fresh children; the
+              // seven-day grace period also covers delayed or retried release jobs.
+              const untaggedCutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
               const doomed = [
                 ...tagged.slice(keep),
-                ...untagged.filter(v => new Date(v.created_at) < oldestKept),
+                ...untagged.filter(v => new Date(v.created_at) < untaggedCutoff),
               ];
               for (const version of doomed) {
                 try {
