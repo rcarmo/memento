@@ -1,5 +1,7 @@
 # Memento
 
+![Memento](docs/icon_256.png)
+
 An AI agent can remember several different kinds of things, and mixing them together causes trouble surprisingly quickly.
 
 A conversation is short-lived working context. A reminder belongs to the agent that must deliver it. Credentials belong to one machine or user. But a fact such as "Smith runs Piclaw", "this service replaced that one" or "the backup lives here" may need to survive for years and be available to several agents.
