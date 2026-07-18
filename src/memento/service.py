@@ -299,6 +299,16 @@ class MemoryService:
                 "memory_patch",
                 "memory_rename",
             ],
+            "skills": [
+                "memory_skill_search",
+                "memory_skill_get",
+                "memory_skill_propose",
+                "memory_skill_proposal_list",
+                "memory_skill_proposal_get",
+                "memory_skill_proposal_review",
+                "memory_skill_proposal_apply",
+                "memory_skill_prune",
+            ],
             "compact": [
                 spec.tool_name for spec in OPERATION_SPECS if spec.tool_name in visible_tools
             ],
@@ -1080,12 +1090,15 @@ class MemoryService:
             if "proposer" not in policy.roles and "curator" not in policy.roles:
                 require_role(policy, "proposer")
             visible = []
-            for record in list_skill_pack_proposals(self._deps.control_connection, status=status):
-                if record.author_principal != policy.principal and "curator" not in policy.roles:
+            for record in list_skill_pack_proposals(self._deps.control_connection):
+                refreshed = self._refresh_skill_proposal(record)
+                if status is not None and refreshed.status.value != status:
+                    continue
+                if refreshed.author_principal != policy.principal and "curator" not in policy.roles:
                     continue
                 if not self._is_authorized(policy, "/skills/", action="read"):
                     continue
-                visible.append(self._skill_proposal_payload(self._refresh_skill_proposal(record)))
+                visible.append(self._skill_proposal_payload(refreshed))
             return self._success({"proposals": visible})
         except Exception as exc:
             return self._failure(exc)

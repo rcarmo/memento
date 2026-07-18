@@ -120,7 +120,7 @@ Configured `mcp.tool_surface` controls stable discovery without depending on req
 
 | Surface | Exposed direct tools |
 |---|---|
-| `compact` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_execute`, plus optional `memory_answer` and optional `memory_route` when the Needle router is enabled (**5** to **7**) |
+| `compact` | core help/status/search/read/execute plus `memory_skill_search`, `memory_skill_get`, optional `memory_answer` and optional `memory_route` (**7** to **9**) |
 | `standard` | the **26** direct compatibility tools, including skill-pack operations |
 | `read_only` | the **10** discovery, concept-read and skill-read tools |
 | `curator` | compact tools plus concept and skill proposal lifecycle tools; direct create/patch/rename remain execute-only (**16** or **17** with `memory_answer`) |

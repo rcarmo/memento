@@ -345,7 +345,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     expected_counts: tuple[
         tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
     ] = (
-        ("compact", 5),
+        ("compact", 7),
         ("standard", 26),
         ("read_only", 10),
         ("curator", 16),
@@ -366,6 +366,8 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "status",
         "search",
         "read",
+        "skill_search",
+        "skill_get",
         "execute",
     ]
     assert any(item["operation"] == "proposal_apply" for item in catalog["execute_only_operations"])
@@ -378,6 +380,10 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     assert "anyOf" in changes_schema["items"]
     help_payload = success_data(service.memory_help(smith))
     assert "memory_execute" in help_payload["mcp"]["direct_tools"]
+    assert help_payload["goals"]["skills"] == [
+        "memory_skill_search",
+        "memory_skill_get",
+    ]
     assert help_payload["mcp"]["execute_only_operations"]["propose"] == (
         "propose",
         "propose_freeform",
@@ -684,6 +690,8 @@ def test_memory_route_disabled_and_server_discovery(
         "memory_search",
         "memory_read",
         "memory_route",
+        "memory_skill_search",
+        "memory_skill_get",
         "memory_execute",
     ]
     catalog = json.loads(asyncio.run(server.resource_catalog())["text"])
