@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping
 from inspect import Parameter, signature
+from pathlib import Path
 from typing import Any, cast, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict
@@ -62,6 +63,13 @@ class _ProposeArgsSchema(BaseModel):
     rationale: str | None = None
 
 
+class RouteArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    request: str
+    execute: bool = True
+
+
 _TOOL_INPUT_MODELS: dict[str, type[BaseModel]] = {
     "memory_help": EmptyArgs,
     "memory_status": EmptyArgs,
@@ -71,6 +79,7 @@ _TOOL_INPUT_MODELS: dict[str, type[BaseModel]] = {
     "memory_graph": GraphArgs,
     "memory_audit": AuditArgs,
     "memory_answer": AnswerArgs,
+    "memory_route": RouteArgs,
     "memory_propose": _ProposeArgsSchema,
     "memory_propose_freeform": ProposeFreeformArgs,
     "memory_propose_update": ProposeUpdateArgs,
@@ -103,8 +112,39 @@ def _annotation_schema(annotation: Any) -> dict[str, Any]:
     }.get(annotation, {})
 
 
+EXECUTE_CAPABLE_OPERATIONS = frozenset(
+    {
+        "help",
+        "status",
+        "search",
+        "read",
+        "list",
+        "graph",
+        "audit",
+        "answer",
+        "propose",
+        "propose_freeform",
+        "propose_update",
+        "proposal_get",
+        "proposal_list",
+        "proposal_review",
+        "proposal_apply",
+        "create",
+        "patch",
+        "rename",
+    }
+)
+
+
 class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
-    def __init__(self, service: MemoryService, *, bearer_tokens: Mapping[str, Principal]) -> None:
+    def __init__(
+        self,
+        service: MemoryService,
+        *,
+        bearer_tokens: Mapping[str, Principal],
+        log_file: Path | None = None,
+    ) -> None:
+        self._umcp_log_file = log_file
         super().__init__()
         self._service = service
         self._bearer_tokens = dict(bearer_tokens)
@@ -115,6 +155,11 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                     f"duplicate principal name configured for bearer tokens: {principal.name}"
                 )
             self._principals_by_name[principal.name] = principal
+
+    def _setup_logging(self) -> None:
+        if self._umcp_log_file is not None:
+            self.log_file = self._umcp_log_file
+        super()._setup_logging()
 
     def get_instructions(self) -> str:
         visible_specs = self._visible_operation_specs()
@@ -247,6 +292,11 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     ) -> dict[str, Any]:
         return self._service.memory_answer(
             self._context(), question=question, answer_mode=answer_mode
+        ).model_dump(mode="json")
+
+    async def tool_memory_route(self, request: str, execute: bool = True) -> dict[str, Any]:
+        return self._service.memory_route(
+            self._context(), request=request, execute=execute
         ).model_dump(mode="json")
 
     async def tool_memory_propose(
@@ -435,7 +485,11 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             "roles": list(spec.roles),
             "commit_capable": spec.commit_capable,
             "direct_tool_available": direct_tool_available,
-            "available_via_execute": not direct_tool_available and self._execute_tool_available(),
+            "available_via_execute": (
+                not direct_tool_available
+                and self._execute_tool_available()
+                and spec.op_name in EXECUTE_CAPABLE_OPERATIONS
+            ),
             "examples": list(spec.examples),
             "input_schema": self._tool_input_schema(method, spec.tool_name),
         }
@@ -449,6 +503,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             tool_names_for_surface(
                 self._service._deps.config.mcp.tool_surface,
                 answer_enabled=answer_enabled,
+                route_enabled=self._service._route_tool_enabled(),
             )
         )
         return tuple(spec for spec in OPERATION_SPECS if spec.tool_name in names)
@@ -463,7 +518,9 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         return tuple(
             spec
             for spec in OPERATION_SPECS
-            if spec.op_name not in visible and spec.op_name != "execute"
+            if spec.op_name not in visible
+            and spec.op_name != "execute"
+            and spec.op_name in EXECUTE_CAPABLE_OPERATIONS
         )
 
     def _workflow_payload(self, goal: str) -> dict[str, Any]:

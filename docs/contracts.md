@@ -120,7 +120,7 @@ Configured `mcp.tool_surface` controls stable discovery without depending on req
 
 | Surface | Exposed direct tools |
 |---|---|
-| `compact` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_execute`, plus optional `memory_answer` (**5** or **6**) |
+| `compact` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_execute`, plus optional `memory_answer` and optional `memory_route` when the Needle router is enabled (**5** to **7**) |
 | `standard` | the existing **18** direct tools for compatibility |
 | `read_only` | the **8** discovery and read tools |
 | `curator` | compact direct tools plus `memory_proposal_get`, `memory_proposal_list`, `memory_proposal_review`, `memory_proposal_apply`; `create`, `patch` and `rename` are execute-only here (**9** or **10**) |
@@ -159,6 +159,8 @@ Returned data includes:
 * `mcp.compact_instructions`
 * `mcp.execute_limits`
 * `mcp.execute_only_operations`
+
+When `intelligent_tiers.needle_router.enabled=true` and the Rust router is loaded, compact discovery may also expose `memory_route`, which classifies a shallow read request into one deterministic router action or abstains with `UNKNOWN`.
 
 `goals` is filtered to the visible direct tools for the active surface and answer setting. `mcp.execute_only_operations` lists workflow operations that are available through `memory_execute` but not exposed as direct tools on that surface.
 
@@ -201,6 +203,7 @@ All tool names below are exact.
 | `memory_graph` | `id_or_path`, `depth=1` | bounded graph neighbours and backlinks |
 | `memory_audit` | `path?` | repository audit for visible scope |
 | `memory_answer` | `question`, `answer_mode="summary"` | optional read-only answer tier |
+| `memory_route` | `request`, `execute=true` | optional Needle shallow router for one read-only request |
 
 ### Proposal and write tools
 

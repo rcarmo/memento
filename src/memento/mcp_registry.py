@@ -101,6 +101,15 @@ OPERATION_SPECS: tuple[OperationSpec, ...] = (
         examples=({"question": "What is Piclaw?", "answer_mode": "summary"},),
     ),
     OperationSpec(
+        op_name="route",
+        tool_name="memory_route",
+        method_name="memory_route",
+        description="Classify one shallow read request through the optional Needle router and dispatch deterministically.",
+        roles=("reader",),
+        discovery_surfaces=frozenset({COMPACT_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}),
+        examples=({"request": "find Piclaw", "execute": True},),
+    ),
+    OperationSpec(
         op_name="propose",
         tool_name="memory_propose",
         method_name="memory_propose",
@@ -236,7 +245,9 @@ WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
 }
 
 
-def tool_names_for_surface(surface: str, *, answer_enabled: bool) -> tuple[str, ...]:
+def tool_names_for_surface(
+    surface: str, *, answer_enabled: bool, route_enabled: bool = False
+) -> tuple[str, ...]:
     names: list[str] = []
     for spec in OPERATION_SPECS:
         if surface not in spec.discovery_surfaces:
@@ -246,6 +257,8 @@ def tool_names_for_surface(surface: str, *, answer_enabled: bool) -> tuple[str, 
             and not answer_enabled
             and surface in {COMPACT_SURFACE, CURATOR_SURFACE}
         ):
+            continue
+        if spec.tool_name == "memory_route" and not route_enabled:
             continue
         names.append(spec.tool_name)
     return tuple(names)

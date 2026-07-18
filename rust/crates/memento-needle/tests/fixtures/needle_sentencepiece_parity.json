@@ -1,0 +1,410 @@
+{
+  "model_path": "/tmp/needle-study/artifacts/needle.model",
+  "special_ids": {
+    "pad": 0,
+    "eos": 1,
+    "bos": 2,
+    "unk": 3,
+    "tool_call": 4,
+    "tools": 5,
+    "space_marker": 8041
+  },
+  "fixtures": [
+    {
+      "input": "",
+      "ids": [],
+      "pieces": [],
+      "decoded": ""
+    },
+    {
+      "input": "hello world",
+      "ids": [
+        706,
+        8055,
+        363,
+        5338,
+        745
+      ],
+      "pieces": [
+        "▁he",
+        "l",
+        "lo",
+        "▁wor",
+        "ld"
+      ],
+      "decoded": "hello world"
+    },
+    {
+      "input": "  hello   world  ",
+      "ids": [
+        706,
+        8055,
+        363,
+        5338,
+        745
+      ],
+      "pieces": [
+        "▁he",
+        "l",
+        "lo",
+        "▁wor",
+        "ld"
+      ],
+      "decoded": "hello world"
+    },
+    {
+      "input": "ASCII only 123 !?",
+      "ids": [
+        933,
+        8074,
+        8076,
+        8084,
+        8084,
+        3627,
+        6622,
+        8041,
+        8185,
+        8105
+      ],
+      "pieces": [
+        "▁A",
+        "S",
+        "C",
+        "I",
+        "I",
+        "▁only",
+        "▁123",
+        "▁",
+        "!",
+        "?"
+      ],
+      "decoded": "ASCII only 123 !?"
+    },
+    {
+      "input": "Café déjà vu",
+      "ids": [
+        736,
+        5569,
+        8128,
+        7220,
+        8079,
+        201,
+        166,
+        546,
+        8053
+      ],
+      "pieces": [
+        "▁C",
+        "af",
+        "é",
+        "▁dé",
+        "j",
+        "<0xC3>",
+        "<0xA0>",
+        "▁v",
+        "u"
+      ],
+      "decoded": "Café déjà vu"
+    },
+    {
+      "input": "中文 mixed text",
+      "ids": [
+        8041,
+        234,
+        190,
+        179,
+        236,
+        156,
+        141,
+        5814,
+        524
+      ],
+      "pieces": [
+        "▁",
+        "<0xE4>",
+        "<0xB8>",
+        "<0xAD>",
+        "<0xE6>",
+        "<0x96>",
+        "<0x87>",
+        "▁mixed",
+        "▁text"
+      ],
+      "decoded": "中文 mixed text"
+    },
+    {
+      "input": "🙂",
+      "ids": [
+        8041,
+        246,
+        165,
+        159,
+        136
+      ],
+      "pieces": [
+        "▁",
+        "<0xF0>",
+        "<0x9F>",
+        "<0x99>",
+        "<0x82>"
+      ],
+      "decoded": "🙂"
+    },
+    {
+      "input": "👩‍💻 writes JSON",
+      "ids": [
+        8041,
+        246,
+        165,
+        151,
+        175,
+        232,
+        134,
+        147,
+        246,
+        165,
+        152,
+        193,
+        365,
+        269,
+        2735,
+        4400
+      ],
+      "pieces": [
+        "▁",
+        "<0xF0>",
+        "<0x9F>",
+        "<0x91>",
+        "<0xA9>",
+        "<0xE2>",
+        "<0x80>",
+        "<0x8D>",
+        "<0xF0>",
+        "<0x9F>",
+        "<0x92>",
+        "<0xBB>",
+        "▁w",
+        "ri",
+        "tes",
+        "▁JSON"
+      ],
+      "decoded": "👩‍💻 writes JSON"
+    },
+    {
+      "input": "{\"tool\":\"memory_search\",\"args\":{\"query\":\"hello🙂\"}}",
+      "ids": [
+        857,
+        5832,
+        264,
+        270,
+        8054,
+        501,
+        8062,
+        700,
+        265,
+        286,
+        8057,
+        8046,
+        282,
+        859,
+        264,
+        6558,
+        363,
+        246,
+        165,
+        159,
+        136,
+        8039,
+        288
+      ],
+      "pieces": [
+        "▁{\"",
+        "tool",
+        "\":\"",
+        "me",
+        "m",
+        "ory",
+        "_",
+        "search",
+        "\",\"",
+        "ar",
+        "g",
+        "s",
+        "\":{\"",
+        "query",
+        "\":\"",
+        "hel",
+        "lo",
+        "<0xF0>",
+        "<0x9F>",
+        "<0x99>",
+        "<0x82>",
+        "\"",
+        "}}"
+      ],
+      "decoded": "{\"tool\":\"memory_search\",\"args\":{\"query\":\"hello🙂\"}}"
+    },
+    {
+      "input": "<tool_call>",
+      "ids": [
+        8041,
+        4
+      ],
+      "pieces": [
+        "▁",
+        "<tool_call>"
+      ],
+      "decoded": "<tool_call>"
+    },
+    {
+      "input": "x<tool_call>y",
+      "ids": [
+        6169,
+        4,
+        8061
+      ],
+      "pieces": [
+        "▁x",
+        "<tool_call>",
+        "y"
+      ],
+      "decoded": "x<tool_call>y"
+    },
+    {
+      "input": "<tools>",
+      "ids": [
+        8041,
+        5
+      ],
+      "pieces": [
+        "▁",
+        "<tools>"
+      ],
+      "decoded": "<tools>"
+    },
+    {
+      "input": "{\"x\":\"<tool_call>\",\"y\":\"<tools>\"}",
+      "ids": [
+        857,
+        8073,
+        264,
+        4,
+        265,
+        8061,
+        264,
+        5,
+        8039,
+        8059
+      ],
+      "pieces": [
+        "▁{\"",
+        "x",
+        "\":\"",
+        "<tool_call>",
+        "\",\"",
+        "y",
+        "\":\"",
+        "<tools>",
+        "\"",
+        "}"
+      ],
+      "decoded": "{\"x\":\"<tool_call>\",\"y\":\"<tools>\"}"
+    },
+    {
+      "input": "\n",
+      "ids": [
+        8041,
+        16
+      ],
+      "pieces": [
+        "▁",
+        "<0x0A>"
+      ],
+      "decoded": "\n"
+    },
+    {
+      "input": " \n ",
+      "ids": [
+        8041,
+        16
+      ],
+      "pieces": [
+        "▁",
+        "<0x0A>"
+      ],
+      "decoded": "\n"
+    },
+    {
+      "input": "\tA",
+      "ids": [
+        8041,
+        15,
+        8082
+      ],
+      "pieces": [
+        "▁",
+        "<0x09>",
+        "A"
+      ],
+      "decoded": "\tA"
+    },
+    {
+      "input": "\\",
+      "ids": [
+        6940
+      ],
+      "pieces": [
+        "▁\\"
+      ],
+      "decoded": "\\"
+    }
+  ],
+  "decode_only": [
+    {
+      "ids": [
+        3
+      ],
+      "decoded": " ⁇ "
+    },
+    {
+      "ids": [
+        8041,
+        3
+      ],
+      "decoded": " ⁇ "
+    },
+    {
+      "ids": [
+        1,
+        2,
+        0,
+        4,
+        5
+      ],
+      "decoded": "<tool_call><tools>"
+    },
+    {
+      "ids": [
+        6
+      ],
+      "decoded": "\u0000"
+    },
+    {
+      "ids": [
+        8041,
+        6
+      ],
+      "decoded": "\u0000"
+    },
+    {
+      "ids": [
+        8041,
+        246,
+        165,
+        159,
+        136
+      ],
+      "decoded": "🙂"
+    }
+  ]
+}

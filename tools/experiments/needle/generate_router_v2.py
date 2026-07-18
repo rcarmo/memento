@@ -257,9 +257,7 @@ def write_outputs(output_dir: Path = Path("/tmp/needle-study")) -> dict[str, Any
     manifest, rows_by_split = build_manifest_and_rows()
     for split, rows in rows_by_split.items():
         output = output_dir / f"router-v2-{split}.jsonl"
-        output.write_text(
-            "\n".join(json.dumps(row, separators=(",", ":")) for row in rows) + "\n"
-        )
+        output.write_text("\n".join(json.dumps(row, separators=(",", ":")) for row in rows) + "\n")
     (output_dir / "router-v2-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
 

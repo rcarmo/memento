@@ -1,0 +1,17 @@
+[package]
+name = "memento-needle-ffi"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+authors = ["Rui Carmo <rui.carmo@gmail.com>"]
+description = "C FFI for Memento Needle router inference"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+memento-needle = { path = "../memento-needle" }
+
+[lints]
+workspace = true

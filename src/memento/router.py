@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import re
 from enum import StrEnum
 from typing import Annotated, Any, Literal
 
@@ -123,6 +125,92 @@ type RouterAction = Annotated[
 ]
 ROUTER_ACTION_ADAPTER: TypeAdapter[RouterAction] = TypeAdapter(RouterAction)
 
+CANONICAL_TRAINED_SHALLOW_TOOLS: tuple[dict[str, Any], ...] = (
+    {
+        "name": "search_then_read",
+        "description": "Search for the best matching concept, then read it.",
+        "parameters": {
+            "query": {"type": "string", "required": True},
+            "search_mode": {"type": "string", "required": False},
+        },
+    },
+    {
+        "name": "search_paths",
+        "description": "Search concepts and return matching paths.",
+        "parameters": {
+            "query": {"type": "string", "required": True},
+            "limit": {"type": "number", "required": False},
+            "search_mode": {"type": "string", "required": False},
+        },
+    },
+    {
+        "name": "status_field",
+        "description": "Return one service status field.",
+        "parameters": {"field": {"type": "string", "required": True}},
+    },
+    {
+        "name": "search_then_graph",
+        "description": "Search for a concept, then inspect its graph neighborhood.",
+        "parameters": {
+            "query": {"type": "string", "required": True},
+            "depth": {"type": "number", "required": False},
+            "search_mode": {"type": "string", "required": False},
+        },
+    },
+    {
+        "name": "read_field",
+        "description": "Read an exact path or concept id and return one field.",
+        "parameters": {
+            "id_or_path": {"type": "string", "required": True},
+            "field": {"type": "string", "required": True},
+        },
+    },
+    {
+        "name": "UNKNOWN",
+        "description": "Use for unsupported, unsafe, ambiguous, external or insufficiently identified requests.",
+        "parameters": {},
+    },
+)
+CANONICAL_TRAINED_SHALLOW_TOOLS_JSON = json.dumps(
+    CANONICAL_TRAINED_SHALLOW_TOOLS, separators=(",", ":")
+)
+
+
+_STATUS_FIELD_ALIASES = {
+    "indexed": "index_revision",
+    "index": "index_revision",
+    "repository": "repo_revision",
+    "revision": "repo_revision",
+    "stale": "index_stale",
+    "semantic_ready": "semantic_search_ready",
+}
+_READ_FIELD_ALIASES = {
+    "name": "title",
+    "contents": "body",
+    "content": "body",
+}
+
+
+def parse_needle_router_output(payload: str) -> RouterAction:
+    parsed = json.loads(payload)
+    if not isinstance(parsed, list) or len(parsed) != 1:
+        raise ValueError("needle router output must be a single-call JSON array")
+    call = parsed[0]
+    if not isinstance(call, dict):
+        raise ValueError("needle router output call must be an object")
+    name = call.get("name")
+    arguments = call.get("arguments", {})
+    if not isinstance(name, str) or not name:
+        raise ValueError("needle router output call name must be a non-empty string")
+    if not isinstance(arguments, dict):
+        raise ValueError("needle router output call arguments must be an object")
+    normalized = dict(arguments)
+    if name == "status_field" and isinstance(normalized.get("field"), str):
+        normalized["field"] = _STATUS_FIELD_ALIASES.get(normalized["field"], normalized["field"])
+    if name == "read_field" and isinstance(normalized.get("field"), str):
+        normalized["field"] = _READ_FIELD_ALIASES.get(normalized["field"], normalized["field"])
+    return ROUTER_ACTION_ADAPTER.validate_python({"action": name, **normalized})
+
 
 class ProjectionSpec(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -151,10 +239,21 @@ class ExecutePlanExpansion(BaseModel):
 
 type ExpandedRouterAction = DirectToolExpansion | ExecutePlanExpansion | None
 
+_SEARCH_REQUEST_PREFIX = re.compile(
+    r"^(?:(?:please|kindly)\s+)?(?:find|search(?:\s+for)?|show|fetch|locate|get)\s+",
+    re.IGNORECASE,
+)
 
-def expand_router_action(action: RouterAction) -> ExpandedRouterAction:
+
+def _derive_search_query(request: str) -> str:
+    derived = _SEARCH_REQUEST_PREFIX.sub("", request, count=1).strip()
+    return derived or request
+
+
+def expand_router_action(action: RouterAction, *, request: str) -> ExpandedRouterAction:
+    """Expand a classification without accepting model-invented free-form values."""
     if isinstance(action, SearchThenReadAction):
-        search_args: dict[str, Any] = {"query": action.query, "limit": 1}
+        search_args: dict[str, Any] = {"query": _derive_search_query(request), "limit": 1}
         if action.search_mode is not None:
             search_args["search_mode"] = action.search_mode.value
         plan = ExecutePlan.model_validate(
@@ -177,7 +276,7 @@ def expand_router_action(action: RouterAction) -> ExpandedRouterAction:
         return DirectToolExpansion(
             tool="memory_search",
             args={
-                "query": action.query,
+                "query": _derive_search_query(request),
                 "limit": action.limit,
                 "search_mode": action.search_mode.value,
             },
@@ -196,7 +295,7 @@ def expand_router_action(action: RouterAction) -> ExpandedRouterAction:
                     {
                         "op": "search",
                         "args": {
-                            "query": action.query,
+                            "query": _derive_search_query(request),
                             "limit": 1,
                             "search_mode": action.search_mode.value,
                         },
@@ -218,6 +317,10 @@ def expand_router_action(action: RouterAction) -> ExpandedRouterAction:
             tool="memory_execute", args={"plan": plan.model_dump(mode="python")}
         )
     if isinstance(action, ReadFieldAction):
+        # The model may identify an exact reference, but it cannot invent one. Require
+        # that reference to be present verbatim in the authenticated user's request.
+        if action.id_or_path not in request:
+            return None
         return DirectToolExpansion(
             tool="memory_read",
             args={"id_or_path": action.id_or_path},
@@ -229,6 +332,8 @@ def expand_router_action(action: RouterAction) -> ExpandedRouterAction:
 
 
 __all__ = [
+    "CANONICAL_TRAINED_SHALLOW_TOOLS",
+    "CANONICAL_TRAINED_SHALLOW_TOOLS_JSON",
     "ExpandedRouterAction",
     "GraphDepth",
     "ProjectionSpec",
@@ -240,4 +345,5 @@ __all__ = [
     "STATUS_FIELDS",
     "SearchMode",
     "expand_router_action",
+    "parse_needle_router_output",
 ]

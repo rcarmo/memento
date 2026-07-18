@@ -1,0 +1,304 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+
+jobs:
+  validate-tag:
+    name: Validate release tag
+    runs-on: ubuntu-latest
+    outputs:
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - name: Validate semantic version
+        id: version
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Expected a semantic version tag such as v1.2.3 or v1.2.3-rc.1; got: $tag" >&2
+            exit 1
+          fi
+          if [[ "${tag#v}" == *-* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    name: Build ${{ matrix.platform }} image
+    needs: validate-tag
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+            artifact: amd64
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            artifact: arm64
+    steps:
+      - name: Checkout repository and model artefacts
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Verify release model artefacts
+        shell: bash
+        run: |
+          git lfs ls-files
+          test -s models/needle/memento-router.ndl
+          test -s models/needle/needle.model
+          if head -n 1 models/needle/memento-router.ndl | grep -q '^version https://git-lfs.github.com/spec/'; then
+            echo "Needle model is still a Git LFS pointer" >&2
+            exit 1
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract OCI labels
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ matrix.artifact }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.artifact }}
+
+      - name: Export image digest
+        shell: bash
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          test -n "$digest"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload image digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ matrix.artifact }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish multi-architecture image
+    needs: [validate-tag, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.inspect.outputs.digest }}
+    steps:
+      - name: Download image digests
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digest-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract release tags and labels
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          flavor: latest=false
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=latest,enable=${{ needs.validate-tag.outputs.prerelease == 'false' }}
+
+      - name: Create and push manifest list
+        working-directory: /tmp/digests
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        shell: bash
+        run: |
+          tags=()
+          while IFS= read -r tag; do
+            [[ -n "$tag" ]] && tags+=("-t" "$tag")
+          done <<< "$TAGS"
+          test "${#tags[@]}" -gt 0
+          sources=()
+          for digest in *; do
+            sources+=("${IMAGE_NAME}@sha256:${digest}")
+          done
+          test "${#sources[@]}" -eq 2
+          docker buildx imagetools create "${tags[@]}" "${sources[@]}"
+
+      - name: Inspect published image
+        id: inspect
+        shell: bash
+        run: |
+          image="${IMAGE_NAME}:${GITHUB_REF_NAME#v}"
+          docker buildx imagetools inspect "$image"
+          digest="$(docker buildx imagetools inspect "$image" --format '{{json .Manifest.Digest}}' | tr -d '"')"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+  release:
+    name: Publish GitHub release
+    needs: [validate-tag, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PRERELEASE: ${{ needs.validate-tag.outputs.prerelease }}
+          IMAGE_DIGEST: ${{ needs.publish.outputs.digest }}
+        shell: bash
+        run: |
+          args=("$GITHUB_REF_NAME" --generate-notes --title "$GITHUB_REF_NAME")
+          [[ "$PRERELEASE" == "true" ]] && args+=(--prerelease)
+          gh release create "${args[@]}" --notes "Container: \`${IMAGE_NAME}:${GITHUB_REF_NAME#v}\`  
+          Digest: \`${IMAGE_DIGEST}\`"
+
+  cleanup:
+    name: Retain five releases, runs, and images
+    needs: release
+    if: always() && needs.release.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+      packages: write
+    steps:
+      - name: Cleanup old releases, tags, runs, artifacts, and GHCR versions
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.RELEASES_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const keep = 5;
+            const { owner, repo } = context.repo;
+
+            const releases = await github.paginate(github.rest.repos.listReleases, {
+              owner, repo, per_page: 100,
+            });
+            releases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            for (const release of releases.slice(keep)) {
+              core.info(`Deleting release and tag ${release.tag_name}`);
+              await github.rest.repos.deleteRelease({ owner, repo, release_id: release.id });
+              if (release.tag_name) {
+                try {
+                  await github.rest.git.deleteRef({ owner, repo, ref: `tags/${release.tag_name}` });
+                } catch (error) {
+                  if (error.status !== 404) core.warning(`Could not delete tag ${release.tag_name}: ${error.message}`);
+                }
+              }
+            }
+
+            const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
+              owner, repo, workflow_id: 'release.yml', per_page: 100,
+            });
+            runs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            for (const run of runs.slice(keep)) {
+              const artifacts = await github.paginate(
+                github.rest.actions.listWorkflowRunArtifacts,
+                { owner, repo, run_id: run.id, per_page: 100 },
+              );
+              for (const artifact of artifacts.filter(a => !a.expired)) {
+                try {
+                  await github.rest.actions.deleteArtifact({ owner, repo, artifact_id: artifact.id });
+                } catch (error) {
+                  core.warning(`Could not delete release artifact ${artifact.id}: ${error.message}`);
+                }
+              }
+              try {
+                await github.rest.actions.deleteWorkflowRun({ owner, repo, run_id: run.id });
+              } catch (error) {
+                core.warning(`Could not delete workflow run ${run.id}: ${error.message}`);
+              }
+            }
+
+            const ownerInfo = await github.rest.users.getByUsername({ username: owner });
+            const isOrg = ownerInfo.data.type === 'Organization';
+            const ownerArgs = isOrg ? { org: owner } : { username: owner };
+            const listVersions = isOrg
+              ? github.rest.packages.getAllPackageVersionsForPackageOwnedByOrg
+              : github.rest.packages.getAllPackageVersionsForPackageOwnedByUser;
+            const deleteVersion = isOrg
+              ? github.rest.packages.deletePackageVersionForOrg
+              : github.rest.packages.deletePackageVersionForUser;
+            try {
+              const versions = await github.paginate(listVersions, {
+                package_type: 'container', package_name: repo.toLowerCase(),
+                per_page: 100, state: 'active', ...ownerArgs,
+              });
+              const tagged = versions
+                .filter(v => v.metadata?.container?.tags?.length)
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+              const untagged = versions.filter(v => !v.metadata?.container?.tags?.length);
+              const oldestKept = tagged.length
+                ? new Date(tagged[Math.min(keep, tagged.length) - 1].created_at)
+                : new Date();
+              const doomed = [
+                ...tagged.slice(keep),
+                ...untagged.filter(v => new Date(v.created_at) < oldestKept),
+              ];
+              for (const version of doomed) {
+                try {
+                  await deleteVersion({
+                    package_type: 'container', package_name: repo.toLowerCase(),
+                    package_version_id: version.id, ...ownerArgs,
+                  });
+                } catch (error) {
+                  core.warning(`Could not delete GHCR version ${version.id}: ${error.message}`);
+                }
+              }
+            } catch (error) {
+              if (error.status === 404) core.info('No GHCR package exists yet.');
+              else throw error;
+            }

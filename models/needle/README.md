@@ -14,6 +14,8 @@ git lfs pull
 ## Files
 
 * `memento-router.pkl` -- the passing fine-tuned shallow-router checkpoint. ADR 0002 records SHA-256 `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
+* `memento-router.ndl` -- deterministic `NDL1` conversion with bf16-rounded tensors, tokenizer metadata, section hashes and tensor directory for the pure Rust runtime. SHA-256: `fc9978c1d3817031a3f9ea00832cd8177290b25ff734b178cb9bcba0b894bb0b`.
+* `needle.model` and `needle.vocab` -- pinned SentencePiece artefacts used by the Rust tokenizer. The model SHA-256 is `0823f5b9133c68a8140addc5d7a425fa9119c4c8cb4a550363b4bffa4ba1c8c7`.
 * `train.jsonl` -- family-separated training corpus for the shallow-router study.
 * `val.jsonl` -- family-separated validation corpus.
 * `test.jsonl` -- untouched family-separated held-out corpus used for the routing and abstention gate.
@@ -29,4 +31,4 @@ The earlier 1,500-example mixed routing/plan/UNKNOWN corpus is a different exper
 
 ## Status
 
-These artefacts document a passed AMD64 quality gate for shallow routing only. They do not enable Needle in production, and they do not prove an embedded runtime, cancellation support or ARM64 parity.
+These artefacts support the embedded pure-Rust router. The scalar reference and AVX2/FMA runtime produce the same decisions as the passing checkpoint on all 360 untouched AMD64 cases. The dedicated C ABI and Python wrapper include bounded output, lifecycle checks and cooperative cancellation. ARM64 correctness is covered by the portable/NEON code paths but still needs hardware performance evidence.

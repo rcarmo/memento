@@ -652,9 +652,9 @@ Fallback applies to one model generation step, not to the whole agent run.
 
 ### Needle shallow router
 
-The passing router checkpoint is not enabled. What exists today is a vendored shallow-action classifier plus deterministic plan expansion in code, still waiting on a pinned embedded runtime and ARM64 parity evidence.
+The passing shallow-action checkpoint is implemented as an opt-in embedded pure-Rust runtime behind `intelligent_tiers.needle_router.enabled`; it remains disabled by default. The NDL1 loader, pinned SentencePiece tokenizer, constrained generator, C ABI and Python wrapper use vendored offline artefacts, bounded output and cooperative cancellation.
 
-The current state is: full-plan attempt failed its gates, shallow router passed AMD64 held-out tests, production runtime evidence remains pending.
+The full-plan attempt failed its gates. The shallow router passed all 360 untouched AMD64 held-out cases, scalar/SIMD parity, FFI lifecycle and cancellation tests, and a clean-container MCP SDK smoke. It can classify only fixed shallow actions. Deterministic code derives search text from the original request, accepts an exact read reference only when it appears verbatim in that request, validates fixed enums, and applies the normal service authorisation boundary. ARM64 has portable/NEON implementation coverage but still needs measured hardware performance evidence.
 
 ## Security invariants
 

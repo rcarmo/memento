@@ -1,0 +1,23 @@
+{
+  "cases": 360,
+  "environment": {
+    "machine": "x86_64",
+    "platform": "Linux-6.8.0-134-generic-x86_64-with-glibc2.39"
+  },
+  "latency_ms": {
+    "max": 622.2100849999999,
+    "p50": 510.44590400000004,
+    "p95": 570.375675
+  },
+  "model": {
+    "checkpoint_sha256": "969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8",
+    "ndl_sha256": "fc9978c1d3817031a3f9ea00832cd8177290b25ff734b178cb9bcba0b894bb0b"
+  },
+  "notes": [
+    "Same untouched family/entity-separated held-out corpus as Needle router v2.",
+    "Scalar reference and SIMD runtime produced the same 360 tool decisions."
+  ],
+  "routing_accuracy": 1.0,
+  "runtime": "pure-rust-ndl1-avx2-fma",
+  "valid_json_rate": 1.0
+}

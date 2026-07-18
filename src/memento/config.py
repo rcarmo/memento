@@ -315,6 +315,23 @@ class SemanticSearchConfig(BaseModel):
         return normalized
 
 
+class NeedleRouterConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    enabled: bool = False
+    ffi_library_path: str = "/usr/local/lib/memento/libmemento_needle_ffi.so"
+    model_path: str = "/usr/local/share/memento/models/memento-router.ndl"
+    tokenizer_path: str = "/usr/local/share/memento/models/needle.model"
+
+    @field_validator("ffi_library_path", "model_path", "tokenizer_path")
+    @classmethod
+    def validate_paths(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("path values must not be empty")
+        return normalized
+
+
 class IntelligentTiersConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -325,6 +342,7 @@ class IntelligentTiersConfig(BaseModel):
     dream: DreamConfig = Field(default_factory=DreamConfig)
     model_provider_slots: ModelProviderSlotsConfig = Field(default_factory=ModelProviderSlotsConfig)
     semantic_search: SemanticSearchConfig = Field(default_factory=SemanticSearchConfig)
+    needle_router: NeedleRouterConfig = Field(default_factory=NeedleRouterConfig)
 
 
 class ServiceConfig(BaseModel):

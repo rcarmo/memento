@@ -16,14 +16,17 @@ The directory also contains the completed free GPU fine-tuning evidence:
 * `router-v2-manifest.json` records the family-separated shallow-router corpus split produced by `tools/experiments/needle/generate_router_v2.py`.
 * `router-v2-training-summary.json` records the shallow-router fine-tuning and hard-negative continuation settings.
 * `router-v2-heldout-amd64.json` records the untouched family-separated AMD64 routing and abstention gate.
+* `memento-router-ndl1.json` records the deterministic NDL1 conversion, section hashes and tensor inventory.
+* `rust-router-amd64.json` records scalar/SIMD decision parity and the initial native runtime timing.
+* `rust-router-single-core-i7-12700.json` records a release build pinned to one Intel Core i7-12700 logical CPU across all 360 untouched cases, including cold start, warm latency, throughput and peak RSS.
 
 The first full-plan checkpoint is not committed because it does not pass the integration thresholds. The later shallow-router experiment is recorded in the `router-v2-*` files and passes the untouched family-separated AMD64 routing/abstention gate after a targeted hard-negative continuation.
 
-The passing checkpoint and family-separated train/validation/test corpora are vendored through Git LFS under [`models/needle/`](../../../models/needle/README.md). Install and fetch LFS objects before using them:
+The passing checkpoint and family-separated train/validation/test corpora are vendored through Git LFS under [`models/needle/`](../../../models/needle/README.md). The Phase 0 pure-Rust packaging pass also stores the converted `models/needle/memento-router.ndl` artefact there and records its manifest in `memento-router-ndl-manifest.json`. Install and fetch LFS objects before using them:
 
 ```bash
 git lfs install
 git lfs pull
 ```
 
-Passing the model-quality gate does not enable Needle in Memento. Runtime integration remains blocked on an embedded/Cactus implementation with offline artefacts, cancellation and AMD64/ARM64 parity.
+The embedded pure-Rust runtime is integrated behind `intelligent_tiers.needle_router.enabled`, which remains disabled by default. The NDL1 loader, SentencePiece tokenizer, constrained generator, C ABI and Python wrapper use vendored offline artefacts and enforce bounded output and cooperative cancellation. AMD64 held-out parity and an end-to-end MCP/container smoke pass are complete; ARM64 has portable/NEON implementation coverage but still needs measured hardware performance evidence.

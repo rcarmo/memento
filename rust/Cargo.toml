@@ -5,6 +5,8 @@ members = [
   "crates/memento-embed",
   "crates/memento-sqlite-vector",
   "crates/memento-ffi",
+  "crates/memento-needle",
+  "crates/memento-needle-ffi",
 ]
 resolver = "2"
 

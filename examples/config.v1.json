@@ -112,6 +112,12 @@
       "max_candidates": 200,
       "default_search_mode": "lexical"
     },
+    "needle_router": {
+      "enabled": false,
+      "ffi_library_path": "/usr/local/lib/memento/libmemento_needle_ffi.so",
+      "model_path": "/usr/local/share/memento/models/memento-router.ndl",
+      "tokenizer_path": "/usr/local/share/memento/models/needle.model"
+    },
     "model_provider_slots": {
       "hot_query": {
         "primary": {

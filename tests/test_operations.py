@@ -108,6 +108,51 @@ def test_compose_example_uses_env_file_and_example_env_lists_required_tokens() -
     assert "required by examples/config.v1.json" in env_example
 
 
+def test_runtime_loads_and_closes_needle_router(
+    monkeypatch: pytest.MonkeyPatch, seeded_root: tuple[Path, Path]
+) -> None:
+    config_path, seed = seeded_root
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["intelligent_tiers"] = {
+        "needle_router": {
+            "enabled": True,
+            "ffi_library_path": "/tmp/libmemento_needle_ffi.so",
+            "model_path": "/tmp/memento-router.ndl",
+            "tokenizer_path": "/tmp/needle.model",
+        }
+    }
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+
+    class FakeRouter:
+        def __init__(self) -> None:
+            self.closed = False
+
+        def generate(self, query: str, tools_json: str, **_: object) -> str:
+            return '[{"name":"UNKNOWN","arguments":{}}]'
+
+        def close(self) -> None:
+            self.closed = True
+
+    fake_router = FakeRouter()
+
+    class FakeLibrary:
+        def __init__(self, library_path: str) -> None:
+            self.library_path = library_path
+
+        def load_router(self, model_path: str, tokenizer_path: str) -> FakeRouter:
+            assert model_path == "/tmp/memento-router.ndl"
+            assert tokenizer_path == "/tmp/needle.model"
+            return fake_router
+
+    monkeypatch.setattr("memento.app.NeedleFfiLibrary", FakeLibrary)
+    runtime = build_runtime(config_path, bootstrap_seed=seed)
+    try:
+        assert runtime.status_snapshot()["needle_router"]["loaded"] is True
+    finally:
+        runtime.close()
+    assert fake_router.closed is True
+
+
 def test_cli_status_and_rebuild_index(seeded_root: tuple[Path, Path]) -> None:
     config_path, seed = seeded_root
     build_runtime(config_path, bootstrap_seed=seed).close()
@@ -217,6 +262,17 @@ def test_backup_restore_and_audit(seeded_root: tuple[Path, Path], tmp_path: Path
         assert main(["--config", str(config_path), "audit"]) == 0
     payload = json.loads(output.getvalue())
     assert payload["ok"] is True
+
+
+def test_runtime_server_uses_writable_state_log(seeded_root: tuple[Path, Path]) -> None:
+    config_path, seed = seeded_root
+    runtime = build_runtime(config_path, bootstrap_seed=seed)
+    try:
+        server = runtime.build_server()
+        assert server.log_file == runtime.paths.root / "logs" / "umcp.log"
+        assert server.log_file.exists()
+    finally:
+        runtime.close()
 
 
 def test_runtime_close_closes_sqlite_connection(seeded_root: tuple[Path, Path]) -> None:
