@@ -2,7 +2,7 @@
 
 ## Rust workspace
 
-The Rust implementation under `rust/` includes code derived from and validated against the MIT-licensed `/tmp/go-gte` reference implementation. That attribution applies to:
+The Rust implementation under `rust/` includes code derived from and validated against the MIT-licensed [`rcarmo/go-gte`](https://github.com/rcarmo/go-gte) reference implementation. That attribution applies to:
 
 * `rust/crates/memento-gte`
 * `rust/crates/memento-vector`
@@ -20,7 +20,7 @@ Runtime code is MIT licensed. The model artefact follows the upstream model card
 
 ## Needle study artefacts
 
-The Needle feasibility and shallow-router study uses upstream Needle source commit `ffb1c51`, Hugging Face model revision `5f89b4307696d669c3df1d38ae057e6e1728b107`, and the locally generated evidence and corpora described in [`docs/evidence/needle/README.md`](evidence/needle/README.md) and [`models/needle/README.md`](../models/needle/README.md).
+The Needle feasibility and shallow-router study builds on [`cactus-compute/needle`](https://github.com/cactus-compute/needle), using upstream source commit `ffb1c51` and Hugging Face model revision `5f89b4307696d669c3df1d38ae057e6e1728b107`. The fine-tuned checkpoint, deterministic NDL1 conversion, pure-Rust inference runtime, SIMD kernels and C ABI are Memento additions; their evidence and corpora are described in [`docs/evidence/needle/README.md`](evidence/needle/README.md) and [`models/needle/README.md`](../models/needle/README.md).
 
 The vendored `models/needle/` files are tracked with Git LFS. Operators and reviewers need Git LFS installed before using them:
 
