@@ -128,8 +128,9 @@ This file is the current delivery and acceptance record. Architecture, rationale
 - [x] Record the go/no-go decision in ADR 0002; the base checkpoint does not meet production thresholds.
 - [x] Fine-tune Needle for two epochs on a free, deterministic 1,500-example Memento routing/plan/UNKNOWN corpus using the local RTX 3060.
 - [x] Rerun unchanged and unseen-family AMD64 gates; the experimental checkpoint remains below routing, abstention and plan-validity thresholds and is not shipped.
-- [ ] Add explicit family-separated training support and nested plan constraints before considering another fine-tune.
-- [ ] Validate only a passing checkpoint on ARM64 and the pinned Cactus runtime before integration.
+- [x] Train a family/entity-separated shallow router and add deterministic plan expansion; the untouched AMD64 test reaches 100% routing/validity/UNKNOWN recall with 0% false actions.
+- [x] Vendor the passing checkpoint and explicit train/validation/test corpora through Git LFS without enabling the JAX runtime.
+- [ ] Validate the exact checkpoint on ARM64 and a pinned embedded/Cactus runtime before production integration.
 
 ## Deferred roadmap
 

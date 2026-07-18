@@ -14,4 +14,6 @@ The directory also contains the completed free GPU fine-tuning evidence:
 * `finetuned-original-holdout-amd64.json` reruns the unchanged baseline cases.
 * `finetuned-unseen-holdout-amd64.json` covers unseen phrasing, entities, plans and safety requests.
 
-The fine-tuned checkpoint is not committed because it does not pass the integration thresholds. The base and fine-tuned studies exist to size future work, not to justify enabling Needle in Memento.
+The first full-plan checkpoint is not committed because it does not pass the integration thresholds. The later shallow-router experiment is recorded in `router-v2-*` files and passes the untouched family-separated AMD64 routing/abstention gate after a targeted hard-negative continuation. Its checkpoint and train/validation/test corpora are vendored through Git LFS under `models/needle/`.
+
+Passing the model-quality gate does not enable Needle in Memento. Runtime integration remains blocked on an embedded/Cactus implementation with offline artefacts, cancellation and AMD64/ARM64 parity.
