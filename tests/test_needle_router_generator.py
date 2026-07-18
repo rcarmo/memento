@@ -25,10 +25,9 @@ def _load_generator_module() -> ModuleType:
     return module
 
 
-def test_generator_uses_exact_router_field_enums() -> None:
+def test_generator_uses_valid_historical_router_field_enums() -> None:
     module = _load_generator_module()
-    assert list(STATUS_FIELDS) == module.STATUS_FIELDS
-    assert module.READ_FIELDS == ["title", "type", "status", "tags", "aliases", "path", "body"]
+    assert set(module.STATUS_FIELDS).issubset(set(STATUS_FIELDS))
     assert set(module.READ_FIELDS).issubset(set(READ_FIELDS))
     assert "frontmatter" not in module.READ_FIELDS
 

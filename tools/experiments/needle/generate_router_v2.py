@@ -4,26 +4,17 @@ import random
 from pathlib import Path
 from typing import Any
 
+# Keep these values and their ordering aligned with the reviewed corpus.
 STATUS_FIELDS = [
-    "service_version",
-    "schema_version",
     "repo_revision",
     "index_revision",
     "index_stale",
-    "principal",
+    "semantic_search_ready",
     "visible_concepts",
     "proposal_backlog",
-    "limits",
-    "roles",
-    "features",
-    "readiness",
-    "semantic_search_ready",
-    "semantic_search_model_id",
-    "semantic_search_dimensions",
-    "semantic_search_embedding_revision",
-    "semantic_search_sqlite_vector_enabled",
 ]
-READ_FIELDS = ["title", "type", "status", "tags", "aliases", "path", "body"]
+# Keep this ordering aligned with the reviewed corpus under models/needle/.
+READ_FIELDS = ["title", "path", "status", "tags", "body", "type"]
 SEARCH_MODES = ["hybrid", "semantic", "lexical"]
 SEARCH_PATH_LIMITS = [1, 2, 3, 5]
 GRAPH_DEPTHS = [1, 2]

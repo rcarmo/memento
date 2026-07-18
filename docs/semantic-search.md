@@ -1,5 +1,7 @@
 # Semantic search
 
+The choice to keep lexical search primary is recorded in [ADR 0006](decisions/0006-keep-lexical-search-primary.md).
+
 Semantic search is optional and rebuildable. FTS5 stays the default because it is cheap to recover and always available. Local benchmark reports are included; production measurements are not.
 
 ## What operators decide

@@ -1,6 +1,6 @@
-# Needle feasibility evidence
+# Needle feasibility reports
 
-This directory records the 2026-07-18 local AMD64 baseline used by [ADR 0002](../../decisions/0002-needle-feasibility.md).
+This directory records the 2026-07-18 local AMD64 baseline used by [ADR 0002](../../decisions/0002-needle-feasibility.md). The fine-tuning sequence is documented in [`docs/needle-fine-tuning.md`](../../needle-fine-tuning.md).
 
 * `base-routing-amd64.json` contains all 21 held-out queries, two fixed-seed outputs per query, parsed tool/argument fields, correctness and determinism flags, aggregate accuracy, latency and peak RSS.
 * `SHA256SUMS` records the pinned Needle checkpoint and SentencePiece artefacts downloaded from Hugging Face model revision `5f89b4307696d669c3df1d38ae057e6e1728b107`.

@@ -79,7 +79,7 @@ Memento would still validate every result, but the baseline model's 85.71% valid
 
 A free local fine-tune was completed on an NVIDIA RTX 3060 12 GB using a deterministic 1,500-example corpus: 180 help, 180 status, 240 search, 240 read, 360 execute and 300 UNKNOWN cases. No model API generated the data. Training used the pinned base checkpoint, two epochs, batch size 32, BF16 and Needle's default optimiser settings.
 
-Needle's built-in random per-tool split used 1,380 train, 60 validation and 60 test examples. It improved from 21.67% to 91.67% exact match, 42.28% to 98.33% name F1 and reached 100% parse rate. Useful training evidence, but not acceptance evidence, because paraphrase families and slot patterns crossed the random split.
+Needle's built-in random per-tool split used 1,380 train, 60 validation and 60 test examples. It improved from 21.67% to 91.67% exact match, 42.28% to 98.33% name F1 and reached 100% parse rate. Those numbers were not used as the release gate because paraphrase families and slot patterns crossed the random split.
 
 Two leakage-resistant checks remained below threshold:
 
@@ -111,6 +111,8 @@ The go/no-go thresholds for any full-plan design are:
 * 100% compliance with one-commit, forbidden-path and no-direct-write rules.
 
 Results must be repeated on AMD64 and ARM64. Claims about Cactus throughput require running the exact fine-tuned checkpoint through a pinned Cactus runtime; the Needle repository's published Cactus figures do not prove Memento workload performance.
+
+The reproducible corpus, recorded training settings and conversion steps are collected in [`docs/needle-fine-tuning.md`](../needle-fine-tuning.md).
 
 ## Shallow-router follow-up
 

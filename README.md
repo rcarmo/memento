@@ -121,7 +121,7 @@ There is no client-facing hard delete.
 
 Lexical search, links and backlinks need no model. GTE-small adds semantic ranking; if it is unavailable, queries use lexical search. Details are in [`docs/semantic-search.md`](docs/semantic-search.md).
 
-The fine-tuned Needle model handles a small set of read requests. Other model slots can write cited answers, draft proposals or suggest Dream maintenance work. Benchmarks are in [`docs/needle-performance.md`](docs/needle-performance.md), and upstream credits are in [`docs/attribution.md`](docs/attribution.md).
+The fine-tuned Needle model handles a small set of read requests. Other model slots can write cited answers, draft proposals or suggest Dream maintenance work. The training process is in [`docs/needle-fine-tuning.md`](docs/needle-fine-tuning.md), benchmarks are in [`docs/needle-performance.md`](docs/needle-performance.md), and upstream credits are in [`docs/attribution.md`](docs/attribution.md).
 
 ## Memory Asset Packs And Complete Skills
 
@@ -167,10 +167,11 @@ Tagged releases are published to `ghcr.io/rcarmo/memento`. Build notes are in [`
 * [`PLAN.md`](PLAN.md) tracks implementation status and pending work.
 * [`docs/implementation.md`](docs/implementation.md) records the implemented architecture.
 * [`docs/diagrams.md`](docs/diagrams.md) shows request, proposal, mutation, recovery, search, router and Dream transitions.
-* [`docs/decisions/`](docs/decisions/0001-keep-operation-worktrees.md) records consequential design decisions, including the [Needle feasibility study](docs/decisions/0002-needle-feasibility.md).
+* [`docs/decisions/`](docs/decisions/README.md) indexes the accepted architecture decisions, including the [Needle study](docs/decisions/0002-needle-feasibility.md).
 * [`docs/contracts.md`](docs/contracts.md) defines schemas, envelopes and MCP operations.
 * [`docs/threat-model.md`](docs/threat-model.md) records trust boundaries and abuse cases.
 * [`docs/semantic-search.md`](docs/semantic-search.md) covers the Rust GTE and SQLite vector tier.
+* [`docs/needle-fine-tuning.md`](docs/needle-fine-tuning.md) records the router corpus, training and conversion process.
 * [`docs/operations.md`](docs/operations.md) covers deployment, health, backup and recovery.
 * [`docs/load-testing.md`](docs/load-testing.md) covers the repository-owned load harness and local thresholds.
 * [`docs/evidence/`](docs/evidence/README.md) contains local operational, HTTP and semantic reports.
