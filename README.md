@@ -8,7 +8,7 @@ Agents remember several kinds of things, and they should not all live in the sam
 
 Memento stores those shared facts. I built it for several Piclaw instances, but any MCP client can connect, search, read, submit proposals and, with curator access, publish changes.
 
-Two small local models help with retrieval. [`cactus-compute/needle`][needle] routes simple natural-language requests to read operations, while [`rcarmo/go-gte`][go-gte] and the [`thenlper/gte-small`][gte-small] weights find related concepts when the wording differs. Permissions and Git changes stay in Memento.
+Two small local models help with retrieval. A fine-tuned version of [`cactus-compute/needle`][needle] routes simple natural-language requests to read operations, while [`rcarmo/go-gte`][go-gte] and the [`thenlper/gte-small`][gte-small] weights find related concepts when the wording differs. Permissions and Git changes stay in Memento.
 
 ```mermaid
 flowchart LR
@@ -22,7 +22,7 @@ flowchart LR
     result --> store[(Git knowledge<br/>and search indexes)]
 ```
 
-Needle maps a read request to search, status, read or graph operations, and gives up when it cannot classify one. GTE-small supplies vectors for semantic ranking. Other local models can write cited answers, draft proposals or suggest maintenance; access control and repository writes stay in Memento.
+The fine-tuned Needle router maps a read request to search, status, read or graph operations, and gives up when it cannot classify one. GTE-small supplies vectors for semantic ranking. Other local models can write cited answers, draft proposals or suggest maintenance; access control and repository writes stay in Memento.
 
 ## Capabilities
 
@@ -121,7 +121,7 @@ There is no client-facing hard delete.
 
 Lexical search, links and backlinks need no model. GTE-small adds semantic ranking; if it is unavailable, queries use lexical search. Details are in [`docs/semantic-search.md`](docs/semantic-search.md).
 
-Needle handles a small set of read requests. Other model slots can write cited answers, draft proposals or suggest Dream maintenance work. Benchmarks are in [`docs/needle-performance.md`](docs/needle-performance.md), and upstream credits are in [`docs/attribution.md`](docs/attribution.md).
+The fine-tuned Needle model handles a small set of read requests. Other model slots can write cited answers, draft proposals or suggest Dream maintenance work. Benchmarks are in [`docs/needle-performance.md`](docs/needle-performance.md), and upstream credits are in [`docs/attribution.md`](docs/attribution.md).
 
 ## Memory Asset Packs And Complete Skills
 
@@ -182,7 +182,7 @@ Tagged releases are published to `ghcr.io/rcarmo/memento`. Build notes are in [`
 
 Memento's semantic-search runtime started from [`rcarmo/go-gte`][go-gte], whose model conversion, tokenizer and inference code provided the reference for the Rust port. The bundled GTE-small weights come from [`thenlper/gte-small`][gte-small].
 
-The shallow router builds on [`cactus-compute/needle`][needle] and its 26M-parameter checkpoint. Memento adds its routing dataset and checkpoint, NDL1 conversion, Rust inference code, SIMD kernels and C ABI.
+The shallow router is a fine-tuned version of [`cactus-compute/needle`][needle]'s 26M-parameter checkpoint. Memento adds the routing dataset and fine-tuned checkpoint, NDL1 conversion, Rust inference code, SIMD kernels and C ABI.
 
 Memento is MIT licensed. Third-party runtime, model and artefact details are recorded in [`docs/attribution.md`](docs/attribution.md).
 
