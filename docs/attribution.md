@@ -18,6 +18,19 @@ The repository vendors the FP32 `gte-small.gtemodel` generated from [`thenlper/g
 
 Runtime code is MIT licensed. The model artefact follows the upstream model card and repository licensing terms; release manifests must retain its source and digest.
 
+## Needle study artefacts
+
+The Needle feasibility and shallow-router study uses upstream Needle source commit `ffb1c51`, Hugging Face model revision `5f89b4307696d669c3df1d38ae057e6e1728b107`, and the locally generated evidence and corpora described in [`docs/evidence/needle/README.md`](evidence/needle/README.md) and [`models/needle/README.md`](../models/needle/README.md).
+
+The vendored `models/needle/` files are tracked with Git LFS. Operators and reviewers need Git LFS installed before using them:
+
+```bash
+git lfs install
+git lfs pull
+```
+
+That prerequisite applies both to the fine-tuned checkpoint and to the family-separated train/validation/test corpora.
+
 ## Pending evidence
 
-Source provenance is documented here. Additional release-time evidence -- such as shipped artefact manifests tying those crates to published binaries -- remains pending.
+Source provenance is documented here. Additional release-time evidence, such as shipped artefact manifests tying those crates and models to published binaries, remains pending.

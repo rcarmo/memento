@@ -1,10 +1,9 @@
 [Unit]
-Description=Run Memento backup daily
+Description=Run Memento backup daily (example disabled by default; maintenance commands require exclusive lease)
 
 [Timer]
 OnCalendar=daily
 Persistent=true
 Unit=memento-backup.service
 
-[Install]
-WantedBy=timers.target
+# Intentionally no [Install] section: enable only after adding safe stop/conflict orchestration for memento.service.

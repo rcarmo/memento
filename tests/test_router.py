@@ -7,8 +7,10 @@ from pydantic import ValidationError
 
 from memento.executor import ExecutePlan, GraphOperation, ReadOperation, SearchOperation
 from memento.router import (
+    READ_FIELD_PROJECTIONS,
     READ_FIELDS,
     ROUTER_ACTION_ADAPTER,
+    STATUS_FIELD_PROJECTIONS,
     STATUS_FIELDS,
     RouterAction,
     SearchMode,
@@ -61,15 +63,32 @@ def test_expand_search_paths() -> None:
     assert expanded.projection.limit == 5
 
 
-def test_expand_status_field() -> None:
-    action = _parse({"action": "status_field", "field": "principal"})
+@pytest.mark.parametrize(
+    ("field", "expected_ref"),
+    (
+        ("principal", "principal"),
+        ("semantic_search_ready", "readiness.semantic_search.ready"),
+        ("semantic_search_model_id", "readiness.semantic_search.model_id"),
+        ("semantic_search_dimensions", "readiness.semantic_search.dimensions"),
+        (
+            "semantic_search_embedding_revision",
+            "readiness.semantic_search.embedding_revision",
+        ),
+        (
+            "semantic_search_sqlite_vector_enabled",
+            "readiness.semantic_search.sqlite_vector_enabled",
+        ),
+    ),
+)
+def test_expand_status_field(field: str, expected_ref: str) -> None:
+    action = _parse({"action": "status_field", "field": field})
     expanded = expand_router_action(action)
     assert expanded is not None
     assert expanded.kind == "direct"
     assert expanded.tool == "memory_status"
     assert expanded.args == {}
     assert expanded.projection is not None
-    assert expanded.projection.ref == "principal"
+    assert expanded.projection.ref == expected_ref
 
 
 def test_expand_search_then_graph() -> None:
@@ -95,15 +114,27 @@ def test_expand_search_then_graph() -> None:
     assert plan.returns[0].ref == "$graph"
 
 
-def test_expand_read_field() -> None:
-    action = _parse({"action": "read_field", "id_or_path": "/projects/piclaw.md", "field": "body"})
+@pytest.mark.parametrize(
+    ("field", "expected_ref"),
+    (
+        ("body", "body"),
+        ("path", "path"),
+        ("title", "frontmatter.title"),
+        ("type", "frontmatter.type"),
+        ("status", "frontmatter.status"),
+        ("tags", "frontmatter.tags"),
+        ("aliases", "frontmatter.aliases"),
+    ),
+)
+def test_expand_read_field(field: str, expected_ref: str) -> None:
+    action = _parse({"action": "read_field", "id_or_path": "/projects/piclaw.md", "field": field})
     expanded = expand_router_action(action)
     assert expanded is not None
     assert expanded.kind == "direct"
     assert expanded.tool == "memory_read"
     assert expanded.args == {"id_or_path": "/projects/piclaw.md"}
     assert expanded.projection is not None
-    assert expanded.projection.ref == "body"
+    assert expanded.projection.ref == expected_ref
 
 
 def test_unknown_has_no_execution() -> None:
@@ -172,15 +203,68 @@ def test_status_and_read_field_mappings_match_sample_payload_shapes() -> None:
         "limits": {},
         "roles": ("reader",),
         "features": {},
-        "readiness": {},
+        "readiness": {
+            "semantic_search": {
+                "ready": True,
+                "model_id": "fake-384",
+                "dimensions": 384,
+                "embedding_revision": "rev-1",
+                "sqlite_vector_enabled": True,
+            }
+        },
     }
     read_payload = {
         "path": "/projects/piclaw.md",
-        "frontmatter": {"title": "Piclaw"},
+        "frontmatter": {
+            "title": "Piclaw",
+            "type": "service",
+            "status": "active",
+            "tags": ["ops"],
+            "aliases": ["piclaw"],
+        },
         "body": "# Piclaw",
     }
-    assert set(STATUS_FIELDS) == set(status_payload)
-    assert set(READ_FIELDS) == set(read_payload)
+    assert set(STATUS_FIELDS) == set(STATUS_FIELD_PROJECTIONS)
+    assert set(READ_FIELDS) == set(READ_FIELD_PROJECTIONS)
+    assert STATUS_FIELD_PROJECTIONS["principal"] == "principal"
+    assert STATUS_FIELD_PROJECTIONS["semantic_search_ready"] == "readiness.semantic_search.ready"
+    assert (
+        STATUS_FIELD_PROJECTIONS["semantic_search_model_id"] == "readiness.semantic_search.model_id"
+    )
+    assert (
+        STATUS_FIELD_PROJECTIONS["semantic_search_dimensions"]
+        == "readiness.semantic_search.dimensions"
+    )
+    assert (
+        STATUS_FIELD_PROJECTIONS["semantic_search_embedding_revision"]
+        == "readiness.semantic_search.embedding_revision"
+    )
+    assert (
+        STATUS_FIELD_PROJECTIONS["semantic_search_sqlite_vector_enabled"]
+        == "readiness.semantic_search.sqlite_vector_enabled"
+    )
+    assert READ_FIELD_PROJECTIONS["title"] == "frontmatter.title"
+    assert READ_FIELD_PROJECTIONS["type"] == "frontmatter.type"
+    assert READ_FIELD_PROJECTIONS["status"] == "frontmatter.status"
+    assert READ_FIELD_PROJECTIONS["tags"] == "frontmatter.tags"
+    assert READ_FIELD_PROJECTIONS["aliases"] == "frontmatter.aliases"
+    assert READ_FIELD_PROJECTIONS["path"] == "path"
+    assert READ_FIELD_PROJECTIONS["body"] == "body"
+    assert set(status_payload) == {
+        "service_version",
+        "schema_version",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "principal",
+        "visible_concepts",
+        "proposal_backlog",
+        "limits",
+        "roles",
+        "features",
+        "readiness",
+    }
+    assert set(read_payload) == {"path", "frontmatter", "body"}
 
 
 def test_injection_like_strings_remain_data_not_code() -> None:

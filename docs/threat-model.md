@@ -22,15 +22,24 @@ client tool input (untrusted)
 * Markdown rewrite corruption: use `markdown-it-py` token structure instead of regular expressions.
 * Link integrity drift: audit broken links and duplicate IDs on every repository scan.
 * Authorisation bypass: take principal identity from trusted request context, never from tool arguments.
+* Lease bypass or split-brain writes: require one active writer lease for the local runtime and reject contending operator processes.
+* Backup self-destruction: avoid storing recovery sets under `repository.root_path`, because restore replaces that tree.
 
 ## Current mitigations
 
 * Strict Pydantic v2 models cover config, principals, envelopes and concept frontmatter.
+* Principal bearer tokens come only from trusted server configuration via each principal's `token_env` environment variable.
 * `ruamel.yaml` keeps deterministic serialisation under control.
 * Reserved-path enforcement happens before filesystem writes.
 * Bundle scan and repository audit cover every concept file.
 * Authorisation is configured by role and namespace.
+* Runtime startup acquires the writer lease before serving or running local maintenance commands.
+* Backup restore verifies checksums, rejects tar links and path escapes, validates archived `refs/heads/main` against the manifest, then materialises `current/` from the archived bare repository.
+
+## Operator implications
+
+The local CLI is not a parallel administration plane. `status`, `audit`, `rebuild-index` and `backup` all go through runtime startup and therefore need the same exclusive lease as the daemon. For live status inspection, prefer MCP `memory_status` or `memory://status` instead of trying to race the running service.
 
 ## Pending evidence
 
-These controls are implemented as described in code and tests. Production deployment evidence -- especially around reverse proxies, transport context handling and operator hardening -- is still pending.
+These controls are implemented as described in code and tests. Production deployment evidence, especially around reverse proxies, transport context handling and operator hardening, is still pending.

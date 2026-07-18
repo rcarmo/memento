@@ -1,10 +1,9 @@
 [Unit]
-Description=Run Memento audit every hour
+Description=Run Memento audit every hour (example disabled by default; maintenance commands require exclusive lease)
 
 [Timer]
 OnCalendar=hourly
 Persistent=true
 Unit=memento-audit.service
 
-[Install]
-WantedBy=timers.target
+# Intentionally no [Install] section: enable only after adding safe stop/conflict orchestration for memento.service.

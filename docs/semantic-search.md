@@ -6,7 +6,7 @@ Semantic search is optional, rebuildable and deliberately second to lexical sear
 
 * Enable semantic search only when the local Rust stack and model artefacts are in place.
 * Keep `lexical` as the default unless benchmark data says otherwise.
-* Use the vendored model at `rust/tests/fixtures/gte-small.gtemodel` unless an explicitly reviewed replacement is configured. The container installs it read-only at `/usr/local/share/memento/models/gte-small.gtemodel`.
+* Use the vendored model at `rust/tests/fixtures/gte-small.gtemodel` unless an explicitly reviewed replacement is configured. The container image copies that file to `/usr/local/share/memento/models/gte-small.gtemodel` and exports matching default environment variables.
 
 ## Components
 
@@ -37,7 +37,7 @@ Semantic search is optional, rebuildable and deliberately second to lexical sear
 }
 ```
 
-The three paths may also come from `MEMENTO_FFI_LIBRARY`, `MEMENTO_SQLITE_VECTOR_EXTENSION`, and `MEMENTO_GTE_MODEL`. Explicit JSON values take precedence. The vendored model SHA-256 is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; replacing it changes the embedding revision and forces re-indexing.
+The three paths may also come from `MEMENTO_FFI_LIBRARY`, `MEMENTO_SQLITE_VECTOR_EXTENSION` and `MEMENTO_GTE_MODEL`. Explicit JSON values take precedence. Those environment variables are optional path overrides, not mandatory global settings. The vendored model SHA-256 is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; replacing it changes the embedding revision and forces re-indexing.
 
 ## Search modes
 
@@ -60,7 +60,24 @@ make rust-check
 make check
 ```
 
-The Docker image builds the Rust FFI library, SQLite extension and subprocess worker in a separate stage. Python wheels do not currently bundle platform-specific Rust libraries; install or mount them separately and set the configured paths.
+The Docker image builds the Rust FFI library, SQLite extension and subprocess worker in a separate stage, then copies the vendored GTE-small model into the runtime image. Python wheels do not currently bundle platform-specific Rust libraries; install or mount them separately and set the configured paths when needed.
+
+## Local evidence reproduction
+
+The reviewed semantic load report under [`docs/evidence/load-semantic-local.json`](evidence/load-semantic-local.json) was produced with:
+
+```bash
+PYTHONPATH=src .venv/bin/python tools/load_test.py \
+  --profile functional \
+  --concepts 100 \
+  --workers 8 \
+  --requests 200 \
+  --semantic-enabled \
+  --include-semantic \
+  --output docs/evidence/load-semantic-local.json
+```
+
+`--semantic-enabled` matters here. It tells the harness to build the local Rust artefacts if needed and enable semantic search in the temporary test config instead of merely asking for semantic queries against a lexical-only runtime.
 
 ## Pending verification
 

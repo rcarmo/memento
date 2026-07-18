@@ -1,12 +1,12 @@
 # Memento implementation
 
-Memento exists because shared durable facts do not belong in Piclaw's per-instance chat history, reminders or local Dream state. Smith and Flint can stay operationally independent while still reading and curating one common body of knowledge.
+Memento exists because shared durable facts do not belong in Piclaw's per-instance chat history, reminders or local Dream state. Smith and Flint stay operationally independent while still reading and curating one common body of knowledge.
 
-What is implemented in tree is already the architecture the service uses: a standalone Python daemon, a Git-backed Markdown repository for canonical knowledge, `control.sqlite` for durable operational state, rebuildable derived indexes for search and graph work, and an MCP surface that stays useful even when every model feature is off.
+What is in this repository is not a sketch. It is the implemented architecture: a standalone Python daemon, a Git-backed Markdown repository for canonical knowledge, `control.sqlite` for durable operational state, rebuildable derived indexes for search and graph work and an MCP surface that remains useful when every model feature is turned off.
 
 The request and state transitions are collected in [Memento transition diagrams](diagrams.md).
 
-The short version is still the right one:
+The short version remains the right one:
 
 > Git is authoritative for knowledge; `control.sqlite` is authoritative for operations; FTS, graph indexes, caches and signals are derived; models are advisory only.
 
@@ -43,7 +43,7 @@ Piclaw clients
 
 ## What the repository stores
 
-Memento stores concepts: systems, services, projects, people, instances and other durable facts that ought to survive any one chat.
+Memento stores concepts: systems, services, projects, people, instances and other durable facts that should survive any one chat.
 
 ### Concept schema v1
 
@@ -100,7 +100,7 @@ That matters because the same semantic mutation at the same base revision should
 
 ## Runtime state layout
 
-The proposed layout in the original plan is now effectively the real one, with the project using `src/memento/` as the package root and keeping mutable state outside the repository tree.
+The runtime layout is present tense because it exists in the implementation. Mutable service state lives outside the repository tree.
 
 ### Service state
 
@@ -208,6 +208,8 @@ Proposal statuses:
 * `stale`
 * `expired`
 
+`request_changes` reviews return a proposal to `draft`.
+
 Default proposal TTL remains 30 days.
 
 ### Scheduler and checkpoints
@@ -284,7 +286,7 @@ Lexical search uses weighted FTS5 fields. Semantic search uses the Rust GTE runt
 
 ## Authentication and authorisation
 
-Memento does not accept a caller identity from tool arguments. The principal arrives through trusted request context and is resolved against configured namespace policy.
+Memento does not accept caller identity from tool arguments. The principal arrives through trusted request context and is resolved against configured namespace policy.
 
 ### Principal shape
 
@@ -298,15 +300,17 @@ Memento does not accept a caller identity from tool arguments. The principal arr
 }
 ```
 
-### Roles
+### Roles are explicit, not inherited
 
-| Role | Permissions |
+Roles are checked as literal membership in the principal record. The service does not infer a hierarchy. If a principal needs read and propose rights, it receives both roles explicitly.
+
+| Role | Permission family |
 |---|---|
-| `reader` | status, list, search, read, graph, audit |
-| `proposer` | reader permissions plus create/update proposals |
-| `curator` | review and apply proposals; direct dry-run patches |
+| `reader` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_list`, `memory_graph`, `memory_audit`, optional `memory_answer`, and `memory_execute` where the referenced operation is otherwise allowed |
+| `proposer` | `memory_propose`, `memory_propose_freeform`, `memory_propose_update`, `memory_proposal_get`, `memory_proposal_list` |
+| `curator` | `memory_proposal_review`, `memory_proposal_apply`, and create/patch/rename authority |
 | `maintainer` | graph maintenance and Dream execution |
-| `admin` | policy, tombstones, import, repair, and service operations |
+| `admin` | no separate hidden tool family; deployment or policy code may assign broad role sets explicitly |
 
 ### Namespace policy
 
@@ -320,7 +324,7 @@ Memento does not accept a caller identity from tool arguments. The principal arr
 }
 ```
 
-Authorisation rules that matter in practice:
+Rules that matter in practice:
 
 * search results are filtered before ranking and output
 * proposal visibility follows author/curator permissions and write scope
@@ -328,17 +332,17 @@ Authorisation rules that matter in practice:
 
 ## MCP surface in the implemented service
 
-The current service supports the compact catalog-first discovery model as well as the full direct tool surface.
+The service supports catalog-first compact discovery as well as direct compatibility surfaces. Surface membership is exact and stable.
 
-### Discovery surfaces
+### Discovery surfaces and counts
 
-| `mcp.tool_surface` | Meaning |
+| `mcp.tool_surface` | Direct tools |
 |---|---|
-| `compact` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, optional `memory_answer` when enabled, and `memory_execute` |
-| `standard` | the existing 18 direct tools for compatibility |
-| `read_only` | discovery and read tools only |
-| `curator` | compact surface plus proposal review/apply workflows |
-| `admin` | full direct surface plus `memory_execute` |
+| `compact` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_execute`, plus `memory_answer` when enabled (**5** or **6**) |
+| `standard` | the full **18** direct compatibility tools |
+| `read_only` | the **8** direct discovery and read tools |
+| `curator` | compact tools plus `memory_proposal_get`, `memory_proposal_list`, `memory_proposal_review`, `memory_proposal_apply`; direct create/patch/rename stay execute-only here (**9** or **10**) |
+| `admin` | the **19**-tool full direct surface plus `memory_execute` |
 
 ### Catalog resources
 
@@ -347,6 +351,24 @@ The current service supports the compact catalog-first discovery model as well a
 * `memory://catalog`
 * `memory://catalog/{operation}`
 * `memory://workflow/{goal}`
+
+### Compact discovery
+
+`memory_help()` takes no arguments. It returns a filtered payload with:
+
+* `goals`
+* `formats`
+* `answer_sources`
+* `search_modes`
+* `catalog.resources`
+* `catalog.templates`
+* `mcp.tool_surface`
+* `mcp.direct_tools`
+* `mcp.compact_instructions`
+* `mcp.execute_limits`
+* `mcp.execute_only_operations`
+
+That filtering matters. The payload reflects the active surface and whether the optional compact answer tier is enabled.
 
 ### Tool names
 
@@ -377,9 +399,19 @@ Proposal and write:
 
 Every tool returns the standard envelope with `status`, `data`, `warnings`, `next_tools`, `repo_revision`, `index_revision`, `index_stale` and `operation_id`.
 
+## Read path
+
+`memory_read` reads one visible concept by path or concept ID and returns the whole concept payload:
+
+* `path`
+* `frontmatter`
+* `body`
+
+It does not expose partial section reads.
+
 ## Write path and transaction model
 
-This is the part Memento cannot get wrong.
+This is the part Memento cannot afford to get wrong.
 
 ### Single active writer
 
@@ -390,11 +422,11 @@ This is the part Memento cannot get wrong.
 
 ### Why each mutation uses a worktree
 
-Memento deliberately pays the cost of a detached worktree for commit-capable operations. Create, patch and rename logic expects a complete filesystem tree, and rename processing scans Markdown files to rewrite inbound links. The isolated tree keeps those intermediate changes away from readers and gives startup recovery a durable commit to inspect after a crash.
+Memento deliberately pays the cost of a detached worktree for commit-capable operations. Create, patch and rename logic expect a complete filesystem tree, and rename processing scans Markdown files to rewrite inbound links. The isolated tree keeps those intermediate changes away from readers and leaves a durable object for startup recovery to inspect after a crash.
 
 Local measurements put worktree add+remove p50 at 6.73 ms for 100 concepts, 23.25 ms for 1,000 and 180.40 ms for 10,000. Since writes are serialized and 10,000 concepts is the initial ceiling, that cost is preferable to replacing the mutation layer with Git plumbing or exposing partial writes through `current/`.
 
-The full decision and alternatives are recorded in [ADR 0001](decisions/0001-keep-operation-worktrees.md). Reader-visible refresh of `current/` is a separate atomicity concern and remains a follow-up.
+The full decision is recorded in [ADR 0001](decisions/0001-keep-operation-worktrees.md). Reader-visible refresh of `current/` remains a separate atomicity concern.
 
 ### Per-operation transaction flow
 
@@ -419,7 +451,7 @@ For every accepted commit-capable mutation:
 17. remove the temporary worktree
 18. emit MCP resource notifications
 
-The repository is not considered successfully mutated until the commit is published and the materialised checkout plus derived indexes have advanced. That is what gives the caller read-your-writes behaviour.
+The repository is not considered successfully mutated until the commit is published and the materialised checkout plus derived indexes have advanced.
 
 ### Commit metadata
 
@@ -437,10 +469,11 @@ Commits carry structured trailers including:
 * commit-capable mutations require `expected_revision` and durable `idempotency_key`
 * renames preserve concept identity and rewrite inbound links atomically
 * there is no general client-facing hard delete
+* curator authority is explicit, but direct create/patch/rename discovery depends on the configured tool surface
 
 ## Recovery model
 
-The service is written to survive interruption without lying about what happened.
+The service is written to survive interruption without pretending that nothing happened.
 
 ### Startup recovery
 
@@ -475,7 +508,7 @@ The derived database can be deleted and rebuilt from Git and configuration.
 
 ## Optional intelligent tiers -- implemented but feature-gated
 
-These tiers exist in tree, but they are not required for deterministic operation and should not be confused with the core write path.
+These tiers exist in tree. They do not dilute the deterministic core.
 
 ### Exact answer cache
 
@@ -528,8 +561,8 @@ The fixed task routing is also exact:
 
 * `memory_answer_hot` -> `hot_query`
 * `memory_answer_deep` -> `deep_query`
-* proposal drafting -> `proposal`
-* Dream drafting -> `dream`
+* `memory_proposal_draft` -> `proposal`
+* `dream_proposal_draft` -> `dream`
 
 ### Model-assisted proposal drafting
 
@@ -547,7 +580,7 @@ Model output must be strict JSON containing:
 * `reciprocal_links`
 * `changes`
 
-The model may only produce `create` and `patch` changes. `rename` is rejected.
+The model may produce proposal `create` and `patch` changes only. `rename` is rejected.
 
 Model-proposal limits are exact:
 
@@ -617,6 +650,12 @@ Per-slot controls include:
 
 Fallback applies to one model generation step, not to the whole agent run.
 
+### Needle shallow router
+
+The passing router checkpoint is not enabled. What exists today is a vendored shallow-action classifier plus deterministic plan expansion in code, still waiting on a pinned embedded runtime and ARM64 parity evidence.
+
+The current state is: full-plan attempt failed its gates, shallow router passed AMD64 held-out tests, production runtime evidence remains pending.
+
 ## Security invariants
 
 Treat MCP arguments, Markdown, frontmatter, links, retrieved text, model output and proxy headers as untrusted.
@@ -647,7 +686,7 @@ These pieces are implemented and exercised by local tests:
 
 ### Pending deployment evidence or live verification
 
-These are still future or pending live work and should not be described as completed production facts:
+These are still pending operational proof and should not be described as completed production facts:
 
 * published SBOM and provenance artefacts
 * final production image digests
@@ -657,7 +696,7 @@ These are still future or pending live work and should not be described as compl
 
 ## Operational completion gates
 
-A production-ready deployment still needs to satisfy the original acceptance bar:
+A production-ready deployment still needs to satisfy the acceptance bar:
 
 * at least one Docker or systemd deployment serves at least two Piclaw clients
 * clients authenticate as distinct principals

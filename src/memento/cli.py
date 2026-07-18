@@ -86,7 +86,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             payload = runtime.status_snapshot()
             if args.format == "prometheus":
                 print(render_prometheus_text(runtime), end="")
-                logger.info("status_rendered", format=args.format)
                 return 0
         elif args.command == "dream":
             payload = runtime.service.run_dream(mode=args.mode)

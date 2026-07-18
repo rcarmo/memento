@@ -1,11 +1,11 @@
 # Memento delivery plan
 
-**Status:** Proposed  
+**Status:** Implemented in tree; local acceptance evidence recorded; deployment and publication evidence pending
 **Architecture:** [docs/implementation.md](docs/implementation.md)  
 **Initial scope:** Deterministic shared-memory MCP service  
 **Python:** 3.12-3.14
 
-This file is the current delivery and acceptance record. Architecture, rationale and longer design notes stay in [docs/implementation.md](docs/implementation.md).
+This file is the delivery and acceptance ledger for what already exists, what has local proof and what still needs live operational evidence. Architecture, rationale and longer design notes stay in [docs/implementation.md](docs/implementation.md).
 
 ## Delivery rules
 
@@ -79,7 +79,7 @@ This file is the current delivery and acceptance record. Architecture, rationale
 - [x] Run Piclaw adapter compatibility smoke tests.
 - [x] Add compact progressive MCP tool disclosure, catalog resources and bounded declarative `memory_execute` plans.
 
-**Exit:** One read-only canary serves Smith with revision-aware deterministic reads.
+**Exit:** The read-only service is implemented and locally validated. Live canary evidence is still a deployment task, not a completed claim.
 
 ## Milestone 5 -- proposals and curated writes
 
@@ -87,12 +87,12 @@ This file is the current delivery and acceptance record. Architecture, rationale
 - [x] Generate deterministic validation and exact diff previews.
 - [x] Enforce expiry, staleness, self-approval and namespace policies.
 - [x] Implement reviewed apply through the canonical Git transaction pipeline.
-- [x] Add curator-only create, patch and rename operations.
+- [x] Add curator-authorised create, patch and rename operations, with curator-surface exposure kept execute-only.
 - [x] Update inbound links atomically on rename.
 - [x] Emit resource update/list-change notifications after successful publication.
 - [x] Link principal, proposal, operation and Git revision in durable audit data.
 
-**Exit:** Smith can curate; Flint can read and propose; stale and conflicting writes fail safely.
+**Exit:** The implementation is present and locally tested. Distinct deployed principals and operator-run write evidence remain pending.
 
 ## Milestone 6 -- production operations
 
@@ -105,7 +105,7 @@ This file is the current delivery and acceptance record. Architecture, rationale
 - [ ] Produce published SBOM, provenance and registry digest evidence. A local immutable image ID is recorded in the load/release evidence.
 - [x] Run a local read-only-root Docker smoke and clean temporary-root backup/restore drill; live systemd parity remains pending.
 
-**Exit:** Local implementation and tests are complete. Live deployment evidence for multi-client production use, artifact publication and restore drills is still pending.
+**Exit:** Local implementation and local operational validation are complete. Live deployment evidence for multi-client production use, artifact publication and restore drills is still pending.
 
 ## Semantic and progressive retrieval
 
@@ -125,9 +125,9 @@ This file is the current delivery and acceptance record. Architecture, rationale
 
 - [x] Pin and run the public Needle checkpoint and tokenizer fully offline on the local AMD64 host.
 - [x] Measure checkpoint load, warm latency, peak RSS, environment size, JSON validity, routing accuracy, determinism and UNKNOWN behaviour.
-- [x] Record the go/no-go decision in ADR 0002; the base checkpoint does not meet production thresholds.
+- [x] Record the go/no-go decision in ADR 0002; the full-plan checkpoint does not meet production thresholds.
 - [x] Fine-tune Needle for two epochs on a free, deterministic 1,500-example Memento routing/plan/UNKNOWN corpus using the local RTX 3060.
-- [x] Rerun unchanged and unseen-family AMD64 gates; the experimental checkpoint remains below routing, abstention and plan-validity thresholds and is not shipped.
+- [x] Rerun unchanged and unseen-family AMD64 gates; the experimental full-plan checkpoint remains below routing, abstention and plan-validity thresholds and is not shipped.
 - [x] Train a family/entity-separated shallow router and add deterministic plan expansion; the untouched AMD64 test reaches 100% routing/validity/UNKNOWN recall with 0% false actions.
 - [x] Vendor the passing checkpoint and explicit train/validation/test corpora through Git LFS without enabling the JAX runtime.
 - [ ] Validate the exact checkpoint on ARM64 and a pinned embedded/Cactus runtime before production integration.

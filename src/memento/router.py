@@ -14,26 +14,38 @@ class SearchMode(StrEnum):
     HYBRID = "hybrid"
 
 
-STATUS_FIELDS = (
-    "service_version",
-    "schema_version",
-    "repo_revision",
-    "index_revision",
-    "index_stale",
-    "principal",
-    "visible_concepts",
-    "proposal_backlog",
-    "limits",
-    "roles",
-    "features",
-    "readiness",
-)
+STATUS_FIELD_PROJECTIONS = {
+    "service_version": "service_version",
+    "schema_version": "schema_version",
+    "repo_revision": "repo_revision",
+    "index_revision": "index_revision",
+    "index_stale": "index_stale",
+    "principal": "principal",
+    "visible_concepts": "visible_concepts",
+    "proposal_backlog": "proposal_backlog",
+    "limits": "limits",
+    "roles": "roles",
+    "features": "features",
+    "readiness": "readiness",
+    "semantic_search_ready": "readiness.semantic_search.ready",
+    "semantic_search_model_id": "readiness.semantic_search.model_id",
+    "semantic_search_dimensions": "readiness.semantic_search.dimensions",
+    "semantic_search_embedding_revision": "readiness.semantic_search.embedding_revision",
+    "semantic_search_sqlite_vector_enabled": "readiness.semantic_search.sqlite_vector_enabled",
+}
+STATUS_FIELDS = tuple(STATUS_FIELD_PROJECTIONS)
 
-READ_FIELDS = (
-    "path",
-    "frontmatter",
-    "body",
-)
+READ_FIELD_PROJECTIONS = {
+    "path": "path",
+    "frontmatter": "frontmatter",
+    "body": "body",
+    "title": "frontmatter.title",
+    "type": "frontmatter.type",
+    "status": "frontmatter.status",
+    "tags": "frontmatter.tags",
+    "aliases": "frontmatter.aliases",
+}
+READ_FIELDS = tuple(READ_FIELD_PROJECTIONS)
 
 type StatusFieldName = Literal[
     "service_version",
@@ -48,8 +60,15 @@ type StatusFieldName = Literal[
     "roles",
     "features",
     "readiness",
+    "semantic_search_ready",
+    "semantic_search_model_id",
+    "semantic_search_dimensions",
+    "semantic_search_embedding_revision",
+    "semantic_search_sqlite_vector_enabled",
 ]
-type ReadFieldName = Literal["path", "frontmatter", "body"]
+type ReadFieldName = Literal[
+    "path", "frontmatter", "body", "title", "type", "status", "tags", "aliases"
+]
 type SearchPathsLimit = Literal[1, 2, 3, 5]
 type GraphDepth = Literal[1, 2]
 
@@ -168,7 +187,7 @@ def expand_router_action(action: RouterAction) -> ExpandedRouterAction:
         return DirectToolExpansion(
             tool="memory_status",
             args={},
-            projection=ProjectionSpec(ref=action.field),
+            projection=ProjectionSpec(ref=STATUS_FIELD_PROJECTIONS[action.field]),
         )
     if isinstance(action, SearchThenGraphAction):
         plan = ExecutePlan.model_validate(
@@ -202,7 +221,7 @@ def expand_router_action(action: RouterAction) -> ExpandedRouterAction:
         return DirectToolExpansion(
             tool="memory_read",
             args={"id_or_path": action.id_or_path},
-            projection=ProjectionSpec(ref=action.field),
+            projection=ProjectionSpec(ref=READ_FIELD_PROJECTIONS[action.field]),
         )
     if isinstance(action, UnknownAction):
         return None
@@ -213,9 +232,11 @@ __all__ = [
     "ExpandedRouterAction",
     "GraphDepth",
     "ProjectionSpec",
+    "READ_FIELD_PROJECTIONS",
     "READ_FIELDS",
     "ROUTER_ACTION_ADAPTER",
     "RouterAction",
+    "STATUS_FIELD_PROJECTIONS",
     "STATUS_FIELDS",
     "SearchMode",
     "expand_router_action",

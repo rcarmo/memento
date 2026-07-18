@@ -1,60 +1,96 @@
 # Memento
 
-[`piclaw`][piclaw] instances are deliberately independent. Smith can have one set of conversations, schedules and local Dream memories while Flint has another--which is exactly what you want until both need to remember the same durable fact.
+An AI agent can remember several different kinds of things, and mixing them together causes trouble surprisingly quickly.
 
-Copying notes between workspaces does not scale. It creates several versions of the truth, makes updates hard to attribute and leaves every instance guessing whether its local copy is current. Sharing Piclaw's message database would be worse: conversations, credentials, reminders and runtime state have different ownership and retention rules.
+A conversation is short-lived working context. A reminder belongs to the agent that must deliver it. Credentials belong to one machine or user. But a fact such as "Smith runs Piclaw", "this service replaced that one" or "the backup lives here" may need to survive for years and be available to several agents.
 
-Memento provides the missing middle ground. It is a standalone Model Context Protocol (MCP) service through which several Piclaw instances can search, read and curate one shared body of durable knowledge without sharing their private operational state.
+Memento stores that last category: shared, durable knowledge.
+
+## Piclaw And Agent Memory
+
+[`piclaw`][piclaw] is a self-hosted agent runtime. A Piclaw instance has its own chats, local notes, reminders, scheduled jobs, tools and credentials. You might run one instance as a personal assistant, another near a home server and a third for a project. Each should remain operationally independent.
+
+That independence creates a memory problem. If two agents both need the same facts, copying Markdown between them produces several versions of the truth. Sharing their entire chat database is worse--private conversations, credentials and reminders have different owners and retention rules.
+
+Memento sits between those two bad options. It gives multiple agents one shared knowledge base while leaving their conversations and local state alone.
 
 ```text
-Smith ──┐
-Flint ──┼── authenticated MCP ──> Memento ──> Git Markdown
-Others ─┘                              ├──────> control.sqlite
-                                      └──────> derived search indexes
+Personal agent ──┐
+Server agent ────┼── authenticated MCP ──> Memento ──> shared Markdown knowledge
+Project agent ───┘                              ├──────> operation journal
+                                                └──────> search indexes
 ```
 
-## What Is Shared
+MCP, the Model Context Protocol, is the interface the agents use to search, read and propose changes. An agent does not receive direct filesystem or Git access.
 
-Memento stores concepts: systems, services, projects, people, instances and other facts that should survive individual chats and remain useful to more than one assistant. Each concept is a Markdown file with strict frontmatter, a stable ID and normal links to related concepts.
+## What Goes Into Shared Memory
 
-The repository stays readable without Memento. You can inspect it with a text editor, review changes with Git, restore it on another machine and rebuild every search index from its contents.
+Memento stores durable concepts: people, projects, machines, services, decisions and relationships that should outlive any one conversation. Each concept is an ordinary Markdown file with structured metadata, a stable ID and links to related concepts.
 
-Memento does not replace or merge:
+Examples include:
 
-* Piclaw conversations and SQLite message history;
-* local `notes/daily/` and `notes/memory/` files;
-* Dream or AutoDream state;
-* reminders and scheduled tasks;
-* credentials, keychains or instance configuration.
+* where a service runs and who owns it;
+* why one system replaced another;
+* which project depends on a particular machine;
+* aliases, tags and links needed to find the same fact later;
+* reviewed operational knowledge that several agents should use consistently.
 
-Those remain private to each Piclaw instance. Shared knowledge has a different job.
+The repository remains useful without Memento. A person can read it with a text editor, inspect its Git history, copy it to another machine and rebuild every search index.
 
-## Why Git, SQLite And MCP
+Memento deliberately does not absorb:
 
-Git is authoritative for knowledge. Every accepted mutation produces a commit with the authenticated principal, operation and base revision attached to it. Renames preserve concept IDs and update inbound links in the same transaction.
+* chat transcripts and temporary conversation context;
+* an agent's private daily notes or local memory summaries;
+* reminders and scheduled jobs;
+* passwords, tokens, keychains or machine configuration.
 
-SQLite is authoritative for operational state: proposals, idempotency keys, write journals, leases and scheduler watermarks. A second rebuildable SQLite database holds FTS5, graph and optional vector indexes.
+Those stay with the agent that owns them.
 
-MCP provides the client boundary. Piclaw instances authenticate as separate principals and receive only the paths their policy permits. Search filtering happens before ranking, which prevents hidden concepts from affecting visible results.
+## How An Agent Uses It
 
-The governing rule is simple:
+A normal read is straightforward: search for a topic, choose a matching concept and read it. More involved requests can use a bounded multi-step plan, such as searching for a project and then reading its first result.
 
-> Git owns knowledge; SQLite owns operations; search indexes are disposable; models are advisory.
+Writes are proposal-first. An agent drafts a change, Memento validates it and an authorised curator reviews it before it becomes shared knowledge. A model can suggest wording or relationships, but deterministic code decides whether the caller is allowed to act, whether the paths are safe and whether a Git commit really succeeded.
+
+This separation keeps agent memory useful without letting a plausible model response become an unreviewed fact.
+
+## What Owns What
+
+The storage rules are deliberately plain:
+
+> Git owns knowledge; `control.sqlite` owns operations; search indexes are disposable; models are advisory.
+
+Git is authoritative for concepts and history. Every accepted change produces a commit tied to the authenticated caller, operation and previous revision. Renames keep the same concept ID and update inbound links in the same transaction.
+
+`control.sqlite` records proposals, repeated-request protection, write journals, leases and scheduler state. FTS5, graph metadata and optional vectors live in a separate derived database that can be rebuilt from Markdown.
 
 ## Reading Shared Memory
 
-The default MCP surface is deliberately small:
+The compact MCP surface is intentionally small. It exposes:
 
-* `memory_help` describes goals and points to the on-demand operation catalog;
-* `memory_status` reports repository, index and feature readiness;
-* `memory_search` performs lexical, semantic or hybrid retrieval;
-* `memory_read` returns one authorised concept or section;
-* `memory_execute` runs a bounded declarative chain of existing operations;
-* `memory_answer` is exposed only when the optional answer tier is enabled.
+* `memory_help`
+* `memory_status`
+* `memory_search`
+* `memory_read`
+* optional `memory_answer`
+* `memory_execute`
 
-Detailed contracts live in MCP resources such as `memory://catalog`, `memory://catalog/{operation}` and `memory://workflow/{goal}`. This progressive disclosure keeps eighteen detailed tool schemas out of the model context during ordinary searches. A full compatibility surface remains available through configuration.
+That gives a compact surface count of **5** without answers and **6** with answers enabled.
 
-`memory_execute` is a constrained operation-plan interpreter rather than arbitrary code execution. It supports typed operations, bounded intermediate values and safe references such as `$matches.results.0.path`. It has no imports, loops, shell, filesystem access or network access, and it permits at most one commit-producing operation in a plan.
+Other configured surfaces are explicit and fixed:
+
+* `standard`: **18** direct tools
+* `read_only`: **8** direct tools
+* `curator`: **9** direct tools without `memory_answer`, **10** with it
+* `admin`: **19** direct tools
+
+`memory_help()` takes no arguments. It returns a filtered payload that reflects the active tool surface and answer setting: available goals, supported formats, answer sources, search modes, catalog resources, workflow templates, visible direct tools, execute limits and any execute-only operations.
+
+Detailed contracts live in MCP resources such as `memory://catalog`, `memory://catalog/{operation}` and `memory://workflow/{goal}`. The point is simple: keep routine model context small, disclose detail on demand and preserve the full compatibility surface when needed.
+
+`memory_read` reads one authorised concept by path or concept ID. It returns the whole concept payload: `path`, `frontmatter` and `body`. It does not expose section-scoped reads.
+
+`memory_execute` is a bounded declarative interpreter over existing service operations. It supports typed operations, saved references such as `$hits.results.0.path`, bounded intermediate values and at most one commit-capable step in a plan. It does not provide imports, loops, shell access, filesystem access or network access.
 
 ## Writing Shared Memory
 
@@ -64,9 +100,18 @@ Cross-instance writes are proposal-first:
 search -> read -> propose -> review -> apply -> Git commit -> index update
 ```
 
-A proposer can describe a change and inspect its deterministic diff. A curator reviews and applies it against an expected repository revision. Stale writes conflict instead of overwriting newer knowledge, and repeating an idempotency key returns the recorded result rather than producing a second commit.
+A proposer can describe a change and inspect its deterministic diff. A curator reviews and applies it against an expected repository revision. Stale writes conflict instead of trampling newer knowledge, and reusing an idempotency key returns the recorded result instead of producing a second commit.
 
-Direct create, patch and rename operations exist for curators and administrators. They use the same authorisation, validation, journalling and compare-and-swap publication path as reviewed proposals. There is no general client-facing hard delete.
+Proposal review supports `approve`, `reject` and `request_changes`. A `request_changes` review sends the proposal back to `draft`; it is not a terminal side channel.
+
+Model-assisted proposal creation exists through `memory_propose_freeform` and `memory_propose_update`. Those entries may search and read context, then draft an ordinary proposal. They cannot review, apply or publish their own work.
+
+Direct `create`, `patch` and `rename` mutations exist, but the exposure is exact:
+
+* on the `standard` and `admin` surfaces they are direct tools;
+* on the `curator` surface they are **execute-only** operations reachable through `memory_execute` and catalog/workflow discovery.
+
+There are no imaginary admin-only mutation families beyond the documented tool list. There is no general client-facing hard delete.
 
 ## Search
 
@@ -81,29 +126,31 @@ Optional semantic search uses a local Rust port of GTE-small:
 * scalar plus runtime-selected AMD64 AVX2/FMA and ARM64 NEON kernels;
 * deterministic reciprocal-rank fusion for hybrid retrieval.
 
-The reviewed FP32 model is vendored at `rust/tests/fixtures/gte-small.gtemodel` and copied into the container at `/usr/local/share/memento/models/gte-small.gtemodel`. Its SHA-256 digest is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; provenance and licensing are recorded in `docs/attribution.md`. If model loading or vector indexing fails, lexical search remains available and semantic readiness becomes degraded; canonical writes still complete.
+The reviewed FP32 model is vendored at `rust/tests/fixtures/gte-small.gtemodel` and copied into the container at `/usr/local/share/memento/models/gte-small.gtemodel`. Its SHA-256 digest is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; provenance and licensing are recorded in `docs/attribution.md`.
 
-See [`docs/semantic-search.md`](docs/semantic-search.md) for configuration and packaging details.
+If model loading or vector indexing fails, lexical search remains available. Canonical writes still complete.
+
+See [`docs/semantic-search.md`](docs/semantic-search.md).
 
 ## Optional Model Features
 
-Memento remains fully useful without an LLM. Optional, independently gated tiers add:
+Memento is useful without an LLM. Optional, independently gated tiers add:
 
-* a fine-tuned local Needle shallow-router checkpoint and deterministic action expander, currently disabled pending embedded AMD64/ARM64 runtime validation;
+* a vendored Needle shallow-router checkpoint plus deterministic plan expansion, still disabled pending embedded AMD64 and ARM64 runtime validation;
 * exact answer caching scoped by repository revision and authorisation visibility;
 * a small hot working set over recent concepts and accepted answers;
 * bounded read-only traversal with validated citations;
-* model-assisted proposal drafting, which cannot review or apply its own work;
+* model-assisted proposal drafting;
 * Dream graph-health scans in report-only or proposal mode;
 * task-specific provider slots with explicit data classifications and model-level fallback.
 
-Models never authenticate clients, choose canonical paths, publish Git refs, approve mutations or claim that persistence succeeded. Deterministic code owns those decisions.
+Models never authenticate callers, pick canonical paths, publish Git refs, approve mutations or declare that persistence succeeded. Deterministic code owns those decisions.
 
 ## Safety And Recovery
 
-Only one Memento process may hold the repository writer lease. Each mutation runs in a temporary Git worktree, validates exact changed paths and publishes `main` with compare-and-swap. The materialised checkout and derived indexes advance before the operation is marked successful, giving the submitting client read-your-writes behaviour.
+Only one Memento process may hold the repository writer lease. Each mutation runs in a temporary Git worktree, validates exact changed paths and publishes `main` with compare-and-swap. The materialised checkout and derived indexes advance before the operation is marked successful, which gives the caller read-your-writes behaviour.
 
-Startup recovery reconciles interrupted journal rows with Git history. The derived database can be deleted and rebuilt. Backups contain the bare Git repository and a consistent SQLite backup with checksums; temporary worktrees, materialised checkouts and search indexes do not need to be preserved.
+Startup recovery reconciles interrupted journal rows with Git history. The derived database can be deleted and rebuilt. Backups need the bare Git repository and a consistent SQLite backup with checksums; temporary worktrees, materialised checkouts and search indexes do not need to be preserved.
 
 Tool arguments, Markdown, links, retrieved text and model output are all untrusted. Memento rejects traversal, symlinks, special files, reserved-file writes, oversized changes, stale revisions, namespace violations and likely secrets in model-authored proposals.
 
@@ -132,7 +179,7 @@ memento-serve --config /etc/memento/config.json restore --input /path/to/backup
 memento-serve --config /etc/memento/config.json dream --mode report_only
 ```
 
-Docker, Compose/Portainer, nginx and hardened systemd examples are included. The container runs as a non-root user with a read-only root filesystem, writable state under `/var/lib/memento`; the default GTE-small model is already installed read-only in the image.
+Docker, Compose/Portainer, nginx and hardened systemd examples are included. The container runs as a non-root user with a read-only root filesystem and writable state under `/var/lib/memento`. The default GTE-small model is installed read-only in the image.
 
 Start with [`examples/config.v1.json`](examples/config.v1.json), then read [`docs/operations.md`](docs/operations.md) before enabling writes.
 
@@ -140,16 +187,16 @@ Start with [`examples/config.v1.json`](examples/config.v1.json), then read [`doc
 
 The deterministic repository, transaction journal, FTS/graph indexes, authenticated MCP service, proposal workflow, backup/restore tooling, compact tool catalog, bounded executor, optional model tiers and Rust semantic-search runtime are implemented and covered by local tests.
 
-Local validation includes Python 3.12-3.14, wheel installation, container builds, authenticated Streamable HTTP calls through Piclaw's bundled MCP SDK, crash-boundary recovery tests and Rust FFI/SQLite-extension parity tests.
+What is still missing is deployment evidence, not architecture. Published SBOM/provenance, production image digests, live Docker/systemd parity and a clean-host production restore drill remain pending. Those gaps are tracked in [`PLAN.md`](PLAN.md).
 
-Published SBOM/provenance, production image digests, live Docker/systemd parity and a clean-host production restore drill still require deployment evidence. They are tracked in [`PLAN.md`](PLAN.md) and are not presented as completed work. Repository-owned local load testing is documented in [`docs/load-testing.md`](docs/load-testing.md); its thresholds are local checks, not universal service SLOs.
+Repository-owned local load testing is documented in [`docs/load-testing.md`](docs/load-testing.md). Its thresholds are local validation thresholds, not service-wide production SLOs.
 
 ## Documentation
 
-* [`PLAN.md`](PLAN.md) tracks implementation and acceptance evidence.
-* [`docs/implementation.md`](docs/implementation.md) contains the complete architecture and roadmap.
-* [`docs/diagrams.md`](docs/diagrams.md) shows the request, router, proposal, mutation, recovery, search and Dream transitions.
-* [`docs/decisions/`](docs/decisions/0001-keep-operation-worktrees.md) records consequential design decisions and measurements, including the [Needle local-model feasibility study](docs/decisions/0002-needle-feasibility.md).
+* [`PLAN.md`](PLAN.md) tracks implementation status and pending acceptance evidence.
+* [`docs/implementation.md`](docs/implementation.md) records the implemented architecture.
+* [`docs/diagrams.md`](docs/diagrams.md) shows request, proposal, mutation, recovery, search, router and Dream transitions.
+* [`docs/decisions/`](docs/decisions/0001-keep-operation-worktrees.md) records consequential design decisions, including the [Needle feasibility study](docs/decisions/0002-needle-feasibility.md).
 * [`docs/contracts.md`](docs/contracts.md) defines schemas, envelopes and MCP operations.
 * [`docs/threat-model.md`](docs/threat-model.md) records trust boundaries and abuse cases.
 * [`docs/semantic-search.md`](docs/semantic-search.md) covers the Rust GTE and SQLite vector tier.

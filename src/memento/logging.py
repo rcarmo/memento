@@ -22,7 +22,7 @@ _DEFAULT_REDACT_KEYS = frozenset(
 @dataclass(slots=True)
 class JsonLogger:
     service: str = "memento"
-    stream: TextIO = sys.stdout
+    stream: TextIO = field(default_factory=lambda: sys.stderr)
     redact_keys: frozenset[str] = field(default_factory=lambda: _DEFAULT_REDACT_KEYS)
 
     def log(self, level: str, event: str, **fields: Any) -> None:

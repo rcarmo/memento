@@ -5,7 +5,7 @@ import io
 import json
 import shutil
 import sqlite3
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -66,16 +66,46 @@ def test_config_loading_and_composition_root(seeded_root: tuple[Path, Path]) -> 
 
 def test_systemd_units_use_installed_console_script() -> None:
     root = Path(__file__).parents[1]
-    units = (
-        root / "deploy/systemd/memento.service",
-        root / "deploy/systemd/memento-audit.service",
-        root / "deploy/systemd/memento-backup.service",
-    )
-    for unit in units:
+    service_unit = root / "deploy/systemd/memento.service"
+    audit_unit = root / "deploy/systemd/memento-audit.service"
+    backup_unit = root / "deploy/systemd/memento-backup.service"
+    for unit in (service_unit, audit_unit, backup_unit):
         content = unit.read_text(encoding="utf-8")
         assert "ExecStart=/opt/memento/.venv/bin/memento-serve " in content
         assert "NoNewPrivileges=true" in content
         assert "ProtectSystem=strict" in content
+        assert "EnvironmentFile=-/etc/memento/memento.env" in content
+        assert "StateDirectory=memento" in content
+
+    assert "ReadWritePaths=/var/lib/memento" in service_unit.read_text(encoding="utf-8")
+    assert "ReadWritePaths=/var/lib/memento" in audit_unit.read_text(encoding="utf-8")
+
+    backup_content = backup_unit.read_text(encoding="utf-8")
+    assert "backup --output /srv/memento-backups/latest" in backup_content
+    assert "ReadWritePaths=/var/lib/memento /srv/memento-backups" in backup_content
+
+
+def test_systemd_timers_are_disabled_by_default_for_exclusive_maintenance() -> None:
+    root = Path(__file__).parents[1]
+    for timer in (
+        root / "deploy/systemd/memento-audit.timer",
+        root / "deploy/systemd/memento-backup.timer",
+    ):
+        content = timer.read_text(encoding="utf-8")
+        assert "[Timer]" in content
+        assert "WantedBy=timers.target" not in content
+        assert "exclusive lease" in content
+
+
+def test_compose_example_uses_env_file_and_example_env_lists_required_tokens() -> None:
+    root = Path(__file__).parents[1]
+    compose = (root / "compose.example.yaml").read_text(encoding="utf-8")
+    env_example = (root / "examples/memento.env.example").read_text(encoding="utf-8")
+    assert "env_file:" in compose
+    assert "- .env" in compose
+    assert "MEMENTO_TOKEN_SMITH=" in env_example
+    assert "MEMENTO_TOKEN_FLINT=" in env_example
+    assert "required by examples/config.v1.json" in env_example
 
 
 def test_cli_status_and_rebuild_index(seeded_root: tuple[Path, Path]) -> None:
@@ -83,27 +113,36 @@ def test_cli_status_and_rebuild_index(seeded_root: tuple[Path, Path]) -> None:
     build_runtime(config_path, bootstrap_seed=seed).close()
 
     output = io.StringIO()
-    with redirect_stdout(output):
+    logs = io.StringIO()
+    with redirect_stdout(output), redirect_stderr(logs):
         assert main(["--config", str(config_path), "status"]) == 0
     payload = json.loads(output.getvalue())
     assert payload["visible_concepts"] == 2
+    assert '"event": "command_completed"' in logs.getvalue()
 
     output = io.StringIO()
-    with redirect_stdout(output):
+    logs = io.StringIO()
+    with redirect_stdout(output), redirect_stderr(logs):
         assert main(["--config", str(config_path), "rebuild-index"]) == 0
     rebuilt = json.loads(output.getvalue())
     assert rebuilt["parity_matches"] is True
+    assert '"event": "command_completed"' in logs.getvalue()
 
 
-def test_cli_prometheus_output(seeded_root: tuple[Path, Path]) -> None:
+def test_cli_prometheus_output_is_clean_stdout(seeded_root: tuple[Path, Path]) -> None:
     config_path, seed = seeded_root
-    build_runtime(config_path, bootstrap_seed=seed).close()
+    runtime = build_runtime(config_path, bootstrap_seed=seed)
+    expected = render_prometheus_text(runtime)
+    runtime.close()
+
     output = io.StringIO()
-    with redirect_stdout(output):
+    logs = io.StringIO()
+    with redirect_stdout(output), redirect_stderr(logs):
         assert main(["--config", str(config_path), "status", "--format", "prometheus"]) == 0
     text = output.getvalue()
-    assert "memento_service_up 1" in text
-    assert "memento_visible_concepts 2" in text
+    assert text == expected
+    assert '"event": "status_rendered"' not in text
+    assert logs.getvalue().count('"event": "runtime_closed"') == 1
 
 
 def test_backup_restore_rejects_manifest_revision_mismatch(
@@ -126,6 +165,30 @@ def test_backup_restore_rejects_manifest_revision_mismatch(
 
     with pytest.raises(ValueError, match="backup manifest revision does not match archived main"):
         restore_backup(load_service_config(config_path), backup_dir)
+
+
+def test_backup_rejects_destination_inside_state_root(seeded_root: tuple[Path, Path]) -> None:
+    config_path, seed = seeded_root
+    runtime = build_runtime(config_path, bootstrap_seed=seed)
+    try:
+        with pytest.raises(
+            ValueError, match="backup destination must be outside repository root_path"
+        ):
+            create_backup(runtime, runtime.paths.root / "backups" / "latest")
+    finally:
+        runtime.close()
+
+
+def test_restore_rejects_backup_source_inside_state_root(seeded_root: tuple[Path, Path]) -> None:
+    config_path, seed = seeded_root
+    runtime = build_runtime(config_path, bootstrap_seed=seed)
+    try:
+        nested_backup = runtime.paths.root / "restore-source"
+        nested_backup.mkdir(parents=True, exist_ok=True)
+        with pytest.raises(ValueError, match="backup source must be outside repository root_path"):
+            restore_backup(load_service_config(config_path), nested_backup)
+    finally:
+        runtime.close()
 
 
 def test_backup_restore_and_audit(seeded_root: tuple[Path, Path], tmp_path: Path) -> None:

@@ -6,6 +6,8 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+    env_file:
+      - .env
     volumes:
       - ./examples/config.v1.json:/etc/memento/config.json:ro
       - memento-data:/var/lib/memento
