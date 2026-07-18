@@ -146,6 +146,22 @@ Memento is useful without an LLM. Optional, independently gated tiers add:
 
 Models never authenticate callers, pick canonical paths, publish Git refs, approve mutations or declare that persistence succeeded. Deterministic code owns those decisions.
 
+### Needle Router Performance
+
+The release-mode Rust runtime was pinned to one logical CPU on an Intel Core i7-12700 and run serially over the untouched 360-case routing corpus. It preserved all 360 tool decisions.
+
+| Measure | Result |
+|---|---:|
+| Warm p50 | 510.8 ms |
+| Warm p95 | 554.6 ms |
+| Sustained serial throughput | 1.95 requests/s |
+| Peak RSS | 163.4 MiB |
+| Cold process + model load + first request | 669 ms |
+
+These are single-core measurements from one host, not portable SLOs. CPU frequency and host contention were not fixed. For capacity planning, recent Intel and AMD AVX2/FMA cores should land around 0.4-0.65 s warm p50; older AVX2 Intel cores around 0.65-1.0 s; ARM server-class NEON cores around 0.6-1.0 s; modern ARM SBC cores around 1.0-1.8 s; and low-power x86 around 1.2-2.5 s. Those ranges are projections until measured on the target hardware.
+
+The full methodology, caveats and per-platform planning table are in [`docs/needle-performance.md`](docs/needle-performance.md); the machine-readable run is in [`docs/evidence/needle/rust-router-single-core-i7-12700.json`](docs/evidence/needle/rust-router-single-core-i7-12700.json).
+
 ## Safety And Recovery
 
 Only one Memento process may hold the repository writer lease. Each mutation runs in a temporary Git worktree, validates exact changed paths and publishes `main` with compare-and-swap. The materialised checkout and derived indexes advance before the operation is marked successful, which gives the caller read-your-writes behaviour.
