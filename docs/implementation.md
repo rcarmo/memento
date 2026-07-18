@@ -4,6 +4,8 @@ Memento exists because shared durable facts do not belong in Piclaw's per-instan
 
 What is implemented in tree is already the architecture the service uses: a standalone Python daemon, a Git-backed Markdown repository for canonical knowledge, `control.sqlite` for durable operational state, rebuildable derived indexes for search and graph work, and an MCP surface that stays useful even when every model feature is off.
 
+The request and state transitions are collected in [Memento transition diagrams](diagrams.md).
+
 The short version is still the right one:
 
 > Git is authoritative for knowledge; `control.sqlite` is authoritative for operations; FTS, graph indexes, caches and signals are derived; models are advisory only.

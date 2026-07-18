@@ -148,6 +148,7 @@ Published SBOM/provenance, production image digests, live Docker/systemd parity 
 
 * [`PLAN.md`](PLAN.md) tracks implementation and acceptance evidence.
 * [`docs/implementation.md`](docs/implementation.md) contains the complete architecture and roadmap.
+* [`docs/diagrams.md`](docs/diagrams.md) shows the request, router, proposal, mutation, recovery, search and Dream transitions.
 * [`docs/decisions/`](docs/decisions/0001-keep-operation-worktrees.md) records consequential design decisions and measurements, including the [Needle local-model feasibility study](docs/decisions/0002-needle-feasibility.md).
 * [`docs/contracts.md`](docs/contracts.md) defines schemas, envelopes and MCP operations.
 * [`docs/threat-model.md`](docs/threat-model.md) records trust boundaries and abuse cases.
