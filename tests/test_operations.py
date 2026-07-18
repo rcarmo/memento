@@ -264,13 +264,17 @@ def test_backup_restore_and_audit(seeded_root: tuple[Path, Path], tmp_path: Path
     assert payload["ok"] is True
 
 
-def test_runtime_server_uses_writable_state_log(seeded_root: tuple[Path, Path]) -> None:
+def test_runtime_server_uses_writable_state_log(
+    seeded_root: tuple[Path, Path], monkeypatch: pytest.MonkeyPatch
+) -> None:
     config_path, seed = seeded_root
+    monkeypatch.setenv("MEMENTO_TOKEN_SMITH", "test-token")
     runtime = build_runtime(config_path, bootstrap_seed=seed)
     try:
         server = runtime.build_server()
-        assert server.log_file == runtime.paths.root / "logs" / "umcp.log"
-        assert server.log_file.exists()
+        expected_log = runtime.paths.root / "logs" / "umcp.log"
+        assert server._umcp_log_file == expected_log
+        assert expected_log.exists()
     finally:
         runtime.close()
 
