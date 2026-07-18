@@ -78,6 +78,29 @@ def parse_stable_semver(version: str) -> tuple[int, int, int]:
     return tuple(int(part) for part in match.groups())  # type: ignore[return-value]
 
 
+def validate_asset_pack(
+    *,
+    asset_kind: str,
+    version: str,
+    zip_bytes: bytes,
+    expected_root_text: tuple[str, str] | None = None,
+) -> ValidatedSkillPack:
+    """Validate a generic ZIP pack, optionally binding one root text file."""
+    skill_name = "asset-pack" if asset_kind != "skill" else "skill-pack"
+    skill_md = ""
+    if expected_root_text is not None:
+        root_path, skill_md = expected_root_text
+    else:
+        root_path = ""
+    return _validate_pack(
+        skill_name=skill_name,
+        version=version,
+        skill_md=skill_md,
+        zip_bytes=zip_bytes,
+        required_root_path=root_path or None,
+    )
+
+
 def validate_skill_pack(
     *, skill_name: str, version: str, skill_md: str, zip_bytes: bytes
 ) -> ValidatedSkillPack:
@@ -88,6 +111,24 @@ def validate_skill_pack(
         )
     parse_stable_semver(version)
 
+    return _validate_pack(
+        skill_name=skill_name,
+        version=version,
+        skill_md=skill_md,
+        zip_bytes=zip_bytes,
+        required_root_path=SKILL_MD_PATH,
+    )
+
+
+def _validate_pack(
+    *,
+    skill_name: str,
+    version: str,
+    skill_md: str,
+    zip_bytes: bytes,
+    required_root_path: str | None,
+) -> ValidatedSkillPack:
+    parse_stable_semver(version)
     expected_skill_md = skill_md.encode("utf-8")
     if len(zip_bytes) > MAX_ZIP_BYTES:
         raise SkillPackValidationError("ZIP archive exceeds maximum encoded size")
@@ -136,7 +177,7 @@ def validate_skill_pack(
             data = archive.read(info)
             _validate_file_magic(data, path=path)
 
-            if path == SKILL_MD_PATH:
+            if required_root_path is not None and path == required_root_path:
                 if data != expected_skill_md:
                     raise SkillPackValidationError(
                         "root SKILL.md contents must exactly match supplied skill_md UTF-8 bytes"
@@ -152,8 +193,8 @@ def validate_skill_pack(
                 )
             )
 
-    if not root_skill_md_found:
-        raise SkillPackValidationError("archive must contain root SKILL.md")
+    if required_root_path is not None and not root_skill_md_found:
+        raise SkillPackValidationError(f"archive must contain root {required_root_path}")
 
     manifest = SkillPackManifest(
         entries=tuple(files),

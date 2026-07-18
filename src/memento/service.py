@@ -48,10 +48,13 @@ from memento.control.operations import (
     get_operation_by_idempotency,
 )
 from memento.control.proposals import (
+    ProposalAssetInput,
     ProposalRecord,
     ProposalStatus,
     create_proposal,
     get_proposal,
+    get_proposal_asset,
+    list_proposal_assets,
     list_proposals,
     update_proposal_status,
 )
@@ -69,14 +72,6 @@ from memento.control.signals import (
     set_service_state,
     upsert_detected_signals,
 )
-from memento.control.skill_pack_proposals import (
-    SkillPackProposalRecord,
-    SkillPackProposalStatus,
-    create_skill_pack_proposal,
-    get_skill_pack_proposal,
-    list_skill_pack_proposals,
-    set_skill_pack_proposal_status,
-)
 from memento.derived.index import (
     DerivedIndex,
     DerivedSearchError,
@@ -86,6 +81,15 @@ from memento.derived.index import (
 from memento.envelopes import ErrorEnvelope, SuccessEnvelope, error_envelope, success_envelope
 from memento.executor import ExecuteLimits, MemoryExecutor
 from memento.mcp_registry import OPERATION_SPECS, WORKFLOW_TEMPLATES, tool_names_for_surface
+from memento.repository.asset_packs import (
+    asset_version_paths,
+    list_asset_versions,
+    load_asset_metadata,
+    resolve_asset_version,
+    retention_partition,
+    validate_asset_kind,
+    write_asset_version,
+)
 from memento.repository.bundle import (
     BundleError,
     audit_repository,
@@ -102,14 +106,6 @@ from memento.repository.git import (
 from memento.repository.links import extract_structural_links, rewrite_links_for_rename
 from memento.repository.paths import PathSafetyError, validate_repository_write_path
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter, ConceptStatus
-from memento.repository.skill_packs import (
-    list_skill_pack_versions,
-    parse_skill_pack_document,
-    resolve_skill_pack_version,
-    retention_partition,
-    skill_pack_paths,
-    write_skill_pack_version,
-)
 from memento.repository.transactions import (
     TransactionConflictError,
     TransactionManager,
@@ -124,7 +120,8 @@ from memento.router import (
 )
 from memento.skill_packs import (
     MAX_ZIP_BYTES,
-    ValidatedSkillPack,
+    SkillPackManifest,
+    validate_asset_pack,
     validate_skill_pack,
 )
 
@@ -187,6 +184,18 @@ class RenameChange(BaseModel):
     new_path: str
 
 
+class AttachAssetPackChange(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    kind: Literal["attach_asset_pack"]
+    path: str
+    asset_kind: str
+    version: str
+    asset_id: str
+    zip_sha256: str
+    manifest: dict[str, Any]
+
+
 class ProposalCitation(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -222,7 +231,7 @@ class ModelProposalDraft(BaseModel):
     changes: tuple[ProposalChange, ...]
 
 
-ProposalChange = CreateChange | PatchChange | RenameChange
+ProposalChange = CreateChange | PatchChange | RenameChange | AttachAssetPackChange
 
 
 @dataclass(frozen=True, slots=True)
@@ -300,13 +309,10 @@ class MemoryService:
                 "memory_rename",
             ],
             "skills": [
-                "memory_skill_search",
+                "memory_search",
+                "memory_read",
                 "memory_skill_get",
                 "memory_skill_propose",
-                "memory_skill_proposal_list",
-                "memory_skill_proposal_get",
-                "memory_skill_proposal_review",
-                "memory_skill_proposal_apply",
                 "memory_skill_prune",
             ],
             "compact": [
@@ -369,27 +375,17 @@ class MemoryService:
                 if item.status in {ProposalStatus.SUBMITTED, ProposalStatus.APPROVED}
                 and self._can_access_proposal(policy, item, require_write=False)
             ]
-            skill_proposals = list_skill_pack_proposals(self._deps.control_connection)
-            visible_skill_proposals = [
-                item
-                for item in skill_proposals
-                if item.status
-                in {SkillPackProposalStatus.SUBMITTED, SkillPackProposalStatus.APPROVED}
-                and (item.author_principal == policy.principal or "curator" in policy.roles)
-                and self._is_authorized(policy, "/skills/", action="read")
-            ]
             semantic = self._deps.derived_index.semantic_status()
             return self._success(
                 {
-                    "service_version": "0.1.0",
+                    "service_version": "0.2.0",
                     "schema_version": self._deps.config.schema_version,
                     "repo_revision": get_main_revision(self._deps.repo_paths),
                     "index_revision": state.index_revision,
                     "index_stale": state.index_revision != state.repo_revision,
                     "principal": policy.principal,
                     "visible_concepts": len(visible_paths),
-                    "proposal_backlog": len(visible_proposals) + len(visible_skill_proposals),
-                    "skill_proposal_backlog": len(visible_skill_proposals),
+                    "proposal_backlog": len(visible_proposals),
                     "limits": self._deps.config.limits.model_dump(mode="python"),
                     "roles": policy.roles,
                     "features": {
@@ -694,9 +690,13 @@ class MemoryService:
         try:
             policy = self._policy(context)
             require_role(policy, "proposer")
-            normalized = self._normalize_changes(changes)
-            self._validate_change_auth(policy, normalized, action="write")
             proposal_id = str(uuid4())
+            stored_changes, proposal_assets = self._prepare_asset_changes(
+                changes, proposal_id=proposal_id
+            )
+            normalized = self._normalize_changes(stored_changes)
+            self._validate_change_auth(policy, normalized, action="write")
+            self._validate_skill_asset_bindings(normalized)
             preview = self._preview_changes(normalized)
             record = create_proposal(
                 self._deps.control_connection,
@@ -707,6 +707,7 @@ class MemoryService:
                 intent=intent,
                 rationale=rationale,
                 patch={"changes": [item.model_dump(mode="json") for item in normalized]},
+                assets=proposal_assets,
             )
             return self._success({"proposal": self._proposal_payload(record, preview)})
         except Exception as exc:
@@ -923,6 +924,7 @@ class MemoryService:
             if proposal.status is not ProposalStatus.APPROVED:
                 raise ConflictError(f"proposal {proposal.proposal_id} is {proposal.status.value}")
             changes = self._normalize_changes(proposal.patch["changes"])
+            changes = self._adapt_existing_asset_concepts(changes)
             self._validate_change_auth(policy, changes, action="write")
             request = self._transaction_request(
                 context,
@@ -934,7 +936,12 @@ class MemoryService:
             )
             result = self._deps.transaction_manager.apply(
                 request,
-                lambda worktree: self._apply_changes(worktree, changes, actor=policy.principal),
+                lambda worktree: self._apply_changes(
+                    worktree,
+                    changes,
+                    actor=policy.principal,
+                    proposal_id=proposal_id,
+                ),
             )
             updated = update_proposal_status(
                 self._deps.control_connection,
@@ -959,65 +966,72 @@ class MemoryService:
         except Exception as exc:
             return self._failure(exc)
 
-    def memory_skill_search(
-        self, context: ServiceContext, *, query: str, limit: int = 20
+    def memory_asset_get(
+        self,
+        context: ServiceContext,
+        *,
+        id_or_path: str,
+        asset_kind: str,
+        version: str | None = None,
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
             require_role(policy, "reader")
-            authorize_path(policy, "/skills/", action="read")
-            needle = query.strip().casefold()
-            if not needle:
-                raise ServiceError("query must not be empty")
-            results: list[dict[str, Any]] = []
-            skills_root = self._deps.repo_paths.current_dir / "skills"
-            for path in sorted(skills_root.glob("*.md")) if skills_root.exists() else ():
-                metadata, skill_md = parse_skill_pack_document(path.read_text(encoding="utf-8"))
-                searchable = " ".join(
-                    (
-                        str(metadata.get("skill_name", "")),
-                        str(metadata.get("version", "")),
-                        skill_md,
-                    )
-                ).casefold()
-                if needle not in searchable:
-                    continue
-                results.append(self._skill_document_payload(metadata, skill_md, include_zip=False))
-                if len(results) >= max(1, min(limit, 100)):
-                    break
-            return self._success({"results": results})
+            path = self._resolve_path(id_or_path)
+            authorize_path(policy, path, action="read")
+            entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
+            resolved = resolve_asset_version(
+                self._deps.repo_paths.current_dir,
+                entry.document.frontmatter.id,
+                asset_kind,
+                version,
+            )
+            metadata = load_asset_metadata(
+                self._deps.repo_paths.current_dir,
+                entry.document.frontmatter.id,
+                asset_kind,
+                resolved,
+            )
+            _metadata_path, zip_path = asset_version_paths(
+                entry.document.frontmatter.id, asset_kind, resolved
+            )
+            zip_bytes = (
+                self._deps.repo_paths.current_dir / zip_path.removeprefix("/")
+            ).read_bytes()
+            return self._success(
+                {
+                    "concept_id": entry.document.frontmatter.id,
+                    "concept_path": path,
+                    "asset_kind": asset_kind,
+                    "version": resolved,
+                    "versions": list(
+                        reversed(
+                            list_asset_versions(
+                                self._deps.repo_paths.current_dir,
+                                entry.document.frontmatter.id,
+                                asset_kind,
+                            )
+                        )
+                    ),
+                    "zip_sha256": metadata["zip_sha256"],
+                    "manifest": metadata["manifest"],
+                    "zip_base64": base64.b64encode(zip_bytes).decode("ascii"),
+                }
+            )
+        except FileNotFoundError as exc:
+            return self._failure(NotFoundError(str(exc)))
         except Exception as exc:
             return self._failure(exc)
 
     def memory_skill_get(
         self, context: ServiceContext, *, skill_name: str, version: str | None = None
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        try:
-            policy = self._policy(context)
-            require_role(policy, "reader")
-            authorize_path(policy, "/skills/", action="read")
-            resolved = resolve_skill_pack_version(
-                self._deps.repo_paths.current_dir, skill_name, version
-            )
-            paths = skill_pack_paths(skill_name, resolved)
-            metadata, skill_md = parse_skill_pack_document(
-                (
-                    self._deps.repo_paths.current_dir / paths.version_document.removeprefix("/")
-                ).read_text(encoding="utf-8")
-            )
-            zip_bytes = (
-                self._deps.repo_paths.current_dir / paths.zip_path.removeprefix("/")
-            ).read_bytes()
-            payload = self._skill_document_payload(metadata, skill_md, include_zip=False)
-            payload["zip_base64"] = base64.b64encode(zip_bytes).decode("ascii")
-            payload["versions"] = list(
-                reversed(list_skill_pack_versions(self._deps.repo_paths.current_dir, skill_name))
-            )
-            return self._success(payload)
-        except FileNotFoundError as exc:
-            return self._failure(NotFoundError(str(exc)))
-        except Exception as exc:
-            return self._failure(exc)
+        return self.memory_asset_get(
+            context,
+            id_or_path=f"/skills/{skill_name}.md",
+            asset_kind="skill",
+            version=version,
+        )
 
     def memory_skill_propose(
         self,
@@ -1029,210 +1043,131 @@ class MemoryService:
         zip_base64: str,
         rationale: str | None = None,
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        try:
-            policy = self._policy(context)
-            require_role(policy, "proposer")
-            authorize_path(policy, "/skills/", action="write")
-            max_base64_chars = ((MAX_ZIP_BYTES + 2) // 3) * 4
-            if len(zip_base64) > max_base64_chars:
-                raise ServiceError("zip_base64 exceeds maximum encoded size")
-            try:
-                zip_bytes = base64.b64decode(zip_base64, validate=True)
-            except (binascii.Error, ValueError) as exc:
-                raise ServiceError("zip_base64 must be valid base64") from exc
-            pack = validate_skill_pack(
-                skill_name=skill_name, version=version, skill_md=skill_md, zip_bytes=zip_bytes
-            )
-            paths = skill_pack_paths(skill_name, version)
-            if (
-                self._deps.repo_paths.current_dir / paths.version_document.removeprefix("/")
-            ).exists():
-                raise ConflictError(
-                    f"accepted skill version already exists: {skill_name} {version}"
+        path = f"/skills/{skill_name}.md"
+        existing = self._deps.repo_paths.current_dir / path.removeprefix("/")
+        if existing.exists():
+            entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
+            if version in list_asset_versions(
+                self._deps.repo_paths.current_dir,
+                entry.document.frontmatter.id,
+                "skill",
+            ):
+                return self._failure(
+                    ConflictError(f"accepted skill version already exists: {skill_name} {version}")
                 )
-            for sibling in list_skill_pack_proposals(self._deps.control_connection):
-                if sibling.skill_name == skill_name and sibling.version == version:
-                    self._refresh_skill_proposal(sibling)
-            record = create_skill_pack_proposal(
-                self._deps.control_connection,
-                author_principal=policy.principal,
-                base_revision=get_main_revision(self._deps.repo_paths),
-                skill_name=skill_name,
-                version=version,
-                rationale=rationale,
-                skill_md=skill_md,
-                zip_bytes=zip_bytes,
-                manifest=pack.manifest,
-            )
-            return self._success({"proposal": self._skill_proposal_payload(record)})
-        except Exception as exc:
-            return self._failure(exc)
+            change: dict[str, Any] = {
+                "kind": "patch",
+                "path": path,
+                "body": skill_md,
+                "tags": ["skill"],
+            }
+        else:
+            change = {
+                "kind": "create",
+                "path": path,
+                "concept_type": "concept",
+                "title": skill_name.replace("-", " ").title(),
+                "body": skill_md,
+                "description": f"Versioned agent skill {skill_name}.",
+                "tags": ["skill"],
+                "aliases": [],
+            }
+        return self.memory_propose(
+            context,
+            intent=f"Attach skill asset {skill_name} {version}",
+            base_revision=get_main_revision(self._deps.repo_paths),
+            rationale=rationale,
+            changes=[
+                change,
+                {
+                    "kind": "attach_asset_pack",
+                    "path": path,
+                    "asset_kind": "skill",
+                    "version": version,
+                    "zip_base64": zip_base64,
+                },
+            ],
+        )
 
-    def memory_skill_proposal_get(
-        self, context: ServiceContext, *, proposal_id: str
-    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        try:
-            policy = self._policy(context)
-            if "proposer" not in policy.roles and "curator" not in policy.roles:
-                require_role(policy, "proposer")
-            record = get_skill_pack_proposal(self._deps.control_connection, proposal_id)
-            self._require_skill_proposal_access(policy, record, write=False)
-            record = self._refresh_skill_proposal(record)
-            return self._success({"proposal": self._skill_proposal_payload(record)})
-        except Exception as exc:
-            return self._failure(exc)
-
-    def memory_skill_proposal_list(
-        self, context: ServiceContext, *, status: str | None = None
-    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        try:
-            policy = self._policy(context)
-            if "proposer" not in policy.roles and "curator" not in policy.roles:
-                require_role(policy, "proposer")
-            visible = []
-            for record in list_skill_pack_proposals(self._deps.control_connection):
-                refreshed = self._refresh_skill_proposal(record)
-                if status is not None and refreshed.status.value != status:
-                    continue
-                if refreshed.author_principal != policy.principal and "curator" not in policy.roles:
-                    continue
-                if not self._is_authorized(policy, "/skills/", action="read"):
-                    continue
-                visible.append(self._skill_proposal_payload(refreshed))
-            return self._success({"proposals": visible})
-        except Exception as exc:
-            return self._failure(exc)
-
-    def memory_skill_proposal_review(
+    def memory_asset_prune(
         self,
         context: ServiceContext,
         *,
-        proposal_id: str,
-        decision: str,
-        comment: str | None = None,
-    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        try:
-            policy = self._policy(context)
-            require_role(policy, "curator")
-            record = self._refresh_skill_proposal(
-                get_skill_pack_proposal(self._deps.control_connection, proposal_id)
-            )
-            self._require_skill_proposal_access(policy, record, write=True)
-            if record.author_principal == policy.principal and decision == "approve":
-                raise ForbiddenError("proposal authors cannot self-approve")
-            if record.status in {
-                SkillPackProposalStatus.APPLIED,
-                SkillPackProposalStatus.EXPIRED,
-                SkillPackProposalStatus.STALE,
-            }:
-                raise ConflictError(f"skill proposal {proposal_id} is {record.status.value}")
-            new_status = {
-                "approve": SkillPackProposalStatus.APPROVED,
-                "reject": SkillPackProposalStatus.REJECTED,
-                "request_changes": SkillPackProposalStatus.REJECTED,
-            }.get(decision)
-            if new_status is None:
-                raise ServiceError(f"unsupported proposal decision: {decision}")
-            updated = set_skill_pack_proposal_status(
-                self._deps.control_connection,
-                proposal_id,
-                status=new_status,
-                reviewed_by=policy.principal,
-                review_comment=comment,
-            )
-            return self._success({"proposal": self._skill_proposal_payload(updated)})
-        except Exception as exc:
-            return self._failure(exc)
-
-    def memory_skill_proposal_apply(
-        self,
-        context: ServiceContext,
-        *,
-        proposal_id: str,
+        id_or_path: str,
+        asset_kind: str,
+        keep: int = 5,
         expected_revision: str,
         idempotency_key: str,
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
             require_role(policy, "curator")
-            record = self._refresh_skill_proposal(
-                get_skill_pack_proposal(self._deps.control_connection, proposal_id)
+            path = self._resolve_path(id_or_path)
+            authorize_path(policy, path, action="write")
+            entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
+            versions = list_asset_versions(
+                self._deps.repo_paths.current_dir,
+                entry.document.frontmatter.id,
+                asset_kind,
             )
-            self._require_skill_proposal_access(policy, record, write=True)
-            request_json = json.dumps(
-                {"proposal_id": proposal_id, "expected_revision": expected_revision},
-                sort_keys=True,
-            )
-            existing = get_operation_by_idempotency(
-                self._deps.control_connection, policy.principal, idempotency_key
-            )
-            if record.status is SkillPackProposalStatus.APPLIED and existing is not None:
-                probe = OperationRequest(
-                    op_id=existing.op_id,
-                    principal=policy.principal,
-                    idempotency_key=idempotency_key,
-                    tool_name="memory_skill_proposal_apply",
-                    request_json=request_json,
+            kept, pruned = retention_partition(versions, keep=keep)
+            active_versions = {
+                asset.version
+                for asset in list_proposal_assets(
+                    self._deps.control_connection,
+                    concept_path=path,
+                    asset_kind=asset_kind,
                 )
-                if existing.request_hash != probe.request_hash:
-                    raise IdempotencyConflictError(
-                        "idempotency key already used for a different request"
-                    )
-                if existing.state is OperationState.SUCCEEDED and existing.result_revision:
-                    replay = existing.replay_payload or {}
-                    replay_paths = replay.get("changed_paths", [])
-                    changed_paths = (
-                        tuple(str(path) for path in replay_paths if isinstance(path, str))
-                        if isinstance(replay_paths, list)
-                        else ()
-                    )
-                    return self._success(
-                        {
-                            "proposal": self._skill_proposal_payload(record),
-                            "changed_paths": changed_paths,
-                            "replayed": True,
-                        },
-                        repo_revision=existing.result_revision,
-                        index_revision=existing.result_revision,
-                        operation_id=existing.op_id,
-                    )
-            if record.status is not SkillPackProposalStatus.APPROVED:
-                raise ConflictError(f"skill proposal {proposal_id} is {record.status.value}")
-            pack = ValidatedSkillPack(
-                skill_name=record.skill_name,
-                version=record.version,
-                skill_md=record.skill_md,
-                zip_bytes=record.zip_bytes,
-                manifest=record.manifest,
-            )
+                if get_proposal(self._deps.control_connection, asset.proposal_id).status
+                in {ProposalStatus.SUBMITTED, ProposalStatus.APPROVED}
+            }
+            pruned = tuple(version for version in pruned if version not in active_versions)
+            kept = tuple(version for version in versions if version not in pruned)
+            if not pruned:
+                return self._success(
+                    {
+                        "concept_path": path,
+                        "asset_kind": asset_kind,
+                        "kept_versions": kept,
+                        "pruned_versions": (),
+                    }
+                )
             request = self._transaction_request(
                 context,
                 idempotency_key=idempotency_key,
-                tool_name="memory_skill_proposal_apply",
+                tool_name="memory_asset_prune",
                 expected_revision=expected_revision,
-                request_json=request_json,
-                commit_message=f"memory: accept skill {record.skill_name} {record.version}",
-            )
-            result = self._deps.transaction_manager.apply(
-                request,
-                lambda worktree: write_skill_pack_version(
-                    worktree,
-                    pack,
-                    accepted_by=policy.principal,
-                    source_proposal_id=proposal_id,
+                request_json=json.dumps(
+                    {
+                        "concept_path": path,
+                        "asset_kind": asset_kind,
+                        "keep": keep,
+                        "expected_revision": expected_revision,
+                    },
+                    sort_keys=True,
                 ),
+                commit_message=f"memory: prune {asset_kind} assets for {path}",
             )
-            updated = set_skill_pack_proposal_status(
-                self._deps.control_connection,
-                proposal_id,
-                status=SkillPackProposalStatus.APPLIED,
-                applied_operation_id=result.operation.op_id,
-                applied_revision=result.result_revision,
-            )
+
+            def mutate(worktree: Path) -> tuple[str, ...]:
+                changed: list[str] = []
+                for old_version in pruned:
+                    for repo_path in asset_version_paths(
+                        entry.document.frontmatter.id, asset_kind, old_version
+                    ):
+                        target = worktree / repo_path.removeprefix("/")
+                        if target.exists():
+                            target.unlink()
+                            changed.append(repo_path)
+                return tuple(changed)
+
+            result = self._deps.transaction_manager.apply(request, mutate)
             return self._success(
                 {
-                    "proposal": self._skill_proposal_payload(updated),
-                    "changed_paths": result.changed_paths,
+                    "concept_path": path,
+                    "asset_kind": asset_kind,
+                    "kept_versions": kept,
+                    "pruned_versions": pruned,
                     "replayed": result.replayed,
                 },
                 repo_revision=result.result_revision,
@@ -1251,66 +1186,14 @@ class MemoryService:
         expected_revision: str,
         idempotency_key: str,
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        try:
-            policy = self._policy(context)
-            require_role(policy, "curator")
-            authorize_path(policy, "/skills/", action="write")
-            versions = list_skill_pack_versions(self._deps.repo_paths.current_dir, skill_name)
-            kept, pruned = retention_partition(versions, keep=keep)
-            active_versions = {
-                item.version
-                for item in list_skill_pack_proposals(self._deps.control_connection)
-                if item.skill_name == skill_name
-                and item.status
-                in {SkillPackProposalStatus.SUBMITTED, SkillPackProposalStatus.APPROVED}
-            }
-            pruned = tuple(version for version in pruned if version not in active_versions)
-            kept = tuple(version for version in versions if version not in pruned)
-            if not pruned:
-                return self._success(
-                    {"skill_name": skill_name, "kept_versions": kept, "pruned_versions": ()}
-                )
-            request = self._transaction_request(
-                context,
-                idempotency_key=idempotency_key,
-                tool_name="memory_skill_prune",
-                expected_revision=expected_revision,
-                request_json=json.dumps(
-                    {
-                        "skill_name": skill_name,
-                        "keep": keep,
-                        "expected_revision": expected_revision,
-                    },
-                    sort_keys=True,
-                ),
-                commit_message=f"memory: prune skill {skill_name} versions",
-            )
-
-            def mutate(worktree: Path) -> tuple[str, ...]:
-                changed = []
-                for old_version in pruned:
-                    paths = skill_pack_paths(skill_name, old_version)
-                    for repo_path in (paths.version_document, paths.zip_path):
-                        target = worktree / repo_path.removeprefix("/")
-                        if target.exists():
-                            target.unlink()
-                            changed.append(repo_path)
-                return tuple(changed)
-
-            result = self._deps.transaction_manager.apply(request, mutate)
-            return self._success(
-                {
-                    "skill_name": skill_name,
-                    "kept_versions": kept,
-                    "pruned_versions": pruned,
-                    "replayed": result.replayed,
-                },
-                repo_revision=result.result_revision,
-                index_revision=result.result_revision,
-                operation_id=result.operation.op_id,
-            )
-        except Exception as exc:
-            return self._failure(exc)
+        return self.memory_asset_prune(
+            context,
+            id_or_path=f"/skills/{skill_name}.md",
+            asset_kind="skill",
+            keep=keep,
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+        )
 
     def memory_create(
         self,
@@ -1509,7 +1392,12 @@ class MemoryService:
             return self._failure(exc)
 
     def _apply_changes(
-        self, worktree: Path, changes: list[ProposalChange], *, actor: str
+        self,
+        worktree: Path,
+        changes: list[ProposalChange],
+        *,
+        actor: str,
+        proposal_id: str | None = None,
     ) -> tuple[str, ...]:
         changed_paths: set[str] = set()
         for change in changes:
@@ -1522,6 +1410,12 @@ class MemoryService:
             elif isinstance(change, RenameChange):
                 rewritten = self._apply_rename(worktree, change, actor=actor)
                 changed_paths.update(rewritten)
+            elif isinstance(change, AttachAssetPackChange):
+                if proposal_id is None:
+                    raise ServiceError("asset changes require a proposal")
+                changed_paths.update(
+                    self._apply_asset_pack(worktree, change, actor=actor, proposal_id=proposal_id)
+                )
             else:  # pragma: no cover
                 raise TypeError(f"unsupported change: {type(change)!r}")
         return tuple(sorted(changed_paths))
@@ -1578,6 +1472,39 @@ class MemoryService:
         )
         target = validate_repository_write_path(worktree, change.path)
         target.absolute_path.write_text(serialize_concept(document), encoding="utf-8")
+
+    def _apply_asset_pack(
+        self,
+        worktree: Path,
+        change: AttachAssetPackChange,
+        *,
+        actor: str,
+        proposal_id: str,
+    ) -> set[str]:
+        entry = read_bundle_entry(worktree, change.path)
+        asset = get_proposal_asset(
+            self._deps.control_connection,
+            proposal_id,
+            change.asset_id,
+        )
+        if asset.sha256 != change.zip_sha256:
+            raise ConflictError("proposal asset digest does not match proposal metadata")
+        manifest = SkillPackManifest.model_validate(change.manifest)
+        if manifest.sha256 != asset.sha256:
+            raise ConflictError("proposal asset manifest digest does not match stored bytes")
+        return set(
+            write_asset_version(
+                worktree,
+                concept_id=entry.document.frontmatter.id,
+                concept_path=change.path,
+                asset_kind=change.asset_kind,
+                version=change.version,
+                zip_bytes=asset.blob_bytes,
+                manifest=manifest,
+                accepted_by=actor,
+                source_proposal_id=proposal_id,
+            )
+        )
 
     def _apply_rename(self, worktree: Path, change: RenameChange, *, actor: str) -> set[str]:
         old_target = validate_repository_write_path(worktree, change.path)
@@ -1667,6 +1594,11 @@ class MemoryService:
                 )
             elif isinstance(change, RenameChange):
                 diffs.append(f"rename {change.path} -> {change.new_path}\n")
+            elif isinstance(change, AttachAssetPackChange):
+                diffs.append(
+                    f"attach {change.asset_kind} asset {change.version} "
+                    f"({change.zip_sha256}) to {change.path}\n"
+                )
             else:  # pragma: no cover
                 raise TypeError(type(change))
         return "".join(diffs)
@@ -2010,6 +1942,142 @@ class MemoryService:
         except (AuthorizationError, ServiceError):
             return False
 
+    def _prepare_asset_changes(
+        self, changes: list[dict[str, Any]], *, proposal_id: str
+    ) -> tuple[list[dict[str, Any]], tuple[ProposalAssetInput, ...]]:
+        stored: list[dict[str, Any]] = []
+        assets: list[ProposalAssetInput] = []
+        rename_paths = {str(raw.get("path")) for raw in changes if raw.get("kind") == "rename"} | {
+            str(raw.get("new_path")) for raw in changes if raw.get("kind") == "rename"
+        }
+        for raw in changes:
+            item = dict(raw)
+            if item.get("kind") != "attach_asset_pack":
+                stored.append(item)
+                continue
+            path = str(item.get("path", ""))
+            if path in rename_paths:
+                raise ServiceError("rename and asset attachment must use separate proposals")
+            asset_kind = validate_asset_kind(str(item.get("asset_kind", "")))
+            version = str(item.get("version", ""))
+            zip_base64 = item.pop("zip_base64", None)
+            if not isinstance(zip_base64, str):
+                raise ServiceError("attach_asset_pack requires zip_base64")
+            max_base64_chars = ((MAX_ZIP_BYTES + 2) // 3) * 4
+            if len(zip_base64) > max_base64_chars:
+                raise ServiceError("zip_base64 exceeds maximum encoded size")
+            try:
+                zip_bytes = base64.b64decode(zip_base64, validate=True)
+            except (binascii.Error, ValueError) as exc:
+                raise ServiceError("zip_base64 must be valid base64") from exc
+            skill_name = Path(path).stem
+            expected_body = self._resulting_body_for_asset(changes, path)
+            if asset_kind == "skill":
+                pack = validate_skill_pack(
+                    skill_name=skill_name,
+                    version=version,
+                    skill_md=expected_body,
+                    zip_bytes=zip_bytes,
+                )
+            else:
+                pack = validate_asset_pack(
+                    asset_kind=asset_kind,
+                    version=version,
+                    zip_bytes=zip_bytes,
+                )
+            for existing_asset in list_proposal_assets(
+                self._deps.control_connection,
+                concept_path=path,
+                asset_kind=asset_kind,
+            ):
+                existing_proposal = self._refresh_proposal_status(
+                    get_proposal(self._deps.control_connection, existing_asset.proposal_id)
+                )
+                if existing_asset.version == version and existing_proposal.status in {
+                    ProposalStatus.SUBMITTED,
+                    ProposalStatus.APPROVED,
+                }:
+                    raise ConflictError(
+                        f"active asset proposal already exists: {path} {asset_kind} {version}"
+                    )
+            asset_id = str(uuid4())
+            stored_item = {
+                "kind": "attach_asset_pack",
+                "path": path,
+                "asset_kind": asset_kind,
+                "version": version,
+                "asset_id": asset_id,
+                "zip_sha256": pack.manifest.sha256,
+                "manifest": pack.manifest.model_dump(mode="json"),
+            }
+            stored.append(stored_item)
+            assets.append(
+                ProposalAssetInput(
+                    asset_id=asset_id,
+                    concept_path=path,
+                    asset_kind=asset_kind,
+                    version=version,
+                    media_type="application/zip",
+                    sha256=pack.manifest.sha256,
+                    blob_bytes=zip_bytes,
+                    manifest_json=pack.manifest.model_dump_json(),
+                )
+            )
+        return stored, tuple(assets)
+
+    def _resulting_body_for_asset(self, changes: list[dict[str, Any]], path: str) -> str:
+        for raw in changes:
+            if raw.get("path") == path and raw.get("kind") in {"create", "patch"}:
+                body = raw.get("body")
+                if isinstance(body, str):
+                    return body
+        return read_bundle_entry(self._deps.repo_paths.current_dir, path).document.body
+
+    def _adapt_existing_asset_concepts(self, changes: list[ProposalChange]) -> list[ProposalChange]:
+        attached_paths = {
+            change.path for change in changes if isinstance(change, AttachAssetPackChange)
+        }
+        adapted: list[ProposalChange] = []
+        for change in changes:
+            if (
+                isinstance(change, CreateChange)
+                and change.path in attached_paths
+                and (self._deps.repo_paths.current_dir / change.path.removeprefix("/")).exists()
+            ):
+                adapted.append(
+                    PatchChange(
+                        kind="patch",
+                        path=change.path,
+                        title=change.title,
+                        description=change.description,
+                        body=change.body,
+                        tags=change.tags,
+                        aliases=change.aliases,
+                    )
+                )
+            else:
+                adapted.append(change)
+        return adapted
+
+    def _validate_skill_asset_bindings(self, changes: list[ProposalChange]) -> None:
+        for change in changes:
+            if not isinstance(change, AttachAssetPackChange) or change.asset_kind != "skill":
+                continue
+            tags: tuple[str, ...] | None = None
+            for candidate in changes:
+                if candidate.path != change.path:
+                    continue
+                if isinstance(candidate, CreateChange) or (
+                    isinstance(candidate, PatchChange) and candidate.tags is not None
+                ):
+                    tags = candidate.tags
+            if tags is None:
+                tags = read_bundle_entry(
+                    self._deps.repo_paths.current_dir, change.path
+                ).document.frontmatter.tags
+            if "skill" not in tags:
+                raise ServiceError("skill asset concepts must include the 'skill' tag")
+
     def _normalize_changes(self, changes: list[dict[str, Any]]) -> list[ProposalChange]:
         normalized: list[ProposalChange] = []
         for item in changes:
@@ -2020,6 +2088,8 @@ class MemoryService:
                 normalized.append(PatchChange.model_validate(item))
             elif kind == "rename":
                 normalized.append(RenameChange.model_validate(item))
+            elif kind == "attach_asset_pack":
+                normalized.append(AttachAssetPackChange.model_validate(item))
             else:
                 raise ServiceError(f"unsupported change kind: {kind}")
         return normalized
@@ -3049,73 +3119,6 @@ class MemoryService:
         if isinstance(exc, GitError):
             return error_envelope("repo_unavailable", str(exc))
         raise exc
-
-    def _refresh_skill_proposal(self, record: SkillPackProposalRecord) -> SkillPackProposalRecord:
-        if record.status in {
-            SkillPackProposalStatus.APPLIED,
-            SkillPackProposalStatus.REJECTED,
-            SkillPackProposalStatus.EXPIRED,
-            SkillPackProposalStatus.STALE,
-        }:
-            return record
-        now = self._now()
-        if record.expires_at is not None:
-            expires = datetime.fromisoformat(record.expires_at.replace("Z", "+00:00"))
-            if expires < now:
-                return set_skill_pack_proposal_status(
-                    self._deps.control_connection,
-                    record.proposal_id,
-                    status=SkillPackProposalStatus.EXPIRED,
-                )
-        if record.base_revision != get_main_revision(self._deps.repo_paths):
-            return set_skill_pack_proposal_status(
-                self._deps.control_connection,
-                record.proposal_id,
-                status=SkillPackProposalStatus.STALE,
-            )
-        return record
-
-    def _require_skill_proposal_access(
-        self, policy: EffectivePolicy, record: SkillPackProposalRecord, *, write: bool
-    ) -> None:
-        if record.author_principal != policy.principal and "curator" not in policy.roles:
-            raise ForbiddenError("skill proposal is not visible to this principal")
-        authorize_path(policy, "/skills/", action="write" if write else "read")
-
-    @staticmethod
-    def _skill_proposal_payload(record: SkillPackProposalRecord) -> dict[str, Any]:
-        return {
-            "proposal_id": record.proposal_id,
-            "author_principal": record.author_principal,
-            "base_revision": record.base_revision,
-            "skill_name": record.skill_name,
-            "version": record.version,
-            "rationale": record.rationale,
-            "skill_md": record.skill_md,
-            "zip_sha256": record.zip_sha256,
-            "manifest": record.manifest.model_dump(mode="json"),
-            "status": record.status.value,
-            "reviewed_by": record.reviewed_by,
-            "review_comment": record.review_comment,
-            "applied_operation_id": record.applied_operation_id,
-            "applied_revision": record.applied_revision,
-            "created_at": record.created_at,
-            "updated_at": record.updated_at,
-            "expires_at": record.expires_at,
-        }
-
-    @staticmethod
-    def _skill_document_payload(
-        metadata: dict[str, object], skill_md: str, *, include_zip: bool
-    ) -> dict[str, Any]:
-        _ = include_zip
-        return {
-            "skill_name": metadata["skill_name"],
-            "version": metadata["version"],
-            "skill_md": skill_md,
-            "zip_sha256": metadata["zip_sha256"],
-            "manifest": metadata["manifest"],
-        }
 
     @staticmethod
     def _proposal_apply_request_json(*, proposal_id: str, expected_revision: str) -> str:

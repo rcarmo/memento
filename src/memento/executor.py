@@ -112,11 +112,12 @@ class ProposalApplyArgs(BaseModel):
     idempotency_key: str
 
 
-class SkillSearchArgs(BaseModel):
+class AssetGetArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    query: str
-    limit: int = 20
+    id_or_path: str
+    asset_kind: str
+    version: str | None = None
 
 
 class SkillGetArgs(BaseModel):
@@ -136,30 +137,12 @@ class SkillProposeArgs(BaseModel):
     rationale: str | None = None
 
 
-class SkillProposalGetArgs(BaseModel):
+class AssetPruneArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    proposal_id: str
-
-
-class SkillProposalListArgs(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    status: str | None = None
-
-
-class SkillProposalReviewArgs(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    proposal_id: str
-    decision: str
-    comment: str | None = None
-
-
-class SkillProposalApplyArgs(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    proposal_id: str
+    id_or_path: str
+    asset_kind: str
+    keep: int = 5
     expected_revision: str
     idempotency_key: str
 

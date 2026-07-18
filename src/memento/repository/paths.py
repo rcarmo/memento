@@ -73,7 +73,7 @@ def validate_repository_read_path(root: Path, bundle_path: str) -> SafeRepositor
 
 
 def is_reserved_bundle_path(bundle_path: str) -> bool:
-    if bundle_path == "/skills" or bundle_path.startswith("/skills/"):
+    if bundle_path == "/.assets" or bundle_path.startswith("/.assets/"):
         return True
     relative_path = Path(bundle_path.removeprefix("/"))
     if relative_path.name in RESERVED_FILENAMES:
