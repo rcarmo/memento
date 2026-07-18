@@ -75,7 +75,22 @@ Memento would still validate every result, but the base model's 85.71% valid-cal
 
 ## Fine-tuning experiment
 
-A follow-up experiment may fine-tune Needle on a reviewed Memento corpus while keeping it outside the service repository and runtime. The minimum held-out set should cover:
+A free local fine-tune was completed on an NVIDIA RTX 3060 12 GB using a deterministic 1,500-example corpus: 180 help, 180 status, 240 search, 240 read, 360 execute and 300 UNKNOWN cases. No model API generated the data. Training used the pinned base checkpoint, two epochs, batch size 32, BF16 and Needle's default optimiser settings.
+
+Needle's built-in random per-tool split used 1,380 train, 60 validation and 60 test examples. It improved from 21.67% to 91.67% exact match, 42.28% to 98.33% name F1 and reached 100% parse rate. Those figures are useful training evidence but are not acceptance evidence because paraphrase families and slot patterns crossed the random split.
+
+Two leakage-resistant checks remained below threshold:
+
+| Held-out set | Routing | JSON validity | UNKNOWN | Execute plans |
+|---|---:|---:|---:|---:|
+| Original unchanged 21 cases | 85.71% | 100% | 80% precision | 2/3 routed; routed plans valid |
+| New unseen-family 28 cases | 75.00% | 96.43% | 62.50% recall; 37.50% false actions | 50% routed; 0% valid across all expected plans |
+
+Peak RSS on the CUDA/JAX evaluation path was about 2.29 GB and median unseen-holdout latency was 0.626 s. The fine-tuned checkpoint is not shipped because it fails the safety and plan-validity gates.
+
+Evidence is under [`docs/evidence/needle/`](../evidence/needle/). The deterministic corpus generator is `tools/experiments/needle/generate_corpus.py`.
+
+A later follow-up may repeat fine-tuning with strict family-separated train/validation files, stronger hard negatives and grammar-constrained nested plans. The minimum held-out set should cover:
 
 * 700 compact routing examples split across help, status, search, read, execute, answer and UNKNOWN.
 * 600 bounded `memory_execute` plans, including safe references, return projections and one-commit enforcement.
@@ -94,6 +109,10 @@ The go/no-go thresholds are:
 * 100% compliance with one-commit, forbidden-path and no-direct-write rules.
 
 Results must be repeated on AMD64 and ARM64. Claims about Cactus throughput require running the exact fine-tuned checkpoint through a pinned Cactus runtime; the Needle repository's published Cactus figures do not prove Memento workload performance.
+
+## Updated decision
+
+The fine-tune does not change the no-go decision. The model learned direct routing, but random-split quality did not transfer to unseen phrasing, abstention remained unsafe and nested plans remained unreliable. A second experiment is only justified after Needle can train from explicit family-separated splits and constrain nested values rather than only tool names and top-level argument keys.
 
 ## Consequences
 
