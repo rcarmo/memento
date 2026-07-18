@@ -56,10 +56,12 @@ class MementoRuntime:
 
     def build_server(self) -> MementoMCPServer:
         self._require_open()
+        log_file = self.paths.root / "logs" / "umcp.log"
+        log_file.parent.mkdir(parents=True, exist_ok=True)
         return MementoMCPServer(
             self.service,
             bearer_tokens=self._bearer_tokens(),
-            log_file=self.paths.root / "logs" / "umcp.log",
+            log_file=log_file,
         )
 
     def status_snapshot(self) -> dict[str, Any]:
