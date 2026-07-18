@@ -2,11 +2,11 @@
 
 ![Memento](docs/icon_256.png)
 
-An AI agent can remember several different kinds of things, and mixing them together causes trouble surprisingly quickly.
+Memento is a memory system designed to be shared by multiple agents on the same network.
 
-A conversation is short-lived working context. A reminder belongs to the agent that must deliver it. Credentials belong to one machine or user. But a fact such as "Smith runs Piclaw", "this service replaced that one" or "the backup lives here" may need to survive for years and be available to several agents.
+Agents remember several kinds of things, and they should not all live in the same place. Conversations are short-lived context. Reminders belong to the agent that must deliver them. Credentials belong to one machine or user. Facts such as "Smith runs Piclaw", "this service replaced that one" or "the backup lives here" may need to last for years and be available to everyone.
 
-Memento stores that last category: shared, durable knowledge. I built it for several Piclaw instances, but any MCP client can connect, search, read, submit proposals and, with curator access, publish changes.
+Memento stores those shared facts. I built it for several Piclaw instances, but any MCP client can connect, search, read, submit proposals and, with curator access, publish changes.
 
 Two small local models help with retrieval. [`cactus-compute/needle`][needle] routes simple natural-language requests to read operations, while [`rcarmo/go-gte`][go-gte] and the [`thenlper/gte-small`][gte-small] weights find related concepts when the wording differs. Permissions and Git changes stay in Memento.
 
