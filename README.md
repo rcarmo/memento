@@ -6,6 +6,26 @@ A conversation is short-lived working context. A reminder belongs to the agent t
 
 Memento stores that last category: shared, durable knowledge.
 
+```mermaid
+flowchart LR
+    request[Agent request] --> core[Deterministic Memento core]
+    core --> needle[Needle router<br/>chooses a shallow read action]
+    needle --> core
+    core --> gte[GTE-small<br/>embeds and ranks concepts]
+    gte --> core
+    core --> hot[Hot query model<br/>short cited answers]
+    core --> deep[Deep query model<br/>bounded multi-step answers]
+    core --> proposal[Proposal model<br/>drafts reviewed changes]
+    core --> dream[Dream model<br/>suggests maintenance]
+    hot --> core
+    deep --> core
+    proposal --> core
+    dream --> core
+    core --> store[(Git knowledge<br/>and rebuildable indexes)]
+```
+
+Needle is the small local traffic cop: it maps a natural-language read request to a bounded search, status, read or graph action, and abstains when the request does not fit. GTE-small turns queries and concepts into 384-dimensional vectors for semantic and hybrid ranking. The optional hot-query model produces short cited answers, while the deep-query model handles bounded multi-step traversal. The proposal model drafts changes for review, and the Dream model suggests maintenance from graph-health signals. None of them authorise callers or write directly--the deterministic Memento core validates every result and owns Git, policy and persistence.
+
 ## Piclaw And Agent Memory
 
 [`piclaw`][piclaw] is a self-hosted agent runtime. A Piclaw instance has its own chats, local notes, reminders, scheduled jobs, tools and credentials. You might run one instance as a personal assistant, another near a home server and a third for a project. Each should remain operationally independent.
