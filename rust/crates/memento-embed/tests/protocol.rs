@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 fn fixture_model() -> Option<Model> {
     let path =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/fixtures/gte-small.gtemodel");
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../models/gte/gte-small.gtemodel");
     Model::from_path(path).ok()
 }
 

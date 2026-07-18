@@ -11,7 +11,7 @@ The Rust workspace keeps parity fixtures with MIT-attributed data generated agai
 
 ## Outputs
 
-* `rust/tests/fixtures/gte-small.gtemodel`
+* `models/gte/gte-small.gtemodel`
 * `rust/tests/fixtures/go_parity.json`
 
 ## Prerequisites
@@ -32,7 +32,7 @@ cd rust
 
 ## What the script does
 
-* Converts the upstream safetensors model into `GTE1` and writes `rust/tests/fixtures/gte-small.gtemodel`.
+* Converts the upstream safetensors model into `GTE1` and writes `models/gte/gte-small.gtemodel`.
 * Builds a temporary Go program that loads the converted model through `/tmp/go-gte`, tokenises a fixed text set and emits embeddings.
 * Writes the resulting parity record to `rust/tests/fixtures/go_parity.json` with source and licence metadata.
 * Removes the temporary Go source file on exit.

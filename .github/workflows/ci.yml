@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           git lfs ls-files
-          if head -n 1 rust/tests/fixtures/gte-small.gtemodel | grep -q '^version https://git-lfs.github.com/spec/'; then
+          if head -n 1 models/gte/gte-small.gtemodel | grep -q '^version https://git-lfs.github.com/spec/'; then
             echo "GTE model is still a Git LFS pointer" >&2
             exit 1
           fi

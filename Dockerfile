@@ -30,7 +30,7 @@ COPY --from=rust-builder /build/rust/target/release/libmemento_ffi.so /usr/local
 COPY --from=rust-builder /build/rust/target/release/libmemento_sqlite_vector.so /usr/local/lib/memento/
 COPY --from=rust-builder /build/rust/target/release/libmemento_needle_ffi.so /usr/local/lib/memento/
 COPY --from=rust-builder /build/rust/target/release/memento-embed /usr/local/bin/
-COPY rust/tests/fixtures/gte-small.gtemodel /usr/local/share/memento/models/gte-small.gtemodel
+COPY models/gte/gte-small.gtemodel /usr/local/share/memento/models/gte-small.gtemodel
 COPY models/needle/memento-router.ndl /usr/local/share/memento/models/memento-router.ndl
 COPY models/needle/needle.model /usr/local/share/memento/models/needle.model
 RUN python -m pip install --upgrade pip \

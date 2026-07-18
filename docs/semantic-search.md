@@ -6,7 +6,7 @@ Semantic search is optional and rebuildable. FTS5 stays the default because it i
 
 * Enable semantic search only when the local Rust stack and model artefacts are in place.
 * Keep `lexical` as the default unless benchmark data says otherwise.
-* Use the vendored model at `rust/tests/fixtures/gte-small.gtemodel` unless an explicitly reviewed replacement is configured. The container image copies that file to `/usr/local/share/memento/models/gte-small.gtemodel` and exports matching default environment variables.
+* Use the vendored model at `models/gte/gte-small.gtemodel` unless an explicitly reviewed replacement is configured. The container image copies that file to `/usr/local/share/memento/models/gte-small.gtemodel` and exports matching default environment variables.
 
 ## Components
 

@@ -448,7 +448,7 @@ def build_harness_environment(
     if semantic_enabled:
         ffi_library = ROOT / "rust/target/release/libmemento_ffi.so"
         sqlite_extension = ROOT / "rust/target/release/libmemento_sqlite_vector.so"
-        model_path = ROOT / "rust/tests/fixtures/gte-small.gtemodel"
+        model_path = ROOT / "models/gte/gte-small.gtemodel"
         if not ffi_library.exists() or not sqlite_extension.exists():
             subprocess.run(
                 [
