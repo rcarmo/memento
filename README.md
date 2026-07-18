@@ -4,7 +4,7 @@ An AI agent can remember several different kinds of things, and mixing them toge
 
 A conversation is short-lived working context. A reminder belongs to the agent that must deliver it. Credentials belong to one machine or user. But a fact such as "Smith runs Piclaw", "this service replaced that one" or "the backup lives here" may need to survive for years and be available to several agents.
 
-Memento stores that last category: shared, durable knowledge.
+Memento stores that last category: shared, durable knowledge. It was designed to solve this across multiple Piclaw instances, but Piclaw is not required: any MCP-enabled agent or client can connect, authenticate, search, read, submit proposals and--when granted the appropriate role--curate shared memory.
 
 ```mermaid
 flowchart LR
@@ -26,9 +26,9 @@ flowchart LR
 
 Needle is the small local traffic cop: it maps a natural-language read request to a bounded search, status, read or graph action, and abstains when the request does not fit. GTE-small turns queries and concepts into 384-dimensional vectors for semantic and hybrid ranking. The optional hot-query model produces short cited answers, while the deep-query model handles bounded multi-step traversal. The proposal model drafts changes for review, and the Dream model suggests maintenance from graph-health signals. None of them authorise callers or write directly--the deterministic Memento core validates every result and owns Git, policy and persistence.
 
-## Piclaw And Agent Memory
+## Piclaw, MCP, And Agent Memory
 
-[`piclaw`][piclaw] is a self-hosted agent runtime. A Piclaw instance has its own chats, local notes, reminders, scheduled jobs, tools and credentials. You might run one instance as a personal assistant, another near a home server and a third for a project. Each should remain operationally independent.
+[`piclaw`][piclaw] is the motivating self-hosted agent runtime. A Piclaw instance has its own chats, local notes, reminders, scheduled jobs, tools and credentials. You might run one instance as a personal assistant, another near a home server and a third for a project. Each should remain operationally independent. Other MCP clients use the same authenticated tools and contracts; Memento does not depend on Piclaw-specific chat, storage or extension APIs.
 
 That independence creates a memory problem. If two agents both need the same facts, copying Markdown between them produces several versions of the truth. Sharing their entire chat database is worse--private conversations, credentials and reminders have different owners and retention rules.
 
@@ -95,14 +95,14 @@ The compact MCP surface is intentionally small. It exposes:
 * optional `memory_answer`
 * `memory_execute`
 
-That gives a compact surface count of **5** without answers and **6** with answers enabled.
+That gives a compact surface count of **5** without answers and **6** with answers enabled; enabling the Needle router adds `memory_route`.
 
-Other configured surfaces are explicit and fixed:
+Other configured surfaces include the dedicated skill-pack operations and are explicit and fixed:
 
-* `standard`: **18** direct tools
-* `read_only`: **8** direct tools
-* `curator`: **9** direct tools without `memory_answer`, **10** with it
-* `admin`: **19** direct tools
+* `standard`: **26** direct tools
+* `read_only`: **10** direct tools
+* `curator`: **16** direct tools without `memory_answer`, **17** with it
+* `admin`: **27** direct tools
 
 `memory_help()` takes no arguments. It returns a filtered payload that reflects the active tool surface and answer setting: available goals, supported formats, answer sources, search modes, catalog resources, workflow templates, visible direct tools, execute limits and any execute-only operations.
 
@@ -181,6 +181,24 @@ The release-mode Rust runtime was pinned to one logical CPU on an Intel Core i7-
 These are single-core measurements from one host, not portable SLOs. CPU frequency and host contention were not fixed. For capacity planning, recent Intel and AMD AVX2/FMA cores should land around 0.4-0.65 s warm p50; older AVX2 Intel cores around 0.65-1.0 s; ARM server-class NEON cores around 0.6-1.0 s; modern ARM SBC cores around 1.0-1.8 s; and low-power x86 around 1.2-2.5 s. Those ranges are projections until measured on the target hardware.
 
 The full methodology, caveats and per-platform planning table are in [`docs/needle-performance.md`](docs/needle-performance.md); the machine-readable run is in [`docs/evidence/needle/rust-router-single-core-i7-12700.json`](docs/evidence/needle/rust-router-single-core-i7-12700.json).
+
+## Complete Skill Packs
+
+Memento can store complete, versioned agent skills rather than reducing them to searchable prose. Each accepted version consists of ordinary searchable Markdown containing the exact `SKILL.md` text plus an immutable ZIP stored through Git LFS. The ZIP may contain scripts, references and binary assets, but not executable binaries, links, nested archives or unsafe paths.
+
+The skill workflow is deliberately storage-only:
+
+```text
+proposer submits ZIP + exact SKILL.md
+    -> curator reviews and applies
+    -> readers search the latest accepted version
+    -> reader recalls latest or an explicit version
+    -> client imports into .pi/skills/<name>/
+```
+
+Names use lowercase words and hyphens; versions are stable semantic versions. Search returns only the highest accepted version, while explicit recall can fetch any retained version. The newest five are retained by default, and pruning never removes the latest or a version referenced by an active proposal.
+
+`memory_skill_get` returns the validated ZIP and generated manifest. The included Python helper `memento.skill_import.import_skill_pack` revalidates and atomically imports it into a workspace, normalises files as non-executable and refuses to overwrite an existing skill directory. Memento itself never installs, merges, enables or executes a skill.
 
 ## Safety And Recovery
 

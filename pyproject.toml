@@ -26,6 +26,7 @@ dependencies = [
 [project.scripts]
 memento = "memento.cli:main"
 memento-serve = "memento.cli:main"
+memento-skill-import = "memento.skill_import:main"
 
 [project.optional-dependencies]
 dev = [

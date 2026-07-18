@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import io
 import shutil
 import tempfile
@@ -11,6 +12,26 @@ from memento.skill_packs import ValidatedSkillPack, validate_skill_pack
 
 class SkillImportConflictError(FileExistsError):
     """Raised when a workspace already contains the recalled skill."""
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Import a recalled ZIP and exact SKILL.md into a workspace."""
+    parser = argparse.ArgumentParser(description="Import a validated Memento skill pack")
+    parser.add_argument("--workspace", default=".")
+    parser.add_argument("--name", required=True)
+    parser.add_argument("--version", required=True)
+    parser.add_argument("--skill-md", required=True)
+    parser.add_argument("--zip", dest="zip_path", required=True)
+    args = parser.parse_args(argv)
+    destination = import_skill_pack(
+        workspace=Path(args.workspace),
+        skill_name=args.name,
+        version=args.version,
+        skill_md=Path(args.skill_md).read_text(encoding="utf-8"),
+        zip_bytes=Path(args.zip_path).read_bytes(),
+    )
+    print(destination)
+    return 0
 
 
 def import_skill_pack(
@@ -28,6 +49,7 @@ def import_skill_pack(
         skill_md=skill_md,
         zip_bytes=zip_bytes,
     )
+    _reject_symlinked_import_root(workspace)
     destination = workspace / ".pi" / "skills" / skill_name
     if destination.exists():
         raise SkillImportConflictError(f"skill destination already exists: {destination}")
@@ -40,6 +62,17 @@ def import_skill_pack(
         shutil.rmtree(temp_dir, ignore_errors=True)
         raise
     return destination
+
+
+def _reject_symlinked_import_root(workspace: Path) -> None:
+    workspace = workspace.resolve(strict=True)
+    current = workspace
+    for part in (".pi", "skills"):
+        current = current / part
+        if current.is_symlink():
+            raise ValueError(f"skill import parent must not be a symlink: {current}")
+        if current.exists() and not current.is_dir():
+            raise ValueError(f"skill import parent must be a directory: {current}")
 
 
 def _extract_validated_pack(pack: ValidatedSkillPack, destination: Path) -> None:

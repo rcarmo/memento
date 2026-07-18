@@ -50,6 +50,14 @@ Common secret-bearing keys such as `authorization`, `token`, `password`, `secret
 
 Because the CLI status path also needs the writer lease, use it for offline inspection or one-shot scrape jobs against a stopped instance. For live status, use MCP.
 
+## Skill-pack storage
+
+Accepted skill ZIPs are Git LFS objects inside the canonical bare repository. Install `git-lfs` anywhere Memento performs accepted skill writes or restores backups. The release container includes it.
+
+Skill submission uses base64 inside MCP JSON. `mcp.max_request_bytes` defaults to 72 MiB, while decoded ZIP content remains capped at 50 MiB and is inspected before proposal storage. Reverse proxies must allow the same request size or skill submission will fail before reaching Memento.
+
+Memento returns recalled ZIPs but does not install them. A client can use `memento.skill_import.import_skill_pack` to import into `.pi/skills/<name>/`; it fails if that destination exists, leaving merge decisions to the client or auditor.
+
 ## Backups
 
 Backups contain the canonical bare repository, the control plane SQLite copy and, when present, a copy of `derived.sqlite`.

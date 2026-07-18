@@ -123,6 +123,7 @@ from memento.router import (
     parse_needle_router_output,
 )
 from memento.skill_packs import (
+    MAX_ZIP_BYTES,
     ValidatedSkillPack,
     validate_skill_pack,
 )
@@ -1022,6 +1023,9 @@ class MemoryService:
             policy = self._policy(context)
             require_role(policy, "proposer")
             authorize_path(policy, "/skills/", action="write")
+            max_base64_chars = ((MAX_ZIP_BYTES + 2) // 3) * 4
+            if len(zip_base64) > max_base64_chars:
+                raise ServiceError("zip_base64 exceeds maximum encoded size")
             try:
                 zip_bytes = base64.b64decode(zip_base64, validate=True)
             except (binascii.Error, ValueError) as exc:
@@ -1036,6 +1040,9 @@ class MemoryService:
                 raise ConflictError(
                     f"accepted skill version already exists: {skill_name} {version}"
                 )
+            for sibling in list_skill_pack_proposals(self._deps.control_connection):
+                if sibling.skill_name == skill_name and sibling.version == version:
+                    self._refresh_skill_proposal(sibling)
             record = create_skill_pack_proposal(
                 self._deps.control_connection,
                 author_principal=policy.principal,
@@ -1056,7 +1063,8 @@ class MemoryService:
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
-            require_role(policy, "proposer")
+            if "proposer" not in policy.roles and "curator" not in policy.roles:
+                require_role(policy, "proposer")
             record = get_skill_pack_proposal(self._deps.control_connection, proposal_id)
             self._require_skill_proposal_access(policy, record, write=False)
             record = self._refresh_skill_proposal(record)
@@ -1069,7 +1077,8 @@ class MemoryService:
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
-            require_role(policy, "proposer")
+            if "proposer" not in policy.roles and "curator" not in policy.roles:
+                require_role(policy, "proposer")
             visible = []
             for record in list_skill_pack_proposals(self._deps.control_connection, status=status):
                 if record.author_principal != policy.principal and "curator" not in policy.roles:
@@ -1137,6 +1146,43 @@ class MemoryService:
                 get_skill_pack_proposal(self._deps.control_connection, proposal_id)
             )
             self._require_skill_proposal_access(policy, record, write=True)
+            request_json = json.dumps(
+                {"proposal_id": proposal_id, "expected_revision": expected_revision},
+                sort_keys=True,
+            )
+            existing = get_operation_by_idempotency(
+                self._deps.control_connection, policy.principal, idempotency_key
+            )
+            if record.status is SkillPackProposalStatus.APPLIED and existing is not None:
+                probe = OperationRequest(
+                    op_id=existing.op_id,
+                    principal=policy.principal,
+                    idempotency_key=idempotency_key,
+                    tool_name="memory_skill_proposal_apply",
+                    request_json=request_json,
+                )
+                if existing.request_hash != probe.request_hash:
+                    raise IdempotencyConflictError(
+                        "idempotency key already used for a different request"
+                    )
+                if existing.state is OperationState.SUCCEEDED and existing.result_revision:
+                    replay = existing.replay_payload or {}
+                    replay_paths = replay.get("changed_paths", [])
+                    changed_paths = (
+                        tuple(str(path) for path in replay_paths if isinstance(path, str))
+                        if isinstance(replay_paths, list)
+                        else ()
+                    )
+                    return self._success(
+                        {
+                            "proposal": self._skill_proposal_payload(record),
+                            "changed_paths": changed_paths,
+                            "replayed": True,
+                        },
+                        repo_revision=existing.result_revision,
+                        index_revision=existing.result_revision,
+                        operation_id=existing.op_id,
+                    )
             if record.status is not SkillPackProposalStatus.APPROVED:
                 raise ConflictError(f"skill proposal {proposal_id} is {record.status.value}")
             pack = ValidatedSkillPack(
@@ -1151,10 +1197,7 @@ class MemoryService:
                 idempotency_key=idempotency_key,
                 tool_name="memory_skill_proposal_apply",
                 expected_revision=expected_revision,
-                request_json=json.dumps(
-                    {"proposal_id": proposal_id, "expected_revision": expected_revision},
-                    sort_keys=True,
-                ),
+                request_json=request_json,
                 commit_message=f"memory: accept skill {record.skill_name} {record.version}",
             )
             result = self._deps.transaction_manager.apply(

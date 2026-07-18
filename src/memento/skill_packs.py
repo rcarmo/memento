@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 STABLE_SEMVER_PATTERN = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 
+MAX_ZIP_BYTES = 50 * 1024 * 1024
 MAX_UNCOMPRESSED_BYTES = 50 * 1024 * 1024
 MAX_FILE_COUNT = 512
 MAX_ARCHIVE_ENTRY_COUNT = 1024
@@ -88,6 +89,8 @@ def validate_skill_pack(
     parse_stable_semver(version)
 
     expected_skill_md = skill_md.encode("utf-8")
+    if len(zip_bytes) > MAX_ZIP_BYTES:
+        raise SkillPackValidationError("ZIP archive exceeds maximum encoded size")
     pack_sha256 = hashlib.sha256(zip_bytes).hexdigest()
 
     try:
