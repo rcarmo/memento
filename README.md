@@ -205,6 +205,15 @@ Repository-owned local load testing is documented in [`docs/load-testing.md`](do
 * [`docs/evidence/`](docs/evidence/README.md) contains reviewed local operational, HTTP and semantic reports.
 * [`AGENTS.md`](AGENTS.md) defines contribution and validation rules.
 
-Memento is MIT licensed. Third-party runtime and model attribution is recorded in [`docs/attribution.md`](docs/attribution.md).
+## Credits
+
+Memento's semantic-search runtime is derived from and validated against [`rcarmo/go-gte`][go-gte], whose model conversion, tokenizer and inference work provided the reference implementation for the Rust GTE port. The vendored GTE-small weights originate from [`thenlper/gte-small`][gte-small].
+
+The embedded shallow router builds on [`cactus-compute/needle`][needle] and its 26M-parameter checkpoint. Memento adds the fine-tuned routing corpus and checkpoint, deterministic NDL1 conversion, pure-Rust inference runtime, SIMD kernels, C ABI and the validation boundary that keeps model output advisory.
+
+Memento is MIT licensed. Third-party runtime, model and artefact details are recorded in [`docs/attribution.md`](docs/attribution.md).
 
 [piclaw]: https://github.com/rcarmo/piclaw
+[go-gte]: https://github.com/rcarmo/go-gte
+[gte-small]: https://huggingface.co/thenlper/gte-small
+[needle]: https://github.com/cactus-compute/needle
