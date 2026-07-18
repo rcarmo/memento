@@ -311,9 +311,6 @@ class MemoryService:
             "skills": [
                 "memory_search",
                 "memory_read",
-                "memory_skill_get",
-                "memory_skill_propose",
-                "memory_skill_prune",
             ],
             "compact": [
                 spec.tool_name for spec in OPERATION_SPECS if spec.tool_name in visible_tools
@@ -1023,72 +1020,6 @@ class MemoryService:
         except Exception as exc:
             return self._failure(exc)
 
-    def memory_skill_get(
-        self, context: ServiceContext, *, skill_name: str, version: str | None = None
-    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        return self.memory_asset_get(
-            context,
-            id_or_path=f"/skills/{skill_name}.md",
-            asset_kind="skill",
-            version=version,
-        )
-
-    def memory_skill_propose(
-        self,
-        context: ServiceContext,
-        *,
-        skill_name: str,
-        version: str,
-        skill_md: str,
-        zip_base64: str,
-        rationale: str | None = None,
-    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        path = f"/skills/{skill_name}.md"
-        existing = self._deps.repo_paths.current_dir / path.removeprefix("/")
-        if existing.exists():
-            entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
-            if version in list_asset_versions(
-                self._deps.repo_paths.current_dir,
-                entry.document.frontmatter.id,
-                "skill",
-            ):
-                return self._failure(
-                    ConflictError(f"accepted skill version already exists: {skill_name} {version}")
-                )
-            change: dict[str, Any] = {
-                "kind": "patch",
-                "path": path,
-                "body": skill_md,
-                "tags": ["skill"],
-            }
-        else:
-            change = {
-                "kind": "create",
-                "path": path,
-                "concept_type": "concept",
-                "title": skill_name.replace("-", " ").title(),
-                "body": skill_md,
-                "description": f"Versioned agent skill {skill_name}.",
-                "tags": ["skill"],
-                "aliases": [],
-            }
-        return self.memory_propose(
-            context,
-            intent=f"Attach skill asset {skill_name} {version}",
-            base_revision=get_main_revision(self._deps.repo_paths),
-            rationale=rationale,
-            changes=[
-                change,
-                {
-                    "kind": "attach_asset_pack",
-                    "path": path,
-                    "asset_kind": "skill",
-                    "version": version,
-                    "zip_base64": zip_base64,
-                },
-            ],
-        )
-
     def memory_asset_prune(
         self,
         context: ServiceContext,
@@ -1176,24 +1107,6 @@ class MemoryService:
             )
         except Exception as exc:
             return self._failure(exc)
-
-    def memory_skill_prune(
-        self,
-        context: ServiceContext,
-        *,
-        skill_name: str,
-        keep: int = 5,
-        expected_revision: str,
-        idempotency_key: str,
-    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        return self.memory_asset_prune(
-            context,
-            id_or_path=f"/skills/{skill_name}.md",
-            asset_kind="skill",
-            keep=keep,
-            expected_revision=expected_revision,
-            idempotency_key=idempotency_key,
-        )
 
     def memory_create(
         self,

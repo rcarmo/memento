@@ -1,5 +1,9 @@
 # Attribution
 
+## uMCP
+
+Memento uses [`rcarmo/umcp`](https://github.com/rcarmo/umcp) for its MCP server, Streamable HTTP transport, request context, authentication and authorization hooks. The Python package pins commit `691af9f159757d45c180856ec0dfb89da7aa341c` through the `mcp` optional dependency.
+
 ## Rust workspace
 
 The Rust implementation under `rust/` includes code derived from and validated against the MIT-licensed [`rcarmo/go-gte`](https://github.com/rcarmo/go-gte) reference implementation. That attribution applies to:

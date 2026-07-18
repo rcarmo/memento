@@ -345,11 +345,11 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     expected_counts: tuple[
         tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
     ] = (
-        ("compact", 7),
-        ("standard", 23),
-        ("read_only", 10),
-        ("curator", 13),
-        ("admin", 24),
+        ("compact", 6),
+        ("standard", 20),
+        ("read_only", 9),
+        ("curator", 11),
+        ("admin", 21),
     )
     for surface, count in expected_counts:
         server = _server_for(
@@ -367,7 +367,6 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "search",
         "read",
         "asset_get",
-        "skill_get",
         "execute",
     ]
     assert any(item["operation"] == "proposal_apply" for item in catalog["execute_only_operations"])
@@ -383,7 +382,6 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     assert help_payload["goals"]["skills"] == [
         "memory_search",
         "memory_read",
-        "memory_skill_get",
     ]
     assert help_payload["mcp"]["execute_only_operations"]["propose"] == (
         "propose",
@@ -401,7 +399,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     ]
 
 
-def test_skill_pack_tool_discovery_and_catalog_schemas(
+def test_asset_pack_tool_discovery_and_catalog_schemas(
     service: MemoryService,
     service_config: ServiceConfig,
 ) -> None:
@@ -411,27 +409,27 @@ def test_skill_pack_tool_discovery_and_catalog_schemas(
     )
     standard_tools = {item["name"]: item for item in standard_server.discover_tools()["tools"]}
     assert "memory_asset_get" in standard_tools
-    assert "memory_skill_get" in standard_tools
-    assert "memory_skill_propose" in standard_tools
     assert "memory_asset_prune" in standard_tools
-    assert "memory_skill_prune" in standard_tools
     assert "memory_execute" not in standard_tools
     assert standard_tools["memory_asset_get"]["annotations"] == {
         "roles": ["reader"],
         "operation": "asset_get",
     }
-    assert (
-        standard_tools["memory_skill_propose"]["inputSchema"]["properties"]["zip_base64"]["type"]
-        == "string"
+    propose_entry = json.loads(
+        asyncio.run(standard_server.resource_template_catalog("propose"))["text"]
     )
+    changes_schema = propose_entry["input_schema"]["properties"]["changes"]
+    assert changes_schema["type"] == "array"
+    assert "anyOf" in changes_schema["items"]
     assert set(standard_tools["memory_asset_prune"]["inputSchema"]["required"]) == {
         "id_or_path",
         "asset_kind",
         "expected_revision",
         "idempotency_key",
     }
-    assert set(standard_tools["memory_skill_prune"]["inputSchema"]["required"]) == {
-        "skill_name",
+    assert set(standard_tools["memory_asset_prune"]["inputSchema"]["required"]) == {
+        "id_or_path",
+        "asset_kind",
         "expected_revision",
         "idempotency_key",
     }
@@ -442,28 +440,23 @@ def test_skill_pack_tool_discovery_and_catalog_schemas(
     )
     read_only_tools = {item["name"] for item in read_only_server.discover_tools()["tools"]}
     assert "memory_asset_get" in read_only_tools
-    assert "memory_skill_get" in read_only_tools
-    assert "memory_skill_propose" not in read_only_tools
     assert "memory_asset_prune" not in read_only_tools
-    assert "memory_skill_prune" not in read_only_tools
 
     catalog = json.loads(asyncio.run(standard_server.resource_catalog())["text"])
-    skill_ops = {item["operation"]: item for item in catalog["operations"]}
-    assert skill_ops["asset_get"]["tool"] == "memory_asset_get"
-    assert skill_ops["asset_get"]["commit_capable"] is False
-    assert skill_ops["asset_prune"]["commit_capable"] is True
-    assert skill_ops["skill_prune"]["commit_capable"] is True
+    asset_ops = {item["operation"]: item for item in catalog["operations"]}
+    assert asset_ops["asset_get"]["tool"] == "memory_asset_get"
+    assert asset_ops["asset_get"]["commit_capable"] is False
+    assert asset_ops["asset_prune"]["commit_capable"] is True
 
-    skill_pack_workflow = json.loads(
-        asyncio.run(standard_server.resource_template_workflow("skill_pack"))["text"]
+    asset_pack_workflow = json.loads(
+        asyncio.run(standard_server.resource_template_workflow("asset_pack"))["text"]
     )
-    assert [item["operation"] for item in skill_pack_workflow["operations"]] == [
+    assert [item["operation"] for item in asset_pack_workflow["operations"]] == [
         "search",
+        "read",
+        "propose",
         "asset_get",
-        "skill_get",
-        "skill_propose",
         "asset_prune",
-        "skill_prune",
     ]
 
 
@@ -476,7 +469,7 @@ def _skill_zip(skill_md: str, script: str = "console.log('ok')\n") -> tuple[str,
     return base64.b64encode(data).decode("ascii"), data
 
 
-def test_skill_pack_propose_review_apply_search_and_recall(
+def test_asset_pack_skill_lifecycle_uses_generic_propose_review_apply_and_get(
     service: MemoryService,
     repo_paths: GitRepositoryPaths,
     smith: ServiceContext,
@@ -484,17 +477,36 @@ def test_skill_pack_propose_review_apply_search_and_recall(
 ) -> None:
     skill_md = "---\nname: demo-skill\ndescription: Demo\n---\n# Demo Skill\n"
     encoded, zip_bytes = _skill_zip(skill_md)
-    proposed = service.memory_skill_propose(
+    base_revision = get_main_revision(repo_paths)
+    proposed = service.memory_propose(
         flint,
-        skill_name="demo-skill",
-        version="1.0.0",
-        skill_md=skill_md,
-        zip_base64=encoded,
+        intent="Share complete skill",
+        base_revision=base_revision,
         rationale="share complete skill",
+        changes=[
+            {
+                "kind": "create",
+                "path": "/skills/demo-skill.md",
+                "concept_type": "project",
+                "title": "Demo Skill",
+                "description": "Demo",
+                "tags": ["skill"],
+                "body": skill_md,
+            },
+            {
+                "kind": "attach_asset_pack",
+                "path": "/skills/demo-skill.md",
+                "asset_kind": "skill",
+                "version": "1.0.0",
+                "zip_base64": encoded,
+            },
+        ],
     )
     proposal = success_data(proposed)["proposal"]
     assert proposal["status"] == "submitted"
-    assert "zip_base64" not in proposal
+    assert "zip_base64" not in proposal["changes"][1]
+    assert proposal["changes"][1]["asset_kind"] == "skill"
+    assert proposal["changes"][1]["version"] == "1.0.0"
 
     self_review = service.memory_proposal_review(
         flint, proposal_id=proposal["proposal_id"], decision="approve"
@@ -510,16 +522,16 @@ def test_skill_pack_propose_review_apply_search_and_recall(
     )
     assert success_data(approved)["proposal"]["status"] == "approved"
 
-    revision = get_main_revision(repo_paths)
     applied = service.memory_proposal_apply(
         smith,
         proposal_id=proposal["proposal_id"],
-        expected_revision=revision,
+        expected_revision=base_revision,
         idempotency_key="skill-demo-1",
     )
     assert applied.status == "success", applied.model_dump(mode="python")
     applied_data = success_data(applied)
     assert applied_data["proposal"]["status"] == "applied"
+    assert "/skills/demo-skill.md" in applied_data["changed_paths"]
     assert any(
         path.startswith("/.assets/") and path.endswith("/skill/1.0.0.zip")
         for path in applied_data["changed_paths"]
@@ -528,7 +540,7 @@ def test_skill_pack_propose_review_apply_search_and_recall(
         service.memory_proposal_apply(
             smith,
             proposal_id=proposal["proposal_id"],
-            expected_revision=revision,
+            expected_revision=base_revision,
             idempotency_key="skill-demo-1",
         )
     )
@@ -537,20 +549,51 @@ def test_skill_pack_propose_review_apply_search_and_recall(
 
     searched = success_data(service.memory_search(flint, query="Demo Skill"))
     assert [item["path"] for item in searched["results"]] == ["/skills/demo-skill.md"]
-    recalled = success_data(service.memory_skill_get(flint, skill_name="demo-skill"))
+    read_back = success_data(service.memory_read(flint, id_or_path="/skills/demo-skill.md"))
+    assert read_back["frontmatter"]["title"] == "Demo Skill"
+    assert "skill" in read_back["frontmatter"]["tags"]
+    recalled = success_data(
+        service.memory_asset_get(flint, id_or_path="/skills/demo-skill.md", asset_kind="skill")
+    )
+    assert recalled["concept_path"] == "/skills/demo-skill.md"
     assert recalled["version"] == "1.0.0"
     assert recalled["versions"] == ["1.0.0"]
     assert base64.b64decode(recalled["zip_base64"]) == zip_bytes
 
-    duplicate = service.memory_skill_propose(
+    duplicate = service.memory_propose(
         flint,
-        skill_name="demo-skill",
-        version="1.0.0",
-        skill_md=skill_md,
-        zip_base64=encoded,
+        intent="Duplicate skill asset",
+        base_revision=get_main_revision(repo_paths),
+        changes=[
+            {
+                "kind": "patch",
+                "path": "/skills/demo-skill.md",
+                "body": skill_md,
+            },
+            {
+                "kind": "attach_asset_pack",
+                "path": "/skills/demo-skill.md",
+                "asset_kind": "skill",
+                "version": "1.0.0",
+                "zip_base64": encoded,
+            },
+        ],
     )
-    assert duplicate.status == "error"
-    assert duplicate.error_class == "conflict"
+    assert duplicate.status == "success"
+    duplicate_id = success_data(duplicate)["proposal"]["proposal_id"]
+    duplicate_review = service.memory_proposal_review(
+        smith, proposal_id=duplicate_id, decision="approve"
+    )
+    assert duplicate_review.status == "success"
+    duplicate_apply = service.memory_proposal_apply(
+        smith,
+        proposal_id=duplicate_id,
+        expected_revision=get_main_revision(repo_paths),
+        idempotency_key="skill-demo-duplicate",
+    )
+    assert duplicate_apply.status == "error"
+    assert duplicate_apply.error_class == "validation_error"
+    assert "accepted asset version already exists" in duplicate_apply.message
 
 
 def test_generic_asset_proposal_rejects_duplicate_and_rename_mix(
@@ -747,7 +790,6 @@ def test_memory_route_disabled_and_server_discovery(
         "memory_read",
         "memory_route",
         "memory_asset_get",
-        "memory_skill_get",
         "memory_execute",
     ]
     catalog = json.loads(asyncio.run(server.resource_catalog())["text"])
