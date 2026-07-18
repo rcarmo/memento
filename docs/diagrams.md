@@ -100,7 +100,7 @@ Every dispatched operation still enters the ordinary service method, so compact 
 
 ## Compact surfaces and execute-only operations
 
-This is the part that is easy to blur in prose, so the diagram makes it explicit.
+Direct tool counts vary by surface; optional answers and routing add one tool each where enabled.
 
 ```mermaid
 flowchart TD
@@ -110,11 +110,11 @@ flowchart TD
     curator[curator surface]
     admin[admin surface]
 
-    compact --> ctools[5 direct tools<br/>or 6 with memory_answer]
-    readonly --> rtools[8 direct tools]
-    standard --> stools[18 direct tools]
-    curator --> curtools[9 direct tools<br/>or 10 with memory_answer]
-    admin --> atools[19 direct tools]
+    compact --> ctools[6 direct tools<br/>7 with memory_answer]
+    readonly --> rtools[9 direct tools]
+    standard --> stools[20 direct tools]
+    curator --> curtools[11 direct tools<br/>12 with memory_answer]
+    admin --> atools[21 direct tools]
 
     curator --> execonly[create / patch / rename are execute-only here]
     standard --> directmut[create / patch / rename are direct tools]

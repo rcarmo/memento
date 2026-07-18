@@ -1,5 +1,7 @@
 # Operations
 
+The state boundaries used by backup and recovery are recorded in [ADR 0003](decisions/0003-separate-knowledge-control-and-derived-state.md).
+
 Memento runs as a single authoritative writer. The daemon is the normal live interface. The local maintenance CLI is for offline or otherwise exclusive operator work.
 
 This document covers Docker, Compose, systemd and reverse-proxy deployments. The examples have local checks; production results are not included.
@@ -50,13 +52,13 @@ Common secret-bearing keys such as `authorization`, `token`, `password`, `secret
 
 Because the CLI status path also needs the writer lease, use it for offline inspection or one-shot scrape jobs against a stopped instance. For live status, use MCP.
 
-## Skill-pack storage
+## Asset-pack storage
 
-Accepted skill ZIPs are Git LFS objects inside the canonical bare repository. Install `git-lfs` anywhere Memento performs accepted skill writes or restores backups. The release container includes it.
+Accepted asset ZIPs are Git LFS objects inside the canonical bare repository. Install `git-lfs` anywhere Memento applies asset proposals or restores backups. The release container includes it.
 
-Skill submission uses base64 inside MCP JSON. `mcp.max_request_bytes` defaults to 72 MiB, while decoded ZIP content remains capped at 50 MiB and is inspected before proposal storage. Reverse proxies must allow the same request size or skill submission will fail before reaching Memento.
+Asset submission uses base64 inside MCP JSON. `mcp.max_request_bytes` defaults to 72 MiB, while decoded ZIP content is capped at 50 MiB and inspected before proposal storage. Reverse proxies must allow the same request size.
 
-Memento returns recalled ZIPs but does not install them. A client can use `memento.skill_import.import_skill_pack` to import into `.pi/skills/<name>/`; it fails if that destination exists, leaving merge decisions to the client or auditor.
+Memento returns recalled ZIPs but does not install them. For skill packs, `memento-skill-import` imports into `.pi/skills/<name>/` and fails if that destination exists.
 
 ## Backups
 

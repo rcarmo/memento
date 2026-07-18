@@ -4,7 +4,7 @@ Memento separates shared facts from an agent's chats, reminders and local mainte
 
 The implementation is a Python daemon around a Git-backed Markdown repository, `control.sqlite` for operational state, and rebuildable search and graph indexes. Read, proposal and curation tools do not depend on optional model features.
 
-The request and state transitions are collected in [Memento transition diagrams](diagrams.md).
+The request and state transitions are collected in [Memento transition diagrams](diagrams.md). Accepted architecture decisions are indexed under [`docs/decisions/`](decisions/README.md).
 
 In short:
 
@@ -26,7 +26,7 @@ Piclaw clients
 
 | Plane | Authority | Implemented responsibilities |
 |---|---|---|
-| Knowledge plane | Git repository | canonical Markdown concepts, searchable skill metadata, immutable Git LFS skill ZIPs, deterministic serialisation, inbound-link rewrites on rename, audit-friendly history |
+| Knowledge plane | Git repository | canonical Markdown concepts, immutable Git LFS asset packs, deterministic serialisation, inbound-link rewrites on rename, audit-friendly history |
 | Control plane | `control.sqlite` | operation journal, idempotency, proposal lifecycle, scheduler runs, service checkpoints |
 | Derived plane | rebuildable SQLite/files | FTS5, graph metadata, semantic vectors, answer cache, hot working memory, traces and signals as configured |
 | Execution plane | service process | MCP tools, authn/authz, transaction pipeline, recovery, notifications, optional model tiers |

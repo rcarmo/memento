@@ -1,6 +1,6 @@
 # Needle shallow-router artefacts
 
-This directory holds the Git LFS artefacts for the passing shallow-router follow-up described in [ADR 0002](../../docs/decisions/0002-needle-feasibility.md).
+This directory holds the Git LFS artefacts for the shallow router described in [ADR 0002](../../docs/decisions/0002-needle-feasibility.md). Corpus generation, training settings, hard-negative continuation and checkpoint conversion are documented in [`docs/needle-fine-tuning.md`](../../docs/needle-fine-tuning.md).
 
 ## Git LFS prerequisite
 
