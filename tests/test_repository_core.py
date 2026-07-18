@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import stat
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
@@ -107,6 +108,14 @@ def test_frontmatter_parse_and_deterministic_serialize() -> None:
     assert "  - assistant" in serialized_once
     assert serialized_once.endswith("\n")
     assert "smith-piclaw\n" in serialized_once
+
+
+def test_concept_serialization_is_thread_safe() -> None:
+    document = parse_concept_text(VALID_CONCEPT)
+    expected = serialize_concept(document)
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        outputs = list(executor.map(lambda _: serialize_concept(document), range(100)))
+    assert outputs == [expected] * 100
 
 
 def test_frontmatter_rejects_unknown_keys() -> None:

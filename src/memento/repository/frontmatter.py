@@ -10,12 +10,6 @@ from ruamel.yaml import YAML
 
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter
 
-_YAML = YAML()
-_YAML.default_flow_style = False
-_YAML.allow_unicode = True
-_YAML.indent(mapping=2, sequence=4, offset=2)
-_YAML.width = 4096
-
 _FRONTMATTER_ORDER = (
     "schema_version",
     "id",
@@ -58,7 +52,12 @@ def parse_concept_file(path: Path) -> ConceptDocument:
 def serialize_concept(document: ConceptDocument) -> str:
     metadata = _ordered_metadata(document.frontmatter)
     yaml_output = StringIO()
-    _YAML.dump(metadata, yaml_output)
+    yaml = YAML()
+    yaml.default_flow_style = False
+    yaml.allow_unicode = True
+    yaml.indent(mapping=2, sequence=4, offset=2)
+    yaml.width = 4096
+    yaml.dump(metadata, yaml_output)
     body = _normalize_body(document.body)
     return f"---\n{yaml_output.getvalue()}---\n{body}\n"
 
