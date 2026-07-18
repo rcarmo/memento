@@ -1,0 +1,54 @@
+{
+  "seed": 20260718,
+  "tools": [
+    "search_then_read",
+    "search_paths",
+    "status_field",
+    "search_then_graph",
+    "read_field",
+    "UNKNOWN"
+  ],
+  "splits": {
+    "train": {
+      "count": 1440,
+      "per_tool": 240,
+      "entities": [
+        "Alder",
+        "Birch",
+        "Cedar",
+        "Dahlia",
+        "Elm",
+        "Fir",
+        "Grove",
+        "Hazel",
+        "Iris",
+        "Jade",
+        "Kelp",
+        "Lotus"
+      ],
+      "sha256": "2981a418a73e74bae8b559cc5dda40feda30df8c04feb150bd2490eb85b3d95c"
+    },
+    "val": {
+      "count": 360,
+      "per_tool": 60,
+      "entities": [
+        "Maple",
+        "Nectar",
+        "Olive",
+        "Pine"
+      ],
+      "sha256": "2065d3c0d2732e2d08ba7b584c9aab7eb444e2b00ef0b6312c5c822bc3fa85d9"
+    },
+    "test": {
+      "count": 360,
+      "per_tool": 60,
+      "entities": [
+        "Quartz",
+        "Reef",
+        "Spruce",
+        "Thyme"
+      ],
+      "sha256": "9ffeb303574fa6bd24718adc42c7a3d8c4632e3cf78685d14886c7b24b2ddca9"
+    }
+  }
+}

@@ -89,6 +89,7 @@ See [`docs/semantic-search.md`](docs/semantic-search.md) for configuration and p
 
 Memento remains fully useful without an LLM. Optional, independently gated tiers add:
 
+* a fine-tuned local Needle shallow-router checkpoint and deterministic action expander, currently disabled pending embedded AMD64/ARM64 runtime validation;
 * exact answer caching scoped by repository revision and authorisation visibility;
 * a small hot working set over recent concepts and accepted answers;
 * bounded read-only traversal with validated citations;

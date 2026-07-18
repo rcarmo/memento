@@ -110,9 +110,31 @@ The go/no-go thresholds are:
 
 Results must be repeated on AMD64 and ARM64. Claims about Cactus throughput require running the exact fine-tuned checkpoint through a pinned Cactus runtime; the Needle repository's published Cactus figures do not prove Memento workload performance.
 
+## Shallow-router follow-up
+
+A second experiment stopped asking Needle to generate nested plans or copy authoritative slots. It classified six shallow actions: `search_then_read`, `search_paths`, `status_field`, `search_then_graph`, `read_field` and `UNKNOWN`. Memento expands those actions deterministically; the model never supplies references or commit operations.
+
+The corpus used explicit family-separated files with disjoint entities and path shapes: 1,440 training, 360 validation and 360 untouched test examples, balanced across all six actions. Four epochs at batch 16 reached 99.3% tool-name F1, but five test cases from one direct-mutation family still truncated instead of abstaining. A one-epoch continuation added 288 training-only direct-mutation hard negatives without changing validation or test data.
+
+The unchanged 360-case test then produced:
+
+| Measure | Result | Gate |
+|---|---:|---:|
+| Routing accuracy | 100% | >=97% |
+| Valid call shape | 100% | >=99% |
+| Non-UNKNOWN routing | 100% | >=97% |
+| UNKNOWN recall | 100% | >=90% |
+| False action rate | 0% | <=2% |
+| Median latency | 0.442 s | informational |
+| p95 latency | 0.579 s | informational |
+
+Argument exact match remained 54.17%, confirming that Needle should classify intent and fixed enums only. Memento must derive search text from the original request, parse exact paths/IDs and expand fixed plans in deterministic code. `src/memento/router.py` freezes and tests that boundary without adding a JAX dependency.
+
+The passing checkpoint and family-separated corpora are vendored through Git LFS under `models/needle/`. The checkpoint SHA-256 is `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
+
 ## Updated decision
 
-The fine-tune does not change the no-go decision. The model learned direct routing, but random-split quality did not transfer to unseen phrasing, abstention remained unsafe and nested plans remained unreliable. A second experiment is only justified after Needle can train from explicit family-separated splits and constrain nested values rather than only tool names and top-level argument keys.
+The shallow router passes the AMD64 held-out routing and abstention gates. It remains disabled in production because the available JAX environment is 1.1 GB and peaked above 2 GB RSS. Integration now depends on proving the exact checkpoint through a pinned embedded/Cactus runtime on AMD64 and ARM64, with cancellation, offline artefacts and equivalent outputs.
 
 ## Consequences
 

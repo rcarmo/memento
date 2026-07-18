@@ -1,0 +1,82 @@
+{
+  "base_eval": {
+    "args_acc": 0.507,
+    "call_f1": 0.5035,
+    "exact_match": 0.5,
+    "n": 360,
+    "name_f1": 0.993,
+    "parse_rate": 0.9861,
+    "per_tool": {
+      "UNKNOWN": {
+        "correct": 55,
+        "total": 60
+      },
+      "read_field": {
+        "correct": 15,
+        "total": 60
+      },
+      "search_paths": {
+        "correct": 15,
+        "total": 60
+      },
+      "search_then_graph": {
+        "correct": 20,
+        "total": 60
+      },
+      "search_then_read": {
+        "correct": 15,
+        "total": 60
+      },
+      "status_field": {
+        "correct": 60,
+        "total": 60
+      }
+    }
+  },
+  "finetuned_eval": {
+    "args_acc": 0.5417,
+    "call_f1": 0.5417,
+    "exact_match": 0.5417,
+    "n": 360,
+    "name_f1": 1.0,
+    "parse_rate": 1.0,
+    "per_tool": {
+      "UNKNOWN": {
+        "correct": 60,
+        "total": 60
+      },
+      "read_field": {
+        "correct": 15,
+        "total": 60
+      },
+      "search_paths": {
+        "correct": 20,
+        "total": 60
+      },
+      "search_then_graph": {
+        "correct": 20,
+        "total": 60
+      },
+      "search_then_read": {
+        "correct": 20,
+        "total": 60
+      },
+      "status_field": {
+        "correct": 60,
+        "total": 60
+      }
+    }
+  },
+  "training": {
+    "base_epochs": 4,
+    "batch_size": 16,
+    "final_checkpoint_sha256": "969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8",
+    "gpu": "NVIDIA GeForce RTX 3060 12GB",
+    "hard_negative_continuation_epochs": 1,
+    "source_checkpoint_sha256": "969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8",
+    "test_examples": 360,
+    "train_examples_hard": 1728,
+    "train_examples_initial": 1440,
+    "validation_examples": 360
+  }
+}
