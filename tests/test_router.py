@@ -281,6 +281,10 @@ def test_status_and_read_field_mappings_match_sample_payload_shapes() -> None:
 def test_parse_needle_router_output_normalizes_bounded_field_aliases() -> None:
     status = parse_needle_router_output('[{"name":"status_field","arguments":{"field":"indexed"}}]')
     assert status == StatusFieldAction(action="status_field", field="index_revision")
+    generic_status = parse_needle_router_output(
+        '[{"name":"status_field","arguments":{"field":"status"}}]'
+    )
+    assert generic_status == StatusFieldAction(action="status_field", field="readiness")
     read = parse_needle_router_output(
         '[{"name":"read_field","arguments":{"id_or_path":"x","field":"contents"}}]'
     )

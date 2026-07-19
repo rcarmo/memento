@@ -182,6 +182,7 @@ _STATUS_FIELD_ALIASES = {
     "repository": "repo_revision",
     "revision": "repo_revision",
     "stale": "index_stale",
+    "status": "readiness",
     "semantic_ready": "semantic_search_ready",
 }
 _READ_FIELD_ALIASES = {

@@ -375,7 +375,7 @@ class MemoryService:
             semantic = self._deps.derived_index.semantic_status()
             return self._success(
                 {
-                    "service_version": "0.2.0",
+                    "service_version": "0.3.0rc3",
                     "schema_version": self._deps.config.schema_version,
                     "repo_revision": get_main_revision(self._deps.repo_paths),
                     "index_revision": state.index_revision,
