@@ -77,7 +77,7 @@ class MementoRuntime:
         proposals = list_proposals(self.control_connection)
         semantic = self.derived_index.semantic_status()
         return {
-            "service_version": "0.2.0",
+            "service_version": "0.3.0rc3",
             "schema_version": self.config.schema_version,
             "repo_revision": get_main_revision(self.paths.repo_paths),
             "index_revision": state.index_revision,
