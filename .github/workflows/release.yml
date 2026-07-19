@@ -38,9 +38,45 @@ jobs:
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
 
+  quality:
+    name: Validate Python ${{ matrix.python-version }}
+    needs: validate-tag
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - name: Checkout repository and model artefacts
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
+        with:
+          components: clippy,rustfmt
+
+      - name: Install development dependencies
+        run: make install-dev
+
+      - name: Run release quality gate
+        run: |
+          make check
+          make coverage
+          make build-wheel
+          make install-wheel
+          make diff-check
+
   build:
     name: Build ${{ matrix.platform }} image
-    needs: validate-tag
+    needs: [validate-tag, quality]
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
@@ -82,6 +118,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set build metadata
+        id: build-meta
+        shell: bash
+        run: |
+          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          echo "date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
       - name: Extract OCI labels
         id: meta
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
@@ -96,6 +139,10 @@ jobs:
           file: ./Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.build-meta.outputs.version }}
+            COMMIT=${{ github.sha }}
+            BUILD_DATE=${{ steps.build-meta.outputs.date }}
           outputs: type=image,name=${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=${{ matrix.artifact }}
           cache-to: type=gha,mode=max,scope=${{ matrix.artifact }}
@@ -116,9 +163,82 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+  compatibility-amd64:
+    name: Test amd64 image without AVX
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Download amd64 digest
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          path: /tmp/digests
+          pattern: digest-amd64
+          merge-multiple: true
+
+      - name: Log in to GHCR
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check native Needle memory ceiling
+        shell: bash
+        run: |
+          digest="$(basename /tmp/digests/*)"
+          image="${IMAGE_NAME}@sha256:${digest}"
+          docker pull "$image"
+          docker run --rm --entrypoint python \
+            -e MEMENTO_SMOKE_MAX_RSS_MIB=220 \
+            "$image" /usr/local/lib/memento/container_cpu_smoke.py needle
+
+      - name: Install QEMU user emulator
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-user-static
+
+      - name: Export image filesystem
+        shell: bash
+        run: |
+          digest="$(basename /tmp/digests/*)"
+          image="${IMAGE_NAME}@sha256:${digest}"
+          docker pull "$image"
+          container="$(docker create "$image")"
+          mkdir -p /tmp/rootfs
+          docker export "$container" | sudo tar -C /tmp/rootfs -xf -
+          docker rm "$container"
+          sudo cp /usr/bin/qemu-x86_64-static /tmp/rootfs/usr/bin/
+
+      - name: Run scalar-path model smoke under Westmere CPU
+        shell: bash
+        run: |
+          features="$(sudo chroot /tmp/rootfs \
+            /usr/bin/qemu-x86_64-static -cpu Westmere \
+            /usr/local/bin/memento-cpu-features)"
+          echo "$features"
+          grep -q 'sse4.2=true' <<< "$features"
+          grep -q 'avx2=false' <<< "$features"
+          grep -q 'fma=false' <<< "$features"
+          qemu=(
+            /usr/bin/qemu-x86_64-static -cpu Westmere
+            -E MEMENTO_FFI_LIBRARY=/usr/local/lib/memento/libmemento_ffi.so
+            -E MEMENTO_GTE_MODEL=/usr/local/share/memento/models/gte-small.gtemodel
+            -E MEMENTO_NEEDLE_FFI_LIBRARY=/usr/local/lib/memento/libmemento_needle_ffi.so
+            -E MEMENTO_NEEDLE_MODEL=/usr/local/share/memento/models/memento-router.ndl
+            -E MEMENTO_NEEDLE_TOKENIZER=/usr/local/share/memento/models/needle.model
+          )
+          sudo chroot /tmp/rootfs "${qemu[@]}" \
+            /usr/local/bin/python /usr/local/lib/memento/container_cpu_smoke.py gte
+          sudo chroot /tmp/rootfs "${qemu[@]}" \
+            /usr/local/bin/python /usr/local/lib/memento/container_cpu_smoke.py needle
+
   publish:
     name: Publish multi-architecture image
-    needs: [validate-tag, build]
+    needs: [validate-tag, build, compatibility-amd64]
     runs-on: ubuntu-latest
     permissions:
       contents: read

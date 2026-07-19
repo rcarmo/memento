@@ -9,6 +9,7 @@
 | [0005](0005-use-umcp-streamable-http.md) | Use uMCP and Streamable HTTP as the MCP boundary | accepted |
 | [0006](0006-keep-lexical-search-primary.md) | Keep lexical search primary and semantic ranking optional | accepted |
 | [0007](0007-attach-generic-versioned-assets.md) | Attach generic versioned assets to ordinary concepts | accepted |
+| [0008](0008-build-for-baseline-cpus.md) | Build release images for baseline CPUs and select SIMD at runtime | accepted |
 
 ## Discussed but not adopted
 
