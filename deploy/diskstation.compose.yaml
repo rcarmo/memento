@@ -1,0 +1,44 @@
+services:
+  memento:
+    image: ghcr.io/rcarmo/memento:${MEMENTO_VERSION:?set MEMENTO_VERSION to a release such as 0.2.3}
+    container_name: memento
+    restart: unless-stopped
+    user: "65532:65532"
+    read_only: true
+    init: true
+    env_file:
+      - /volume1/docker/memento/config/memento.env
+    command:
+      - --config
+      - /etc/memento/config.json
+      - serve
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --endpoint
+      - /mcp
+    ports:
+      - "127.0.0.1:18081:8000"
+    volumes:
+      - /volume1/docker/memento/config/config.json:/etc/memento/config.json:ro
+      - /volume1/docker/memento/state:/var/lib/memento
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    mem_limit: 320m
+    mem_reservation: 192m
+    pids_limit: 128
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import socket; socket.create_connection(('127.0.0.1', 8000), 2).close()
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
