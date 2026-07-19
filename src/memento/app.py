@@ -12,6 +12,7 @@ from memento.config import Principal, ServiceConfig
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.operations import OperationRequest
 from memento.control.proposals import ProposalStatus, list_proposals
+from memento.derived.embeddings_worker import SemanticEmbeddingRefreshWorker
 from memento.derived.index import DerivedIndex
 from memento.ffi import RustFfiLibrary
 from memento.model_clients import RoutedFallbackModelClient, build_endpoint_clients
@@ -26,8 +27,10 @@ from memento.repository.git import (
 )
 from memento.repository.lease import WriterLease, acquire_writer_lease
 from memento.repository.transactions import TransactionManager, TransactionRequest
+from memento.semantic import EmbeddingClient
 from memento.server import MementoMCPServer
 from memento.service import MemoryService, ServiceDependencies
+from memento.subprocess_embeddings import SubprocessEmbeddingClient
 
 
 class RuntimeClosedError(RuntimeError):
@@ -53,6 +56,7 @@ class MementoRuntime:
     transaction_manager: TransactionManager
     service: MemoryService
     lease: WriterLease
+    embedding_refresh_worker: SemanticEmbeddingRefreshWorker | None = None
     needle_library: NeedleFfiLibrary | None = None
     closed: bool = False
 
@@ -111,6 +115,8 @@ class MementoRuntime:
         self._require_open()
         revision = get_main_revision(self.paths.repo_paths)
         self.derived_index.rebuild(self.paths.repo_paths.current_dir, repo_revision=revision)
+        if self.embedding_refresh_worker is not None:
+            self.embedding_refresh_worker.enqueue(self.paths.repo_paths.current_dir, revision)
         parity = self.derived_index.parity_check(
             self.paths.repo_paths.current_dir,
             repo_revision=revision,
@@ -125,6 +131,8 @@ class MementoRuntime:
     def close(self) -> None:
         if self.closed:
             return
+        if self.embedding_refresh_worker is not None:
+            self.embedding_refresh_worker.close()
         embedding_client = getattr(self.derived_index, "_embedding_client", None)
         close = getattr(embedding_client, "close", None)
         if close is not None:
@@ -198,6 +206,9 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
         paths.writer_lock,
         owner=f"memento[{os.getpid()}]@{socket.gethostname()}",
     )
+    control_connection: sqlite3.Connection | None = None
+    embedding_client: EmbeddingClient | None = None
+    embedding_refresh_worker: SemanticEmbeddingRefreshWorker | None = None
     needle_router = None
     try:
         if not paths.repo_paths.bare_dir.exists():
@@ -207,7 +218,6 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
         control_connection = connect_control_db(paths.control_db)
         migrate_control_db(control_connection)
         semantic = config.intelligent_tiers.semantic_search
-        embedding_client = None
         needle_library = None
         needle_router = None
         if semantic.enabled:
@@ -216,20 +226,31 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             sqlite_path = semantic.sqlite_extension_path or os.environ.get(
                 "MEMENTO_SQLITE_VECTOR_EXTENSION"
             )
-            if not ffi_path or not model_path:
-                raise RuntimeError(
-                    "semantic search requires ffi_library_path/MEMENTO_FFI_LIBRARY "
-                    "and model_path/MEMENTO_GTE_MODEL"
-                )
+            if not model_path:
+                raise RuntimeError("semantic search requires model_path/MEMENTO_GTE_MODEL")
             semantic = semantic.model_copy(
                 update={
-                    "ffi_library_path": ffi_path,
+                    "ffi_library_path": ffi_path or None,
                     "model_path": model_path,
                     "sqlite_extension_path": sqlite_path,
                 }
             )
-            library = RustFfiLibrary(ffi_path)
-            embedding_client = library.load_model(model_path)
+            if semantic.worker_mode == "subprocess":
+                embedding_client = SubprocessEmbeddingClient(
+                    semantic.worker_path,
+                    model_path,
+                    dimensions=semantic.dimensions,
+                    max_batch=semantic.max_batch_size,
+                    max_input_chars=semantic.max_input_chars,
+                    timeout_seconds=semantic.worker_timeout_seconds,
+                )
+            else:
+                if not ffi_path:
+                    raise RuntimeError(
+                        "in-process semantic search requires ffi_library_path/MEMENTO_FFI_LIBRARY"
+                    )
+                library = RustFfiLibrary(ffi_path)
+                embedding_client = library.load_model(model_path)
         needle = config.intelligent_tiers.needle_router
         if needle.enabled:
             ffi_path = os.environ.get("MEMENTO_NEEDLE_FFI_LIBRARY", needle.ffi_library_path).strip()
@@ -258,6 +279,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             paths.derived_db,
             semantic_config=semantic,
             embedding_client=embedding_client,
+            defer_embeddings=semantic.enabled and semantic.worker_mode == "subprocess",
         )
         if not derived_index.db_path.exists() or derived_index.get_state().index_revision == "":
             derived_index.rebuild(
@@ -278,6 +300,8 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                 )
             else:
                 derived_index.rebuild(materialized_root, repo_revision=repo_revision)
+            if embedding_refresh_worker is not None:
+                embedding_refresh_worker.enqueue(materialized_root, repo_revision)
 
         manager = TransactionManager(
             control_connection,
@@ -308,6 +332,11 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             )
         )
         manager.recover_startup()
+        if semantic.enabled and semantic.worker_mode == "subprocess":
+            embedding_refresh_worker = SemanticEmbeddingRefreshWorker(derived_index)
+            state = derived_index.get_state()
+            if derived_index.semantic_status().embedding_revision != state.repo_revision:
+                embedding_refresh_worker.enqueue(paths.repo_paths.current_dir, state.repo_revision)
         if (paths.repo_paths.current_dir / "skills" / ".versions").exists():
             revision = get_main_revision(paths.repo_paths)
             manager.apply(
@@ -335,10 +364,18 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             transaction_manager=manager,
             service=service,
             lease=lease,
+            embedding_refresh_worker=embedding_refresh_worker,
             needle_library=needle_library,
         )
     except Exception:
+        if embedding_refresh_worker is not None:
+            embedding_refresh_worker.close()
+        close = getattr(embedding_client, "close", None)
+        if close is not None:
+            close()
         if needle_router is not None:
             needle_router.close()
+        if control_connection is not None:
+            control_connection.close()
         lease.release()
         raise

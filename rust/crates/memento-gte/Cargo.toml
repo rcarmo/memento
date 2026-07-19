@@ -8,6 +8,7 @@ authors = ["Rui Carmo <rui.carmo@gmail.com>"]
 description = "Rust GTE1 parser/tokenizer/inference for Memento"
 
 [dependencies]
+memmap2 = "0.9"
 memento-vector = { path = "../memento-vector" }
 serde.workspace = true
 thiserror.workspace = true

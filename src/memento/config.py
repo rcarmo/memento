@@ -287,6 +287,9 @@ class SemanticSearchConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     enabled: bool = False
+    worker_mode: Literal["subprocess", "in_process"] = "subprocess"
+    worker_path: str = "/usr/local/bin/memento-embed"
+    worker_timeout_seconds: float = Field(default=300.0, gt=0)
     ffi_library_path: str | None = None
     sqlite_extension_path: str | None = None
     model_path: str | None = None
@@ -305,6 +308,14 @@ class SemanticSearchConfig(BaseModel):
         normalized = value.strip()
         if not normalized:
             raise ValueError("path values must not be empty")
+        return normalized
+
+    @field_validator("worker_path")
+    @classmethod
+    def validate_worker_path(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("worker_path must not be empty")
         return normalized
 
     @field_validator("model_id")
