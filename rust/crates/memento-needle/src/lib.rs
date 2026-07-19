@@ -1415,17 +1415,11 @@ fn project_vec(input: &[f32], in_dim: usize, out_dim: usize, kernel: &[f32]) -> 
 }
 fn project_rows(input: &[f32], in_dim: usize, out_dim: usize, kernel: &[f32]) -> Vec<f32> {
     let rows = input.len() / in_dim;
-    let mut out = vec![0.0; rows * out_dim];
-    for r in 0..rows {
-        let projected = project_vec(
-            &input[r * in_dim..(r + 1) * in_dim],
-            in_dim,
-            out_dim,
-            kernel,
-        );
-        out[r * out_dim..(r + 1) * out_dim].copy_from_slice(&projected);
+    if rows == 1 {
+        return project_vec(input, in_dim, out_dim, kernel);
     }
-    out
+    memento_vector::linear_in_out(input, rows, in_dim, kernel, out_dim, None)
+        .expect("internal Needle projection dimensions match")
 }
 fn attend_single(
     q: &[f32],

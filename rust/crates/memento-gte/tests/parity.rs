@@ -23,6 +23,16 @@ fn model_path() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../models/gte/gte-small.gtemodel")
 }
 
+fn assert_embeddings_close(text: &str, got: &[f32], want: &[f32]) {
+    assert_eq!(got.len(), want.len(), "embedding len mismatch for {text:?}");
+    for (index, (g, w)) in got.iter().zip(want.iter()).enumerate() {
+        assert!(
+            (g - w).abs() < 1e-4,
+            "embedding mismatch for {text:?} at {index}: {g} vs {w}"
+        );
+    }
+}
+
 #[test]
 fn parses_fixture_model_and_matches_go_parity() {
     let root = fixture_root();
@@ -43,17 +53,44 @@ fn parses_fixture_model_and_matches_go_parity() {
             item.text
         );
         let got = model.embed(&item.text).expect("embed");
-        assert_eq!(got.len(), item.embedding.len());
-        for (index, (g, w)) in got.iter().zip(item.embedding.iter()).enumerate() {
-            assert!(
-                (g - w).abs() < 1e-4,
-                "embedding mismatch for {:?} at {}: {} vs {}",
-                item.text,
-                index,
-                g,
-                w
-            );
-        }
+        assert_embeddings_close(&item.text, &got, &item.embedding);
+    }
+}
+
+#[test]
+fn batched_embeddings_match_individual_embeddings() {
+    let model_path = model_path();
+    if !model_path.exists() {
+        eprintln!("skipping fixture-dependent test; run rust/tests/scripts/generate_golden.sh");
+        return;
+    }
+    let model = Model::from_path(&model_path).expect("load model");
+    let texts = vec![
+        String::new(),
+        "hello".to_string(),
+        "hello world".to_string(),
+        "The quick brown fox jumps over the lazy dog.".to_string(),
+        "batch tail".to_string(),
+        "tail".to_string(),
+    ];
+
+    let batch = model
+        .embed_batch(&texts, BatchOptions::default(), None)
+        .expect("embed batch");
+    assert_eq!(batch.len(), texts.len());
+    for (text, batched_embedding) in texts.iter().zip(batch.iter()) {
+        let individual = model.embed(text).expect("embed");
+        assert_embeddings_close(text, batched_embedding, &individual);
+    }
+
+    let tail_texts = texts[texts.len() - 2..].to_vec();
+    let tail_batch = model
+        .embed_batch(&tail_texts, BatchOptions::default(), None)
+        .expect("embed tail batch");
+    assert_eq!(tail_batch.len(), tail_texts.len());
+    for (text, batched_embedding) in tail_texts.iter().zip(tail_batch.iter()) {
+        let individual = model.embed(text).expect("embed");
+        assert_embeddings_close(text, batched_embedding, &individual);
     }
 }
 

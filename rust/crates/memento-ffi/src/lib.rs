@@ -208,6 +208,9 @@ fn map_vector_error(err: &VectorError) -> MementoFfiStatus {
             MementoFfiStatus::Bounds,
             format!("invalid byte length: {len}"),
         ),
+        VectorError::InvalidMatrixShape { .. } | VectorError::ShapeOverflow { .. } => {
+            fail(MementoFfiStatus::Bounds, err.to_string())
+        }
     }
 }
 

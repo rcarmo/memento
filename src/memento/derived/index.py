@@ -228,10 +228,12 @@ class DerivedIndex:
         *,
         semantic_config: SemanticSearchConfig | None = None,
         embedding_client: EmbeddingClient | None = None,
+        defer_embeddings: bool = False,
     ) -> None:
         self._db_path = db_path
         self._semantic_config = semantic_config or SemanticSearchConfig()
         self._embedding_client = embedding_client
+        self._defer_embeddings = defer_embeddings
         self._sqlite_vector_enabled = False
         self._sqlite_vector_warning: str | None = None
 
@@ -271,14 +273,32 @@ class DerivedIndex:
                 connection.execute("UPDATE concepts SET repo_revision = ?", (repo_revision,))
                 self._recompute_links(connection, repo_revision)
                 self._recompute_metrics(connection)
+                if not self._defer_embeddings:
+                    self._update_embeddings(
+                        connection,
+                        repo_revision=repo_revision,
+                        changed_documents=tuple(changed_documents),
+                        full_rebuild=False,
+                    )
+                self._set_state(connection, "index_revision", repo_revision)
+                self._set_state(connection, "status", "ready")
+
+        self._with_quarantine(run)
+
+    def refresh_embeddings(self, bundle_root: Path, *, repo_revision: str) -> None:
+        bundle = scan_bundle(bundle_root)
+
+        def run(connection: sqlite3.Connection) -> None:
+            self._ensure_ready(connection)
+            with connection:
                 self._update_embeddings(
                     connection,
                     repo_revision=repo_revision,
-                    changed_documents=tuple(changed_documents),
+                    changed_documents=tuple(
+                        (entry.bundle_path, entry.document) for entry in bundle.entries
+                    ),
                     full_rebuild=False,
                 )
-                self._set_state(connection, "index_revision", repo_revision)
-                self._set_state(connection, "status", "ready")
 
         self._with_quarantine(run)
 
@@ -471,9 +491,11 @@ class DerivedIndex:
                 "SUM(CASE WHEN status = 'ready' THEN 1 ELSE 0 END) AS ready_count "
                 "FROM concept_embeddings"
             ).fetchone()
-            revision = self._get_state_optional(connection, "semantic_embedding_revision")
+            repo_revision = self._get_state(connection, "repo_revision")
+            revision_raw = self._get_state_optional(connection, "semantic_embedding_revision")
         total = int(row["total"] or 0)
         ready_count = int(row["ready_count"] or 0)
+        revision = revision_raw or None
         warnings = [item for item in (self._sqlite_vector_warning,) if item is not None]
         if self._embedding_client is None:
             warnings.append("semantic_embedding_client_unavailable")
@@ -483,7 +505,11 @@ class DerivedIndex:
             )
         return SemanticStatus(
             enabled=True,
-            ready=self._embedding_client is not None and total == ready_count,
+            ready=(
+                self._embedding_client is not None
+                and total == ready_count
+                and revision == repo_revision
+            ),
             model_id=self._semantic_config.model_id,
             dimensions=self._semantic_config.dimensions,
             embedding_revision=revision,
@@ -577,12 +603,13 @@ class DerivedIndex:
                 self._upsert_entry(connection, entry.bundle_path, entry.document, repo_revision)
             self._recompute_links(connection, repo_revision)
             self._recompute_metrics(connection)
-            self._update_embeddings(
-                connection,
-                repo_revision=repo_revision,
-                changed_documents=tuple(changed_documents),
-                full_rebuild=True,
-            )
+            if not self._defer_embeddings:
+                self._update_embeddings(
+                    connection,
+                    repo_revision=repo_revision,
+                    changed_documents=tuple(changed_documents),
+                    full_rebuild=True,
+                )
             self._set_state(connection, "index_revision", repo_revision)
             self._set_state(connection, "status", "ready")
 
