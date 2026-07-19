@@ -31,7 +31,7 @@ The fine-tuned Needle router maps a read request to search, status, read or grap
 * Lexical and graph search, with optional local GTE semantic ranking.
 * Proposal-first, revision-checked and idempotent Git writes.
 * Versioned Git LFS asset packs, including complete recallable skills.
-* Local Needle routing, GTE embeddings and optional answer/proposal/Dream models.
+* Local LLMs can help with routing, retrieval, answers, proposals and maintenance, but the complete memory lifecycle also works without them.
 * Rebuildable indexes, crash recovery, backups, metrics and non-root deployment.
 
 Tools, limits and roles are in [`docs/contracts.md`](docs/contracts.md); the storage and transaction design is in [`docs/implementation.md`](docs/implementation.md).
@@ -173,6 +173,7 @@ Tagged releases are published to `ghcr.io/rcarmo/memento`. Build notes are in [`
 * [`docs/semantic-search.md`](docs/semantic-search.md) covers the Rust GTE and SQLite vector tier.
 * [`docs/needle-fine-tuning.md`](docs/needle-fine-tuning.md) records the router corpus, training and conversion process.
 * [`docs/operations.md`](docs/operations.md) covers deployment, health, backup and recovery.
+* [`docs/diskstation.md`](docs/diskstation.md) covers the scalar x86-64 compatibility target and NAS deployment profile.
 * [`docs/load-testing.md`](docs/load-testing.md) covers the repository-owned load harness and local thresholds.
 * [`docs/evidence/`](docs/evidence/README.md) contains local operational, HTTP and semantic reports.
 * [`AGENTS.md`](AGENTS.md) defines contribution and validation rules.

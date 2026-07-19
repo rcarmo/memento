@@ -14,7 +14,8 @@ RUN case "$TARGETARCH" in \
         *) echo "unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
     esac \
     && cd rust \
-    && cargo build --release -p memento-ffi -p memento-sqlite-vector -p memento-embed -p memento-needle-ffi -p memento-vector --bin memento-cpu-features
+    && cargo build --release -p memento-ffi -p memento-sqlite-vector -p memento-embed -p memento-needle-ffi \
+    && cargo build --release -p memento-vector --bin memento-cpu-features
 
 FROM python:3.12-slim-bookworm@sha256:d50fb7611f86d04a3b0471b46d7557818d88983fc3136726336b2a4c657aa30b
 

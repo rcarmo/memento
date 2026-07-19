@@ -26,6 +26,7 @@ Putting all three in Git would turn operational bookkeeping into knowledge commi
 * Git alone does not preserve pending proposals or idempotency records; backups include `control.sqlite`.
 * Schema migrations for control state are explicit and reject unknown versions.
 * Accepted ZIP assets use Git LFS but remain part of the canonical Git history.
+* Local models may join the memory lifecycle, but read, proposal, curation, publication and recovery do not depend on them.
 
 ## Alternatives considered
 

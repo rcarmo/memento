@@ -1,0 +1,46 @@
+{
+  "schema_version": 2,
+  "repository": {
+    "root_path": "/var/lib/memento",
+    "bundle_root": "/"
+  },
+  "authorization": {
+    "principals": {
+      "piclaw": {
+        "roles": ["reader", "proposer"],
+        "token_env": "MEMENTO_TOKEN_PICLAW",
+        "read_prefixes": ["/"],
+        "write_prefixes": ["/instances/", "/people/", "/projects/", "/services/", "/systems/", "/skills/"]
+      },
+      "curator": {
+        "roles": ["reader", "proposer", "curator"],
+        "token_env": "MEMENTO_TOKEN_CURATOR",
+        "read_prefixes": ["/"],
+        "write_prefixes": ["/instances/", "/people/", "/projects/", "/services/", "/systems/", "/skills/"]
+      }
+    }
+  },
+  "mcp": {
+    "tool_surface": "compact",
+    "compact_answer_enabled": false,
+    "max_request_bytes": 75497472,
+    "execute": {
+      "max_operations": 12,
+      "max_intermediates": 12,
+      "max_records": 50,
+      "max_output_bytes": 65536,
+      "max_time_seconds": 3.0
+    }
+  },
+  "intelligent_tiers": {
+    "semantic_search": {
+      "enabled": false
+    },
+    "needle_router": {
+      "enabled": true,
+      "ffi_library_path": "/usr/local/lib/memento/libmemento_needle_ffi.so",
+      "model_path": "/usr/local/share/memento/models/memento-router.ndl",
+      "tokenizer_path": "/usr/local/share/memento/models/needle.model"
+    }
+  }
+}

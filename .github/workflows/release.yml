@@ -38,9 +38,45 @@ jobs:
             echo "prerelease=false" >> "$GITHUB_OUTPUT"
           fi
 
+  quality:
+    name: Validate Python ${{ matrix.python-version }}
+    needs: validate-tag
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - name: Checkout repository and model artefacts
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
+        with:
+          components: clippy,rustfmt
+
+      - name: Install development dependencies
+        run: make install-dev
+
+      - name: Run release quality gate
+        run: |
+          make check
+          make coverage
+          make build-wheel
+          make install-wheel
+          make diff-check
+
   build:
     name: Build ${{ matrix.platform }} image
-    needs: validate-tag
+    needs: [validate-tag, quality]
     runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
@@ -149,6 +185,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check native Needle memory ceiling
+        shell: bash
+        run: |
+          digest="$(basename /tmp/digests/*)"
+          image="${IMAGE_NAME}@sha256:${digest}"
+          docker pull "$image"
+          docker run --rm --entrypoint python \
+            -e MEMENTO_SMOKE_MAX_RSS_MIB=220 \
+            "$image" /usr/local/lib/memento/container_cpu_smoke.py needle
+
       - name: Install QEMU user emulator
         shell: bash
         run: |
@@ -177,9 +223,18 @@ jobs:
           grep -q 'sse4.2=true' <<< "$features"
           grep -q 'avx2=false' <<< "$features"
           grep -q 'fma=false' <<< "$features"
-          sudo chroot /tmp/rootfs \
-            /usr/bin/qemu-x86_64-static -cpu Westmere \
-            /usr/local/bin/python /usr/local/lib/memento/container_cpu_smoke.py
+          qemu=(
+            /usr/bin/qemu-x86_64-static -cpu Westmere
+            -E MEMENTO_FFI_LIBRARY=/usr/local/lib/memento/libmemento_ffi.so
+            -E MEMENTO_GTE_MODEL=/usr/local/share/memento/models/gte-small.gtemodel
+            -E MEMENTO_NEEDLE_FFI_LIBRARY=/usr/local/lib/memento/libmemento_needle_ffi.so
+            -E MEMENTO_NEEDLE_MODEL=/usr/local/share/memento/models/memento-router.ndl
+            -E MEMENTO_NEEDLE_TOKENIZER=/usr/local/share/memento/models/needle.model
+          )
+          sudo chroot /tmp/rootfs "${qemu[@]}" \
+            /usr/local/bin/python /usr/local/lib/memento/container_cpu_smoke.py gte
+          sudo chroot /tmp/rootfs "${qemu[@]}" \
+            /usr/local/bin/python /usr/local/lib/memento/container_cpu_smoke.py needle
 
   publish:
     name: Publish multi-architecture image

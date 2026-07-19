@@ -14,6 +14,8 @@ The release path validates Python, Rust, the wheel and the container, then publi
 
 ## Packaging notes
 
+The base images are pinned Debian Bookworm manifests: Rust 1.88 for the builder and Python 3.12 for the runtime. amd64 Rust code targets baseline x86-64; AVX2/FMA and NEON kernels are selected at runtime. The release pipeline runs the amd64 image under a no-AVX Westmere CPU model before publishing the manifest. See [ADR 0008](decisions/0008-build-for-baseline-cpus.md).
+
 * The Python wheel contains the service and the client-side skill import command. Platform-specific Rust libraries are built separately.
 * The container packages the Rust GTE and Needle runtimes, vendored models, Git and Git LFS. Git LFS stores accepted versioned asset ZIPs.
 * Principal bearer tokens remain mandatory runtime configuration. Provider API keys and model path overrides are optional and used only when enabled.
@@ -21,10 +23,10 @@ The release path validates Python, Rust, the wheel and the container, then publi
 
 ## CI and publication
 
-GitHub Actions validates Python 3.12--3.14 through the Make targets, runs Rust formatting/Clippy/workspace tests, builds and installs a wheel, and builds the container. Stable `v*` tags publish native `linux/amd64` and `linux/arm64` images to GHCR, create a multi-architecture OCI index, publish a GitHub release and retain five releases. Fresh untagged architecture manifests are protected for seven days so cleanup cannot break a tagged index.
+Both push CI and tag releases validate Python 3.12--3.14 through the Make targets, run Rust formatting/Clippy/workspace tests, build and install a wheel, and check for a clean diff. A tag cannot start image publication until that release-owned quality matrix passes. Stable `v*` tags then publish native `linux/amd64` and `linux/arm64` images to GHCR, create a multi-architecture OCI index, publish a GitHub release and retain five releases. Fresh untagged architecture manifests are protected for seven days so cleanup cannot break a tagged index.
 
 Published tags include the full version, major/minor, major and stable-only `latest`.
 
 ## Remaining provenance limits
 
-The Dockerfile still uses floating base-image tags (`rust:1-slim` and `python:3.14-slim`). Published image digests are immutable observations of a completed build, but rebuilding the same source later may produce a different digest until base images are pinned. SBOM attachment remains a future release improvement; BuildKit provenance attestations are included in the OCI index.
+Base-image manifests and GitHub Actions are pinned. SBOM attachment remains a future release improvement; BuildKit provenance attestations are included in the OCI index.
