@@ -38,6 +38,10 @@ docker compose \
   -f deploy/diskstation.compose.yaml up -d
 ```
 
-The template pins `MEMENTO_VERSION`, binds MCP to loopback for a reverse proxy, runs as UID/GID 65532, drops Linux capabilities, uses a read-only root filesystem and sets a 320 MiB memory limit for Needle with semantic search disabled. Check RSS and latency on the J3455 before changing that limit.
+The template pins `MEMENTO_VERSION`, publishes MCP on port 18081, runs as UID/GID 65532, drops Linux capabilities, uses a read-only root filesystem and sets a 320 MiB memory limit for Needle with semantic search disabled. The bearer-token file is mounted read-only and sourced by the container entrypoint because a remote Portainer server cannot resolve an endpoint-local `env_file` during Compose parsing.
+
+The deployed J3455 profile uses a 30-second `memory_execute` budget. A real-target benchmark found exact reads at 9.32 ms p50, lexical search at 601 ms p50/1.80 s p95, graph lookup through `memory_execute` at 392 ms p50, Git-backed patch/rename operations at 2.1--3.1 seconds and scalar Needle routes at 10--13 seconds. The full report is [`docs/evidence/diskstation-memory-benchmark-2026-07-19.json`](evidence/diskstation-memory-benchmark-2026-07-19.json).
+
+A commit may finish just after the execute deadline and still return a controlled timeout to the client. Mutation callers must reconcile an ambiguous timeout using the idempotency key, repository revision and target path before retrying. Raw punctuation in lexical queries also needs FTS5 quoting or escaping; ordinary term queries are the safer default.
 
 No DiskStation deployment is performed by GitHub Actions. Release automation builds and tests the image, then publishes it to GHCR. Updating the NAS remains a separate operator action with an explicit version and rollback plan.
