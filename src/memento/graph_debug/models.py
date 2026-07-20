@@ -32,6 +32,17 @@ class GraphEmbeddingState(GraphModel):
     error: str | None = None
 
 
+class GraphDiagnostic(GraphModel):
+    id: str
+    rule: str
+    severity: Literal["info", "warning", "error"]
+    concept_ids: tuple[str, ...]
+    message: str
+    measured: dict[str, str | int | float | bool | None]
+    threshold: dict[str, str | int | float | bool | None] = Field(default_factory=dict)
+    derived: bool = False
+
+
 class GraphNode(GraphModel):
     id: str
     path: str
@@ -53,6 +64,7 @@ class GraphNode(GraphModel):
     pending_proposal_count: int = 0
     embedding: GraphEmbeddingState = Field(default_factory=GraphEmbeddingState)
     coarse_position: GraphPosition
+    anomaly_ids: tuple[str, ...] = ()
 
 
 class GraphEdge(GraphModel):
@@ -114,6 +126,7 @@ class GraphOverview(GraphModel):
     memberships: tuple[tuple[str, str], ...] = ()
     layout_seed: str
     layout_version: str = "v1"
+    diagnostics: tuple[GraphDiagnostic, ...] = ()
     truncated: bool = False
 
 
