@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from memento import __version__
 from memento.config import Principal, ServiceConfig
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.operations import OperationRequest
@@ -77,7 +78,7 @@ class MementoRuntime:
         proposals = list_proposals(self.control_connection)
         semantic = self.derived_index.semantic_status()
         return {
-            "service_version": "0.3.0rc3",
+            "service_version": __version__,
             "schema_version": self.config.schema_version,
             "repo_revision": get_main_revision(self.paths.repo_paths),
             "index_revision": state.index_revision,

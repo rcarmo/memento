@@ -239,7 +239,14 @@ def test_fts_syntax_error_returns_validation_error_without_quarantine(
     index.rebuild(repo_paths.current_dir, repo_revision=get_main_revision(repo_paths))
 
     with pytest.raises(ValueError, match="invalid FTS query"):
-        index.search(policy=policy, query='"unterminated')
+        index.search(policy=policy, query='"unterminated', query_syntax="fts5")
+
+    plain = index.search(policy=policy, query="visible---", query_syntax="plain")
+    assert [result.path for result in plain.results] == ["/instances/smith.md"]
+    with pytest.raises(ValueError, match="unsupported query_syntax"):
+        index.search(policy=policy, query="visible", query_syntax="unknown")
+    with pytest.raises(ValueError, match="at least one word"):
+        index.search(policy=policy, query="---", query_syntax="plain")
 
     state = index.get_state()
     assert state.status == "ready"

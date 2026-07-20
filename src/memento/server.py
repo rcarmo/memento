@@ -264,6 +264,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         limit: int = 20,
         cursor: str | None = None,
         search_mode: str | None = None,
+        query_syntax: str = "plain",
     ) -> dict[str, Any]:
         return self._service.memory_search(
             self._context(),
@@ -272,6 +273,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             limit=limit,
             cursor=cursor,
             search_mode=search_mode,
+            query_syntax=query_syntax,
         ).model_dump(mode="json")
 
     async def tool_memory_read(self, id_or_path: str) -> dict[str, Any]:

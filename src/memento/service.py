@@ -17,6 +17,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from memento import __version__
 from memento.answers import (
     UNKNOWN_ANSWER,
     AnswerCitation,
@@ -375,7 +376,7 @@ class MemoryService:
             semantic = self._deps.derived_index.semantic_status()
             return self._success(
                 {
-                    "service_version": "0.3.0rc3",
+                    "service_version": __version__,
                     "schema_version": self._deps.config.schema_version,
                     "repo_revision": get_main_revision(self._deps.repo_paths),
                     "index_revision": state.index_revision,
@@ -426,6 +427,7 @@ class MemoryService:
         limit: int = 20,
         cursor: str | None = None,
         search_mode: str | None = None,
+        query_syntax: str = "plain",
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
@@ -445,10 +447,12 @@ class MemoryService:
                 cursor=cursor,
                 freshness=SearchFreshness.EVENTUAL,
                 search_mode=resolved_mode,
+                query_syntax=query_syntax,
             )
             return self._success(
                 {
                     "search_mode": mode_name,
+                    "query_syntax": query_syntax,
                     "results": [
                         {
                             "id": item.concept_id,

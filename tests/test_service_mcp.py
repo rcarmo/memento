@@ -877,6 +877,61 @@ def test_execute_rejects_invalid_references_and_multiple_commit_ops(
     assert commit_heavy.error_class == "validation_error"
 
 
+def test_execute_reports_success_when_deadline_expires_after_commit(
+    service: MemoryService,
+    smith: ServiceContext,
+    repo_paths: GitRepositoryPaths,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    ticks = iter((0.0, 0.0, 4.0))
+    monkeypatch.setattr("memento.executor.monotonic", lambda: next(ticks))
+    result = service.memory_execute(
+        smith,
+        plan={
+            "operations": [
+                {
+                    "op": "create",
+                    "args": {
+                        "path": "/projects/post-commit-deadline.md",
+                        "concept_type": "project",
+                        "title": "Post-commit Deadline",
+                        "body": "Committed before the response deadline check.\n",
+                        "expected_revision": get_main_revision(repo_paths),
+                        "idempotency_key": "post-commit-deadline-1",
+                    },
+                    "save_as": "created",
+                },
+                {"op": "status", "args": {}},
+            ]
+        },
+    )
+    assert result.status == "success"
+    assert "memory_execute_deadline_exceeded_after_commit" in result.warnings
+    data = success_data(result)
+    assert data["stopped"] is True
+    assert data["stop_reason"] == "deadline exceeded after committed operation"
+    assert len(data["trace"]) == 1
+    assert data["revisions"][0]["repo_revision"] == get_main_revision(repo_paths)
+    assert data["revisions"][0]["operation_id"] is not None
+    assert (repo_paths.current_dir / "projects/post-commit-deadline.md").is_file()
+
+
+def test_execute_deadline_without_commit_remains_an_error(
+    service: MemoryService,
+    flint: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    ticks = iter((0.0, 0.0, 4.0, 4.0))
+    monkeypatch.setattr("memento.executor.monotonic", lambda: next(ticks))
+    result = service.memory_execute(
+        flint,
+        plan={"operations": [{"op": "status", "args": {}}]},
+    )
+    assert result.status == "error"
+    assert result.error_class == "validation_error"
+    assert result.message == "plan exceeded configured max_time_seconds"
+
+
 def test_execute_limits_auth_and_error_control(
     service: MemoryService,
     service_config: ServiceConfig,
