@@ -17,13 +17,13 @@ Read every applicable file completely. Read the Python skill and `.github/copilo
 
 ## Product boundaries
 
-* Treat Git Markdown as the authoritative knowledge store.
-* Treat `control.sqlite` as authoritative for operations, idempotency, proposals, leases and scheduler state.
-* Treat FTS, graph indexes, caches and signals as derived and rebuildable.
-* Keep the daemon as the only canonical repository writer. Exactly one active process holds the write lease.
-* Let models answer, classify and propose. Keep identity, authorization, paths, validation, hashes, concurrency, writes, audit and completion claims in deterministic code.
-* Keep Piclaw conversations, Dream memory, schedules, credentials and keychains outside Memento.
-* Keep the deterministic service useful with every optional model tier disabled.
+* Concepts are Markdown files in Git, so they can be read and recovered without the service.
+* `control.sqlite` records operations, idempotency, proposals, leases and scheduler state.
+* FTS, graph indexes, caches and signals can be deleted and rebuilt.
+* One daemon holds the writer lease and publishes repository changes.
+* Models may answer, classify and draft proposals. Service code resolves identity, checks permissions and paths, validates output and performs writes.
+* Piclaw conversations, Dream memory, schedules, credentials and keychains stay outside Memento.
+* With every model setting off, search, read and curated writes continue to work.
 
 ## Security invariants
 
@@ -33,14 +33,14 @@ Treat MCP arguments, Markdown, frontmatter, links, retrieved text, model output 
 * Authorise before search ranking or output to prevent namespace leakage.
 * Reject traversal, symlinks, special files, reserved-file writes and paths outside the knowledge root.
 * Require expected revisions and durable idempotency for mutations.
-* Publish Git changes with compare-and-swap; never force-update canonical history.
+* Publish Git changes with compare-and-swap; never force-update `main`.
 * Do not expose unrestricted filesystem, shell, Git administration or network tools to models.
 * Never log secrets, tokens, complete concepts or full sensitive prompts by default.
 * Bound bodies, diffs, result counts, queues, retries, subprocesses, model steps and timeouts.
 
 ## Implementation order
 
-Follow `PLAN.md`. Build the deterministic core before MCP writes or intelligent tiers. Do not add optional-tier modules, provider abstractions or dependencies before their milestone starts; document deferred interfaces instead.
+Follow `PLAN.md`. Finish repository and MCP behaviour before adding optional model tiers. Add provider abstractions and dependencies only when a current milestone needs them.
 
 Use `src/memento/` as the single package root. Keep reusable logic in the package, CLI entry points alongside that package, deployment files in `deploy/`, tests in `tests/`, and developer utilities in `tools/`.
 
@@ -54,7 +54,7 @@ Use the Makefile as the stable local and CI interface.
 * `make format` -- apply formatting.
 * `make format-check` -- verify formatting.
 * `make typecheck` -- mandatory static typing.
-* `make test` -- deterministic tests.
+* `make test` -- repeatable offline tests.
 * `make coverage` -- branch coverage.
 * `make check` -- required validation gate.
 
@@ -67,7 +67,7 @@ Type all new and changed Python code. Prefer typed functions, frozen internal da
 * Prefer parameterised pytest cases, small fakes and in-memory protocols.
 * Test public behaviour and invariants.
 * Add negative coverage for authorization, path containment, malformed content, replay, stale revisions, idempotency conflicts, partial failure and recovery.
-* Keep unit tests offline and deterministic.
+* Keep unit tests offline and repeatable.
 * Mark integration, live, crash and deployment tests explicitly.
 * Keep static analysis clean on the lowest supported Python, 3.12.
 * Treat runtime compatibility across Python 3.12-3.14 and Piclaw/uMCP Streamable HTTP as CI and compatibility-work evidence.
@@ -86,9 +86,24 @@ Type all new and changed Python code. Prefer typed functions, frozen internal da
 * Use focused branches and pull requests once a remote and protected `main` workflow exist.
 * Do not deploy uncommitted trees or mutable production image tags.
 
-## Documentation
+## Communication and documentation
 
-Write concise plain English. Distinguish planned, implemented, deployed and live-verified behaviour. Update architecture, security, operations and acceptance evidence with behavioural changes. Do not present roadmap items as current capabilities.
+Clear writing is part of correctness. A technically accurate change is not finished if its README, ADR or plan makes the behaviour hard to understand.
+
+Before drafting or substantially editing prose, read the workspace `writing-style` skill and its reference. Apply it to READMEs, ADRs, plans, architecture notes, release notes and user-facing explanations.
+
+* Lead with what works and why. Do not narrate commits or the order in which changes happened.
+* Use concise plain English, concrete behaviour and specific numbers.
+* Give each document one job: READMEs orient, ADRs record decisions, plans sequence work, contracts define exact interfaces and reports hold measurements.
+* Link to detailed contracts, tests and reports instead of repeating them in narrative documents.
+* Avoid audit-register prose such as "acceptance evidence", "pending operational proof" and repeated implemented/deployed disclaimers. Collect remaining gaps once.
+* Avoid slogans and negative parallelism such as "X is authoritative; Y is not" when a concrete description is clearer.
+* Do not repeat "canonical", "deterministic", "feature-gated" or boundary assurances through every section. State the rule once, then describe the behaviour that enforces it.
+* Use `--` rather than a Unicode em dash, straight quotes, British spelling where natural and `*` for prose bullets.
+* Keep headings useful. Do not add "Overview", "Introduction" or "Conclusion".
+* Run an anti-pattern sweep before commit and read the result aloud. If it sounds like a compliance packet, generated product brochure or status bot, rewrite it.
+
+Distinguish planned, implemented, deployed and live-verified behaviour where that distinction changes a reader's decision. Do not turn every paragraph into a status label, and do not present roadmap items as current capabilities.
 
 ## Completion gate
 
