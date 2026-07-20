@@ -36,7 +36,7 @@ dev = [
     "ruff>=0.9",
 ]
 mcp = [
-    "umcp @ git+https://github.com/rcarmo/umcp.git@691af9f159757d45c180856ec0dfb89da7aa341c",
+    "umcp @ git+https://github.com/rcarmo/umcp.git@9ff48cf1b22ac61855262e4e64b4da5583e0f11c",
 ]
 
 [tool.setuptools.packages.find]

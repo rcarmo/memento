@@ -30,6 +30,7 @@ from memento.executor import (
     SearchArgs,
     execute_plan_schema,
 )
+from memento.graph_debug import GraphDebugHTTPHandler
 from memento.mcp_registry import (
     OPERATION_SPEC_BY_OP,
     OPERATION_SPECS,
@@ -48,7 +49,11 @@ from memento.service import (
 
 try:  # pragma: no cover - optional runtime dependency
     from aioumcp import AsyncMCPServer  # type: ignore[import-not-found]
-    from umcp_shared import MCPPrincipal, get_request_context  # type: ignore[import-not-found]
+    from umcp_shared import (  # type: ignore[import-not-found]
+        MCPHTTPResponse,
+        MCPPrincipal,
+        get_request_context,
+    )
 except ImportError:  # pragma: no cover - optional runtime dependency
     AsyncMCPServer = object
     MCPPrincipal = object
@@ -160,6 +165,9 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                     f"duplicate principal name configured for bearer tokens: {principal.name}"
                 )
             self._principals_by_name[principal.name] = principal
+        self._graph_debug_http = GraphDebugHTTPHandler(
+            service._deps.config.observability.graph_explorer
+        )
 
     def _setup_logging(self) -> None:
         if self._umcp_log_file is not None:
@@ -218,6 +226,23 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         if required:
             fallback["required"] = required
         return fallback
+
+    def handle_http_request(
+        self,
+        *,
+        method: str,
+        path: str,
+        headers: Mapping[str, str],
+        body: bytes,
+        peer: str | None,
+    ) -> MCPHTTPResponse | None:
+        return self._graph_debug_http.handle(
+            method=method,
+            path=path,
+            headers=headers,
+            body=body,
+            peer=peer,
+        )
 
     def authenticate_request(
         self, *, method: str, path: str, headers: Mapping[str, str], peer: str | None

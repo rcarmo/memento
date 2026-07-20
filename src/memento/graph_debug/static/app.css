@@ -1,0 +1,8 @@
+:root { color-scheme: light dark; font: 16px/1.5 system-ui, sans-serif; }
+body { margin: 0; background: #e8eff6; color: #1a2a40; }
+main { max-width: 52rem; margin: 8vh auto; padding: 2rem; }
+.warning { border: 1px solid #c87020; padding: .75rem 1rem; border-radius: .5rem; }
+@media (prefers-color-scheme: dark) {
+  body { background: #2a1e18; color: #e8d8d0; }
+  .warning { border-color: #e0a840; }
+}
