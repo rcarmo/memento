@@ -23,9 +23,16 @@ for (const library of manifest.libraries) {
   const response = await fetch(library.source, { redirect: "follow" });
   if (!response.ok) throw new Error(`${library.source}: HTTP ${response.status}`);
   const bytes = new Uint8Array(await response.arrayBuffer());
-  const actual = await sha256(bytes);
+  const sourceDigest = await sha256(bytes);
+  const expectedSource = library.source_sha256 || library.sha256;
+  if (sourceDigest !== expectedSource) throw new Error(`${library.file}: expected source ${expectedSource}, got ${sourceDigest}`);
+  let output = bytes;
+  if (library.transform === "rewrite bare preact import to ./preact.module.js") {
+    output = new TextEncoder().encode(new TextDecoder().decode(bytes).replace('from"preact"', 'from"./preact.module.js"'));
+  }
+  const actual = await sha256(output);
   if (actual !== library.sha256) throw new Error(`${library.file}: expected ${library.sha256}, got ${actual}`);
-  await writeFile(target, bytes);
+  await writeFile(target, output);
   console.log(`updated ${basename(target)} (${bytes.byteLength} bytes)`);
 }
 

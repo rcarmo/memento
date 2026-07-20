@@ -2,7 +2,7 @@ PYTHON ?= python3
 VENV ?= .venv
 BIN := $(VENV)/bin
 
-.PHONY: install install-dev lint format format-check typecheck test coverage rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check load-functional load-operational load-check clean
+.PHONY: install install-dev lint format format-check typecheck test coverage graph-check rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check load-functional load-operational load-check clean
 
 $(BIN)/python:
 	$(PYTHON) -m venv $(VENV)
@@ -31,6 +31,11 @@ test:
 coverage:
 	$(BIN)/pytest --cov=memento --cov-branch --cov-report=term-missing
 
+graph-check:
+	bun tools/vendor_graph_libraries.ts --check
+	bun build src/memento/graph_debug/static/app.js --target=browser --format=esm --outfile=/tmp/memento-graph-check.js >/dev/null
+	rm -f /tmp/memento-graph-check.js
+
 rust-format-check:
 	cd rust && cargo fmt --all --check
 
@@ -42,7 +47,7 @@ rust-test:
 
 rust-check: rust-format-check rust-lint rust-test
 
-check: lint format-check typecheck test rust-check
+check: lint format-check typecheck test graph-check rust-check
 
 build-wheel:
 	$(BIN)/python -m build --wheel

@@ -11,6 +11,7 @@ def test_vendored_graph_modules_match_manifest_and_ship_licences() -> None:
     assert manifest["schema_version"] == 1
     assert [item["name"] for item in manifest["libraries"]] == [
         "three",
+        "three-core",
         "preact",
         "preact-hooks",
     ]

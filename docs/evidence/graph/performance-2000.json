@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "environment": "headless Chromium fixture",
+  "target_fps": 30,
+  "ci_floor_fps": 28,
+  "first_useful_paint_ms": 667,
+  "fps_samples": [
+    30.1,
+    30.1,
+    31.5,
+    31.7,
+    31.7,
+    31.9,
+    32.2,
+    32.2,
+    32.5,
+    32.8
+  ],
+  "fps_median": 31.799999999999997,
+  "heap": 12700000,
+  "nodes": 2000,
+  "edges": 1999,
+  "culled_edges": 0,
+  "lod": "points",
+  "fetch_ms": 32,
+  "response_bytes": 1684107
+}
