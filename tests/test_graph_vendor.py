@@ -5,6 +5,19 @@ import json
 from importlib.resources import files
 
 
+def test_graph_application_assets_are_available_as_package_resources() -> None:
+    root = files("memento.graph_debug").joinpath("static")
+    for relative in (
+        "index.html",
+        "app.css",
+        "app.js",
+        "api.js",
+        "graph-scene.js",
+        "layout-worker.js",
+    ):
+        assert root.joinpath(relative).is_file(), relative
+
+
 def test_vendored_graph_modules_match_manifest_and_ship_licences() -> None:
     root = files("memento.graph_debug").joinpath("static", "vendor")
     manifest = json.loads(root.joinpath("manifest.json").read_text(encoding="utf-8"))
