@@ -359,13 +359,8 @@ class MemoryService:
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
-            state = self._deps.derived_index.get_state()
-            bundle = scan_bundle(self._deps.repo_paths.current_dir)
-            visible_paths = [
-                entry.bundle_path
-                for entry in bundle.entries
-                if self._is_authorized(policy, entry.bundle_path, action="read")
-            ]
+            snapshot = self._deps.derived_index.status_snapshot(policy)
+            state = snapshot.state
             proposals = list_proposals(self._deps.control_connection)
             visible_proposals = [
                 item
@@ -378,11 +373,11 @@ class MemoryService:
                 {
                     "service_version": __version__,
                     "schema_version": self._deps.config.schema_version,
-                    "repo_revision": get_main_revision(self._deps.repo_paths),
+                    "repo_revision": state.repo_revision,
                     "index_revision": state.index_revision,
                     "index_stale": state.index_revision != state.repo_revision,
                     "principal": policy.principal,
-                    "visible_concepts": len(visible_paths),
+                    "visible_concepts": snapshot.visible_concepts,
                     "proposal_backlog": len(visible_proposals),
                     "limits": self._deps.config.limits.model_dump(mode="python"),
                     "roles": policy.roles,

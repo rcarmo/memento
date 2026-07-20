@@ -700,12 +700,25 @@ impl RouterModel {
         let mut token = tokenizer.eos_token_id();
         let mut generated = Vec::new();
         for _ in 0..options.max_gen_len {
-            let mut logits =
-                self.decode_step(token, generated.len(), &mut state, &mut checkpoint)?;
-            if options.constrained && decoder.is_active() {
-                decoder.constrain_logits(&mut logits);
-            }
-            let next = argmax(&logits) as u32;
+            let hidden = self.decode_step(token, generated.len(), &mut state, &mut checkpoint)?;
+            let next = if options.constrained {
+                decoder
+                    .allowed_token_ids()
+                    .filter(|allowed| !allowed.is_empty())
+                    .map_or_else(
+                        || argmax_logits(&hidden, &self.embedding, self.config.d_model as usize),
+                        |allowed| {
+                            argmax_logits_allowed(
+                                &hidden,
+                                &self.embedding,
+                                self.config.d_model as usize,
+                                allowed,
+                            )
+                        },
+                    )
+            } else {
+                argmax_logits(&hidden, &self.embedding, self.config.d_model as usize)
+            } as u32;
             if options.constrained {
                 decoder.update(next);
             }
@@ -749,12 +762,11 @@ impl RouterModel {
         for layer in 0..layers {
             poll(checkpoint, "encoder_layer")?;
             let norm = layer_slice(&self.encoder_norm0, layer, dm);
-            let residual = x.clone();
             let xn = apply_zcrmsnorm_rows(&x, dm, norm);
             let attn = self.attend_full(&xn, &xn, tokens, layer, &rope, true, false);
             let gate = sigmoid(self.encoder_attn_gate[layer]);
             for i in 0..x.len() {
-                x[i] = residual[i] + gate * attn[i];
+                x[i] += gate * attn[i];
             }
         }
         Ok(apply_zcrmsnorm_rows(&x, dm, &self.encoder_final_norm))
@@ -816,7 +828,6 @@ impl RouterModel {
             .collect::<Vec<_>>();
         for layer in 0..self.config.num_decoder_layers as usize {
             poll(checkpoint, "decoder_layer")?;
-            let residual = x.clone();
             let norm = layer_slice(&self.decoder_norm0, layer, dm);
             let xn = apply_zcrmsnorm_vec(&x, norm);
             let q_proj = layer_slice(&self.decoder_self_q_proj, layer, dm * dm);
@@ -853,10 +864,9 @@ impl RouterModel {
             let self_out = project_vec(&self_ctx, dm, dm, out_proj);
             let gate = sigmoid(self.decoder_self_gate[layer]);
             for i in 0..dm {
-                x[i] = residual[i] + gate * self_out[i];
+                x[i] += gate * self_out[i];
             }
 
-            let residual = x.clone();
             let xn = apply_zcrmsnorm_vec(&x, layer_slice(&self.decoder_norm1, layer, dm));
             let q_proj = layer_slice(&self.decoder_cross_q_proj, layer, dm * dm);
             let out_proj = layer_slice(&self.decoder_cross_out_proj, layer, dm * dm);
@@ -878,11 +888,10 @@ impl RouterModel {
             let cross_out = project_vec(&cross_ctx, dm, dm, out_proj);
             let gate = sigmoid(self.decoder_cross_gate[layer]);
             for i in 0..dm {
-                x[i] = residual[i] + gate * cross_out[i];
+                x[i] += gate * cross_out[i];
             }
         }
-        let x = apply_zcrmsnorm_vec(&x, &self.decoder_final_norm);
-        Ok(logits_from_hidden(&x, &self.embedding, dm))
+        Ok(apply_zcrmsnorm_vec(&x, &self.decoder_final_norm))
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -949,13 +958,12 @@ impl RouterModel {
         apply_head_norm_rows(&mut k, tokens.len(), kv_heads, head_dim, k_norm);
         apply_rope_rows(&mut q, tokens.len(), heads, head_dim, rope);
         apply_rope_rows(&mut k, tokens.len(), kv_heads, head_dim, rope);
-        let mut out = vec![0.0; tokens.len() * dm];
+        let mut contexts = vec![0.0; tokens.len() * dm];
         for t in 0..tokens.len() {
             let ctx = attend_single(&q[t * dm..(t + 1) * dm], &k, &v, heads, kv_heads, head_dim);
-            let projected = project_vec(&ctx, dm, dm, out_kernel);
-            out[t * dm..(t + 1) * dm].copy_from_slice(&projected);
+            contexts[t * dm..(t + 1) * dm].copy_from_slice(&ctx);
         }
-        out
+        project_rows(&contexts, dm, dm, out_kernel)
     }
 }
 
@@ -1184,29 +1192,22 @@ impl ConstrainedDecoder {
             constraints: ToolConstraints { names, params },
         }
     }
-    fn is_active(&self) -> bool {
-        self.machine.state != JsonState::Free
-    }
     fn update(&mut self, token: u32) {
         if let Some(text) = self.token_strings.get(token as usize) {
             self.machine.feed(text);
         }
     }
-    fn constrain_logits(&self, logits: &mut [f32]) {
+    fn allowed_token_ids(&self) -> Option<Vec<usize>> {
         let trie = match self.machine.state {
-            JsonState::Free => return,
+            JsonState::Free => return None,
             JsonState::InName => &self.constraints.names,
-            JsonState::InArgKey => {
-                match self.constraints.params.get(&self.machine.current_function) {
-                    Some(t) => t,
-                    None => return,
-                }
-            }
+            JsonState::InArgKey => self
+                .constraints
+                .params
+                .get(&self.machine.current_function)?,
         };
-        let Some(node) = trie.node(&self.machine.constrained_buf) else {
-            return;
-        };
-        let mut allowed = vec![false; logits.len()];
+        let node = trie.node(&self.machine.constrained_buf)?;
+        let mut allowed = Vec::new();
         let mut starts = node.children.keys().copied().collect::<Vec<_>>();
         if node.terminal {
             starts.push('"');
@@ -1214,17 +1215,13 @@ impl ConstrainedDecoder {
         for first in starts {
             for (id, text) in self.token_strings.iter().enumerate() {
                 if text.starts_with(first) && token_valid(text, node) {
-                    allowed[id] = true;
+                    allowed.push(id);
                 }
             }
         }
-        if allowed.iter().any(|&x| x) {
-            for (id, logit) in logits.iter_mut().enumerate() {
-                if !allowed[id] {
-                    *logit = f32::NEG_INFINITY;
-                }
-            }
-        }
+        allowed.sort_unstable();
+        allowed.dedup();
+        Some(allowed)
     }
 }
 
@@ -1436,11 +1433,12 @@ fn attend_single(
     };
     let repeats = heads / kv_heads;
     let mut out = vec![0.0; heads * head_dim];
+    let mut scores = vec![0.0; kv_tokens];
     let scale = (head_dim as f32).sqrt();
     for h in 0..heads {
         let qh = &q[h * head_dim..(h + 1) * head_dim];
         let kh = h / repeats;
-        let mut scores = vec![0.0; kv_tokens];
+        scores.fill(0.0);
         let mut max = f32::NEG_INFINITY;
         for (token_index, score_slot) in scores.iter_mut().enumerate() {
             let base = token_index * kv_heads * head_dim + kh * head_dim;
@@ -1466,21 +1464,23 @@ fn attend_single(
     }
     out
 }
-fn logits_from_hidden(hidden: &[f32], embedding: &[f32], dim: usize) -> Vec<f32> {
-    let vocab = embedding.len() / dim;
-    let mut logits = vec![0.0; vocab];
-    for id in 0..vocab {
-        logits[id] = dot(hidden, &embedding[id * dim..(id + 1) * dim]);
-    }
-    logits
+fn argmax_logits(hidden: &[f32], embedding: &[f32], dim: usize) -> usize {
+    argmax_logits_allowed(hidden, embedding, dim, 0..embedding.len() / dim)
 }
-fn argmax(values: &[f32]) -> usize {
+
+fn argmax_logits_allowed(
+    hidden: &[f32],
+    embedding: &[f32],
+    dim: usize,
+    token_ids: impl IntoIterator<Item = usize>,
+) -> usize {
     let mut best = 0;
-    let mut score = f32::NEG_INFINITY;
-    for (i, &v) in values.iter().enumerate() {
-        if v > score {
-            score = v;
-            best = i;
+    let mut best_score = f32::NEG_INFINITY;
+    for id in token_ids {
+        let score = dot(hidden, &embedding[id * dim..(id + 1) * dim]);
+        if score > best_score {
+            best_score = score;
+            best = id;
         }
     }
     best

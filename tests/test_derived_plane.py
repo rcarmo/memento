@@ -102,6 +102,38 @@ def derived_index(tmp_path: Path, repo_paths: GitRepositoryPaths) -> DerivedInde
     return index
 
 
+def test_status_snapshot_counts_only_authorized_concepts(
+    derived_index: DerivedIndex,
+    policy: EffectivePolicy,
+    hidden_policy: EffectivePolicy,
+) -> None:
+    visible = derived_index.status_snapshot(policy)
+    all_concepts = derived_index.status_snapshot(hidden_policy)
+    assert visible.state == all_concepts.state
+    assert visible.visible_concepts == 3
+    assert all_concepts.visible_concepts == 4
+
+
+def test_concurrent_first_open_initializes_schema_once(tmp_path: Path) -> None:
+    index = DerivedIndex(tmp_path / "concurrent.sqlite")
+    states: list[str] = []
+    errors: list[BaseException] = []
+
+    def read_state() -> None:
+        try:
+            states.append(index.get_state().status)
+        except BaseException as exc:  # pragma: no cover - surfaced by assertion
+            errors.append(exc)
+
+    threads = [threading.Thread(target=read_state) for _ in range(8)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    assert errors == []
+    assert states == ["ready"] * 8
+
+
 def test_full_rebuild_search_filters_and_hidden_namespace_do_not_leak_ranking(
     derived_index: DerivedIndex,
     repo_paths: GitRepositoryPaths,
