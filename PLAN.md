@@ -132,6 +132,12 @@ This file is the delivery and acceptance ledger for what already exists, what ha
 - [x] Vendor the passing checkpoint and explicit train/validation/test corpora through Git LFS without enabling the JAX runtime.
 - [ ] Validate the exact checkpoint on ARM64 and a pinned embedded/Cactus runtime before production integration.
 
+## Visual memory debugger
+
+The accepted architecture is [ADR 0011](docs/decisions/0011-embed-a-gated-visual-memory-debugger.md), and the detailed delivery contract is [`docs/graph-explorer-plan.md`](docs/graph-explorer-plan.md). Active phase and checklist tracking lives in the session Plan sidebar rather than a repository workitems board.
+
+The MVP adds a globally gated, unauthenticated trusted-LAN `/graph` debugging surface with progressive 2.5D rendering, provenance, explicit and semantic layers, explainable diagnostics, derived embedding refresh, bounded exports, browser/scale tests and a final DiskStation deployment gate. Revision playback and animated diffs follow after the MVP.
+
 ## Deferred roadmap
 
 Start each tier behind an independent feature flag and only after Milestone 6.
