@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from threading import Lock
 
 from memento.authz import EffectivePolicy
 from memento.config import SemanticSearchConfig
@@ -212,6 +213,12 @@ class ParityReport:
 
 
 @dataclass(frozen=True, slots=True)
+class DerivedStatusSnapshot:
+    state: DerivedIndexState
+    visible_concepts: int
+
+
+@dataclass(frozen=True, slots=True)
 class SemanticStatus:
     enabled: bool
     ready: bool
@@ -237,6 +244,8 @@ class DerivedIndex:
         self._defer_embeddings = defer_embeddings
         self._sqlite_vector_enabled = False
         self._sqlite_vector_warning: str | None = None
+        self._initialized_identity: tuple[int, int] | None = None
+        self._initialization_lock = Lock()
 
     @property
     def db_path(self) -> Path:
@@ -455,6 +464,26 @@ class DerivedIndex:
             broken_link_count=int(row["broken_link_count"]),
             orphan_flag=bool(row["orphan_flag"]),
         )
+
+    def status_snapshot(self, policy: EffectivePolicy) -> DerivedStatusSnapshot:
+        try:
+            with self._connect() as connection:
+                state = DerivedIndexState(
+                    repo_revision=self._get_state(connection, "repo_revision"),
+                    index_revision=self._get_state(connection, "index_revision"),
+                    schema_version=self._get_state(connection, "schema_version"),
+                    status=self._get_state(connection, "status"),
+                    quarantine_path=self._get_state_optional(connection, "quarantine_path"),
+                )
+                prefixes = _authorized_prefix_conditions(policy.read_prefixes)
+                row = connection.execute(
+                    f"SELECT COUNT(*) AS total FROM concepts AS c WHERE {prefixes.sql}",
+                    prefixes.parameters,
+                ).fetchone()
+                return DerivedStatusSnapshot(state=state, visible_concepts=int(row["total"] or 0))
+        except sqlite3.DatabaseError as exc:
+            self._handle_corruption(exc)
+        raise AssertionError("unreachable")
 
     def get_state(self) -> DerivedIndexState:
         try:
@@ -1244,11 +1273,30 @@ class DerivedIndex:
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         connection = sqlite3.connect(self._db_path)
         connection.row_factory = sqlite3.Row
-        connection.execute("PRAGMA application_id=1296646996")
-        connection.execute("PRAGMA journal_mode=WAL")
         connection.execute("PRAGMA foreign_keys=ON")
+        self._ensure_initialized(connection)
         self._configure_sqlite_vector(connection)
         return connection
+
+    def _ensure_initialized(self, connection: sqlite3.Connection) -> None:
+        identity = self._database_identity()
+        if self._initialized_identity == identity:
+            return
+        with self._initialization_lock:
+            identity = self._database_identity()
+            if self._initialized_identity == identity:
+                return
+            connection.execute("PRAGMA application_id=1296646996")
+            connection.execute("PRAGMA journal_mode=WAL")
+            self._migrate(connection, force=True)
+            self._initialized_identity = self._database_identity()
+
+    def _database_identity(self) -> tuple[int, int] | None:
+        try:
+            stat = self._db_path.stat()
+        except FileNotFoundError:
+            return None
+        return stat.st_dev, stat.st_ino
 
     def _configure_sqlite_vector(self, connection: sqlite3.Connection) -> None:
         extension_path = self._semantic_config.sqlite_extension_path
@@ -1267,7 +1315,9 @@ class DerivedIndex:
             with suppress(AttributeError):
                 connection.enable_load_extension(False)
 
-    def _migrate(self, connection: sqlite3.Connection) -> None:
+    def _migrate(self, connection: sqlite3.Connection, *, force: bool = False) -> None:
+        if not force and self._initialized_identity == self._database_identity():
+            return
         with connection:
             for statement in MIGRATIONS:
                 connection.execute(statement)
@@ -1331,6 +1381,7 @@ class DerivedIndex:
         )
 
     def _quarantine_db(self) -> Path:
+        self._initialized_identity = None
         if not self._db_path.exists():
             return self._db_path.with_suffix(".missing")
         quarantine_path = self._db_path.with_name(
