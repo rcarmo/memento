@@ -8,6 +8,7 @@ from pathlib import PurePosixPath
 from umcp_shared import MCPHTTPResponse  # type: ignore[import-not-found]
 
 from memento.config import GraphExplorerConfig
+from memento.graph_debug.export import export_graph_json, export_graph_svg
 from memento.graph_debug.refresh import GraphEmbeddingRefreshCoordinator
 from memento.graph_debug.snapshot import GraphSnapshotError, GraphSnapshotService
 
@@ -54,6 +55,11 @@ class GraphDebugHTTPHandler:
         refresh_path = f"{prefix}/api/v1/embeddings/refresh"
         if method == "POST" and path == refresh_path:
             return self._refresh(body)
+        if method == "POST" and path in {
+            f"{prefix}/api/v1/export/json",
+            f"{prefix}/api/v1/export/svg",
+        }:
+            return self._export(path.rsplit("/", 1)[-1], body)
         if method != "GET":
             return MCPHTTPResponse(
                 405,
@@ -62,7 +68,13 @@ class GraphDebugHTTPHandler:
         if body:
             return MCPHTTPResponse(400, headers=_CACHE_HEADERS)
         if path in {prefix, f"{prefix}/"}:
-            return self._static("index.html")
+            response = self._static("index.html")
+            return response.__class__(
+                response.status,
+                body=response.body.replace(b"__GRAPH_PREFIX__", prefix.encode("utf-8")),
+                content_type=response.content_type,
+                headers=response.headers,
+            )
         if path == f"{prefix}/api/v1/status":
             return self._json(
                 {
@@ -112,6 +124,38 @@ class GraphDebugHTTPHandler:
             return self._not_found()
         content_type = _STATIC_CONTENT_TYPES.get(path.suffix.casefold(), "application/octet-stream")
         return MCPHTTPResponse(200, body=body, content_type=content_type, headers=_CACHE_HEADERS)
+
+    def _export(self, export_type: str, body: bytes) -> MCPHTTPResponse:
+        if self._snapshot_service is None:
+            return self._json({"error": "graph snapshot unavailable"}, status=503)
+        try:
+            request = json.loads(body or b"{}")
+            if not isinstance(request, dict):
+                raise GraphSnapshotError("export body must be an object")
+            ids = request.get("concept_ids", [])
+            if not isinstance(ids, list) or not all(isinstance(item, str) for item in ids):
+                raise GraphSnapshotError("concept_ids must be an array of strings")
+            nodes, edges, revisions = self._snapshot_service.export_selection(tuple(ids))
+            if export_type == "json":
+                output = export_graph_json(
+                    nodes,
+                    edges,
+                    revisions=revisions,
+                    settings=request.get("settings")
+                    if isinstance(request.get("settings"), dict)
+                    else None,
+                )
+                content_type = "application/json; charset=utf-8"
+            else:
+                output = export_graph_svg(nodes, edges)
+                content_type = "image/svg+xml"
+            return MCPHTTPResponse(
+                200, body=output, content_type=content_type, headers=_CACHE_HEADERS
+            )
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return self._json({"error": "invalid JSON"}, status=400)
+        except (GraphSnapshotError, ValueError) as exc:
+            return self._json({"error": str(exc)}, status=400)
 
     def _refresh(self, body: bytes) -> MCPHTTPResponse:
         if self._refresh_coordinator is None:

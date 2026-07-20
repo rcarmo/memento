@@ -1,0 +1,12 @@
+{
+  "name": "memento-browser-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "graph:check": "bun tools/vendor_graph_libraries.ts --check && bun build src/memento/graph_debug/static/app.js --target=browser --format=esm --outfile=/tmp/memento-graph-check.js && rm -f /tmp/memento-graph-check.js",
+    "graph:test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.1"
+  }
+}

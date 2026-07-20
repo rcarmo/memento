@@ -50,6 +50,27 @@ class GraphSnapshotService:
         self._derived_db_path = derived_db_path
         self._control_db_path = control_db_path
 
+    def export_selection(
+        self, concept_ids: tuple[str, ...]
+    ) -> tuple[tuple[GraphNode, ...], tuple[GraphEdge, ...], GraphRevisions]:
+        unique = tuple(sorted(dict.fromkeys(concept_ids)))
+        if not unique or len(unique) > self._config.export_node_limit:
+            raise GraphSnapshotError(
+                "export selection must contain a bounded non-empty concept set"
+            )
+        with self._derived() as derived, self._control() as control:
+            nodes = self._nodes(
+                derived,
+                proposal_counts=self._proposal_counts(control),
+                concept_ids=unique,
+                limit=self._config.export_node_limit,
+            )
+            if len(nodes) != len(unique):
+                raise GraphSnapshotError("export selection includes unknown memories")
+            ids = {node.id for node in nodes}
+            edges = self._edges(derived, ids=ids, limit=self._config.edge_limit)
+            return tuple(nodes), tuple(edges), self._revisions(derived)
+
     def paths_for_ids(self, concept_ids: tuple[str, ...]) -> tuple[str, ...]:
         if not concept_ids:
             return ()

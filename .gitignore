@@ -23,3 +23,8 @@ rust/target/
 .DS_Store
 .vscode/
 .idea/
+
+# Browser test dependencies and output
+/node_modules/
+/test-results/
+/playwright-report/

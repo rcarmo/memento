@@ -1,17 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-graph-prefix="__GRAPH_PREFIX__">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
   <title>Memento Visual Debugger</title>
-  <link rel="stylesheet" href="/graph/assets/app.css">
+  <link rel="stylesheet" href="__GRAPH_PREFIX__/assets/app.css">
 </head>
 <body>
-  <main>
-    <p class="warning">Unauthenticated visual debugger -- trusted networks only.</p>
-    <h1>Memento Visual Debugger</h1>
-    <p>The graph scene is being assembled. This gated page verifies the shared HTTP boundary.</p>
-  </main>
+  <div id="app"><p class="warning boot">Unauthenticated visual debugger -- trusted networks only.</p><p class="boot">Loading Memento visual debugger…</p></div>
+  <noscript>This visual debugger requires JavaScript and WebGL2.</noscript>
+  <script type="importmap">{"imports":{"preact":"__GRAPH_PREFIX__/assets/vendor/preact.module.js"}}</script>
+  <script type="module" src="__GRAPH_PREFIX__/assets/app.js"></script>
 </body>
 </html>
