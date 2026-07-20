@@ -1,0 +1,95 @@
+{
+  "date": "2026-07-19",
+  "target": {
+    "host": "192.168.1.250",
+    "cpu": "Intel Celeron J3455",
+    "simd": "scalar",
+    "image": "ghcr.io/rcarmo/memento:0.3.0-rc.3",
+    "semantic_search": false,
+    "needle_router": true
+  },
+  "operations": {
+    "status": {
+      "n": 10,
+      "min_ms": 81.89,
+      "p50_ms": 201.74,
+      "p95_ms": 481.45,
+      "max_ms": 481.45,
+      "mean_ms": 234.95
+    },
+    "create_commit": {
+      "n": 1,
+      "outcome": "committed after the original 3 second plan deadline; the client received a controlled timeout and reconciled by repository revision and path"
+    },
+    "read_before_patch": {
+      "n": 20,
+      "min_ms": 8.85,
+      "p50_ms": 9.32,
+      "p95_ms": 12.63,
+      "max_ms": 14.05,
+      "mean_ms": 9.93
+    },
+    "lexical_search": {
+      "n": 20,
+      "min_ms": 138.65,
+      "p50_ms": 601.03,
+      "p95_ms": 1800.31,
+      "max_ms": 2244.41,
+      "mean_ms": 735.48
+    },
+    "patch_commit": {
+      "n": 1,
+      "elapsed_ms": 3051.15
+    },
+    "rename_commit": {
+      "n": 1,
+      "elapsed_ms": 2133.67
+    },
+    "read_after_rename": {
+      "n": 10,
+      "min_ms": 8.77,
+      "p50_ms": 9.32,
+      "p95_ms": 11.77,
+      "max_ms": 11.77,
+      "mean_ms": 9.59
+    },
+    "graph_via_execute": {
+      "n": 10,
+      "min_ms": 177.08,
+      "p50_ms": 391.82,
+      "p95_ms": 1212.52,
+      "max_ms": 1212.52,
+      "mean_ms": 507.43
+    },
+    "final_report_patch": {
+      "n": 1,
+      "elapsed_ms": 2140.1
+    },
+    "needle_status_routes_ms": [
+      12016.1,
+      13207.8,
+      10432.6
+    ]
+  },
+  "revisions": {
+    "before": "6a66fc205c1f34030f44aeb53fc8c5c5bf16bc03",
+    "after_create": "23a048306c793911f2e657b8c22d1a2863eae7d5",
+    "after_patch": "f8d8dfdb98c453151d1929be9b19938ef6a8b875",
+    "after_rename": "0e1b5fc1695b072ee17c74cb58c10e86e4e7f340",
+    "final": "32e2f5fbb63531ca79a0ffd1577624131b5cd86b"
+  },
+  "container_memory": {
+    "current_bytes": 163934208,
+    "peak_bytes": 224669696,
+    "limit_bytes": 335544320,
+    "oom_killed": false,
+    "restart_count": 0
+  },
+  "constraints": [
+    "Git-backed writes require a DiskStation-specific execute budget above 3 seconds; the deployed profile uses 30 seconds.",
+    "A plan deadline can be observed after a commit has succeeded, so clients must reconcile timeout outcomes using idempotency keys, repository revision and target path.",
+    "Raw punctuation such as hyphens is not accepted unescaped by the FTS5 query parser; use ordinary terms or quote/escape advanced queries.",
+    "Needle shallow routing takes approximately 10 to 13 seconds on the scalar J3455 and should not sit on latency-sensitive direct read paths.",
+    "DSM Docker ignored the requested pids_limit, although UID, read-only root, dropped capabilities, no-new-privileges and memory limits were enforced."
+  ]
+}

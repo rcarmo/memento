@@ -6,22 +6,19 @@ services:
     user: "65532:65532"
     read_only: true
     init: true
-    env_file:
-      - /volume1/docker/memento/config/memento.env
+    entrypoint: ["/bin/sh", "-ec"]
     command:
-      - --config
-      - /etc/memento/config.json
-      - serve
-      - --host
-      - 0.0.0.0
-      - --port
-      - "8000"
-      - --endpoint
-      - /mcp
+      - |
+        set -a
+        . /run/secrets/memento.env
+        set +a
+        exec memento-serve --config /etc/memento/config.json serve \
+          --host 0.0.0.0 --port 8000 --endpoint /mcp
     ports:
-      - "127.0.0.1:18081:8000"
+      - "18081:8000"
     volumes:
       - /volume1/docker/memento/config/config.json:/etc/memento/config.json:ro
+      - /volume1/docker/memento/config/memento.env:/run/secrets/memento.env:ro
       - /volume1/docker/memento/state:/var/lib/memento
     tmpfs:
       - /tmp:size=32m,mode=1777
