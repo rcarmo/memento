@@ -69,7 +69,7 @@ def _snapshot(
     derived = sqlite3.connect(derived_path)
     derived.executescript(
         """
-        CREATE TABLE concepts(id TEXT PRIMARY KEY,path TEXT,type TEXT,title TEXT,status TEXT,tags_json TEXT,updated_at TEXT,repo_revision TEXT,body TEXT);
+        CREATE TABLE concepts(id TEXT PRIMARY KEY,path TEXT,type TEXT,title TEXT,status TEXT,tags_json TEXT,updated_at TEXT,repo_revision TEXT,body TEXT,content_hash TEXT);
         CREATE TABLE links(source_id TEXT,target_id TEXT,raw_target TEXT,target_path TEXT,anchor TEXT,link_kind TEXT,resolution_state TEXT,first_seen_revision TEXT,last_checked_revision TEXT);
         CREATE TABLE graph_metrics(concept_id TEXT PRIMARY KEY,inbound_degree INTEGER,outbound_degree INTEGER,broken_link_count INTEGER,orphan_flag INTEGER);
         CREATE TABLE concept_embeddings(concept_id TEXT PRIMARY KEY,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT,embedding_blob BLOB);
@@ -77,7 +77,7 @@ def _snapshot(
         """
     )
     derived.executemany(
-        "INSERT INTO concepts VALUES(?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO concepts VALUES(?,?,?,?,?,?,?,?,?,?)",
         (
             (
                 "a-id",
@@ -89,6 +89,7 @@ def _snapshot(
                 "2026-07-20T00:00:00Z",
                 "rev-1",
                 "Alpha",
+                "hash-a",
             ),
             (
                 "b-id",
@@ -100,6 +101,7 @@ def _snapshot(
                 "2026-07-20T00:00:00Z",
                 "rev-1",
                 "Beta",
+                "hash-b",
             ),
         ),
     )

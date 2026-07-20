@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from memento.config import GraphExplorerConfig
+from memento.graph_debug.diagnostics import apply_diagnostic_ids, diagnose_graph
 from memento.graph_debug.layout import aggregate_layout
 from memento.graph_debug.models import (
     GraphAggregateEdge,
@@ -62,6 +63,13 @@ class GraphSnapshotService:
             visible = nodes[: self._config.direct_node_limit]
             ids = {node.id for node in visible}
             edges = self._edges(derived, ids=ids, limit=self._config.edge_limit)
+            diagnostics = diagnose_graph(
+                nodes,
+                edges,
+                revisions=revisions,
+                content_hashes=self._content_hashes(derived),
+            )
+            visible = list(apply_diagnostic_ids(visible, diagnostics))
             if truncated:
                 all_nodes = self._nodes(
                     derived,
@@ -118,6 +126,7 @@ class GraphSnapshotService:
                 memberships=layout.memberships if layout is not None else (),
                 layout_seed=revisions.repository,
                 layout_version=layout.version if layout is not None else "v1",
+                diagnostics=diagnostics,
                 truncated=truncated,
             )
 
@@ -356,6 +365,13 @@ class GraphSnapshotService:
                 )
             )
         return result
+
+    @staticmethod
+    def _content_hashes(connection: sqlite3.Connection) -> dict[str, str]:
+        return {
+            str(row["id"]): str(row["content_hash"])
+            for row in connection.execute("SELECT id, content_hash FROM concepts ORDER BY id")
+        }
 
     def _proposal_counts(self, connection: sqlite3.Connection) -> dict[str, tuple[int, int]]:
         counts: dict[str, list[int]] = {}
