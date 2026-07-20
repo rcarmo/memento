@@ -4,7 +4,7 @@ import json
 
 import pytest
 from pydantic import ValidationError
-from umcp_shared import MCPHTTPResponse  # type: ignore[import-not-found]
+from umcp_shared import MCPHTTPResponse
 
 from memento.config import GraphExplorerConfig
 from memento.graph_debug import GraphDebugHTTPHandler

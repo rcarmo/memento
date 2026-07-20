@@ -50,8 +50,8 @@ from memento.service import (
 )
 
 try:  # pragma: no cover - optional runtime dependency
-    from aioumcp import AsyncMCPServer  # type: ignore[import-not-found]
-    from umcp_shared import (  # type: ignore[import-not-found]
+    from aioumcp import AsyncMCPServer
+    from umcp_shared import (
         MCPHTTPResponse,
         MCPPrincipal,
         get_request_context,

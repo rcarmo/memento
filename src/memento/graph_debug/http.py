@@ -5,7 +5,7 @@ from collections.abc import Mapping
 from importlib.resources import files
 from pathlib import PurePosixPath
 
-from umcp_shared import MCPHTTPResponse  # type: ignore[import-not-found]
+from umcp_shared import MCPHTTPResponse
 
 from memento.config import GraphExplorerConfig
 from memento.graph_debug.export import export_graph_json, export_graph_svg

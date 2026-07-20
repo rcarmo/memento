@@ -67,6 +67,8 @@ Skill concepts live under `/skills/`, carry the `skill` tag and match the `SKILL
 
 The optional `/graph` surface helps humans inspect how memories are being created and managed. It shows explicit links, provenance, sizes, assets, proposals, index state and a separately labelled semantic overlay in a 2.5D scene.
 
+![Memento visual debugger showing linked memories and the selected-memory inspector](docs/memento-graph-debugger.png)
+
 The debugger is disabled by default and unauthenticated when enabled. It is meant for a trusted development network, not an Internet-facing service. [ADR 0011](docs/decisions/0011-embed-a-gated-visual-memory-debugger.md) and [`docs/graph-explorer-plan.md`](docs/graph-explorer-plan.md) describe the boundary and delivery plan.
 
 ## Running It
