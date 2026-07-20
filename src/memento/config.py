@@ -357,6 +357,44 @@ class IntelligentTiersConfig(BaseModel):
     needle_router: NeedleRouterConfig = Field(default_factory=NeedleRouterConfig)
 
 
+class GraphExplorerConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    enabled: bool = False
+    route_prefix: str = "/graph"
+    direct_node_limit: int = Field(default=2_000, ge=1, le=2_000)
+    overview_cluster_limit: int = Field(default=500, ge=1, le=1_000)
+    expansion_node_limit: int = Field(default=2_000, ge=1, le=2_000)
+    edge_limit: int = Field(default=12_000, ge=1, le=20_000)
+    preview_chars: int = Field(default=4_000, ge=0, le=16_000)
+    semantic_neighbours: int = Field(default=12, ge=1, le=100)
+    export_node_limit: int = Field(default=2_000, ge=1, le=2_000)
+    refresh_max_paths: int = Field(default=2_000, ge=1, le=10_000)
+
+    @field_validator("route_prefix")
+    @classmethod
+    def validate_route_prefix(cls, value: str) -> str:
+        normalized = value.strip()
+        if (
+            not normalized.startswith("/")
+            or normalized == "/"
+            or normalized.endswith("/")
+            or "?" in normalized
+            or "#" in normalized
+            or ".." in normalized.split("/")
+        ):
+            raise ValueError(
+                "graph route_prefix must be an absolute non-root path without a trailing slash"
+            )
+        return normalized
+
+
+class ObservabilityConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    graph_explorer: GraphExplorerConfig = Field(default_factory=GraphExplorerConfig)
+
+
 class ServiceConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -366,3 +404,4 @@ class ServiceConfig(BaseModel):
     limits: LimitsConfig = Field(default_factory=LimitsConfig)
     mcp: MCPConfig = Field(default_factory=MCPConfig)
     intelligent_tiers: IntelligentTiersConfig = Field(default_factory=IntelligentTiersConfig)
+    observability: ObservabilityConfig = Field(default_factory=ObservabilityConfig)
