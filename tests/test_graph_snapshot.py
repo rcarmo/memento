@@ -184,11 +184,20 @@ def test_overview_is_bounded_deterministic_and_omits_vectors(tmp_path: Path) -> 
     assert first == second
     assert isinstance(first, GraphOverview)
     assert first.truncated is True
-    assert len(first.nodes) == 1
+    assert first.mode == "aggregated"
+    assert first.nodes == ()
+    assert sum(cluster.member_count for cluster in first.clusters) == 2
     assert first.metrics.memory_count == 2
-    assert first.nodes[0].proposal_count == 1
-    assert first.nodes[0].pending_proposal_count == 1
-    assert first.nodes[0].asset_bytes > 0
+    assert first.metrics.asset_bytes > 0
+    cluster = first.clusters[0]
+    expansion = service.expand_cluster(cluster.id)
+    assert expansion.parent_position == cluster.coarse_position
+    assert [node.id for node in expansion.nodes] == ["a-id", "b-id"]
+    assert expansion.next_cursor is None
+    detail = service.detail("a-id")
+    assert detail.node.proposal_count == 1
+    assert detail.node.pending_proposal_count == 1
+    assert detail.node.asset_bytes > 0
     encoded = first.model_dump_json()
     assert "SECRET-VECTOR" not in encoded
     assert "embedding_blob" not in encoded
@@ -217,6 +226,8 @@ def test_detail_and_neighbourhood_are_bounded_and_revision_aware(tmp_path: Path)
         service.neighbourhood("a-id", depth=2)
     with pytest.raises(GraphSnapshotError, match="unknown"):
         service.detail("missing")
+    with pytest.raises(GraphSnapshotError, match="unknown cluster"):
+        service.expand_cluster("missing")
 
 
 def test_snapshot_reports_stale_revisions(tmp_path: Path) -> None:

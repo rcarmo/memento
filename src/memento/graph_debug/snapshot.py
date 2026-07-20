@@ -4,12 +4,17 @@ import hashlib
 import json
 import math
 import sqlite3
+from dataclasses import asdict
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from memento.config import GraphExplorerConfig
+from memento.graph_debug.layout import aggregate_layout
 from memento.graph_debug.models import (
+    GraphAggregateEdge,
+    GraphAggregateNode,
     GraphAssetSummary,
+    GraphClusterExpansion,
     GraphEdge,
     GraphEmbeddingState,
     GraphMemoryDetail,
@@ -57,6 +62,28 @@ class GraphSnapshotService:
             visible = nodes[: self._config.direct_node_limit]
             ids = {node.id for node in visible}
             edges = self._edges(derived, ids=ids, limit=self._config.edge_limit)
+            if truncated:
+                all_nodes = self._nodes(
+                    derived,
+                    proposal_counts=proposal_counts,
+                    limit=self._config.refresh_max_paths,
+                )
+                all_ids = {node.id for node in all_nodes}
+                all_edges = self._edges(
+                    derived,
+                    ids=all_ids,
+                    limit=self._config.edge_limit,
+                )
+                layout = aggregate_layout(
+                    all_nodes,
+                    all_edges,
+                    repository_revision=revisions.repository,
+                    cluster_limit=self._config.overview_cluster_limit,
+                )
+                mode: Literal["direct", "aggregated"] = "aggregated"
+            else:
+                layout = None
+                mode = "direct"
             return GraphOverview(
                 revisions=revisions,
                 metrics=GraphMetrics(
@@ -73,9 +100,70 @@ class GraphSnapshotService:
                         "SELECT COUNT(*) FROM graph_metrics WHERE orphan_flag != 0",
                     ),
                 ),
-                nodes=tuple(visible),
-                edges=tuple(edges),
+                mode=mode,
+                nodes=tuple(visible) if layout is None else (),
+                edges=tuple(edges) if layout is None else (),
+                clusters=(
+                    tuple(
+                        GraphAggregateNode.model_validate(asdict(item)) for item in layout.clusters
+                    )
+                    if layout is not None
+                    else ()
+                ),
+                cluster_edges=(
+                    tuple(GraphAggregateEdge.model_validate(asdict(item)) for item in layout.edges)
+                    if layout is not None
+                    else ()
+                ),
+                memberships=layout.memberships if layout is not None else (),
+                layout_seed=revisions.repository,
+                layout_version=layout.version if layout is not None else "v1",
                 truncated=truncated,
+            )
+
+    def expand_cluster(self, cluster_id: str, *, cursor: int = 0) -> GraphClusterExpansion:
+        if cursor < 0:
+            raise GraphSnapshotError("cluster cursor must be non-negative")
+        with self._derived() as derived, self._control() as control:
+            revisions = self._revisions(derived)
+            proposal_counts = self._proposal_counts(control)
+            all_nodes = self._nodes(
+                derived,
+                proposal_counts=proposal_counts,
+                limit=self._config.refresh_max_paths,
+            )
+            all_ids = {node.id for node in all_nodes}
+            all_edges = self._edges(derived, ids=all_ids, limit=self._config.edge_limit)
+            layout = aggregate_layout(
+                all_nodes,
+                all_edges,
+                repository_revision=revisions.repository,
+                cluster_limit=self._config.overview_cluster_limit,
+            )
+            members = {
+                node_id
+                for node_id, member_cluster in layout.memberships
+                if member_cluster == cluster_id
+            }
+            cluster = next((item for item in layout.clusters if item.id == cluster_id), None)
+            if cluster is None:
+                raise GraphSnapshotError("unknown cluster")
+            ordered = [node for node in all_nodes if node.id in members]
+            page = ordered[cursor : cursor + self._config.expansion_node_limit]
+            next_cursor = cursor + len(page) if cursor + len(page) < len(ordered) else None
+            visible = {node.id for node in page}
+            edges = [
+                edge
+                for edge in all_edges
+                if edge.source in visible and edge.target is not None and edge.target in visible
+            ]
+            return GraphClusterExpansion(
+                revisions=revisions,
+                cluster_id=cluster_id,
+                parent_position=cluster.coarse_position,
+                nodes=tuple(page),
+                edges=tuple(edges[: self._config.edge_limit]),
+                next_cursor=str(next_cursor) if next_cursor is not None else None,
             )
 
     def detail(self, concept_id: str) -> GraphMemoryDetail:

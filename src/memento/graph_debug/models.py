@@ -77,13 +77,43 @@ class GraphMetrics(GraphModel):
     orphan_count: int
 
 
+class GraphAggregateNode(GraphModel):
+    id: str
+    label: str
+    namespace: str
+    member_count: int
+    markdown_bytes: int
+    asset_bytes: int
+    combined_bytes: int
+    explicit_in_degree: int
+    explicit_out_degree: int
+    broken_link_count: int
+    orphan_count: int
+    type_counts: tuple[tuple[str, int], ...]
+    status_counts: tuple[tuple[str, int], ...]
+    coarse_position: GraphPosition
+
+
+class GraphAggregateEdge(GraphModel):
+    id: str
+    source: str
+    target: str
+    explicit_edge_count: int
+    canonical: Literal[True] = True
+
+
 class GraphOverview(GraphModel):
     schema_version: Literal[1] = 1
-    mode: Literal["direct"] = "direct"
+    mode: Literal["direct", "aggregated"] = "direct"
     revisions: GraphRevisions
     metrics: GraphMetrics
-    nodes: tuple[GraphNode, ...]
-    edges: tuple[GraphEdge, ...]
+    nodes: tuple[GraphNode, ...] = ()
+    edges: tuple[GraphEdge, ...] = ()
+    clusters: tuple[GraphAggregateNode, ...] = ()
+    cluster_edges: tuple[GraphAggregateEdge, ...] = ()
+    memberships: tuple[tuple[str, str], ...] = ()
+    layout_seed: str
+    layout_version: str = "v1"
     truncated: bool = False
 
 
@@ -116,6 +146,16 @@ class GraphMemoryDetail(GraphModel):
     inbound: tuple[GraphEdge, ...]
     assets: tuple[GraphAssetSummary, ...]
     proposals: tuple[GraphProposalSummary, ...]
+
+
+class GraphClusterExpansion(GraphModel):
+    schema_version: Literal[1] = 1
+    revisions: GraphRevisions
+    cluster_id: str
+    parent_position: GraphPosition
+    nodes: tuple[GraphNode, ...]
+    edges: tuple[GraphEdge, ...]
+    next_cursor: str | None = None
 
 
 class GraphNeighbourhood(GraphModel):
