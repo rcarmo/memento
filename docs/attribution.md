@@ -1,8 +1,12 @@
 # Attribution
 
+## Visual memory debugger
+
+The optional visual debugger vendors [Three.js](https://threejs.org/) 0.180.0 and [Preact](https://preactjs.com/) 10.27.2, including Preact Hooks, under their MIT licences. Exact source URLs and SHA-256 digests are recorded in `src/memento/graph_debug/static/vendor/manifest.json`; the combined licence text is shipped beside the browser modules in `LICENSES.md`. `bun tools/vendor_graph_libraries.ts --check` verifies the committed files without network access.
+
 ## uMCP
 
-Memento uses [`rcarmo/umcp`](https://github.com/rcarmo/umcp) for its MCP server, Streamable HTTP transport, request context, authentication and authorization hooks. The Python package pins commit `691af9f159757d45c180856ec0dfb89da7aa341c` through the `mcp` optional dependency.
+Memento uses [`rcarmo/umcp`](https://github.com/rcarmo/umcp) for its MCP server, Streamable HTTP transport, request context, authentication and authorization hooks. The Python package pins commit `9ff48cf1b22ac61855262e4e64b4da5583e0f11c` through the `mcp` optional dependency.
 
 ## Rust workspace
 

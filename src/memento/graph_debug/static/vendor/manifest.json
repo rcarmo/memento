@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "libraries": [
+    {
+      "name": "three",
+      "version": "0.180.0",
+      "source": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.min.js",
+      "file": "three.module.min.js",
+      "sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6",
+      "license": "MIT",
+      "license_source": "https://raw.githubusercontent.com/mrdoob/three.js/r180/LICENSE",
+      "license_sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
+    },
+    {
+      "name": "preact",
+      "version": "10.27.2",
+      "source": "https://cdn.jsdelivr.net/npm/preact@10.27.2/dist/preact.module.js",
+      "file": "preact.module.js",
+      "sha256": "a1cefabf06ec626adcb92731537e1e04fd09a7908e22551bab50540106dc950d",
+      "license": "MIT",
+      "license_source": "https://raw.githubusercontent.com/preactjs/preact/10.27.2/LICENSE",
+      "license_sha256": "1fe6958409c8c257a70c587a18b6f7f412b179b456630790d30b2ec9a8e4b7d4"
+    },
+    {
+      "name": "preact-hooks",
+      "version": "10.27.2",
+      "source": "https://cdn.jsdelivr.net/npm/preact@10.27.2/hooks/dist/hooks.module.js",
+      "file": "preact-hooks.module.js",
+      "sha256": "9295b344df14b5395a612fed63350619d029e91cc2e80e9a2a5f920e38b88972",
+      "license": "MIT",
+      "license_source": "https://raw.githubusercontent.com/preactjs/preact/10.27.2/LICENSE",
+      "license_sha256": "1fe6958409c8c257a70c587a18b6f7f412b179b456630790d30b2ec9a8e4b7d4"
+    }
+  ]
+}
