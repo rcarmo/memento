@@ -198,7 +198,7 @@ All tool names below are exact.
 |---|---|---|
 | `memory_help` | none | compact discovery and workflow hints |
 | `memory_status` | none | service readiness, revisions, features and limits |
-| `memory_search` | `query`, `concept_type?`, `limit=20`, `cursor?`, `search_mode?` | lexical, semantic or hybrid retrieval |
+| `memory_search` | `query`, `concept_type?`, `limit=20`, `cursor?`, `search_mode?`, `query_syntax="plain"` | lexical, semantic or hybrid retrieval |
 | `memory_read` | `id_or_path` | path or concept ID; returns the whole concept payload |
 | `memory_list` | `path_prefix="/"` | visible concepts under a prefix |
 | `memory_graph` | `id_or_path`, `depth=1` | bounded graph neighbours and backlinks |
@@ -265,6 +265,9 @@ Current payload fields:
 * `limit=20`
 * `cursor?`
 * `search_mode?`
+* `query_syntax="plain"`
+
+`query_syntax="plain"` tokenises ordinary text and quotes each word before passing it to FTS5, so punctuation and operators remain literal input. Use `query_syntax="fts5"` only for deliberate phrases, prefixes, boolean operators or other raw FTS5 expressions. Punctuation-only plain queries and malformed raw FTS5 expressions fail with `validation_error`.
 
 ### Search modes
 
@@ -509,6 +512,7 @@ Operation names are stable literals:
 * At most one commit-capable operation -- `proposal_apply`, `create`, `patch`, `rename` -- is allowed per plan.
 * Output is bounded by configured limits for operation count, intermediates, records, bytes and total runtime.
 * Success returns a bounded operation trace, revision summary and requested projections.
+* If the runtime deadline expires after a commit-capable operation succeeds, execution stops and returns success with the committed revisions, operation ID and warning `memory_execute_deadline_exceeded_after_commit`. A deadline reached before any commit remains a `validation_error`.
 * If `stop_on_error` is `true`, execution stops at the first operation-level error.
 * If `stop_on_error` is `false`, later steps may still run and successful projections may still be returned.
 

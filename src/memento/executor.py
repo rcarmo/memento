@@ -26,6 +26,7 @@ class SearchArgs(BaseModel):
     limit: int = 20
     cursor: str | None = None
     search_mode: str | None = None
+    query_syntax: Literal["plain", "fts5"] = "plain"
 
 
 class ReadArgs(BaseModel):
@@ -390,7 +391,14 @@ class MemoryExecutor:
                     {"trace": trace, "revisions": revisions, "saved": saved},
                     commit_succeeded=commit_succeeded,
                 )
-                self._check_time(started)
+                deadline_exceeded = self._time_exceeded(started)
+                if deadline_exceeded:
+                    if commit_succeeded:
+                        warnings.append("memory_execute_deadline_exceeded_after_commit")
+                        stopped = True
+                        stop_reason = "deadline exceeded after committed operation"
+                        break
+                    self._check_time(started)
                 if entry["status"] == "error" and parsed.stop_on_error:
                     break
             returns = self._project_returns(parsed, saved, last_success)
@@ -441,8 +449,11 @@ class MemoryExecutor:
             projected[name] = _bound_value(value, self._limits.max_records)
         return projected
 
+    def _time_exceeded(self, started: float) -> bool:
+        return monotonic() - started > self._limits.max_time_seconds
+
     def _check_time(self, started: float) -> None:
-        if monotonic() - started > self._limits.max_time_seconds:
+        if self._time_exceeded(started):
             raise ValueError("plan exceeded configured max_time_seconds")
 
     def _ensure_output_size(self, payload: dict[str, Any], *, commit_succeeded: bool) -> None:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import shutil
 import sqlite3
 import time
@@ -316,6 +317,7 @@ class DerivedIndex:
         freshness: SearchFreshness = SearchFreshness.EVENTUAL,
         timeout_seconds: float = 1.0,
         search_mode: SearchMode = SearchMode.LEXICAL,
+        query_syntax: str = "fts5",
     ) -> SearchPage:
         if freshness is SearchFreshness.STRICT:
             self.wait_for_freshness(timeout_seconds=timeout_seconds)
@@ -331,10 +333,11 @@ class DerivedIndex:
                     status=self._get_state(connection, "status"),
                     quarantine_path=self._get_state_optional(connection, "quarantine_path"),
                 )
+                lexical_query = _lexical_query(query, query_syntax=query_syntax)
                 lexical_rows = self._search_lexical_rows(
                     connection,
                     policy=policy,
-                    query=query,
+                    query=lexical_query,
                     concept_type=concept_type,
                     tags=tags,
                     status=status,
@@ -1361,6 +1364,19 @@ class DerivedIndex:
             """,
             (key, value),
         )
+
+
+def _lexical_query(query: str, *, query_syntax: str) -> str:
+    if query_syntax == "fts5":
+        if not query.strip():
+            raise DerivedSearchError("search query must not be empty")
+        return query
+    if query_syntax != "plain":
+        raise DerivedSearchError(f"unsupported query_syntax: {query_syntax}")
+    terms = re.findall(r"\w+", query, flags=re.UNICODE)
+    if not terms:
+        raise DerivedSearchError("plain search query must contain at least one word")
+    return " ".join(f'"{term.replace(chr(34), chr(34) * 2)}"' for term in terms)
 
 
 def _decode_cursor(cursor: str | None) -> int:
