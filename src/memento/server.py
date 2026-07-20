@@ -31,6 +31,7 @@ from memento.executor import (
     execute_plan_schema,
 )
 from memento.graph_debug import GraphDebugHTTPHandler
+from memento.graph_debug.refresh import GraphEmbeddingRefreshCoordinator
 from memento.graph_debug.snapshot import GraphSnapshotService
 from memento.mcp_registry import (
     OPERATION_SPEC_BY_OP,
@@ -155,6 +156,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         bearer_tokens: Mapping[str, Principal],
         log_file: Path | None = None,
         graph_snapshot_service: GraphSnapshotService | None = None,
+        graph_refresh_coordinator: GraphEmbeddingRefreshCoordinator | None = None,
     ) -> None:
         self._umcp_log_file = log_file
         super().__init__()
@@ -170,6 +172,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         self._graph_debug_http = GraphDebugHTTPHandler(
             service._deps.config.observability.graph_explorer,
             snapshot_service=graph_snapshot_service,
+            refresh_coordinator=graph_refresh_coordinator,
         )
 
     def _setup_logging(self) -> None:

@@ -16,6 +16,7 @@ from memento.control.proposals import ProposalStatus, list_proposals
 from memento.derived.embeddings_worker import SemanticEmbeddingRefreshWorker
 from memento.derived.index import DerivedIndex
 from memento.ffi import RustFfiLibrary
+from memento.graph_debug.refresh import GraphEmbeddingRefreshCoordinator
 from memento.graph_debug.snapshot import GraphSnapshotService
 from memento.model_clients import RoutedFallbackModelClient, build_endpoint_clients
 from memento.needle_ffi import NeedleFfiLibrary
@@ -72,11 +73,18 @@ class MementoRuntime:
             derived_db_path=self.paths.derived_db,
             control_db_path=self.paths.control_db,
         )
+        graph_refresh_coordinator = GraphEmbeddingRefreshCoordinator(
+            self.config.observability.graph_explorer,
+            repository_root=self.paths.repo_paths.current_dir,
+            snapshot_service=graph_snapshot_service,
+            worker=self.embedding_refresh_worker,
+        )
         return MementoMCPServer(
             self.service,
             bearer_tokens=self._bearer_tokens(),
             log_file=log_file,
             graph_snapshot_service=graph_snapshot_service,
+            graph_refresh_coordinator=graph_refresh_coordinator,
         )
 
     def status_snapshot(self) -> dict[str, Any]:
