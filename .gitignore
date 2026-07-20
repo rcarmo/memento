@@ -16,7 +16,8 @@ dist/
 # Rust
 rust/target/
 
-# Local configuration and editors
+# Local configuration, planning and editors
+/workitems/
 .env
 .envrc
 .DS_Store
