@@ -16,6 +16,7 @@ from memento.control.proposals import ProposalStatus, list_proposals
 from memento.derived.embeddings_worker import SemanticEmbeddingRefreshWorker
 from memento.derived.index import DerivedIndex
 from memento.ffi import RustFfiLibrary
+from memento.graph_debug.snapshot import GraphSnapshotService
 from memento.model_clients import RoutedFallbackModelClient, build_endpoint_clients
 from memento.needle_ffi import NeedleFfiLibrary
 from memento.repository.asset_migration import migrate_legacy_skill_packs
@@ -65,10 +66,17 @@ class MementoRuntime:
         self._require_open()
         log_file = self.paths.root / "logs" / "umcp.log"
         log_file.parent.mkdir(parents=True, exist_ok=True)
+        graph_snapshot_service = GraphSnapshotService(
+            self.config.observability.graph_explorer,
+            repository_root=self.paths.repo_paths.current_dir,
+            derived_db_path=self.paths.derived_db,
+            control_db_path=self.paths.control_db,
+        )
         return MementoMCPServer(
             self.service,
             bearer_tokens=self._bearer_tokens(),
             log_file=log_file,
+            graph_snapshot_service=graph_snapshot_service,
         )
 
     def status_snapshot(self) -> dict[str, Any]:
