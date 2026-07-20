@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "memento"
-version = "0.3.0rc5"
+version = "0.3.0rc6"
 description = "A deterministic shared-memory MCP service backed by Git Markdown."
 readme = "README.md"
 requires-python = ">=3.12,<3.15"
@@ -30,6 +30,7 @@ memento-skill-import = "memento.skill_import:main"
 
 [project.optional-dependencies]
 dev = [
+    "umcp @ git+https://github.com/rcarmo/umcp.git@9ff48cf1b22ac61855262e4e64b4da5583e0f11c",
     "mypy>=1.11",
     "pytest>=8",
     "pytest-cov>=5",
