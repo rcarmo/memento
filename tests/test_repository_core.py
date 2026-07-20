@@ -202,7 +202,7 @@ def test_generated_indexes_and_log_escape_markdown_titles_and_authors(tmp_path: 
     bundle = scan_bundle(bundle_root)
     indexes = generate_directory_indexes(bundle)
     log_output = generate_root_log(bundle)
-    assert "[Link \\[trap\\]\(x\)](/projects/escaped.md)" in indexes["/projects/"]
+    assert r"[Link \[trap\]\(x\)](/projects/escaped.md)" in indexes["/projects/"]
     assert "agent\\_\\*\\`demo\\`" in log_output
 
 
