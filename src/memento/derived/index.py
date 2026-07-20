@@ -297,6 +297,49 @@ class DerivedIndex:
 
     def refresh_embeddings(self, bundle_root: Path, *, repo_revision: str) -> None:
         bundle = scan_bundle(bundle_root)
+        self._refresh_embedding_documents(
+            bundle_root,
+            repo_revision=repo_revision,
+            changed_documents=tuple(
+                (entry.bundle_path, entry.document) for entry in bundle.entries
+            ),
+            full_rebuild=False,
+        )
+
+    def refresh_embedding_paths(
+        self,
+        bundle_root: Path,
+        *,
+        repo_revision: str,
+        paths: tuple[str, ...],
+    ) -> None:
+        unique_paths = tuple(sorted(dict.fromkeys(paths)))
+        changed_documents: list[tuple[str, object]] = []
+        for bundle_path in unique_paths:
+            absolute = bundle_root / bundle_path.removeprefix("/")
+            if (
+                not bundle_path.startswith("/")
+                or not absolute.is_file()
+                or not bundle_path.endswith(".md")
+            ):
+                raise ValueError(f"embedding refresh path is unavailable: {bundle_path}")
+            changed_documents.append((bundle_path, parse_concept_file(absolute)))
+        self._refresh_embedding_documents(
+            bundle_root,
+            repo_revision=repo_revision,
+            changed_documents=tuple(changed_documents),
+            full_rebuild=False,
+        )
+
+    def _refresh_embedding_documents(
+        self,
+        bundle_root: Path,
+        *,
+        repo_revision: str,
+        changed_documents: tuple[tuple[str, object], ...],
+        full_rebuild: bool,
+    ) -> None:
+        del bundle_root
 
         def run(connection: sqlite3.Connection) -> None:
             self._ensure_ready(connection)
@@ -304,10 +347,8 @@ class DerivedIndex:
                 self._update_embeddings(
                     connection,
                     repo_revision=repo_revision,
-                    changed_documents=tuple(
-                        (entry.bundle_path, entry.document) for entry in bundle.entries
-                    ),
-                    full_rebuild=False,
+                    changed_documents=changed_documents,
+                    full_rebuild=full_rebuild,
                 )
 
         self._with_quarantine(run)

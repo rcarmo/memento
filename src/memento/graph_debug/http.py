@@ -8,6 +8,7 @@ from pathlib import PurePosixPath
 from umcp_shared import MCPHTTPResponse  # type: ignore[import-not-found]
 
 from memento.config import GraphExplorerConfig
+from memento.graph_debug.refresh import GraphEmbeddingRefreshCoordinator
 from memento.graph_debug.snapshot import GraphSnapshotError, GraphSnapshotService
 
 _CACHE_HEADERS = (("Cache-Control", "no-store"), ("X-Content-Type-Options", "nosniff"))
@@ -28,9 +29,11 @@ class GraphDebugHTTPHandler:
         config: GraphExplorerConfig,
         *,
         snapshot_service: GraphSnapshotService | None = None,
+        refresh_coordinator: GraphEmbeddingRefreshCoordinator | None = None,
     ) -> None:
         self._config = config
         self._snapshot_service = snapshot_service
+        self._refresh_coordinator = refresh_coordinator
         self._static_root = files("memento.graph_debug").joinpath("static")
 
     def handle(
@@ -48,6 +51,9 @@ class GraphDebugHTTPHandler:
             return None
         if not self._config.enabled:
             return self._not_found()
+        refresh_path = f"{prefix}/api/v1/embeddings/refresh"
+        if method == "POST" and path == refresh_path:
+            return self._refresh(body)
         if method != "GET":
             return MCPHTTPResponse(
                 405,
@@ -67,6 +73,10 @@ class GraphDebugHTTPHandler:
                 }
             )
         try:
+            if path == f"{prefix}/api/v1/embeddings/status":
+                if self._refresh_coordinator is None:
+                    return self._json({"available": False})
+                return self._json(self._refresh_coordinator.state_dict())
             if path == f"{prefix}/api/v1/overview":
                 return self._snapshot_json("overview")
             cluster_prefix = f"{prefix}/api/v1/clusters/"
@@ -102,6 +112,27 @@ class GraphDebugHTTPHandler:
             return self._not_found()
         content_type = _STATIC_CONTENT_TYPES.get(path.suffix.casefold(), "application/octet-stream")
         return MCPHTTPResponse(200, body=body, content_type=content_type, headers=_CACHE_HEADERS)
+
+    def _refresh(self, body: bytes) -> MCPHTTPResponse:
+        if self._refresh_coordinator is None:
+            return self._json({"error": "semantic embedding refresh is unavailable"}, status=503)
+        try:
+            payload = json.loads(body)
+            if not isinstance(payload, dict):
+                raise GraphSnapshotError("embedding refresh body must be an object")
+            ids = payload.get("concept_ids", [])
+            if not isinstance(ids, list) or not all(isinstance(item, str) for item in ids):
+                raise GraphSnapshotError("concept_ids must be an array of strings")
+            self._refresh_coordinator.enqueue(
+                scope=str(payload.get("scope") or ""),
+                concept_ids=tuple(ids),
+                confirm_full=payload.get("confirm_full") is True,
+            )
+            return self._json(self._refresh_coordinator.state_dict(), status=202)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return self._json({"error": "invalid JSON"}, status=400)
+        except GraphSnapshotError as exc:
+            return self._json({"error": str(exc)}, status=400)
 
     def _snapshot_json(self, operation: str, concept_id: str | None = None) -> MCPHTTPResponse:
         if self._snapshot_service is None:

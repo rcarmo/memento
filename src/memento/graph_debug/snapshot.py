@@ -50,6 +50,17 @@ class GraphSnapshotService:
         self._derived_db_path = derived_db_path
         self._control_db_path = control_db_path
 
+    def paths_for_ids(self, concept_ids: tuple[str, ...]) -> tuple[str, ...]:
+        if not concept_ids:
+            return ()
+        with self._derived() as derived:
+            rows = derived.execute(
+                f"SELECT id, path FROM concepts WHERE id IN ({','.join('?' for _ in concept_ids)}) ORDER BY id",
+                concept_ids,
+            ).fetchall()
+        by_id = {str(row["id"]): str(row["path"]) for row in rows}
+        return tuple(by_id[concept_id] for concept_id in concept_ids if concept_id in by_id)
+
     def overview(self) -> GraphOverview:
         with self._derived() as derived, self._control() as control:
             revisions = self._revisions(derived)

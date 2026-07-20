@@ -19,7 +19,7 @@ class SemanticEmbeddingRefreshWorker:
     def __init__(self, derived_index: DerivedIndex) -> None:
         self._derived_index = derived_index
         self._condition = threading.Condition()
-        self._pending_request: tuple[Path, str] | None = None
+        self._pending_request: tuple[Path, str, tuple[str, ...] | None] | None = None
         self._running = False
         self._closed = False
         self._last_error: str | None = None
@@ -53,11 +53,24 @@ class SemanticEmbeddingRefreshWorker:
                 last_error=self._last_error,
             )
 
-    def enqueue(self, bundle_root: Path, repo_revision: str) -> bool:
+    def enqueue(
+        self,
+        bundle_root: Path,
+        repo_revision: str,
+        *,
+        paths: tuple[str, ...] | None = None,
+    ) -> bool:
         with self._condition:
             if self._closed:
                 return False
-            self._pending_request = (bundle_root, repo_revision)
+            if self._pending_request is not None:
+                pending_root, pending_revision, pending_paths = self._pending_request
+                if pending_root == bundle_root and pending_revision == repo_revision:
+                    if pending_paths is None or paths is None:
+                        paths = None
+                    else:
+                        paths = tuple(sorted(set(pending_paths) | set(paths)))
+            self._pending_request = (bundle_root, repo_revision, paths)
             self._condition.notify_all()
             return True
 
@@ -93,8 +106,15 @@ class SemanticEmbeddingRefreshWorker:
                 self._running = True
             assert request is not None
             try:
-                bundle_root, repo_revision = request
-                self._derived_index.refresh_embeddings(bundle_root, repo_revision=repo_revision)
+                bundle_root, repo_revision, paths = request
+                if paths is None:
+                    self._derived_index.refresh_embeddings(bundle_root, repo_revision=repo_revision)
+                else:
+                    self._derived_index.refresh_embedding_paths(
+                        bundle_root,
+                        repo_revision=repo_revision,
+                        paths=paths,
+                    )
             except Exception as exc:
                 with self._condition:
                     self._last_error = str(exc)
