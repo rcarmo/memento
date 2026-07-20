@@ -3,135 +3,56 @@
 **Status:** accepted
 **Date:** 2026-07-20
 
+## Context
+
+Memento already records enough information to explain how shared memory evolves, but inspecting it means moving between Markdown, Git history, `control.sqlite` and `derived.sqlite`. That is tolerable while debugging one concept and hopeless when trying to understand clusters, broken links, oversized assets or the difference between stored links and semantic proximity.
+
+We need a human debugging view rather than another agent tool. It should make the current memory graph legible, show where each piece came from and expose stale or surprising state without becoming a second editor.
+
 ## Decision
 
-Memento includes an optional browser-based visual debugger for human inspection of memory creation, provenance, relationships and derived state. It is served by the Memento process on the same host and port as MCP, under `/graph`, with bounded JSON APIs under `/graph/api/`.
+Memento will serve an optional visual debugger at `/graph` on the same host and port as MCP. `observability.graph_explorer.enabled` controls the entire surface and defaults to `false`. When it is off, the page, static files and API routes return `404`.
 
-The complete surface is controlled by one global setting, `observability.graph_explorer.enabled`, which defaults to `false`. When disabled, the HTML, JavaScript, styles, assets and data APIs return `404`. When enabled, the surface is intentionally unauthenticated and visible to anyone who can reach Memento. It is a local development and trusted-LAN debugging facility and must not be enabled on an Internet-facing deployment. Enabling it does not change MCP authentication or authorisation.
+When enabled, `/graph` is unauthenticated. This is deliberate: the first deployment is on a trusted LAN and the tool is for development. Titles, paths, tags, topology, provenance and previews may be sensitive, so the page carries a warning and the documentation tells operators to leave it off on an Internet-facing service. MCP authentication and namespace policy do not change.
 
-The initial debugger shows current state plus provenance and management metadata. Memories are primary nodes. Assets and proposals are optional satellite nodes expanded on demand. Principals, revisions and operations begin as filters and overlays rather than permanent nodes.
+Memories are the primary nodes. Assets and proposals appear as satellites when a memory is expanded; principals, revisions and operations are filters or overlays. Explicit Markdown links are the only stored relationships. Semantic similarity, common tags, namespace, type and provenance may influence layout, but they use separate edge styles and explanations. An absent embedding says nothing about the health of a Markdown link.
 
-Explicit Markdown links are canonical relationship state. Semantic proximity, shared tags, namespace, type and provenance are separate computed layout influences with independent controls and distinct visual encoding. Embeddings are derived analytical data, not relationships. Missing or stale embeddings never imply broken links.
+The server supplies stable clusters, coarse coordinates and bounded pages. The browser refines only the visible set, which keeps the 10,000-concept repository limit practical without sending the embedding matrix to the client. Repositories above the direct-render threshold open as aggregates and expand by cluster or neighbourhood.
 
-The server computes deterministic coarse clusters, communities, positions and bounded layout hints. The browser refines only the visible working set from a deterministic seed. The initial response is aggregated for repositories above the direct-render threshold; clusters and neighbourhoods expand on demand up to the existing 10,000-concept ceiling. Raw embedding vectors never leave the server.
+Three.js renders the WebGL2 scene. Preact handles controls and the inspector. Both libraries are committed at exact versions with checksums and licences. The application ships as browser-native ES modules; Bun handles vendoring, integrity checks and tests, but there is no JavaScript bundle in the release.
 
-The browser uses vendored Three.js for the WebGL2 scene and vendored Preact for controls, inspectors and diagnostics. Source is browser-native ES modules. Bun is used only for vendoring, integrity verification, housekeeping and tests. The project does not introduce Vite, Webpack, Rollup or another JavaScript build system.
+The debugger cannot change Markdown, proposals or operation records. It may ask the existing short-lived GTE worker to refresh selected, visible or all embeddings, since those rows are disposable index data. A full refresh requires confirmation.
 
-The debugger is read-only for canonical Git knowledge and SQLite control state. It may request selected, visible-neighbourhood or full embedding refresh because embeddings are rebuildable derived state. Full refresh requires explicit confirmation and runs through the existing short-lived batched GTE worker.
+## What The View Shows
 
-## Purpose
+The default node radius reflects Markdown plus retained asset bytes on a logarithmic scale. Other size modes cover Markdown, assets, explicit degree, semantic density, update frequency and age. Colour defaults to memory type and may switch to namespace, creator, age, status, embedding state, proposal state, assets or anomaly class. Outlines and badges carry warnings when colour is already being used for something else.
 
-The debugger exists to help humans understand and guide Memento's development. It should make these questions answerable without reading Git, SQLite and logs separately:
+Selecting a memory opens its path, type, status, tags, timestamps, updater, revision, sizes, explicit links, embedding metadata, proposals, assets and a short sanitised Markdown preview. The inspector also explains the forces affecting its position.
 
-* How was a memory created or changed, by which principal and operation?
-* Which explicit links are present, broken or unexpectedly central?
-* Which memories are isolated, duplicated, oversized, stale or outside their expected namespace cluster?
-* How do structural links, semantic similarity and metadata groupings differ?
-* Which assets and proposals surround a memory, and how much storage do they consume?
-* Are repository, index and embedding revisions aligned?
-* Why is a selected node positioned, sized, coloured or flagged as it is?
+Diagnostics name the rule and measured value. The first set covers orphans, broken links, high degree, isolated groups, revision lag, embedding failures, pending proposals, duplicate content, size outliers, tag drift and namespace outliers. Semantic diagnostics are labelled as derived observations rather than relationship defects.
 
-This is observability, not an end-user knowledge browser and not a graph editor.
+The current scene can be saved as PNG. A bounded neighbourhood can be exported as SVG, and JSON export contains the filtered nodes, typed edges, coordinates, settings, revisions and diagnostics. None of these formats includes tokens, raw vectors or asset payloads.
 
-## Visual model
+## Consequences
 
-Memory nodes are rendered in a 2.5D WebGL scene with depth-aware camera movement, curved arcs, instancing, GPU picking and level of detail. The default node radius uses logarithmically scaled combined Markdown and retained-asset bytes. Operators may switch size to Markdown bytes, asset bytes, explicit degree, semantic-neighbour density, update frequency or age.
+The setting is a meaningful trust-boundary switch rather than a cosmetic feature flag. Enabling it exposes debugging metadata to anyone who can reach the service.
 
-Colour defaults to memory type and may switch to namespace, creator, age, status, embedding readiness, proposal state, asset presence or anomaly class. Health and anomaly state also use outline, shape or badges so meaning never relies on colour alone.
+Large repositories need an aggregate-first API and level of detail in the browser. The useful target is an overview within five seconds over the LAN, at least 30 fps with 2,000 visible nodes, selection feedback below 100 ms and expansion starting below 250 ms. Current desktop Chromium, Firefox and Safari are supported, along with tablet touch; WebGL2 is required.
 
-Positioning combines independently adjustable forces:
+Graph responses need coherent repository and index revisions, stable ordering and strict node, edge, preview and export bounds. The implementation must avoid one SQL query or filesystem read per edge. Raw embedding vectors remain inside Memento.
 
-* explicit links, strongest by default;
-* semantic proximity from current compatible embeddings;
-* shared tags;
-* namespace;
-* memory type;
-* provenance.
+The release must include the browser modules and licence files, pass the existing Python, Rust, packaging and no-AVX checks, and be exercised through Portainer on the DiskStation before the debugger is left enabled on the trusted LAN.
 
-Stored links and inferred similarity use different edge types, legends and inspector language. The selected-node inspector explains every active force and cluster assignment.
+## Deferred
 
-## Inspector and diagnostics
+Revision playback and animated diffs will use Git history and operation records after the current-state view is settled. Split comparison between two relationship/force configurations and standalone interactive export are also later work.
 
-Selecting a memory opens a read-only inspector containing:
+## Alternatives
 
-* stable ID, path, title, type, status and tags;
-* creator/principal, creation/update timestamps and current Git revision;
-* Markdown, asset and combined byte counts;
-* proposal or operation origin where available;
-* explicit inbound and outbound links;
-* semantic neighbours with scores, model ID and embedding revision;
-* current repository, index and embedding revision state;
-* cluster membership and layout-force explanations;
-* expandable asset and proposal satellites;
-* sanitised bounded Markdown preview;
-* copy-path and focus-neighbourhood actions.
+A separate graph container would need another API or direct access to Memento's databases, adding a second deployment and trust boundary. Keeping the view in Memento gives it coherent snapshots and the existing model/index lifecycle.
 
-The MVP detects and explains structural, lifecycle and content-shape anomalies: orphan nodes, broken links, excessive degree, isolated clusters, stale indexes or embeddings, pending/failed management state, near-duplicates, size outliers, tag drift and namespace outliers. Each diagnostic reports its rule and measured value rather than one opaque anomaly score.
+SVG alone is attractive for documents but not for thousands of moving nodes, depth, touch camera movement and picking. A plain canvas would work, although it would recreate facilities already available in Three.js.
 
-## Progressive loading
+Sending every concept and vector in one response would make the browser responsible for sensitive data and expensive clustering. Aggregate-first responses keep both sides bounded.
 
-The overview endpoint returns bounded aggregate nodes and edges. A repository with no more than the direct-render threshold may return memories directly. Larger repositories return namespace/community aggregates with counts, byte totals, anomaly summaries and deterministic centroids. Expansion endpoints return a bounded cluster page or selected neighbourhood. Semantic neighbours are computed server-side for the requested working set only.
-
-The browser renders no more than approximately 2,000 memory nodes at once. Before frame rate collapses it reduces labels, semantic edges and satellite detail. It never downloads the complete 10,000-node embedding matrix.
-
-## Exports
-
-The MVP exports:
-
-* PNG for the current rendered scene;
-* SVG for a bounded selected neighbourhood, preserving labels and curved typed edges;
-* JSON containing the current filtered nodes, typed edges, coordinates, active force settings, revisions and diagnostics.
-
-Exports contain no raw vectors, credentials, bearer tokens or full asset payloads. Standalone interactive HTML export is deferred.
-
-## Browser and performance requirements
-
-The supported clients are current desktop Chromium, Firefox and Safari, plus tablet touch. WebGL2 is required. Phone-sized interaction and a non-WebGL renderer are not MVP requirements.
-
-Acceptance budgets are:
-
-* useful aggregated overview within five seconds over LAN;
-* at least 30 fps for 2,000 visible memory nodes and bounded edges on an ordinary laptop;
-* selection feedback below 100 ms;
-* cluster expansion begins below 250 ms and may stream;
-* bounded and cancellable server responses;
-* visible fetch, layout, render, node/edge and frame-pressure diagnostics.
-
-## Security consequences
-
-The global setting is an explicit trust-boundary switch. Startup logs and the UI warn that enabling it exposes memory metadata without authentication. Titles, paths, tags, topology, provenance, asset sizes and previews may all be sensitive. Documentation forbids enabling it on Internet-facing deployments.
-
-The graph APIs use strict route, method, query and response bounds. They do not expose raw filesystem paths outside bundle paths, SQLite internals, credentials, token environment names, raw vectors or asset bodies. Markdown previews are sanitised and bounded. Canonical/control mutations are unavailable from this surface.
-
-Derived embedding refresh uses a narrow maintenance API with bounded scope, one coalescing job, progress reporting and explicit full-refresh confirmation. It cannot invoke proposal, review, apply, create, patch or rename operations.
-
-## Validation
-
-The feature requires:
-
-* backend tests for the global gate, 404 behaviour, route bounds, aggregation, provenance, diagnostics, semantic-neighbour computation, refresh jobs and exports;
-* deterministic layout and community fixtures;
-* Playwright tests on Chromium, Firefox and WebKit for mouse, keyboard and tablet-touch workflows;
-* light/dark visual snapshots;
-* synthetic 500, 2,000 and 10,000-memory fixtures;
-* machine-readable fetch/layout/render/frame-budget reports;
-* no-secret/no-vector export tests;
-* the existing Python, Rust, wheel, container, multi-architecture and no-AVX gates;
-* a real DiskStation Portainer deployment and browser smoke while enabled on the trusted LAN.
-
-## Deferred features
-
-Revision playback and animated graph diffs are explicitly planned after the MVP. That feature will derive snapshots from Git history and control-plane events without changing their authority. Split-screen comparison of two relationship/force configurations and standalone interactive HTML export are also deferred.
-
-## Alternatives considered
-
-* **Separate graph container:** rejected because it would duplicate configuration, expose another trust boundary and either require privileged database mounts or a second API anyway.
-* **Authenticated graph explorer:** deferred because the agreed MVP is an explicitly enabled trusted-network debugging surface. MCP authentication remains unchanged.
-* **SVG-only renderer:** rejected because thousands of animated nodes, curved edges and touch camera movement require GPU-backed rendering.
-* **Canvas-only renderer:** rejected because Three.js provides the 2.5D camera, instancing, picking and depth effects needed for the intended polish.
-* **Full graph in one response:** rejected because 10,000 concepts plus inferred edges and labels would exceed browser and response budgets.
-* **Browser-side raw embeddings:** rejected because vectors are large derived implementation data and unnecessary for rendering.
-* **Semantic similarity as a relationship:** rejected because embeddings do not change canonical relationship state.
-* **Automatic full embedding refresh on page load:** rejected because opening a debugging UI must not unexpectedly load GTE or start repository-wide work.
-* **General editing from the graph:** rejected because the debugger must observe canonical/control state, not become another mutation path.
-* **A JavaScript bundler/framework toolchain:** rejected because browser-native modules and vendored libraries meet the requirement with less supply-chain and maintenance overhead.
+An editor embedded in the graph would create another write path and blur its purpose. Changes continue through MCP proposals and curator operations.
