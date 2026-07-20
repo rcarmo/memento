@@ -69,6 +69,9 @@ class GraphDebugHTTPHandler:
         try:
             if path == f"{prefix}/api/v1/overview":
                 return self._snapshot_json("overview")
+            cluster_prefix = f"{prefix}/api/v1/clusters/"
+            if path.startswith(cluster_prefix):
+                return self._snapshot_json("cluster", path.removeprefix(cluster_prefix))
             memory_prefix = f"{prefix}/api/v1/memories/"
             if path.startswith(memory_prefix):
                 return self._snapshot_json("detail", path.removeprefix(memory_prefix))
@@ -105,6 +108,8 @@ class GraphDebugHTTPHandler:
             return self._json({"error": "graph snapshot unavailable"}, status=503)
         if operation == "overview":
             encoded = self._snapshot_service.overview().model_dump_json()
+        elif operation == "cluster" and concept_id:
+            encoded = self._snapshot_service.expand_cluster(concept_id).model_dump_json()
         elif operation == "detail" and concept_id:
             encoded = self._snapshot_service.detail(concept_id).model_dump_json()
         elif operation == "neighbourhood" and concept_id:
