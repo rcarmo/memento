@@ -117,6 +117,7 @@ async def _serve(
             port=port,
             endpoint=endpoint,
             max_request_bytes=runtime.config.mcp.max_request_bytes,
+            allowed_origins=list(runtime.config.mcp.allowed_origins),
         )
     )
     stop_task = asyncio.create_task(shutdown_event.wait())
@@ -172,12 +173,14 @@ async def run_server(
     port: int,
     endpoint: str,
     max_request_bytes: int,
+    allowed_origins: list[str] | None = None,
 ) -> Any:
     return await server.run_streamable_http_async(
         host=host,
         port=port,
         endpoint=endpoint,
         max_request_bytes=max_request_bytes,
+        allowed_origins=allowed_origins,
     )
 
 

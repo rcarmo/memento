@@ -95,7 +95,24 @@ class MCPConfig(BaseModel):
     tool_surface: Literal["compact", "standard", "read_only", "curator", "admin"] = "compact"
     compact_answer_enabled: bool = True
     max_request_bytes: int = Field(default=72 * 1024 * 1024, ge=4 * 1024 * 1024)
+    allowed_origins: tuple[str, ...] = ()
     execute: MCPExecuteLimitsConfig = Field(default_factory=MCPExecuteLimitsConfig)
+
+    @field_validator("allowed_origins")
+    @classmethod
+    def validate_allowed_origins(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        normalized = tuple(sorted(dict.fromkeys(item.strip() for item in value)))
+        for item in normalized:
+            parsed = urlparse(item)
+            if (
+                parsed.scheme not in {"http", "https"}
+                or not parsed.hostname
+                or parsed.path not in {"", "/"}
+                or parsed.query
+                or parsed.fragment
+            ):
+                raise ValueError("allowed origins must be HTTP(S) origins without paths")
+        return normalized
 
 
 class DeepAnswerLimitsConfig(BaseModel):
