@@ -1,0 +1,13 @@
+{
+  "load_ms": 8788,
+  "metrics": {
+    "nodes": "1",
+    "edges": "0",
+    "culled": "0",
+    "lod": "near",
+    "fps": "57.3",
+    "fetch": "141 ms",
+    "bytes": "1915"
+  },
+  "errors": []
+}

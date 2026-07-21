@@ -40,6 +40,8 @@ docker compose \
 
 The template pins `MEMENTO_VERSION`, publishes MCP on port 18081, runs as UID/GID 65532, drops Linux capabilities, uses a read-only root filesystem and sets a 320 MiB memory limit for Needle with semantic search disabled. The bearer-token file is mounted read-only and sourced by the container entrypoint because a remote Portainer server cannot resolve an endpoint-local `env_file` during Compose parsing.
 
+The trusted-LAN profile also enables the visual debugger at `http://192.168.1.250:18081/graph`. Browser module requests carry an Origin header, so the exact LAN origin appears in `mcp.allowed_origins`; arbitrary origins remain blocked. Leave `observability.graph_explorer.enabled` off on an Internet-facing deployment.
+
 The deployed J3455 profile uses a 30-second `memory_execute` budget. A real-target benchmark found exact reads at 9.32 ms p50, lexical search at 601 ms p50/1.80 s p95, graph lookup through `memory_execute` at 392 ms p50, Git-backed patch/rename operations at 2.1--3.1 seconds and scalar Needle routes at 10--13 seconds. The full report is [`docs/evidence/diskstation-memory-benchmark-2026-07-19.json`](evidence/diskstation-memory-benchmark-2026-07-19.json).
 
 A commit may finish just after the execute deadline and still return a controlled timeout to the client. Mutation callers must reconcile an ambiguous timeout using the idempotency key, repository revision and target path before retrying. Raw punctuation in lexical queries also needs FTS5 quoting or escaping; ordinary term queries are the safer default.
