@@ -1,8 +1,12 @@
 PYTHON ?= python3
 VENV ?= .venv
 BIN := $(VENV)/bin
+MEMENTO_VERSION ?= 0.3.0-rc.17
+RELEASE_TAG ?= v$(MEMENTO_VERSION)
+PORTAINER_URL ?= https://ops.local:9443
+PICLAW ?= piclaw
 
-.PHONY: install install-dev lint format format-check typecheck test coverage graph-check rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check load-functional load-operational load-check clean
+.PHONY: install install-dev lint format format-check typecheck test coverage graph-check rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check release-wait deploy-diskstation verify-diskstation release-deploy-diskstation load-functional load-operational load-check clean
 
 $(BIN)/python:
 	$(PYTHON) -m venv $(VENV)
@@ -57,6 +61,20 @@ install-wheel: build-wheel
 
 diff-check:
 	git diff --exit-code -- . ':(exclude).coverage'
+
+release-wait:
+	@GITHUB_TOKEN="$${GITHUB_TOKEN:-$$($(PICLAW) keychain get github/piclaw-bot)}" \
+		$(BIN)/python tools/release_deploy.py wait-release "$(RELEASE_TAG)"
+
+deploy-diskstation:
+	@PORTAINER_URL="$(PORTAINER_URL)" \
+		PORTAINER_TOKEN="$${PORTAINER_TOKEN:-$$($(PICLAW) keychain get portainer/relay)}" \
+		$(BIN)/python tools/release_deploy.py deploy "$(MEMENTO_VERSION)"
+
+verify-diskstation:
+	$(BIN)/python tools/release_deploy.py verify
+
+release-deploy-diskstation: release-wait deploy-diskstation verify-diskstation
 
 load-functional:
 	PYTHONPATH=src $(BIN)/python tools/load_test.py --profile functional --concepts 12 --workers 4 --requests 24 --output build/load-functional.json
