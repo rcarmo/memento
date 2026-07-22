@@ -316,6 +316,7 @@ class SemanticSearchConfig(BaseModel):
     max_batch_size: int = Field(default=16, ge=1)
     max_candidates: int = Field(default=200, ge=1)
     default_search_mode: Literal["lexical", "semantic", "hybrid"] = "lexical"
+    refresh_on_startup: bool = True
 
     @field_validator("ffi_library_path", "sqlite_extension_path", "model_path")
     @classmethod

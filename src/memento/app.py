@@ -352,7 +352,10 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
         if semantic.enabled and semantic.worker_mode == "subprocess":
             embedding_refresh_worker = SemanticEmbeddingRefreshWorker(derived_index)
             state = derived_index.get_state()
-            if derived_index.semantic_status().embedding_revision != state.repo_revision:
+            if (
+                semantic.refresh_on_startup
+                and derived_index.semantic_status().embedding_revision != state.repo_revision
+            ):
                 embedding_refresh_worker.enqueue(paths.repo_paths.current_dir, state.repo_revision)
         if (paths.repo_paths.current_dir / "skills" / ".versions").exists():
             revision = get_main_revision(paths.repo_paths)
