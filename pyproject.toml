@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "memento"
-version = "0.3.0rc13"
+version = "0.3.0rc14"
 description = "A deterministic shared-memory MCP service backed by Git Markdown."
 readme = "README.md"
 requires-python = ">=3.12,<3.15"

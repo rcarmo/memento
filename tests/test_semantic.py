@@ -175,6 +175,30 @@ def semantic_config(**overrides: object) -> SemanticSearchConfig:
     return SemanticSearchConfig.model_validate(payload)
 
 
+def test_semantic_status_requires_embedding_rows_for_all_concepts(
+    tmp_path: Path,
+    semantic_repo_paths: GitRepositoryPaths,
+) -> None:
+    revision = get_main_revision(semantic_repo_paths)
+    lexical = DerivedIndex(tmp_path / "missing-embeddings.sqlite")
+    lexical.rebuild(semantic_repo_paths.current_dir, repo_revision=revision)
+    with sqlite3.connect(lexical.db_path) as connection:
+        connection.execute(
+            "UPDATE index_state SET value = ? WHERE key = 'semantic_embedding_revision'",
+            (revision,),
+        )
+        connection.commit()
+
+    semantic = DerivedIndex(
+        lexical.db_path,
+        semantic_config=semantic_config(),
+        embedding_client=FakeEmbedder(revision="rev-a"),
+    )
+    status = semantic.semantic_status()
+    assert status.ready is False
+    assert any("4 of 4 embeddings not ready" in warning for warning in status.warnings)
+
+
 def test_fake_embedder_full_rebuild_incremental_update_delete_and_model_invalidation(
     tmp_path: Path,
     semantic_repo_paths: GitRepositoryPaths,
