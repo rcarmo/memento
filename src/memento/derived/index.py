@@ -564,23 +564,26 @@ class DerivedIndex:
                 "SUM(CASE WHEN status = 'ready' THEN 1 ELSE 0 END) AS ready_count "
                 "FROM concept_embeddings"
             ).fetchone()
+            concept_count = int(
+                connection.execute("SELECT COUNT(*) FROM concepts").fetchone()[0] or 0
+            )
             repo_revision = self._get_state(connection, "repo_revision")
             revision_raw = self._get_state_optional(connection, "semantic_embedding_revision")
-        total = int(row["total"] or 0)
         ready_count = int(row["ready_count"] or 0)
+        missing_count = max(0, concept_count - ready_count)
         revision = revision_raw or None
         warnings = [item for item in (self._sqlite_vector_warning,) if item is not None]
         if self._embedding_client is None:
             warnings.append("semantic_embedding_client_unavailable")
-        if total > ready_count:
+        if missing_count:
             warnings.append(
-                f"semantic_embeddings_degraded: {total - ready_count} of {total} embeddings not ready"
+                f"semantic_embeddings_degraded: {missing_count} of {concept_count} embeddings not ready"
             )
         return SemanticStatus(
             enabled=True,
             ready=(
                 self._embedding_client is not None
-                and total == ready_count
+                and concept_count == ready_count
                 and revision == repo_revision
             ),
             model_id=self._semantic_config.model_id,
