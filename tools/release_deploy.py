@@ -18,6 +18,18 @@ class HttpResult:
     payload: Any
 
 
+def decode_json_response(text: str) -> Any:
+    if not text:
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        lines = [line for line in text.splitlines() if line.strip()]
+        if lines and all(line.lstrip().startswith("{") for line in lines):
+            return [json.loads(line) for line in lines]
+        raise
+
+
 def request_json(
     method: str,
     url: str,
@@ -26,6 +38,7 @@ def request_json(
     data: object | None = None,
     timeout: float = 30.0,
     insecure: bool = False,
+    extra_headers: dict[str, str] | None = None,
 ) -> HttpResult:
     import ssl
 
@@ -35,19 +48,21 @@ def request_json(
         headers["Content-Type"] = "application/json"
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    if extra_headers:
+        headers.update(extra_headers)
     req = urllib.request.Request(url, data=body, method=method, headers=headers)
     context = ssl._create_unverified_context() if insecure else None  # noqa: S323 - local ops target
     try:
         with urllib.request.urlopen(req, timeout=timeout, context=context) as response:
             raw = response.read()
             text = raw.decode("utf-8", errors="replace")
-            payload = json.loads(text) if text else None
+            payload = decode_json_response(text)
             return HttpResult(response.status, payload)
     except urllib.error.HTTPError as exc:
         raw = exc.read()
         text = raw.decode("utf-8", errors="replace")
         try:
-            error_payload: Any = json.loads(text) if text else {"error": exc.reason}
+            error_payload: Any = decode_json_response(text) if text else {"error": exc.reason}
         except json.JSONDecodeError:
             error_payload = {"error": text or exc.reason}
         return HttpResult(exc.code, error_payload)
@@ -158,10 +173,10 @@ def portainer_request(
     result = request_json(
         method,
         f"{portainer_base()}{path}",
-        token=portainer_token(),
         data=data,
         timeout=timeout,
         insecure=True,
+        extra_headers={"X-API-Key": portainer_token()},
     )
     if result.status >= 400:
         raise SystemExit(f"Portainer {method} {path} failed: {result.status} {result.payload}")
@@ -216,7 +231,7 @@ def deploy(args: argparse.Namespace) -> None:
     try:
         portainer_request(
             "PUT",
-            "/api/stacks/111",
+            "/api/stacks/111?" + urllib.parse.urlencode({"endpointId": "18"}),
             data={
                 "StackFileContent": compose(args.version),
                 "Env": [],
