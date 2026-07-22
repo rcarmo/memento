@@ -62,7 +62,12 @@ def aggregate_layout(
 
     groups: list[tuple[str, tuple[GraphNode, ...]]] = []
     for namespace, members in sorted(by_namespace.items()):
-        components = _explicit_components(tuple(members), ordered_edges)
+        namespace_members = tuple(members)
+        components = _explicit_components(namespace_members, ordered_edges)
+        if _is_sparse_namespace(namespace_members, components):
+            cluster_id = _cluster_id(namespace, 0, namespace_members)
+            groups.append((cluster_id, namespace_members))
+            continue
         for index, component in enumerate(components):
             cluster_id = _cluster_id(namespace, index, component)
             groups.append((cluster_id, component))
@@ -133,6 +138,15 @@ def _explicit_components(
                     stack.append(neighbour)
         components.append(tuple(sorted(component, key=lambda item: item.id)))
     return tuple(sorted(components, key=lambda component: component[0].id))
+
+
+def _is_sparse_namespace(
+    members: tuple[GraphNode, ...], components: tuple[tuple[GraphNode, ...], ...]
+) -> bool:
+    if len(members) <= 1 or len(components) <= 1:
+        return False
+    singleton_count = sum(1 for component in components if len(component) == 1)
+    return singleton_count / len(components) >= 0.5
 
 
 def _merge_small_groups(
