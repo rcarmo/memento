@@ -4,6 +4,7 @@ import hashlib
 import json
 import math
 import sqlite3
+from collections.abc import Sequence
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Literal
@@ -34,6 +35,16 @@ _PENDING_PROPOSALS = {"draft", "submitted", "approved", "stale"}
 
 class GraphSnapshotError(ValueError):
     """Raised when a graph-debug snapshot request is invalid or unavailable."""
+
+
+def _is_sparse_overview(nodes: Sequence[GraphNode], edges: Sequence[GraphEdge]) -> bool:
+    if len(nodes) < 12:
+        return False
+    resolved_edges = sum(1 for edge in edges if edge.target is not None)
+    if resolved_edges >= max(1, len(nodes) // 4):
+        return False
+    orphan_count = sum(1 for node in nodes if node.orphan)
+    return orphan_count / len(nodes) >= 0.5
 
 
 class GraphSnapshotService:
@@ -102,7 +113,8 @@ class GraphSnapshotService:
                 content_hashes=self._content_hashes(derived),
             )
             visible = list(apply_diagnostic_ids(visible, diagnostics))
-            if truncated:
+            sparse = _is_sparse_overview(visible, edges)
+            if truncated or sparse:
                 all_nodes = self._nodes(
                     derived,
                     proposal_counts=proposal_counts,

@@ -11,7 +11,7 @@ Before any NAS deployment, the release workflow runs the amd64 image under QEMU'
 * GTE-small loads and produces a 384-value embedding;
 * the fine-tuned Needle router loads and produces one valid shallow action.
 
-Native image tests measured Needle at 185 MiB peak RSS. GTE-small reached about 297 MiB because its FP32 model is expanded during inference. The DiskStation profile uses short-lived GTE workers and a 512 MiB container limit so the trusted-LAN graph UI can refresh selected, visible or full embeddings without keeping the model resident in the service process.
+Native image tests measured Needle at 185 MiB peak RSS. GTE-small reached about 297 MiB because its FP32 model is expanded during inference. The DiskStation profile uses short-lived GTE workers, disables startup embedding refresh and sets a 512 MiB container limit so the trusted-LAN graph UI can refresh selected, visible or full embeddings on demand without keeping the model resident in the service process.
 
 The DiskStation Compose template is [`deploy/diskstation.compose.yaml`](../deploy/diskstation.compose.yaml). It uses:
 

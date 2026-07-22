@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from memento.graph_debug.layout import aggregate_layout
 from memento.graph_debug.models import GraphEdge, GraphNode, GraphPosition
+from memento.graph_debug.snapshot import _is_sparse_overview
 
 
-def node(index: int, namespace: str = "/projects/") -> GraphNode:
+def node(index: int, namespace: str = "/projects/", *, orphan: bool = False) -> GraphNode:
     return GraphNode(
         id=f"node-{index:05d}",
         path=f"{namespace}node-{index:05d}.md",
@@ -17,6 +18,7 @@ def node(index: int, namespace: str = "/projects/") -> GraphNode:
         combined_bytes=100 + index,
         explicit_in_degree=1,
         explicit_out_degree=1,
+        orphan=orphan,
         coarse_position=GraphPosition(x=0, y=0, z=0),
     )
 
@@ -69,6 +71,15 @@ def test_aggregate_layout_handles_isolates_and_cluster_bound() -> None:
     assert len(layout.clusters) == 5
     assert sum(cluster.member_count for cluster in layout.clusters) == 20
     assert any(cluster.id == "cluster:overflow" for cluster in layout.clusters)
+
+
+def test_sparse_overview_detection_requires_many_orphaned_nodes() -> None:
+    sparse_nodes = [node(index, "/skills/", orphan=True) for index in range(20)]
+    assert _is_sparse_overview(sparse_nodes, ()) is True
+    assert (
+        _is_sparse_overview(sparse_nodes, [edge(index, index + 1) for index in range(10)]) is False
+    )
+    assert _is_sparse_overview(sparse_nodes[:4], ()) is False
 
 
 def test_scale_fixtures_are_bounded() -> None:

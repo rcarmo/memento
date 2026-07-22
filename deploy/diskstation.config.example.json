@@ -46,7 +46,8 @@
       "model_path": "/usr/local/share/memento/models/gte-small.gtemodel",
       "ffi_library_path": "/usr/local/lib/memento/libmemento_ffi.so",
       "sqlite_extension_path": "/usr/local/lib/memento/libmemento_sqlite_vector.so",
-      "default_search_mode": "lexical"
+      "default_search_mode": "lexical",
+      "refresh_on_startup": false
     },
     "needle_router": {
       "enabled": true,
