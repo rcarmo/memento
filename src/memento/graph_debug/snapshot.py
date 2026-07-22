@@ -31,7 +31,7 @@ from memento.graph_debug.models import (
 )
 from memento.repository.frontmatter import parse_concept_file
 
-_PENDING_PROPOSALS = {"draft", "submitted", "approved", "stale"}
+_PENDING_PROPOSALS = {"draft", "submitted", "approved"}
 
 
 class GraphSnapshotError(ValueError):
