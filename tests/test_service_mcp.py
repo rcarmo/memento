@@ -194,6 +194,24 @@ def test_auth_visibility_and_standard_envelopes(
     assert success_data(hidden_visible)["frontmatter"]["title"] == "Ghost"
 
 
+def test_memory_list_includes_light_frontmatter_metadata(
+    service: MemoryService, flint: ServiceContext
+) -> None:
+    payload = success_data(service.memory_list(flint, path_prefix="/projects/"))
+    assert payload["entries"] == [
+        {
+            "path": "/projects/piclaw.md",
+            "id": "piclaw-id",
+            "title": "Piclaw",
+            "type": "project",
+            "status": "active",
+            "description": "Visible project.",
+            "aliases": (),
+            "tags": ("shared",),
+        }
+    ]
+
+
 def test_proposal_lifecycle_self_approval_stale_apply_and_idempotency(
     service: MemoryService,
     control_connection: sqlite3.Connection,
