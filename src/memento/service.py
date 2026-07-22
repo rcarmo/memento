@@ -512,6 +512,10 @@ class MemoryService:
                         "id": entry.document.frontmatter.id,
                         "title": entry.document.frontmatter.title,
                         "type": entry.document.frontmatter.type,
+                        "status": entry.document.frontmatter.status,
+                        "description": entry.document.frontmatter.description,
+                        "aliases": entry.document.frontmatter.aliases,
+                        "tags": entry.document.frontmatter.tags,
                     }
                 )
             return self._success({"entries": visible})
