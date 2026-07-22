@@ -2,10 +2,16 @@ from __future__ import annotations
 
 from memento.graph_debug.layout import aggregate_layout
 from memento.graph_debug.models import GraphEdge, GraphNode, GraphPosition
-from memento.graph_debug.snapshot import _is_sparse_overview
+from memento.graph_debug.snapshot import _is_sparse_overview, _overlay_edges
 
 
-def node(index: int, namespace: str = "/projects/", *, orphan: bool = False) -> GraphNode:
+def node(
+    index: int,
+    namespace: str = "/projects/",
+    *,
+    orphan: bool = False,
+    tags: tuple[str, ...] = (),
+) -> GraphNode:
     return GraphNode(
         id=f"node-{index:05d}",
         path=f"{namespace}node-{index:05d}.md",
@@ -13,6 +19,7 @@ def node(index: int, namespace: str = "/projects/", *, orphan: bool = False) -> 
         type="project",
         status="active",
         namespace=namespace,
+        tags=tags,
         updated_at="2026-07-20T00:00:00Z",
         markdown_bytes=100 + index,
         combined_bytes=100 + index,
@@ -80,6 +87,22 @@ def test_sparse_overview_detection_requires_many_orphaned_nodes() -> None:
         _is_sparse_overview(sparse_nodes, [edge(index, index + 1) for index in range(10)]) is False
     )
     assert _is_sparse_overview(sparse_nodes[:4], ()) is False
+
+
+def test_overlay_edges_connect_adjacent_members_with_shared_tags() -> None:
+    nodes = [
+        node(0, tags=("shared",)),
+        node(1, tags=("shared", "other")),
+        node(2, tags=("shared",)),
+        node(3, tags=("other",)),
+    ]
+    edges = _overlay_edges(nodes, "rev", 10)
+    assert [(edge.kind, edge.raw_target) for edge in edges] == [
+        ("shared_tag", "other"),
+        ("shared_tag", "shared"),
+        ("shared_tag", "shared"),
+    ]
+    assert all(edge.canonical is False and edge.resolution == "derived" for edge in edges)
 
 
 def test_scale_fixtures_are_bounded() -> None:
