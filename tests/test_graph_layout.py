@@ -55,6 +55,14 @@ def test_aggregate_layout_is_deterministic_and_input_order_independent() -> None
     )
 
 
+def test_aggregate_layout_groups_sparse_namespace_isolates() -> None:
+    nodes = [node(index, "/skills/") for index in range(10)]
+    layout = aggregate_layout(nodes, (), repository_revision="rev", cluster_limit=20)
+    assert len(layout.clusters) == 1
+    assert layout.clusters[0].namespace == "/skills/"
+    assert layout.clusters[0].member_count == 10
+
+
 def test_aggregate_layout_handles_isolates_and_cluster_bound() -> None:
     nodes = [node(index, f"/namespace-{index}/") for index in range(20)]
     layout = aggregate_layout(nodes, (), repository_revision="rev", cluster_limit=5)

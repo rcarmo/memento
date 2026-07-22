@@ -22,8 +22,8 @@ services:
       - /volume1/docker/memento/state:/var/lib/memento
     tmpfs:
       - /tmp:size=32m,mode=1777
-    mem_limit: 320m
-    mem_reservation: 192m
+    mem_limit: 512m
+    mem_reservation: 256m
     pids_limit: 128
     security_opt:
       - no-new-privileges:true
