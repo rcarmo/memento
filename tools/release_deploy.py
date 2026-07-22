@@ -62,7 +62,11 @@ def keychain_secret(name: str) -> str:
         text=True,
         timeout=30,
     )
-    start = completed.stdout.find("{")
+    start = completed.stdout.rfind("\n{")
+    if start >= 0:
+        start += 1
+    else:
+        start = completed.stdout.find("{")
     if start < 0:
         raise SystemExit(f"keychain entry {name} did not return JSON")
     payload = json.loads(completed.stdout[start:])
