@@ -4,6 +4,7 @@ import hashlib
 import json
 import math
 import sqlite3
+from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import asdict
 from pathlib import Path
@@ -40,11 +41,41 @@ class GraphSnapshotError(ValueError):
 def _is_sparse_overview(nodes: Sequence[GraphNode], edges: Sequence[GraphEdge]) -> bool:
     if len(nodes) < 12:
         return False
-    resolved_edges = sum(1 for edge in edges if edge.target is not None)
+    resolved_edges = sum(1 for edge in edges if edge.kind == "explicit" and edge.target is not None)
     if resolved_edges >= max(1, len(nodes) // 4):
         return False
     orphan_count = sum(1 for node in nodes if node.orphan)
     return orphan_count / len(nodes) >= 0.5
+
+
+def _overlay_edges(
+    nodes: Sequence[GraphNode], repository_revision: str, limit: int
+) -> list[GraphEdge]:
+    if limit <= 0:
+        return []
+    by_tag: dict[str, list[GraphNode]] = defaultdict(list)
+    for node in sorted(nodes, key=lambda item: item.id):
+        for tag in sorted(set(node.tags)):
+            by_tag[tag].append(node)
+    result: list[GraphEdge] = []
+    for tag, members in sorted(by_tag.items()):
+        for left, right in zip(members, members[1:], strict=False):
+            result.append(
+                GraphEdge(
+                    id=f"shared-tag:{tag}:{left.id}:{right.id}",
+                    source=left.id,
+                    target=right.id,
+                    raw_target=tag,
+                    kind="shared_tag",
+                    canonical=False,
+                    resolution="derived",
+                    first_seen_revision=repository_revision,
+                    last_checked_revision=repository_revision,
+                )
+            )
+            if len(result) >= limit:
+                return result
+    return result
 
 
 class GraphSnapshotService:
@@ -105,15 +136,23 @@ class GraphSnapshotService:
             truncated = len(nodes) > self._config.direct_node_limit
             visible = nodes[: self._config.direct_node_limit]
             ids = {node.id for node in visible}
-            edges = self._edges(derived, ids=ids, limit=self._config.edge_limit)
+            explicit_edges = self._edges(derived, ids=ids, limit=self._config.edge_limit)
             diagnostics = diagnose_graph(
                 nodes,
-                edges,
+                explicit_edges,
                 revisions=revisions,
                 content_hashes=self._content_hashes(derived),
             )
             visible = list(apply_diagnostic_ids(visible, diagnostics))
-            sparse = _is_sparse_overview(visible, edges)
+            sparse = _is_sparse_overview(visible, explicit_edges)
+            edges = [
+                *explicit_edges,
+                *_overlay_edges(
+                    visible,
+                    revisions.repository,
+                    self._config.edge_limit - len(explicit_edges),
+                ),
+            ]
             if truncated or sparse:
                 all_nodes = self._nodes(
                     derived,
@@ -125,6 +164,11 @@ class GraphSnapshotService:
                     derived,
                     ids=all_ids,
                     limit=self._config.edge_limit,
+                )
+                all_edges.extend(
+                    _overlay_edges(
+                        all_nodes, revisions.repository, self._config.edge_limit - len(all_edges)
+                    )
                 )
                 layout = aggregate_layout(
                     all_nodes,
@@ -187,6 +231,11 @@ class GraphSnapshotService:
             )
             all_ids = {node.id for node in all_nodes}
             all_edges = self._edges(derived, ids=all_ids, limit=self._config.edge_limit)
+            all_edges.extend(
+                _overlay_edges(
+                    all_nodes, revisions.repository, self._config.edge_limit - len(all_edges)
+                )
+            )
             layout = aggregate_layout(
                 all_nodes,
                 all_edges,

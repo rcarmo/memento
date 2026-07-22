@@ -6,7 +6,7 @@ from collections import Counter, defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from memento.graph_debug.models import GraphEdge, GraphNode, GraphPosition
+from memento.graph_debug.models import GraphEdge, GraphEdgeKind, GraphNode, GraphPosition
 
 _LAYOUT_VERSION = "v1"
 
@@ -35,6 +35,7 @@ class AggregateEdge:
     source: str
     target: str
     explicit_edge_count: int
+    kind: GraphEdgeKind = "explicit"
     canonical: bool = True
 
 
@@ -85,7 +86,7 @@ def aggregate_layout(
         )
         for index, (cluster_id, members) in enumerate(groups)
     )
-    counts: Counter[tuple[str, str]] = Counter()
+    counts: Counter[tuple[GraphEdgeKind, str, str]] = Counter()
     for edge in ordered_edges:
         if edge.target is None:
             continue
@@ -93,15 +94,17 @@ def aggregate_layout(
         target = memberships.get(edge.target)
         if source is None or target is None or source == target:
             continue
-        counts[(source, target)] += 1
+        counts[(edge.kind, source, target)] += 1
     aggregate_edges = tuple(
         AggregateEdge(
-            id=f"cluster-explicit:{source}:{target}",
+            id=f"cluster-{kind}:{source}:{target}",
             source=source,
             target=target,
-            explicit_edge_count=count,
+            explicit_edge_count=count if kind == "explicit" else 0,
+            kind=kind,
+            canonical=kind == "explicit",
         )
-        for (source, target), count in sorted(counts.items())
+        for (kind, source, target), count in sorted(counts.items())
     )
     return AggregateLayout(
         seed=repository_revision,
@@ -118,7 +121,12 @@ def _explicit_components(
     ids = {node.id for node in members}
     neighbours: dict[str, set[str]] = {node_id: set() for node_id in ids}
     for edge in edges:
-        if edge.target is not None and edge.source in ids and edge.target in ids:
+        if (
+            edge.kind == "explicit"
+            and edge.target is not None
+            and edge.source in ids
+            and edge.target in ids
+        ):
             neighbours[edge.source].add(edge.target)
             neighbours[edge.target].add(edge.source)
     node_by_id = {node.id: node for node in members}

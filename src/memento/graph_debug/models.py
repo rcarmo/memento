@@ -67,13 +67,18 @@ class GraphNode(GraphModel):
     anomaly_ids: tuple[str, ...] = ()
 
 
+GraphEdgeKind = Literal[
+    "explicit", "shared_tag", "shared_namespace", "shared_type", "semantic_similarity"
+]
+
+
 class GraphEdge(GraphModel):
     id: str
     source: str
     target: str | None = None
     raw_target: str
-    kind: Literal["explicit"] = "explicit"
-    canonical: Literal[True] = True
+    kind: GraphEdgeKind = "explicit"
+    canonical: bool = True
     resolution: str
     anchor: str | None = None
     first_seen_revision: str
@@ -111,7 +116,8 @@ class GraphAggregateEdge(GraphModel):
     source: str
     target: str
     explicit_edge_count: int
-    canonical: Literal[True] = True
+    kind: GraphEdgeKind = "explicit"
+    canonical: bool = True
 
 
 class GraphOverview(GraphModel):

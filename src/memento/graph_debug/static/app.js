@@ -9,11 +9,12 @@ function App(){
  useEffect(()=>{try{if(!canvas.current.getContext("webgl2"))throw new Error("WebGL2 is unavailable in this browser or graphics environment.");scene.current=new GraphScene(canvas.current,{select:(n)=>selectNode(n),performance:setPerf});window.__mementoGraphScene=scene.current;load();loadRefreshStatus();}catch(e){setError(`Visual debugger unavailable: ${e.message}`);}return()=>{delete window.__mementoGraphScene;scene.current?.worker?.terminate();};},[]);
  async function load(){try{const {payload,elapsed,bytes}=await graphApi.overview();setTiming({fetch:elapsed,bytes});setGraph(payload);draw(payload);}catch(e){setError(e.message);}}
  async function loadRefreshStatus(){try{const {payload}=await graphApi.refreshStatus();setRefresh(payload);}catch(e){setRefresh({available:false,last_error:e.message});}}
- function draw(payload){const aggregated=payload.mode==="aggregated";const nodes=aggregated?payload.clusters:payload.nodes;const edges=aggregated?payload.cluster_edges.map(e=>({...e,kind:"explicit"})):payload.edges;scene.current?.setGraph(nodes,edges,{sizeMetric,forces});}
+ function draw(payload){const aggregated=payload.mode==="aggregated";const nodes=aggregated?payload.clusters:payload.nodes;const edges=aggregated?payload.cluster_edges.map(e=>({...e,kind:e.kind||"explicit"})):payload.edges;scene.current?.setGraph(nodes,edges,{sizeMetric,forces});}
  async function selectNode(node){setSelected(node);scene.current?.focus(node);try{if(node.member_count){const {payload}=await graphApi.cluster(node.id);setGraph(g=>({...g,mode:"direct",nodes:payload.nodes,edges:payload.edges}));draw({mode:"direct",nodes:payload.nodes,edges:payload.edges});setDetail({cluster:true,...payload});}else{const {payload}=await graphApi.detail(node.id);setDetail(payload);}}catch(e){setError(e.message);}}
+ async function openMemory(id){if(!id)return;try{const {payload}=await graphApi.detail(id);setSelected(payload.node);setDetail(payload);scene.current?.focus(payload.node);}catch(e){setError(e.message);}}
  useEffect(()=>{if(graph)draw(graph);},[sizeMetric,forces]);
- const nodes=graph?(graph.mode==="aggregated"?graph.clusters:graph.nodes):[];const aggregateType=(n)=>n.namespace==="/skills/"?"skill":(n.type_counts?.[0]?.[0]||n.type);const matchesType=(n)=>type==="all"||n.type===type||aggregateType(n)===type;const matchesQuery=(n)=>!query||`${n.title||""} ${n.label||""} ${n.path||""} ${n.namespace||""}`.toLowerCase().includes(query.toLowerCase());const filtered=useMemo(()=>nodes.filter(n=>matchesType(n)&&matchesQuery(n)),[nodes,type,query]);
- function redrawFiltered(){if(!graph)return;const visible=new Set(filtered.map(n=>n.id));const sourceEdges=graph.mode==="aggregated"?graph.cluster_edges:graph.edges;const filteredEdges=sourceEdges.filter(e=>visible.has(e.source)&&visible.has(e.target)).map(e=>graph.mode==="aggregated"?{...e,kind:"explicit"}:e);scene.current?.setGraph(filtered,filteredEdges,{sizeMetric,forces});}
+ const nodes=graph?(graph.mode==="aggregated"?graph.clusters:graph.nodes):[];const aggregateType=(n)=>n.namespace==="/skills/"?"skill":(n.type_counts?.[0]?.[0]||n.type);const matchesType=(n)=>type==="all"||n.type===type||aggregateType(n)===type;const matchesQuery=(n)=>!query||`${n.title||""} ${n.label||""} ${n.path||""} ${n.namespace||""} ${(n.tags||[]).join(" ")}`.toLowerCase().includes(query.toLowerCase());const filtered=useMemo(()=>nodes.filter(n=>matchesType(n)&&matchesQuery(n)),[nodes,type,query]);
+ function redrawFiltered(){if(!graph)return;const visible=new Set(filtered.map(n=>n.id));const sourceEdges=graph.mode==="aggregated"?graph.cluster_edges:graph.edges;const filteredEdges=sourceEdges.filter(e=>visible.has(e.source)&&visible.has(e.target)).map(e=>graph.mode==="aggregated"?{...e,kind:e.kind||"explicit"}:e);scene.current?.setGraph(filtered,filteredEdges,{sizeMetric,forces});}
  useEffect(redrawFiltered,[filtered]);
  async function refreshEmbedding(scope){try{if(refresh&&refresh.available===false)throw new Error(refresh.last_error||"Semantic embedding refresh is unavailable on this Memento instance.");const ids=scope==="selected"&&selected?[selected.id]:filtered.filter(n=>!n.member_count).map(n=>n.id);const {payload}=await graphApi.refresh(scope,ids,scope==="full");setRefresh(payload);}catch(e){setError(e.message);await loadRefreshStatus();}}
  function download(name,href){const a=document.createElement("a");a.download=name;a.href=href;a.click();}
@@ -34,8 +35,56 @@ function App(){
    h("dl",{class:"perf"},[h("dt",{},"Nodes"),h("dd",{},perf.nodes||0),h("dt",{},"Edges"),h("dd",{},perf.edges||0),h("dt",{},"Culled"),h("dd",{},perf.culledEdges||0),h("dt",{},"LOD"),h("dd",{},perf.lod||"near"),h("dt",{},"FPS"),h("dd",{},(perf.fps||0).toFixed(1)),h("dt",{},"Fetch"),h("dd",{},`${(timing.fetch||0).toFixed(0)} ms`),h("dt",{},"Bytes"),h("dd",{},timing.bytes||0)]),
   ]),
   h("main",{class:"viewport"},[h("canvas",{ref:canvas,tabIndex:0,"aria-label":"2.5D memory graph"}),h("div",{class:"legend","aria-label":"Graph legend"},[h("span",{},[h("i",{class:"shape sphere"}),"memory"]),h("span",{},[h("i",{class:"shape box"}),"system / service"]),h("span",{},[h("i",{class:"shape diamond"}),"high degree"]),h("span",{},[h("i",{class:"shape ring"}),"cluster"]),h("span",{},[h("i",{class:"line explicit"}),"explicit link"]),h("span",{},[h("i",{class:"line semantic"}),"semantic overlay"])]),error&&h("div",{class:"toast-error",onClick:()=>setError(null)},error)]),
-  h("section",{class:"inspector"},detail?h(Inspector,{detail,selected}):h("p",{},"Select a memory or cluster to inspect provenance and relationships.")),
+  h("section",{class:"inspector"},detail?h(Inspector,{detail,selected,onTag:(tag)=>{setType("all");setQuery(tag);},onMemory:openMemory}):h("p",{},"Select a memory or cluster to inspect provenance and relationships.")),
  ]);
 }
-function Inspector({detail,selected}){const n=detail.node||selected;const tags=n.tags||[];const edgeLine=e=>h("li",{},[h("code",{},e.raw_target||e.target||"missing")," ",h("small",{},e.resolution||e.kind||"")]);const proposalLine=p=>h("li",{},[h("code",{},p.status)," ",p.intent||p.proposal_id," ",h("small",{},p.author||"")]);const assetLine=a=>h("li",{},[h("code",{},`${a.asset_kind}:${a.version}`),` ${a.payload_bytes||0} bytes`]);return h("div",{},[h("h2",{},n.title||n.label),h("code",{},n.path||n.namespace),tags.length?h("p",{class:"tags"},tags.map(t=>h("span",{class:"tag"},t))):null,h("dl",{},Object.entries({type:n.type,status:n.status,namespace:n.namespace,members:n.member_count,updated:n.updated_at,updated_by:n.updated_by,markdown_bytes:n.markdown_bytes,asset_bytes:n.asset_bytes,proposals:n.proposal_count,embedding:n.embedding?.status}).filter(([,v])=>v!=null).flatMap(([k,v])=>[h("dt",{},k),h("dd",{},String(v))])),detail.preview&&h("pre",{class:"preview"},detail.preview),detail.nodes&&h("details",{open:true},[h("summary",{},`Cluster members (${detail.nodes.length})`),h("ul",{},detail.nodes.slice(0,80).map(m=>h("li",{},[h("code",{},m.path)," ",m.title," ",(m.tags||[]).map(t=>h("span",{class:"tag"},t))])))]),h("h3",{},"Explicit links"),h("p",{},`${detail.inbound?.length||0} inbound / ${detail.outbound?.length||0} outbound`),h("div",{class:"link-lists"},[detail.inbound?.length?h("div",{},[h("h4",{},"Inbound"),h("ul",{},detail.inbound.slice(0,30).map(edgeLine))]):null,detail.outbound?.length?h("div",{},[h("h4",{},"Outbound"),h("ul",{},detail.outbound.slice(0,30).map(edgeLine))]):null]),h("h3",{},"Assets / proposals"),detail.assets?.length?h("ul",{},detail.assets.map(assetLine)):h("p",{},"No assets."),detail.proposals?.length?h("ul",{},detail.proposals.map(proposalLine)):h("p",{},"No proposals.")]);}
+function Inspector({detail,selected,onTag,onMemory}) {
+ const n=detail.node||selected;
+ const tags=n.tags||[];
+ const edgeLine=(edge,id)=>h("li",{},[
+  h("button",{class:"link-button",disabled:!id,onClick:()=>id&&onMemory(id)},edge.raw_target||id||"missing"),
+  " ",h("small",{},edge.resolution||edge.kind||""),
+ ]);
+ const proposalLine=proposal=>h("li",{},[
+  h("code",{},proposal.status)," ",proposal.intent||proposal.proposal_id," ",h("small",{},proposal.author||""),
+ ]);
+ const assetLine=asset=>h("li",{},[
+  h("code",{},`${asset.asset_kind}:${asset.version}`),` ${asset.payload_bytes||0} bytes`,
+ ]);
+ const tagButton=tag=>h("button",{class:"tag",onClick:()=>onTag(tag)},tag);
+ const members=detail.nodes?h("details",{open:true},[
+  h("summary",{},`Cluster members (${detail.nodes.length})`),
+  h("ul",{},detail.nodes.slice(0,80).map(member=>h("li",{},[
+   h("button",{class:"link-button",onClick:()=>onMemory(member.id)},member.path),
+   " ",member.title," ",(member.tags||[]).map(tagButton),
+  ]))),
+ ]):null;
+ return h("div",{},[
+  h("h2",{},n.title||n.label),
+  h("code",{},n.path||n.namespace),
+  tags.length?h("p",{class:"tags"},tags.map(tagButton)):null,
+  h("dl",{},Object.entries({
+   type:n.type,status:n.status,namespace:n.namespace,members:n.member_count,
+   updated:n.updated_at,updated_by:n.updated_by,markdown_bytes:n.markdown_bytes,
+   asset_bytes:n.asset_bytes,proposals:n.proposal_count,embedding:n.embedding?.status,
+  }).filter(([,value])=>value!=null).flatMap(([key,value])=>[
+   h("dt",{},key),h("dd",{},String(value)),
+  ])),
+  detail.preview&&h("pre",{class:"preview"},detail.preview),
+  members,
+  h("h3",{},"Explicit links"),
+  h("p",{},`${detail.inbound?.length||0} inbound / ${detail.outbound?.length||0} outbound`),
+  h("div",{class:"link-lists"},[
+   detail.inbound?.length?h("div",{},[
+    h("h4",{},"Inbound"),h("ul",{},detail.inbound.slice(0,30).map(edge=>edgeLine(edge,edge.source))),
+   ]):null,
+   detail.outbound?.length?h("div",{},[
+    h("h4",{},"Outbound"),h("ul",{},detail.outbound.slice(0,30).map(edge=>edgeLine(edge,edge.target))),
+   ]):null,
+  ]),
+  h("h3",{},"Assets / proposals"),
+  detail.assets?.length?h("ul",{},detail.assets.map(assetLine)):h("p",{},"No assets."),
+  detail.proposals?.length?h("ul",{},detail.proposals.map(proposalLine)):h("p",{},"No proposals."),
+ ]);
+}
 render(h(App),document.getElementById("app"));
