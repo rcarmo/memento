@@ -4,6 +4,7 @@ import json
 from collections.abc import Mapping
 from importlib.resources import files
 from pathlib import PurePosixPath
+from urllib.parse import unquote
 
 from umcp_shared import MCPHTTPResponse
 
@@ -93,13 +94,15 @@ class GraphDebugHTTPHandler:
                 return self._snapshot_json("overview")
             cluster_prefix = f"{prefix}/api/v1/clusters/"
             if path.startswith(cluster_prefix):
-                return self._snapshot_json("cluster", path.removeprefix(cluster_prefix))
+                return self._snapshot_json("cluster", unquote(path.removeprefix(cluster_prefix)))
             memory_prefix = f"{prefix}/api/v1/memories/"
             if path.startswith(memory_prefix):
-                return self._snapshot_json("detail", path.removeprefix(memory_prefix))
+                return self._snapshot_json("detail", unquote(path.removeprefix(memory_prefix)))
             neighbourhood_prefix = f"{prefix}/api/v1/neighbourhood/"
             if path.startswith(neighbourhood_prefix):
-                return self._snapshot_json("neighbourhood", path.removeprefix(neighbourhood_prefix))
+                return self._snapshot_json(
+                    "neighbourhood", unquote(path.removeprefix(neighbourhood_prefix))
+                )
         except GraphSnapshotError as exc:
             return self._json({"error": str(exc)}, status=404)
         if path.startswith(f"{prefix}/assets/"):
