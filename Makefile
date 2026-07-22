@@ -63,12 +63,10 @@ diff-check:
 	git diff --exit-code -- . ':(exclude).coverage'
 
 release-wait:
-	@GITHUB_TOKEN="$${GITHUB_TOKEN:-$$($(PICLAW) keychain get github/piclaw-bot)}" \
-		$(BIN)/python tools/release_deploy.py wait-release "$(RELEASE_TAG)"
+	@PICLAW="$(PICLAW)" $(BIN)/python tools/release_deploy.py wait-release "$(RELEASE_TAG)"
 
 deploy-diskstation:
-	@PORTAINER_URL="$(PORTAINER_URL)" \
-		PORTAINER_TOKEN="$${PORTAINER_TOKEN:-$$($(PICLAW) keychain get portainer/relay)}" \
+	@PORTAINER_URL="$(PORTAINER_URL)" PICLAW="$(PICLAW)" \
 		$(BIN)/python tools/release_deploy.py deploy "$(MEMENTO_VERSION)"
 
 verify-diskstation:

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import time
 import urllib.error
 import urllib.parse
@@ -52,18 +53,39 @@ def request_json(
         return HttpResult(exc.code, error_payload)
 
 
+def keychain_secret(name: str) -> str:
+    command = os.environ.get("PICLAW", "piclaw")
+    completed = subprocess.run(
+        [command, "keychain", "get", name],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    start = completed.stdout.find("{")
+    if start < 0:
+        raise SystemExit(f"keychain entry {name} did not return JSON")
+    payload = json.loads(completed.stdout[start:])
+    secret = payload.get("secret")
+    if not isinstance(secret, str) or not secret:
+        raise SystemExit(f"keychain entry {name} has no secret")
+    return secret
+
+
 def github_token() -> str:
-    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
-    if not token:
-        raise SystemExit("Set GITHUB_TOKEN or GH_TOKEN")
-    return token
+    return (
+        os.environ.get("GITHUB_TOKEN")
+        or os.environ.get("GH_TOKEN")
+        or keychain_secret("github/piclaw-bot")
+    )
 
 
 def portainer_token() -> str:
-    token = os.environ.get("PORTAINER_TOKEN") or os.environ.get("PORTAINER_RELAY")
-    if not token:
-        raise SystemExit("Set PORTAINER_TOKEN or PORTAINER_RELAY")
-    return token
+    return (
+        os.environ.get("PORTAINER_TOKEN")
+        or os.environ.get("PORTAINER_RELAY")
+        or keychain_secret("portainer/relay")
+    )
 
 
 def wait_release(args: argparse.Namespace) -> None:
