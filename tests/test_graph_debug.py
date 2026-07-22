@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from typing import cast
 
 import pytest
 from pydantic import ValidationError
@@ -8,6 +9,29 @@ from umcp_shared import MCPHTTPResponse
 
 from memento.config import GraphExplorerConfig
 from memento.graph_debug import GraphDebugHTTPHandler
+from memento.graph_debug.snapshot import GraphSnapshotService
+
+
+class _Payload:
+    def __init__(self, value: dict[str, object]) -> None:
+        self._value = value
+
+    def model_dump_json(self) -> str:
+        return json.dumps(self._value)
+
+
+class _Snapshot:
+    def __init__(self) -> None:
+        self.cluster_id = "cluster:skills:0:abc"
+        self.detail_id = "node:1"
+
+    def expand_cluster(self, cluster_id: str) -> _Payload:
+        assert cluster_id == self.cluster_id
+        return _Payload({"cluster_id": cluster_id})
+
+    def detail(self, concept_id: str) -> _Payload:
+        assert concept_id == self.detail_id
+        return _Payload({"node": {"id": concept_id}})
 
 
 def request(
@@ -69,6 +93,19 @@ def test_graph_boundary_rejects_methods_and_bodies_without_touching_mcp() -> Non
     body = request(handler, "/graph", body=b"unexpected")
     assert body is not None and body.status == 400
     assert request(handler, "/mcp", method="POST", body=b"{}") is None
+
+
+def test_graph_api_decodes_url_encoded_ids() -> None:
+    snapshot = _Snapshot()
+    handler = GraphDebugHTTPHandler(
+        GraphExplorerConfig(enabled=True), snapshot_service=cast(GraphSnapshotService, snapshot)
+    )
+    cluster = request(handler, "/graph/api/v1/clusters/cluster%3Askills%3A0%3Aabc")
+    assert cluster is not None and cluster.status == 200
+    assert json.loads(cluster.body)["cluster_id"] == snapshot.cluster_id
+    detail = request(handler, "/graph/api/v1/memories/node%3A1")
+    assert detail is not None and detail.status == 200
+    assert json.loads(detail.body)["node"]["id"] == snapshot.detail_id
 
 
 def test_graph_route_prefix_is_strict_and_configurable() -> None:
