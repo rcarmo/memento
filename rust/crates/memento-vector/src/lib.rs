@@ -204,6 +204,7 @@ fn validate_bias_shape(bias: Option<&[f32]>, out_features: usize) -> Result<(), 
     Ok(())
 }
 
+#[cfg_attr(target_arch = "x86_64", allow(dead_code))]
 fn dot_scalar(left: &[f32], right: &[f32]) -> f32 {
     left.iter().zip(right).map(|(a, b)| a * b).sum()
 }
@@ -214,6 +215,7 @@ fn axpy_scalar(alpha: f32, values: &[f32], output: &mut [f32]) {
     }
 }
 
+#[cfg_attr(target_arch = "x86_64", allow(dead_code))]
 fn linear_out_in_scalar(
     input: &[f32],
     rows: usize,
@@ -269,6 +271,7 @@ fn linear_out_in_row_block_scalar(
     }
 }
 
+#[cfg_attr(target_arch = "x86_64", allow(dead_code))]
 fn linear_in_out_scalar(
     input: &[f32],
     rows: usize,
@@ -345,7 +348,8 @@ fn axpy_runtime(alpha: f32, values: &[f32], output: &mut [f32]) {
         // SAFETY: feature detection guarantees required instructions.
         unsafe { return axpy_x86_avx2_fma(alpha, values, output) }
     }
-    axpy_scalar(alpha, values, output);
+    // SAFETY: x86_64 guarantees SSE2 support.
+    unsafe { axpy_x86_sse2(alpha, values, output) }
 }
 
 #[cfg(target_arch = "aarch64")]
@@ -368,7 +372,8 @@ fn dot_runtime(left: &[f32], right: &[f32]) -> f32 {
         // SAFETY: feature detection guarantees required instructions.
         unsafe { return dot_x86_avx2_fma(left, right) }
     }
-    dot_scalar(left, right)
+    // SAFETY: x86_64 guarantees SSE2 support.
+    unsafe { dot_x86_sse2(left, right) }
 }
 
 #[cfg(target_arch = "aarch64")]
@@ -409,15 +414,18 @@ fn linear_out_in_runtime(
             );
         }
     }
-    linear_out_in_scalar(
-        input,
-        rows,
-        in_features,
-        weights,
-        out_features,
-        bias,
-        output,
-    );
+    // SAFETY: x86_64 guarantees SSE2 support.
+    unsafe {
+        linear_out_in_x86_sse2(
+            input,
+            rows,
+            in_features,
+            weights,
+            out_features,
+            bias,
+            output,
+        );
+    }
 }
 
 #[cfg(target_arch = "aarch64")]
@@ -500,15 +508,18 @@ fn linear_in_out_runtime(
             );
         }
     }
-    linear_in_out_scalar(
-        input,
-        rows,
-        in_features,
-        weights,
-        out_features,
-        bias,
-        output,
-    );
+    // SAFETY: x86_64 guarantees SSE2 support.
+    unsafe {
+        linear_in_out_x86_sse2(
+            input,
+            rows,
+            in_features,
+            weights,
+            out_features,
+            bias,
+            output,
+        );
+    }
 }
 
 #[cfg(target_arch = "aarch64")]
@@ -584,6 +595,23 @@ unsafe fn axpy_x86_avx2_fma(alpha: f32, values: &[f32], output: &mut [f32]) {
     axpy_scalar(alpha, &values[chunks * 8..], &mut output[chunks * 8..]);
 }
 
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "sse2")]
+unsafe fn axpy_x86_sse2(alpha: f32, values: &[f32], output: &mut [f32]) {
+    use std::arch::x86_64::{_mm_add_ps, _mm_loadu_ps, _mm_mul_ps, _mm_set1_ps, _mm_storeu_ps};
+
+    let factor = _mm_set1_ps(alpha);
+    let chunks = values.len() / 4;
+    for i in 0..chunks {
+        let offset = i * 4;
+        let value = _mm_loadu_ps(values.as_ptr().add(offset));
+        let current = _mm_loadu_ps(output.as_ptr().add(offset));
+        let next = _mm_add_ps(current, _mm_mul_ps(factor, value));
+        _mm_storeu_ps(output.as_mut_ptr().add(offset), next);
+    }
+    axpy_scalar(alpha, &values[chunks * 4..], &mut output[chunks * 4..]);
+}
+
 #[cfg(target_arch = "aarch64")]
 #[target_feature(enable = "neon")]
 unsafe fn axpy_neon(alpha: f32, values: &[f32], output: &mut [f32]) {
@@ -619,6 +647,28 @@ unsafe fn dot_x86_avx2_fma(left: &[f32], right: &[f32]) -> f32 {
     _mm256_storeu_ps(lanes.as_mut_ptr(), sum);
     let mut total: f32 = lanes.iter().sum();
     for i in (chunks * 8)..left.len() {
+        total += left[i] * right[i];
+    }
+    total
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "sse2")]
+unsafe fn dot_x86_sse2(left: &[f32], right: &[f32]) -> f32 {
+    use std::arch::x86_64::{_mm_add_ps, _mm_loadu_ps, _mm_mul_ps, _mm_setzero_ps, _mm_storeu_ps};
+
+    let mut sum = _mm_setzero_ps();
+    let chunks = left.len() / 4;
+    for i in 0..chunks {
+        let offset = i * 4;
+        let a = _mm_loadu_ps(left.as_ptr().add(offset));
+        let b = _mm_loadu_ps(right.as_ptr().add(offset));
+        sum = _mm_add_ps(sum, _mm_mul_ps(a, b));
+    }
+    let mut lanes = [0f32; 4];
+    _mm_storeu_ps(lanes.as_mut_ptr(), sum);
+    let mut total: f32 = lanes.iter().sum();
+    for i in (chunks * 4)..left.len() {
         total += left[i] * right[i];
     }
     total
@@ -681,6 +731,65 @@ unsafe fn linear_out_in_x86_avx2_fma(
                 );
                 let weight_lanes = _mm_set1_ps(*weight_row.add(k));
                 acc = _mm_fmadd_ps(input_lanes, weight_lanes, acc);
+            }
+            let mut lanes = [0.0; ROW_BLOCK];
+            _mm_storeu_ps(lanes.as_mut_ptr(), acc);
+            for row_offset in 0..ROW_BLOCK {
+                output[(row_base + row_offset) * out_features + out] = lanes[row_offset];
+            }
+        }
+    }
+    if row_limit < rows {
+        linear_out_in_row_block_scalar(
+            input,
+            row_limit,
+            rows - row_limit,
+            in_features,
+            weights,
+            out_features,
+            bias,
+            output,
+        );
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "sse2")]
+unsafe fn linear_out_in_x86_sse2(
+    input: &[f32],
+    rows: usize,
+    in_features: usize,
+    weights: &[f32],
+    out_features: usize,
+    bias: Option<&[f32]>,
+    output: &mut [f32],
+) {
+    use std::arch::x86_64::{
+        _mm_add_ps, _mm_mul_ps, _mm_set1_ps, _mm_set_ps, _mm_setzero_ps, _mm_storeu_ps,
+    };
+
+    let row_limit = rows / ROW_BLOCK * ROW_BLOCK;
+    for row_base in (0..row_limit).step_by(ROW_BLOCK) {
+        let input_ptr0 = input.as_ptr().add(row_base * in_features);
+        let input_ptr1 = input_ptr0.add(in_features);
+        let input_ptr2 = input_ptr1.add(in_features);
+        let input_ptr3 = input_ptr2.add(in_features);
+        for out in 0..out_features {
+            let weight_row = weights.as_ptr().add(out * in_features);
+            let mut acc = if let Some(bias) = bias {
+                _mm_set1_ps(bias[out])
+            } else {
+                _mm_setzero_ps()
+            };
+            for k in 0..in_features {
+                let input_lanes = _mm_set_ps(
+                    *input_ptr3.add(k),
+                    *input_ptr2.add(k),
+                    *input_ptr1.add(k),
+                    *input_ptr0.add(k),
+                );
+                let weight_lanes = _mm_set1_ps(*weight_row.add(k));
+                acc = _mm_add_ps(acc, _mm_mul_ps(input_lanes, weight_lanes));
             }
             let mut lanes = [0.0; ROW_BLOCK];
             _mm_storeu_ps(lanes.as_mut_ptr(), acc);
@@ -817,6 +926,105 @@ unsafe fn linear_in_out_x86_avx2_fma(
             _mm256_storeu_ps(dst2, acc2);
             _mm256_storeu_ps(dst3, acc3);
             out_base += 8;
+        }
+        if out_base < out_features {
+            linear_in_out_row_block_scalar_range(
+                input,
+                row_base,
+                ROW_BLOCK,
+                in_features,
+                weights,
+                out_features,
+                bias,
+                output,
+                out_base,
+                out_features,
+            );
+        }
+    }
+    for row_base in (row_limit..rows).step_by(ROW_BLOCK) {
+        let block_rows = (rows - row_base).min(ROW_BLOCK);
+        linear_in_out_row_block_scalar_range(
+            input,
+            row_base,
+            block_rows,
+            in_features,
+            weights,
+            out_features,
+            bias,
+            output,
+            0,
+            out_features,
+        );
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "sse2")]
+unsafe fn linear_in_out_x86_sse2(
+    input: &[f32],
+    rows: usize,
+    in_features: usize,
+    weights: &[f32],
+    out_features: usize,
+    bias: Option<&[f32]>,
+    output: &mut [f32],
+) {
+    use std::arch::x86_64::{
+        _mm_add_ps, _mm_loadu_ps, _mm_mul_ps, _mm_set1_ps, _mm_setzero_ps, _mm_storeu_ps,
+    };
+
+    let row_limit = rows / ROW_BLOCK * ROW_BLOCK;
+    for row_base in (0..row_limit).step_by(ROW_BLOCK) {
+        let input_ptr0 = input.as_ptr().add(row_base * in_features);
+        let input_ptr1 = input_ptr0.add(in_features);
+        let input_ptr2 = input_ptr1.add(in_features);
+        let input_ptr3 = input_ptr2.add(in_features);
+        let mut out_base = 0;
+        while out_base + 4 <= out_features {
+            let bias_lanes = if let Some(bias) = bias {
+                _mm_loadu_ps(bias.as_ptr().add(out_base))
+            } else {
+                _mm_setzero_ps()
+            };
+            let mut acc0 = bias_lanes;
+            let mut acc1 = bias_lanes;
+            let mut acc2 = bias_lanes;
+            let mut acc3 = bias_lanes;
+            for k in 0..in_features {
+                let weight_lanes = _mm_loadu_ps(weights.as_ptr().add(k * out_features + out_base));
+                acc0 = _mm_add_ps(
+                    acc0,
+                    _mm_mul_ps(_mm_set1_ps(*input_ptr0.add(k)), weight_lanes),
+                );
+                acc1 = _mm_add_ps(
+                    acc1,
+                    _mm_mul_ps(_mm_set1_ps(*input_ptr1.add(k)), weight_lanes),
+                );
+                acc2 = _mm_add_ps(
+                    acc2,
+                    _mm_mul_ps(_mm_set1_ps(*input_ptr2.add(k)), weight_lanes),
+                );
+                acc3 = _mm_add_ps(
+                    acc3,
+                    _mm_mul_ps(_mm_set1_ps(*input_ptr3.add(k)), weight_lanes),
+                );
+            }
+            let dst0 = output.as_mut_ptr().add(row_base * out_features + out_base);
+            let dst1 = output
+                .as_mut_ptr()
+                .add((row_base + 1) * out_features + out_base);
+            let dst2 = output
+                .as_mut_ptr()
+                .add((row_base + 2) * out_features + out_base);
+            let dst3 = output
+                .as_mut_ptr()
+                .add((row_base + 3) * out_features + out_base);
+            _mm_storeu_ps(dst0, acc0);
+            _mm_storeu_ps(dst1, acc1);
+            _mm_storeu_ps(dst2, acc2);
+            _mm_storeu_ps(dst3, acc3);
+            out_base += 4;
         }
         if out_base < out_features {
             linear_in_out_row_block_scalar_range(
@@ -1159,6 +1367,108 @@ mod tests {
             Some(&bias),
         )
         .expect("linear_in_out");
+        approx_eq(&actual, &expected, 1e-5);
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[test]
+    fn x86_sse2_axpy_matches_scalar_with_tail() {
+        let alpha = -0.75;
+        let values = generated_values(7, 0.25);
+        let mut expected = generated_values(7, -0.5);
+        let mut actual = expected.clone();
+
+        axpy_scalar(alpha, &values, &mut expected);
+        // SAFETY: x86_64 guarantees SSE2 support.
+        unsafe { axpy_x86_sse2(alpha, &values, &mut actual) };
+
+        approx_eq(&actual, &expected, 1e-6);
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[test]
+    fn x86_sse2_dot_matches_scalar_with_tail() {
+        let left = generated_values(11, 0.125);
+        let right = generated_values(11, -0.375);
+
+        let expected = dot_scalar(&left, &right);
+        // SAFETY: x86_64 guarantees SSE2 support.
+        let actual = unsafe { dot_x86_sse2(&left, &right) };
+
+        let delta = (actual - expected).abs();
+        assert!(
+            delta <= 1e-5,
+            "left={actual}, right={expected}, delta={delta}"
+        );
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[test]
+    fn x86_sse2_linear_out_in_matches_reference_with_row_tail() {
+        let rows = 5;
+        let in_features = 7;
+        let out_features = 3;
+        let input = generated_values(rows * in_features, 0.25);
+        let weights = generated_values(out_features * in_features, -0.125);
+        let bias = generated_values(out_features, 0.5);
+        let expected = reference_linear_out_in(
+            &input,
+            rows,
+            in_features,
+            &weights,
+            out_features,
+            Some(&bias),
+        );
+        let mut actual = vec![0.0; rows * out_features];
+
+        // SAFETY: x86_64 guarantees SSE2 support.
+        unsafe {
+            linear_out_in_x86_sse2(
+                &input,
+                rows,
+                in_features,
+                &weights,
+                out_features,
+                Some(&bias),
+                &mut actual,
+            );
+        }
+
+        approx_eq(&actual, &expected, 1e-5);
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[test]
+    fn x86_sse2_linear_in_out_matches_reference_with_row_and_output_tails() {
+        let rows = 5;
+        let in_features = 7;
+        let out_features = 6;
+        let input = generated_values(rows * in_features, 0.125);
+        let weights = generated_values(in_features * out_features, 0.0625);
+        let bias = generated_values(out_features, -0.5);
+        let expected = reference_linear_in_out(
+            &input,
+            rows,
+            in_features,
+            &weights,
+            out_features,
+            Some(&bias),
+        );
+        let mut actual = vec![0.0; rows * out_features];
+
+        // SAFETY: x86_64 guarantees SSE2 support.
+        unsafe {
+            linear_in_out_x86_sse2(
+                &input,
+                rows,
+                in_features,
+                &weights,
+                out_features,
+                Some(&bias),
+                &mut actual,
+            );
+        }
+
         approx_eq(&actual, &expected, 1e-5);
     }
 
