@@ -34,6 +34,7 @@ export const graphApi = {
   overview: () => request("/overview"),
   detail: (id) => request(`/memories/${encodeURIComponent(id)}`),
   neighbourhood: (id) => request(`/neighbourhood/${encodeURIComponent(id)}`),
+  search: (query) => request("/search", { method: "POST", body: JSON.stringify({ query }) }),
   cluster: (id) => request(`/clusters/${encodeURIComponent(id)}`),
   refreshStatus: () => request("/embeddings/status"),
   refresh: (scope, conceptIds = [], confirmFull = false) => request("/embeddings/refresh", {

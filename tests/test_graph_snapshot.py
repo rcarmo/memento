@@ -70,6 +70,7 @@ def _snapshot(
     derived.executescript(
         """
         CREATE TABLE concepts(id TEXT PRIMARY KEY,path TEXT,type TEXT,title TEXT,status TEXT,tags_json TEXT,updated_at TEXT,repo_revision TEXT,body TEXT,content_hash TEXT);
+        CREATE VIRTUAL TABLE concept_fts USING fts5(concept_id UNINDEXED,title,description,aliases,tags,body,path,tokenize='unicode61');
         CREATE TABLE links(source_id TEXT,target_id TEXT,raw_target TEXT,target_path TEXT,anchor TEXT,link_kind TEXT,resolution_state TEXT,first_seen_revision TEXT,last_checked_revision TEXT);
         CREATE TABLE graph_metrics(concept_id TEXT PRIMARY KEY,inbound_degree INTEGER,outbound_degree INTEGER,broken_link_count INTEGER,orphan_flag INTEGER);
         CREATE TABLE concept_embeddings(concept_id TEXT PRIMARY KEY,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT,embedding_blob BLOB);
@@ -103,6 +104,21 @@ def _snapshot(
                 "Beta",
                 "hash-b",
             ),
+        ),
+    )
+    derived.executemany(
+        "INSERT INTO concept_fts(concept_id,title,description,aliases,tags,body,path) VALUES(?,?,?,?,?,?,?)",
+        (
+            (
+                "a-id",
+                "A",
+                "Alpha description",
+                "",
+                "graph shared",
+                "Alpha body with more text",
+                "/projects/a.md",
+            ),
+            ("b-id", "B", "Beta description", "", "graph", "Beta body", "/projects/b.md"),
         ),
     )
     derived.execute(
@@ -204,6 +220,24 @@ def test_overview_is_bounded_deterministic_and_omits_vectors(tmp_path: Path) -> 
     assert "SECRET-VECTOR" not in encoded
     assert "embedding_blob" not in encoded
     assert first.edges == ()
+
+
+def test_graph_search_uses_fts_and_returns_bounded_metadata(tmp_path: Path) -> None:
+    service = _snapshot(tmp_path)
+    payload = service.search("alpha shared")
+    assert payload["schema_version"] == 1
+    assert payload["results"] == [
+        {
+            "id": "a-id",
+            "path": "/projects/a.md",
+            "title": "A",
+            "type": "project",
+            "tags": ("graph",),
+            "snippet": "Alpha body with more text",
+        }
+    ]
+    with pytest.raises(GraphSnapshotError, match="contain words"):
+        service.search("---")
 
 
 def test_detail_and_neighbourhood_are_bounded_and_revision_aware(tmp_path: Path) -> None:

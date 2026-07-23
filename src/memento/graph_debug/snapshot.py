@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 import sqlite3
 from collections import defaultdict
 from collections.abc import Sequence
@@ -32,6 +33,8 @@ from memento.graph_debug.models import (
 from memento.repository.frontmatter import parse_concept_file
 
 _PENDING_PROPOSALS = {"draft", "submitted", "approved"}
+_GRAPH_SEARCH_LIMIT = 20
+_GRAPH_SNIPPET_CHARS = 240
 
 
 class GraphSnapshotError(ValueError):
@@ -78,6 +81,18 @@ def _overlay_edges(
     return result
 
 
+def _plain_fts_query(query: str) -> str:
+    terms = re.findall(r"\w+", query, flags=re.UNICODE)
+    if not terms:
+        raise GraphSnapshotError("search query must contain words")
+    return " ".join(f'"{term.replace(chr(34), chr(34) * 2)}"' for term in terms)
+
+
+def _graph_snippet(value: str) -> str:
+    compact = " ".join(value.split())
+    return compact[:_GRAPH_SNIPPET_CHARS]
+
+
 class GraphSnapshotService:
     def __init__(
         self,
@@ -112,6 +127,36 @@ class GraphSnapshotService:
             ids = {node.id for node in nodes}
             edges = self._edges(derived, ids=ids, limit=self._config.edge_limit)
             return tuple(nodes), tuple(edges), self._revisions(derived)
+
+    def search(self, query: str) -> dict[str, object]:
+        expression = _plain_fts_query(query.strip())
+        with self._derived() as derived:
+            rows = derived.execute(
+                """
+                SELECT c.id, c.path, c.title, c.type, c.tags_json,
+                       snippet(concept_fts, 5, '', '', ' … ', 16) AS snippet
+                  FROM concept_fts
+                  JOIN concepts AS c ON c.id = concept_fts.concept_id
+                 WHERE concept_fts MATCH ?
+                 ORDER BY bm25(concept_fts, 10.0, 5.0, 5.0, 4.0, 1.0, 5.0), c.id
+                 LIMIT ?
+                """,
+                (expression, _GRAPH_SEARCH_LIMIT),
+            ).fetchall()
+        return {
+            "schema_version": 1,
+            "results": [
+                {
+                    "id": str(row["id"]),
+                    "path": str(row["path"]),
+                    "title": str(row["title"]),
+                    "type": str(row["type"]),
+                    "tags": tuple(json.loads(row["tags_json"])),
+                    "snippet": _graph_snippet(str(row["snippet"] or row["title"])),
+                }
+                for row in rows
+            ],
+        }
 
     def paths_for_ids(self, concept_ids: tuple[str, ...]) -> tuple[str, ...]:
         if not concept_ids:
