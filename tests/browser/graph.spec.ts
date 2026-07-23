@@ -18,6 +18,10 @@ test("loads WebGL graph, filters, selects and exports", async ({ page, browserNa
   }
   await expect.poll(async()=>Number((await page.locator(".perf dd").first().textContent())||0),{timeout:15000}).toBeGreaterThan(0);
   expect(Date.now()-started).toBeLessThan(5000);
+  const spread=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;const points=scene.nodes.map((node:any)=>node.coarse_position);const nearest=points.map((point:any,index:number)=>Math.min(...points.filter((_:any,other:number)=>other!==index).map((other:any)=>Math.hypot(point.x-other.x,point.y-other.y,point.z-other.z)))).sort((a:number,b:number)=>a-b);const xs=points.map((point:any)=>point.x),ys=points.map((point:any)=>point.y);return{width:Math.max(...xs)-Math.min(...xs),height:Math.max(...ys)-Math.min(...ys),median:nearest[Math.floor(nearest.length/2)]};});
+  expect(spread.width).toBeGreaterThan(8);
+  expect(spread.height).toBeGreaterThan(8);
+  expect(spread.median).toBeGreaterThan(1.2);
   await page.locator('input[placeholder*="title"]').fill("Memory 1");
   const canvasBox=await page.locator("canvas").boundingBox();expect(canvasBox).not.toBeNull();
   const center={x:Math.floor(canvasBox!.width/2),y:Math.floor(canvasBox!.height/2)};
