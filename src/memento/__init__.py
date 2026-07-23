@@ -1,3 +1,3 @@
 """Memento package."""
 
-__version__ = "0.3.0rc23"
+__version__ = "0.3.0rc24"

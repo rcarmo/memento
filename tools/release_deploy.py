@@ -303,28 +303,43 @@ def verify(args: argparse.Namespace) -> None:
         if time.monotonic() >= deadline:
             raise SystemExit("graph verification timed out")
         time.sleep(args.interval)
+    mode = overview.get("mode")
     clusters = overview.get("clusters", [])
-    if overview.get("mode") != "aggregated" or not clusters:
-        raise SystemExit(f"unexpected overview: {overview.get('mode')} clusters={len(clusters)}")
-    skill = next((item for item in clusters if item.get("namespace") == "/skills/"), None)
-    if not skill:
-        raise SystemExit("missing /skills/ cluster")
-    cluster_path = urllib.parse.quote(skill["id"], safe="")
-    expanded = request_json(
-        "GET", f"{base}/graph/api/v1/clusters/{cluster_path}", timeout=20
-    ).payload
-    if len(expanded.get("nodes", [])) != 26:
-        raise SystemExit(f"unexpected skill node count: {len(expanded.get('nodes', []))}")
-    if not all(node.get("tags") for node in expanded.get("nodes", [])):
-        raise SystemExit("expanded skill nodes are missing tags")
+    nodes = overview.get("nodes", [])
+    if mode == "aggregated":
+        skill = next((item for item in clusters if item.get("namespace") == "/skills/"), None)
+        if not skill:
+            raise SystemExit("missing /skills/ cluster")
+        cluster_path = urllib.parse.quote(skill["id"], safe="")
+        expanded = request_json(
+            "GET", f"{base}/graph/api/v1/clusters/{cluster_path}", timeout=20
+        ).payload
+        skill_nodes = expanded.get("nodes", [])
+        edge_count = len(overview.get("cluster_edges", []))
+    elif mode == "direct":
+        skill_nodes = [node for node in nodes if node.get("namespace") == "/skills/"]
+        edge_count = len(overview.get("edges", []))
+    else:
+        raise SystemExit(f"unexpected overview mode: {mode}")
+    if len(skill_nodes) != 26:
+        raise SystemExit(f"unexpected skill node count: {len(skill_nodes)}")
+    if not all(node.get("tags") for node in skill_nodes):
+        raise SystemExit("skill nodes are missing tags")
+    if edge_count <= 0:
+        raise SystemExit("graph has no relationships")
+    revisions = overview.get("revisions", {})
+    if revisions.get("repository") != revisions.get("index"):
+        raise SystemExit(f"graph index is stale: {revisions}")
     print(
         json.dumps(
             {
-                "mode": overview["mode"],
+                "mode": mode,
+                "nodes": len(nodes),
                 "clusters": len(clusters),
-                "skills": len(expanded["nodes"]),
+                "edges": edge_count,
+                "skills": len(skill_nodes),
                 "all_skill_nodes_have_tags": True,
-                "revisions": overview.get("revisions"),
+                "revisions": revisions,
             },
             indent=2,
         )
