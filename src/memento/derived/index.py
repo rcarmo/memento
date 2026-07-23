@@ -866,7 +866,7 @@ class DerivedIndex:
                 title=document.frontmatter.title,
                 description=document.frontmatter.description,
                 body=document.body,
-            )
+            )[: self._semantic_config.max_input_chars]
             text_hash = embedding_content_hash(text)
             existing = connection.execute(
                 "SELECT embedding_text_hash, model_id, dimensions, model_revision, status FROM concept_embeddings WHERE concept_id = ?",

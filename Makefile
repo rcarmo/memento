@@ -6,7 +6,7 @@ RELEASE_TAG ?= v$(MEMENTO_VERSION)
 PORTAINER_URL ?= https://ops.local:9443
 PICLAW ?= piclaw
 
-.PHONY: install install-dev lint format format-check typecheck test coverage graph-check rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check release-wait deploy-diskstation verify-diskstation release-deploy-diskstation load-functional load-operational load-check clean
+.PHONY: install install-dev lint format format-check typecheck test coverage graph-check rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check release-wait deploy-diskstation refresh-diskstation-embeddings verify-diskstation release-deploy-diskstation load-functional load-operational load-check clean
 
 $(BIN)/python:
 	$(PYTHON) -m venv $(VENV)
@@ -68,6 +68,9 @@ release-wait:
 deploy-diskstation:
 	@PORTAINER_URL="$(PORTAINER_URL)" PICLAW="$(PICLAW)" \
 		$(BIN)/python tools/release_deploy.py deploy "$(MEMENTO_VERSION)"
+
+refresh-diskstation-embeddings:
+	$(BIN)/python tools/release_deploy.py refresh-embeddings
 
 verify-diskstation:
 	$(BIN)/python tools/release_deploy.py verify

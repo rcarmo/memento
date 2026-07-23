@@ -789,14 +789,21 @@ fn wordpiece_tokenize(
                 found = Some((id, end));
                 break;
             }
-            end -= 1;
+            end = word[..end]
+                .char_indices()
+                .next_back()
+                .map_or(start, |(index, _)| index);
         }
         if let Some((id, end)) = found {
             out.push(id);
             start = end;
         } else {
             out.push(TOKEN_UNK);
-            start += 1;
+            start += word[start..]
+                .chars()
+                .next()
+                .expect("start is before word length")
+                .len_utf8();
         }
     }
 }
@@ -1059,6 +1066,14 @@ mod tests {
         );
         assert_eq!(TOKEN_PAD, 0);
         assert_eq!(TOKEN_MASK, 103);
+    }
+
+    #[test]
+    fn wordpiece_unknown_unicode_advances_on_character_boundaries() {
+        let vocab = std::collections::HashMap::new();
+        let mut output = Vec::new();
+        wordpiece_tokenize("café🧪", &vocab, &mut output);
+        assert_eq!(output, vec![TOKEN_UNK; 5]);
     }
 
     #[allow(clippy::too_many_lines)]

@@ -61,6 +61,7 @@ class FakeEmbedder(EmbeddingClient):
             max_input_chars=4096,
         )
         self._fail_on = fail_on.casefold() if fail_on is not None else None
+        self.seen_texts: list[str] = []
 
     def model_info(self) -> EmbeddingModelInfo:
         return self._info
@@ -68,6 +69,7 @@ class FakeEmbedder(EmbeddingClient):
     def embed(self, text: str, *, cancelled: Callable[[], bool] | None = None) -> tuple[float, ...]:
         if cancelled is not None and cancelled():
             raise SemanticSearchError("cancelled")
+        self.seen_texts.append(text)
         lowered = text.casefold()
         if self._fail_on is not None and self._fail_on in lowered:
             raise SemanticSearchError(f"synthetic embed failure for {self._fail_on}")
@@ -197,6 +199,22 @@ def test_semantic_status_requires_embedding_rows_for_all_concepts(
     status = semantic.semantic_status()
     assert status.ready is False
     assert any("4 of 4 embeddings not ready" in warning for warning in status.warnings)
+
+
+def test_embedding_text_is_truncated_to_configured_character_limit(
+    tmp_path: Path,
+    semantic_repo_paths: GitRepositoryPaths,
+) -> None:
+    embedder = FakeEmbedder()
+    index = DerivedIndex(
+        tmp_path / "truncated.sqlite",
+        semantic_config=semantic_config(max_input_chars=32),
+        embedding_client=embedder,
+    )
+    revision = get_main_revision(semantic_repo_paths)
+    index.rebuild(semantic_repo_paths.current_dir, repo_revision=revision)
+    assert embedder.seen_texts
+    assert all(len(text) <= 32 for text in embedder.seen_texts)
 
 
 def test_fake_embedder_full_rebuild_incremental_update_delete_and_model_invalidation(
