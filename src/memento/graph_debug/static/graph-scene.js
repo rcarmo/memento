@@ -16,7 +16,7 @@ export class GraphScene {
     this.nodeGroup = new THREE.Group(); this.edgeGroup = new THREE.Group(); this.haloGroup=new THREE.Group(); this.scene.add(this.edgeGroup,this.haloGroup,this.nodeGroup);
     this.scene.add(new THREE.HemisphereLight(0xddeeff, 0x302018, 1.7));
     const light = new THREE.DirectionalLight(0xffffff, 1.1); light.position.set(5, 8, 10); this.scene.add(light);
-    this.target = new THREE.Vector3(); this.yaw = 0; this.pitch = 0.12; this.distance = 16; this.lastTelemetry=0;this.lastLodDistance=0;this.visibleEdgeCount=0;
+    this.target = new THREE.Vector3(); this.yaw = 0; this.pitch = 0.12; this.distance = 16; this.focusTween=null;this.lastTelemetry=0;this.lastLodDistance=0;this.visibleEdgeCount=0;
     this.drag = null; this.pointers = new Map(); this.lastFrame = performance.now(); this.frames = [];
     this.worker = new Worker(new URL("./layout-worker.js", import.meta.url), { type: "module" });
     this.worker.onmessage = (event) => { if (event.data.type === "positions") this.applyPositions(event.data.positions,event.data.progress); };
@@ -24,14 +24,14 @@ export class GraphScene {
   }
   bind() {
     const c = this.canvas;
-    c.addEventListener("pointerdown", (e) => { c.setPointerCapture(e.pointerId); this.pointers.set(e.pointerId, e); this.drag = { x:e.clientX,y:e.clientY,moved:false }; });
+    c.addEventListener("pointerdown", (e) => { this.cancelFocus();c.setPointerCapture(e.pointerId); this.pointers.set(e.pointerId, e); this.drag = { x:e.clientX,y:e.clientY,moved:false }; });
     c.addEventListener("pointermove", (e) => {
       if (!this.pointers.has(e.pointerId)){this.hover(e);return;} const old=this.pointers.get(e.pointerId); this.pointers.set(e.pointerId,e);
       if (this.pointers.size===1 && old) { this.yaw -= (e.clientX-old.clientX)*.006; this.pitch=Math.max(-1.35,Math.min(1.35,this.pitch-(e.clientY-old.clientY)*.006)); if(this.drag)this.drag.moved ||= Math.hypot(e.clientX-this.drag.x,e.clientY-this.drag.y)>4; }
       if (this.pointers.size===2) { const ps=[...this.pointers.values()]; const d=Math.hypot(ps[0].clientX-ps[1].clientX,ps[0].clientY-ps[1].clientY); if(this.pinch)this.distance=Math.max(2,Math.min(80,this.pinch.distance*this.pinch.d/d)); else this.pinch={d,distance:this.distance}; }
     });
     c.addEventListener("pointerup", (e) => { const click=this.drag&&!this.drag.moved; this.pointers.delete(e.pointerId); this.pinch=null; if(click)this.pick(e); this.drag=null; });
-    c.addEventListener("wheel", (e) => { e.preventDefault(); this.distance=Math.max(2,Math.min(80,this.distance*Math.exp(e.deltaY*.001))); }, { passive:false });
+    c.addEventListener("wheel", (e) => { this.cancelFocus();e.preventDefault(); this.distance=Math.max(2,Math.min(80,this.distance*Math.exp(e.deltaY*.001))); }, { passive:false });
     addEventListener("resize",()=>this.resize());
   }
   setGraph(nodes, edges, settings={}) {
@@ -47,8 +47,10 @@ export class GraphScene {
   hit(e){const r=this.canvas.getBoundingClientRect();this.pointer.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height*2-1));this.raycaster.setFromCamera(this.pointer,this.camera);return this.meshes?.length&&this.raycaster.intersectObjects(this.meshes)[0];}
   hover(e){const hit=this.hit(e);if(!hit||hit.instanceId==null){this.label.hidden=true;return;}const n=this.nodes[hit.object.userData.globalIndices[hit.instanceId]];this.label.textContent=n.title||n.label||n.id;this.label.style.left=`${e.clientX-this.canvas.getBoundingClientRect().left+14}px`;this.label.style.top=`${e.clientY-this.canvas.getBoundingClientRect().top+14}px`;this.label.hidden=false;}
   pick(e){const hit=this.hit(e);if(hit&&hit.instanceId!=null){const globalIndex=hit.object.userData.globalIndices[hit.instanceId],node=this.nodes[globalIndex];this.selectedId=node.id;this.callbacks.select?.(node);this.drawHalos();}}
-  focus(node){const p=node.coarse_position||{x:0,y:0,z:0};this.target.set(p.x,p.y,p.z);this.distance=Math.max(4,this.distance*.6);}
+  updateFocus(now=performance.now()){const tween=this.focusTween;if(!tween)return;const progress=Math.min(1,(now-tween.startedAt)/tween.duration),eased=progress*progress*(3-2*progress);this.target.lerpVectors(tween.fromTarget,tween.toTarget,eased);this.distance=THREE.MathUtils.lerp(tween.fromDistance,tween.toDistance,eased);if(progress>=1){this.focusTween=null;this.drawEdges();}}
+  cancelFocus(now=performance.now()){if(!this.focusTween)return;this.updateFocus(now);this.focusTween=null;}
+  focus(node){const p=node.coarse_position;if(!p)return;const now=performance.now();this.cancelFocus(now);this.selectedId=node.id;this.drawHalos();this.focusTween={startedAt:now,duration:520,fromTarget:this.target.clone(),toTarget:new THREE.Vector3(p.x,p.y,p.z),fromDistance:this.distance,toDistance:Math.max(4,Math.min(80,this.distance*.7))};}
   resize(){const r=this.canvas.getBoundingClientRect();this.renderer.setSize(Math.max(1,r.width),Math.max(1,r.height),false);this.camera.aspect=Math.max(1,r.width)/Math.max(1,r.height);this.camera.updateProjectionMatrix();}
-  animate(){requestAnimationFrame(()=>this.animate());const cp=Math.cos(this.pitch);this.camera.position.set(this.target.x+Math.sin(this.yaw)*cp*this.distance,this.target.y+Math.sin(this.pitch)*this.distance,this.target.z+Math.cos(this.yaw)*cp*this.distance);this.camera.lookAt(this.target);this.camera.far=Math.max(80,this.distance*5);this.camera.updateProjectionMatrix();for(const halo of this.haloGroup.children)halo.lookAt(this.camera.position);if(Math.abs(this.distance-this.lastLodDistance)>Math.max(1,this.distance*.18)){this.lastLodDistance=this.distance;const far=this.distance>24||this.nodes.length>1000;if(this.largePoints)this.largePoints.material.uniforms?.pointScale&&(this.largePoints.material.uniforms.pointScale.value=far?.75:1);this.drawEdges();}this.renderer.render(this.scene,this.camera);const now=performance.now(),dt=now-this.lastFrame;this.lastFrame=now;this.frames.push(dt);if(this.frames.length>120)this.frames.shift();if(now-this.lastTelemetry>500){this.lastTelemetry=now;this.callbacks.performance?.({fps:this.frames.length?1000/(this.frames.reduce((a,b)=>a+b,0)/this.frames.length):0,nodes:this.nodes.length,edges:this.visibleEdgeCount,culledEdges:Math.max(0,this.edges.length-this.visibleEdgeCount),lod:this.largePoints?"points":this.distance>24?"mid":"near"});}}
+  animate(){requestAnimationFrame(()=>this.animate());const now=performance.now();this.updateFocus(now);const cp=Math.cos(this.pitch);this.camera.position.set(this.target.x+Math.sin(this.yaw)*cp*this.distance,this.target.y+Math.sin(this.pitch)*this.distance,this.target.z+Math.cos(this.yaw)*cp*this.distance);this.camera.lookAt(this.target);this.camera.far=Math.max(80,this.distance*5);this.camera.updateProjectionMatrix();for(const halo of this.haloGroup.children)halo.lookAt(this.camera.position);if(Math.abs(this.distance-this.lastLodDistance)>Math.max(1,this.distance*.18)){this.lastLodDistance=this.distance;const far=this.distance>24||this.nodes.length>1000;if(this.largePoints)this.largePoints.material.uniforms?.pointScale&&(this.largePoints.material.uniforms.pointScale.value=far?.75:1);this.drawEdges();}this.renderer.render(this.scene,this.camera);const dt=now-this.lastFrame;this.lastFrame=now;this.frames.push(dt);if(this.frames.length>120)this.frames.shift();if(now-this.lastTelemetry>500){this.lastTelemetry=now;this.callbacks.performance?.({fps:this.frames.length?1000/(this.frames.reduce((a,b)=>a+b,0)/this.frames.length):0,nodes:this.nodes.length,edges:this.visibleEdgeCount,culledEdges:Math.max(0,this.edges.length-this.visibleEdgeCount),lod:this.largePoints?"points":this.distance>24?"mid":"near"});}}
   exportPng(){return this.canvas.toDataURL("image/png");}
 }

@@ -33,6 +33,22 @@ class _Snapshot:
         assert concept_id == self.detail_id
         return _Payload({"node": {"id": concept_id}})
 
+    def search(self, query: str) -> dict[str, object]:
+        assert query == "alpha graph"
+        return {
+            "schema_version": 1,
+            "results": [
+                {
+                    "id": "a-id",
+                    "path": "/projects/a.md",
+                    "title": "A",
+                    "type": "project",
+                    "tags": ("graph",),
+                    "snippet": "Alpha",
+                }
+            ],
+        }
+
 
 def request(
     handler: GraphDebugHTTPHandler,
@@ -93,6 +109,28 @@ def test_graph_boundary_rejects_methods_and_bodies_without_touching_mcp() -> Non
     body = request(handler, "/graph", body=b"unexpected")
     assert body is not None and body.status == 400
     assert request(handler, "/mcp", method="POST", body=b"{}") is None
+
+
+def test_graph_search_post_returns_results() -> None:
+    snapshot = _Snapshot()
+    handler = GraphDebugHTTPHandler(
+        GraphExplorerConfig(enabled=True), snapshot_service=cast(GraphSnapshotService, snapshot)
+    )
+    response = request(
+        handler,
+        "/graph/api/v1/search",
+        method="POST",
+        body=b'{"query":"alpha graph"}',
+    )
+    assert response is not None and response.status == 200
+    assert json.loads(response.body)["results"][0]["path"] == "/projects/a.md"
+    invalid = request(
+        handler,
+        "/graph/api/v1/search",
+        method="POST",
+        body=b'{"query":123}',
+    )
+    assert invalid is not None and invalid.status == 400
 
 
 def test_graph_api_decodes_url_encoded_ids() -> None:

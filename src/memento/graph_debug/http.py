@@ -53,6 +53,9 @@ class GraphDebugHTTPHandler:
             return None
         if not self._config.enabled:
             return self._not_found()
+        search_path = f"{prefix}/api/v1/search"
+        if method == "POST" and path == search_path:
+            return self._search(body)
         refresh_path = f"{prefix}/api/v1/embeddings/refresh"
         if method == "POST" and path == refresh_path:
             return self._refresh(body)
@@ -158,6 +161,22 @@ class GraphDebugHTTPHandler:
         except (json.JSONDecodeError, UnicodeDecodeError):
             return self._json({"error": "invalid JSON"}, status=400)
         except (GraphSnapshotError, ValueError) as exc:
+            return self._json({"error": str(exc)}, status=400)
+
+    def _search(self, body: bytes) -> MCPHTTPResponse:
+        if self._snapshot_service is None:
+            return self._json({"error": "graph snapshot unavailable"}, status=503)
+        try:
+            payload = json.loads(body or b"{}")
+            if not isinstance(payload, dict):
+                raise GraphSnapshotError("search body must be an object")
+            query = payload.get("query")
+            if not isinstance(query, str):
+                raise GraphSnapshotError("search query must be a string")
+            return self._json(self._snapshot_service.search(query))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return self._json({"error": "invalid JSON"}, status=400)
+        except GraphSnapshotError as exc:
             return self._json({"error": str(exc)}, status=400)
 
     def _refresh(self, body: bytes) -> MCPHTTPResponse:
