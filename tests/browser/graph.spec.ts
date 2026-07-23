@@ -34,6 +34,27 @@ test("loads WebGL graph, filters, selects and exports", async ({ page, browserNa
   expect(errors).toEqual([]);
 });
 
+test("focuses smoothly without rotating and reveals FTS search results", async ({ page, browserName, isMobile }) => {
+  test.skip(isMobile || browserName!=="chromium","camera interpolation is asserted once in Chromium");
+  await page.goto("/graph",{waitUntil:"networkidle"});
+  await expect.poll(async()=>Number((await page.locator(".perf dd").first().textContent())||0),{timeout:15000}).toBeGreaterThan(0);
+  const focus=await page.evaluate(async()=>{const scene:any=(window as any).__mementoGraphScene;const node=scene.nodes[20];scene.yaw=1.2;scene.pitch=.3;const before={target:scene.target.toArray(),yaw:scene.yaw,pitch:scene.pitch};scene.focus(node);const immediate={target:scene.target.toArray(),active:!!scene.focusTween};await new Promise(resolve=>setTimeout(resolve,260));const middle={target:scene.target.toArray(),active:!!scene.focusTween};await new Promise(resolve=>setTimeout(resolve,400));const end={target:scene.target.toArray(),yaw:scene.yaw,pitch:scene.pitch,active:!!scene.focusTween,position:[node.coarse_position.x,node.coarse_position.y,node.coarse_position.z]};return{before,immediate,middle,end};});
+  expect(focus.immediate.target).toEqual(focus.before.target);
+  expect(focus.middle.target).not.toEqual(focus.before.target);
+  expect(focus.end.target).toEqual(focus.end.position);
+  expect(focus.end.yaw).toBe(focus.before.yaw);
+  expect(focus.end.pitch).toBe(focus.before.pitch);
+  expect(focus.end.active).toBe(false);
+  await page.locator('.search-control input').fill("bounded Markdown preview");
+  await expect(page.locator('.search-results button')).toHaveCount(20);
+  await page.locator('.search-results button').nth(10).click();
+  await expect(page.locator('.search-control input')).toHaveValue("");
+  await expect(page.locator('.inspector')).toContainText("Memory");
+  const revealed=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return{nodes:scene.nodes.length,selectedId:scene.selectedId};});
+  expect(revealed.nodes).toBeGreaterThan(0);
+  expect(revealed.selectedId).toBeTruthy();
+});
+
 test("tablet touch layout remains usable", async ({ page, isMobile }) => {
   test.skip(!isMobile,"tablet project only");
   await page.goto("/graph",{waitUntil:"networkidle"});
