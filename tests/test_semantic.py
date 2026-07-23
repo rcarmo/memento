@@ -278,7 +278,7 @@ def test_fake_embedder_full_rebuild_incremental_update_delete_and_model_invalida
     status = invalidated.semantic_status()
     assert status.enabled is True
     assert status.ready is False
-    assert status.embedding_revision == "rev-3"
+    assert status.embedding_revision == "partial"
     assert any("semantic_embeddings_degraded" in warning for warning in status.warnings)
 
     with sqlite3.connect(index.db_path) as connection:

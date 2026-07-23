@@ -929,7 +929,15 @@ class DerivedIndex:
                         model_revision=model_info.revision,
                         validated=validated,
                     )
-        self._set_state(connection, "semantic_embedding_revision", repo_revision)
+        concept_count = int(connection.execute("SELECT COUNT(*) FROM concepts").fetchone()[0] or 0)
+        ready_count = int(
+            connection.execute(
+                "SELECT COUNT(*) FROM concept_embeddings WHERE status='ready'"
+            ).fetchone()[0]
+            or 0
+        )
+        embedding_revision = repo_revision if concept_count == ready_count else "partial"
+        self._set_state(connection, "semantic_embedding_revision", embedding_revision)
 
     def _embed_pending_batch(
         self, pending: Sequence[tuple[str, ConceptDocument, str, str]]
