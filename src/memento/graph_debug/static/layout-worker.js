@@ -17,7 +17,7 @@ self.onmessage = (event) => {
       const distance = Math.hypot(dx, dy, dz) || 0.001;
       const kind = edge.kind || "explicit";
       const strength = (forces[kind] ?? forces.explicit ?? 0.08) * alpha;
-      const desired = kind === "semantic_similarity" ? 1.8 : 2.6;
+      const desired = kind === "explicit" ? 3.0 : kind === "semantic_similarity" ? 2.4 : kind === "shared_tag" ? 3.6 : 4.0;
       const pull = (distance - desired) * strength / distance;
       velocity[si].x += dx * pull; velocity[si].y += dy * pull; velocity[si].z += dz * pull;
       velocity[ti].x -= dx * pull; velocity[ti].y -= dy * pull; velocity[ti].z -= dz * pull;
@@ -28,8 +28,8 @@ self.onmessage = (event) => {
         const a = positions[i], b = positions[j];
         const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
         const d2 = dx * dx + dy * dy + dz * dz + 0.05;
-        if (d2 > 16) continue;
-        const push = 0.004 * alpha / d2;
+        if (d2 > 25) continue;
+        const push = 0.007 * alpha / d2;
         velocity[i].x -= dx * push; velocity[i].y -= dy * push; velocity[i].z -= dz * push;
         velocity[j].x += dx * push; velocity[j].y += dy * push; velocity[j].z += dz * push;
       }
