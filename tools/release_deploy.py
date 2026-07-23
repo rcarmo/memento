@@ -245,6 +245,50 @@ def deploy(args: argparse.Namespace) -> None:
     print("stack update requested", flush=True)
 
 
+def refresh_embeddings(args: argparse.Namespace) -> None:
+    base = args.base_url.rstrip("/")
+    result = request_json(
+        "POST",
+        f"{base}/graph/api/v1/embeddings/refresh",
+        data={"scope": "full", "concept_ids": [], "confirm_full": True},
+        timeout=30,
+    )
+    if result.status not in {200, 202}:
+        raise SystemExit(f"embedding refresh enqueue failed: {result.status} {result.payload}")
+    deadline = time.monotonic() + args.timeout
+    while time.monotonic() < deadline:
+        state = request_json("GET", f"{base}/graph/api/v1/embeddings/status", timeout=20)
+        if state.status != 200:
+            raise SystemExit(f"embedding status failed: {state.status} {state.payload}")
+        payload = state.payload
+        print(
+            f"embeddings: running={payload.get('running')} pending={payload.get('pending')} "
+            f"queued={payload.get('queued_paths')} error={payload.get('last_error')}",
+            flush=True,
+        )
+        if payload.get("last_error"):
+            raise SystemExit(f"embedding refresh failed: {payload['last_error']}")
+        if not payload.get("running") and not payload.get("pending"):
+            overview = request_json("GET", f"{base}/graph/api/v1/overview", timeout=20).payload
+            repository = overview.get("revisions", {}).get("repository")
+            embedding = overview.get("revisions", {}).get("embedding")
+            if repository != embedding:
+                raise SystemExit(
+                    f"embedding revision mismatch: repository={repository} embedding={embedding}"
+                )
+            missing = sum(
+                1
+                for item in overview.get("diagnostics", [])
+                if item.get("rule") == "embedding_missing"
+            )
+            if missing:
+                raise SystemExit(f"embedding refresh completed with {missing} missing diagnostics")
+            print(f"embeddings ready at {embedding}", flush=True)
+            return
+        time.sleep(args.interval)
+    raise SystemExit("embedding refresh timed out")
+
+
 def verify(args: argparse.Namespace) -> None:
     base = args.base_url.rstrip("/")
     deadline = time.monotonic() + args.timeout
@@ -301,6 +345,12 @@ def main() -> None:
     dep.add_argument("--pull-timeout", type=float, default=180)
     dep.add_argument("--deploy-timeout", type=float, default=180)
     dep.set_defaults(func=deploy)
+
+    emb = sub.add_parser("refresh-embeddings")
+    emb.add_argument("--base-url", default="http://192.168.1.250:18081")
+    emb.add_argument("--timeout", type=float, default=900)
+    emb.add_argument("--interval", type=float, default=5)
+    emb.set_defaults(func=refresh_embeddings)
 
     ver = sub.add_parser("verify")
     ver.add_argument("--base-url", default="http://192.168.1.250:18081")
