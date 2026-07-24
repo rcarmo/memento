@@ -5,7 +5,7 @@ import json
 import math
 import re
 import sqlite3
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Sequence
 from dataclasses import asdict
 from pathlib import Path
@@ -93,6 +93,48 @@ def _graph_snippet(value: str) -> str:
     return compact[:_GRAPH_SNIPPET_CHARS]
 
 
+def _path_scope_sql(column: str, read_prefixes: tuple[str, ...] | None) -> tuple[str, list[str]]:
+    if read_prefixes is None or "/" in read_prefixes:
+        return "", []
+    clauses: list[str] = []
+    parameters: list[str] = []
+    for prefix in read_prefixes:
+        clauses.append(f"({column} = ? OR {column} LIKE ? ESCAPE '\\')")
+        parameters.extend((prefix[:-1], f"{prefix.replace('%', r'\%').replace('_', r'\_')}%"))
+    return f"({' OR '.join(clauses)})", parameters
+
+
+def _path_visible(path: str, read_prefixes: tuple[str, ...] | None) -> bool:
+    return read_prefixes is None or any(
+        prefix == "/" or path == prefix[:-1] or path.startswith(prefix) for prefix in read_prefixes
+    )
+
+
+def _scoped_nodes(nodes: list[GraphNode], explicit_edges: Sequence[GraphEdge]) -> list[GraphNode]:
+    inbound: Counter[str] = Counter()
+    outbound: Counter[str] = Counter()
+    broken: Counter[str] = Counter()
+    for edge in explicit_edges:
+        if edge.kind != "explicit":
+            continue
+        if edge.target is None or edge.resolution != "resolved":
+            broken[edge.source] += 1
+            continue
+        outbound[edge.source] += 1
+        inbound[edge.target] += 1
+    return [
+        node.model_copy(
+            update={
+                "explicit_in_degree": inbound[node.id],
+                "explicit_out_degree": outbound[node.id],
+                "broken_link_count": broken[node.id],
+                "orphan": inbound[node.id] == 0 and outbound[node.id] == 0,
+            }
+        )
+        for node in nodes
+    ]
+
+
 class GraphSnapshotService:
     def __init__(
         self,
@@ -108,7 +150,10 @@ class GraphSnapshotService:
         self._control_db_path = control_db_path
 
     def export_selection(
-        self, concept_ids: tuple[str, ...]
+        self,
+        concept_ids: tuple[str, ...],
+        *,
+        read_prefixes: tuple[str, ...] | None = None,
     ) -> tuple[tuple[GraphNode, ...], tuple[GraphEdge, ...], GraphRevisions]:
         unique = tuple(sorted(dict.fromkeys(concept_ids)))
         if not unique or len(unique) > self._config.export_node_limit:
@@ -121,27 +166,35 @@ class GraphSnapshotService:
                 proposal_counts=self._proposal_counts(control),
                 concept_ids=unique,
                 limit=self._config.export_node_limit,
+                read_prefixes=read_prefixes,
             )
             if len(nodes) != len(unique):
                 raise GraphSnapshotError("export selection includes unknown memories")
             ids = {node.id for node in nodes}
             edges = self._edges(derived, ids=ids, limit=self._config.edge_limit)
+            nodes = _scoped_nodes(nodes, edges)
             return tuple(nodes), tuple(edges), self._revisions(derived)
 
-    def search(self, query: str) -> dict[str, object]:
+    def search(
+        self, query: str, *, read_prefixes: tuple[str, ...] | None = None
+    ) -> dict[str, object]:
         expression = _plain_fts_query(query.strip())
+        scope_sql, scope_parameters = _path_scope_sql("c.path", read_prefixes)
+        conditions = ["concept_fts MATCH ?"]
+        if scope_sql:
+            conditions.append(scope_sql)
         with self._derived() as derived:
             rows = derived.execute(
-                """
+                f"""
                 SELECT c.id, c.path, c.title, c.type, c.tags_json,
                        snippet(concept_fts, 5, '', '', ' … ', 16) AS snippet
                   FROM concept_fts
                   JOIN concepts AS c ON c.id = concept_fts.concept_id
-                 WHERE concept_fts MATCH ?
+                 WHERE {" AND ".join(conditions)}
                  ORDER BY bm25(concept_fts, 10.0, 5.0, 5.0, 4.0, 1.0, 5.0), c.id
                  LIMIT ?
                 """,
-                (expression, _GRAPH_SEARCH_LIMIT),
+                (expression, *scope_parameters, _GRAPH_SEARCH_LIMIT),
             ).fetchall()
         return {
             "schema_version": 1,
@@ -169,7 +222,7 @@ class GraphSnapshotService:
         by_id = {str(row["id"]): str(row["path"]) for row in rows}
         return tuple(by_id[concept_id] for concept_id in concept_ids if concept_id in by_id)
 
-    def overview(self) -> GraphOverview:
+    def overview(self, *, read_prefixes: tuple[str, ...] | None = None) -> GraphOverview:
         with self._derived() as derived, self._control() as control:
             revisions = self._revisions(derived)
             proposal_counts = self._proposal_counts(control)
@@ -177,16 +230,18 @@ class GraphSnapshotService:
                 derived,
                 proposal_counts=proposal_counts,
                 limit=self._config.direct_node_limit + 1,
+                read_prefixes=read_prefixes,
             )
             truncated = len(nodes) > self._config.direct_node_limit
             visible = nodes[: self._config.direct_node_limit]
-            ids = {node.id for node in visible}
-            explicit_edges = self._edges(derived, ids=ids, limit=self._config.edge_limit)
+            visible_ids = {node.id for node in visible}
+            explicit_edges = self._edges(derived, ids=visible_ids, limit=self._config.edge_limit)
+            visible = _scoped_nodes(visible, explicit_edges)
             diagnostics = diagnose_graph(
-                nodes,
+                visible,
                 explicit_edges,
                 revisions=revisions,
-                content_hashes=self._content_hashes(derived),
+                content_hashes=self._content_hashes(derived, visible_ids),
             )
             visible = list(apply_diagnostic_ids(visible, diagnostics))
             sparse = _is_sparse_overview(visible, explicit_edges)
@@ -198,22 +253,35 @@ class GraphSnapshotService:
                     self._config.edge_limit - len(explicit_edges),
                 ),
             ]
+            metric_nodes = visible
+            metric_edges = explicit_edges
             if truncated or sparse:
                 all_nodes = self._nodes(
                     derived,
                     proposal_counts=proposal_counts,
                     limit=self._config.refresh_max_paths,
+                    read_prefixes=read_prefixes,
                 )
                 all_ids = {node.id for node in all_nodes}
-                all_edges = self._edges(
+                all_explicit_edges = self._edges(
                     derived,
                     ids=all_ids,
                     limit=self._config.edge_limit,
                 )
-                all_edges.extend(
-                    _overlay_edges(
-                        all_nodes, revisions.repository, self._config.edge_limit - len(all_edges)
-                    )
+                all_nodes = _scoped_nodes(all_nodes, all_explicit_edges)
+                all_edges = [
+                    *all_explicit_edges,
+                    *_overlay_edges(
+                        all_nodes,
+                        revisions.repository,
+                        self._config.edge_limit - len(all_explicit_edges),
+                    ),
+                ]
+                diagnostics = diagnose_graph(
+                    all_nodes,
+                    all_explicit_edges,
+                    revisions=revisions,
+                    content_hashes=self._content_hashes(derived, all_ids),
                 )
                 layout = aggregate_layout(
                     all_nodes,
@@ -221,6 +289,8 @@ class GraphSnapshotService:
                     repository_revision=revisions.repository,
                     cluster_limit=self._config.overview_cluster_limit,
                 )
+                metric_nodes = all_nodes
+                metric_edges = all_explicit_edges
                 mode: Literal["direct", "aggregated"] = "aggregated"
             else:
                 layout = None
@@ -228,18 +298,16 @@ class GraphSnapshotService:
             return GraphOverview(
                 revisions=revisions,
                 metrics=GraphMetrics(
-                    memory_count=self._scalar(derived, "SELECT COUNT(*) FROM concepts"),
-                    markdown_bytes=sum(node.markdown_bytes for node in nodes),
-                    asset_bytes=sum(node.asset_bytes for node in nodes),
-                    explicit_edges=self._scalar(derived, "SELECT COUNT(*) FROM links"),
-                    broken_edges=self._scalar(
-                        derived,
-                        "SELECT COUNT(*) FROM links WHERE resolution_state != 'resolved'",
+                    memory_count=len(metric_nodes),
+                    markdown_bytes=sum(node.markdown_bytes for node in metric_nodes),
+                    asset_bytes=sum(node.asset_bytes for node in metric_nodes),
+                    explicit_edges=len(metric_edges),
+                    broken_edges=sum(
+                        1
+                        for edge in metric_edges
+                        if edge.target is None or edge.resolution != "resolved"
                     ),
-                    orphan_count=self._scalar(
-                        derived,
-                        "SELECT COUNT(*) FROM graph_metrics WHERE orphan_flag != 0",
-                    ),
+                    orphan_count=sum(1 for node in metric_nodes if node.orphan),
                 ),
                 mode=mode,
                 nodes=tuple(visible) if layout is None else (),
@@ -263,7 +331,13 @@ class GraphSnapshotService:
                 truncated=truncated,
             )
 
-    def expand_cluster(self, cluster_id: str, *, cursor: int = 0) -> GraphClusterExpansion:
+    def expand_cluster(
+        self,
+        cluster_id: str,
+        *,
+        cursor: int = 0,
+        read_prefixes: tuple[str, ...] | None = None,
+    ) -> GraphClusterExpansion:
         if cursor < 0:
             raise GraphSnapshotError("cluster cursor must be non-negative")
         with self._derived() as derived, self._control() as control:
@@ -273,9 +347,11 @@ class GraphSnapshotService:
                 derived,
                 proposal_counts=proposal_counts,
                 limit=self._config.refresh_max_paths,
+                read_prefixes=read_prefixes,
             )
             all_ids = {node.id for node in all_nodes}
             all_edges = self._edges(derived, ids=all_ids, limit=self._config.edge_limit)
+            all_nodes = _scoped_nodes(all_nodes, all_edges)
             all_edges.extend(
                 _overlay_edges(
                     all_nodes, revisions.repository, self._config.edge_limit - len(all_edges)
@@ -313,7 +389,9 @@ class GraphSnapshotService:
                 next_cursor=str(next_cursor) if next_cursor is not None else None,
             )
 
-    def detail(self, concept_id: str) -> GraphMemoryDetail:
+    def detail(
+        self, concept_id: str, *, read_prefixes: tuple[str, ...] | None = None
+    ) -> GraphMemoryDetail:
         with self._derived() as derived, self._control() as control:
             revisions = self._revisions(derived)
             proposal_counts = self._proposal_counts(control)
@@ -322,6 +400,7 @@ class GraphSnapshotService:
                 proposal_counts=proposal_counts,
                 concept_ids=(concept_id,),
                 limit=1,
+                read_prefixes=read_prefixes,
             )
             if not nodes:
                 raise GraphSnapshotError("unknown memory")
@@ -329,16 +408,20 @@ class GraphSnapshotService:
             path = self._repository_path(node.path)
             document = parse_concept_file(path)
             preview = document.body[: self._config.preview_chars]
+            visible_ids = self._visible_ids(derived, read_prefixes)
             outbound = self._edges(
                 derived,
+                ids=visible_ids,
                 source_id=concept_id,
                 limit=self._config.edge_limit,
             )
             inbound = self._edges(
                 derived,
+                ids=visible_ids,
                 target_id=concept_id,
                 limit=self._config.edge_limit,
             )
+            node = _scoped_nodes([node], [*outbound, *inbound])[0]
             return GraphMemoryDetail(
                 revisions=revisions,
                 node=node,
@@ -350,39 +433,60 @@ class GraphSnapshotService:
                 proposals=self._proposals(control, node.path),
             )
 
-    def neighbourhood(self, concept_id: str, *, depth: int = 1) -> GraphNeighbourhood:
+    def neighbourhood(
+        self,
+        concept_id: str,
+        *,
+        depth: int = 1,
+        read_prefixes: tuple[str, ...] | None = None,
+    ) -> GraphNeighbourhood:
         if depth != 1:
             raise GraphSnapshotError("MVP neighbourhood depth must be 1")
         with self._derived() as derived, self._control() as control:
-            if (
-                derived.execute("SELECT 1 FROM concepts WHERE id = ?", (concept_id,)).fetchone()
-                is None
-            ):
+            center = self._nodes(
+                derived,
+                proposal_counts=self._proposal_counts(control),
+                concept_ids=(concept_id,),
+                limit=1,
+                read_prefixes=read_prefixes,
+            )
+            if not center:
                 raise GraphSnapshotError("unknown memory")
-            rows = derived.execute(
-                """
-                SELECT source_id AS id FROM links WHERE target_id = ?
-                UNION
-                SELECT target_id AS id FROM links WHERE source_id = ? AND target_id IS NOT NULL
-                UNION SELECT ? AS id
-                ORDER BY id LIMIT ?
-                """,
-                (concept_id, concept_id, concept_id, self._config.expansion_node_limit),
-            ).fetchall()
-            ids = tuple(str(row["id"]) for row in rows)
+            visible_ids = self._visible_ids(derived, read_prefixes)
+            visible_edges = self._edges(derived, ids=visible_ids, limit=self._config.edge_limit)
+            neighbour_ids = {concept_id}
+            for edge in visible_edges:
+                if edge.target is None:
+                    continue
+                if edge.source == concept_id:
+                    neighbour_ids.add(edge.target)
+                if edge.target == concept_id:
+                    neighbour_ids.add(edge.source)
+            ids = tuple(sorted(neighbour_ids)[: self._config.expansion_node_limit])
             nodes = self._nodes(
                 derived,
                 proposal_counts=self._proposal_counts(control),
                 concept_ids=ids,
                 limit=self._config.expansion_node_limit,
+                read_prefixes=read_prefixes,
             )
             visible = {node.id for node in nodes}
+            edges = self._edges(derived, ids=visible, limit=self._config.edge_limit)
+            nodes = _scoped_nodes(nodes, edges)
             return GraphNeighbourhood(
                 revisions=self._revisions(derived),
                 center_id=concept_id,
                 nodes=tuple(nodes),
-                edges=tuple(self._edges(derived, ids=visible, limit=self._config.edge_limit)),
+                edges=tuple(edges),
             )
+
+    @staticmethod
+    def _visible_ids(
+        connection: sqlite3.Connection, read_prefixes: tuple[str, ...] | None
+    ) -> set[str]:
+        scope_sql, parameters = _path_scope_sql("path", read_prefixes)
+        query = "SELECT id FROM concepts" + (f" WHERE {scope_sql}" if scope_sql else "")
+        return {str(row["id"]) for row in connection.execute(query, parameters)}
 
     def _nodes(
         self,
@@ -391,14 +495,20 @@ class GraphSnapshotService:
         proposal_counts: dict[str, tuple[int, int]],
         limit: int,
         concept_ids: tuple[str, ...] | None = None,
+        read_prefixes: tuple[str, ...] | None = None,
     ) -> list[GraphNode]:
-        conditions = ""
+        clauses: list[str] = []
         parameters: list[object] = []
         if concept_ids is not None:
             if not concept_ids:
                 return []
-            conditions = f"WHERE c.id IN ({','.join('?' for _ in concept_ids)})"
+            clauses.append(f"c.id IN ({','.join('?' for _ in concept_ids)})")
             parameters.extend(concept_ids)
+        scope_sql, scope_parameters = _path_scope_sql("c.path", read_prefixes)
+        if scope_sql:
+            clauses.append(scope_sql)
+            parameters.extend(scope_parameters)
+        conditions = f"WHERE {' AND '.join(clauses)}" if clauses else ""
         parameters.append(limit)
         rows = connection.execute(
             f"""
@@ -505,11 +615,19 @@ class GraphSnapshotService:
         return result
 
     @staticmethod
-    def _content_hashes(connection: sqlite3.Connection) -> dict[str, str]:
-        return {
-            str(row["id"]): str(row["content_hash"])
-            for row in connection.execute("SELECT id, content_hash FROM concepts ORDER BY id")
-        }
+    def _content_hashes(
+        connection: sqlite3.Connection, concept_ids: set[str] | None = None
+    ) -> dict[str, str]:
+        if concept_ids is not None:
+            if not concept_ids:
+                return {}
+            rows = connection.execute(
+                f"SELECT id, content_hash FROM concepts WHERE id IN ({','.join('?' for _ in concept_ids)}) ORDER BY id",
+                tuple(sorted(concept_ids)),
+            )
+        else:
+            rows = connection.execute("SELECT id, content_hash FROM concepts ORDER BY id")
+        return {str(row["id"]): str(row["content_hash"]) for row in rows}
 
     def _proposal_counts(self, connection: sqlite3.Connection) -> dict[str, tuple[int, int]]:
         counts: dict[str, list[int]] = {}

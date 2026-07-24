@@ -173,6 +173,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             service._deps.config.observability.graph_explorer,
             snapshot_service=graph_snapshot_service,
             refresh_coordinator=graph_refresh_coordinator,
+            authorization=service._deps.config.authorization,
         )
 
     def _setup_logging(self) -> None:
