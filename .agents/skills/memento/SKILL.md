@@ -21,9 +21,9 @@ Use `memory_help` or `memory://catalog` when you need operation names, schemas o
 
 Client setup is covered in:
 
-* [Pi setup](https://github.com/rcarmo/memento/blob/main/docs/setup-pi.md)
-* [Piclaw setup](https://github.com/rcarmo/memento/blob/main/docs/setup-piclaw.md)
-* [Codex setup](https://github.com/rcarmo/memento/blob/main/docs/setup-codex.md)
+* Pi: `docs/setup-pi.md`
+* Piclaw: `docs/setup-piclaw.md`
+* Codex: `docs/setup-codex.md`
 
 ## Read Workflow
 
