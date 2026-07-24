@@ -7,7 +7,7 @@ import pytest
 from pydantic import ValidationError
 from umcp_shared import MCPHTTPResponse
 
-from memento.config import GraphExplorerConfig
+from memento.config import AuthorizationConfig, GraphExplorerConfig, NamespacePolicy
 from memento.graph_debug import GraphDebugHTTPHandler
 from memento.graph_debug.snapshot import GraphSnapshotService
 
@@ -24,16 +24,24 @@ class _Snapshot:
     def __init__(self) -> None:
         self.cluster_id = "cluster:skills:0:abc"
         self.detail_id = "node:1"
+        self.read_prefixes: list[tuple[str, ...] | None] = []
 
-    def expand_cluster(self, cluster_id: str) -> _Payload:
+    def expand_cluster(
+        self, cluster_id: str, *, read_prefixes: tuple[str, ...] | None = None
+    ) -> _Payload:
+        self.read_prefixes.append(read_prefixes)
         assert cluster_id == self.cluster_id
         return _Payload({"cluster_id": cluster_id})
 
-    def detail(self, concept_id: str) -> _Payload:
+    def detail(self, concept_id: str, *, read_prefixes: tuple[str, ...] | None = None) -> _Payload:
+        self.read_prefixes.append(read_prefixes)
         assert concept_id == self.detail_id
         return _Payload({"node": {"id": concept_id}})
 
-    def search(self, query: str) -> dict[str, object]:
+    def search(
+        self, query: str, *, read_prefixes: tuple[str, ...] | None = None
+    ) -> dict[str, object]:
+        self.read_prefixes.append(read_prefixes)
         assert query == "alpha graph"
         return {
             "schema_version": 1,
@@ -56,8 +64,11 @@ def request(
     *,
     method: str = "GET",
     body: bytes = b"",
+    headers: dict[str, str] | None = None,
 ) -> MCPHTTPResponse | None:
-    return handler.handle(method=method, path=path, headers={}, body=body, peer="127.0.0.1")
+    return handler.handle(
+        method=method, path=path, headers=headers or {}, body=body, peer="127.0.0.1"
+    )
 
 
 def test_disabled_graph_routes_are_indistinguishable_404s() -> None:
@@ -109,6 +120,58 @@ def test_graph_boundary_rejects_methods_and_bodies_without_touching_mcp() -> Non
     body = request(handler, "/graph", body=b"unexpected")
     assert body is not None and body.status == 400
     assert request(handler, "/mcp", method="POST", body=b"{}") is None
+
+
+def simulated_authorization() -> AuthorizationConfig:
+    return AuthorizationConfig(
+        principals={
+            "projects-reader": NamespacePolicy(
+                roles=("reader",),
+                token_env="TOKEN_PROJECTS",
+                read_prefixes=("/projects/",),
+                write_prefixes=(),
+            )
+        }
+    )
+
+
+def test_graph_principal_simulation_exposes_safe_metadata_and_scopes_requests() -> None:
+    snapshot = _Snapshot()
+    handler = GraphDebugHTTPHandler(
+        GraphExplorerConfig(enabled=True),
+        snapshot_service=cast(GraphSnapshotService, snapshot),
+        authorization=simulated_authorization(),
+    )
+    principals = request(handler, "/graph/api/v1/principals")
+    assert principals is not None and principals.status == 200
+    payload = json.loads(principals.body)
+    assert payload == {
+        "principals": [
+            {
+                "name": "projects-reader",
+                "read_prefixes": ["/projects/"],
+                "roles": ["reader"],
+                "write_prefixes": [],
+            }
+        ],
+        "schema_version": 1,
+    }
+    response = request(
+        handler,
+        "/graph/api/v1/search",
+        method="POST",
+        body=b'{"query":"alpha graph"}',
+        headers={"x-memento-simulated-principal": "projects-reader"},
+    )
+    assert response is not None and response.status == 200
+    assert snapshot.read_prefixes[-1] == ("/projects/",)
+    unknown = request(
+        handler,
+        "/graph/api/v1/status",
+        headers={"x-memento-simulated-principal": "missing"},
+    )
+    assert unknown is not None and unknown.status == 400
+    assert "unknown simulated principal" in json.loads(unknown.body)["error"]
 
 
 def test_graph_search_post_returns_results() -> None:

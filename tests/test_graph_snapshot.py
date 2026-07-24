@@ -266,6 +266,92 @@ def test_detail_and_neighbourhood_are_bounded_and_revision_aware(tmp_path: Path)
         service.expand_cluster("missing")
 
 
+def test_simulated_prefix_scope_hides_nodes_search_links_and_metrics(tmp_path: Path) -> None:
+    service = _snapshot(tmp_path, direct_limit=10)
+    _write_concept(
+        service._repository_root,
+        "/private/c.md",
+        concept_id="c-id",
+        title="Private C",
+        body="Hidden alpha secret.\n",
+    )
+    with sqlite3.connect(service._derived_db_path) as connection:
+        connection.execute(
+            "INSERT INTO concepts VALUES(?,?,?,?,?,?,?,?,?,?)",
+            (
+                "c-id",
+                "/private/c.md",
+                "project",
+                "Private C",
+                "active",
+                '["hidden"]',
+                "2026-07-20T00:00:00Z",
+                "rev-1",
+                "Hidden alpha secret",
+                "hash-c",
+            ),
+        )
+        connection.execute(
+            "INSERT INTO concept_fts(concept_id,title,description,aliases,tags,body,path) VALUES(?,?,?,?,?,?,?)",
+            (
+                "c-id",
+                "Private C",
+                "Hidden description",
+                "",
+                "hidden",
+                "Hidden alpha secret",
+                "/private/c.md",
+            ),
+        )
+        connection.execute("INSERT INTO graph_metrics VALUES(?,?,?,?,?)", ("c-id", 1, 1, 0, 0))
+        connection.executemany(
+            "INSERT INTO links VALUES(?,?,?,?,?,?,?,?,?)",
+            (
+                (
+                    "a-id",
+                    "c-id",
+                    "/private/c.md",
+                    "/private/c.md",
+                    None,
+                    "markdown",
+                    "resolved",
+                    "rev-1",
+                    "rev-1",
+                ),
+                (
+                    "c-id",
+                    "b-id",
+                    "/projects/b.md",
+                    "/projects/b.md",
+                    None,
+                    "markdown",
+                    "resolved",
+                    "rev-1",
+                    "rev-1",
+                ),
+            ),
+        )
+        connection.commit()
+
+    prefixes = ("/projects/",)
+    overview = service.overview(read_prefixes=prefixes)
+    assert overview.mode == "direct"
+    assert {node.path for node in overview.nodes} == {"/projects/a.md", "/projects/b.md"}
+    assert overview.metrics.memory_count == 2
+    assert overview.metrics.explicit_edges == 1
+    assert overview.metrics.broken_edges == 0
+    assert overview.metrics.orphan_count == 0
+    assert service.search("secret", read_prefixes=prefixes)["results"] == []
+    with pytest.raises(GraphSnapshotError, match="unknown memory"):
+        service.detail("c-id", read_prefixes=prefixes)
+    detail = service.detail("a-id", read_prefixes=prefixes)
+    assert [edge.target for edge in detail.outbound] == ["b-id"]
+    neighbourhood = service.neighbourhood("a-id", read_prefixes=prefixes)
+    assert {node.id for node in neighbourhood.nodes} == {"a-id", "b-id"}
+    with pytest.raises(GraphSnapshotError, match="unknown"):
+        service.export_selection(("a-id", "c-id"), read_prefixes=prefixes)
+
+
 def test_snapshot_reports_stale_revisions(tmp_path: Path) -> None:
     service = _snapshot(tmp_path)
     connection = sqlite3.connect(service._derived_db_path)

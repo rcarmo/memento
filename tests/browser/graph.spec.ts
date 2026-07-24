@@ -59,6 +59,30 @@ test("focuses smoothly without rotating and reveals FTS search results", async (
   expect(revealed.selectedId).toBeTruthy();
 });
 
+test("simulates principal namespace visibility without becoming an auth boundary", async ({ page, browserName, isMobile }) => {
+  test.skip(isMobile||browserName!=="chromium","principal simulation is asserted once in Chromium");
+  const overviewHeaders:string[]=[];
+  page.on("request",request=>{if(request.url().endsWith("/graph/api/v1/overview"))overviewHeaders.push(request.headers()["x-memento-simulated-principal"]||"");});
+  await page.goto("/graph",{waitUntil:"networkidle"});
+  const selector=page.locator('label:has-text("View as") select');
+  await expect(selector).toHaveValue("");
+  await expect.poll(async()=>Number((await page.locator(".perf dd").first().textContent())||0)).toBe(120);
+  await selector.selectOption("projects-reader");
+  await expect(page.locator("header .warning")).toHaveText("Simulated visibility — not an authorization boundary");
+  await expect.poll(async()=>Number((await page.locator(".perf dd").first().textContent())||0)).toBe(20);
+  expect(overviewHeaders.at(-1)).toBe("projects-reader");
+  await page.locator('.search-control input').fill("bounded Markdown preview");
+  await expect(page.locator('.search-results button')).toHaveCount(20);
+  const paths=await page.locator('.search-results button code').allTextContents();
+  expect(paths.every(path=>path.startsWith("/projects/"))).toBe(true);
+  await selector.selectOption("shared-reader");
+  await expect.poll(async()=>Number((await page.locator(".perf dd").first().textContent())||0)).toBe(40);
+  await selector.selectOption("");
+  await expect(page.locator("header .warning")).toHaveText("Unauthenticated -- trusted networks only");
+  await expect.poll(async()=>Number((await page.locator(".perf dd").first().textContent())||0)).toBe(120);
+  expect(overviewHeaders.at(-1)).toBe("");
+});
+
 test("tablet touch layout remains usable", async ({ page, isMobile }) => {
   test.skip(!isMobile,"tablet project only");
   await page.goto("/graph",{waitUntil:"networkidle"});
