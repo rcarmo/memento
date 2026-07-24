@@ -129,6 +129,10 @@ class DerivedIndexCorruptionError(RuntimeError):
     """Raised when the derived database cannot be used safely."""
 
 
+class DerivedIndexUnavailableError(RuntimeError):
+    """Raised when transient SQLite contention prevents derived-index access."""
+
+
 class DerivedSearchError(ValueError):
     """Raised when a user-supplied search query is invalid."""
 
@@ -1397,14 +1401,12 @@ class DerivedIndex:
             with self._connect() as connection:
                 self._migrate(connection)
                 action(connection)
-        except (sqlite3.DatabaseError, DerivedIndexCorruptionError) as exc:
-            quarantine_path = self._quarantine_db()
-            with self._connect() as connection:
-                self._migrate(connection)
-                with connection:
-                    self._set_state(connection, "status", "quarantined")
-                    self._set_state(connection, "quarantine_path", str(quarantine_path))
-            raise DerivedIndexCorruptionError(str(exc)) from exc
+        except sqlite3.DatabaseError as exc:
+            if self._is_transient_database_error(exc):
+                raise DerivedIndexUnavailableError(str(exc)) from exc
+            self._quarantine_after_error(exc)
+        except DerivedIndexCorruptionError as exc:
+            self._quarantine_after_error(exc)
 
     def _validate_db_file(self) -> None:
         if not self._db_path.exists() or self._db_path.stat().st_size == 0:
@@ -1415,6 +1417,11 @@ class DerivedIndex:
             raise sqlite3.DatabaseError("invalid sqlite header")
 
     def _handle_corruption(self, exc: sqlite3.DatabaseError) -> None:
+        if self._is_transient_database_error(exc):
+            raise DerivedIndexUnavailableError(str(exc)) from exc
+        self._quarantine_after_error(exc)
+
+    def _quarantine_after_error(self, exc: Exception) -> None:
         quarantine_path = self._quarantine_db()
         with self._connect() as connection:
             self._migrate(connection)
@@ -1422,6 +1429,11 @@ class DerivedIndex:
                 self._set_state(connection, "status", "quarantined")
                 self._set_state(connection, "quarantine_path", str(quarantine_path))
         raise DerivedIndexCorruptionError(str(exc)) from exc
+
+    @staticmethod
+    def _is_transient_database_error(exc: sqlite3.DatabaseError) -> bool:
+        message = str(exc).casefold()
+        return "database is locked" in message or "database is busy" in message
 
     def _is_search_query_error(self, exc: sqlite3.OperationalError) -> bool:
         message = str(exc).casefold()

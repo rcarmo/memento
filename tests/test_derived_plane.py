@@ -12,7 +12,12 @@ import pytest
 from memento.authz import EffectivePolicy
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.operations import OperationRequest
-from memento.derived.index import DerivedIndex, DerivedIndexCorruptionError, SearchFreshness
+from memento.derived.index import (
+    DerivedIndex,
+    DerivedIndexCorruptionError,
+    DerivedIndexUnavailableError,
+    SearchFreshness,
+)
 from memento.repository.frontmatter import serialize_concept
 from memento.repository.git import GitRepositoryPaths, bootstrap_repository, get_main_revision
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter, ConceptStatus
@@ -286,6 +291,27 @@ def test_fts_syntax_error_returns_validation_error_without_quarantine(
     assert [result.path for result in index.search(policy=policy, query="visible").results] == [
         "/instances/smith.md"
     ]
+
+
+def test_transient_lock_does_not_quarantine_derived_index(
+    tmp_path: Path,
+    repo_paths: GitRepositoryPaths,
+) -> None:
+    index = DerivedIndex(tmp_path / "locked.sqlite")
+    revision = get_main_revision(repo_paths)
+    index.rebuild(repo_paths.current_dir, repo_revision=revision)
+
+    def locked(_: sqlite3.Connection) -> None:
+        raise sqlite3.OperationalError("database is locked")
+
+    with pytest.raises(DerivedIndexUnavailableError, match="database is locked"):
+        index._with_quarantine(locked)
+
+    assert index.db_path.is_file()
+    assert list(tmp_path.glob("locked.quarantine-*.sqlite")) == []
+    state = index.get_state()
+    assert state.status == "ready"
+    assert state.index_revision == revision
 
 
 def test_corruption_is_quarantined_and_rebuild_recovers(

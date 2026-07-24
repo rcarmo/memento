@@ -105,6 +105,55 @@ _TOOL_ARG_MODELS: dict[str, type[BaseModel]] = {
 }
 
 
+def execute_tool_schema() -> dict[str, Any]:
+    plan_schema = execute_plan_schema()
+    properties = dict(plan_schema.get("properties", {}))
+    properties["plan"] = plan_schema
+    schema: dict[str, Any] = {
+        "type": "object",
+        "properties": properties,
+        "oneOf": [
+            {
+                "required": ["plan"],
+                "not": {
+                    "anyOf": [
+                        {"required": ["operations"]},
+                        {"required": ["stop_on_error"]},
+                        {"required": ["returns"]},
+                    ]
+                },
+            },
+            {"required": ["operations"], "not": {"required": ["plan"]}},
+        ],
+        "additionalProperties": False,
+    }
+    if "$defs" in plan_schema:
+        schema["$defs"] = plan_schema["$defs"]
+    return schema
+
+
+def normalize_execute_tool_arguments(
+    *,
+    plan: dict[str, Any] | None = None,
+    operations: list[dict[str, Any]] | None = None,
+    stop_on_error: bool = True,
+    returns: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    if plan is not None:
+        if operations is not None or returns is not None or stop_on_error is not True:
+            raise ValueError(
+                "memory_execute accepts either plan or top-level plan fields, not both"
+            )
+        return plan
+    if operations is None:
+        raise ValueError("memory_execute requires plan or operations")
+    return {
+        "operations": operations,
+        "stop_on_error": stop_on_error,
+        "returns": returns or [],
+    }
+
+
 def _annotation_schema(annotation: Any) -> dict[str, Any]:
     if annotation is Parameter.empty or annotation is Any:
         return {}
@@ -209,7 +258,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
 
     def _tool_input_schema(self, method: Any, tool_name: str) -> dict[str, Any]:
         if tool_name == "memory_execute":
-            return execute_plan_schema()
+            return execute_tool_schema()
         model = _TOOL_ARG_MODELS.get(tool_name)
         if model is not None:
             generated = model.model_json_schema()
@@ -493,8 +542,23 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         await self._notify_for_envelope(envelope.model_dump(mode="json"))
         return envelope.model_dump(mode="json")
 
-    async def tool_memory_execute(self, plan: dict[str, Any]) -> dict[str, Any]:
-        envelope = self._service.memory_execute(self._context(), plan=plan)
+    async def tool_memory_execute(
+        self,
+        plan: dict[str, Any] | None = None,
+        operations: list[dict[str, Any]] | None = None,
+        stop_on_error: bool = True,
+        returns: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
+        try:
+            normalized = normalize_execute_tool_arguments(
+                plan=plan,
+                operations=operations,
+                stop_on_error=stop_on_error,
+                returns=returns,
+            )
+        except ValueError as exc:
+            return self._service._failure(exc).model_dump(mode="json")
+        envelope = self._service.memory_execute(self._context(), plan=normalized)
         await self._notify_for_envelope(envelope.model_dump(mode="json"))
         return envelope.model_dump(mode="json")
 
