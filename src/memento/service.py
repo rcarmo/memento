@@ -75,6 +75,7 @@ from memento.control.signals import (
 )
 from memento.derived.index import (
     DerivedIndex,
+    DerivedIndexUnavailableError,
     DerivedSearchError,
     SearchFreshness,
     SearchMode,
@@ -361,6 +362,16 @@ class MemoryService:
             policy = self._policy(context)
             snapshot = self._deps.derived_index.status_snapshot(policy)
             state = snapshot.state
+            repository_revision = get_main_revision(self._deps.repo_paths)
+            index_revision = state.index_revision
+            index_stale = index_revision != repository_revision or state.status != "ready"
+            visible_concepts = snapshot.visible_concepts
+            if state.status != "ready" or not state.repo_revision or not state.index_revision:
+                visible_concepts = sum(
+                    1
+                    for entry in scan_bundle(self._deps.repo_paths.current_dir).entries
+                    if self._is_authorized(policy, entry.bundle_path, action="read")
+                )
             proposals = list_proposals(self._deps.control_connection)
             visible_proposals = [
                 item
@@ -373,11 +384,11 @@ class MemoryService:
                 {
                     "service_version": __version__,
                     "schema_version": self._deps.config.schema_version,
-                    "repo_revision": state.repo_revision,
-                    "index_revision": state.index_revision,
-                    "index_stale": state.index_revision != state.repo_revision,
+                    "repo_revision": repository_revision,
+                    "index_revision": index_revision,
+                    "index_stale": index_stale,
                     "principal": policy.principal,
-                    "visible_concepts": snapshot.visible_concepts,
+                    "visible_concepts": visible_concepts,
                     "proposal_backlog": len(visible_proposals),
                     "limits": self._deps.config.limits.model_dump(mode="python"),
                     "roles": policy.roles,
@@ -406,9 +417,10 @@ class MemoryService:
                         },
                     },
                 },
-                index_revision=state.index_revision,
-                index_stale=state.index_revision != state.repo_revision,
-                warnings=semantic.warnings,
+                repo_revision=repository_revision,
+                index_revision=index_revision,
+                index_stale=index_stale,
+                warnings=semantic.warnings + (("derived_index_stale",) if index_stale else ()),
             )
         except Exception as exc:
             return self._failure(exc)
@@ -2998,11 +3010,13 @@ class MemoryService:
         operation_id: str | None = None,
         warnings: tuple[str, ...] = (),
     ) -> SuccessEnvelope[dict[str, Any]]:
-        revision = repo_revision or get_main_revision(self._deps.repo_paths)
+        revision = (
+            repo_revision if repo_revision is not None else get_main_revision(self._deps.repo_paths)
+        )
         return success_envelope(
             data,
             repo_revision=revision,
-            index_revision=index_revision or revision,
+            index_revision=index_revision if index_revision is not None else revision,
             index_stale=index_stale,
             operation_id=operation_id,
             warnings=warnings,
@@ -3034,6 +3048,8 @@ class MemoryService:
             return error_envelope("conflict", str(exc))
         if isinstance(exc, GitError):
             return error_envelope("repo_unavailable", str(exc))
+        if isinstance(exc, DerivedIndexUnavailableError):
+            return error_envelope("derived_index_unavailable", str(exc))
         raise exc
 
     @staticmethod

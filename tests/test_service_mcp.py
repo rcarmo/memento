@@ -29,7 +29,11 @@ from memento.repository.frontmatter import serialize_concept
 from memento.repository.git import GitRepositoryPaths, bootstrap_repository, get_main_revision
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter, ConceptStatus
 from memento.repository.transactions import TransactionManager
-from memento.server import MementoMCPServer
+from memento.server import (
+    MementoMCPServer,
+    execute_tool_schema,
+    normalize_execute_tool_arguments,
+)
 from memento.service import MemoryService, ServiceContext, ServiceDependencies
 
 
@@ -353,6 +357,57 @@ def _server_for(
         )
     )
     return MementoMCPServer(variant_service, bearer_tokens=tokens)
+
+
+def test_status_reports_canonical_state_when_derived_index_is_empty(
+    tmp_path: Path,
+    service: MemoryService,
+    flint: ServiceContext,
+) -> None:
+    empty_index = DerivedIndex(tmp_path / "empty-derived.sqlite")
+    empty_service = MemoryService(
+        ServiceDependencies(
+            config=service._deps.config,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=empty_index,
+            transaction_manager=service._deps.transaction_manager,
+        )
+    )
+
+    result = empty_service.memory_status(flint)
+
+    assert result.status == "success"
+    data = success_data(result)
+    revision = get_main_revision(service._deps.repo_paths)
+    assert data["repo_revision"] == revision
+    assert data["index_revision"] == ""
+    assert data["index_stale"] is True
+    assert data["visible_concepts"] == 2
+    assert result.repo_revision == revision
+    assert result.index_revision == ""
+    assert result.index_stale is True
+    assert "derived_index_stale" in result.warnings
+
+
+def test_execute_tool_schema_and_normalization_support_both_argument_forms() -> None:
+    schema = execute_tool_schema()
+    assert set(schema["properties"]) >= {"plan", "operations", "stop_on_error", "returns"}
+    assert schema["additionalProperties"] is False
+
+    plan = {"operations": [{"op": "status", "args": {}}]}
+    assert normalize_execute_tool_arguments(plan=plan) is plan
+    assert normalize_execute_tool_arguments(
+        operations=plan["operations"], stop_on_error=False, returns=[]
+    ) == {
+        "operations": plan["operations"],
+        "stop_on_error": False,
+        "returns": [],
+    }
+    with pytest.raises(ValueError, match="either plan or top-level"):
+        normalize_execute_tool_arguments(plan=plan, operations=plan["operations"])
+    with pytest.raises(ValueError, match="requires plan or operations"):
+        normalize_execute_tool_arguments()
 
 
 def test_tool_discovery_surfaces_and_catalog_resources(
