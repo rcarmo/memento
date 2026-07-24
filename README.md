@@ -63,6 +63,8 @@ A concept can carry an immutable versioned asset pack in Git LFS. The Markdown r
 
 Skill concepts live under `/skills/`, carry the `skill` tag and match the `SKILL.md` inside their pack. `memory_asset_get` returns a selected version and its manifest; `memento-skill-import` validates it again before placing it in a workspace. Memento does not install or execute recalled skills on behalf of a client.
 
+The repository also ships an Agent Skills package at [`.agents/skills/memento/SKILL.md`](.agents/skills/memento/SKILL.md). It gives Pi, Piclaw and Codex agents a compact workflow for search, reads, proposals, curation, namespaces, assets and retry reconciliation.
+
 ## Visual Debugging
 
 The optional `/graph` surface helps humans inspect how memories are being created and managed. It shows explicit links, provenance, sizes, assets, proposals, index state and a separately labelled semantic overlay in a 2.5D scene.
@@ -84,8 +86,13 @@ make check
 
 Tagged images are published at `ghcr.io/rcarmo/memento`. The DiskStation profile, including the scalar Intel J3455 path, is in [`docs/diskstation.md`](docs/diskstation.md).
 
+Client setup guides cover [Pi](docs/setup-pi.md), [Piclaw](docs/setup-piclaw.md) and [Codex](docs/setup-codex.md).
+
 ## Documentation
 
+* [`docs/setup-pi.md`](docs/setup-pi.md) -- connect Pi through pi-mcp-adapter
+* [`docs/setup-piclaw.md`](docs/setup-piclaw.md) -- keychain-backed Piclaw MCP setup
+* [`docs/setup-codex.md`](docs/setup-codex.md) -- Codex MCP and Agent Skills setup
 * [`docs/contracts.md`](docs/contracts.md) -- MCP tools, schemas, roles and limits
 * [`docs/implementation.md`](docs/implementation.md) -- storage, transactions and runtime architecture
 * [`docs/diagrams.md`](docs/diagrams.md) -- request, write, recovery and model flows
