@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from memento import __version__
+from memento.access import AccessStore
 from memento.config import Principal, ServiceConfig
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.operations import OperationRequest
@@ -61,6 +62,7 @@ class MementoRuntime:
     lease: WriterLease
     embedding_refresh_worker: SemanticEmbeddingRefreshWorker | None = None
     needle_library: NeedleFfiLibrary | None = None
+    access_store: AccessStore | None = None
     closed: bool = False
 
     def build_server(self) -> MementoMCPServer:
@@ -82,6 +84,7 @@ class MementoRuntime:
         return MementoMCPServer(
             self.service,
             bearer_tokens=self._bearer_tokens(),
+            access_store=self.access_store,
             log_file=log_file,
             graph_snapshot_service=graph_snapshot_service,
             graph_refresh_coordinator=graph_refresh_coordinator,
@@ -162,6 +165,8 @@ class MementoRuntime:
         self.closed = True
 
     def _bearer_tokens(self) -> dict[str, Principal]:
+        if self.access_store is not None:
+            return {}
         tokens: dict[str, Principal] = {}
         for principal_name, principal_policy in self.config.authorization.principals.items():
             token = os.environ.get(principal_policy.token_env, "").strip()
@@ -234,6 +239,14 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             materialize_current_checkout(paths.repo_paths)
         control_connection = connect_control_db(paths.control_db)
         migrate_control_db(control_connection)
+        master_key = os.environ.get("MEMENTO_ADMIN_MASTER_KEY", "").strip()
+        access_store = AccessStore(control_connection, master_key) if master_key else None
+        if access_store is not None:
+            bootstrap_tokens = {
+                name: os.environ.get(policy.token_env, "").strip()
+                for name, policy in config.authorization.principals.items()
+            }
+            access_store.bootstrap(config.authorization, bootstrap_tokens)
         semantic = config.intelligent_tiers.semantic_search
         needle_library = None
         needle_router = None
@@ -346,6 +359,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                 transaction_manager=manager,
                 model_client=routed_client,
                 needle_router=needle_router,
+                access_store=access_store,
             )
         )
         manager.recover_startup()
@@ -386,6 +400,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             lease=lease,
             embedding_refresh_worker=embedding_refresh_worker,
             needle_library=needle_library,
+            access_store=access_store,
         )
     except Exception:
         if embedding_refresh_worker is not None:

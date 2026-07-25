@@ -18,7 +18,7 @@ The base images are pinned Debian Bookworm manifests: Rust 1.88 for the builder 
 
 * The Python wheel contains the service and the client-side skill import command. Platform-specific Rust libraries are built separately.
 * The container packages the Rust GTE and Needle runtimes, vendored models, Git and Git LFS. Git LFS stores accepted versioned asset ZIPs.
-* Principal bearer tokens remain mandatory runtime configuration. Provider API keys and model path overrides are optional and used only when enabled.
+* `MEMENTO_ADMIN_MASTER_KEY` is mandatory when managed access is enabled. Bootstrap/recovery bearer variables are required for initial import; dynamically issued principal credentials live only as control-database verifiers. Provider API keys and model path overrides remain optional.
 * Skill submission can require up to the configured 72 MiB MCP request limit; reverse proxies must permit the same bounded request size.
 
 ## CI and publication
@@ -30,3 +30,7 @@ Published tags include the full version, major/minor, major and stable-only `lat
 ## Remaining provenance limits
 
 Base-image manifests and GitHub Actions are pinned. SBOM attachment remains a future release improvement; BuildKit provenance attestations are included in the OCI index.
+
+## Access-management release checks
+
+Release validation must cover the v7 control migration, bootstrap rename to `sandbox`, admin-only tool discovery, `/admin` authentication, one-time credential behavior and the explicit offline master-key rotation command. Runtime deployment requires `MEMENTO_ADMIN_MASTER_KEY`; per-principal environment tokens are bootstrap/recovery inputs.

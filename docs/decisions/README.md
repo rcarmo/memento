@@ -13,6 +13,7 @@
 | [0009](0009-run-gte-in-batched-short-lived-workers.md) | Run GTE in mmap-backed, batched short-lived workers | accepted |
 | [0010](0010-use-tiled-matrix-kernels-for-local-inference.md) | Use tiled matrix kernels for GTE and Needle inference | accepted |
 | [0011](0011-embed-a-gated-visual-memory-debugger.md) | Embed a gated visual memory debugger | accepted |
+| [0012](0012-manage-access-in-the-control-plane.md) | Manage dynamic principals and credentials in the control plane | accepted |
 
 ## Discussed but not adopted
 

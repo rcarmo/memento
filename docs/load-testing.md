@@ -106,8 +106,9 @@ PYTHONPATH=src .venv/bin/python tools/load_test.py \
 Start a local daemon first, with the normal bearer-token environment in place:
 
 ```bash
-export MEMENTO_TOKEN_SMITH='replace-me'
-export MEMENTO_TOKEN_FLINT='replace-me-too'
+export MEMENTO_ADMIN_MASTER_KEY='temporary-load-test-key'
+export MEMENTO_TOKEN_SANDBOX_BOOTSTRAP='replace-me'
+export MEMENTO_TOKEN_WORK_AGENT_BOOTSTRAP='replace-me-too'
 memento-serve --config /path/to/config.json serve --host 127.0.0.1 --port 18768
 ```
 
@@ -121,7 +122,7 @@ PYTHONPATH=src .venv/bin/python tools/load_test.py \
   --requests 200 \
   --include-http \
   --http-url http://127.0.0.1:18768/mcp \
-  --http-token "$MEMENTO_TOKEN_SMITH" \
+  --http-token "$MEMENTO_TOKEN_SANDBOX_BOOTSTRAP" \
   --http-concurrency 8 \
   --duration-seconds 10 \
   --http-status-ratio 40 \
@@ -139,7 +140,7 @@ PYTHONPATH=src .venv/bin/python tools/load_test.py \
   --profile check \
   --include-http \
   --http-url http://127.0.0.1:8000/mcp \
-  --http-token "$MEMENTO_TOKEN_SMITH" \
+  --http-token "$MEMENTO_TOKEN_SANDBOX_BOOTSTRAP" \
   --http-concurrency 8 \
   --duration-seconds 10 \
   --output build/load-http.json
@@ -152,3 +153,7 @@ The HTTP mix is configurable with:
 * `--http-read-ratio`
 
 Those ratios are interpreted as a local traffic mix, not as a production traffic model.
+
+## Managed access
+
+Create disposable load-test principals through `/admin` or `access_principal_create`; do not add permanent `MEMENTO_TOKEN_*` variables for them. Pass the one-time test credential to the harness and revoke it after the run.

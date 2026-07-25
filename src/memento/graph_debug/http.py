@@ -8,6 +8,7 @@ from urllib.parse import unquote
 
 from umcp_shared import MCPHTTPResponse
 
+from memento.access import AccessStore
 from memento.config import AuthorizationConfig, GraphExplorerConfig, NamespacePolicy
 from memento.graph_debug.export import export_graph_json, export_graph_svg
 from memento.graph_debug.refresh import GraphEmbeddingRefreshCoordinator
@@ -33,11 +34,13 @@ class GraphDebugHTTPHandler:
         snapshot_service: GraphSnapshotService | None = None,
         refresh_coordinator: GraphEmbeddingRefreshCoordinator | None = None,
         authorization: AuthorizationConfig | None = None,
+        access_store: AccessStore | None = None,
     ) -> None:
         self._config = config
         self._snapshot_service = snapshot_service
         self._refresh_coordinator = refresh_coordinator
         self._principal_policies = dict(authorization.principals) if authorization else {}
+        self._access_store = access_store
         self._static_root = files("memento.graph_debug").joinpath("static")
 
     def handle(
@@ -141,7 +144,11 @@ class GraphDebugHTTPHandler:
         name = headers.get("x-memento-simulated-principal", "").strip()
         if not name:
             return None
-        policy = self._principal_policies.get(name)
+        policy = (
+            self._access_store.policy(name)
+            if self._access_store is not None
+            else self._principal_policies.get(name)
+        )
         if policy is None:
             raise GraphSnapshotError("unknown simulated principal")
         return policy
@@ -150,17 +157,31 @@ class GraphDebugHTTPHandler:
         return self._json(
             {
                 "schema_version": 1,
-                "principals": [
-                    {
-                        "name": name,
-                        "roles": policy.roles,
-                        "read_prefixes": policy.read_prefixes,
-                        "write_prefixes": policy.write_prefixes,
-                    }
-                    for name, policy in sorted(self._principal_policies.items())
-                ],
+                "principals": self._principal_payloads(),
             }
         )
+
+    def _principal_payloads(self) -> list[dict[str, object]]:
+        if self._access_store is not None:
+            return [
+                {
+                    "name": item.name,
+                    "roles": item.roles,
+                    "read_prefixes": item.read_prefixes,
+                    "write_prefixes": item.write_prefixes,
+                }
+                for item in self._access_store.list()
+                if item.enabled and not item.revoked and not item.deleted
+            ]
+        return [
+            {
+                "name": name,
+                "roles": policy.roles,
+                "read_prefixes": policy.read_prefixes,
+                "write_prefixes": policy.write_prefixes,
+            }
+            for name, policy in sorted(self._principal_policies.items())
+        ]
 
     def _static(self, relative: str) -> MCPHTTPResponse:
         path = PurePosixPath(relative)

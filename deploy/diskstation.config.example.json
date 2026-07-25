@@ -6,17 +6,23 @@
   },
   "authorization": {
     "principals": {
-      "piclaw": {
+      "piclaw-workspace": {
+        "roles": ["reader", "proposer", "curator"],
+        "token_env": "MEMENTO_TOKEN_WORKSPACE",
+        "read_prefixes": ["/"],
+        "write_prefixes": ["/instances/", "/people/", "/projects/", "/services/", "/systems/", "/skills/", "/work/", "/personal/", "/infrastructure/", "/public/"]
+      },
+      "flint": {
         "roles": ["reader", "proposer"],
-        "token_env": "MEMENTO_TOKEN_PICLAW",
+        "token_env": "MEMENTO_TOKEN_FLINT",
         "read_prefixes": ["/"],
         "write_prefixes": ["/instances/", "/people/", "/projects/", "/services/", "/systems/", "/skills/"]
       },
-      "curator": {
-        "roles": ["reader", "proposer", "curator"],
-        "token_env": "MEMENTO_TOKEN_CURATOR",
-        "read_prefixes": ["/"],
-        "write_prefixes": ["/instances/", "/people/", "/projects/", "/services/", "/systems/", "/skills/"]
+      "work-agent": {
+        "roles": ["reader", "proposer"],
+        "token_env": "MEMENTO_TOKEN_WORK_AGENT",
+        "read_prefixes": ["/work/", "/skills/", "/public/"],
+        "write_prefixes": ["/work/"]
       }
     }
   },

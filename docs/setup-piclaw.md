@@ -82,3 +82,7 @@ Memento applies each principal's namespace prefixes before search ranking, graph
 * adapter connects by SSE and receives `405` -- ensure the URL ends in the configured Streamable HTTP endpoint, normally `/mcp`.
 
 Piclaw's implementation and tests are in `runtime/src/secure/mcp-keychain.ts` and `runtime/test/secure/mcp-keychain.test.ts` in the Piclaw repository.
+
+## Obtain a principal credential
+
+Create the instance from the matching `/admin` preset and import the one-time credential into Piclaw's keychain. Keep the generated `.pi/mcp.json` keychain reference; never paste a literal bearer token into it. Ordinary Piclaw instances should not use the `sandbox` administrator credential. The existing `/mcp` configuration automatically discovers `access_*` only when the authenticated principal has `admin`.

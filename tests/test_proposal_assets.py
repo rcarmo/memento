@@ -220,7 +220,7 @@ def test_migrate_v5_skill_pack_proposals_into_generic_assets(tmp_path: Path) -> 
         schema_version = connection.execute(
             "SELECT value FROM service_state WHERE key = 'schema_version'"
         ).fetchone()[0]
-        assert schema_version == "6"
+        assert schema_version == "7"
     finally:
         connection.close()
 

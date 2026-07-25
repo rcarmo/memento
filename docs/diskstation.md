@@ -47,3 +47,7 @@ The deployed J3455 profile uses a 30-second `memory_execute` budget. A real-targ
 A commit may finish just after the execute deadline and still return a controlled timeout to the client. Mutation callers must reconcile an ambiguous timeout using the idempotency key, repository revision and target path before retrying. Raw punctuation in lexical queries also needs FTS5 quoting or escaping; ordinary term queries are the safer default.
 
 No DiskStation deployment is performed by GitHub Actions. Release automation builds and tests the image, then publishes it to GHCR. Updating the NAS remains a separate operator action with an explicit version and rollback plan.
+
+## Managed access on DiskStation
+
+Provide `MEMENTO_ADMIN_MASTER_KEY` in `/volume1/docker/memento/config/memento.env`. Existing `MEMENTO_TOKEN_*` values are imported at bootstrap and retained only for emergency recovery. Open `http://<diskstation>:18081/admin` with the bootstrap credential, now identified as `sandbox`, and issue least-privilege instance credentials from presets. Follow [Access Management](access-management.md) for backup and explicit one-shot key rotation.

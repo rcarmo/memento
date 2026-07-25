@@ -17,8 +17,8 @@ Streamable HTTP works across hosts and containers without giving clients filesys
 
 ## Consequences
 
-* Every MCP principal has a separate bearer token and namespace policy.
-* The server accepts principal identity only from authenticated request context.
+* Every MCP principal has a separate bearer token and namespace policy; managed credentials are verified from control-plane records after bootstrap.
+* The server accepts principal identity only from authenticated request context. Admin-only `access_*` tools use the same endpoint and are hidden from non-admin discovery.
 * Large asset proposals use a configured 72 MiB HTTP request ceiling; decoded ZIP validation has its own 50 MiB limit.
 * Reverse proxies must preserve the Authorization header and permit the configured request size.
 * Transport upgrades are made in uMCP and pinned deliberately in Memento.

@@ -139,7 +139,7 @@ Paths define knowledge domains. A deployment can share `/skills/` and `/public/`
 
 Never accept a principal name as a memory operation argument. Identity comes from the authenticated MCP request. Search ranking, graph traversal and writes are filtered by the effective namespace policy.
 
-The trusted `/graph` debugger can show the full repository and simulate configured principals with **View as**. Simulation is diagnostic only and is labelled as not being an authorisation boundary.
+The trusted `/graph` debugger can show the full repository and simulate managed principals with **View as**. Simulation is diagnostic only and is labelled as not being an authorisation boundary.
 
 ## Skills And Assets
 
@@ -165,3 +165,7 @@ Before reporting success:
 * verify links resolve and tags are present;
 * verify embedding readiness only when semantic behavior matters;
 * keep tokens and client configuration out of concepts and logs.
+
+## Access Management
+
+Principals are managed through `/admin` or admin-only `access_*` tools on the existing MCP endpoint. Non-admin agents cannot discover or invoke them. Credentials are shown once on create/rotate; never file them in Memento or copy them into concepts. Use least-privilege presets and keep ordinary agents off the `sandbox` administrator credential.

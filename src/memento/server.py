@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
+from dataclasses import asdict
 from inspect import Parameter, signature
 from pathlib import Path
 from typing import Any, cast, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict
 
+from memento.access import AccessStore
+from memento.admin import AdminHTTPHandler
 from memento.config import Principal
 from memento.executor import (
     AnswerArgs,
@@ -206,11 +209,13 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         log_file: Path | None = None,
         graph_snapshot_service: GraphSnapshotService | None = None,
         graph_refresh_coordinator: GraphEmbeddingRefreshCoordinator | None = None,
+        access_store: AccessStore | None = None,
     ) -> None:
         self._umcp_log_file = log_file
         super().__init__()
         self._service = service
         self._bearer_tokens = dict(bearer_tokens)
+        self._access_store = access_store
         self._principals_by_name: dict[str, Principal] = {}
         for principal in self._bearer_tokens.values():
             if principal.name in self._principals_by_name:
@@ -218,11 +223,13 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                     f"duplicate principal name configured for bearer tokens: {principal.name}"
                 )
             self._principals_by_name[principal.name] = principal
+        self._admin_http = AdminHTTPHandler(access_store)
         self._graph_debug_http = GraphDebugHTTPHandler(
             service._deps.config.observability.graph_explorer,
             snapshot_service=graph_snapshot_service,
             refresh_coordinator=graph_refresh_coordinator,
             authorization=service._deps.config.authorization,
+            access_store=access_store,
         )
 
     def _setup_logging(self) -> None:
@@ -254,7 +261,83 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                     "annotations": {"roles": list(spec.roles), "operation": spec.op_name},
                 }
             )
+        if self._access_store is not None:
+            try:
+                principal = self._context().principal
+            except RuntimeError:
+                principal = None
+            if principal is not None and "admin" in principal.roles:
+                tools.extend(self._access_tools())
         return {"tools": tools}
+
+    @staticmethod
+    def _access_tools() -> list[dict[str, Any]]:
+        object_schema = {"type": "object", "additionalProperties": False}
+        entries: list[tuple[str, str, dict[str, Any]]] = [
+            ("access_principal_list", "List managed principals.", {}),
+            (
+                "access_audit_list",
+                "List recent access changes.",
+                {"limit": {"type": "integer", "minimum": 1, "maximum": 100}},
+            ),
+            (
+                "access_principal_create",
+                "Create a principal and return its credential once.",
+                {
+                    "name": {"type": "string"},
+                    "roles": {"type": "array", "items": {"type": "string"}},
+                    "read_prefixes": {"type": "array", "items": {"type": "string"}},
+                    "write_prefixes": {"type": "array", "items": {"type": "string"}},
+                    "idempotency_key": {"type": "string"},
+                },
+            ),
+            (
+                "access_principal_update",
+                "Update principal roles and namespaces.",
+                {
+                    "name": {"type": "string"},
+                    "roles": {"type": "array", "items": {"type": "string"}},
+                    "read_prefixes": {"type": "array", "items": {"type": "string"}},
+                    "write_prefixes": {"type": "array", "items": {"type": "string"}},
+                },
+            ),
+            (
+                "access_principal_rename",
+                "Rename a principal.",
+                {"name": {"type": "string"}, "new_name": {"type": "string"}},
+            ),
+            ("access_principal_disable", "Disable a principal.", {"name": {"type": "string"}}),
+            ("access_principal_enable", "Enable a principal.", {"name": {"type": "string"}}),
+            (
+                "access_credential_rotate",
+                "Rotate and return a credential once.",
+                {"name": {"type": "string"}, "idempotency_key": {"type": "string"}},
+            ),
+            (
+                "access_principal_revoke",
+                "Revoke a principal credential.",
+                {"name": {"type": "string"}},
+            ),
+            (
+                "access_principal_delete",
+                "Tombstone a disabled, revoked principal.",
+                {"name": {"type": "string"}},
+            ),
+        ]
+        tools = []
+        for name, description, properties in entries:
+            schema: dict[str, Any] = {**object_schema, "properties": properties}
+            if name not in {"access_principal_list", "access_audit_list"}:
+                schema["required"] = list(properties.keys())
+            tools.append(
+                {
+                    "name": name,
+                    "description": description,
+                    "inputSchema": schema,
+                    "annotations": {"roles": ["admin"], "operation": name.removeprefix("access_")},
+                }
+            )
+        return tools
 
     def _tool_input_schema(self, method: Any, tool_name: str) -> dict[str, Any]:
         if tool_name == "memory_execute":
@@ -292,6 +375,11 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         body: bytes,
         peer: str | None,
     ) -> MCPHTTPResponse | None:
+        admin_response = self._admin_http.handle(
+            method=method, path=path, headers=headers, body=body
+        )
+        if admin_response is not None:
+            return admin_response
         return self._graph_debug_http.handle(
             method=method,
             path=path,
@@ -307,7 +395,11 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         if not authorization.startswith("Bearer "):
             return None
         token = authorization.removeprefix("Bearer ")
-        principal = self._bearer_tokens.get(token)
+        principal = (
+            self._access_store.authenticate(token)
+            if self._access_store is not None
+            else self._bearer_tokens.get(token)
+        )
         if principal is None:
             return None
         return MCPPrincipal(name=principal.name, roles=principal.roles, metadata=principal.metadata)
@@ -315,7 +407,11 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     def authorize_request(
         self, principal: MCPPrincipal | None, *, rpc_method: str | None, tool_name: str | None
     ) -> bool:
-        return principal is not None
+        if principal is None:
+            return False
+        if tool_name is not None and tool_name.startswith("access_"):
+            return "admin" in principal.roles
+        return True
 
     def _context(self) -> ServiceContext:
         request = get_request_context()
@@ -328,6 +424,10 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         if name is None:
             raise RuntimeError("missing authenticated principal")
         principal = self._principals_by_name.get(name)
+        if principal is None and self._access_store is not None:
+            policy = self._access_store.policy(name)
+            if policy is not None:
+                principal = Principal(name=name, roles=policy.roles)
         if principal is None:
             raise RuntimeError(f"unknown request principal: {name}")
         return principal
@@ -561,6 +661,93 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         envelope = self._service.memory_execute(self._context(), plan=normalized)
         await self._notify_for_envelope(envelope.model_dump(mode="json"))
         return envelope.model_dump(mode="json")
+
+    def _require_access_admin(self) -> Principal:
+        principal = self._context().principal
+        if self._access_store is None or "admin" not in principal.roles:
+            raise RuntimeError("admin access is required")
+        return principal
+
+    def _access(self) -> AccessStore:
+        if self._access_store is None:
+            raise RuntimeError("access management is not configured")
+        return self._access_store
+
+    async def tool_access_principal_list(self) -> dict[str, Any]:
+        self._require_access_admin()
+        return {"principals": [asdict(item) for item in self._access().list()]}
+
+    async def tool_access_audit_list(self, limit: int = 50) -> dict[str, Any]:
+        self._require_access_admin()
+        return {"events": list(self._access().audit(limit))}
+
+    async def tool_access_principal_create(
+        self,
+        name: str,
+        roles: list[str],
+        read_prefixes: list[str],
+        write_prefixes: list[str],
+        idempotency_key: str,
+    ) -> dict[str, Any]:
+        actor = self._require_access_admin()
+        principal, token = self._access().create(
+            actor=actor.name,
+            name=name,
+            roles=tuple(roles),
+            read_prefixes=tuple(read_prefixes),
+            write_prefixes=tuple(write_prefixes),
+            idempotency_key=idempotency_key,
+        )
+        return {"principal": asdict(principal), "credential": token}
+
+    async def tool_access_principal_update(
+        self, name: str, roles: list[str], read_prefixes: list[str], write_prefixes: list[str]
+    ) -> dict[str, Any]:
+        actor = self._require_access_admin()
+        item = self._access().update(
+            actor=actor.name,
+            name=name,
+            roles=tuple(roles),
+            read_prefixes=tuple(read_prefixes),
+            write_prefixes=tuple(write_prefixes),
+        )
+        return {"principal": asdict(item)}
+
+    async def tool_access_principal_rename(self, name: str, new_name: str) -> dict[str, Any]:
+        actor = self._require_access_admin()
+        item = self._access().rename(actor=actor.name, name=name, new_name=new_name)
+        return {"principal": asdict(item)}
+
+    async def tool_access_principal_disable(self, name: str) -> dict[str, Any]:
+        actor = self._require_access_admin()
+        item = self._access().set_enabled(actor=actor.name, name=name, enabled=False)
+        return {"principal": asdict(item)}
+
+    async def tool_access_principal_enable(self, name: str) -> dict[str, Any]:
+        actor = self._require_access_admin()
+        item = self._access().set_enabled(actor=actor.name, name=name, enabled=True)
+        return {"principal": asdict(item)}
+
+    async def tool_access_credential_rotate(
+        self, name: str, idempotency_key: str
+    ) -> dict[str, Any]:
+        actor = self._require_access_admin()
+        return {
+            "name": name,
+            "credential": self._access().rotate(
+                actor=actor.name, name=name, idempotency_key=idempotency_key
+            ),
+        }
+
+    async def tool_access_principal_revoke(self, name: str) -> dict[str, Any]:
+        actor = self._require_access_admin()
+        item = self._access().revoke(actor=actor.name, name=name)
+        return {"principal": asdict(item)}
+
+    async def tool_access_principal_delete(self, name: str) -> dict[str, Any]:
+        actor = self._require_access_admin()
+        item = self._access().delete(actor=actor.name, name=name)
+        return {"principal": asdict(item)}
 
     async def resource_status(self) -> dict[str, Any]:
         payload = self._service.memory_status(self._context()).model_dump(mode="json")

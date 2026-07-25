@@ -28,8 +28,9 @@ PYTHONPATH=src .venv/bin/python tools/load_test.py \
 Start a local daemon first:
 
 ```bash
-export MEMENTO_TOKEN_SMITH='replace-me'
-export MEMENTO_TOKEN_FLINT='replace-me-too'
+export MEMENTO_ADMIN_MASTER_KEY='temporary-load-test-key'
+export MEMENTO_TOKEN_SANDBOX_BOOTSTRAP='replace-me'
+export MEMENTO_TOKEN_WORK_AGENT_BOOTSTRAP='replace-me-too'
 memento-serve --config /path/to/config.json serve --host 127.0.0.1 --port 18768
 ```
 
@@ -43,7 +44,7 @@ PYTHONPATH=src .venv/bin/python tools/load_test.py \
   --requests 200 \
   --include-http \
   --http-url http://127.0.0.1:18768/mcp \
-  --http-token "$MEMENTO_TOKEN_SMITH" \
+  --http-token "$MEMENTO_TOKEN_SANDBOX_BOOTSTRAP" \
   --http-concurrency 8 \
   --duration-seconds 10 \
   --http-status-ratio 40 \
@@ -66,3 +67,7 @@ PYTHONPATH=src .venv/bin/python tools/load_test.py \
 ```
 
 Heavier or deployed runs should write new reports rather than replacing these local baselines. See [`../load-testing.md`](../load-testing.md).
+
+## Access evidence
+
+Access-management evidence should record principal names, roles and outcomes only. Never capture one-time credentials or the master key. Reproduction environments create disposable test principals and revoke them afterwards.

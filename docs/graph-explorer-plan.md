@@ -163,3 +163,7 @@ The new candidate is pulled through Portainer and applied to stack 111 without m
 ## Deferred
 
 Revision playback and animated diffs will derive bounded snapshots from Git history and operation records. Split comparison between two layer/force configurations and standalone interactive export follow later.
+
+## Relationship to access management
+
+The graph debugger remains a separate trusted-network diagnostic surface. It reads dynamic principal policies for simulation, but simulation is not authorization. Real principal changes happen only through authenticated `/admin` or admin-only `access_*` calls.

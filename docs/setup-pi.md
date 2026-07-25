@@ -80,3 +80,7 @@ Common failures:
 * no tools listed -- verify the project/global config location and inspect `mcp({})` before editing server settings.
 
 [adapter]: https://github.com/nicobailon/pi-mcp-adapter
+
+## Obtain a principal credential
+
+An administrator creates a least-privilege principal through `/admin` or an admin-only `access_principal_create` call. Save the one-time credential immediately. Do not use the `sandbox` administrator credential for ordinary Pi work. Rotation is the only recovery when a credential is lost.

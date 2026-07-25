@@ -18,6 +18,7 @@ from uuid import uuid4
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from memento import __version__
+from memento.access import AccessStore
 from memento.answers import (
     UNKNOWN_ANSWER,
     AnswerCitation,
@@ -41,7 +42,7 @@ from memento.authz import (
     require_role,
     resolve_policy,
 )
-from memento.config import Principal, ServiceConfig
+from memento.config import AuthorizationConfig, Principal, ServiceConfig
 from memento.control.operations import (
     IdempotencyConflictError,
     OperationRequest,
@@ -268,6 +269,7 @@ class ServiceDependencies:
     transaction_manager: TransactionManager
     model_client: ModelClient | None = None
     needle_router: NeedleRouterProtocol | None = None
+    access_store: AccessStore | None = None
 
 
 class MemoryService:
@@ -2998,6 +3000,11 @@ class MemoryService:
         return raw_output[:200]
 
     def _policy(self, context: ServiceContext) -> EffectivePolicy:
+        if self._deps.access_store is not None:
+            managed = self._deps.access_store.policy(context.principal.name)
+            if managed is not None:
+                authorization = AuthorizationConfig(principals={context.principal.name: managed})
+                return resolve_policy(authorization, context.principal)
         return resolve_policy(self._deps.config.authorization, context.principal)
 
     def _success(

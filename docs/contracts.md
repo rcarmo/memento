@@ -1,11 +1,11 @@
 # Memento contracts
 
-Memento exposes a deterministic MCP surface over a Git-backed Markdown repository, with optional model-assisted read and proposal tiers layered on top. The repository remains authoritative for durable knowledge; `control.sqlite` remains authoritative for operations, idempotency, proposals, leases and scheduler state; FTS, graph indexes, caches and signals remain derived and rebuildable.
+Memento exposes a deterministic MCP surface over a Git-backed Markdown repository, with optional model-assisted read and proposal tiers layered on top. The repository remains authoritative for durable knowledge; `control.sqlite` remains authoritative for operations, idempotency, proposals, leases, scheduler state and managed access; FTS, graph indexes, caches and signals remain derived and rebuildable.
 
 ## Core rules
 
 * Git Markdown is authoritative for concepts; accepted immutable asset ZIPs in Git LFS are part of the same canonical history.
-* `control.sqlite` is authoritative for operations, idempotency, proposals, leases and scheduler state.
+* `control.sqlite` is authoritative for operations, idempotency, proposals, leases, scheduler state, managed principals, credential verifiers and access activity.
 * FTS, graph indexes, caches and signals are derived and rebuildable.
 * The daemon is the sole canonical repository writer. One active process holds the write lease.
 * Models may answer, classify and draft proposals. Deterministic code owns identity, authorization, paths, validation, hashes, concurrency, writes, audit and completion claims.
@@ -116,7 +116,7 @@ Memento supports two discovery patterns:
 
 ### `mcp.tool_surface`
 
-Configured `mcp.tool_surface` controls stable discovery without depending on request-time identity.
+Configured `mcp.tool_surface` controls regular memory-tool discovery. When managed access is enabled, authenticated principals with the explicit `admin` role additionally discover the `access_*` family on the same endpoint; non-admin principals do not.
 
 | Surface | Exposed direct tools |
 |---|---|
@@ -124,7 +124,7 @@ Configured `mcp.tool_surface` controls stable discovery without depending on req
 | `standard` | the **20** direct compatibility tools, including generic asset retrieval and pruning |
 | `read_only` | the **9** discovery, concept-read and asset-read tools |
 | `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**11** or **12** with `memory_answer`) |
-| `admin` | the **21**-tool full direct surface plus `memory_execute` |
+| `admin` | the **21**-tool full direct memory surface plus `memory_execute`; managed administrators additionally receive the role-filtered `access_*` family |
 
 ### Catalog resources
 
@@ -706,3 +706,7 @@ Treat MCP arguments, Markdown, frontmatter, links, retrieved text, model output 
 ## Pagination
 
 List and search responses use deterministic cursors derived from sorted result order and validated limits.
+
+## Access management
+
+The existing `/mcp` endpoint conditionally discovers `access_*` tools only for an authenticated principal with the explicit `admin` role. Calls are authorized again at execution time. Principal list/update/rename/lifecycle, credential rotation and the bounded activity list use the same service as `/admin/api/*`. Create and rotate return credential plaintext once; list/get/activity never return it. See [Access Management](access-management.md).

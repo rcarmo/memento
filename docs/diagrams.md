@@ -55,7 +55,7 @@ flowchart LR
     deterministic -->|optional model request| dream
 
     deterministic --> git[(Git Markdown<br/>canonical knowledge)]
-    deterministic --> control[(control.sqlite<br/>operations and proposals)]
+    deterministic --> control[(control.sqlite<br/>operations, proposals and managed access)]
     deterministic --> derived[(derived.sqlite<br/>FTS, graph, vectors, caches)]
 
     hot -. no direct writes .-> deterministic
@@ -377,3 +377,14 @@ stateDiagram-v2
 ```
 
 Dream never reviews, applies or publishes its own proposal.
+
+## Access flow
+
+```text
+/admin or access_* -> bearer authentication -> explicit admin check -> AccessStore
+                                                       |-> control.sqlite policy/audit
+                                                       |-> one-time credential response
+container rotate-master-key -> re-encrypt verifier key -> normal restart
+```
+
+Ordinary principals use the same `/mcp` configuration but do not discover administrative tools.

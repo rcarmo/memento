@@ -3,14 +3,17 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import signal
 from collections.abc import Sequence
 from contextlib import suppress
 from pathlib import Path
 from typing import Any
 
-from memento.app import MementoRuntime, build_runtime
+from memento.access import AccessStore
+from memento.app import MementoRuntime, build_runtime, load_service_config, runtime_paths_for
 from memento.backup import create_backup, restore_backup
+from memento.control.db import connect_control_db, migrate_control_db
 from memento.logging import JsonLogger
 from memento.metrics import render_prometheus_text
 from memento.repository.bundle import audit_repository
@@ -44,6 +47,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     dream = subparsers.add_parser("dream", help="Run Dream scanner/proposal mode once")
     dream.add_argument("--mode", choices=("disabled", "report_only", "propose"))
+
+    subparsers.add_parser(
+        "rotate-master-key", help="Re-encrypt the access verifier key using container secrets"
+    )
     return parser
 
 
@@ -52,8 +59,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     logger = JsonLogger()
     config_path = Path(args.config)
     if args.command == "restore":
-        from memento.app import load_service_config
-
         payload = restore_backup(
             load_service_config(config_path),
             Path(args.input),
@@ -61,6 +66,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         _emit_json(payload)
         logger.info("restore_completed", backup_dir=args.input, **payload)
+        return 0
+    if args.command == "rotate-master-key":
+        config = load_service_config(config_path)
+        connection = connect_control_db(runtime_paths_for(config).control_db)
+        try:
+            migrate_control_db(connection)
+            old_key = os.environ.get("MEMENTO_ADMIN_PREVIOUS_MASTER_KEY", "")
+            new_key = os.environ.get("MEMENTO_ADMIN_MASTER_KEY", "")
+            AccessStore(connection, old_key).rotate_master_key(old_key, new_key)
+        finally:
+            connection.close()
+        _emit_json({"rotated": True})
+        logger.info("master_key_rotated")
         return 0
 
     runtime = build_runtime(config_path)

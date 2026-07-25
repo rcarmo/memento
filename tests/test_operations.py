@@ -103,9 +103,10 @@ def test_compose_example_uses_env_file_and_example_env_lists_required_tokens() -
     env_example = (root / "examples/memento.env.example").read_text(encoding="utf-8")
     assert "env_file:" in compose
     assert "- .env" in compose
-    assert "MEMENTO_TOKEN_SMITH=" in env_example
-    assert "MEMENTO_TOKEN_FLINT=" in env_example
-    assert "required by examples/config.v1.json" in env_example
+    assert "MEMENTO_ADMIN_MASTER_KEY=" in env_example
+    assert "MEMENTO_TOKEN_SANDBOX_BOOTSTRAP=" in env_example
+    assert "MEMENTO_TOKEN_WORK_AGENT_BOOTSTRAP=" in env_example
+    assert "Bootstrap/recovery credentials" in env_example
 
 
 def test_runtime_loads_and_closes_needle_router(

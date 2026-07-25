@@ -119,9 +119,8 @@ The runtime layout is present tense because it exists in the implementation. Mut
 
 ```text
 /etc/memento/
-├── config.json
-├── principals.json        # optional deployment split
-└── secrets.env            # or equivalent secret injection
+├── config.json            # bootstrap/recovery principal policy
+└── secrets.env            # master key, bootstrap credentials and optional providers
 ```
 
 ### Filesystem safety rules
@@ -469,7 +468,7 @@ Commits carry structured trailers including:
 * commit-capable mutations require `expected_revision` and durable `idempotency_key`
 * renames preserve concept identity and rewrite inbound links atomically
 * there is no general client-facing hard delete
-* curator authority is explicit, but direct create/patch/rename discovery depends on the configured tool surface
+* curator authority is explicit, while direct create/patch/rename discovery depends on the configured regular tool surface; access management additionally requires `admin`
 
 ## Recovery model
 
@@ -712,3 +711,7 @@ A production-ready deployment still needs to satisfy the acceptance bar:
 * Docker and systemd deployment documentation is tested
 
 Those are live acceptance conditions, not claims about the current repository state.
+
+## Dynamic access plane
+
+`control.sqlite` stores managed principals, namespace policies, HMAC credential verifiers and access activity. A random verifier key is encrypted by `MEMENTO_ADMIN_MASTER_KEY`; bearer plaintext is not retained. At bootstrap, environment principals are imported, `piclaw-workspace` becomes `sandbox`, and receives `admin`. Authentication resolves managed credentials before building request-local policy. The `/admin` HTTP handler and role-filtered `access_*` MCP tools share `AccessStore`. See [ADR 0012](decisions/0012-manage-access-in-the-control-plane.md).

@@ -5,7 +5,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-SCHEMA_VERSION = "6"
+SCHEMA_VERSION = "7"
 
 MIGRATIONS_V1 = (
     """
@@ -95,6 +95,59 @@ MIGRATIONS_V1 = (
     "CREATE INDEX IF NOT EXISTS idx_dream_signals_status ON dream_signals(status, signal_type)",
 )
 
+MIGRATIONS_V7 = (
+    """
+    CREATE TABLE IF NOT EXISTS access_meta (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS access_principals (
+        name TEXT PRIMARY KEY,
+        roles_json TEXT NOT NULL,
+        read_prefixes_json TEXT NOT NULL,
+        write_prefixes_json TEXT NOT NULL,
+        enabled INTEGER NOT NULL,
+        revoked INTEGER NOT NULL,
+        deleted INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS access_credentials (
+        principal_name TEXT PRIMARY KEY,
+        token_digest TEXT NOT NULL UNIQUE,
+        created_at TEXT NOT NULL,
+        revoked_at TEXT,
+        FOREIGN KEY(principal_name) REFERENCES access_principals(name) ON UPDATE CASCADE
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS access_audit (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        actor TEXT NOT NULL,
+        action TEXT NOT NULL,
+        target TEXT NOT NULL,
+        details_json TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_access_audit_created ON access_audit(created_at DESC, id DESC)",
+    """
+    CREATE TABLE IF NOT EXISTS access_idempotency (
+        actor TEXT NOT NULL,
+        idempotency_key TEXT NOT NULL,
+        action TEXT NOT NULL,
+        target TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        PRIMARY KEY(actor, idempotency_key)
+    )
+    """,
+)
+
 MIGRATIONS_V6 = (
     """
     CREATE TABLE IF NOT EXISTS proposal_assets (
@@ -138,7 +191,7 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
             "SELECT value FROM service_state WHERE key = 'schema_version'"
         ).fetchone()
         if schema_row is None:
-            for statement in MIGRATIONS_V6:
+            for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7):
                 connection.execute(statement)
             connection.execute(
                 "INSERT INTO service_state(key, value, updated_at) "
@@ -148,11 +201,11 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
             return
         current_version = schema_row["value"]
         if current_version == SCHEMA_VERSION:
-            for statement in MIGRATIONS_V6:
+            for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7):
                 connection.execute(statement)
             return
         if current_version in {"1", "2", "3", "4"}:
-            for statement in MIGRATIONS_V6:
+            for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7):
                 connection.execute(statement)
             connection.execute(
                 "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
@@ -161,6 +214,16 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
             return
         if current_version == "5":
             _migrate_v5_to_v6(connection)
+            for statement in MIGRATIONS_V7:
+                connection.execute(statement)
+            connection.execute(
+                "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
+                (SCHEMA_VERSION,),
+            )
+            return
+        if current_version == "6":
+            for statement in MIGRATIONS_V7:
+                connection.execute(statement)
             connection.execute(
                 "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
                 (SCHEMA_VERSION,),

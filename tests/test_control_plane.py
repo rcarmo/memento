@@ -93,7 +93,7 @@ def test_control_db_migrations_enable_wal_and_v1_tables(
         "service_state",
         "dream_signals",
     } <= tables
-    assert schema_version == "6"
+    assert schema_version == "7"
 
 
 def test_idempotency_replays_per_principal_and_rejects_payload_conflicts(

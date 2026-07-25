@@ -13,7 +13,7 @@ Project agent ---/                          |          operation journal
                                              `-------- search and graph indexes
 ```
 
-Concepts have stable IDs, structured metadata and ordinary Markdown links. Read them with a text editor, inspect their history with Git or rebuild the indexes from the checkout. `control.sqlite` keeps operation and proposal records; `derived.sqlite` holds FTS5, backlinks, graph metrics and optional embeddings.
+Concepts have stable IDs, structured metadata and ordinary Markdown links. Read them with a text editor, inspect their history with Git or rebuild the indexes from the checkout. `control.sqlite` keeps operations, proposals, dynamic principals, credential verifiers and access activity; `derived.sqlite` holds FTS5, backlinks, graph metrics and optional embeddings.
 
 ## What Belongs Here
 
@@ -43,7 +43,9 @@ Writes normally go through review:
 search -> read -> propose -> review -> apply -> Git commit -> index update
 ```
 
-Memento checks the caller's namespace, the expected repository revision and the request's idempotency key. A retry returns the recorded result instead of creating another commit. Curators can also create, patch and rename concepts directly where the selected MCP surface permits it. Memento has no client-facing hard delete.
+Memento checks the caller's namespace, the expected repository revision and the request's idempotency key. A retry returns the recorded result instead of creating another commit. Curators can also create, patch and rename concepts directly when those tools are exposed. Memento has no client-facing hard delete.
+
+Administrators manage principals through the preset-driven [`/admin`](docs/access-management.md) UI or role-filtered `access_*` tools on the same `/mcp` endpoint. Ordinary principals cannot discover or invoke those tools. New and rotated credentials are shown once; only verifiers are retained.
 
 The complete tool contracts, roles, limits and response envelopes are in [`docs/contracts.md`](docs/contracts.md).
 
@@ -75,7 +77,7 @@ The debugger is disabled by default and unauthenticated when enabled. It is mean
 
 ## Running It
 
-Memento supports Python 3.12-3.14 and ships as a non-root multi-architecture container. Start with [`examples/config.v1.json`](examples/config.v1.json), then use [`docs/operations.md`](docs/operations.md) for tokens, deployment, health checks, backup and recovery.
+Memento supports Python 3.12-3.14 and ships as a non-root multi-architecture container. Start with [`examples/config.v1.json`](examples/config.v1.json), set `MEMENTO_ADMIN_MASTER_KEY`, then use [`docs/operations.md`](docs/operations.md) for deployment, health checks, backup and recovery. [`docs/access-management.md`](docs/access-management.md) covers bootstrap, `/admin`, MCP access tools, one-time credentials and explicit container master-key rotation.
 
 For development:
 
@@ -93,6 +95,7 @@ Client setup guides cover [Pi](docs/setup-pi.md), [Piclaw](docs/setup-piclaw.md)
 * [`docs/setup-pi.md`](docs/setup-pi.md) -- connect Pi through pi-mcp-adapter
 * [`docs/setup-piclaw.md`](docs/setup-piclaw.md) -- keychain-backed Piclaw MCP setup
 * [`docs/setup-codex.md`](docs/setup-codex.md) -- Codex MCP and Agent Skills setup
+* [`docs/access-management.md`](docs/access-management.md) -- dynamic principals, `/admin`, access tools and credential lifecycle
 * [`docs/contracts.md`](docs/contracts.md) -- MCP tools, schemas, roles and limits
 * [`docs/implementation.md`](docs/implementation.md) -- storage, transactions and runtime architecture
 * [`docs/diagrams.md`](docs/diagrams.md) -- request, write, recovery and model flows

@@ -6,17 +6,17 @@
   },
   "authorization": {
     "principals": {
-      "smith": {
+      "piclaw-workspace": {
         "roles": ["reader", "proposer", "curator"],
-        "token_env": "MEMENTO_TOKEN_SMITH",
-        "read_prefixes": ["/instances/", "/projects/"],
-        "write_prefixes": ["/instances/", "/projects/"]
+        "token_env": "MEMENTO_TOKEN_SANDBOX_BOOTSTRAP",
+        "read_prefixes": ["/"],
+        "write_prefixes": ["/instances/", "/people/", "/projects/", "/services/", "/systems/", "/skills/", "/work/", "/personal/", "/infrastructure/", "/public/"]
       },
-      "flint": {
+      "work-agent": {
         "roles": ["reader", "proposer"],
-        "token_env": "MEMENTO_TOKEN_FLINT",
-        "read_prefixes": ["/instances/", "/projects/"],
-        "write_prefixes": ["/projects/"]
+        "token_env": "MEMENTO_TOKEN_WORK_AGENT_BOOTSTRAP",
+        "read_prefixes": ["/work/", "/skills/", "/public/"],
+        "write_prefixes": ["/work/"]
       }
     }
   },

@@ -18,7 +18,7 @@ Read every applicable file completely. Read the Python skill and `.github/copilo
 ## Product boundaries
 
 * Concepts are Markdown files in Git, so they can be read and recovered without the service.
-* `control.sqlite` records operations, idempotency, proposals, leases and scheduler state.
+* `control.sqlite` records operations, idempotency, proposals, leases, scheduler state, managed principals, credential verifiers and access activity.
 * FTS, graph indexes, caches and signals can be deleted and rebuilt.
 * One daemon holds the writer lease and publishes repository changes.
 * Models may answer, classify and draft proposals. Service code resolves identity, checks permissions and paths, validates output and performs writes.

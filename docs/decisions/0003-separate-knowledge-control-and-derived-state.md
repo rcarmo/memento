@@ -8,10 +8,10 @@
 Memento keeps three kinds of state separate:
 
 * Git stores concepts, accepted asset packs and their history.
-* `control.sqlite` stores proposals, pending asset bytes, operations, idempotency records, leases and scheduler state.
+* `control.sqlite` stores proposals, pending asset bytes, operations, idempotency records, leases, scheduler state, dynamic principal policies, credential verifiers and access activity.
 * `derived.sqlite` stores FTS, graph data, embeddings and caches that can be rebuilt from Git.
 
-A backup needs the bare Git repository and a consistent copy of `control.sqlite`. The readable checkout and derived database are recreated during restore.
+A backup needs the bare Git repository, a consistent copy of `control.sqlite`, and the separately managed access master key. The readable checkout and derived database are recreated during restore.
 
 ## Why
 

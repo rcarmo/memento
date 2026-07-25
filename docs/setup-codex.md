@@ -64,3 +64,7 @@ The skill describes the search/read workflow, proposal lifecycle, direct curator
 * long writes or connection resets -- reconcile the repository revision and target path before retrying with the same idempotency key.
 
 The Codex MCP configuration reference is published at [developers.openai.com/codex/mcp](https://developers.openai.com/codex/mcp/).
+
+## Obtain a principal credential
+
+Use `/admin` or an admin-only MCP call to create a least-privilege principal and capture its one-time credential. Do not configure Codex with the `sandbox` administrator credential for ordinary work. Lost credentials are rotated, never recovered from Memento.

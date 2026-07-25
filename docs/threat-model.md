@@ -43,3 +43,7 @@ The local CLI is not a parallel administration plane. `status`, `audit`, `rebuil
 ## Pending evidence
 
 These controls are implemented as described in code and tests. Production deployment evidence, especially around reverse proxies, transport context handling and operator hardening, is still pending.
+
+## Managed-access threats
+
+Dynamic bearer credentials are stored only as HMAC verifiers. The random verifier key is encrypted by the container master key. `/admin` keeps its bearer only in tab memory and sends it on each API request; deployments must use TLS outside a trusted host boundary. Role-filtered discovery is not the authorization boundary: every `access_*` call checks `admin`. Namespace validation prevents writes outside readable prefixes, the final enabled admin cannot remove itself, and credential plaintext is returned once. Master-key loss makes managed authentication unavailable; bootstrap environment principals are the recovery path.
