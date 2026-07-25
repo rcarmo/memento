@@ -38,6 +38,17 @@ test("loads WebGL graph, filters, selects and exports", async ({ page, browserNa
   expect(errors).toEqual([]);
 });
 
+test("keeps picking bounds synchronized after worker layout", async ({ page, browserName, isMobile }) => {
+  test.skip(isMobile || browserName!=="chromium","instanced-mesh picking is asserted once in Chromium");
+  await page.goto("/graph",{waitUntil:"domcontentloaded"});
+  await page.waitForFunction(()=>Boolean((window as any).__mementoGraphScene?.nodes?.length));
+  await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;const box=scene.canvas.getBoundingClientRect();scene.hit({clientX:box.left+box.width/2,clientY:box.top+box.height/2});});
+  await page.waitForTimeout(2500);
+  const result=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;const Vector3=scene.camera.position.constructor;const outside:any[]=[];for(const mesh of scene.meshes){const sphere=mesh.boundingSphere;for(const globalIndex of mesh.userData.globalIndices){const node=scene.nodes[globalIndex],p=node.coarse_position,point=new Vector3(p.x,p.y,p.z);if(!sphere||point.distanceTo(sphere.center)>sphere.radius+scene.radius(node))outside.push({id:node.id,title:node.title});}}return{outside,nodes:scene.nodes.length};});
+  expect(result.nodes).toBeGreaterThan(0);
+  expect(result.outside).toEqual([]);
+});
+
 test("focuses smoothly without rotating and reveals FTS search results", async ({ page, browserName, isMobile }) => {
   test.skip(isMobile || browserName!=="chromium","camera interpolation is asserted once in Chromium");
   await page.goto("/graph",{waitUntil:"networkidle"});
