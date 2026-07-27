@@ -49,6 +49,21 @@ test("keeps picking bounds synchronized after worker layout", async ({ page, bro
   expect(result.outside).toEqual([]);
 });
 
+test("highlights selected inbound and outbound links directionally", async ({ page, browserName, isMobile }) => {
+  test.skip(isMobile || browserName!=="chromium","selected edge rendering is asserted once in Chromium");
+  await page.goto("/graph",{waitUntil:"networkidle"});
+  await page.waitForFunction(()=>Boolean((window as any).__mementoGraphScene?.nodes?.length));
+  const overlay=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;const incoming=new Set(scene.edges.map((edge:any)=>edge.target)),outgoing=new Set(scene.edges.map((edge:any)=>edge.source));const node=scene.nodes.find((candidate:any)=>incoming.has(candidate.id)&&outgoing.has(candidate.id));if(!node)return null;scene.focus(node);const first=scene.selectedEdgeGroup.children[0],geometry=first?.geometry,material=first?.material;scene.focus(node);return{selected:node.id,incoming:scene.selectedEdgeGroup.userData.incoming,outgoing:scene.selectedEdgeGroup.userData.outgoing,replaced:Boolean(first&&scene.selectedEdgeGroup.children[0]!==first),disposed:Boolean(geometry?.index===null&&material?.program===undefined),children:scene.selectedEdgeGroup.children.map((mesh:any)=>({direction:mesh.userData.direction,color:mesh.material.color.getHex(),radius:mesh.geometry.parameters.radius}))};});
+  expect(overlay).not.toBeNull();
+  expect(overlay!.incoming).toBeGreaterThan(0);
+  expect(overlay!.outgoing).toBeGreaterThan(0);
+  expect(overlay!.replaced).toBe(true);
+  expect(overlay!.children.filter((edge:any)=>edge.direction==="incoming").every((edge:any)=>edge.color===0x55aee8&&edge.radius>.01)).toBe(true);
+  expect(overlay!.children.filter((edge:any)=>edge.direction==="outgoing").every((edge:any)=>edge.color===0xe66b5b&&edge.radius>.01)).toBe(true);
+  await expect(page.locator(".legend")).toContainText("selected incoming");
+  await expect(page.locator(".legend")).toContainText("selected outgoing");
+});
+
 test("focuses smoothly without rotating and reveals FTS search results", async ({ page, browserName, isMobile }) => {
   test.skip(isMobile || browserName!=="chromium","camera interpolation is asserted once in Chromium");
   await page.goto("/graph",{waitUntil:"networkidle"});

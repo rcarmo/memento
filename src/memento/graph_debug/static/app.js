@@ -539,6 +539,8 @@ function App() {
         h("span", {}, [h("i", { class: "shape ring" }), "cluster"]),
         h("span", {}, [h("i", { class: "line explicit" }), "explicit link"]),
         h("span", {}, [h("i", { class: "line semantic" }), "semantic overlay"]),
+        h("span", {}, [h("i", { class: "line selected-incoming" }), "selected incoming"]),
+        h("span", {}, [h("i", { class: "line selected-outgoing" }), "selected outgoing"]),
       ]),
       error && h("div", { class: "toast-error", onClick: () => setError(null) }, error),
     ]),
