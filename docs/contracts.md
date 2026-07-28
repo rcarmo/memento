@@ -353,7 +353,9 @@ Ordinary concepts can carry immutable, versioned ZIP assets. Proposal metadata r
 
 Asset kinds and versions use lowercase/hyphen names and stable `MAJOR.MINOR.PATCH`. ZIPs are bounded to 50 MiB encoded and uncompressed, with per-file, entry-count and compression-ratio limits. Traversal, absolute paths, backslashes, links, special files, encrypted entries, nested archives and native executables are rejected.
 
-`memory_propose` accepts an `attach_asset_pack` change containing `path`, `asset_kind`, `version` and `zip_base64`. Stored proposal JSON replaces bytes with an asset ID, digest and generated manifest. `memory_proposal_get/list/review/apply` remain the only proposal lifecycle.
+`memory_propose` accepts an `attach_asset_pack` change containing `path`, `asset_kind`, `version` and exactly one of `zip_base64` or `staged_asset_id`. Stored proposal JSON replaces either transport reference with an asset ID, digest and generated manifest. `memory_proposal_get/list/review/apply` remain the only proposal lifecycle.
+
+For large packs, clients should send the ZIP as a raw binary body to `POST /assets/staging?asset_kind=<kind>&version=<semver>` using `Content-Type: application/zip`, bearer authentication and an `Idempotency-Key` header. The response contains `staged_asset_id`, SHA-256, manifest and 24-hour expiry. `GET /assets/staging/{staged_asset_id}` returns `ready`, `consumed` or `expired` state for reconciliation. Stages are principal-scoped; skill/body compatibility is checked again when the proposal consumes the stage. Proposal creation and stage consumption commit atomically.
 
 | Tool | Required role | Purpose |
 |---|---|---|
@@ -362,7 +364,7 @@ Asset kinds and versions use lowercase/hyphen names and stable `MAJOR.MINOR.PATC
 
 Skills are ordinary concepts tagged `skill`; their body must byte-match ZIP-root `SKILL.md`. Search and read use `memory_search` and `memory_read`. Omitted asset versions resolve to the highest accepted stable version. The latest five are retained by default; active proposal references are protected. Recall never extracts files server-side.
 
-The Streamable HTTP request limit defaults to 72 MiB so a 50 MiB decoded ZIP fits after base64 and JSON overhead. Operators may raise it deliberately, but decoded ZIP and archive safety limits remain independent.
+The Streamable HTTP request limit defaults to 72 MiB so the compatibility base64 path can carry a 50 MiB decoded ZIP after JSON overhead. Raw binary staging avoids base64 expansion but retains the same decoded ZIP and archive-safety limits.
 
 ## Proposal records and lifecycle
 

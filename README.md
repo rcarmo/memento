@@ -61,7 +61,7 @@ Model setup and measurements live in [`docs/semantic-search.md`](docs/semantic-s
 
 ## Assets And Skills
 
-A concept can carry an immutable versioned asset pack in Git LFS. The Markdown remains searchable while diagrams, templates, datasets or a complete agent skill travel in an attached ZIP.
+A concept can carry an immutable versioned asset pack in Git LFS. The Markdown remains searchable while diagrams, templates, datasets or a complete agent skill travel in an attached ZIP. Large ZIPs can be sent as raw binary to the authenticated staging endpoint and referenced from an ordinary proposal, avoiding base64 expansion in MCP JSON.
 
 Skill concepts live under `/skills/`, carry the `skill` tag and match the `SKILL.md` inside their pack. `memory_asset_get` returns a selected version and its manifest; `memento-skill-import` validates it again before placing it in a workspace. Memento does not install or execute recalled skills on behalf of a client.
 

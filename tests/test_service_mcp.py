@@ -35,6 +35,7 @@ from memento.server import (
     normalize_execute_tool_arguments,
 )
 from memento.service import MemoryService, ServiceContext, ServiceDependencies
+from memento.staged_assets import StagedAssetStore
 
 
 class FakeNeedleRouter:
@@ -540,6 +541,76 @@ def _skill_zip(skill_md: str, script: str = "console.log('ok')\n") -> tuple[str,
         archive.writestr("scripts/run.ts", script)
     data = stream.getvalue()
     return base64.b64encode(data).decode("ascii"), data
+
+
+def test_staged_skill_asset_is_consumed_by_proposal(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+) -> None:
+    store = StagedAssetStore(service._deps.control_connection)
+    staged_service = MemoryService(
+        ServiceDependencies(
+            config=service._deps.config,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            staged_asset_store=store,
+        )
+    )
+    skill_md = "---\nname: staged-skill\ndescription: Staged\n---\n# Staged Skill\n"
+    _encoded, zip_bytes = _skill_zip(skill_md)
+    staged, _ = store.put(
+        principal="flint",
+        idempotency_key="staged-skill-upload-1",
+        asset_kind="skill",
+        version="1.0.0",
+        zip_bytes=zip_bytes,
+    )
+    proposed = staged_service.memory_propose(
+        flint,
+        intent="Share staged skill",
+        base_revision=get_main_revision(repo_paths),
+        changes=[
+            {
+                "kind": "create",
+                "path": "/skills/staged-skill.md",
+                "concept_type": "project",
+                "title": "Staged Skill",
+                "tags": ["skill"],
+                "body": skill_md,
+            },
+            {
+                "kind": "attach_asset_pack",
+                "path": "/skills/staged-skill.md",
+                "asset_kind": "skill",
+                "version": "1.0.0",
+                "staged_asset_id": staged.staged_asset_id,
+            },
+        ],
+    )
+    proposal = success_data(proposed)["proposal"]
+    assert "staged_asset_id" not in proposal["changes"][1]
+    consumed = store.get(principal="flint", staged_asset_id=staged.staged_asset_id)
+    assert consumed.state == "consumed"
+    assert consumed.proposal_id == proposal["proposal_id"]
+    replay = staged_service.memory_propose(
+        flint,
+        intent="Reuse staged skill",
+        base_revision=get_main_revision(repo_paths),
+        changes=[
+            {
+                "kind": "attach_asset_pack",
+                "path": "/skills/staged-skill.md",
+                "asset_kind": "skill",
+                "version": "1.0.0",
+                "staged_asset_id": staged.staged_asset_id,
+            }
+        ],
+    )
+    assert replay.status == "error"
+    assert "not ready" in replay.message
 
 
 def test_asset_pack_skill_lifecycle_uses_generic_propose_review_apply_and_get(

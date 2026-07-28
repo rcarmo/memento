@@ -92,8 +92,9 @@ def test_control_db_migrations_enable_wal_and_v1_tables(
         "scheduler_runs",
         "service_state",
         "dream_signals",
+        "staged_assets",
     } <= tables
-    assert schema_version == "7"
+    assert schema_version == "8"
 
 
 def test_idempotency_replays_per_principal_and_rejects_payload_conflicts(

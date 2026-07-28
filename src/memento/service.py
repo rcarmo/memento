@@ -127,6 +127,7 @@ from memento.skill_packs import (
     validate_asset_pack,
     validate_skill_pack,
 )
+from memento.staged_assets import StagedAssetError, StagedAssetStore
 
 
 class ServiceError(RuntimeError):
@@ -270,6 +271,7 @@ class ServiceDependencies:
     model_client: ModelClient | None = None
     needle_router: NeedleRouterProtocol | None = None
     access_store: AccessStore | None = None
+    staged_asset_store: StagedAssetStore | None = None
 
 
 class MemoryService:
@@ -705,24 +707,33 @@ class MemoryService:
             policy = self._policy(context)
             require_role(policy, "proposer")
             proposal_id = str(uuid4())
-            stored_changes, proposal_assets = self._prepare_asset_changes(
-                changes, proposal_id=proposal_id
+            stored_changes, proposal_assets, staged_asset_ids = self._prepare_asset_changes(
+                changes, proposal_id=proposal_id, principal=policy.principal
             )
             normalized = self._normalize_changes(stored_changes)
             self._validate_change_auth(policy, normalized, action="write")
             self._validate_skill_asset_bindings(normalized)
             preview = self._preview_changes(normalized)
-            record = create_proposal(
-                self._deps.control_connection,
-                proposal_id=proposal_id,
-                author_principal=policy.principal,
-                client_instance_id=context.client_instance_id,
-                base_revision=base_revision,
-                intent=intent,
-                rationale=rationale,
-                patch={"changes": [item.model_dump(mode="json") for item in normalized]},
-                assets=proposal_assets,
-            )
+            with self._deps.control_connection:
+                record = create_proposal(
+                    self._deps.control_connection,
+                    proposal_id=proposal_id,
+                    author_principal=policy.principal,
+                    client_instance_id=context.client_instance_id,
+                    base_revision=base_revision,
+                    intent=intent,
+                    rationale=rationale,
+                    patch={"changes": [item.model_dump(mode="json") for item in normalized]},
+                    assets=proposal_assets,
+                    manage_transaction=False,
+                )
+                if self._deps.staged_asset_store is not None:
+                    self._deps.staged_asset_store.consume(
+                        principal=policy.principal,
+                        staged_asset_ids=staged_asset_ids,
+                        proposal_id=proposal_id,
+                        manage_transaction=False,
+                    )
             return self._success({"proposal": self._proposal_payload(record, preview)})
         except Exception as exc:
             return self._failure(exc)
@@ -1873,10 +1884,11 @@ class MemoryService:
             return False
 
     def _prepare_asset_changes(
-        self, changes: list[dict[str, Any]], *, proposal_id: str
-    ) -> tuple[list[dict[str, Any]], tuple[ProposalAssetInput, ...]]:
+        self, changes: list[dict[str, Any]], *, proposal_id: str, principal: str
+    ) -> tuple[list[dict[str, Any]], tuple[ProposalAssetInput, ...], tuple[str, ...]]:
         stored: list[dict[str, Any]] = []
         assets: list[ProposalAssetInput] = []
+        staged_asset_ids: list[str] = []
         rename_paths = {str(raw.get("path")) for raw in changes if raw.get("kind") == "rename"} | {
             str(raw.get("new_path")) for raw in changes if raw.get("kind") == "rename"
         }
@@ -1891,15 +1903,34 @@ class MemoryService:
             asset_kind = validate_asset_kind(str(item.get("asset_kind", "")))
             version = str(item.get("version", ""))
             zip_base64 = item.pop("zip_base64", None)
-            if not isinstance(zip_base64, str):
-                raise ServiceError("attach_asset_pack requires zip_base64")
-            max_base64_chars = ((MAX_ZIP_BYTES + 2) // 3) * 4
-            if len(zip_base64) > max_base64_chars:
-                raise ServiceError("zip_base64 exceeds maximum encoded size")
-            try:
-                zip_bytes = base64.b64decode(zip_base64, validate=True)
-            except (binascii.Error, ValueError) as exc:
-                raise ServiceError("zip_base64 must be valid base64") from exc
+            staged_asset_id = item.pop("staged_asset_id", None)
+            if isinstance(zip_base64, str) == isinstance(staged_asset_id, str):
+                raise ServiceError(
+                    "attach_asset_pack requires exactly one of zip_base64 or staged_asset_id"
+                )
+            if isinstance(staged_asset_id, str):
+                if self._deps.staged_asset_store is None:
+                    raise ServiceError("asset staging is unavailable")
+                try:
+                    staged = self._deps.staged_asset_store.get(
+                        principal=principal,
+                        staged_asset_id=staged_asset_id,
+                        require_ready=True,
+                    )
+                except StagedAssetError as exc:
+                    raise ServiceError(str(exc)) from exc
+                if staged.asset_kind != asset_kind or staged.version != version:
+                    raise ServiceError("staged asset kind/version does not match proposal")
+                zip_bytes = staged.blob_bytes
+                staged_asset_ids.append(staged_asset_id)
+            else:
+                max_base64_chars = ((MAX_ZIP_BYTES + 2) // 3) * 4
+                if len(zip_base64) > max_base64_chars:
+                    raise ServiceError("zip_base64 exceeds maximum encoded size")
+                try:
+                    zip_bytes = base64.b64decode(zip_base64, validate=True)
+                except (binascii.Error, ValueError) as exc:
+                    raise ServiceError("zip_base64 must be valid base64") from exc
             skill_name = Path(path).stem
             expected_body = self._resulting_body_for_asset(changes, path)
             if asset_kind == "skill":
@@ -1953,7 +1984,7 @@ class MemoryService:
                     manifest_json=pack.manifest.model_dump_json(),
                 )
             )
-        return stored, tuple(assets)
+        return stored, tuple(assets), tuple(staged_asset_ids)
 
     def _resulting_body_for_asset(self, changes: list[dict[str, Any]], path: str) -> str:
         for raw in changes:

@@ -5,7 +5,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-SCHEMA_VERSION = "7"
+SCHEMA_VERSION = "8"
 
 MIGRATIONS_V1 = (
     """
@@ -148,6 +148,30 @@ MIGRATIONS_V7 = (
     """,
 )
 
+MIGRATIONS_V8 = (
+    """
+    CREATE TABLE IF NOT EXISTS staged_assets (
+        staged_asset_id TEXT PRIMARY KEY,
+        principal TEXT NOT NULL,
+        idempotency_key TEXT NOT NULL,
+        asset_kind TEXT NOT NULL,
+        version TEXT NOT NULL,
+        media_type TEXT NOT NULL,
+        sha256 TEXT NOT NULL,
+        blob_bytes BLOB NOT NULL,
+        manifest_json TEXT NOT NULL,
+        state TEXT NOT NULL,
+        proposal_id TEXT,
+        created_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        consumed_at TEXT,
+        UNIQUE(principal, idempotency_key),
+        FOREIGN KEY(proposal_id) REFERENCES proposals(proposal_id)
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_staged_assets_expiry ON staged_assets(state, expires_at)",
+)
+
 MIGRATIONS_V6 = (
     """
     CREATE TABLE IF NOT EXISTS proposal_assets (
@@ -191,7 +215,7 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
             "SELECT value FROM service_state WHERE key = 'schema_version'"
         ).fetchone()
         if schema_row is None:
-            for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7):
+            for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7, *MIGRATIONS_V8):
                 connection.execute(statement)
             connection.execute(
                 "INSERT INTO service_state(key, value, updated_at) "
@@ -199,37 +223,18 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
                 (SCHEMA_VERSION,),
             )
             return
-        current_version = schema_row["value"]
-        if current_version == SCHEMA_VERSION:
-            for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7):
-                connection.execute(statement)
-            return
-        if current_version in {"1", "2", "3", "4"}:
-            for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7):
-                connection.execute(statement)
-            connection.execute(
-                "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
-                (SCHEMA_VERSION,),
-            )
-            return
+        current_version = str(schema_row["value"])
         if current_version == "5":
             _migrate_v5_to_v6(connection)
-            for statement in MIGRATIONS_V7:
-                connection.execute(statement)
+        elif current_version not in {"1", "2", "3", "4", "6", "7", SCHEMA_VERSION}:
+            raise MigrationError(f"unsupported control schema version: {current_version}")
+        for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7, *MIGRATIONS_V8):
+            connection.execute(statement)
+        if current_version != SCHEMA_VERSION:
             connection.execute(
                 "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
                 (SCHEMA_VERSION,),
             )
-            return
-        if current_version == "6":
-            for statement in MIGRATIONS_V7:
-                connection.execute(statement)
-            connection.execute(
-                "UPDATE service_state SET value = ?, updated_at = datetime('now') WHERE key = 'schema_version'",
-                (SCHEMA_VERSION,),
-            )
-            return
-        raise MigrationError(f"unsupported control schema version: {current_version}")
 
 
 def _migrate_v5_to_v6(connection: sqlite3.Connection) -> None:

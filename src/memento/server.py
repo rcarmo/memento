@@ -51,6 +51,7 @@ from memento.service import (
     RenameChange,
     ServiceContext,
 )
+from memento.staging_http import AssetStagingHTTPHandler
 
 try:  # pragma: no cover - optional runtime dependency
     from aioumcp import AsyncMCPServer
@@ -224,6 +225,11 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                 )
             self._principals_by_name[principal.name] = principal
         self._admin_http = AdminHTTPHandler(access_store)
+        self._staging_http = (
+            AssetStagingHTTPHandler(service._deps.staged_asset_store, self._authenticate_headers)
+            if service._deps.staged_asset_store is not None
+            else None
+        )
         self._graph_debug_http = GraphDebugHTTPHandler(
             service._deps.config.observability.graph_explorer,
             snapshot_service=graph_snapshot_service,
@@ -366,6 +372,17 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             fallback["required"] = required
         return fallback
 
+    def _authenticate_headers(self, headers: Mapping[str, str]) -> Principal | None:
+        authorization = headers.get("authorization", "")
+        if not authorization.startswith("Bearer "):
+            return None
+        token = authorization.removeprefix("Bearer ")
+        return (
+            self._access_store.authenticate(token)
+            if self._access_store is not None
+            else self._bearer_tokens.get(token)
+        )
+
     def handle_http_request(
         self,
         *,
@@ -375,6 +392,12 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         body: bytes,
         peer: str | None,
     ) -> MCPHTTPResponse | None:
+        if self._staging_http is not None:
+            staging_response = self._staging_http.handle(
+                method=method, path=path, headers=headers, body=body
+            )
+            if staging_response is not None:
+                return staging_response
         admin_response = self._admin_http.handle(
             method=method, path=path, headers=headers, body=body
         )
@@ -391,15 +414,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     def authenticate_request(
         self, *, method: str, path: str, headers: Mapping[str, str], peer: str | None
     ) -> MCPPrincipal | None:
-        authorization = headers.get("authorization", "")
-        if not authorization.startswith("Bearer "):
-            return None
-        token = authorization.removeprefix("Bearer ")
-        principal = (
-            self._access_store.authenticate(token)
-            if self._access_store is not None
-            else self._bearer_tokens.get(token)
-        )
+        principal = self._authenticate_headers(headers)
         if principal is None:
             return None
         return MCPPrincipal(name=principal.name, roles=principal.roles, metadata=principal.metadata)

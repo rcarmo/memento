@@ -103,6 +103,7 @@ def create_proposal(
     patch: dict[str, Any],
     expires_in_days: int = DEFAULT_PROPOSAL_TTL_DAYS,
     assets: Iterable[ProposalAssetInput] = (),
+    manage_transaction: bool = True,
 ) -> ProposalRecord:
     patch_json = json.dumps(patch, sort_keys=True)
     patch_hash = hashlib.sha256(patch_json.encode("utf-8")).hexdigest()
@@ -113,7 +114,8 @@ def create_proposal(
         .replace("+00:00", "Z")
     )
     asset_rows = tuple(assets)
-    with connection:
+
+    def insert() -> None:
         connection.execute(
             """
             INSERT INTO proposals(
@@ -140,6 +142,12 @@ def create_proposal(
         _insert_proposal_assets(
             connection, proposal_id=proposal_id, assets=asset_rows, created_at=now
         )
+
+    if manage_transaction:
+        with connection:
+            insert()
+    else:
+        insert()
     return get_proposal(connection, proposal_id)
 
 

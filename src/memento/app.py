@@ -34,6 +34,7 @@ from memento.repository.transactions import TransactionManager, TransactionReque
 from memento.semantic import EmbeddingClient
 from memento.server import MementoMCPServer
 from memento.service import MemoryService, ServiceDependencies
+from memento.staged_assets import StagedAssetStore
 from memento.subprocess_embeddings import SubprocessEmbeddingClient
 
 
@@ -350,6 +351,8 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             if endpoint_clients
             else None
         )
+        staged_asset_store = StagedAssetStore(control_connection)
+        staged_asset_store.expire()
         service = MemoryService(
             ServiceDependencies(
                 config=config,
@@ -360,6 +363,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                 model_client=routed_client,
                 needle_router=needle_router,
                 access_store=access_store,
+                staged_asset_store=staged_asset_store,
             )
         )
         manager.recover_startup()
