@@ -138,18 +138,20 @@ def test_staging_http_auth_validation_replay_and_status(connection: sqlite3.Conn
     )
     unauthorized = handler.handle(
         method="POST",
-        path="/assets/staging?asset_kind=templates&version=1.0.0",
+        path="/assets/staging",
         headers={"content-type": "application/zip"},
         body=zip_bytes(),
     )
     assert unauthorized is not None and unauthorized.status == 401
     created = handler.handle(
         method="POST",
-        path="/assets/staging?asset_kind=templates&version=1.0.0",
+        path="/assets/staging",
         headers={
             "authorization": "Bearer token",
             "content-type": "application/zip",
             "idempotency-key": "http-stage-1",
+            "x-memento-asset-kind": "templates",
+            "x-memento-asset-version": "1.0.0",
         },
         body=zip_bytes(),
     )
@@ -159,11 +161,13 @@ def test_staging_http_auth_validation_replay_and_status(connection: sqlite3.Conn
     assert payload["replayed"] is False
     replay = handler.handle(
         method="POST",
-        path="/assets/staging?asset_kind=templates&version=1.0.0",
+        path="/assets/staging",
         headers={
             "authorization": "Bearer token",
             "content-type": "application/zip",
             "idempotency-key": "http-stage-1",
+            "x-memento-asset-kind": "templates",
+            "x-memento-asset-version": "1.0.0",
         },
         body=zip_bytes(),
     )
@@ -177,3 +181,19 @@ def test_staging_http_auth_validation_replay_and_status(connection: sqlite3.Conn
     )
     assert status is not None and status.status == 200
     assert json.loads(status.body)["sha256"] == payload["sha256"]
+
+
+def test_staging_metadata_headers_are_required(connection: sqlite3.Connection) -> None:
+    proposer = Principal(name="flint", roles=("reader", "proposer"))
+    handler = AssetStagingHTTPHandler(StagedAssetStore(connection), lambda _headers: proposer)
+    response = handler.handle(
+        method="POST",
+        path="/assets/staging",
+        headers={
+            "content-type": "application/zip",
+            "idempotency-key": "missing-metadata",
+        },
+        body=zip_bytes(),
+    )
+    assert response is not None and response.status == 400
+    assert "stable semantic version" in json.loads(response.body)["error"]

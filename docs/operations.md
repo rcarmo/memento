@@ -56,7 +56,7 @@ Because the CLI status path also needs the writer lease, use it for offline insp
 
 Accepted asset ZIPs are Git LFS objects inside the canonical bare repository. Install `git-lfs` anywhere Memento applies asset proposals or restores backups. The release container includes it.
 
-Small asset submissions may use base64 inside MCP JSON. Large packs should use authenticated `POST /assets/staging` with a raw `application/zip` body and then reference the returned `staged_asset_id` from `attach_asset_pack`. `mcp.max_request_bytes` defaults to 72 MiB, while decoded ZIP content is capped at 50 MiB and inspected before storage. Reverse proxies must allow the staging body size and preserve `Authorization` and `Idempotency-Key` headers.
+Small asset submissions may use base64 inside MCP JSON. Large packs should use authenticated `POST /assets/staging` with a raw `application/zip` body and then reference the returned `staged_asset_id` from `attach_asset_pack`. `mcp.max_request_bytes` defaults to 72 MiB, while decoded ZIP content is capped at 50 MiB and inspected before storage. Reverse proxies must allow the staging body size and preserve `Authorization`, `Idempotency-Key`, `X-Memento-Asset-Kind` and `X-Memento-Asset-Version` headers.
 
 Memento returns recalled ZIPs but does not install them. For skill packs, `memento-skill-import` imports into `.pi/skills/<name>/` and fails if that destination exists.
 

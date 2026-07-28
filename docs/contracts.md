@@ -355,7 +355,7 @@ Asset kinds and versions use lowercase/hyphen names and stable `MAJOR.MINOR.PATC
 
 `memory_propose` accepts an `attach_asset_pack` change containing `path`, `asset_kind`, `version` and exactly one of `zip_base64` or `staged_asset_id`. Stored proposal JSON replaces either transport reference with an asset ID, digest and generated manifest. `memory_proposal_get/list/review/apply` remain the only proposal lifecycle.
 
-For large packs, clients should send the ZIP as a raw binary body to `POST /assets/staging?asset_kind=<kind>&version=<semver>` using `Content-Type: application/zip`, bearer authentication and an `Idempotency-Key` header. The response contains `staged_asset_id`, SHA-256, manifest and 24-hour expiry. `GET /assets/staging/{staged_asset_id}` returns `ready`, `consumed` or `expired` state for reconciliation. Stages are principal-scoped; skill/body compatibility is checked again when the proposal consumes the stage. Proposal creation and stage consumption commit atomically.
+For large packs, clients should send the ZIP as a raw binary body to `POST /assets/staging` using a raw binary body plus `Content-Type: application/zip`, bearer authentication, `Idempotency-Key`, `X-Memento-Asset-Kind` and `X-Memento-Asset-Version` headers. The response contains `staged_asset_id`, SHA-256, manifest and 24-hour expiry. `GET /assets/staging/{staged_asset_id}` returns `ready`, `consumed` or `expired` state for reconciliation. Stages are principal-scoped; skill/body compatibility is checked again when the proposal consumes the stage. Proposal creation and stage consumption commit atomically.
 
 | Tool | Required role | Purpose |
 |---|---|---|

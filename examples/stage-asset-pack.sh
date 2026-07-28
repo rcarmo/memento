@@ -18,5 +18,7 @@ curl --fail-with-body \
   --header "Authorization: Bearer ${MEMENTO_TOKEN}" \
   --header 'Content-Type: application/zip' \
   --header "Idempotency-Key: ${key}" \
+  --header "X-Memento-Asset-Kind: ${kind}" \
+  --header "X-Memento-Asset-Version: ${version}" \
   --data-binary "@${zip}" \
-  "${MEMENTO_URL%/}/assets/staging?asset_kind=${kind}&version=${version}"
+  "${MEMENTO_URL%/}/assets/staging"

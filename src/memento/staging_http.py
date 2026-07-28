@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable, Mapping
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import urlsplit
 
 from umcp_shared import MCPHTTPResponse
 
@@ -37,11 +37,8 @@ class AssetStagingHTTPHandler:
                     return self._json({"error": "Content-Type must be application/zip"}, 415)
                 if len(body) > MAX_ZIP_BYTES:
                     return self._json({"error": "ZIP archive exceeds maximum encoded size"}, 413)
-                query = parse_qs(route.query, keep_blank_values=True)
-                asset_kind = (query.get("asset_kind") or [headers.get("x-memento-asset-kind", "")])[
-                    0
-                ]
-                version = (query.get("version") or [headers.get("x-memento-asset-version", "")])[0]
+                asset_kind = headers.get("x-memento-asset-kind", "")
+                version = headers.get("x-memento-asset-version", "")
                 staged, replayed = self._store.put(
                     principal=principal.name,
                     idempotency_key=headers.get("idempotency-key", ""),
