@@ -7,6 +7,9 @@ on:
 permissions:
   contents: read
 
+env:
+  RUNTIME_LFS_PATHS: models/gte/gte-small.gtemodel models/needle/memento-router.ndl models/needle/needle.model
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,18 +18,17 @@ jobs:
       matrix:
         python-version: ["3.12", "3.13", "3.14"]
     steps:
-      - name: Checkout
+      - name: Checkout pointers only
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
-          lfs: true
-      - name: Verify model artefacts
+          lfs: false
+      - name: Fetch only the tiny tokenizer needed by Rust unit tests
         shell: bash
         run: |
-          git lfs ls-files
-          if head -n 1 models/gte/gte-small.gtemodel | grep -q '^version https://git-lfs.github.com/spec/'; then
-            echo "GTE model is still a Git LFS pointer" >&2
-            exit 1
-          fi
+          git lfs install --local
+          git lfs pull --include="models/needle/needle.model" --exclude=""
+          test -s models/needle/needle.model
+          ! head -n 1 models/needle/needle.model | grep -q '^version https://git-lfs.github.com/spec/'
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
@@ -41,9 +43,13 @@ jobs:
           bun-version: 1.3.14
       - name: Install dev dependencies
         run: make install-dev
-      - name: Validate
+      - name: Validate without downloading model objects
+        env:
+          GIT_LFS_SKIP_SMUDGE: "1"
         run: make check
       - name: Coverage
+        env:
+          GIT_LFS_SKIP_SMUDGE: "1"
         run: make coverage
       - name: Build wheel
         run: make build-wheel
@@ -52,26 +58,80 @@ jobs:
       - name: Diff check
         run: make diff-check
 
-  container:
+  runtime-models:
+    name: Prepare cached runtime models
     runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.pointers.outputs.cache-key }}
     steps:
-      - name: Checkout
+      - name: Checkout pointers only
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
-          lfs: true
-      - name: Verify model artefacts
+          lfs: false
+      - name: Build cache key from runtime model pointers
+        id: pointers
         shell: bash
         run: |
-          git lfs ls-files
-          if head -n 1 models/needle/memento-router.ndl | grep -q '^version https://git-lfs.github.com/spec/'; then
-            echo "Needle model is still a Git LFS pointer" >&2
-            exit 1
-          fi
+          key="runtime-lfs-${RUNNER_OS}-$(sha256sum $RUNTIME_LFS_PATHS | sha256sum | cut -d' ' -f1)"
+          echo "cache-key=$key" >> "$GITHUB_OUTPUT"
+      - name: Restore Git LFS object cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .git/lfs/objects
+          key: ${{ steps.pointers.outputs.cache-key }}
+      - name: Fetch only runtime model objects
+        shell: bash
+        run: |
+          git lfs install --local
+          git lfs fetch origin --include="models/gte/gte-small.gtemodel,models/needle/memento-router.ndl,models/needle/needle.model" --exclude=""
+          git lfs checkout $RUNTIME_LFS_PATHS
+          for path in $RUNTIME_LFS_PATHS; do
+            test -s "$path"
+            ! head -n 1 "$path" | grep -q '^version https://git-lfs.github.com/spec/'
+          done
+      - name: Upload runtime models once
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: runtime-models
+          path: |
+            models/gte/gte-small.gtemodel
+            models/needle/memento-router.ndl
+            models/needle/needle.model
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  container:
+    runs-on: ubuntu-latest
+    needs: runtime-models
+    steps:
+      - name: Checkout pointers only
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          lfs: false
+      - name: Download prepared runtime models
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: runtime-models
+          path: models
+      - name: Verify runtime model artefacts
+        shell: bash
+        run: |
+          for path in $RUNTIME_LFS_PATHS; do
+            test -s "$path"
+            ! head -n 1 "$path" | grep -q '^version https://git-lfs.github.com/spec/'
+          done
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4
       - name: Build container
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
         with:
           context: .
+          load: true
           push: false
           tags: memento:ci
+      - name: Smoke runtime models from the image
+        shell: bash
+        run: |
+          docker run --rm --entrypoint python memento:ci /usr/local/lib/memento/container_cpu_smoke.py gte
+          docker run --rm --entrypoint python -e MEMENTO_SMOKE_MAX_RSS_MIB=220 memento:ci /usr/local/lib/memento/container_cpu_smoke.py needle

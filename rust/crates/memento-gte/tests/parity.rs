@@ -23,6 +23,13 @@ fn model_path() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../models/gte/gte-small.gtemodel")
 }
 
+fn vendored_model_available(path: &PathBuf) -> bool {
+    let Ok(bytes) = fs::read(path) else {
+        return false;
+    };
+    !bytes.starts_with(b"version https://git-lfs.github.com/spec/v1\n")
+}
+
 fn assert_embeddings_close(text: &str, got: &[f32], want: &[f32]) {
     assert_eq!(got.len(), want.len(), "embedding len mismatch for {text:?}");
     for (index, (g, w)) in got.iter().zip(want.iter()).enumerate() {
@@ -38,7 +45,7 @@ fn parses_fixture_model_and_matches_go_parity() {
     let root = fixture_root();
     let model_path = model_path();
     let fixture_path = root.join("go_parity.json");
-    if !(model_path.exists() && fixture_path.exists()) {
+    if !(vendored_model_available(&model_path) && fixture_path.exists()) {
         eprintln!("skipping parity test; run rust/tests/scripts/generate_golden.sh");
         return;
     }
@@ -60,7 +67,7 @@ fn parses_fixture_model_and_matches_go_parity() {
 #[test]
 fn batched_embeddings_match_individual_embeddings() {
     let model_path = model_path();
-    if !model_path.exists() {
+    if !vendored_model_available(&model_path) {
         eprintln!("skipping fixture-dependent test; run rust/tests/scripts/generate_golden.sh");
         return;
     }
@@ -97,7 +104,7 @@ fn batched_embeddings_match_individual_embeddings() {
 #[test]
 fn batch_limits_and_cancellation_work() {
     let model_path = model_path();
-    if !model_path.exists() {
+    if !vendored_model_available(&model_path) {
         eprintln!("skipping fixture-dependent test; run rust/tests/scripts/generate_golden.sh");
         return;
     }

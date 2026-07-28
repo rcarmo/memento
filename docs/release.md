@@ -27,6 +27,12 @@ Both push CI and tag releases validate Python 3.12--3.14 through the Make target
 
 Published tags include the full version, major/minor, major and stable-only `latest`.
 
+## Git LFS bandwidth policy
+
+Workflow checkouts never use `lfs: true`. Python/Rust quality matrices fetch only the 125 KB SentencePiece tokenizer needed by unconditional unit tests. A single model-preparation job fetches the three runtime image artefacts (GTE model, Needle NDL and tokenizer), caches `.git/lfs/objects` by their pointer hashes and uploads them once as a one-day uncompressed Actions artifact. Native image builders consume that artifact instead of contacting Git LFS independently. Training JSONL, vocabulary and Python checkpoint files are never downloaded by CI or release jobs.
+
+Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable large models in matrix jobs rather than accidentally parsing pointer text.
+
 ## Remaining provenance limits
 
 Base-image manifests and GitHub Actions are pinned. SBOM attachment remains a future release improvement; BuildKit provenance attestations are included in the OCI index.
