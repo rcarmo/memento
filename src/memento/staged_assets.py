@@ -166,7 +166,7 @@ class StagedAssetStore:
             for staged_asset_id in staged_asset_ids:
                 updated = self._connection.execute(
                     """
-                    UPDATE staged_assets SET state='consumed',proposal_id=?,consumed_at=?
+                    UPDATE staged_assets SET state='consumed',proposal_id=?,consumed_at=?,blob_bytes=X''
                     WHERE staged_asset_id=? AND principal=? AND state='ready'
                     """,
                     (proposal_id, now, staged_asset_id, principal),

@@ -74,6 +74,7 @@ def test_staging_store_is_idempotent_owned_and_consumable(connection: sqlite3.Co
     consumed = store.get(principal="flint", staged_asset_id=first.staged_asset_id)
     assert consumed.state == "consumed"
     assert consumed.proposal_id == "proposal-1"
+    assert consumed.blob_bytes == b""
     with pytest.raises(StagedAssetError, match="not ready"):
         store.get(principal="flint", staged_asset_id=first.staged_asset_id, require_ready=True)
 
