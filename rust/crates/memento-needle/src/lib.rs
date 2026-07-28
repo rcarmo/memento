@@ -1725,7 +1725,17 @@ mod tests {
             .expect("fixture"),
         )
         .expect("json");
-        let tok = NeedleTokenizer::from_repo_default().expect("tokenizer");
+        let tokenizer_path =
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../models/needle/needle.model");
+        let Ok(tokenizer_bytes) = std::fs::read(&tokenizer_path) else {
+            eprintln!("skipping tokenizer parity test; tokenizer model is unavailable");
+            return;
+        };
+        if tokenizer_bytes.starts_with(b"version https://git-lfs.github.com/spec/v1\n") {
+            eprintln!("skipping tokenizer parity test; tokenizer model is an LFS pointer");
+            return;
+        }
+        let tok = NeedleTokenizer::from_model_bytes(&tokenizer_bytes).expect("tokenizer");
         for case in parity.fixtures {
             assert_eq!(
                 tok.encode(&case.input).expect("encode"),

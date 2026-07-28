@@ -29,9 +29,9 @@ Published tags include the full version, major/minor, major and stable-only `lat
 
 ## Git LFS bandwidth policy
 
-Workflow checkouts never use `lfs: true`. Python/Rust quality matrices fetch only the 125 KB SentencePiece tokenizer needed by unconditional unit tests. A single model-preparation job fetches the three runtime image artefacts (GTE model, Needle NDL and tokenizer), caches `.git/lfs/objects` by their pointer hashes and uploads them once as a one-day uncompressed Actions artifact. Native image builders consume that artifact instead of contacting Git LFS independently. Training JSONL, vocabulary and Python checkpoint files are never downloaded by CI or release jobs.
+Workflow checkouts never use `lfs: true` and no CI command contacts Git LFS. A single model-preparation job derives a cache key from the committed LFS pointers, restores the three runtime image artefacts (GTE model, Needle NDL and tokenizer) from the Actions cache, or downloads their versioned `model-assets-v1` GitHub Release bundle on a cache miss. Every extracted file is SHA-256 checked against its committed LFS pointer OID before being uploaded once as a one-day uncompressed Actions artifact. Native image builders consume that artifact. Training JSONL, vocabulary and Python checkpoint files are never downloaded by CI or release jobs.
 
-Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable large models in matrix jobs rather than accidentally parsing pointer text.
+Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
 ## Remaining provenance limits
 

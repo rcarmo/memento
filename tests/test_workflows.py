@@ -24,40 +24,32 @@ def steps(document: dict[str, Any]) -> Iterator[dict[str, Any]]:
         yield from cast(list[dict[str, Any]], job.get("steps", []))
 
 
-def test_workflows_never_use_implicit_full_lfs_checkout() -> None:
+def test_workflows_never_contact_git_lfs() -> None:
     for name in ("ci.yml", "release.yml"):
         for step in steps(workflow(name)):
             if str(step.get("uses", "")).startswith("actions/checkout@"):
                 assert step.get("with", {}).get("lfs") is not True
+            assert "git lfs " not in str(step.get("run", ""))
 
 
-def test_each_workflow_fetches_only_runtime_models_once() -> None:
+def test_each_workflow_prepares_one_verified_runtime_model_artifact() -> None:
     for name in ("ci.yml", "release.yml"):
         document = workflow(name)
-        fetches = [
-            step["run"]
+        commands = [
+            str(step.get("run", ""))
             for step in steps(document)
-            if "git lfs fetch origin" in str(step.get("run", ""))
+            if "prepare_runtime_models.py" in str(step.get("run", ""))
         ]
-        assert len(fetches) == 1
-        command = fetches[0]
-        assert all(path in command for path in RUNTIME_PATHS)
-        assert "memento-router.pkl" not in command
-        assert "train.jsonl" not in command
-        assert "train-hard.jsonl" not in command
-        assert "test.jsonl" not in command
-        assert "val.jsonl" not in command
-        assert "needle.vocab" not in command
-
-
-def test_quality_jobs_fetch_only_tiny_tokenizer() -> None:
-    for name, job_name in (("ci.yml", "test"), ("release.yml", "quality")):
-        commands = "\n".join(
-            str(step.get("run", "")) for step in workflow(name)["jobs"][job_name]["steps"]
+        assert sum("--key-only" in command for command in commands) == 1
+        assert sum("--key-only" not in command for command in commands) == 1
+        model_job = document["jobs"]["runtime-models"]
+        cache = next(
+            step
+            for step in model_job["steps"]
+            if str(step.get("uses", "")).startswith("actions/cache@")
         )
-        assert 'git lfs pull --include="models/needle/needle.model"' in commands
-        assert "gte-small.gtemodel" not in commands
-        assert "memento-router.ndl" not in commands
+        cached_paths = set(str(cache["with"]["path"]).splitlines())
+        assert cached_paths == RUNTIME_PATHS
 
 
 def test_container_builders_download_prepared_model_artifact() -> None:
@@ -67,3 +59,19 @@ def test_container_builders_download_prepared_model_artifact() -> None:
     assert any(
         step.get("with", {}).get("name") == "release-runtime-models" for step in release["steps"]
     )
+
+
+def test_training_and_checkpoint_paths_are_absent_from_workflows() -> None:
+    text = "\n".join(
+        (ROOT / ".github" / "workflows" / name).read_text(encoding="utf-8")
+        for name in ("ci.yml", "release.yml")
+    )
+    for path in (
+        "memento-router.pkl",
+        "train.jsonl",
+        "train-hard.jsonl",
+        "test.jsonl",
+        "val.jsonl",
+        "needle.vocab",
+    ):
+        assert path not in text
