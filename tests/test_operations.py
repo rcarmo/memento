@@ -109,6 +109,39 @@ def test_compose_example_uses_env_file_and_example_env_lists_required_tokens() -
     assert "Bootstrap/recovery credentials" in env_example
 
 
+def test_diskstation_progressive_embeddings_are_persistent_and_single_threaded() -> None:
+    root = Path(__file__).parents[1]
+    compose = (root / "deploy/diskstation.compose.yaml").read_text(encoding="utf-8")
+    deploy_helper = (root / "tools/release_deploy.py").read_text(encoding="utf-8")
+    config = json.loads((root / "deploy/diskstation.config.example.json").read_text())
+    semantic = config["intelligent_tiers"]["semantic_search"]
+    assert semantic["max_batch_size"] == 1
+    assert semantic["progressive_enabled"] is True
+    assert semantic["progressive_startup_delay_seconds"] == 120
+    assert semantic["progressive_interactive_idle_seconds"] == 15
+    assert semantic["progressive_delay_seconds"] == 30
+    assert semantic["progressive_load_average_limit"] == 1.5
+    assert semantic["progressive_nice"] == 15
+    assert "/volume1/docker/memento/state:/var/lib/memento" in compose
+    for variable in (
+        "RAYON_NUM_THREADS",
+        "OMP_NUM_THREADS",
+        "OPENBLAS_NUM_THREADS",
+        "MKL_NUM_THREADS",
+    ):
+        assert f'{variable}: "1"' in compose
+        assert f'{variable}: "1"' in deploy_helper
+    for setting in (
+        "progressive_enabled",
+        "progressive_startup_delay_seconds",
+        "progressive_interactive_idle_seconds",
+        "progressive_delay_seconds",
+        "progressive_load_average_limit",
+        "progressive_nice",
+    ):
+        assert setting in deploy_helper
+
+
 def test_runtime_loads_and_closes_needle_router(
     monkeypatch: pytest.MonkeyPatch, seeded_root: tuple[Path, Path]
 ) -> None:

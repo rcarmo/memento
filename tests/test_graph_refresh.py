@@ -40,6 +40,9 @@ class _WorkerState:
     running: bool = False
     pending: bool = True
     last_error: str | None = None
+    pause_reason: str | None = "interactive"
+    current_path: str | None = None
+    completed: int = 4
 
 
 class _Worker:
@@ -68,6 +71,8 @@ def test_selected_visible_and_confirmed_full_refresh(tmp_path: Path) -> None:
     refresh = coordinator(tmp_path, worker)
     selected = refresh.enqueue(scope="selected", concept_ids=("a",))
     assert selected.available and selected.queued_paths == 1
+    assert selected.pause_reason == "interactive"
+    assert selected.completed == 4
     assert worker.calls[-1] == (tmp_path, "rev", ("/projects/a.md",))
     refresh.enqueue(scope="visible", concept_ids=("b", "a", "a"))
     visible_paths = worker.calls[-1][2]

@@ -10,6 +10,7 @@ from typing import Any, cast, get_args, get_origin
 from pydantic import BaseModel, ConfigDict
 
 from memento.access import AccessStore
+from memento.activity import ActivityClock
 from memento.admin import AdminHTTPHandler
 from memento.config import Principal
 from memento.executor import (
@@ -211,12 +212,14 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         graph_snapshot_service: GraphSnapshotService | None = None,
         graph_refresh_coordinator: GraphEmbeddingRefreshCoordinator | None = None,
         access_store: AccessStore | None = None,
+        activity: ActivityClock | None = None,
     ) -> None:
         self._umcp_log_file = log_file
         super().__init__()
         self._service = service
         self._bearer_tokens = dict(bearer_tokens)
         self._access_store = access_store
+        self._activity = activity or ActivityClock()
         self._principals_by_name: dict[str, Principal] = {}
         for principal in self._bearer_tokens.values():
             if principal.name in self._principals_by_name:
@@ -392,6 +395,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         body: bytes,
         peer: str | None,
     ) -> MCPHTTPResponse | None:
+        self._activity.touch()
         if self._staging_http is not None:
             staging_response = self._staging_http.handle(
                 method=method, path=path, headers=headers, body=body
@@ -414,6 +418,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     def authenticate_request(
         self, *, method: str, path: str, headers: Mapping[str, str], peer: str | None
     ) -> MCPPrincipal | None:
+        self._activity.touch()
         principal = self._authenticate_headers(headers)
         if principal is None:
             return None
@@ -429,6 +434,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         return True
 
     def _context(self) -> ServiceContext:
+        self._activity.touch()
         request = get_request_context()
         principal = self._resolve_request_principal(getattr(request, "principal", None))
         return ServiceContext(

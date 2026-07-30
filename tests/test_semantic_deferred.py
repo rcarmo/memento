@@ -12,9 +12,13 @@ from typing import cast
 
 import pytest
 
+from memento.activity import ActivityClock
 from memento.app import build_runtime
 from memento.config import SemanticSearchConfig
-from memento.derived.embeddings_worker import SemanticEmbeddingRefreshWorker
+from memento.derived.embeddings_worker import (
+    ProgressiveEmbeddingPolicy,
+    SemanticEmbeddingRefreshWorker,
+)
 from memento.derived.index import DerivedIndex
 from memento.repository.frontmatter import serialize_concept
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter, ConceptStatus
@@ -86,6 +90,8 @@ class RecordingFakeEmbedder(EmbeddingClient):
 class FakeRefreshIndex:
     def __init__(self) -> None:
         self.calls: list[str] = []
+        self.path_calls: list[tuple[str, ...]] = []
+        self.pending_paths: list[str] = []
         self.started = threading.Event()
         self.release = threading.Event()
 
@@ -95,6 +101,18 @@ class FakeRefreshIndex:
         self.started.set()
         if repo_revision == "rev-1":
             assert self.release.wait(timeout=5.0)
+
+    def refresh_embedding_paths(
+        self, bundle_root: Path, *, repo_revision: str, paths: tuple[str, ...]
+    ) -> None:
+        del bundle_root, repo_revision
+        self.path_calls.append(paths)
+        for path in paths:
+            if path in self.pending_paths:
+                self.pending_paths.remove(path)
+
+    def pending_embedding_paths(self, *, limit: int = 1) -> tuple[str, ...]:
+        return tuple(self.pending_paths[:limit])
 
 
 @pytest.fixture()
@@ -267,6 +285,150 @@ def test_refresh_embeddings_batches_full_bundle(semantic_bundle: Path, tmp_path:
 
     assert embedder.batch_sizes == [2, 2, 1]
     assert index.semantic_status().ready is True
+
+
+def test_rebuild_preserves_ready_embeddings_and_marks_changed_content_stale(
+    semantic_bundle: Path, tmp_path: Path
+) -> None:
+    embedder = RecordingFakeEmbedder()
+    index = DerivedIndex(
+        tmp_path / "preserved.sqlite",
+        semantic_config=semantic_config(),
+        embedding_client=embedder,
+        defer_embeddings=True,
+    )
+    index.rebuild(semantic_bundle, repo_revision="rev-1")
+    index.refresh_embeddings(semantic_bundle, repo_revision="rev-1")
+    assert embedder.batch_sizes == [2]
+
+    index.rebuild(semantic_bundle, repo_revision="rev-2")
+    assert index.semantic_status().ready is True
+    assert index.semantic_status().embedding_revision == "rev-2"
+    assert index.pending_embedding_paths() == ()
+    assert embedder.batch_sizes == [2]
+
+    write_concept(
+        semantic_bundle / "projects" / "alpha.md",
+        concept_id="alpha-id",
+        title="Alpha",
+        body="# Alpha\n\nchanged after rebuild\n",
+    )
+    index.rebuild(semantic_bundle, repo_revision="rev-3")
+    assert index.pending_embedding_paths(limit=10) == ("/projects/alpha.md",)
+    assert index.semantic_status().embedding_revision == "partial"
+
+
+def test_model_revision_change_marks_persisted_embeddings_stale(
+    semantic_bundle: Path, tmp_path: Path
+) -> None:
+    first = DerivedIndex(
+        tmp_path / "model-change.sqlite",
+        semantic_config=semantic_config(),
+        embedding_client=RecordingFakeEmbedder(revision="model-1"),
+        defer_embeddings=True,
+    )
+    first.rebuild(semantic_bundle, repo_revision="rev-1")
+    first.refresh_embeddings(semantic_bundle, repo_revision="rev-1")
+    assert first.pending_embedding_paths(limit=10) == ()
+
+    reopened = DerivedIndex(
+        first.db_path,
+        semantic_config=semantic_config(),
+        embedding_client=RecordingFakeEmbedder(revision="model-2"),
+        defer_embeddings=True,
+    )
+    assert reopened.mark_model_stale() == 2
+    assert reopened.pending_embedding_paths(limit=10) == (
+        "/projects/alpha.md",
+        "/projects/beta.md",
+    )
+
+
+def test_pending_paths_skip_degraded_until_manual_or_content_change(
+    semantic_bundle: Path, tmp_path: Path
+) -> None:
+    index = DerivedIndex(
+        tmp_path / "degraded.sqlite",
+        semantic_config=semantic_config(),
+        embedding_client=RecordingFakeEmbedder(),
+        defer_embeddings=True,
+    )
+    index.rebuild(semantic_bundle, repo_revision="rev-1")
+    with sqlite3.connect(index.db_path) as connection:
+        connection.execute(
+            """
+            INSERT INTO concept_embeddings(
+                concept_id,path,embedding_text_hash,model_id,dimensions,embedding_revision,
+                status,model_revision,embedding_blob,embedding_norm,updated_at,error_message
+            ) VALUES('alpha-id','/projects/alpha.md','hash','fake-384',384,'rev-1',
+                'degraded','model-rev-1',NULL,NULL,'now','failed')
+            """
+        )
+        connection.commit()
+    assert index.pending_embedding_paths(limit=10) == ("/projects/beta.md",)
+
+
+def test_progressive_worker_resumes_pending_state_and_prioritizes_manual_paths(
+    tmp_path: Path,
+) -> None:
+    fake_index = FakeRefreshIndex()
+    fake_index.pending_paths = ["/a.md", "/b.md"]
+    worker = SemanticEmbeddingRefreshWorker(
+        cast(DerivedIndex, fake_index),
+        policy=ProgressiveEmbeddingPolicy(
+            enabled=True,
+            startup_delay_seconds=0,
+            interactive_idle_seconds=0,
+            delay_seconds=0,
+            load_average_limit=99,
+        ),
+        load_average=lambda: 0,
+    )
+    try:
+        assert worker.enqueue(tmp_path, "rev-1", paths=("/manual.md",)) is True
+        assert wait_for(lambda: len(fake_index.path_calls) == 3, timeout_seconds=2.0)
+        assert fake_index.path_calls == [("/manual.md",), ("/a.md",), ("/b.md",)]
+        assert worker.state().completed == 3
+    finally:
+        worker.close()
+
+
+def test_progressive_worker_pauses_for_activity_load_and_pacing(tmp_path: Path) -> None:
+    fake_index = FakeRefreshIndex()
+    fake_index.pending_paths = ["/a.md"]
+    now = [0.0]
+    load = [2.0]
+    activity = ActivityClock(lambda: now[0])
+    worker = SemanticEmbeddingRefreshWorker(
+        cast(DerivedIndex, fake_index),
+        policy=ProgressiveEmbeddingPolicy(
+            enabled=True,
+            startup_delay_seconds=10,
+            interactive_idle_seconds=5,
+            delay_seconds=30,
+            load_average_limit=1.5,
+        ),
+        activity=activity,
+        load_average=lambda: load[0],
+        monotonic=lambda: now[0],
+    )
+    try:
+        worker.enqueue(tmp_path, "rev-1")
+        assert wait_for(lambda: worker.state().pause_reason == "startup", timeout_seconds=1.0)
+        now[0] = 11
+        activity.touch()
+        assert wait_for(lambda: worker.state().pause_reason == "interactive", timeout_seconds=1.5)
+        now[0] = 17
+        assert wait_for(lambda: worker.state().pause_reason == "load", timeout_seconds=1.5)
+        load[0] = 0
+        assert wait_for(lambda: fake_index.path_calls == [("/a.md",)], timeout_seconds=1.5)
+        fake_index.pending_paths = ["/b.md"]
+        worker.enqueue(tmp_path, "rev-1")
+        assert wait_for(lambda: worker.state().pause_reason == "pacing", timeout_seconds=1.5)
+        now[0] = 48
+        assert wait_for(lambda: fake_index.path_calls[-1] == ("/b.md",), timeout_seconds=1.5)
+    finally:
+        worker.close()
 
 
 def test_embedding_refresh_worker_coalesces_latest_revision_and_close(tmp_path: Path) -> None:

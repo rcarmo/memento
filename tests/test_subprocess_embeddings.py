@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import json
 import stat
+import struct
+import subprocess
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -82,6 +86,45 @@ def test_subprocess_embedding_client_enforces_limits_and_errors(tmp_path: Path) 
     )
     with pytest.raises(SemanticSearchError, match="exited 7"):
         failed.embed("one")
+
+
+def test_subprocess_embedding_client_uses_low_priority_single_thread_environment(
+    tmp_path: Path,
+) -> None:
+    model = tmp_path / "model.gte"
+    model_file(model)
+    seen: dict[str, Any] = {}
+
+    def run(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[bytes]:
+        seen["command"] = command
+        seen["env"] = kwargs["env"]
+        header = json.dumps(
+            {
+                "ok": True,
+                "dimensions": 4,
+                "count": 1,
+                "payload_len": 16,
+            },
+            separators=(",", ":"),
+        ).encode()
+        payload = struct.pack("<4f", 1.0, 1.0, 1.0, 1.0)
+        wire = struct.pack("<II", 4 + len(header) + len(payload), len(header)) + header + payload
+        return subprocess.CompletedProcess(command, 0, stdout=wire, stderr=b"")
+
+    client = SubprocessEmbeddingClient(
+        "/worker",
+        model,
+        dimensions=4,
+        max_batch=1,
+        max_input_chars=10,
+        nice=15,
+        threads=1,
+        process_runner=run,
+    )
+    assert client.embed("one") == (1.0, 1.0, 1.0, 1.0)
+    assert seen["command"] == ["nice", "-n", "15", "/worker", str(model)]
+    for name in ("RAYON_NUM_THREADS", "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
+        assert seen["env"][name] == "1"
 
 
 def test_subprocess_embedding_client_cancellation(tmp_path: Path) -> None:

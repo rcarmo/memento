@@ -2,13 +2,22 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import struct
 import subprocess
 from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 from memento.semantic import EmbeddingClient, EmbeddingModelInfo, SemanticSearchError
+
+
+class ProcessRunner(Protocol):
+    def __call__(self, command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[bytes]: ...
+
+
+def _run_process(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[bytes]:
+    return subprocess.run(command, **kwargs)
 
 
 class SubprocessEmbeddingClient(EmbeddingClient):
@@ -23,6 +32,9 @@ class SubprocessEmbeddingClient(EmbeddingClient):
         max_batch: int,
         max_input_chars: int,
         timeout_seconds: float = 300.0,
+        nice: int = 0,
+        threads: int = 1,
+        process_runner: ProcessRunner | None = None,
     ) -> None:
         self._worker_path = Path(worker_path)
         self._model_path = Path(model_path)
@@ -30,6 +42,9 @@ class SubprocessEmbeddingClient(EmbeddingClient):
         self._max_batch = max_batch
         self._max_input_chars = max_input_chars
         self._timeout_seconds = timeout_seconds
+        self._nice = nice
+        self._threads = threads
+        self._process_runner: ProcessRunner = process_runner or _run_process
         self._revision = _sha256_file(self._model_path)
 
     def model_info(self) -> EmbeddingModelInfo:
@@ -65,12 +80,24 @@ class SubprocessEmbeddingClient(EmbeddingClient):
         payload = json.dumps(request, separators=(",", ":")).encode("utf-8")
         wire = struct.pack("<I", len(payload)) + payload
         try:
-            completed = subprocess.run(
-                [str(self._worker_path), str(self._model_path)],
+            command = [str(self._worker_path), str(self._model_path)]
+            if self._nice > 0:
+                command = ["nice", "-n", str(self._nice), *command]
+            environment = os.environ.copy()
+            for name in (
+                "RAYON_NUM_THREADS",
+                "OMP_NUM_THREADS",
+                "OPENBLAS_NUM_THREADS",
+                "MKL_NUM_THREADS",
+            ):
+                environment[name] = str(self._threads)
+            completed = self._process_runner(
+                command,
                 input=wire,
                 capture_output=True,
                 timeout=self._timeout_seconds,
                 check=False,
+                env=environment,
             )
         except (OSError, subprocess.TimeoutExpired) as exc:
             raise SemanticSearchError(f"embedding worker failed: {exc}") from exc

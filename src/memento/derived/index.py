@@ -672,7 +672,6 @@ class DerivedIndex:
                 "concept_fts",
                 "links",
                 "graph_metrics",
-                "concept_embeddings",
             ):
                 connection.execute(f"DELETE FROM {table}")
             self._set_state(connection, "status", "rebuilding")
@@ -683,6 +682,12 @@ class DerivedIndex:
                 self._upsert_entry(connection, entry.bundle_path, entry.document, repo_revision)
             self._recompute_links(connection, repo_revision)
             self._recompute_metrics(connection)
+            connection.execute(
+                "DELETE FROM concept_embeddings WHERE concept_id NOT IN (SELECT id FROM concepts)"
+            )
+            self._mark_embedding_staleness(
+                connection, tuple(changed_documents), repo_revision=repo_revision
+            )
             if not self._defer_embeddings:
                 self._update_embeddings(
                     connection,
@@ -831,6 +836,89 @@ class DerivedIndex:
                 (concept_id, inbound, outbound, broken, orphan),
             )
 
+    def mark_model_stale(self) -> int:
+        """Mark persisted embeddings stale when configured model metadata changed."""
+        if not self._semantic_config.enabled or self._embedding_client is None:
+            return 0
+        model_info = self._embedding_client.model_info()
+        self._validate_model_info(model_info)
+        with self._connect() as connection, connection:
+            result = connection.execute(
+                """
+                UPDATE concept_embeddings
+                SET status='stale', model_id=?, dimensions=?, model_revision=?
+                WHERE model_id != ? OR dimensions != ? OR model_revision != ?
+                """,
+                (
+                    self._semantic_config.model_id,
+                    self._semantic_config.dimensions,
+                    model_info.revision,
+                    self._semantic_config.model_id,
+                    self._semantic_config.dimensions,
+                    model_info.revision,
+                ),
+            )
+            if result.rowcount:
+                self._set_state(connection, "semantic_embedding_revision", "partial")
+        return result.rowcount
+
+    def pending_embedding_paths(self, *, limit: int = 1) -> tuple[str, ...]:
+        """Return deterministic missing/stale embedding paths from persisted derived state."""
+        if limit < 1:
+            raise ValueError("limit must be positive")
+        with self._connect() as connection:
+            self._ensure_ready(connection)
+            rows = connection.execute(
+                """
+                SELECT c.path
+                FROM concepts AS c
+                LEFT JOIN concept_embeddings AS e ON e.concept_id = c.id
+                WHERE e.concept_id IS NULL OR e.status IN ('stale', 'pending')
+                ORDER BY CASE WHEN e.status = 'stale' THEN 0 ELSE 1 END, c.path
+                LIMIT ?
+                """,
+                (limit,),
+            ).fetchall()
+        return tuple(str(row["path"]) for row in rows)
+
+    def _mark_embedding_staleness(
+        self,
+        connection: sqlite3.Connection,
+        changed_documents: tuple[tuple[str, object], ...],
+        *,
+        repo_revision: str,
+    ) -> None:
+        for bundle_path, document in changed_documents:
+            if not isinstance(document, ConceptDocument):
+                raise TypeError("document must be a ConceptDocument")
+            text = embedding_text(
+                title=document.frontmatter.title,
+                description=document.frontmatter.description,
+                body=document.body,
+            )[: self._semantic_config.max_input_chars]
+            text_hash = embedding_content_hash(text)
+            connection.execute(
+                """
+                UPDATE concept_embeddings
+                SET path=?, embedding_revision=?, status=CASE
+                    WHEN embedding_text_hash=? THEN status ELSE 'stale' END
+                WHERE concept_id=?
+                """,
+                (bundle_path, repo_revision, text_hash, document.frontmatter.id),
+            )
+        concept_count = int(connection.execute("SELECT COUNT(*) FROM concepts").fetchone()[0] or 0)
+        ready_count = int(
+            connection.execute(
+                "SELECT COUNT(*) FROM concept_embeddings WHERE status='ready'"
+            ).fetchone()[0]
+            or 0
+        )
+        self._set_state(
+            connection,
+            "semantic_embedding_revision",
+            repo_revision if concept_count == ready_count else ("partial" if ready_count else ""),
+        )
+
     def _update_embeddings(
         self,
         connection: sqlite3.Connection,
@@ -878,7 +966,6 @@ class DerivedIndex:
             ).fetchone()
             if (
                 existing is not None
-                and not full_rebuild
                 and existing["embedding_text_hash"] == text_hash
                 and existing["model_id"] == self._semantic_config.model_id
                 and int(existing["dimensions"]) == self._semantic_config.dimensions

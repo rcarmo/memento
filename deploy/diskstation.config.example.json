@@ -53,7 +53,14 @@
       "ffi_library_path": "/usr/local/lib/memento/libmemento_ffi.so",
       "sqlite_extension_path": "/usr/local/lib/memento/libmemento_sqlite_vector.so",
       "default_search_mode": "lexical",
-      "refresh_on_startup": false
+      "max_batch_size": 1,
+      "refresh_on_startup": false,
+      "progressive_enabled": true,
+      "progressive_startup_delay_seconds": 120,
+      "progressive_interactive_idle_seconds": 15,
+      "progressive_delay_seconds": 30,
+      "progressive_load_average_limit": 1.5,
+      "progressive_nice": 15
     },
     "needle_router": {
       "enabled": true,

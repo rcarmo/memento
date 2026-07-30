@@ -17,6 +17,9 @@ class GraphEmbeddingRefreshState:
     last_scope: str | None
     queued_paths: int
     repository_revision: str | None
+    pause_reason: str | None = None
+    current_path: str | None = None
+    completed: int = 0
 
 
 class GraphEmbeddingRefreshCoordinator:
@@ -96,6 +99,9 @@ class GraphEmbeddingRefreshCoordinator:
             last_scope=self._last_scope,
             queued_paths=self._queued_paths,
             repository_revision=self._repository_revision,
+            pause_reason=state.pause_reason,
+            current_path=state.current_path,
+            completed=state.completed,
         )
 
     def state_dict(self) -> dict[str, object]:

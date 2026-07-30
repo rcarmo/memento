@@ -10,11 +10,15 @@ from typing import Any
 
 from memento import __version__
 from memento.access import AccessStore
+from memento.activity import ActivityClock
 from memento.config import Principal, ServiceConfig
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.operations import OperationRequest
 from memento.control.proposals import ProposalStatus, list_proposals
-from memento.derived.embeddings_worker import SemanticEmbeddingRefreshWorker
+from memento.derived.embeddings_worker import (
+    ProgressiveEmbeddingPolicy,
+    SemanticEmbeddingRefreshWorker,
+)
 from memento.derived.index import DerivedIndex
 from memento.ffi import RustFfiLibrary
 from memento.graph_debug.refresh import GraphEmbeddingRefreshCoordinator
@@ -64,6 +68,7 @@ class MementoRuntime:
     embedding_refresh_worker: SemanticEmbeddingRefreshWorker | None = None
     needle_library: NeedleFfiLibrary | None = None
     access_store: AccessStore | None = None
+    activity: ActivityClock | None = None
     closed: bool = False
 
     def build_server(self) -> MementoMCPServer:
@@ -86,6 +91,7 @@ class MementoRuntime:
             self.service,
             bearer_tokens=self._bearer_tokens(),
             access_store=self.access_store,
+            activity=self.activity,
             log_file=log_file,
             graph_snapshot_service=graph_snapshot_service,
             graph_refresh_coordinator=graph_refresh_coordinator,
@@ -97,6 +103,11 @@ class MementoRuntime:
         visible_concepts = len(scan_bundle(self.paths.repo_paths.current_dir).entries)
         proposals = list_proposals(self.control_connection)
         semantic = self.derived_index.semantic_status()
+        worker_state = (
+            self.embedding_refresh_worker.state()
+            if self.embedding_refresh_worker is not None
+            else None
+        )
         return {
             "service_version": __version__,
             "schema_version": self.config.schema_version,
@@ -112,6 +123,18 @@ class MementoRuntime:
                 "embedding_revision": semantic.embedding_revision,
                 "sqlite_vector_enabled": semantic.sqlite_vector_enabled,
                 "warnings": list(semantic.warnings),
+                "worker": (
+                    {
+                        "running": worker_state.running,
+                        "pending": worker_state.pending,
+                        "pause_reason": worker_state.pause_reason,
+                        "current_path": worker_state.current_path,
+                        "completed": worker_state.completed,
+                        "last_error": worker_state.last_error,
+                    }
+                    if worker_state is not None
+                    else None
+                ),
             },
             "needle_router": {
                 "enabled": self.config.intelligent_tiers.needle_router.enabled,
@@ -249,6 +272,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             }
             access_store.bootstrap(config.authorization, bootstrap_tokens)
         semantic = config.intelligent_tiers.semantic_search
+        activity = ActivityClock()
         needle_library = None
         needle_router = None
         if semantic.enabled:
@@ -274,6 +298,8 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                     max_batch=semantic.max_batch_size,
                     max_input_chars=semantic.max_input_chars,
                     timeout_seconds=semantic.worker_timeout_seconds,
+                    nice=semantic.progressive_nice if semantic.progressive_enabled else 0,
+                    threads=1,
                 )
             else:
                 if not ffi_path:
@@ -332,7 +358,11 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             else:
                 derived_index.rebuild(materialized_root, repo_revision=repo_revision)
             if embedding_refresh_worker is not None:
-                embedding_refresh_worker.enqueue(materialized_root, repo_revision)
+                embedding_refresh_worker.enqueue(
+                    materialized_root,
+                    repo_revision,
+                    paths=changed_paths or None,
+                )
 
         manager = TransactionManager(
             control_connection,
@@ -368,12 +398,22 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
         )
         manager.recover_startup()
         if semantic.enabled and semantic.worker_mode == "subprocess":
-            embedding_refresh_worker = SemanticEmbeddingRefreshWorker(derived_index)
+            derived_index.mark_model_stale()
+            embedding_refresh_worker = SemanticEmbeddingRefreshWorker(
+                derived_index,
+                policy=ProgressiveEmbeddingPolicy(
+                    enabled=semantic.progressive_enabled,
+                    startup_delay_seconds=semantic.progressive_startup_delay_seconds,
+                    interactive_idle_seconds=semantic.progressive_interactive_idle_seconds,
+                    delay_seconds=semantic.progressive_delay_seconds,
+                    load_average_limit=semantic.progressive_load_average_limit,
+                ),
+                activity=activity,
+            )
             state = derived_index.get_state()
             if (
-                semantic.refresh_on_startup
-                and derived_index.semantic_status().embedding_revision != state.repo_revision
-            ):
+                semantic.progressive_enabled or semantic.refresh_on_startup
+            ) and derived_index.semantic_status().embedding_revision != state.repo_revision:
                 embedding_refresh_worker.enqueue(paths.repo_paths.current_dir, state.repo_revision)
         if (paths.repo_paths.current_dir / "skills" / ".versions").exists():
             revision = get_main_revision(paths.repo_paths)
@@ -405,6 +445,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             embedding_refresh_worker=embedding_refresh_worker,
             needle_library=needle_library,
             access_store=access_store,
+            activity=activity,
         )
     except Exception:
         if embedding_refresh_worker is not None:

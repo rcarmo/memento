@@ -317,6 +317,12 @@ class SemanticSearchConfig(BaseModel):
     max_candidates: int = Field(default=200, ge=1)
     default_search_mode: Literal["lexical", "semantic", "hybrid"] = "lexical"
     refresh_on_startup: bool = True
+    progressive_enabled: bool = False
+    progressive_startup_delay_seconds: float = Field(default=120.0, ge=0)
+    progressive_interactive_idle_seconds: float = Field(default=15.0, ge=0)
+    progressive_delay_seconds: float = Field(default=30.0, ge=0)
+    progressive_load_average_limit: float = Field(default=1.5, gt=0)
+    progressive_nice: int = Field(default=15, ge=0, le=19)
 
     @field_validator("ffi_library_path", "sqlite_extension_path", "model_path")
     @classmethod

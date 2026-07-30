@@ -48,6 +48,12 @@ A commit may finish just after the execute deadline and still return a controlle
 
 No DiskStation deployment is performed by GitHub Actions. Release automation builds and tests the image, then publishes it to GHCR. Updating the NAS remains a separate operator action with an explicit version and rollback plan.
 
+## Progressive embeddings
+
+The DiskStation profile uses one low-priority concept every 30 seconds after a two-minute startup grace and 15 seconds of interactive idle time. Work pauses above a 1-minute load average of 1.5. `nice 15` and single-thread native pool variables keep inference subordinate to MCP and storage workloads. The `/volume1/docker/memento/state:/var/lib/memento` mount preserves `derived.sqlite` and completed vectors across image upgrades.
+
+Do not delete `derived.sqlite` during routine releases. A deliberate rebuild now reuses unchanged embeddings and schedules only stale/missing paths.
+
 ## Managed access on DiskStation
 
 Provide `MEMENTO_ADMIN_MASTER_KEY` in `/volume1/docker/memento/config/memento.env`. Existing `MEMENTO_TOKEN_*` values are imported at bootstrap and retained only for emergency recovery. Open `http://<diskstation>:18081/admin` with the bootstrap credential, now identified as `sandbox`, and issue least-privilege instance credentials from presets. Follow [Access Management](access-management.md) for backup and explicit one-shot key rotation.
