@@ -20,14 +20,15 @@ On shared or low-power hosts, enable progressive generation instead of a full st
   "progressive_startup_delay_seconds": 120,
   "progressive_interactive_idle_seconds": 15,
   "progressive_delay_seconds": 30,
-  "progressive_load_average_limit": 1.5,
+  "progressive_cpu_busy_limit_percent": 75,
+  "progressive_cpu_sample_seconds": 15,
   "progressive_nice": 15,
   "max_batch_size": 1,
   "refresh_on_startup": false
 }
 ```
 
-The worker derives one missing or stale path at a time from `derived.sqlite`; no separate queue needs recovery. It waits through startup grace, recent interactive traffic, normalized host load (1-minute load average divided by CPU count) and pacing, then launches one short-lived embedding subprocess at low CPU priority with native thread pools restricted to one thread. Manual selected/visible/full refresh requests enter the same worker and receive priority without bypassing the gates.
+The worker derives one missing or stale path at a time from `derived.sqlite`; no separate queue needs recovery. It waits through startup grace, recent interactive traffic, sampled CPU utilization from `/proc/stat` and pacing, then launches one short-lived embedding subprocess at low CPU priority with native thread pools restricted to one thread. Manual selected/visible/full refresh requests enter the same worker and receive priority without bypassing the gates.
 
 Ready embeddings persist in `/var/lib/memento/derived.sqlite`. Container replacement therefore resumes from existing progress. Derived rebuilds retain embeddings whose concept text hash and model metadata remain valid, delete rows for removed concepts and enqueue only changed, missing, degraded or model-stale records. `/graph/api/v1/embeddings/status` reports `pause_reason`, `current_path` and `completed` count.
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import threading
 import time
 from collections import deque
@@ -9,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from memento.activity import ActivityClock
+from memento.cpu_usage import CpuUsageSampler
 from memento.derived.index import DerivedIndex
 
 
@@ -18,7 +18,7 @@ class ProgressiveEmbeddingPolicy:
     startup_delay_seconds: float = 120.0
     interactive_idle_seconds: float = 15.0
     delay_seconds: float = 30.0
-    load_average_limit: float = 1.5
+    cpu_busy_limit_percent: float = 75.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,15 +38,13 @@ class SemanticEmbeddingRefreshWorker:
         *,
         policy: ProgressiveEmbeddingPolicy | None = None,
         activity: ActivityClock | None = None,
-        load_average: Callable[[], float] | None = None,
-        cpu_count: Callable[[], int | None] = os.cpu_count,
+        cpu_usage: Callable[[], float | None] | None = None,
         monotonic: Callable[[], float] = time.monotonic,
     ) -> None:
         self._derived_index = derived_index
         self._policy = policy or ProgressiveEmbeddingPolicy()
         self._activity = activity or ActivityClock(monotonic)
-        self._load_average = load_average or (lambda: os.getloadavg()[0])
-        self._cpu_count = cpu_count
+        self._cpu_usage = cpu_usage or CpuUsageSampler(monotonic=monotonic).sample
         self._monotonic = monotonic
         self._condition = threading.Condition()
         self._bundle_root: Path | None = None
@@ -211,9 +209,11 @@ class SemanticEmbeddingRefreshWorker:
         idle_remaining = self._policy.interactive_idle_seconds - self._activity.idle_seconds()
         if idle_remaining > 0:
             return "interactive", idle_remaining
-        processors = max(1, self._cpu_count() or 1)
-        if self._load_average() / processors > self._policy.load_average_limit:
-            return "load", 1.0
+        cpu_busy = self._cpu_usage()
+        if cpu_busy is None:
+            return "cpu-sampling", 1.0
+        if cpu_busy > self._policy.cpu_busy_limit_percent:
+            return "cpu", 1.0
         if self._last_completed_at is not None:
             delay_remaining = self._policy.delay_seconds - (now - self._last_completed_at)
             if delay_remaining > 0:

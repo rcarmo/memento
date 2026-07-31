@@ -15,6 +15,7 @@ from memento.config import Principal, ServiceConfig
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.operations import OperationRequest
 from memento.control.proposals import ProposalStatus, list_proposals
+from memento.cpu_usage import CpuUsageSampler
 from memento.derived.embeddings_worker import (
     ProgressiveEmbeddingPolicy,
     SemanticEmbeddingRefreshWorker,
@@ -406,9 +407,12 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                     startup_delay_seconds=semantic.progressive_startup_delay_seconds,
                     interactive_idle_seconds=semantic.progressive_interactive_idle_seconds,
                     delay_seconds=semantic.progressive_delay_seconds,
-                    load_average_limit=semantic.progressive_load_average_limit,
+                    cpu_busy_limit_percent=semantic.progressive_cpu_busy_limit_percent,
                 ),
                 activity=activity,
+                cpu_usage=CpuUsageSampler(
+                    window_seconds=semantic.progressive_cpu_sample_seconds
+                ).sample,
             )
             state = derived_index.get_state()
             if (

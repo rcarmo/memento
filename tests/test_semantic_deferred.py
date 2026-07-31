@@ -380,9 +380,9 @@ def test_progressive_worker_resumes_pending_state_and_prioritizes_manual_paths(
             startup_delay_seconds=0,
             interactive_idle_seconds=0,
             delay_seconds=0,
-            load_average_limit=99,
+            cpu_busy_limit_percent=99,
         ),
-        load_average=lambda: 0,
+        cpu_usage=lambda: 0,
     )
     try:
         assert worker.enqueue(tmp_path, "rev-1", paths=("/manual.md",)) is True
@@ -397,7 +397,7 @@ def test_progressive_worker_pauses_for_activity_load_and_pacing(tmp_path: Path) 
     fake_index = FakeRefreshIndex()
     fake_index.pending_paths = ["/a.md"]
     now = [0.0]
-    load = [2.0]
+    cpu_busy = [90.0]
     activity = ActivityClock(lambda: now[0])
     worker = SemanticEmbeddingRefreshWorker(
         cast(DerivedIndex, fake_index),
@@ -406,11 +406,10 @@ def test_progressive_worker_pauses_for_activity_load_and_pacing(tmp_path: Path) 
             startup_delay_seconds=10,
             interactive_idle_seconds=5,
             delay_seconds=30,
-            load_average_limit=1.5,
+            cpu_busy_limit_percent=75,
         ),
         activity=activity,
-        load_average=lambda: load[0],
-        cpu_count=lambda: 1,
+        cpu_usage=lambda: cpu_busy[0],
         monotonic=lambda: now[0],
     )
     try:
@@ -420,8 +419,8 @@ def test_progressive_worker_pauses_for_activity_load_and_pacing(tmp_path: Path) 
         activity.touch()
         assert wait_for(lambda: worker.state().pause_reason == "interactive", timeout_seconds=1.5)
         now[0] = 17
-        assert wait_for(lambda: worker.state().pause_reason == "load", timeout_seconds=1.5)
-        load[0] = 0
+        assert wait_for(lambda: worker.state().pause_reason == "cpu", timeout_seconds=1.5)
+        cpu_busy[0] = 0
         assert wait_for(lambda: fake_index.path_calls == [("/a.md",)], timeout_seconds=1.5)
         fake_index.pending_paths = ["/b.md"]
         worker.enqueue(tmp_path, "rev-1")
@@ -432,9 +431,10 @@ def test_progressive_worker_pauses_for_activity_load_and_pacing(tmp_path: Path) 
         worker.close()
 
 
-def test_progressive_load_limit_is_normalized_by_cpu_count(tmp_path: Path) -> None:
+def test_progressive_worker_waits_for_cpu_sample_before_processing(tmp_path: Path) -> None:
     fake_index = FakeRefreshIndex()
     fake_index.pending_paths = ["/a.md"]
+    samples: list[float | None] = [None, 40.0]
     worker = SemanticEmbeddingRefreshWorker(
         cast(DerivedIndex, fake_index),
         policy=ProgressiveEmbeddingPolicy(
@@ -442,13 +442,13 @@ def test_progressive_load_limit_is_normalized_by_cpu_count(tmp_path: Path) -> No
             startup_delay_seconds=0,
             interactive_idle_seconds=0,
             delay_seconds=0,
-            load_average_limit=1.5,
+            cpu_busy_limit_percent=75,
         ),
-        load_average=lambda: 5.0,
-        cpu_count=lambda: 4,
+        cpu_usage=lambda: samples.pop(0) if samples else 40.0,
     )
     try:
         worker.enqueue(tmp_path, "rev-1")
+        assert wait_for(lambda: worker.state().pause_reason == "cpu-sampling", timeout_seconds=1.0)
         assert wait_for(lambda: fake_index.path_calls == [("/a.md",)], timeout_seconds=1.5)
     finally:
         worker.close()

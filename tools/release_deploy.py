@@ -197,7 +197,7 @@ def update_config(args: argparse.Namespace) -> None:
                 "path=pathlib.Path('/config/config.json')\n"
                 "data=json.loads(path.read_text())\n"
                 "semantic=data.setdefault('intelligent_tiers',{}).setdefault('semantic_search',{})\n"
-                "semantic.update({'enabled': True, 'worker_mode': 'subprocess', 'worker_path': '/usr/local/bin/memento-embed', 'model_path': '/usr/local/share/memento/models/gte-small.gtemodel', 'ffi_library_path': '/usr/local/lib/memento/libmemento_ffi.so', 'sqlite_extension_path': '/usr/local/lib/memento/libmemento_sqlite_vector.so', 'default_search_mode': 'lexical', 'refresh_on_startup': False, 'max_batch_size': 1, 'progressive_enabled': True, 'progressive_startup_delay_seconds': 120, 'progressive_interactive_idle_seconds': 15, 'progressive_delay_seconds': 30, 'progressive_load_average_limit': 1.5, 'progressive_nice': 15})\n"
+                "semantic.update({'enabled': True, 'worker_mode': 'subprocess', 'worker_path': '/usr/local/bin/memento-embed', 'model_path': '/usr/local/share/memento/models/gte-small.gtemodel', 'ffi_library_path': '/usr/local/lib/memento/libmemento_ffi.so', 'sqlite_extension_path': '/usr/local/lib/memento/libmemento_sqlite_vector.so', 'default_search_mode': 'lexical', 'refresh_on_startup': False, 'max_batch_size': 1, 'progressive_enabled': True, 'progressive_startup_delay_seconds': 120, 'progressive_interactive_idle_seconds': 15, 'progressive_delay_seconds': 30, 'progressive_cpu_busy_limit_percent': 75, 'progressive_cpu_sample_seconds': 15, 'progressive_nice': 15})\n"
                 "path.write_text(json.dumps(data, indent=2, sort_keys=False)+'\\n')\n"
                 "print('updated memento config')\n",
             ],

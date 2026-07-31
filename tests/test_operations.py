@@ -120,7 +120,8 @@ def test_diskstation_progressive_embeddings_are_persistent_and_single_threaded()
     assert semantic["progressive_startup_delay_seconds"] == 120
     assert semantic["progressive_interactive_idle_seconds"] == 15
     assert semantic["progressive_delay_seconds"] == 30
-    assert semantic["progressive_load_average_limit"] == 1.5
+    assert semantic["progressive_cpu_busy_limit_percent"] == 75
+    assert semantic["progressive_cpu_sample_seconds"] == 15
     assert semantic["progressive_nice"] == 15
     assert "/volume1/docker/memento/state:/var/lib/memento" in compose
     for variable in (
@@ -136,7 +137,8 @@ def test_diskstation_progressive_embeddings_are_persistent_and_single_threaded()
         "progressive_startup_delay_seconds",
         "progressive_interactive_idle_seconds",
         "progressive_delay_seconds",
-        "progressive_load_average_limit",
+        "progressive_cpu_busy_limit_percent",
+        "progressive_cpu_sample_seconds",
         "progressive_nice",
     ):
         assert setting in deploy_helper

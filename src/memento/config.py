@@ -322,6 +322,8 @@ class SemanticSearchConfig(BaseModel):
     progressive_interactive_idle_seconds: float = Field(default=15.0, ge=0)
     progressive_delay_seconds: float = Field(default=30.0, ge=0)
     progressive_load_average_limit: float = Field(default=1.5, gt=0)
+    progressive_cpu_busy_limit_percent: float = Field(default=75.0, gt=0, le=100)
+    progressive_cpu_sample_seconds: float = Field(default=15.0, gt=0)
     progressive_nice: int = Field(default=15, ge=0, le=19)
 
     @field_validator("ffi_library_path", "sqlite_extension_path", "model_path")
