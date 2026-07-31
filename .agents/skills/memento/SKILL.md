@@ -147,6 +147,8 @@ A shared skill is an ordinary concept under `/skills/`, tagged `skill`, with an 
 
 Use `memory_asset_get` with the concept path, `asset_kind="skill"` and an optional version. Validate the returned digest and manifest before installing files into an agent skill directory. Memento stores and returns skill packs; it does not execute them.
 
+To publish a local ZIP from a Piclaw session, call `memory_asset_stage_begin`, upload the raw file to its returned `upload_path` with the one-time `X-Memento-Upload-Ticket`, then call `memory_asset_stage_status`. Use the returned `staged_asset_id` in an ordinary `attach_asset_pack` proposal. Do not pass an agent bearer token to the upload command; the ticket is short-lived, principal-bound and single-use.
+
 Skill changes should normally use proposals so a curator reviews both Markdown and packaged files.
 
 ## Graph And Audit

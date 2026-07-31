@@ -9,6 +9,7 @@ import zipfile
 from collections.abc import Generator
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any, Literal, cast
 
 import pytest
@@ -419,11 +420,11 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     expected_counts: tuple[
         tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
     ] = (
-        ("compact", 6),
-        ("standard", 20),
+        ("compact", 8),
+        ("standard", 22),
         ("read_only", 9),
-        ("curator", 11),
-        ("admin", 21),
+        ("curator", 13),
+        ("admin", 23),
     )
     for surface, count in expected_counts:
         server = _server_for(
@@ -440,6 +441,8 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "status",
         "search",
         "read",
+        "asset_stage_begin",
+        "asset_stage_status",
         "asset_get",
         "execute",
     ]
@@ -451,6 +454,12 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     changes_schema = operation["input_schema"]["properties"]["changes"]
     assert changes_schema["type"] == "array"
     assert "anyOf" in changes_schema["items"]
+    attachment = operation["input_schema"]["$defs"]["_AttachAssetPackInputSchema"]
+    assert {"zip_base64", "staged_asset_id"} <= set(attachment["properties"])
+    assert "asset_id" not in attachment["properties"]
+    assert "manifest" not in attachment["properties"]
+    assert len(attachment["oneOf"]) == 2
+    assert {"kind", "path", "asset_kind", "version"} <= set(attachment["required"])
     help_payload = success_data(service.memory_help(smith))
     assert "memory_execute" in help_payload["mcp"]["direct_tools"]
     assert help_payload["goals"]["skills"] == [
@@ -471,6 +480,53 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "propose_freeform",
         "propose_update",
     ]
+
+
+def test_mcp_asset_stage_ticket_and_status_bridge(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    store = StagedAssetStore(service._deps.control_connection)
+    staged_service = MemoryService(
+        ServiceDependencies(
+            config=service_config,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            staged_asset_store=store,
+        )
+    )
+    server = MementoMCPServer(
+        staged_service,
+        bearer_tokens={
+            "smith-token": Principal(name="smith", roles=("curator", "proposer", "reader"))
+        },
+    )
+    monkeypatch.setattr(
+        "memento.server.get_request_context",
+        lambda: SimpleNamespace(principal="smith", session_id="session-1"),
+    )
+    begun = asyncio.run(
+        server.tool_memory_asset_stage_begin(
+            asset_kind="templates",
+            version="1.0.0",
+            idempotency_key="mcp-ticket-1",
+        )
+    )
+    assert begun["status"] == "success"
+    assert begun["data"]["upload_path"] == "/assets/staging/upload"
+    assert begun["data"]["upload_ticket_header"] == "X-Memento-Upload-Ticket"
+    raw_token = begun["data"]["upload_ticket"]
+    assert raw_token.startswith("memento_upload_")
+    pending = asyncio.run(server.tool_memory_asset_stage_status("mcp-ticket-1"))
+    assert pending["data"]["state"] == "pending"
+    staged, _ = store.put_with_ticket(raw_token=raw_token, zip_bytes=_skill_zip("# Template\n")[1])
+    uploaded = asyncio.run(server.tool_memory_asset_stage_status("mcp-ticket-1"))
+    assert uploaded["data"]["state"] == "uploaded"
+    assert uploaded["data"]["staged_asset_id"] == staged.staged_asset_id
+    assert uploaded["data"]["staged_asset"]["sha256"] == staged.sha256
 
 
 def test_asset_pack_tool_discovery_and_catalog_schemas(
@@ -528,6 +584,8 @@ def test_asset_pack_tool_discovery_and_catalog_schemas(
     assert [item["operation"] for item in asset_pack_workflow["operations"]] == [
         "search",
         "read",
+        "asset_stage_begin",
+        "asset_stage_status",
         "propose",
         "asset_get",
         "asset_prune",
@@ -933,6 +991,8 @@ def test_memory_route_disabled_and_server_discovery(
         "memory_search",
         "memory_read",
         "memory_route",
+        "memory_asset_stage_begin",
+        "memory_asset_stage_status",
         "memory_asset_get",
         "memory_execute",
     ]

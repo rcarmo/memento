@@ -1,18 +1,41 @@
 from __future__ import annotations
 
+import hashlib
+import secrets
 import sqlite3
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import uuid4
 
-from memento.skill_packs import SkillPackManifest, validate_asset_pack
+from memento.repository.asset_packs import validate_asset_kind
+from memento.skill_packs import SkillPackManifest, parse_stable_semver, validate_asset_pack
 
 STAGING_TTL_HOURS = 24
+UPLOAD_TICKET_TTL_HOURS = 1
 
 
 class StagedAssetError(ValueError):
     pass
+
+
+@dataclass(frozen=True, slots=True)
+class UploadTicket:
+    principal: str
+    idempotency_key: str
+    asset_kind: str
+    version: str
+    expires_at: str
+    staged_asset_id: str | None
+    consumed_at: str | None
+
+    @property
+    def state(self) -> str:
+        if self.staged_asset_id is not None:
+            return "uploaded"
+        if _parse_timestamp(self.expires_at) <= _now():
+            return "expired"
+        return "pending"
 
 
 @dataclass(frozen=True, slots=True)
@@ -63,6 +86,96 @@ class StagedAssetStore:
     def __init__(self, connection: sqlite3.Connection) -> None:
         self._connection = connection
 
+    def begin_upload(
+        self,
+        *,
+        principal: str,
+        idempotency_key: str,
+        asset_kind: str,
+        version: str,
+    ) -> tuple[UploadTicket, str]:
+        if not idempotency_key.strip():
+            raise StagedAssetError("idempotency_key is required")
+        existing = self._connection.execute(
+            "SELECT * FROM asset_upload_tickets WHERE principal=? AND idempotency_key=?",
+            (principal, idempotency_key),
+        ).fetchone()
+        if existing is not None:
+            ticket = self._ticket_from_row(existing)
+            if ticket.asset_kind != asset_kind or ticket.version != version:
+                raise StagedAssetError("idempotency key was already used for a different upload")
+            raise StagedAssetError(f"upload ticket already issued: {ticket.state}")
+        parse_stable_semver(version)
+        validate_asset_kind(asset_kind)
+        now = _now()
+        raw_token = "memento_upload_" + secrets.token_urlsafe(32)
+        with self._connection:
+            self._connection.execute(
+                """
+                INSERT INTO asset_upload_tickets(
+                    token_digest,principal,idempotency_key,asset_kind,version,
+                    created_at,expires_at,staged_asset_id,consumed_at
+                ) VALUES(?,?,?,?,?,?,?,?,?)
+                """,
+                (
+                    hashlib.sha256(raw_token.encode()).hexdigest(),
+                    principal,
+                    idempotency_key,
+                    asset_kind,
+                    version,
+                    _timestamp(now),
+                    _timestamp(now + timedelta(hours=UPLOAD_TICKET_TTL_HOURS)),
+                    None,
+                    None,
+                ),
+            )
+        return self.ticket_status(principal=principal, idempotency_key=idempotency_key), raw_token
+
+    def ticket_status(self, *, principal: str, idempotency_key: str) -> UploadTicket:
+        row = self._connection.execute(
+            "SELECT * FROM asset_upload_tickets WHERE principal=? AND idempotency_key=?",
+            (principal, idempotency_key),
+        ).fetchone()
+        if row is None:
+            raise StagedAssetError("upload ticket not found")
+        return self._ticket_from_row(row)
+
+    def put_with_ticket(self, *, raw_token: str, zip_bytes: bytes) -> tuple[StagedAsset, bool]:
+        digest = hashlib.sha256(raw_token.encode()).hexdigest()
+        row = self._connection.execute(
+            "SELECT * FROM asset_upload_tickets WHERE token_digest=?", (digest,)
+        ).fetchone()
+        if row is None:
+            raise StagedAssetError("upload ticket not found")
+        ticket = self._ticket_from_row(row)
+        if ticket.state == "expired":
+            raise StagedAssetError("upload ticket expired")
+        if ticket.staged_asset_id is not None:
+            staged = self.get(principal=ticket.principal, staged_asset_id=ticket.staged_asset_id)
+            if staged.sha256 != hashlib.sha256(zip_bytes).hexdigest():
+                raise StagedAssetError("upload ticket was already used for a different asset")
+            return staged, True
+        with self._connection:
+            staged, replayed = self.put(
+                principal=ticket.principal,
+                idempotency_key=f"ticket:{ticket.idempotency_key}",
+                asset_kind=ticket.asset_kind,
+                version=ticket.version,
+                zip_bytes=zip_bytes,
+                manage_transaction=False,
+            )
+            now = _timestamp(_now())
+            updated = self._connection.execute(
+                """
+                UPDATE asset_upload_tickets SET staged_asset_id=?,consumed_at=?
+                WHERE token_digest=? AND staged_asset_id IS NULL
+                """,
+                (staged.staged_asset_id, now, digest),
+            )
+            if updated.rowcount != 1:
+                raise StagedAssetError("upload ticket could not be consumed")
+        return staged, replayed
+
     def put(
         self,
         *,
@@ -71,6 +184,7 @@ class StagedAssetStore:
         asset_kind: str,
         version: str,
         zip_bytes: bytes,
+        manage_transaction: bool = True,
     ) -> tuple[StagedAsset, bool]:
         if not idempotency_key.strip():
             raise StagedAssetError("Idempotency-Key header is required")
@@ -108,7 +222,8 @@ class StagedAssetStore:
             expires_at=_timestamp(now + timedelta(hours=STAGING_TTL_HOURS)),
             consumed_at=None,
         )
-        with self._connection:
+
+        def insert() -> None:
             self._connection.execute(
                 """
                 INSERT INTO staged_assets(
@@ -133,6 +248,12 @@ class StagedAssetStore:
                     None,
                 ),
             )
+
+        if manage_transaction:
+            with self._connection:
+                insert()
+        else:
+            insert()
         return staged, False
 
     def get(
@@ -191,6 +312,18 @@ class StagedAssetStore:
                 (now,),
             )
         return result.rowcount
+
+    @staticmethod
+    def _ticket_from_row(row: sqlite3.Row) -> UploadTicket:
+        return UploadTicket(
+            principal=str(row["principal"]),
+            idempotency_key=str(row["idempotency_key"]),
+            asset_kind=str(row["asset_kind"]),
+            version=str(row["version"]),
+            expires_at=str(row["expires_at"]),
+            staged_asset_id=(str(row["staged_asset_id"]) if row["staged_asset_id"] else None),
+            consumed_at=str(row["consumed_at"]) if row["consumed_at"] else None,
+        )
 
     @staticmethod
     def _from_row(row: sqlite3.Row) -> StagedAsset:

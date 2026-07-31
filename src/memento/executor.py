@@ -113,6 +113,20 @@ class ProposalApplyArgs(BaseModel):
     idempotency_key: str
 
 
+class AssetStageBeginArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    asset_kind: str
+    version: str
+    idempotency_key: str
+
+
+class AssetStageStatusArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    idempotency_key: str
+
+
 class AssetGetArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 

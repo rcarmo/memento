@@ -28,10 +28,21 @@ class AssetStagingHTTPHandler:
         route = urlsplit(path)
         if route.path != "/assets/staging" and not route.path.startswith("/assets/staging/"):
             return None
-        principal = self._authenticate(headers)
-        if principal is None or "proposer" not in principal.roles:
-            return self._json({"error": "proposer bearer credential required"}, 401)
         try:
+            if method == "POST" and route.path == "/assets/staging/upload":
+                if headers.get("content-type", "").split(";", 1)[0].strip() != "application/zip":
+                    return self._json({"error": "Content-Type must be application/zip"}, 415)
+                if len(body) > MAX_ZIP_BYTES:
+                    return self._json({"error": "ZIP archive exceeds maximum encoded size"}, 413)
+                staged, replayed = self._store.put_with_ticket(
+                    raw_token=headers.get("x-memento-upload-ticket", ""), zip_bytes=body
+                )
+                return self._json(
+                    {**staged.public_payload(), "replayed": replayed}, 200 if replayed else 201
+                )
+            principal = self._authenticate(headers)
+            if principal is None or "proposer" not in principal.roles:
+                return self._json({"error": "proposer bearer credential required"}, 401)
             if method == "POST" and route.path == "/assets/staging":
                 if headers.get("content-type", "").split(";", 1)[0].strip() != "application/zip":
                     return self._json({"error": "Content-Type must be application/zip"}, 415)

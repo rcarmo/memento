@@ -2,4 +2,4 @@ from memento import __version__
 
 
 def test_package_version() -> None:
-    assert __version__ == "0.3.12"
+    assert __version__ == "0.3.13"

@@ -5,7 +5,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-SCHEMA_VERSION = "8"
+SCHEMA_VERSION = "9"
 
 MIGRATIONS_V1 = (
     """
@@ -172,6 +172,25 @@ MIGRATIONS_V8 = (
     "CREATE INDEX IF NOT EXISTS idx_staged_assets_expiry ON staged_assets(state, expires_at)",
 )
 
+MIGRATIONS_V9 = (
+    """
+    CREATE TABLE IF NOT EXISTS asset_upload_tickets (
+        token_digest TEXT PRIMARY KEY,
+        principal TEXT NOT NULL,
+        idempotency_key TEXT NOT NULL,
+        asset_kind TEXT NOT NULL,
+        version TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        staged_asset_id TEXT,
+        consumed_at TEXT,
+        UNIQUE(principal, idempotency_key),
+        FOREIGN KEY(staged_asset_id) REFERENCES staged_assets(staged_asset_id)
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_asset_upload_ticket_expiry ON asset_upload_tickets(expires_at)",
+)
+
 MIGRATIONS_V6 = (
     """
     CREATE TABLE IF NOT EXISTS proposal_assets (
@@ -215,7 +234,7 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
             "SELECT value FROM service_state WHERE key = 'schema_version'"
         ).fetchone()
         if schema_row is None:
-            for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7, *MIGRATIONS_V8):
+            for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7, *MIGRATIONS_V8, *MIGRATIONS_V9):
                 connection.execute(statement)
             connection.execute(
                 "INSERT INTO service_state(key, value, updated_at) "
@@ -226,9 +245,9 @@ def migrate_control_db(connection: sqlite3.Connection) -> None:
         current_version = str(schema_row["value"])
         if current_version == "5":
             _migrate_v5_to_v6(connection)
-        elif current_version not in {"1", "2", "3", "4", "6", "7", SCHEMA_VERSION}:
+        elif current_version not in {"1", "2", "3", "4", "6", "7", "8", SCHEMA_VERSION}:
             raise MigrationError(f"unsupported control schema version: {current_version}")
-        for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7, *MIGRATIONS_V8):
+        for statement in (*MIGRATIONS_V6, *MIGRATIONS_V7, *MIGRATIONS_V8, *MIGRATIONS_V9):
             connection.execute(statement)
         if current_version != SCHEMA_VERSION:
             connection.execute(

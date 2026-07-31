@@ -167,6 +167,33 @@ OPERATION_SPECS: tuple[OperationSpec, ...] = (
         commit_capable=True,
     ),
     OperationSpec(
+        op_name="asset_stage_begin",
+        tool_name="memory_asset_stage_begin",
+        method_name="memory_asset_stage_begin",
+        description="Create a one-time raw ZIP upload ticket for a staged asset pack.",
+        roles=("proposer",),
+        discovery_surfaces=frozenset(
+            {COMPACT_SURFACE, STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}
+        ),
+        examples=(
+            {
+                "asset_kind": "skill",
+                "version": "1.0.0",
+                "idempotency_key": "upload-deploy-skill-1.0.0",
+            },
+        ),
+    ),
+    OperationSpec(
+        op_name="asset_stage_status",
+        tool_name="memory_asset_stage_status",
+        method_name="memory_asset_stage_status",
+        description="Reconcile a staged asset upload ticket and retrieve its staged_asset_id.",
+        roles=("proposer",),
+        discovery_surfaces=frozenset(
+            {COMPACT_SURFACE, STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}
+        ),
+    ),
+    OperationSpec(
         op_name="asset_get",
         tool_name="memory_asset_get",
         method_name="memory_asset_get",
@@ -265,7 +292,15 @@ WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
     },
     "asset_pack": {
         "description": "Discover, inspect, attach, retrieve, and prune versioned memory assets.",
-        "operations": ["search", "read", "propose", "asset_get", "asset_prune"],
+        "operations": [
+            "search",
+            "read",
+            "asset_stage_begin",
+            "asset_stage_status",
+            "propose",
+            "asset_get",
+            "asset_prune",
+        ],
     },
 }
 

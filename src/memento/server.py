@@ -5,9 +5,9 @@ from collections.abc import Mapping
 from dataclasses import asdict
 from inspect import Parameter, signature
 from pathlib import Path
-from typing import Any, cast, get_args, get_origin
+from typing import Any, Literal, cast, get_args, get_origin
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from memento.access import AccessStore
 from memento.activity import ActivityClock
@@ -17,6 +17,8 @@ from memento.executor import (
     AnswerArgs,
     AssetGetArgs,
     AssetPruneArgs,
+    AssetStageBeginArgs,
+    AssetStageStatusArgs,
     AuditArgs,
     CreateArgs,
     EmptyArgs,
@@ -45,7 +47,6 @@ from memento.mcp_registry import (
     tool_names_for_surface,
 )
 from memento.service import (
-    AttachAssetPackChange,
     CreateChange,
     MemoryService,
     PatchChange,
@@ -69,12 +70,38 @@ except ImportError:  # pragma: no cover - optional runtime dependency
         raise RuntimeError("uMCP is not installed")
 
 
+class _AttachAssetPackInputSchema(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        frozen=True,
+        json_schema_extra={
+            "oneOf": [
+                {"required": ["zip_base64"], "not": {"required": ["staged_asset_id"]}},
+                {"required": ["staged_asset_id"], "not": {"required": ["zip_base64"]}},
+            ]
+        },
+    )
+
+    kind: Literal["attach_asset_pack"]
+    path: str
+    asset_kind: str
+    version: str
+    zip_base64: str | None = None
+    staged_asset_id: str | None = None
+
+    @model_validator(mode="after")
+    def validate_transport(self) -> _AttachAssetPackInputSchema:
+        if (self.zip_base64 is None) == (self.staged_asset_id is None):
+            raise ValueError("exactly one of zip_base64 or staged_asset_id is required")
+        return self
+
+
 class _ProposeArgsSchema(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     intent: str
     base_revision: str
-    changes: list[CreateChange | PatchChange | RenameChange | AttachAssetPackChange]
+    changes: list[CreateChange | PatchChange | RenameChange | _AttachAssetPackInputSchema]
     rationale: str | None = None
 
 
@@ -102,6 +129,8 @@ _TOOL_ARG_MODELS: dict[str, type[BaseModel]] = {
     "memory_proposal_list": ProposalListArgs,
     "memory_proposal_review": ProposalReviewArgs,
     "memory_proposal_apply": ProposalApplyArgs,
+    "memory_asset_stage_begin": AssetStageBeginArgs,
+    "memory_asset_stage_status": AssetStageStatusArgs,
     "memory_asset_get": AssetGetArgs,
     "memory_asset_prune": AssetPruneArgs,
     "memory_create": CreateArgs,
@@ -565,6 +594,76 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         )
         await self._notify_for_envelope(envelope.model_dump(mode="json"))
         return envelope.model_dump(mode="json")
+
+    async def tool_memory_asset_stage_begin(
+        self, asset_kind: str, version: str, idempotency_key: str
+    ) -> dict[str, Any]:
+        context = self._context()
+        if "proposer" not in context.principal.roles:
+            return self._service._failure(ValueError("proposer role is required")).model_dump(
+                mode="json"
+            )
+        store = self._service._deps.staged_asset_store
+        if store is None:
+            return self._service._failure(ValueError("asset staging is unavailable")).model_dump(
+                mode="json"
+            )
+        try:
+            ticket, raw_token = store.begin_upload(
+                principal=context.principal.name,
+                idempotency_key=idempotency_key,
+                asset_kind=asset_kind,
+                version=version,
+            )
+        except ValueError as exc:
+            return self._service._failure(exc).model_dump(mode="json")
+        return self._service._success(
+            {
+                "state": ticket.state,
+                "asset_kind": ticket.asset_kind,
+                "version": ticket.version,
+                "idempotency_key": ticket.idempotency_key,
+                "expires_at": ticket.expires_at,
+                "upload_path": "/assets/staging/upload",
+                "upload_method": "POST",
+                "upload_content_type": "application/zip",
+                "upload_ticket_header": "X-Memento-Upload-Ticket",
+                "upload_ticket": raw_token,
+            }
+        ).model_dump(mode="json")
+
+    async def tool_memory_asset_stage_status(self, idempotency_key: str) -> dict[str, Any]:
+        context = self._context()
+        if "proposer" not in context.principal.roles:
+            return self._service._failure(ValueError("proposer role is required")).model_dump(
+                mode="json"
+            )
+        store = self._service._deps.staged_asset_store
+        if store is None:
+            return self._service._failure(ValueError("asset staging is unavailable")).model_dump(
+                mode="json"
+            )
+        try:
+            ticket = store.ticket_status(
+                principal=context.principal.name, idempotency_key=idempotency_key
+            )
+            payload: dict[str, Any] = {
+                "state": ticket.state,
+                "asset_kind": ticket.asset_kind,
+                "version": ticket.version,
+                "idempotency_key": ticket.idempotency_key,
+                "expires_at": ticket.expires_at,
+                "staged_asset_id": ticket.staged_asset_id,
+                "consumed_at": ticket.consumed_at,
+            }
+            if ticket.staged_asset_id is not None:
+                payload["staged_asset"] = store.get(
+                    principal=context.principal.name,
+                    staged_asset_id=ticket.staged_asset_id,
+                ).public_payload()
+        except ValueError as exc:
+            return self._service._failure(exc).model_dump(mode="json")
+        return self._service._success(payload).model_dump(mode="json")
 
     async def tool_memory_asset_get(
         self, id_or_path: str, asset_kind: str, version: str | None = None

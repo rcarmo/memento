@@ -120,11 +120,11 @@ Configured `mcp.tool_surface` controls regular memory-tool discovery. When manag
 
 | Surface | Exposed direct tools |
 |---|---|
-| `compact` | core help/status/search/read/execute plus `memory_asset_get`, optional `memory_answer` and optional `memory_route` (**6** to **8**) |
-| `standard` | the **20** direct compatibility tools, including generic asset retrieval and pruning |
-| `read_only` | the **9** discovery, concept-read and asset-read tools |
-| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**11** or **12** with `memory_answer`) |
-| `admin` | the **21**-tool full direct memory surface plus `memory_execute`; managed administrators additionally receive the role-filtered `access_*` family |
+| `compact` | core help/status/search/read/execute, asset staging begin/status and `memory_asset_get`, plus optional `memory_answer` and `memory_route` (**8** to **10**) |
+| `standard` | the **22** direct compatibility tools, including staging, generic asset retrieval and pruning |
+| `read_only` | the **9** discovery, concept-read and asset-read tools; no upload ticket tools |
+| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**13** or **14** with `memory_answer`) |
+| `admin` | the **23**-tool full direct memory surface plus `memory_execute`; managed administrators additionally receive the role-filtered `access_*` family |
 
 ### Catalog resources
 
@@ -141,7 +141,7 @@ They expose generated descriptions, roles, examples and input schemas. Current w
 * `inspect` -> `search`, `read`
 * `propose` -> `search`, `read`, `propose`, `propose_freeform`, `propose_update`
 * `curate` -> `proposal_list`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_prune`, `create`, `patch`, `rename`
-* `asset_pack` -> `search`, `read`, `propose`, `asset_get`, `asset_prune`
+* `asset_pack` -> `search`, `read`, `asset_stage_begin`, `asset_stage_status`, `propose`, `asset_get`, `asset_prune`
 
 ### `memory_help`
 
@@ -357,10 +357,14 @@ Asset kinds and versions use lowercase/hyphen names and stable `MAJOR.MINOR.PATC
 
 `memory_propose` accepts an `attach_asset_pack` change containing `path`, `asset_kind`, `version` and exactly one of `zip_base64` or `staged_asset_id`. Stored proposal JSON replaces either transport reference with an asset ID, digest and generated manifest. `memory_proposal_get/list/review/apply` remain the only proposal lifecycle.
 
-For large packs, clients should send the ZIP as a raw binary body to `POST /assets/staging` using a raw binary body plus `Content-Type: application/zip`, bearer authentication, `Idempotency-Key`, `X-Memento-Asset-Kind` and `X-Memento-Asset-Version` headers. The response contains `staged_asset_id`, SHA-256, manifest and 24-hour expiry. `GET /assets/staging/{staged_asset_id}` returns `ready`, `consumed` or `expired` state for reconciliation. Stages are principal-scoped; skill/body compatibility is checked again when the proposal consumes the stage. Proposal creation and stage consumption commit atomically; consumed staging bytes are removed after being copied into proposal asset storage.
+For Piclaw/MCP clients, `memory_asset_stage_begin` creates a one-hour, one-time, principal-bound upload ticket and returns `/assets/staging/upload`, the `X-Memento-Upload-Ticket` header name and the ticket value. The client sends the ZIP as a raw `application/zip` body without exposing its bearer token to the upload command. `memory_asset_stage_status` reconciles `pending`, `uploaded` or `expired` ticket state and returns the generated `staged_asset_id`, SHA-256 and manifest after upload.
+
+Clients that already manage bearer authentication may alternatively use `POST /assets/staging` with `Authorization`, `Idempotency-Key`, `X-Memento-Asset-Kind` and `X-Memento-Asset-Version` headers, then reconcile with `GET /assets/staging/{staged_asset_id}`. Stages are principal-scoped and expire after 24 hours; ticket upload authorization expires after one hour. Skill/body compatibility is checked again when the proposal consumes the stage. Proposal creation and stage consumption commit atomically; consumed staging bytes are removed after being copied into proposal asset storage.
 
 | Tool | Required role | Purpose |
 |---|---|---|
+| `memory_asset_stage_begin` | `proposer` | issue a one-time raw ZIP upload ticket and upload instructions |
+| `memory_asset_stage_status` | `proposer` | reconcile ticket/upload state and retrieve `staged_asset_id` |
 | `memory_asset_get` | `reader` | retrieve latest or explicit version, manifest and ZIP as base64 |
 | `memory_asset_prune` | `curator` | remove retained versions beyond the keep count |
 

@@ -131,6 +131,67 @@ def test_proposal_and_stage_consumption_can_share_one_transaction(
     )
 
 
+def test_upload_ticket_is_one_time_principal_bound_and_reconcilable(
+    connection: sqlite3.Connection,
+) -> None:
+    store = StagedAssetStore(connection)
+    ticket, raw_token = store.begin_upload(
+        principal="flint",
+        idempotency_key="ticket-1",
+        asset_kind="templates",
+        version="1.0.0",
+    )
+    assert ticket.state == "pending"
+    assert raw_token.startswith("memento_upload_")
+    with pytest.raises(StagedAssetError, match="already issued"):
+        store.begin_upload(
+            principal="flint",
+            idempotency_key="ticket-1",
+            asset_kind="templates",
+            version="1.0.0",
+        )
+    staged, replayed = store.put_with_ticket(raw_token=raw_token, zip_bytes=zip_bytes())
+    assert replayed is False
+    assert store.ticket_status(principal="flint", idempotency_key="ticket-1").state == "uploaded"
+    assert (
+        store.ticket_status(principal="flint", idempotency_key="ticket-1").staged_asset_id
+        == staged.staged_asset_id
+    )
+    with pytest.raises(StagedAssetError, match="not found"):
+        store.ticket_status(principal="other", idempotency_key="ticket-1")
+    replay, replayed = store.put_with_ticket(raw_token=raw_token, zip_bytes=zip_bytes())
+    assert replayed is True
+    assert replay.staged_asset_id == staged.staged_asset_id
+
+
+def test_staging_http_ticket_upload_requires_no_bearer(connection: sqlite3.Connection) -> None:
+    proposer = Principal(name="flint", roles=("reader", "proposer"))
+    store = StagedAssetStore(connection)
+    _ticket, raw_token = store.begin_upload(
+        principal="flint",
+        idempotency_key="ticket-http-1",
+        asset_kind="templates",
+        version="1.0.0",
+    )
+    handler = AssetStagingHTTPHandler(store, lambda _headers: proposer)
+    response = handler.handle(
+        method="POST",
+        path="/assets/staging/upload",
+        headers={
+            "content-type": "application/zip",
+            "x-memento-upload-ticket": raw_token,
+        },
+        body=zip_bytes(),
+    )
+    assert response is not None and response.status == 201
+    payload = json.loads(response.body)
+    assert payload["state"] == "ready"
+    assert (
+        store.ticket_status(principal="flint", idempotency_key="ticket-http-1").staged_asset_id
+        == payload["staged_asset_id"]
+    )
+
+
 def test_staging_http_auth_validation_replay_and_status(connection: sqlite3.Connection) -> None:
     proposer = Principal(name="flint", roles=("reader", "proposer"))
     handler = AssetStagingHTTPHandler(
