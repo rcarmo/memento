@@ -410,6 +410,7 @@ def test_progressive_worker_pauses_for_activity_load_and_pacing(tmp_path: Path) 
         ),
         activity=activity,
         load_average=lambda: load[0],
+        cpu_count=lambda: 1,
         monotonic=lambda: now[0],
     )
     try:
@@ -427,6 +428,28 @@ def test_progressive_worker_pauses_for_activity_load_and_pacing(tmp_path: Path) 
         assert wait_for(lambda: worker.state().pause_reason == "pacing", timeout_seconds=1.5)
         now[0] = 48
         assert wait_for(lambda: fake_index.path_calls[-1] == ("/b.md",), timeout_seconds=1.5)
+    finally:
+        worker.close()
+
+
+def test_progressive_load_limit_is_normalized_by_cpu_count(tmp_path: Path) -> None:
+    fake_index = FakeRefreshIndex()
+    fake_index.pending_paths = ["/a.md"]
+    worker = SemanticEmbeddingRefreshWorker(
+        cast(DerivedIndex, fake_index),
+        policy=ProgressiveEmbeddingPolicy(
+            enabled=True,
+            startup_delay_seconds=0,
+            interactive_idle_seconds=0,
+            delay_seconds=0,
+            load_average_limit=1.5,
+        ),
+        load_average=lambda: 5.0,
+        cpu_count=lambda: 4,
+    )
+    try:
+        worker.enqueue(tmp_path, "rev-1")
+        assert wait_for(lambda: fake_index.path_calls == [("/a.md",)], timeout_seconds=1.5)
     finally:
         worker.close()
 

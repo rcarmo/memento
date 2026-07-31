@@ -39,12 +39,14 @@ class SemanticEmbeddingRefreshWorker:
         policy: ProgressiveEmbeddingPolicy | None = None,
         activity: ActivityClock | None = None,
         load_average: Callable[[], float] | None = None,
+        cpu_count: Callable[[], int | None] = os.cpu_count,
         monotonic: Callable[[], float] = time.monotonic,
     ) -> None:
         self._derived_index = derived_index
         self._policy = policy or ProgressiveEmbeddingPolicy()
         self._activity = activity or ActivityClock(monotonic)
         self._load_average = load_average or (lambda: os.getloadavg()[0])
+        self._cpu_count = cpu_count
         self._monotonic = monotonic
         self._condition = threading.Condition()
         self._bundle_root: Path | None = None
@@ -209,7 +211,8 @@ class SemanticEmbeddingRefreshWorker:
         idle_remaining = self._policy.interactive_idle_seconds - self._activity.idle_seconds()
         if idle_remaining > 0:
             return "interactive", idle_remaining
-        if self._load_average() > self._policy.load_average_limit:
+        processors = max(1, self._cpu_count() or 1)
+        if self._load_average() / processors > self._policy.load_average_limit:
             return "load", 1.0
         if self._last_completed_at is not None:
             delay_remaining = self._policy.delay_seconds - (now - self._last_completed_at)

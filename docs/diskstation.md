@@ -50,7 +50,7 @@ No DiskStation deployment is performed by GitHub Actions. Release automation bui
 
 ## Progressive embeddings
 
-The DiskStation profile uses one low-priority concept every 30 seconds after a two-minute startup grace and 15 seconds of interactive idle time. Work pauses above a 1-minute load average of 1.5. `nice 15` and single-thread native pool variables keep inference subordinate to MCP and storage workloads. The `/volume1/docker/memento/state:/var/lib/memento` mount preserves `derived.sqlite` and completed vectors across image upgrades.
+The DiskStation profile uses one low-priority concept every 30 seconds after a two-minute startup grace and 15 seconds of interactive idle time. Work pauses when the 1-minute load average divided by CPU count exceeds 1.5. `nice 15` and single-thread native pool variables keep inference subordinate to MCP and storage workloads. The `/volume1/docker/memento/state:/var/lib/memento` mount preserves `derived.sqlite` and completed vectors across image upgrades.
 
 Do not delete `derived.sqlite` during routine releases. A deliberate rebuild now reuses unchanged embeddings and schedules only stale/missing paths.
 
