@@ -43,6 +43,14 @@ from memento.staged_assets import StagedAssetStore
 from memento.subprocess_embeddings import SubprocessEmbeddingClient
 
 
+def embedding_refresh_paths(changed_paths: tuple[str, ...]) -> tuple[str, ...]:
+    return tuple(
+        path
+        for path in changed_paths
+        if path.startswith("/") and path.endswith(".md") and not path.startswith("/.assets/")
+    )
+
+
 class RuntimeClosedError(RuntimeError):
     """Raised when using a closed runtime."""
 
@@ -359,11 +367,15 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             else:
                 derived_index.rebuild(materialized_root, repo_revision=repo_revision)
             if embedding_refresh_worker is not None:
-                embedding_refresh_worker.enqueue(
-                    materialized_root,
-                    repo_revision,
-                    paths=changed_paths or None,
-                )
+                concept_paths = embedding_refresh_paths(changed_paths)
+                if concept_paths:
+                    embedding_refresh_worker.enqueue(
+                        materialized_root,
+                        repo_revision,
+                        paths=concept_paths,
+                    )
+                elif not changed_paths:
+                    embedding_refresh_worker.enqueue(materialized_root, repo_revision)
 
         manager = TransactionManager(
             control_connection,

@@ -11,7 +11,12 @@ from pathlib import Path
 
 import pytest
 
-from memento.app import RuntimeClosedError, build_runtime, load_service_config
+from memento.app import (
+    RuntimeClosedError,
+    build_runtime,
+    embedding_refresh_paths,
+    load_service_config,
+)
 from memento.backup import create_backup, restore_backup
 from memento.cli import _serve, main
 from memento.config import ServiceConfig
@@ -107,6 +112,18 @@ def test_compose_example_uses_env_file_and_example_env_lists_required_tokens() -
     assert "MEMENTO_TOKEN_SANDBOX_BOOTSTRAP=" in env_example
     assert "MEMENTO_TOKEN_WORK_AGENT_BOOTSTRAP=" in env_example
     assert "Bootstrap/recovery credentials" in env_example
+
+
+def test_embedding_refresh_paths_exclude_asset_and_runtime_changes() -> None:
+    assert embedding_refresh_paths(
+        (
+            "/skills/demo.md",
+            "/.assets/id/skill/1.0.0.json",
+            "/.assets/id/skill/1.0.0.zip",
+            "/.gitattributes",
+            "/projects/other.md",
+        )
+    ) == ("/skills/demo.md", "/projects/other.md")
 
 
 def test_diskstation_progressive_embeddings_are_persistent_and_single_threaded() -> None:

@@ -64,7 +64,15 @@ test("highlights selected inbound and outbound links directionally", async ({ pa
   await expect(page.locator(".legend")).toContainText("selected outgoing");
 });
 
-test("focuses smoothly without rotating and reveals FTS search results", async ({ page, browserName, isMobile }) => {
+test("transient embedding diagnostics do not ring every node", async ({ page, browserName, isMobile }) => {
+  test.skip(isMobile || browserName!=="chromium","halo filtering is asserted once in Chromium");
+  await page.goto("/graph",{waitUntil:"networkidle"});
+  await page.waitForFunction(()=>Boolean((window as any).__mementoGraphScene?.nodes?.length));
+  const halos=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;scene.selectedId=null;for(const node of scene.nodes)node.anomaly_ids=[];scene.nodes[0].anomaly_ids=[`diagnostic:embedding_stale:${scene.nodes[0].id}`];scene.nodes[1].anomaly_ids=[`diagnostic:embedding_missing:${scene.nodes[1].id}`];scene.nodes[2].anomaly_ids=[`diagnostic:orphan:${scene.nodes[2].id}`];scene.nodes[3].anomaly_ids=[`diagnostic:size_outlier:${scene.nodes[3].id}`];scene.drawHalos();return scene.haloGroup.children.length;});
+  expect(halos).toBe(1);
+});
+
+test("focuses smoothly without rotating and reveals FTS search results", async ({ page, browserName,isMobile }) => {
   test.skip(isMobile || browserName!=="chromium","camera interpolation is asserted once in Chromium");
   await page.goto("/graph",{waitUntil:"networkidle"});
   await expect.poll(async()=>Number((await page.locator(".perf dd").first().textContent())||0),{timeout:15000}).toBeGreaterThan(0);

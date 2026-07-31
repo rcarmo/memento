@@ -84,7 +84,7 @@ The initial rules cover:
 
 * orphan and broken-link state;
 * high degree and isolated namespace/community groups;
-* repository/index lag and embedding failure or staleness;
+* repository/index lag and embedding failure or staleness; transient missing/stale embedding diagnostics remain visible in filters/status but do not draw per-node gold action rings;
 * pending proposal state;
 * exact duplicates and compatible-embedding near-duplicates;
 * Markdown/asset size outliers;

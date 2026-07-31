@@ -164,6 +164,12 @@ class SemanticEmbeddingRefreshWorker:
             except Exception as exc:
                 with self._condition:
                     self._last_error = str(exc)
+                    if (
+                        path is not None
+                        and self._priority_paths
+                        and self._priority_paths[0] == path
+                    ):
+                        self._priority_paths.popleft()
             else:
                 with self._condition:
                     self._last_error = None

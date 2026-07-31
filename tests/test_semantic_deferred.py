@@ -92,6 +92,7 @@ class FakeRefreshIndex:
         self.calls: list[str] = []
         self.path_calls: list[tuple[str, ...]] = []
         self.pending_paths: list[str] = []
+        self.fail_paths: set[str] = set()
         self.started = threading.Event()
         self.release = threading.Event()
 
@@ -107,6 +108,8 @@ class FakeRefreshIndex:
     ) -> None:
         del bundle_root, repo_revision
         self.path_calls.append(paths)
+        if any(path in self.fail_paths for path in paths):
+            raise ValueError(f"embedding refresh path is unavailable: {paths[0]}")
         for path in paths:
             if path in self.pending_paths:
                 self.pending_paths.remove(path)
@@ -450,6 +453,32 @@ def test_progressive_worker_waits_for_cpu_sample_before_processing(tmp_path: Pat
         worker.enqueue(tmp_path, "rev-1")
         assert wait_for(lambda: worker.state().pause_reason == "cpu-sampling", timeout_seconds=1.0)
         assert wait_for(lambda: fake_index.path_calls == [("/a.md",)], timeout_seconds=1.5)
+    finally:
+        worker.close()
+
+
+def test_failed_priority_path_does_not_block_progressive_queue(tmp_path: Path) -> None:
+    fake_index = FakeRefreshIndex()
+    fake_index.fail_paths = {"/.assets/file.json"}
+    fake_index.pending_paths = ["/valid.md"]
+    worker = SemanticEmbeddingRefreshWorker(
+        cast(DerivedIndex, fake_index),
+        policy=ProgressiveEmbeddingPolicy(
+            enabled=True,
+            startup_delay_seconds=0,
+            interactive_idle_seconds=0,
+            delay_seconds=0,
+            cpu_busy_limit_percent=99,
+        ),
+        cpu_usage=lambda: 0,
+    )
+    try:
+        worker.enqueue(tmp_path, "rev-1", paths=("/.assets/file.json",))
+        assert wait_for(
+            lambda: fake_index.path_calls == [("/.assets/file.json",), ("/valid.md",)],
+            timeout_seconds=2.0,
+        )
+        assert worker.state().last_error is None
     finally:
         worker.close()
 
