@@ -153,7 +153,7 @@ Skill changes should normally use proposals so a curator reviews both Markdown a
 
 Use `memory_graph` for authorised concept neighbourhoods. Use `/graph` for human diagnosis of links, tags, proposals, assets, search, embeddings and simulated principal visibility.
 
-Broken links, missing embeddings and orphaned concepts are derived diagnostics. Fix canonical Markdown or refresh the derived index rather than editing SQLite directly. Derived state can be deleted and rebuilt from Git; concept Markdown and control records are the durable state.
+Broken links, missing embeddings and orphaned concepts are derived diagnostics. Fix canonical Markdown or request refresh rather than editing SQLite directly. Derived state remains rebuildable from Git, but persisted `derived.sqlite` preserves expensive embeddings across container upgrades and rebuilds; do not delete it casually. Progressive deployments regenerate missing/stale paths over time and manual refresh uses the same gated worker.
 
 ## Safety Checks
 

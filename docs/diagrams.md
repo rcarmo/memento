@@ -335,14 +335,18 @@ Lexical search remains available when optional semantic components are missing o
 ```mermaid
 stateDiagram-v2
     [*] --> LexicalReady
-    LexicalReady --> SemanticBuilding: model and FFI available
+    LexicalReady --> SemanticQueued: missing or stale persisted paths
+    SemanticQueued --> SemanticPaused: startup, interactive activity, CPU busy, or pacing
+    SemanticPaused --> SemanticBuilding: gates clear; one low-priority path
+    SemanticQueued --> SemanticBuilding: gates clear; one low-priority path
+    SemanticBuilding --> SemanticQueued: more persisted work remains
     SemanticBuilding --> SemanticReady: embedding revision equals repository revision
-    SemanticBuilding --> SemanticDegraded: load or embedding failure
+    SemanticBuilding --> SemanticDegraded: embedding failure
 
     SemanticReady --> SemanticStale: repository or model revision changes
-    SemanticStale --> SemanticBuilding: incremental update or rebuild
+    SemanticStale --> SemanticQueued: derive pending paths from persisted rows
     SemanticReady --> SemanticDegraded: runtime or vector failure
-    SemanticDegraded --> SemanticBuilding: operator repairs runtime
+    SemanticDegraded --> SemanticQueued: content/model change or manual retry
 
     LexicalReady --> LexicalResult: lexical request
     SemanticReady --> SemanticResult: semantic request

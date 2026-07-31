@@ -10,7 +10,7 @@
 | [0006](0006-keep-lexical-search-primary.md) | Keep lexical search primary and semantic ranking optional | accepted |
 | [0007](0007-attach-generic-versioned-assets.md) | Attach generic versioned assets to ordinary concepts | accepted |
 | [0008](0008-build-for-baseline-cpus.md) | Build release images for baseline CPUs and select SIMD at runtime | accepted |
-| [0009](0009-run-gte-in-batched-short-lived-workers.md) | Run GTE in mmap-backed, batched short-lived workers | accepted |
+| [0009](0009-run-gte-in-batched-short-lived-workers.md) | Run GTE in mmap-backed short-lived workers; DiskStation uses progressive single-item scheduling | accepted, amended |
 | [0010](0010-use-tiled-matrix-kernels-for-local-inference.md) | Use tiled matrix kernels for GTE and Needle inference | accepted |
 | [0011](0011-embed-a-gated-visual-memory-debugger.md) | Embed a gated visual memory debugger | accepted |
 | [0012](0012-manage-access-in-the-control-plane.md) | Manage dynamic principals and credentials in the control plane | accepted |

@@ -33,6 +33,10 @@ Workflow checkouts never use `lfs: true` and no CI command contacts Git LFS. A s
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Progressive embedding release checks
+
+Release validation covers pointer-only/rebuild reuse, restart-derived pending work, model-revision invalidation, manual priority, startup and interactive idle gates, `/proc/stat` CPU sampling with I/O wait treated as idle, pacing, `nice` command construction, and one-thread native environments. Deployment validation confirms the persistent `/var/lib/memento` mount and status fields (`pause_reason`, `current_path`, `completed`).
+
 ## Remaining provenance limits
 
 Base-image manifests and GitHub Actions are pinned. SBOM attachment remains a future release improvement; BuildKit provenance attestations are included in the OCI index.

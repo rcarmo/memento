@@ -68,7 +68,7 @@ Operator rules:
 
 * Write backups **outside** `repository.root_path`.
 * Use timestamped directories and external retention, for example `BACKUP_ROOT/20260718T231500Z/`.
-* Do not treat `derived.sqlite` as the crown jewels. The canonical backup value is `repo.git` plus `control.sqlite`.
+* `derived.sqlite` is not canonical, but preserving it avoids expensive semantic regeneration. Include it in routine backups when practical; `repo.git` plus `control.sqlite` remain the indispensable recovery set.
 
 Keeping backups outside `repository.root_path` matters for two reasons:
 
@@ -77,7 +77,7 @@ Keeping backups outside `repository.root_path` matters for two reasons:
 
 ## Restore semantics
 
-`restore` is intentionally destructive. After checksum verification and staging, it renames the existing `repository.root_path` aside, replaces it with the restored state, and removes the previous tree. Materialised `current/` is recreated from the archived bare repository, and `derived.sqlite` is rebuilt by default unless `--no-rebuild-derived` is explicitly requested.
+`restore` is intentionally destructive. After checksum verification and staging, it renames the existing `repository.root_path` aside, replaces it with the restored state, and removes the previous tree. Materialised `current/` is recreated from the archived bare repository. `derived.sqlite` is rebuilt by default unless `--no-rebuild-derived` is explicitly requested; use that flag when restoring a compatible derived backup so progressive generation resumes from persisted vectors.
 
 Treat the command as replacing the entire state root, not as merging files into an existing installation.
 
@@ -86,9 +86,9 @@ Treat the command as replacing the entire state root, not as merging files into 
 1. Stop the service and create a backup outside `repository.root_path`.
 2. Install the new wheel or container image.
 3. Start Memento and check `memory_status`.
-4. Run `rebuild-index` offline if the index is stale or quarantined.
+4. Run `rebuild-index` offline only if the lexical/graph index is stale or quarantined. Routine image upgrades preserve `derived.sqlite`; a rebuild reuses compatible embeddings and progressively regenerates only gaps.
 
-Control database migrations reject unknown schema versions. Model and Rust library changes may require semantic re-indexing, but do not change canonical Git history.
+Control database migrations reject unknown schema versions. Model changes mark incompatible embedding rows stale for progressive regeneration but do not change canonical Git history.
 
 ## Rollback
 
@@ -100,7 +100,7 @@ memento-serve --config CONFIG audit
 memento-serve --config CONFIG status
 ```
 
-Restore verifies checksums, restores the bare repository and control database together, materialises the checkout, and rebuilds `derived.sqlite` unless `--no-rebuild-derived` is given. Keep the service stopped until audit and status checks finish.
+Restore verifies checksums, restores the bare repository and control database together, materialises the checkout, and rebuilds `derived.sqlite` unless `--no-rebuild-derived` is given. Preserve a compatible derived backup when minimizing post-restore embedding work matters. Keep the service stopped until audit and status checks finish.
 
 ## Shutdown behaviour
 

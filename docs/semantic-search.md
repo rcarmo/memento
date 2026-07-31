@@ -30,7 +30,7 @@ On shared or low-power hosts, enable progressive generation instead of a full st
 
 The worker derives one missing or stale path at a time from `derived.sqlite`; no separate queue needs recovery. It waits through startup grace, recent interactive traffic, sampled CPU utilization from `/proc/stat` and pacing, then launches one short-lived embedding subprocess at low CPU priority with native thread pools restricted to one thread. Manual selected/visible/full refresh requests enter the same worker and receive priority without bypassing the gates.
 
-Ready embeddings persist in `/var/lib/memento/derived.sqlite`. Container replacement therefore resumes from existing progress. Derived rebuilds retain embeddings whose concept text hash and model metadata remain valid, delete rows for removed concepts and enqueue only changed, missing, degraded or model-stale records. `/graph/api/v1/embeddings/status` reports `pause_reason`, `current_path` and `completed` count.
+Ready embeddings persist in `/var/lib/memento/derived.sqlite`. Container replacement therefore resumes from existing progress. Derived rebuilds retain embeddings whose concept text hash and model metadata remain valid, delete rows for removed concepts and enqueue only changed, missing or model-stale records. A degraded row is not retried forever in the background; changing its content/model marks it stale, and an operator can explicitly prioritize it with manual refresh. `/graph/api/v1/embeddings/status` reports `pause_reason`, `current_path` and `completed` count.
 
 ## Components
 
@@ -73,9 +73,9 @@ Authorisation path filters are applied before semantic scoring, so hidden concep
 
 ## Derived-state rules
 
-Concept embeddings are packed little-endian float32 BLOBs in `derived.sqlite`. Rows carry model, dimension, content hash and repository revision. Model changes mark old rows stale. Changed or deleted concepts update incrementally, and a full derived rebuild regenerates all vectors.
+Concept embeddings are packed little-endian float32 BLOBs in `derived.sqlite`. Rows carry model, dimension, content hash and repository revision. Model changes mark old rows stale. Changed or deleted concepts update incrementally. A full derived rebuild retains ready rows whose text hash and model metadata still match, marks changed rows stale, removes deleted-concept rows and progressively fills only the remaining gaps.
 
-If model loading or embedding fails, Memento still advances the lexical index, marks semantic readiness degraded, and keeps canonical writes successful. Semantic and hybrid requests then fall back to lexical with explicit warnings.
+If model loading or embedding fails, Memento still advances the lexical index, records the row as degraded, and keeps canonical writes successful. Semantic and hybrid requests then fall back to lexical with explicit warnings.
 
 ## Build and validation
 

@@ -241,7 +241,7 @@ The service also keeps checkpoint state for:
 
 ## Derived plane -- what can be rebuilt
 
-The derived database is intentionally disposable.
+The derived database is rebuildable rather than canonical, but deployments should persist it because semantic vectors are expensive to regenerate. Routine container replacement and derived rebuilds preserve reusable embedding rows.
 
 ### Implemented derived data
 
@@ -269,7 +269,7 @@ Search modes are exact:
 * `semantic`
 * `hybrid`
 
-Lexical search uses weighted FTS5 fields. Semantic search uses the Rust GTE runtime when enabled and ready. Hybrid search uses deterministic reciprocal-rank fusion. If semantic components are degraded or unavailable, Memento reports warnings and falls back safely instead of blocking the repository.
+Lexical search uses weighted FTS5 fields. Semantic search uses the Rust GTE runtime when enabled and ready. Hybrid search uses deterministic reciprocal-rank fusion. If semantic components are degraded or unavailable, Memento reports warnings and falls back safely instead of blocking the repository. Progressive mode derives missing/stale paths from persisted rows and processes one concept through the same worker used by manual refresh.
 
 ### Implemented limits
 
@@ -281,7 +281,7 @@ Lexical search uses weighted FTS5 fields. Semantic search uses the Rust GTE runt
 | search-mode semantic candidates | `200` |
 | semantic dimensions | `384` |
 | semantic max input chars | `4096` |
-| semantic max batch size | `16` |
+| semantic max batch size | `16` generic; `1` in the progressive DiskStation profile |
 
 ## Authentication and authorisation
 
@@ -485,7 +485,7 @@ On startup Memento:
 5. classifies each interrupted operation as retryable, published, conflicted or failed
 6. removes abandoned worktrees only after classification
 7. verifies or rebuilds the materialised checkout
-8. verifies or rebuilds derived indexes when revisions differ
+8. verifies or rebuilds derived indexes when revisions differ, retaining compatible embedding rows
 9. becomes ready only after repository state is coherent
 
 ### Backup and restore boundaries

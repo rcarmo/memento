@@ -92,7 +92,7 @@ The initial rules cover:
 
 ### Embedding Refresh
 
-Selected and visible refreshes accept bounded concept IDs. Full refresh requires `confirm_full=true`. One coordinator coalesces requests into the existing worker, which batches concepts, maps GTE weights, writes derived rows and exits. Status reports queued scope, running/pending state, repository revision and the last error.
+Selected and visible refreshes accept bounded concept IDs. Full refresh requires `confirm_full=true`. The coordinator places these paths at the front of the same progressive worker used for automatic generation; manual requests do not bypass startup, interactive-idle, sampled-CPU or pacing gates. The DiskStation profile processes one path per low-priority single-threaded subprocess. Status reports queued scope, running/pending state, pause reason, current path, completed count, repository revision and the last error.
 
 ## Browser Application
 
@@ -158,7 +158,7 @@ make diff-check
 
 The release pipeline also runs Python 3.12-3.14, the Rust workspace, Needle's 360-case parity set, GTE parity, browser/vendor tests, amd64/arm64 image builds and the Westmere no-AVX smoke.
 
-The new candidate is pulled through Portainer and applied to stack 111 without moving the previous tag. DiskStation validation checks unauthenticated `/graph`, authenticated MCP, desktop Chromium, tablet touch, response/render timings, RSS, restart behaviour and selected/visible embedding refresh. The graph stays enabled only on the agreed trusted LAN.
+A tagged candidate is pulled or loaded through Portainer and applied to stack 111 without moving the previous tag. DiskStation validation checks unauthenticated `/graph`, authenticated MCP, desktop Chromium, tablet touch, response/render timings, RSS, restart behaviour and selected/visible embedding refresh. The graph stays enabled only on the agreed trusted LAN.
 
 ## Deferred
 

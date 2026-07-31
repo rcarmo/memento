@@ -11,7 +11,7 @@ Before any NAS deployment, the release workflow runs the amd64 image under QEMU'
 * GTE-small loads and produces a 384-value embedding;
 * the fine-tuned Needle router loads and produces one valid shallow action.
 
-Native image tests measured Needle at 185 MiB peak RSS. GTE-small reached about 297 MiB because its FP32 model is expanded during inference. The DiskStation profile uses short-lived GTE workers, disables startup embedding refresh and sets a 512 MiB container limit so the trusted-LAN graph UI can refresh selected, visible or full embeddings on demand without keeping the model resident in the service process.
+Native image tests measured Needle at 185 MiB peak RSS. GTE-small reached about 297 MiB because its FP32 model is expanded during inference. The DiskStation profile uses short-lived GTE workers, disables bulk startup refresh and sets a 512 MiB container limit. Progressive generation and selected/visible/full manual requests share one low-priority gated queue, so the model is not kept resident in the service process.
 
 The DiskStation Compose template is [`deploy/diskstation.compose.yaml`](../deploy/diskstation.compose.yaml). It uses:
 
@@ -52,7 +52,7 @@ No DiskStation deployment is performed by GitHub Actions. Release automation bui
 
 The DiskStation profile uses one low-priority concept every 30 seconds after a two-minute startup grace and 15 seconds of interactive idle time. Work pauses when sampled CPU utilization exceeds 75% over a 15-second window. Linux I/O wait is treated as idle, so normal NAS storage load does not block progress. `nice 15` and single-thread native pool variables keep inference subordinate to MCP and storage workloads. The `/volume1/docker/memento/state:/var/lib/memento` mount preserves `derived.sqlite` and completed vectors across image upgrades.
 
-Do not delete `derived.sqlite` during routine releases. A deliberate rebuild now reuses unchanged embeddings and schedules only stale/missing paths.
+Do not delete `derived.sqlite` during routine releases. A deliberate rebuild now reuses unchanged embeddings and schedules only stale/missing paths. Live `v0.3.12` validation preserved 99 ready rows through an image update/rebuild, then progressively completed six queued paths with no errors until repository, index and embedding revisions matched.
 
 ## Managed access on DiskStation
 

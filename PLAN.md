@@ -28,7 +28,7 @@ Memento's repository, transaction, MCP, proposal, search, model and container fo
 * Authenticated Streamable HTTP through uMCP
 * Compact and full tool surfaces, catalog/workflow resources and `memory_execute`
 * FTS5 search, backlinks, graph neighbourhoods and index rebuild/parity checks
-* Local GTE semantic and hybrid search with short-lived batched workers
+* Local GTE semantic and hybrid search with persistent progressive state and short-lived low-priority single-item workers
 * Fine-tuned Needle shallow routing through the Rust runtime
 * Cited answers, exact cache, hot memory, proposal drafting and Dream modes behind independent settings
 
@@ -47,7 +47,6 @@ The current work adds a trusted-LAN `/graph` view with progressive 2.5D renderin
 
 ## Remaining Live Work
 
-* Complete and deploy the visual debugger, then capture desktop and tablet screenshots plus browser performance results.
 * Exercise distinct deployed principals through the write/proposal workflow.
 * Repeat model performance checks on a real ARM64 host.
 * Run a live restore drill for the selected primary deployment path.

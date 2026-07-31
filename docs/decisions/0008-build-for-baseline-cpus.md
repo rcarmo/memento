@@ -23,8 +23,8 @@ Bookworm and Python 3.12 provide a conservative userspace and longer support win
 * AVX2/FMA and scalar code ship in one image; users do not select a mode.
 * The release workflow blocks manifest publication if no-AVX GTE or Needle inference fails.
 * Native CI checks Needle's peak process RSS against 220 MiB.
-* The DiskStation profile starts with a 320 MiB container limit, Needle enabled and semantic search disabled.
-* GTE-small is supported on the J3455 scalar path, but its roughly 297 MiB native peak requires a larger container limit than the initial profile.
+* The deployed DiskStation profile uses a 512 MiB container limit with Needle and semantic search enabled.
+* GTE-small runs on the J3455 scalar path through short-lived progressive workers at low priority and one native thread; its roughly 297 MiB peak remains bounded by worker exit.
 * NAS deployment and rollback remain operator actions with a pinned image version.
 
 ## Alternatives considered

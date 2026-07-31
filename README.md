@@ -53,7 +53,7 @@ The complete tool contracts, roles, limits and response envelopes are in [`docs/
 
 FTS5 handles exact and lexical search. Markdown links supply backlinks and graph neighbourhoods. Neither needs a model.
 
-GTE-small can add semantic ranking when different wording describes the same subject. Embeddings live in the derived database and can be regenerated from Markdown. On memory-constrained hosts, Memento runs GTE in short-lived batches and releases the process afterwards.
+GTE-small can add semantic ranking when different wording describes the same subject. Embeddings live in persistent `derived.sqlite`: they remain rebuildable from Markdown, but routine container updates and derived rebuilds preserve reusable vectors. On memory-constrained hosts, progressive mode processes one missing or stale concept at a time in a short-lived, low-priority, single-threaded worker, pauses for recent requests or high sampled CPU use, and releases model RAM after each item.
 
 A fine-tuned 26M-parameter [Needle][needle] model can route a small set of natural-language read requests. It emits a candidate action that Memento validates before running. Other configured model slots may produce cited answers or draft proposals and maintenance suggestions.
 

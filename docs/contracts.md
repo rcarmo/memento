@@ -252,6 +252,8 @@ Current payload fields:
   * `embedding_revision`
   * `sqlite_vector_enabled`
 
+Operational HTTP status at `/graph/api/v1/embeddings/status` additionally reports worker `running`, `pending`, `pause_reason`, `current_path`, `completed`, queued scope/path count, repository revision and last error. Pause reasons include `startup`, `interactive`, `cpu-sampling`, `cpu` and `pacing`.
+
 `warnings` may contain degraded feature notices such as unavailable semantic search components.
 
 ## `memory_search` and semantic modes
@@ -691,6 +693,15 @@ The implemented service and optional tiers use these exact defaults and bounds.
 | `max_batch_size` | `16` | `>=1` |
 | `max_candidates` | `200` | `>=1` |
 | `default_search_mode` | `lexical` | `lexical`, `semantic`, `hybrid` |
+| `progressive_enabled` | `False` | boolean |
+| `progressive_startup_delay_seconds` | `120` | `>=0` |
+| `progressive_interactive_idle_seconds` | `15` | `>=0` |
+| `progressive_delay_seconds` | `30` | `>=0` |
+| `progressive_cpu_busy_limit_percent` | `75` | `>0`, `<=100` |
+| `progressive_cpu_sample_seconds` | `15` | `>0` |
+| `progressive_nice` | `15` | `0..19` |
+
+`progressive_load_average_limit` remains accepted for configuration compatibility but is no longer used; sampled CPU utilization replaced load-average gating in `v0.3.12`.
 
 ## Safety invariants
 
