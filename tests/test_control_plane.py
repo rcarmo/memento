@@ -15,7 +15,12 @@ from memento.control.operations import (
     create_operation,
     get_operation,
 )
-from memento.repository.git import GitRepositoryPaths, bootstrap_repository, get_main_revision
+from memento.repository.git import (
+    GitRepositoryPaths,
+    bootstrap_repository,
+    get_main_revision,
+    materialize_current_checkout,
+)
 from memento.repository.lease import WriterLeaseError, acquire_writer_lease
 from memento.repository.transactions import (
     TransactionConflictError,
@@ -66,6 +71,25 @@ def test_empty_repository_bootstrap_materializes_and_recovers(tmp_path: Path) ->
         assert paths.current_dir.is_dir()
     finally:
         connection.close()
+
+
+def test_materialize_ignores_persisted_repository_hooks(tmp_path: Path) -> None:
+    seed = tmp_path / "seed-hooks"
+    seed.mkdir()
+    (seed / "memory.md").write_text("# Memory\n", encoding="utf-8")
+    paths = GitRepositoryPaths(
+        bare_dir=tmp_path / "hooks.git",
+        current_dir=tmp_path / "current-hooks",
+        worktrees_dir=tmp_path / "worktrees-hooks",
+    )
+    bootstrap_repository(paths, seed)
+    hook = paths.bare_dir / "hooks" / "post-checkout"
+    hook.write_text("#!/bin/sh\nexit 2\n", encoding="utf-8")
+    hook.chmod(0o755)
+
+    result = materialize_current_checkout(paths)
+
+    assert result.path.joinpath("memory.md").read_text(encoding="utf-8") == "# Memory\n"
 
 
 def test_control_db_migrations_enable_wal_and_v1_tables(

@@ -431,7 +431,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                     author_email="rui.carmo@gmail.com",
                 ),
                 lambda worktree: migrate_legacy_blobs_to_git(
-                    worktree, hydrated_root=paths.repo_paths.current_dir
+                    worktree, object_root=paths.repo_paths.bare_dir / "lfs" / "objects"
                 ),
             )
         if semantic.enabled and semantic.worker_mode == "subprocess":

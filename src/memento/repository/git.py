@@ -222,7 +222,7 @@ def _copy_tree(source: Path, target: Path) -> None:
 
 def _git_stdout(*args: object) -> str:
     result = subprocess.run(
-        ["git", *[str(arg) for arg in args]],
+        ["git", "-c", "core.hooksPath=/dev/null", *[str(arg) for arg in args]],
         capture_output=True,
         text=True,
         check=False,

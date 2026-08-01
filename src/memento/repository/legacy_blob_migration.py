@@ -28,7 +28,7 @@ def repository_needs_legacy_blob_migration(root: Path) -> bool:
     )
 
 
-def migrate_legacy_blobs_to_git(worktree: Path, *, hydrated_root: Path) -> tuple[str, ...]:
+def migrate_legacy_blobs_to_git(worktree: Path, *, object_root: Path) -> tuple[str, ...]:
     """Replace legacy external-blob pointers with verified ordinary Git blobs."""
     changed: set[str] = set()
     attributes = worktree / ".gitattributes"
@@ -49,17 +49,15 @@ def migrate_legacy_blobs_to_git(worktree: Path, *, hydrated_root: Path) -> tuple
         if match is None:
             continue
         relative = target.relative_to(worktree)
-        source = hydrated_root / relative
-        if not source.is_file():
-            raise LegacyBlobMigrationError(
-                f"hydrated legacy blob is unavailable: /{relative.as_posix()}"
-            )
-        blob = source.read_bytes()
         expected_digest = match.group(1).decode()
         expected_size = int(match.group(2))
+        source = object_root / expected_digest[:2] / expected_digest[2:4] / expected_digest
+        if not source.is_file():
+            raise LegacyBlobMigrationError(f"legacy blob is unavailable: /{relative.as_posix()}")
+        blob = source.read_bytes()
         if len(blob) != expected_size or hashlib.sha256(blob).hexdigest() != expected_digest:
             raise LegacyBlobMigrationError(
-                f"hydrated legacy blob failed verification: /{relative.as_posix()}"
+                f"legacy blob failed verification: /{relative.as_posix()}"
             )
         target.write_bytes(blob)
         changed.add(f"/{relative.as_posix()}")
