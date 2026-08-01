@@ -252,6 +252,8 @@ Current payload fields:
   * `embedding_revision`
   * `sqlite_vector_enabled`
 
+Direct graph snapshots include deterministic, non-canonical `semantic_similarity` edges only when embedding and repository revisions match. Each edge contains cosine `similarity`, `model_id` and `embedding_revision`, never the vector. Server generation uses a configurable candidate floor and bounded top-k/global limits; aggregate-first views omit semantic edges until expansion.
+
 Operational HTTP status at `/graph/api/v1/embeddings/status` additionally reports worker `running`, `pending`, `pause_reason`, `current_path`, `completed`, queued scope/path count, repository revision and last error. Pause reasons include `startup`, `interactive`, `cpu-sampling`, `cpu` and `pacing`.
 
 `warnings` may contain degraded feature notices such as unavailable semantic search components.
@@ -706,6 +708,17 @@ The implemented service and optional tiers use these exact defaults and bounds.
 | `progressive_nice` | `15` | `0..19` |
 
 `progressive_load_average_limit` remains accepted for configuration compatibility but is no longer used; sampled CPU utilization replaced load-average gating in `v0.3.12`.
+
+### Graph semantic edge limits
+
+| Field | Default | Bounds |
+|---|---:|---:|
+| `semantic_neighbours` | `12` | `1..100` |
+| `semantic_min_similarity` | `0.75` | `-1..1` |
+| `semantic_edge_node_limit` | `300` | `1..2000` |
+| `semantic_edge_limit` | `1500` | `1..12000` |
+
+The browser defaults to five neighbours per node and cosine `0.85`; selected nodes reveal semantic neighbours even while the global semantic layer is off.
 
 ## Safety invariants
 

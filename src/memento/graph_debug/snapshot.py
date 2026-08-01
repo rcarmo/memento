@@ -5,6 +5,7 @@ import json
 import math
 import re
 import sqlite3
+import struct
 from collections import Counter, defaultdict
 from collections.abc import Sequence
 from dataclasses import asdict
@@ -78,6 +79,103 @@ def _overlay_edges(
             )
             if len(result) >= limit:
                 return result
+    return result
+
+
+def _semantic_edges(
+    connection: sqlite3.Connection,
+    nodes: Sequence[GraphNode],
+    revisions: GraphRevisions,
+    config: GraphExplorerConfig,
+    limit: int,
+) -> list[GraphEdge]:
+    if (
+        limit <= 0
+        or len(nodes) < 2
+        or len(nodes) > config.semantic_edge_node_limit
+        or revisions.embedding != revisions.repository
+    ):
+        return []
+    ids = {node.id for node in nodes}
+    placeholders = ",".join("?" for _ in ids)
+    rows = connection.execute(
+        f"""
+        SELECT concept_id, embedding_blob, embedding_norm, model_id, embedding_revision
+        FROM concept_embeddings
+        WHERE status='ready' AND concept_id IN ({placeholders})
+        ORDER BY concept_id
+        """,
+        tuple(sorted(ids)),
+    ).fetchall()
+    vectors: dict[str, tuple[tuple[float, ...], float, str, str]] = {}
+    for row in rows:
+        blob = bytes(row["embedding_blob"] or b"")
+        if not blob or len(blob) % 4:
+            continue
+        values = struct.unpack(f"<{len(blob) // 4}f", blob)
+        norm = float(row["embedding_norm"] or math.sqrt(sum(value * value for value in values)))
+        if norm <= 0:
+            continue
+        vectors[str(row["concept_id"])] = (
+            values,
+            norm,
+            str(row["model_id"]),
+            str(row["embedding_revision"]),
+        )
+    directed: dict[str, list[tuple[float, str]]] = {}
+    ordered = sorted(vectors)
+    for source in ordered:
+        source_vector, source_norm, _model, _revision = vectors[source]
+        candidates: list[tuple[float, str]] = []
+        for target in ordered:
+            if target == source:
+                continue
+            target_vector, target_norm, target_model, target_revision = vectors[target]
+            if target_model != _model or target_revision != _revision:
+                continue
+            score = sum(a * b for a, b in zip(source_vector, target_vector, strict=True)) / (
+                source_norm * target_norm
+            )
+            if score >= config.semantic_min_similarity:
+                candidates.append((score, target))
+        directed[source] = sorted(candidates, key=lambda item: (-item[0], item[1]))[
+            : config.semantic_neighbours
+        ]
+    pair_candidates: dict[tuple[str, str], tuple[float, bool]] = {}
+    neighbour_sets = {
+        source: {target for _score, target in neighbour_values}
+        for source, neighbour_values in directed.items()
+    }
+    for source, neighbour_values in directed.items():
+        for score, target in neighbour_values:
+            pair = (source, target) if source < target else (target, source)
+            mutual = source in neighbour_sets.get(target, set())
+            previous = pair_candidates.get(pair)
+            if previous is None or score > previous[0] or mutual and not previous[1]:
+                pair_candidates[pair] = (score, mutual)
+    ordered_edges = sorted(
+        pair_candidates.items(),
+        key=lambda item: (not item[1][1], -item[1][0], item[0]),
+    )[: min(limit, config.semantic_edge_limit)]
+    result: list[GraphEdge] = []
+    for (source, target), (score, _mutual) in ordered_edges:
+        _vector, _norm, model_id, embedding_revision = vectors[source]
+        result.append(
+            GraphEdge(
+                id=f"semantic:{source}:{target}",
+                source=source,
+                target=target,
+                raw_target=f"cosine:{score:.4f}",
+                kind="semantic_similarity",
+                canonical=False,
+                resolution="derived",
+                first_seen_revision=revisions.repository,
+                last_checked_revision=revisions.repository,
+                similarity=round(score, 6),
+                model_id=model_id,
+                embedding_revision=embedding_revision,
+            )
+        )
     return result
 
 
@@ -245,12 +343,20 @@ class GraphSnapshotService:
             )
             visible = list(apply_diagnostic_ids(visible, diagnostics))
             sparse = _is_sparse_overview(visible, explicit_edges)
+            semantic_edges = _semantic_edges(
+                derived,
+                visible,
+                revisions,
+                self._config,
+                self._config.edge_limit - len(explicit_edges),
+            )
             edges = [
                 *explicit_edges,
+                *semantic_edges,
                 *_overlay_edges(
                     visible,
                     revisions.repository,
-                    self._config.edge_limit - len(explicit_edges),
+                    self._config.edge_limit - len(explicit_edges) - len(semantic_edges),
                 ),
             ]
             metric_nodes = visible
@@ -269,6 +375,8 @@ class GraphSnapshotService:
                     limit=self._config.edge_limit,
                 )
                 all_nodes = _scoped_nodes(all_nodes, all_explicit_edges)
+                # Aggregate layout remains canonical/contextual. Semantic edges are
+                # revealed after expansion into a bounded direct view.
                 all_edges = [
                     *all_explicit_edges,
                     *_overlay_edges(
@@ -352,6 +460,14 @@ class GraphSnapshotService:
             all_ids = {node.id for node in all_nodes}
             all_edges = self._edges(derived, ids=all_ids, limit=self._config.edge_limit)
             all_nodes = _scoped_nodes(all_nodes, all_edges)
+            semantic_edges = _semantic_edges(
+                derived,
+                all_nodes,
+                revisions,
+                self._config,
+                self._config.edge_limit - len(all_edges),
+            )
+            all_edges.extend(semantic_edges)
             all_edges.extend(
                 _overlay_edges(
                     all_nodes, revisions.repository, self._config.edge_limit - len(all_edges)
@@ -452,10 +568,25 @@ class GraphSnapshotService:
             )
             if not center:
                 raise GraphSnapshotError("unknown memory")
+            revisions = self._revisions(derived)
             visible_ids = self._visible_ids(derived, read_prefixes)
             visible_edges = self._edges(derived, ids=visible_ids, limit=self._config.edge_limit)
+            visible_nodes = self._nodes(
+                derived,
+                proposal_counts=self._proposal_counts(control),
+                concept_ids=tuple(sorted(visible_ids)),
+                limit=self._config.semantic_edge_node_limit,
+                read_prefixes=read_prefixes,
+            )
+            semantic_edges = _semantic_edges(
+                derived,
+                visible_nodes,
+                revisions,
+                self._config,
+                self._config.semantic_edge_limit,
+            )
             neighbour_ids = {concept_id}
-            for edge in visible_edges:
+            for edge in [*visible_edges, *semantic_edges]:
                 if edge.target is None:
                     continue
                 if edge.source == concept_id:
@@ -472,9 +603,14 @@ class GraphSnapshotService:
             )
             visible = {node.id for node in nodes}
             edges = self._edges(derived, ids=visible, limit=self._config.edge_limit)
+            edges.extend(
+                edge
+                for edge in semantic_edges
+                if edge.source in visible and edge.target is not None and edge.target in visible
+            )
             nodes = _scoped_nodes(nodes, edges)
             return GraphNeighbourhood(
-                revisions=self._revisions(derived),
+                revisions=revisions,
                 center_id=concept_id,
                 nodes=tuple(nodes),
                 edges=tuple(edges),

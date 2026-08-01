@@ -74,7 +74,7 @@ The detail endpoint adds a short Markdown preview, inbound and outbound explicit
 
 The server partitions the explicit-link graph by namespace and stable communities, then creates hash-seeded coarse `x`, `y` and `z` coordinates. The same revision and settings produce the same result regardless of SQL/input ordering. Expansion begins at the parent centroid.
 
-Browser force defaults rank explicit links above semantic similarity, namespace, tags, type and provenance. Every force is adjustable. Missing embeddings remove only the semantic force.
+Browser force defaults rank explicit links above semantic similarity, namespace, tags, type and provenance. Semantic similarity is default-off: selecting a node always reveals its strongest semantic neighbours, while a layer toggle exposes bounded top-k edges above an adjustable cosine threshold. Amber segmented arcs encode derived similarity; opacity/brightness increase with score, selected semantic neighbours gain a thin amber tube highlight, and the inspector shows score, model and embedding revision. Aggregate-first layout remains canonical/contextual until a cluster is expanded. Missing embeddings remove only the semantic layer.
 
 ### Diagnostics
 

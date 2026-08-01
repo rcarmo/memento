@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import struct
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -73,7 +74,7 @@ def _snapshot(
         CREATE VIRTUAL TABLE concept_fts USING fts5(concept_id UNINDEXED,title,description,aliases,tags,body,path,tokenize='unicode61');
         CREATE TABLE links(source_id TEXT,target_id TEXT,raw_target TEXT,target_path TEXT,anchor TEXT,link_kind TEXT,resolution_state TEXT,first_seen_revision TEXT,last_checked_revision TEXT);
         CREATE TABLE graph_metrics(concept_id TEXT PRIMARY KEY,inbound_degree INTEGER,outbound_degree INTEGER,broken_link_count INTEGER,orphan_flag INTEGER);
-        CREATE TABLE concept_embeddings(concept_id TEXT PRIMARY KEY,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT,embedding_blob BLOB);
+        CREATE TABLE concept_embeddings(concept_id TEXT PRIMARY KEY,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT,embedding_blob BLOB,embedding_norm REAL);
         CREATE TABLE index_state(key TEXT PRIMARY KEY,value TEXT);
         """
     )
@@ -139,18 +140,33 @@ def _snapshot(
         "INSERT INTO graph_metrics VALUES(?,?,?,?,?)",
         (("a-id", 0, 1, 0, 0), ("b-id", 1, 0, 0, 0)),
     )
-    derived.execute(
-        "INSERT INTO concept_embeddings VALUES(?,?,?,?,?,?,?,?,?)",
+    derived.executemany(
+        "INSERT INTO concept_embeddings VALUES(?,?,?,?,?,?,?,?,?,?)",
         (
-            "a-id",
-            "ready",
-            "gte",
-            384,
-            "rev-1",
-            "model-1",
-            "2026-07-20T00:00:00Z",
-            None,
-            b"SECRET-VECTOR",
+            (
+                "a-id",
+                "ready",
+                "gte",
+                2,
+                "rev-1",
+                "model-1",
+                "2026-07-20T00:00:00Z",
+                None,
+                struct.pack("<2f", 1.0, 0.0),
+                1.0,
+            ),
+            (
+                "b-id",
+                "ready",
+                "gte",
+                2,
+                "rev-1",
+                "model-1",
+                "2026-07-20T00:00:00Z",
+                None,
+                struct.pack("<2f", 0.9, 0.1),
+                (0.82) ** 0.5,
+            ),
         ),
     )
     derived.executemany(
@@ -193,6 +209,20 @@ def _snapshot(
         derived_db_path=derived_path,
         control_db_path=control_path,
     )
+
+
+def test_overview_adds_bounded_semantic_edges_without_vectors(tmp_path: Path) -> None:
+    overview = _snapshot(tmp_path, direct_limit=2).overview()
+    semantic = [edge for edge in overview.edges if edge.kind == "semantic_similarity"]
+    assert len(semantic) == 1
+    edge = semantic[0]
+    assert {edge.source, edge.target} == {"a-id", "b-id"}
+    assert edge.similarity is not None and edge.similarity > 0.99
+    assert edge.model_id == "gte"
+    assert edge.embedding_revision == "rev-1"
+    payload = overview.model_dump_json()
+    assert "SECRET-VECTOR" not in payload
+    assert "embedding_blob" not in payload
 
 
 def test_overview_is_bounded_deterministic_and_omits_vectors(tmp_path: Path) -> None:
@@ -257,7 +287,7 @@ def test_detail_and_neighbourhood_are_bounded_and_revision_aware(tmp_path: Path)
 
     neighbourhood = service.neighbourhood("a-id")
     assert [node.id for node in neighbourhood.nodes] == ["a-id", "b-id"]
-    assert len(neighbourhood.edges) == 1
+    assert {edge.kind for edge in neighbourhood.edges} == {"explicit", "semantic_similarity"}
     with pytest.raises(GraphSnapshotError, match="depth"):
         service.neighbourhood("a-id", depth=2)
     with pytest.raises(GraphSnapshotError, match="unknown"):
@@ -304,6 +334,21 @@ def test_simulated_prefix_scope_hides_nodes_search_links_and_metrics(tmp_path: P
             ),
         )
         connection.execute("INSERT INTO graph_metrics VALUES(?,?,?,?,?)", ("c-id", 1, 1, 0, 0))
+        connection.execute(
+            "INSERT INTO concept_embeddings VALUES(?,?,?,?,?,?,?,?,?,?)",
+            (
+                "c-id",
+                "ready",
+                "gte",
+                2,
+                "rev-1",
+                "model-1",
+                "2026-07-20T00:00:00Z",
+                None,
+                struct.pack("<2f", 1.0, 0.0),
+                1.0,
+            ),
+        )
         connection.executemany(
             "INSERT INTO links VALUES(?,?,?,?,?,?,?,?,?)",
             (
@@ -341,6 +386,7 @@ def test_simulated_prefix_scope_hides_nodes_search_links_and_metrics(tmp_path: P
     assert overview.metrics.explicit_edges == 1
     assert overview.metrics.broken_edges == 0
     assert overview.metrics.orphan_count == 0
+    assert all(edge.source != "c-id" and edge.target != "c-id" for edge in overview.edges)
     assert service.search("secret", read_prefixes=prefixes)["results"] == []
     with pytest.raises(GraphSnapshotError, match="unknown memory"):
         service.detail("c-id", read_prefixes=prefixes)

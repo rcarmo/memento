@@ -83,6 +83,9 @@ class GraphEdge(GraphModel):
     anchor: str | None = None
     first_seen_revision: str
     last_checked_revision: str
+    similarity: float | None = None
+    model_id: str | None = None
+    embedding_revision: str | None = None
 
 
 class GraphMetrics(GraphModel):

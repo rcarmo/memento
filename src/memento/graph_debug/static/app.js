@@ -12,6 +12,35 @@ const forceDefaults = {
   shared_provenance: 0.006,
 };
 const simulatedWarning = "Simulated visibility — not an authorization boundary";
+
+export function semanticDisplayEdges(edges, selectedId, enabled, threshold, neighbours) {
+  const semantic = edges
+    .filter((edge) => edge.kind === "semantic_similarity" && (edge.similarity || 0) >= threshold)
+    .sort((left, right) => (right.similarity || 0) - (left.similarity || 0) || left.id.localeCompare(right.id));
+  const keep = new Set();
+  if (enabled) {
+    const perNode = new Map();
+    for (const edge of semantic) {
+      const sourceCount = perNode.get(edge.source) || 0;
+      const targetCount = perNode.get(edge.target) || 0;
+      if (sourceCount < neighbours && targetCount < neighbours) {
+        keep.add(edge.id);
+        perNode.set(edge.source, sourceCount + 1);
+        perNode.set(edge.target, targetCount + 1);
+      }
+    }
+  }
+  if (selectedId) {
+    let count = 0;
+    for (const edge of semantic) {
+      if ((edge.source === selectedId || edge.target === selectedId) && count < neighbours) {
+        keep.add(edge.id);
+        count += 1;
+      }
+    }
+  }
+  return edges.filter((edge) => edge.kind !== "semantic_similarity" || keep.has(edge.id));
+}
 const simulatedRefreshWarning = "Embedding refresh is disabled while simulating visibility.";
 
 function normalizePrincipals(payload) {
@@ -60,6 +89,7 @@ function App() {
   const scene = useRef(null);
   const exportDialog = useRef(null);
   const [graph, setGraph] = useState(null);
+  const graphRef = useRef(null);
   const [selected, setSelected] = useState(null);
   const [detail, setDetail] = useState(null);
   const [error, setError] = useState(null);
@@ -69,6 +99,9 @@ function App() {
   const [type, setType] = useState("all");
   const [sizeMetric, setSizeMetric] = useState("combined_bytes");
   const [forces, setForces] = useState(forceDefaults);
+  const [semanticEnabled, setSemanticEnabled] = useState(false);
+  const [semanticThreshold, setSemanticThreshold] = useState(0.85);
+  const [semanticNeighbours, setSemanticNeighbours] = useState(5);
   const [perf, setPerf] = useState({});
   const [timing, setTiming] = useState({});
   const [refresh, setRefresh] = useState(null);
@@ -109,6 +142,7 @@ function App() {
     try {
       const { payload, elapsed, bytes } = await graphApi.overview();
       setTiming({ fetch: elapsed, bytes });
+      graphRef.current = payload;
       setGraph(payload);
       draw(payload);
     } catch (e) {
@@ -131,17 +165,40 @@ function App() {
     const edges = aggregated
       ? payload.cluster_edges.map((edge) => ({ ...edge, kind: edge.kind || "explicit" }))
       : payload.edges;
-    scene.current?.setGraph(nodes, edges, { sizeMetric, forces });
+    scene.current?.setGraph(
+      nodes,
+      semanticDisplayEdges(edges, selected?.id, semanticEnabled, semanticThreshold, semanticNeighbours),
+      { sizeMetric, forces },
+    );
   }
 
   async function selectNode(node) {
     setSelected(node);
     scene.current?.focus(node);
+    const currentGraph = graphRef.current;
+    if (currentGraph?.mode === "direct") {
+      scene.current?.setEdges(
+        semanticDisplayEdges(
+          currentGraph.edges,
+          node.id,
+          semanticEnabled,
+          semanticThreshold,
+          semanticNeighbours,
+        ),
+      );
+    }
     try {
       if (node.member_count) {
         const { payload } = await graphApi.cluster(node.id);
-        setGraph((current) => ({ ...current, mode: "direct", nodes: payload.nodes, edges: payload.edges }));
-        draw({ mode: "direct", nodes: payload.nodes, edges: payload.edges });
+        const expanded = {
+          ...graphRef.current,
+          mode: "direct",
+          nodes: payload.nodes,
+          edges: payload.edges,
+        };
+        graphRef.current = expanded;
+        setGraph(expanded);
+        draw(expanded);
         setDetail({ cluster: true, ...payload });
       } else {
         const { payload } = await graphApi.detail(node.id);
@@ -167,6 +224,7 @@ function App() {
           clusters: [],
           cluster_edges: [],
         };
+        graphRef.current = revealed;
         setGraph(revealed);
         draw(revealed);
       }
@@ -183,7 +241,7 @@ function App() {
 
   useEffect(() => {
     if (graph) draw(graph);
-  }, [sizeMetric, forces]);
+  }, [sizeMetric, forces, semanticEnabled, semanticThreshold, semanticNeighbours]);
 
   useEffect(() => {
     const value = query.trim();
@@ -225,10 +283,20 @@ function App() {
     const filteredEdges = sourceEdges
       .filter((edge) => visible.has(edge.source) && visible.has(edge.target))
       .map((edge) => (graph.mode === "aggregated" ? { ...edge, kind: edge.kind || "explicit" } : edge));
-    scene.current?.setGraph(filtered, filteredEdges, { sizeMetric, forces });
+    scene.current?.setGraph(
+      filtered,
+      semanticDisplayEdges(
+        filteredEdges,
+        selected?.id,
+        semanticEnabled,
+        semanticThreshold,
+        semanticNeighbours,
+      ),
+      { sizeMetric, forces },
+    );
   }
 
-  useEffect(redrawFiltered, [filtered]);
+  useEffect(redrawFiltered, [filtered, semanticEnabled, semanticThreshold, semanticNeighbours]);
 
   async function changeView(name) {
     const next = typeof name === "string" ? name.trim() : "";
@@ -275,7 +343,16 @@ function App() {
 
   async function exportFormat(format) {
     try {
-      const settings = { query, type, sizeMetric, forces, include_preview: includePreview };
+      const settings = {
+        query,
+        type,
+        sizeMetric,
+        forces,
+        include_preview: includePreview,
+        semantic_enabled: semanticEnabled,
+        semantic_threshold: semanticThreshold,
+        semantic_neighbours: semanticNeighbours,
+      };
       if (format === "png") {
         download("memento-graph.png", scene.current.exportPng());
       } else {
@@ -314,6 +391,21 @@ function App() {
               h("path", { d: "M8 12h8M8 16h8" }),
             ]);
 
+  const selectedSemanticEdges = selected && graph?.mode === "direct"
+    ? graph.edges
+        .filter(
+          (edge) =>
+            edge.kind === "semantic_similarity"
+            && (edge.similarity || 0) >= semanticThreshold
+            && (edge.source === selected.id || edge.target === selected.id),
+        )
+        .sort((left, right) => (right.similarity || 0) - (left.similarity || 0))
+        .slice(0, semanticNeighbours)
+        .map((edge) => {
+          const otherId = edge.source === selected.id ? edge.target : edge.source;
+          return { ...edge, other: graph.nodes.find((node) => node.id === otherId) };
+        })
+    : [];
   const activePrincipal = principals.find((principal) => principal.name === simulatedPrincipal) || null;
   const refreshUnavailable = refresh?.available === false
     ? refresh.last_error || "Semantic embedding refresh is unavailable on this Memento instance."
@@ -399,6 +491,40 @@ function App() {
             h("option", { value }, value),
           ),
         ),
+      ]),
+      h("details", { open: true }, [
+        h("summary", {}, "Semantic similarity"),
+        h("label", { class: "check" }, [
+          h("input", {
+            type: "checkbox",
+            checked: semanticEnabled,
+            onChange: (event) => setSemanticEnabled(event.currentTarget.checked),
+          }),
+          "Show semantic layer",
+        ]),
+        h("label", { class: "slider" }, [
+          `Minimum cosine ${semanticThreshold.toFixed(2)}`,
+          h("input", {
+            type: "range",
+            min: 0.75,
+            max: 0.98,
+            step: 0.01,
+            value: semanticThreshold,
+            onInput: (event) => setSemanticThreshold(Number(event.currentTarget.value)),
+          }),
+        ]),
+        h("label", { class: "slider" }, [
+          `Neighbours per node ${semanticNeighbours}`,
+          h("input", {
+            type: "range",
+            min: 1,
+            max: 12,
+            step: 1,
+            value: semanticNeighbours,
+            onInput: (event) => setSemanticNeighbours(Number(event.currentTarget.value)),
+          }),
+        ]),
+        h("small", {}, "Selected nodes always reveal their strongest semantic neighbours."),
       ]),
       h("details", {}, [
         h("summary", {}, "Forces"),
@@ -551,6 +677,7 @@ function App() {
         ? h(Inspector, {
             detail,
             selected,
+            semanticEdges: selectedSemanticEdges,
             onTag: (tag) => {
               setType("all");
               setQuery(tag);
@@ -562,7 +689,7 @@ function App() {
   ]);
 }
 
-function Inspector({ detail, selected, onTag, onMemory }) {
+function Inspector({ detail, selected, semanticEdges, onTag, onMemory }) {
   const node = detail.node || selected;
   const tags = node.tags || [];
   const edgeLine = (edge, id) =>
@@ -641,6 +768,21 @@ function Inspector({ detail, selected, onTag, onMemory }) {
           ])
         : null,
     ]),
+    h("h3", {}, "Semantic neighbours"),
+    semanticEdges?.length
+      ? h(
+          "ul",
+          {},
+          semanticEdges.map((edge) => {
+            const other = edge.other || { id: edge.source === node.id ? edge.target : edge.source };
+            return h("li", {}, [
+              h("button", { class: "link-button", onClick: () => onMemory(other.id) }, other.title || other.path || other.id),
+              ` cosine ${(edge.similarity || 0).toFixed(3)}`,
+              h("small", {}, ` ${edge.model_id || "embedding"} · ${edge.embedding_revision || ""}`),
+            ]);
+          }),
+        )
+      : h("p", {}, "No semantic neighbours above the current threshold."),
     h("h3", {}, "Assets / proposals"),
     detail.assets?.length ? h("ul", {}, detail.assets.map(assetLine)) : h("p", {}, "No assets."),
     detail.proposals?.length ? h("ul", {}, detail.proposals.map(proposalLine)) : h("p", {}, "No proposals."),

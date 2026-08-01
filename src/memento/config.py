@@ -394,6 +394,9 @@ class GraphExplorerConfig(BaseModel):
     edge_limit: int = Field(default=12_000, ge=1, le=20_000)
     preview_chars: int = Field(default=4_000, ge=0, le=16_000)
     semantic_neighbours: int = Field(default=12, ge=1, le=100)
+    semantic_min_similarity: float = Field(default=0.75, ge=-1, le=1)
+    semantic_edge_node_limit: int = Field(default=300, ge=1, le=2_000)
+    semantic_edge_limit: int = Field(default=1_500, ge=1, le=12_000)
     export_node_limit: int = Field(default=2_000, ge=1, le=2_000)
     refresh_max_paths: int = Field(default=2_000, ge=1, le=10_000)
 

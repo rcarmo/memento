@@ -69,7 +69,7 @@ The repository also ships an Agent Skills package at [`.agents/skills/memento/SK
 
 ## Visual Debugging
 
-The optional `/graph` surface helps humans inspect how memories are being created and managed. It shows explicit links, provenance, sizes, assets, proposals, index state and a separately labelled semantic overlay in a 2.5D scene.
+The optional `/graph` surface helps humans inspect how memories are being created and managed. It shows explicit links, provenance, sizes, assets, proposals and index state in a 2.5D scene. Embedding similarity is a separately labelled, default-off layer: selected nodes reveal top semantic neighbours as amber segmented arcs with cosine/model metadata.
 
 ![Memento visual debugger showing linked memories and the selected-memory inspector](docs/memento-graph-debugger.png)
 
