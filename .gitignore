@@ -16,6 +16,14 @@ dist/
 # Rust
 rust/target/
 
+# Release-hosted runtime models and training artefacts
+/models/gte/*.gtemodel
+/models/needle/*.ndl
+/models/needle/*.model
+/models/needle/*.pkl
+/models/needle/*.vocab
+/models/needle/*.jsonl
+
 # Local configuration, planning and editors
 /workitems/
 .env

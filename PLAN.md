@@ -20,7 +20,7 @@ Memento's repository, transaction, MCP, proposal, search, model and container fo
 * Strict concept schema, stable IDs, links, path containment and repository audit
 * Git worktree transactions with compare-and-swap publication and restart recovery
 * Proposal review/apply plus curator create, patch and rename
-* Versioned Git LFS asset packs and complete skill recall
+* Versioned Git asset packs and complete skill recall
 * Writer lease, idempotent replay, stale-write conflicts, backups and restore
 
 ### Retrieval And MCP

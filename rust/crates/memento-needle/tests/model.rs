@@ -13,10 +13,6 @@ fn loads_converted_router_model_when_present() {
         return;
     }
     let bytes = std::fs::read(&path).expect("read ndl");
-    if bytes.starts_with(b"version https://git-lfs.github.com/spec/v1\n") {
-        eprintln!("skipping model load test; git lfs pull models/needle/memento-router.ndl");
-        return;
-    }
     let model = Model::from_bytes(&bytes).expect("parse ndl");
     assert_eq!(model.config().dtype, "bfloat16");
     assert_eq!(model.config().num_encoder_layers, 12);

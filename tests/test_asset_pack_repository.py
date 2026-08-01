@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import io
 import subprocess
 import zipfile
@@ -9,7 +8,6 @@ from pathlib import Path
 import pytest
 
 from memento.repository.asset_packs import (
-    LFS_ATTRIBUTES_LINE,
     asset_version_paths,
     list_asset_versions,
     load_asset_metadata,
@@ -53,7 +51,7 @@ def test_write_resolve_and_retention(tmp_path: Path) -> None:
         tmp_path, "12345678-abcd-1234-abcd-123456789abc", "templates", "1.10.0"
     )
     assert metadata["concept_path"] == "/projects/demo.md"
-    assert LFS_ATTRIBUTES_LINE in (tmp_path / ".gitattributes").read_text()
+    assert not (tmp_path / ".gitattributes").exists()
     assert retention_partition(("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0")) == (
         ("1.5.0", "1.4.0", "1.3.0", "1.2.0", "1.1.0"),
         ("1.0.0",),
@@ -81,7 +79,7 @@ def test_immutable_asset_version(tmp_path: Path) -> None:
         write()
 
 
-def test_git_lfs_tracks_generic_asset(tmp_path: Path) -> None:
+def test_git_stages_generic_asset_as_an_ordinary_blob(tmp_path: Path) -> None:
     root = tmp_path / "repo"
     root.mkdir()
     subprocess.run(["git", "init", "-b", "main", str(root)], check=True, capture_output=True)
@@ -97,7 +95,6 @@ def test_git_lfs_tracks_generic_asset(tmp_path: Path) -> None:
         accepted_by="curator",
         source_proposal_id="p1",
     )
-    subprocess.run(["git", "-C", str(root), "lfs", "install", "--local"], check=True)
     subprocess.run(["git", "-C", str(root), "add", "--all"], check=True)
     _metadata, zip_path = asset_version_paths(
         "12345678-abcd-1234-abcd-123456789abc", "templates", "1.0.0"
@@ -107,8 +104,5 @@ def test_git_lfs_tracks_generic_asset(tmp_path: Path) -> None:
         check=True,
         capture_output=True,
     ).stdout
-    assert staged.startswith(b"version https://git-lfs.github.com/spec/v1\n")
-    assert (
-        hashlib.sha256((root / zip_path.removeprefix("/")).read_bytes()).hexdigest()
-        == item.manifest.sha256
-    )
+    assert staged == item.zip_bytes
+    assert not (root / ".gitattributes").exists()

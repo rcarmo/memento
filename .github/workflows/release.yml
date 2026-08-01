@@ -15,7 +15,7 @@ concurrency:
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}
-  RUNTIME_LFS_PATHS: models/gte/gte-small.gtemodel models/needle/memento-router.ndl models/needle/needle.model
+  RUNTIME_MODEL_PATHS: models/gte/gte-small.gtemodel models/needle/memento-router.ndl models/needle/needle.model
 
 jobs:
   validate-tag:
@@ -48,11 +48,10 @@ jobs:
       matrix:
         python-version: ["3.12", "3.13", "3.14"]
     steps:
-      - name: Checkout repository pointers only
+      - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
           fetch-depth: 0
-          lfs: false
 
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
@@ -72,9 +71,7 @@ jobs:
       - name: Install development dependencies
         run: make install-dev
 
-      - name: Run release quality gate without downloading model objects
-        env:
-          GIT_LFS_SKIP_SMUDGE: "1"
+      - name: Run release quality gate without downloading runtime models
         run: |
           make check
           make coverage
@@ -87,25 +84,23 @@ jobs:
     needs: validate-tag
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout pointers only
+      - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
-        with:
-          lfs: false
-      - name: Build cache key from runtime model pointers
-        id: pointers
+      - name: Build cache key from runtime model manifest
+        id: manifest
         shell: bash
         run: |
           key="runtime-models-${RUNNER_OS}-$(python tools/prepare_runtime_models.py --key-only)"
           echo "cache-key=$key" >> "$GITHUB_OUTPUT"
-      - name: Restore Git LFS object cache
+      - name: Restore runtime model cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             models/gte/gte-small.gtemodel
             models/needle/memento-router.ndl
             models/needle/needle.model
-          key: ${{ steps.pointers.outputs.cache-key }}
-      - name: Prepare verified runtime models without Git LFS
+          key: ${{ steps.manifest.outputs.cache-key }}
+      - name: Prepare verified runtime models
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python tools/prepare_runtime_models.py
@@ -139,10 +134,8 @@ jobs:
             runner: ubuntu-24.04-arm
             artifact: arm64
     steps:
-      - name: Checkout repository pointers only
+      - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
-        with:
-          lfs: false
 
       - name: Download prepared runtime models
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
@@ -153,9 +146,8 @@ jobs:
       - name: Verify release model artefacts
         shell: bash
         run: |
-          for path in $RUNTIME_LFS_PATHS; do
+          for path in $RUNTIME_MODEL_PATHS; do
             test -s "$path"
-            ! head -n 1 "$path" | grep -q '^version https://git-lfs.github.com/spec/'
           done
 
       - name: Set up Docker Buildx

@@ -24,12 +24,14 @@ def steps(document: dict[str, Any]) -> Iterator[dict[str, Any]]:
         yield from cast(list[dict[str, Any]], job.get("steps", []))
 
 
-def test_workflows_never_contact_git_lfs() -> None:
+def test_workflows_have_no_lfs_configuration_or_commands() -> None:
     for name in ("ci.yml", "release.yml"):
+        text = (ROOT / ".github" / "workflows" / name).read_text(encoding="utf-8")
+        for forbidden in ("git " + "lfs", "git-" + "lfs", "git_" + "lfs"):
+            assert forbidden not in text.lower()
         for step in steps(workflow(name)):
             if str(step.get("uses", "")).startswith("actions/checkout@"):
-                assert step.get("with", {}).get("lfs") is not True
-            assert "git lfs " not in str(step.get("run", ""))
+                assert "lfs" not in step.get("with", {})
 
 
 def test_each_workflow_prepares_one_verified_runtime_model_artifact() -> None:

@@ -1731,10 +1731,6 @@ mod tests {
             eprintln!("skipping tokenizer parity test; tokenizer model is unavailable");
             return;
         };
-        if tokenizer_bytes.starts_with(b"version https://git-lfs.github.com/spec/v1\n") {
-            eprintln!("skipping tokenizer parity test; tokenizer model is an LFS pointer");
-            return;
-        }
         let tok = NeedleTokenizer::from_model_bytes(&tokenizer_bytes).expect("tokenizer");
         for case in parity.fixtures {
             assert_eq!(

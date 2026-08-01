@@ -12,8 +12,6 @@ from memento.skill_packs import (
     parse_stable_semver,
 )
 
-LFS_ATTRIBUTES_LINE = "skills/.versions/**/*.zip filter=lfs diff=lfs merge=lfs -text"
-
 
 @dataclass(frozen=True, slots=True)
 class SkillPackPaths:
@@ -30,16 +28,6 @@ def skill_pack_paths(skill_name: str, version: str) -> SkillPackPaths:
         version_document=f"/skills/.versions/{skill_name}/{version}.md",
         zip_path=f"/skills/.versions/{skill_name}/{version}.zip",
     )
-
-
-def ensure_lfs_attributes(worktree: Path) -> bool:
-    path = worktree / ".gitattributes"
-    lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
-    if LFS_ATTRIBUTES_LINE in lines:
-        return False
-    lines.append(LFS_ATTRIBUTES_LINE)
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    return True
 
 
 def write_skill_pack_version(
@@ -69,10 +57,7 @@ def write_skill_pack_version(
     ).version_document.removeprefix("/")
     latest_doc.parent.mkdir(parents=True, exist_ok=True)
     latest_doc.write_bytes(latest_source.read_bytes())
-    changed = [paths.version_document, paths.zip_path, paths.latest_document]
-    if ensure_lfs_attributes(worktree):
-        changed.append("/.gitattributes")
-    return tuple(sorted(changed))
+    return tuple(sorted((paths.version_document, paths.zip_path, paths.latest_document)))
 
 
 def render_skill_pack_document(

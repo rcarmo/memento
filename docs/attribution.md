@@ -30,11 +30,10 @@ Runtime code is MIT licensed. The model artefact follows the upstream model card
 
 The Needle feasibility and shallow-router study builds on [`cactus-compute/needle`](https://github.com/cactus-compute/needle), using upstream source commit `ffb1c51` and Hugging Face model revision `5f89b4307696d669c3df1d38ae057e6e1728b107`. The fine-tuned checkpoint, deterministic NDL1 conversion, pure-Rust inference runtime, SIMD kernels and C ABI are Memento additions; their evidence and corpora are described in [`docs/evidence/needle/README.md`](evidence/needle/README.md) and [`models/needle/README.md`](../models/needle/README.md).
 
-The vendored `models/needle/` files are tracked with Git LFS. Operators and reviewers need Git LFS installed before using them:
+Needle runtime files are release-hosted and verified through `models/runtime-models.json`. Prepare them before runtime checks with:
 
 ```bash
-git lfs install
-git lfs pull
+python3 tools/prepare_runtime_models.py
 ```
 
 That prerequisite applies both to the fine-tuned checkpoint and to the family-separated train/validation/test corpora.

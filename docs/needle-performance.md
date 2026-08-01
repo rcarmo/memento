@@ -36,7 +36,7 @@ The router currently serialises each model instance for predictable scratch-buff
 
 ## Reproduction
 
-After fetching Git LFS artefacts:
+After preparing the pinned release artefacts:
 
 ```bash
 cd rust

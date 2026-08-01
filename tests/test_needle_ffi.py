@@ -36,7 +36,7 @@ def build_rust_cdylib(package: str, stem: str) -> Path:
     return library_path
 
 
-def vendored_model_paths() -> tuple[Path, Path]:
+def prepared_model_paths() -> tuple[Path, Path]:
     project_root = Path(__file__).resolve().parents[1]
     return (
         project_root / "models" / "needle" / "memento-router.ndl",
@@ -44,14 +44,11 @@ def vendored_model_paths() -> tuple[Path, Path]:
     )
 
 
-def require_vendored_model() -> tuple[Path, Path]:
-    model_path, tokenizer_path = vendored_model_paths()
+def require_prepared_model() -> tuple[Path, Path]:
+    model_path, tokenizer_path = prepared_model_paths()
     for path in (model_path, tokenizer_path):
         if not path.exists():
-            pytest.skip(f"missing vendored Needle artifact: {path}")
-        data = path.read_bytes()
-        if data.startswith(b"version https://git-lfs.github.com/spec/v1\n"):
-            pytest.skip(f"git lfs artifact not fetched: {path}")
+            pytest.skip(f"missing prepared Needle artifact: {path}")
     return model_path, tokenizer_path
 
 
@@ -64,7 +61,7 @@ def test_needle_router_config_defaults_are_disabled_with_default_paths() -> None
 
 
 def test_real_ffi_router_output_parses_to_one_action() -> None:
-    model_path, tokenizer_path = require_vendored_model()
+    model_path, tokenizer_path = require_prepared_model()
     ffi_library_path = build_rust_cdylib("memento-needle-ffi", "libmemento_needle_ffi")
     library = NeedleFfiLibrary(ffi_library_path)
     with library.load_router(model_path, tokenizer_path) as router:
@@ -82,7 +79,7 @@ def test_real_ffi_router_output_parses_to_one_action() -> None:
 
 
 def test_python_ctypes_wrapper_router_lifecycle_generate_cancel_and_errors() -> None:
-    model_path, tokenizer_path = require_vendored_model()
+    model_path, tokenizer_path = require_prepared_model()
     ffi_library_path = build_rust_cdylib("memento-needle-ffi", "libmemento_needle_ffi")
     library = NeedleFfiLibrary(ffi_library_path)
 

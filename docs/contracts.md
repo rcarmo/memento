@@ -4,7 +4,7 @@ Memento exposes a deterministic MCP surface over a Git-backed Markdown repositor
 
 ## Core rules
 
-* Git Markdown is authoritative for concepts; accepted immutable asset ZIPs in Git LFS are part of the same canonical history.
+* Git Markdown is authoritative for concepts; accepted immutable asset ZIPs are ordinary blobs in the same canonical history.
 * `control.sqlite` is authoritative for operations, idempotency, proposals, leases, scheduler state, managed principals, credential verifiers and access activity.
 * FTS, graph indexes, caches and signals are derived and rebuildable.
 * The daemon is the sole canonical repository writer. One active process holds the write lease.

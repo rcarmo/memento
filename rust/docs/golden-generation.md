@@ -16,11 +16,10 @@ The Rust workspace keeps parity fixtures with MIT-attributed data generated agai
 
 ## Prerequisites
 
-Some tracked fixtures in this repository use Git LFS. Install LFS and pull them before regenerating or auditing goldens:
+Runtime models are release-hosted and absent from a clean checkout. Prepare the pinned, verified files before regenerating or auditing goldens:
 
 ```bash
-git lfs install
-git lfs pull
+python3 ../tools/prepare_runtime_models.py
 ```
 
 ## Command

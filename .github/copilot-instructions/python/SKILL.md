@@ -312,11 +312,10 @@ A Python change is complete when:
 
 Static analysis must stay clean on Python 3.12, the lowest supported version. Runtime compatibility evidence covers Python 3.12 through 3.14.
 
-If you need model or corpus fixtures, install and fetch Git LFS objects first:
+If you need runtime model fixtures, fetch and verify the pinned release asset first:
 
 ```bash
-git lfs install
-git lfs pull
+python3 tools/prepare_runtime_models.py
 ```
 
 ## Review checklist

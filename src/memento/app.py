@@ -35,6 +35,10 @@ from memento.repository.git import (
     materialize_current_checkout,
 )
 from memento.repository.lease import WriterLease, acquire_writer_lease
+from memento.repository.legacy_blob_migration import (
+    migrate_legacy_blobs_to_git,
+    repository_needs_legacy_blob_migration,
+)
 from memento.repository.transactions import TransactionManager, TransactionRequest
 from memento.semantic import EmbeddingClient
 from memento.server import MementoMCPServer
@@ -410,6 +414,26 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             )
         )
         manager.recover_startup()
+        if repository_needs_legacy_blob_migration(paths.repo_paths.current_dir):
+            revision = get_main_revision(paths.repo_paths)
+            manager.apply(
+                TransactionRequest(
+                    operation=OperationRequest(
+                        op_id="migrate-legacy-blobs-to-git-v1",
+                        principal="memento-migration",
+                        idempotency_key="migrate-legacy-blobs-to-git-v1",
+                        tool_name="internal_legacy_blob_migration",
+                        request_json=json.dumps({"base_revision": revision}),
+                    ),
+                    expected_revision=revision,
+                    commit_message="memory: migrate legacy assets to ordinary Git blobs",
+                    author_name="Rui Carmo",
+                    author_email="rui.carmo@gmail.com",
+                ),
+                lambda worktree: migrate_legacy_blobs_to_git(
+                    worktree, hydrated_root=paths.repo_paths.current_dir
+                ),
+            )
         if semantic.enabled and semantic.worker_mode == "subprocess":
             derived_index.mark_model_stale()
             embedding_refresh_worker = SemanticEmbeddingRefreshWorker(

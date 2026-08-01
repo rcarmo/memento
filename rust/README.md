@@ -37,11 +37,10 @@ These commands cover every crate in the workspace. They do not fetch or generate
 
 ## Model fixtures
 
-Some model and corpus fixtures are stored with Git LFS. Install LFS and pull the tracked objects before working with them:
+Runtime model fixtures are release-hosted and absent from a clean checkout. Prepare the pinned, verified files before model-dependent work:
 
 ```bash
-git lfs install
-git lfs pull
+python3 ../tools/prepare_runtime_models.py
 ```
 
 If `/tmp/go-gte/models/gte-small/model.safetensors` is present, run:

@@ -7,7 +7,6 @@ from pathlib import Path
 from memento.skill_packs import SkillPackManifest, SkillPackValidationError, parse_stable_semver
 
 ASSET_KIND_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-LFS_ATTRIBUTES_LINE = ".assets/**/*.zip filter=lfs diff=lfs merge=lfs -text"
 
 
 def validate_asset_kind(asset_kind: str) -> str:
@@ -25,16 +24,6 @@ def asset_version_paths(concept_id: str, asset_kind: str, version: str) -> tuple
     parse_stable_semver(version)
     base = f"/.assets/{concept_id}/{asset_kind}/{version}"
     return f"{base}.json", f"{base}.zip"
-
-
-def ensure_asset_lfs_attributes(worktree: Path) -> bool:
-    path = worktree / ".gitattributes"
-    lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
-    if LFS_ATTRIBUTES_LINE in lines:
-        return False
-    lines.append(LFS_ATTRIBUTES_LINE)
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    return True
 
 
 def write_asset_version(
@@ -71,10 +60,7 @@ def write_asset_version(
     }
     metadata_file.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
     zip_file.write_bytes(zip_bytes)
-    changed = [metadata_path, zip_path]
-    if ensure_asset_lfs_attributes(worktree):
-        changed.append("/.gitattributes")
-    return tuple(sorted(changed))
+    return tuple(sorted((metadata_path, zip_path)))
 
 
 def list_asset_versions(root: Path, concept_id: str, asset_kind: str) -> tuple[str, ...]:

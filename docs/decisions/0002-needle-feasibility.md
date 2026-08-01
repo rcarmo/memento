@@ -143,7 +143,7 @@ The unchanged 360-case test then produced:
 
 Argument exact match remained 54.17%, which confirms the intended boundary: Needle may classify intent and fixed enums only. Memento still derives search text from the original request, parses exact paths and IDs and expands fixed plans in deterministic code. `src/memento/router.py` freezes and tests that boundary without adding a JAX dependency to the normal runtime.
 
-The passing checkpoint and family-separated corpora are vendored through Git LFS under `models/needle/`. The checkpoint SHA-256 is `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
+The passing checkpoint and family-separated corpora are pinned in the `training-assets-v1` release. The checkpoint SHA-256 is `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
 
 ## Embedded runtime acceptance
 

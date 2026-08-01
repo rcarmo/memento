@@ -1,34 +1,32 @@
 # Needle shallow-router artefacts
 
-This directory holds the Git LFS artefacts for the shallow router described in [ADR 0002](../../docs/decisions/0002-needle-feasibility.md). Corpus generation, training settings, hard-negative continuation and checkpoint conversion are documented in [`docs/needle-fine-tuning.md`](../../docs/needle-fine-tuning.md).
+This directory documents the shallow router described in [ADR 0002](../../docs/decisions/0002-needle-feasibility.md). Corpus generation, training, hard-negative continuation and checkpoint conversion are documented in [`docs/needle-fine-tuning.md`](../../docs/needle-fine-tuning.md).
 
-## Git LFS prerequisite
+The binaries and corpora are deliberately not stored in Git.
 
-These files are tracked with Git LFS. Install LFS and fetch the real objects before you try to inspect, hash or use them:
+## Runtime files
+
+A clean checkout contains only [`../runtime-models.json`](../runtime-models.json). Prepare the pinned, SHA-256-verified runtime release asset with:
 
 ```bash
-git lfs install
-git lfs pull
+python3 tools/prepare_runtime_models.py
 ```
 
-## Files
+This provides:
 
-* `memento-router.pkl` -- the passing fine-tuned shallow-router checkpoint. ADR 0002 records SHA-256 `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
-* `memento-router.ndl` -- deterministic `NDL1` conversion with bf16-rounded tensors, tokenizer metadata, section hashes and tensor directory for the pure Rust runtime. SHA-256: `fc9978c1d3817031a3f9ea00832cd8177290b25ff734b178cb9bcba0b894bb0b`.
-* `needle.model` and `needle.vocab` -- pinned SentencePiece artefacts used by the Rust tokenizer. The model SHA-256 is `0823f5b9133c68a8140addc5d7a425fa9119c4c8cb4a550363b4bffa4ba1c8c7`.
-* `train.jsonl` -- family-separated training corpus for the shallow-router study.
-* `val.jsonl` -- family-separated validation corpus.
-* `test.jsonl` -- untouched family-separated held-out corpus used for the routing and abstention gate.
-* `train-hard.jsonl` -- additional training-only hard negatives used for the one-epoch continuation after the first shallow-router run still emitted false actions for direct-mutation prompts.
+* `memento-router.ndl` — SHA-256 `fc9978c1d3817031a3f9ea00832cd8177290b25ff734b178cb9bcba0b894bb0b`;
+* `needle.model` — SHA-256 `0823f5b9133c68a8140addc5d7a425fa9119c4c8cb4a550363b4bffa4ba1c8c7`.
 
-## Provenance
+## Training files
 
-`train.jsonl`, `val.jsonl` and `test.jsonl` come from `tools/experiments/needle/generate_router_v2.py`, which writes the deterministic `router-v2-*.jsonl` splits under `/tmp/needle-study/` before they are reviewed and vendored here.
+The separately pinned `training-assets-v1` GitHub release contains `needle-training-assets-v1.tar` with SHA-256 `7c723be0babdac2ff11a735d6feea2eef1d61622967a32777f2fd53dc826db4c`. It includes:
 
-`train-hard.jsonl` is the targeted hard-negative continuation set referenced by ADR 0002 and the `router-v2-training-summary.json` evidence.
+* `memento-router.pkl` — passing checkpoint, SHA-256 `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`;
+* `needle.vocab`;
+* `train.jsonl`, `val.jsonl`, `test.jsonl`, and `train-hard.jsonl`.
 
-The earlier 1,500-example mixed routing/plan/UNKNOWN corpus is a different experiment. Its generator is `tools/experiments/needle/generate_corpus.py`, and its manifest and training evidence live under [`docs/evidence/needle/`](../../docs/evidence/needle/README.md).
+Download that release asset only when reproducing training or evaluation. All extracted files are ignored by Git.
 
-## Status
+## Provenance and status
 
-These artefacts support the embedded pure-Rust router. The scalar reference and AVX2/FMA runtime produce the same decisions as the passing checkpoint on all 360 untouched AMD64 cases. The dedicated C ABI and Python wrapper include bounded output, lifecycle checks and cooperative cancellation. ARM64 correctness is covered by the portable/NEON code paths but still needs hardware performance evidence.
+The deterministic splits come from `tools/experiments/needle/generate_router_v2.py`; the hard-negative continuation is recorded in ADR 0002 and `router-v2-training-summary.json`. The scalar and AVX2/FMA runtimes match the passing checkpoint on all 360 untouched AMD64 cases. The C ABI and Python wrapper include bounded output, lifecycle checks and cooperative cancellation. ARM64 correctness is covered by portable/NEON paths but still needs hardware performance evidence.

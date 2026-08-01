@@ -26,7 +26,7 @@ Piclaw clients
 
 | Plane | Authority | Implemented responsibilities |
 |---|---|---|
-| Knowledge plane | Git repository | canonical Markdown concepts, immutable Git LFS asset packs, deterministic serialisation, inbound-link rewrites on rename, audit-friendly history |
+| Knowledge plane | Git repository | canonical Markdown concepts, immutable versioned asset packs, deterministic serialisation, inbound-link rewrites on rename, audit-friendly history |
 | Control plane | `control.sqlite` | operation journal, idempotency, proposal lifecycle, scheduler runs, service checkpoints |
 | Derived plane | rebuildable SQLite/files | FTS5, graph metadata, semantic vectors, answer cache, hot working memory, traces and signals as configured |
 | Execution plane | service process | MCP tools, authn/authz, transaction pipeline, recovery, notifications, optional model tiers |

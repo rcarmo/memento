@@ -5,7 +5,7 @@
 
 ## Decision
 
-A memory concept may carry immutable, versioned ZIP assets. Accepted packs are stored through Git LFS under:
+A memory concept may carry immutable, versioned ZIP assets. Accepted packs are stored as ordinary Git blobs under:
 
 ```text
 /.assets/<concept-id>/<asset-kind>/<version>.json
@@ -20,7 +20,7 @@ Skills are not a server-side content type. A skill is a normal concept under `/s
 
 The first implementation gave skills their own proposal table, tools, search and storage layout. That duplicated concept behavior and made other binary attachments impossible without another parallel feature.
 
-A generic asset layer keeps one memory model and one review queue. Storing by concept ID lets a concept move without breaking its assets. Git LFS keeps binary history out of ordinary Git objects while preserving versioned references.
+A generic asset layer keeps one memory model and one review queue. Storing by concept ID lets a concept move without breaking its assets. Ordinary Git blobs keep versioned assets self-contained and remove any runtime dependency on an external blob service.
 
 ## Consequences
 

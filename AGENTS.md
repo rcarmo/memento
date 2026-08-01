@@ -71,10 +71,9 @@ Type all new and changed Python code. Prefer typed functions, frozen internal da
 * Mark integration, live, crash and deployment tests explicitly.
 * Keep static analysis clean on the lowest supported Python, 3.12.
 * Treat runtime compatibility across Python 3.12-3.14 and Piclaw/uMCP Streamable HTTP as CI and compatibility-work evidence.
-* Install Git LFS and pull LFS objects before working with model or corpus fixtures:
+* Prepare runtime model fixtures from the pinned release manifest before model-dependent work:
   ```bash
-  git lfs install
-  git lfs pull
+  python3 tools/prepare_runtime_models.py
   ```
 
 ## Git workflow

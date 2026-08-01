@@ -56,7 +56,7 @@ The splits use different entity families and path shapes:
 
 The reviewed read-field order is `title`, `path`, `status`, `tags`, `body`, `type`; status fields are `repo_revision`, `index_revision`, `index_stale`, `semantic_search_ready`, `visible_concepts`, `proposal_backlog`. These values and their ordering are part of the corpus definition because field assignment depends on list position.
 
-The generated hashes must match [`router-v2-manifest.json`](evidence/needle/router-v2-manifest.json). The reviewed files are stored through Git LFS under [`models/needle/`](../models/needle/README.md).
+The generated hashes must match [`router-v2-manifest.json`](evidence/needle/router-v2-manifest.json). The reviewed training files are stored in the pinned `training-assets-v1` release; runtime files use `models/runtime-models.json`.
 
 ## Train and continue with hard negatives
 

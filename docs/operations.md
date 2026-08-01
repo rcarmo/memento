@@ -54,7 +54,7 @@ Because the CLI status path also needs the writer lease, use it for offline insp
 
 ## Asset-pack storage
 
-Accepted asset ZIPs are Git LFS objects inside the canonical bare repository. Install `git-lfs` anywhere Memento applies asset proposals or restores backups. The release container includes it.
+Accepted asset ZIPs are ordinary blobs inside the canonical bare repository. Existing repositories with hydrated legacy pointer-backed assets are migrated once at startup; keep the old hydrated checkout available until that migration commits.
 
 Small asset submissions may use base64 inside MCP JSON. Piclaw agents should call `memory_asset_stage_begin`, upload the raw ZIP to the returned path using the one-time `X-Memento-Upload-Ticket`, then call `memory_asset_stage_status` and reference its `staged_asset_id` from `attach_asset_pack`. Clients that already manage bearer authentication may use `POST /assets/staging` directly. `mcp.max_request_bytes` defaults to 72 MiB, while decoded ZIP content is capped at 50 MiB and inspected before storage. Reverse proxies must allow the staging body size and preserve `Authorization`, `Idempotency-Key`, `X-Memento-Asset-Kind`, `X-Memento-Asset-Version` and `X-Memento-Upload-Ticket` headers.
 

@@ -2,72 +2,55 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import os
-import re
-import subprocess
 import tarfile
 import urllib.request
 from pathlib import Path
+from typing import Any, cast
 
-RUNTIME_PATHS = (
-    Path("models/gte/gte-small.gtemodel"),
-    Path("models/needle/memento-router.ndl"),
-    Path("models/needle/needle.model"),
-)
-POINTER_OID = re.compile(r"^oid sha256:([0-9a-f]{64})$", re.MULTILINE)
-RELEASE_TAG = "model-assets-v1"
+MANIFEST_PATH = Path("models/runtime-models.json")
 
 
-def pointer_text(path: Path) -> str:
-    return subprocess.run(
-        ["git", "show", f"HEAD:{path.as_posix()}"],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout
+def load_manifest(root: Path = Path(".")) -> dict[str, Any]:
+    return cast(dict[str, Any], json.loads((root / MANIFEST_PATH).read_text(encoding="utf-8")))
 
 
-def expected_oid(path: Path) -> str:
-    match = POINTER_OID.search(pointer_text(path))
-    if match is None:
-        raise SystemExit(f"{path} is not a Git LFS pointer")
-    return match.group(1)
+def bundle_key(root: Path = Path(".")) -> str:
+    return hashlib.sha256((root / MANIFEST_PATH).read_bytes()).hexdigest()
 
 
-def bundle_key() -> str:
-    digest = hashlib.sha256()
-    for path in RUNTIME_PATHS:
-        digest.update(pointer_text(path).encode())
-    return digest.hexdigest()
-
-
-def verify(root: Path) -> None:
-    for relative in RUNTIME_PATHS:
-        path = root / relative
+def verify(root: Path, manifest: dict[str, Any]) -> None:
+    for name, expected in cast(dict[str, str], manifest["files"]).items():
+        path = root / name
         actual = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else "missing"
-        expected = expected_oid(relative)
         if actual != expected:
-            raise SystemExit(
-                f"runtime model digest mismatch for {relative}: {actual} != {expected}"
-            )
+            raise SystemExit(f"runtime model digest mismatch for {name}: {actual} != {expected}")
 
 
-def download(root: Path, token: str | None) -> None:
-    key = bundle_key()
-    asset = f"runtime-models-{key}.tar"
-    url = f"https://github.com/rcarmo/memento/releases/download/{RELEASE_TAG}/{asset}"
+def download(root: Path, token: str | None, manifest: dict[str, Any]) -> None:
+    tag = str(manifest["release_tag"])
+    asset = str(manifest["asset_name"])
+    url = f"https://github.com/rcarmo/memento/releases/download/{tag}/{asset}"
     request = urllib.request.Request(url)
     if token:
         request.add_header("Authorization", f"Bearer {token}")
     archive = root / asset
+    digest = hashlib.sha256()
     with urllib.request.urlopen(request, timeout=300) as response, archive.open("wb") as output:
         while chunk := response.read(1024 * 1024):
+            digest.update(chunk)
             output.write(chunk)
+    if digest.hexdigest() != manifest["asset_sha256"]:
+        archive.unlink(missing_ok=True)
+        raise SystemExit("runtime model release asset digest mismatch")
     with tarfile.open(archive) as bundle:
-        members = {member.name for member in bundle.getmembers() if member.isfile()}
-        expected = {path.as_posix() for path in RUNTIME_PATHS}
-        if members != expected:
-            raise SystemExit(f"unexpected runtime model archive members: {sorted(members)}")
+        members = bundle.getmembers()
+        expected = set(cast(dict[str, str], manifest["files"]))
+        names = {member.name for member in members}
+        if names != expected or any(not member.isfile() for member in members):
+            archive.unlink(missing_ok=True)
+            raise SystemExit(f"unexpected runtime model archive members: {sorted(names)}")
         bundle.extractall(root, filter="data")
     archive.unlink()
 
@@ -77,15 +60,16 @@ def main() -> None:
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--key-only", action="store_true")
     args = parser.parse_args()
+    manifest = load_manifest(args.root)
     if args.key_only:
-        print(bundle_key())
+        print(bundle_key(args.root))
         return
     try:
-        verify(args.root)
+        verify(args.root, manifest)
     except (SystemExit, FileNotFoundError):
-        download(args.root, os.environ.get("GITHUB_TOKEN"))
-        verify(args.root)
-    print(bundle_key())
+        download(args.root, os.environ.get("GITHUB_TOKEN"), manifest)
+        verify(args.root, manifest)
+    print(bundle_key(args.root))
 
 
 if __name__ == "__main__":

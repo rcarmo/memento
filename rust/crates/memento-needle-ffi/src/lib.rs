@@ -510,22 +510,15 @@ mod tests {
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../models/needle/needle.model")
     }
 
-    fn vendored_model_available() -> bool {
+    fn prepared_model_available() -> bool {
         for path in [model_path(), tokenizer_path()] {
-            let Ok(bytes) = fs::read(&path) else {
+            let Ok(_bytes) = fs::read(&path) else {
                 eprintln!(
                     "skipping Needle FFI real-model test; missing {}",
                     path.display()
                 );
                 return false;
             };
-            if bytes.starts_with(b"version https://git-lfs.github.com/spec/v1\n") {
-                eprintln!(
-                    "skipping Needle FFI real-model test; git lfs pull {}",
-                    path.display()
-                );
-                return false;
-            }
         }
         true
     }
@@ -589,7 +582,7 @@ mod tests {
 
     #[test]
     fn generate_reports_required_length_and_router_info_when_model_present() {
-        if !vendored_model_available() {
+        if !prepared_model_available() {
             return;
         }
         let handle = unsafe { load_handle() };
@@ -666,7 +659,7 @@ mod tests {
 
     #[test]
     fn cancelled_generation_is_reported_when_model_present() {
-        if !vendored_model_available() {
+        if !prepared_model_available() {
             return;
         }
         let handle = unsafe { load_handle() };
@@ -711,7 +704,7 @@ mod tests {
 
     #[test]
     fn c_smoke_test_runs_when_compiler_and_model_exist() {
-        if !vendored_model_available() {
+        if !prepared_model_available() {
             return;
         }
         let compiler = ["cc", "clang", "gcc"].into_iter().find(|candidate| {

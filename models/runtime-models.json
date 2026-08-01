@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "release_tag": "model-assets-v1",
+  "asset_name": "runtime-models-84317b5811d49e316d710f9759cfcd8d38f97f03875f53c258cd819277a2fac8.tar",
+  "asset_sha256": "84317b5811d49e316d710f9759cfcd8d38f97f03875f53c258cd819277a2fac8",
+  "files": {
+    "models/gte/gte-small.gtemodel": "06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171",
+    "models/needle/memento-router.ndl": "fc9978c1d3817031a3f9ea00832cd8177290b25ff734b178cb9bcba0b894bb0b",
+    "models/needle/needle.model": "0823f5b9133c68a8140addc5d7a425fa9119c4c8cb4a550363b4bffa4ba1c8c7"
+  }
+}

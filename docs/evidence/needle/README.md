@@ -22,11 +22,10 @@ The directory also contains records from the free GPU fine-tuning run:
 
 The first full-plan checkpoint is not committed because it does not pass the integration thresholds. The later shallow-router experiment is recorded in the `router-v2-*` files and passes the untouched family-separated AMD64 routing/abstention gate after a targeted hard-negative continuation.
 
-The passing checkpoint and family-separated train/validation/test corpora are vendored through Git LFS under [`models/needle/`](../../../models/needle/README.md). The Phase 0 pure-Rust packaging pass also stores the converted `models/needle/memento-router.ndl` artefact there and records its manifest in `memento-router-ndl-manifest.json`. Install and fetch LFS objects before using them:
+The passing checkpoint and family-separated corpora are pinned in the `training-assets-v1` release. The pure-Rust runtime files are pinned in `models/runtime-models.json`. Prepare runtime files with:
 
 ```bash
-git lfs install
-git lfs pull
+python3 tools/prepare_runtime_models.py
 ```
 
 The embedded Rust runtime is enabled with `intelligent_tiers.needle_router.enabled` and is off by default. The NDL1 loader, SentencePiece tokenizer, generator, C ABI and Python wrapper use local artefacts, bounded output and cooperative cancellation. AMD64 parity and MCP/container tests passed. ARM64 uses the portable/NEON paths, but this repository does not yet include ARM64 performance measurements.
