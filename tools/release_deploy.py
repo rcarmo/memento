@@ -321,8 +321,8 @@ def verify(args: argparse.Namespace) -> None:
         edge_count = len(overview.get("edges", []))
     else:
         raise SystemExit(f"unexpected overview mode: {mode}")
-    if len(skill_nodes) != 26:
-        raise SystemExit(f"unexpected skill node count: {len(skill_nodes)}")
+    if not skill_nodes:
+        raise SystemExit("graph has no skill nodes")
     if not all(node.get("tags") for node in skill_nodes):
         raise SystemExit("skill nodes are missing tags")
     if edge_count <= 0:

@@ -294,6 +294,8 @@ class DerivedIndex:
                         changed_documents=tuple(changed_documents),
                         full_rebuild=False,
                     )
+                elif not changed_documents:
+                    self._advance_ready_embedding_revision(connection, repo_revision)
                 self._set_state(connection, "index_revision", repo_revision)
                 self._set_state(connection, "status", "ready")
 
@@ -881,6 +883,26 @@ class DerivedIndex:
             ).fetchall()
         return tuple(str(row["path"]) for row in rows)
 
+    def _advance_ready_embedding_revision(
+        self, connection: sqlite3.Connection, repo_revision: str
+    ) -> None:
+        connection.execute(
+            "UPDATE concept_embeddings SET embedding_revision=? WHERE status='ready'",
+            (repo_revision,),
+        )
+        concept_count = int(connection.execute("SELECT COUNT(*) FROM concepts").fetchone()[0] or 0)
+        ready_count = int(
+            connection.execute(
+                "SELECT COUNT(*) FROM concept_embeddings WHERE status='ready'"
+            ).fetchone()[0]
+            or 0
+        )
+        self._set_state(
+            connection,
+            "semantic_embedding_revision",
+            repo_revision if concept_count == ready_count else ("partial" if ready_count else ""),
+        )
+
     def _mark_embedding_staleness(
         self,
         connection: sqlite3.Connection,
@@ -1020,6 +1042,10 @@ class DerivedIndex:
                         model_revision=model_info.revision,
                         validated=validated,
                     )
+        connection.execute(
+            "UPDATE concept_embeddings SET embedding_revision=? WHERE status='ready'",
+            (repo_revision,),
+        )
         concept_count = int(connection.execute("SELECT COUNT(*) FROM concepts").fetchone()[0] or 0)
         ready_count = int(
             connection.execute(

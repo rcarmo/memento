@@ -292,6 +292,47 @@ def test_fake_embedder_full_rebuild_incremental_update_delete_and_model_invalida
     ]
 
 
+@pytest.mark.parametrize("defer_embeddings", [False, True])
+def test_asset_only_revision_advances_ready_embeddings_without_recomputing(
+    tmp_path: Path,
+    semantic_repo_paths: GitRepositoryPaths,
+    defer_embeddings: bool,
+) -> None:
+    embedder = FakeEmbedder()
+    db_path = tmp_path / "asset-revision.sqlite"
+    DerivedIndex(
+        db_path,
+        semantic_config=semantic_config(),
+        embedding_client=embedder,
+    ).rebuild(semantic_repo_paths.current_dir, repo_revision="rev-1")
+    embedder.seen_texts.clear()
+    asset = semantic_repo_paths.current_dir / ".assets" / "alpha" / "templates" / "1.0.0.zip"
+    asset.parent.mkdir(parents=True)
+    asset.write_bytes(b"asset")
+    index = DerivedIndex(
+        db_path,
+        semantic_config=semantic_config(),
+        embedding_client=embedder,
+        defer_embeddings=defer_embeddings,
+    )
+
+    index.update_paths(
+        semantic_repo_paths.current_dir,
+        repo_revision="rev-assets",
+        changed_paths=("/.assets/alpha/templates/1.0.0.zip",),
+    )
+
+    assert embedder.seen_texts == []
+    status = index.semantic_status()
+    assert status.ready is True
+    assert status.embedding_revision == "rev-assets"
+    with sqlite3.connect(index.db_path) as connection:
+        revisions = connection.execute(
+            "SELECT DISTINCT embedding_revision FROM concept_embeddings"
+        ).fetchall()
+    assert revisions == [("rev-assets",)]
+
+
 def test_semantic_search_disabled_or_unavailable_falls_back_to_lexical(
     tmp_path: Path,
     semantic_repo_paths: GitRepositoryPaths,
