@@ -348,11 +348,18 @@ class MemoryService:
                 "catalog": {
                     "resources": ("memory://help", "memory://status", "memory://catalog"),
                     "templates": ("memory://catalog/{operation}", "memory://workflow/{goal}"),
+                    "operation_values": tuple(spec.op_name for spec in OPERATION_SPECS),
+                    "workflow_values": tuple(WORKFLOW_TEMPLATES),
+                    "asset_publication": {
+                        "workflow": "memory://workflow/asset_pack",
+                        "proposal_contract": "memory://catalog/propose",
+                        "prompt": "publish_asset_pack",
+                    },
                 },
                 "mcp": {
                     "tool_surface": self._deps.config.mcp.tool_surface,
                     "direct_tools": tuple(sorted(visible_tools)),
-                    "compact_instructions": "Use memory_search, then memory_read, or use memory_execute with saved references like $hits.results.0.path. If enabled, memory_route can classify one shallow read request into a deterministic action.",
+                    "compact_instructions": "Use memory_search, then memory_read, or use memory_execute with saved references like $hits.results.0.path. For staged ZIP uploads, read memory://workflow/asset_pack and memory://catalog/propose before submitting an attach_asset_pack change. If enabled, memory_route can classify one shallow read request into a deterministic action.",
                     "execute_limits": self._deps.config.mcp.execute.model_dump(mode="python"),
                     "execute_only_operations": execute_only_operations,
                 },
@@ -3047,6 +3054,7 @@ class MemoryService:
         index_stale: bool = False,
         operation_id: str | None = None,
         warnings: tuple[str, ...] = (),
+        next_tools: tuple[str, ...] = (),
     ) -> SuccessEnvelope[dict[str, Any]]:
         revision = (
             repo_revision if repo_revision is not None else get_main_revision(self._deps.repo_paths)
@@ -3058,6 +3066,7 @@ class MemoryService:
             index_stale=index_stale,
             operation_id=operation_id,
             warnings=warnings,
+            next_tools=next_tools,
         )
 
     def _failure(self, exc: Exception) -> ErrorEnvelope:

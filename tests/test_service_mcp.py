@@ -454,7 +454,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     changes_schema = operation["input_schema"]["properties"]["changes"]
     assert changes_schema["type"] == "array"
     assert "anyOf" in changes_schema["items"]
-    attachment = operation["input_schema"]["$defs"]["_AttachAssetPackInputSchema"]
+    attachment = operation["input_schema"]["$defs"]["ProposeAssetChange"]
     assert {"zip_base64", "staged_asset_id"} <= set(attachment["properties"])
     assert "asset_id" not in attachment["properties"]
     assert "manifest" not in attachment["properties"]
@@ -471,6 +471,17 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "propose_freeform",
         "propose_update",
     )
+    assert help_payload["catalog"]["workflow_values"] == (
+        "inspect",
+        "propose",
+        "curate",
+        "asset_pack",
+    )
+    assert help_payload["catalog"]["asset_publication"] == {
+        "workflow": "memory://workflow/asset_pack",
+        "proposal_contract": "memory://catalog/propose",
+        "prompt": "publish_asset_pack",
+    }
     workflow = json.loads(asyncio.run(server.resource_template_workflow("inspect"))["text"])
     assert [item["operation"] for item in workflow["operations"]] == ["search", "read"]
     propose_workflow = json.loads(asyncio.run(server.resource_template_workflow("propose"))["text"])
@@ -480,6 +491,74 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "propose_freeform",
         "propose_update",
     ]
+    asset_workflow = json.loads(
+        asyncio.run(server.resource_template_workflow("asset_pack"))["text"]
+    )
+    assert [step["operation"] for step in asset_workflow["steps"]] == [
+        "asset_stage_begin",
+        "raw_upload",
+        "asset_stage_status",
+        "propose",
+    ]
+    proposal_change = asset_workflow["steps"][-1]["arguments"]["changes"][0]
+    assert proposal_change == {
+        "kind": "attach_asset_pack",
+        "path": "/skills/example.md",
+        "asset_kind": "skill",
+        "version": "1.1.0",
+        "staged_asset_id": "<asset_stage_status.data.staged_asset_id>",
+    }
+    templates = server.discover_resource_templates()["resourceTemplates"]
+    by_template = {item["uriTemplate"]: item for item in templates}
+    assert "asset_stage_begin" in by_template["memory://catalog/{operation}"]["description"]
+    assert "asset_pack" in by_template["memory://workflow/{goal}"]["description"]
+    prompts = server.discover_prompts()["prompts"]
+    assert [item["name"] for item in prompts] == ["publish_asset_pack"]
+    operation_completion = asyncio.run(
+        server.handle_completion_complete_async(
+            1,
+            {
+                "ref": {
+                    "type": "ref/resource",
+                    "uri": "memory://catalog/{operation}",
+                },
+                "argument": {"name": "operation", "value": "asset_stage"},
+            },
+        )
+    )
+    assert operation_completion["result"]["completion"]["values"] == [
+        "asset_stage_begin",
+        "asset_stage_status",
+    ]
+    goal_completion = asyncio.run(
+        server.handle_completion_complete_async(
+            2,
+            {
+                "ref": {
+                    "type": "ref/resource",
+                    "uri": "memory://workflow/{goal}",
+                },
+                "argument": {"name": "goal", "value": "asset"},
+            },
+        )
+    )
+    assert goal_completion["result"]["completion"]["values"] == ["asset_pack"]
+    prompt = asyncio.run(
+        server.prompt_publish_asset_pack(
+            target_path="/skills/example.md", asset_kind="skill", version="1.1.0"
+        )
+    )
+    assert "memory_asset_stage_begin" in prompt
+    assert "memory://workflow/asset_pack" in prompt
+    assert '"staged_asset_id": "<data.staged_asset_id>"' in prompt
+    execute_schema = next(
+        item["inputSchema"]
+        for item in server.discover_tools()["tools"]
+        if item["name"] == "memory_execute"
+    )
+    serialized_execute_schema = json.dumps(execute_schema, sort_keys=True)
+    assert "attach_asset_pack" in serialized_execute_schema
+    assert "staged_asset_id" in serialized_execute_schema
 
 
 def test_mcp_asset_stage_ticket_and_status_bridge(
@@ -518,6 +597,14 @@ def test_mcp_asset_stage_ticket_and_status_bridge(
     assert begun["status"] == "success"
     assert begun["data"]["upload_path"] == "/assets/staging/upload"
     assert begun["data"]["upload_ticket_header"] == "X-Memento-Upload-Ticket"
+    assert begun["data"]["workflow"] == "memory://workflow/asset_pack"
+    assert begun["data"]["proposal_contract"] == "memory://catalog/propose"
+    assert begun["next_tools"] == [
+        "memory_asset_stage_status",
+        "memory://workflow/asset_pack",
+        "memory://catalog/propose",
+        "memory_execute",
+    ]
     raw_token = begun["data"]["upload_ticket"]
     assert raw_token.startswith("memento_upload_")
     pending = asyncio.run(server.tool_memory_asset_stage_status("mcp-ticket-1"))
@@ -527,6 +614,9 @@ def test_mcp_asset_stage_ticket_and_status_bridge(
     assert uploaded["data"]["state"] == "uploaded"
     assert uploaded["data"]["staged_asset_id"] == staged.staged_asset_id
     assert uploaded["data"]["staged_asset"]["sha256"] == staged.sha256
+    assert "memory://workflow/asset_pack" in uploaded["next_tools"]
+    assert "memory://catalog/propose" in uploaded["next_tools"]
+    assert "memory_execute" in uploaded["next_tools"]
 
 
 def test_asset_pack_tool_discovery_and_catalog_schemas(

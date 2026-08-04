@@ -291,7 +291,7 @@ WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
         ],
     },
     "asset_pack": {
-        "description": "Discover, inspect, attach, retrieve, and prune versioned memory assets.",
+        "description": "Stage, upload, reconcile, and attach a versioned asset pack through a proposal.",
         "operations": [
             "search",
             "read",
@@ -300,6 +300,55 @@ WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
             "propose",
             "asset_get",
             "asset_prune",
+        ],
+        "steps": [
+            {
+                "step": 1,
+                "operation": "asset_stage_begin",
+                "arguments": {
+                    "asset_kind": "skill",
+                    "version": "1.1.0",
+                    "idempotency_key": "upload-example-skill-1.1.0",
+                },
+                "result": "Use upload_path, upload_method, upload_content_type, upload_ticket_header, and upload_ticket from the response.",
+            },
+            {
+                "step": 2,
+                "operation": "raw_upload",
+                "request": {
+                    "method": "POST",
+                    "path_from": "asset_stage_begin.data.upload_path",
+                    "content_type": "application/zip",
+                    "header_name_from": "asset_stage_begin.data.upload_ticket_header",
+                    "header_value_from": "asset_stage_begin.data.upload_ticket",
+                    "body": "raw ZIP bytes",
+                },
+            },
+            {
+                "step": 3,
+                "operation": "asset_stage_status",
+                "arguments": {"idempotency_key": "upload-example-skill-1.1.0"},
+                "result": "Wait for state=uploaded and save data.staged_asset_id.",
+            },
+            {
+                "step": 4,
+                "operation": "propose",
+                "via_compact_tool": "memory_execute",
+                "arguments": {
+                    "intent": "Publish the staged skill pack",
+                    "base_revision": "<current repository revision>",
+                    "changes": [
+                        {
+                            "kind": "attach_asset_pack",
+                            "path": "/skills/example.md",
+                            "asset_kind": "skill",
+                            "version": "1.1.0",
+                            "staged_asset_id": "<asset_stage_status.data.staged_asset_id>",
+                        }
+                    ],
+                    "rationale": "Attach the reviewed skill pack to its concept.",
+                },
+            },
         ],
     },
 }

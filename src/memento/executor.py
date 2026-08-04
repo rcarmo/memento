@@ -5,7 +5,7 @@ import re
 from time import monotonic
 from typing import Any, Literal, cast
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError, model_validator
 
 from memento.envelopes import ErrorEnvelope, SuccessEnvelope, error_envelope
 from memento.mcp_registry import OPERATION_SPEC_BY_OP
@@ -61,12 +61,75 @@ class AnswerArgs(BaseModel):
     answer_mode: str = "summary"
 
 
+class ProposeCreateChange(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    kind: Literal["create"]
+    path: str
+    concept_type: str
+    title: str
+    body: str
+    description: str | None = None
+    tags: tuple[str, ...] = ()
+    aliases: tuple[str, ...] = ()
+
+
+class ProposePatchChange(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    kind: Literal["patch"]
+    path: str
+    title: str | None = None
+    description: str | None = None
+    body: str | None = None
+    status: str | None = None
+    tags: tuple[str, ...] | None = None
+    aliases: tuple[str, ...] | None = None
+
+
+class ProposeRenameChange(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    kind: Literal["rename"]
+    path: str
+    new_path: str
+
+
+class ProposeAssetChange(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        frozen=True,
+        json_schema_extra={
+            "oneOf": [
+                {"required": ["zip_base64"], "not": {"required": ["staged_asset_id"]}},
+                {"required": ["staged_asset_id"], "not": {"required": ["zip_base64"]}},
+            ]
+        },
+    )
+
+    kind: Literal["attach_asset_pack"]
+    path: str
+    asset_kind: str
+    version: str
+    zip_base64: str | None = None
+    staged_asset_id: str | None = None
+
+    @model_validator(mode="after")
+    def validate_transport(self) -> ProposeAssetChange:
+        if (self.zip_base64 is None) == (self.staged_asset_id is None):
+            raise ValueError("exactly one of zip_base64 or staged_asset_id is required")
+        return self
+
+
+ProposeChange = ProposeCreateChange | ProposePatchChange | ProposeRenameChange | ProposeAssetChange
+
+
 class ProposeArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     intent: str
     base_revision: str
-    changes: list[dict[str, Any]]
+    changes: list[ProposeChange]
     rationale: str | None = None
 
 

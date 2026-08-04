@@ -7,7 +7,7 @@ from inspect import Parameter, signature
 from pathlib import Path
 from typing import Any, Literal, cast, get_args, get_origin
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict
 
 from memento.access import AccessStore
 from memento.activity import ActivityClock
@@ -29,7 +29,11 @@ from memento.executor import (
     ProposalGetArgs,
     ProposalListArgs,
     ProposalReviewArgs,
+    ProposeAssetChange,
+    ProposeCreateChange,
     ProposeFreeformArgs,
+    ProposePatchChange,
+    ProposeRenameChange,
     ProposeUpdateArgs,
     ReadArgs,
     RenameArgs,
@@ -46,13 +50,7 @@ from memento.mcp_registry import (
     OperationSpec,
     tool_names_for_surface,
 )
-from memento.service import (
-    CreateChange,
-    MemoryService,
-    PatchChange,
-    RenameChange,
-    ServiceContext,
-)
+from memento.service import MemoryService, ServiceContext
 from memento.staging_http import AssetStagingHTTPHandler
 
 try:  # pragma: no cover - optional runtime dependency
@@ -70,39 +68,44 @@ except ImportError:  # pragma: no cover - optional runtime dependency
         raise RuntimeError("uMCP is not installed")
 
 
-class _AttachAssetPackInputSchema(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-        frozen=True,
-        json_schema_extra={
-            "oneOf": [
-                {"required": ["zip_base64"], "not": {"required": ["staged_asset_id"]}},
-                {"required": ["staged_asset_id"], "not": {"required": ["zip_base64"]}},
-            ]
-        },
-    )
-
-    kind: Literal["attach_asset_pack"]
-    path: str
-    asset_kind: str
-    version: str
-    zip_base64: str | None = None
-    staged_asset_id: str | None = None
-
-    @model_validator(mode="after")
-    def validate_transport(self) -> _AttachAssetPackInputSchema:
-        if (self.zip_base64 is None) == (self.staged_asset_id is None):
-            raise ValueError("exactly one of zip_base64 or staged_asset_id is required")
-        return self
-
-
 class _ProposeArgsSchema(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     intent: str
     base_revision: str
-    changes: list[CreateChange | PatchChange | RenameChange | _AttachAssetPackInputSchema]
+    changes: list[
+        ProposeCreateChange | ProposePatchChange | ProposeRenameChange | ProposeAssetChange
+    ]
     rationale: str | None = None
+
+
+OperationName = Literal[
+    "help",
+    "status",
+    "search",
+    "read",
+    "list",
+    "graph",
+    "audit",
+    "answer",
+    "route",
+    "propose",
+    "propose_freeform",
+    "propose_update",
+    "proposal_get",
+    "proposal_list",
+    "proposal_review",
+    "proposal_apply",
+    "asset_stage_begin",
+    "asset_stage_status",
+    "asset_get",
+    "asset_prune",
+    "create",
+    "patch",
+    "rename",
+    "execute",
+]
+WorkflowGoal = Literal["inspect", "propose", "curate", "asset_pack"]
 
 
 class RouteArgs(BaseModel):
@@ -629,7 +632,15 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                 "upload_content_type": "application/zip",
                 "upload_ticket_header": "X-Memento-Upload-Ticket",
                 "upload_ticket": raw_token,
-            }
+                "workflow": "memory://workflow/asset_pack",
+                "proposal_contract": "memory://catalog/propose",
+            },
+            next_tools=(
+                "memory_asset_stage_status",
+                "memory://workflow/asset_pack",
+                "memory://catalog/propose",
+                "memory_execute",
+            ),
         ).model_dump(mode="json")
 
     async def tool_memory_asset_stage_status(self, idempotency_key: str) -> dict[str, Any]:
@@ -663,7 +674,15 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                 ).public_payload()
         except ValueError as exc:
             return self._service._failure(exc).model_dump(mode="json")
-        return self._service._success(payload).model_dump(mode="json")
+        return self._service._success(
+            payload,
+            next_tools=(
+                "memory_asset_stage_status",
+                "memory://workflow/asset_pack",
+                "memory://catalog/propose",
+                "memory_execute",
+            ),
+        ).model_dump(mode="json")
 
     async def tool_memory_asset_get(
         self, id_or_path: str, asset_kind: str, version: str | None = None
@@ -869,6 +888,38 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         item = self._access().delete(actor=actor.name, name=name)
         return {"principal": asdict(item)}
 
+    async def prompt_publish_asset_pack(
+        self,
+        target_path: str = "/skills/example.md",
+        asset_kind: str = "skill",
+        version: str = "1.0.0",
+    ) -> str:
+        """Build a staged asset publication plan. Categories: assets, proposals"""
+        return "\n".join(
+            (
+                "Publish a versioned asset pack through Memento's staged upload workflow.",
+                f"Target concept: {target_path}",
+                f"Asset kind: {asset_kind}",
+                f"Version: {version}",
+                "1. Call memory_asset_stage_begin with asset_kind, version, and a unique idempotency_key.",
+                "2. POST the raw ZIP bytes to data.upload_path using data.upload_ticket_header: data.upload_ticket and Content-Type: application/zip.",
+                "3. Call memory_asset_stage_status with the same idempotency_key until state is uploaded; save data.staged_asset_id.",
+                "4. Read memory://workflow/asset_pack and memory://catalog/propose.",
+                "5. Submit a propose operation (directly or through memory_execute) whose changes include:",
+                json.dumps(
+                    {
+                        "kind": "attach_asset_pack",
+                        "path": target_path,
+                        "asset_kind": asset_kind,
+                        "version": version,
+                        "staged_asset_id": "<data.staged_asset_id>",
+                    },
+                    sort_keys=True,
+                ),
+                "Use the current repository revision as base_revision. The staged asset is consumed only after the proposal is created successfully.",
+            )
+        )
+
     async def resource_status(self) -> dict[str, Any]:
         payload = self._service.memory_status(self._context()).model_dump(mode="json")
         return {"mimeType": "application/json", "text": json.dumps(payload, sort_keys=True)}
@@ -894,7 +945,8 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             ]
         return {"mimeType": "application/json", "text": json.dumps(payload, sort_keys=True)}
 
-    async def resource_template_catalog(self, operation: str) -> dict[str, Any]:
+    async def resource_template_catalog(self, operation: OperationName) -> dict[str, Any]:
+        """Read one operation contract. Values include propose, asset_stage_begin, and asset_stage_status."""
         spec = OPERATION_SPEC_BY_OP.get(operation)
         if spec is None:
             raise RuntimeError(f"unknown operation: {operation}")
@@ -909,7 +961,8 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             ),
         }
 
-    async def resource_template_workflow(self, goal: str) -> dict[str, Any]:
+    async def resource_template_workflow(self, goal: WorkflowGoal) -> dict[str, Any]:
+        """Read one workflow. Valid goals: inspect, propose, curate, asset_pack."""
         payload = self._workflow_payload(goal)
         return {"mimeType": "application/json", "text": json.dumps(payload, sort_keys=True)}
 
@@ -980,13 +1033,16 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                 for name in meta["operations"]
                 if name not in visible
             ]
-        return {
+        payload = {
             "goal": goal,
             "uri": f"memory://workflow/{goal}",
             "description": meta["description"],
             "operations": direct,
             "execute_only_operations": execute_only,
         }
+        if "steps" in meta:
+            payload["steps"] = meta["steps"]
+        return payload
 
     async def _notify_for_envelope(self, envelope: Mapping[str, Any]) -> None:
         if envelope.get("status") != "success":
