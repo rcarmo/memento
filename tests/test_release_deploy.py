@@ -18,7 +18,7 @@ sys.modules[SPEC.name] = release_deploy
 SPEC.loader.exec_module(release_deploy)
 
 
-def deploy_args(version: str = "0.3.21") -> argparse.Namespace:
+def deploy_args(version: str = "0.3.22") -> argparse.Namespace:
     return argparse.Namespace(
         version=version,
         pull_timeout=300.0,
@@ -27,9 +27,9 @@ def deploy_args(version: str = "0.3.21") -> argparse.Namespace:
 
 
 def test_compose_uses_bounded_persisted_state_startup_grace() -> None:
-    document = yaml.safe_load(release_deploy.compose("0.3.21"))
+    document = yaml.safe_load(release_deploy.compose("0.3.22"))
     service = document["services"]["memento"]
-    assert service["image"] == "ghcr.io/rcarmo/memento:0.3.21"
+    assert service["image"] == "ghcr.io/rcarmo/memento:0.3.22"
     expected_healthcheck = {
         "test": [
             "CMD",
@@ -78,8 +78,13 @@ def test_update_config_waits_for_success_and_removes_unique_helper(
     assert create[0] == "POST"
     assert create[1].endswith("name=memento-config-update-abc123def456")
     payload = cast(dict[str, Any], create[2])
-    assert payload["User"] == "0:0"
+    assert payload["User"] == "65532:65532"
     assert payload["NetworkDisabled"] is True
+    script = payload["Cmd"][1]
+    assert "temporary.open('w')" in script
+    assert "os.fsync(stream.fileno())" in script
+    assert "os.replace(temporary, path)" in script
+    assert "os.fsync(directory)" in script
     assert payload["HostConfig"] == {
         "Binds": ["/volume1/docker/memento/config:/config"],
         "AutoRemove": False,
