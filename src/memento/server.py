@@ -894,29 +894,30 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         asset_kind: str = "skill",
         version: str = "1.0.0",
     ) -> str:
-        """Build a staged asset publication plan. Categories: assets, proposals"""
+        """Build an MCP-native asset publication plan. Categories: assets, proposals"""
         return "\n".join(
             (
-                "Publish a versioned asset pack through Memento's staged upload workflow.",
+                "Publish and verify a versioned asset pack with one authenticated curator profile.",
                 f"Target concept: {target_path}",
                 f"Asset kind: {asset_kind}",
                 f"Version: {version}",
-                "1. Call memory_asset_stage_begin with asset_kind, version, and a unique idempotency_key.",
-                "2. POST the raw ZIP bytes to data.upload_path using data.upload_ticket_header: data.upload_ticket and Content-Type: application/zip.",
-                "3. Call memory_asset_stage_status with the same idempotency_key until state is uploaded; save data.staged_asset_id.",
-                "4. Read memory://workflow/asset_pack and memory://catalog/propose.",
-                "5. Submit a propose operation (directly or through memory_execute) whose changes include:",
+                "1. Read memory://workflow/asset_pack and memory://catalog/propose.",
+                "2. For a skill pack, make the concept body and ZIP-root SKILL.md byte-identical, then base64-encode the ZIP.",
+                "3. Submit a propose operation (directly or through memory_execute) using the current repository revision and this change:",
                 json.dumps(
                     {
                         "kind": "attach_asset_pack",
                         "path": target_path,
                         "asset_kind": asset_kind,
                         "version": version,
-                        "staged_asset_id": "<data.staged_asset_id>",
+                        "zip_base64": "<base64 ZIP bytes>",
                     },
                     sort_keys=True,
                 ),
-                "Use the current repository revision as base_revision. The staged asset is consumed only after the proposal is created successfully.",
+                "4. Read the proposal and verify its generated manifest, SHA-256, target path, asset kind, and version.",
+                "5. With the same authenticated curator profile, approve and apply using a fresh expected revision and durable idempotency key.",
+                "6. Retrieve the accepted version with memory_asset_get and verify the returned manifest, SHA-256, and decoded ZIP bytes.",
+                "Use memory_asset_stage_begin, raw HTTP upload, memory_asset_stage_status, and staged_asset_id only when the MCP request would exceed the configured ceiling or the client deliberately uses raw binary HTTP upload.",
             )
         )
 
@@ -1040,8 +1041,9 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             "operations": direct,
             "execute_only_operations": execute_only,
         }
-        if "steps" in meta:
-            payload["steps"] = meta["steps"]
+        for key in ("profile", "steps", "staging_fallback"):
+            if key in meta:
+                payload[key] = meta[key]
         return payload
 
     async def _notify_for_envelope(self, envelope: Mapping[str, Any]) -> None:

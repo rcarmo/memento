@@ -874,8 +874,6 @@ class MemoryService:
             proposal = get_proposal(self._deps.control_connection, proposal_id)
             self._require_proposal_access(policy, proposal, require_write=True)
             proposal = self._refresh_proposal_status(proposal)
-            if proposal.author_principal == policy.principal and decision == "approve":
-                raise ForbiddenError("proposal authors cannot self-approve")
             if proposal.status in {ProposalStatus.APPLIED, ProposalStatus.EXPIRED}:
                 raise ConflictError(
                     f"proposal {proposal.proposal_id} is already {proposal.status.value}"

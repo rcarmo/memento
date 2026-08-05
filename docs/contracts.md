@@ -359,9 +359,11 @@ Asset kinds and versions use lowercase/hyphen names and stable `MAJOR.MINOR.PATC
 
 `memory_propose` accepts an `attach_asset_pack` change containing `path`, `asset_kind`, `version` and exactly one of `zip_base64` or `staged_asset_id`. Stored proposal JSON replaces either transport reference with an asset ID, digest and generated manifest. `memory_proposal_get/list/review/apply` remain the only proposal lifecycle.
 
-For Piclaw/MCP clients, `memory_asset_stage_begin` creates a one-hour, one-time, principal-bound upload ticket and returns `/assets/staging/upload`, the `X-Memento-Upload-Ticket` header name and the ticket value. The client sends the ZIP as a raw `application/zip` body without exposing its bearer token to the upload command. `memory_asset_stage_status` reconciles `pending`, `uploaded` or `expired` ticket state and returns the generated `staged_asset_id`, SHA-256 and manifest after upload.
+MCP clients should use `zip_base64` when the complete request fits `mcp.max_request_bytes`. This keeps proposal creation inside the authenticated MCP exchange. A skill concept's body must byte-match the ZIP-root `SKILL.md`; clients verify the generated manifest before review and verify the manifest, SHA-256 and decoded ZIP after retrieval.
 
-Clients that already manage bearer authentication may alternatively use `POST /assets/staging` with `Authorization`, `Idempotency-Key`, `X-Memento-Asset-Kind` and `X-Memento-Asset-Version` headers, then reconcile with `GET /assets/staging/{staged_asset_id}`. Stages are principal-scoped and expire after 24 hours; ticket upload authorization expires after one hour. Skill/body compatibility is checked again when the proposal consumes the stage. Proposal creation and stage consumption commit atomically; consumed staging bytes are removed after being copied into proposal asset storage.
+For larger requests, or clients deliberately using raw binary HTTP, `memory_asset_stage_begin` creates a one-hour, one-time, principal-bound upload ticket and returns `/assets/staging/upload`, the `X-Memento-Upload-Ticket` header name and the ticket value. The client sends the ZIP as a raw `application/zip` body without exposing its bearer token to the upload command. `memory_asset_stage_status` reconciles `pending`, `uploaded` or `expired` ticket state and returns the generated `staged_asset_id`, SHA-256 and manifest after upload.
+
+Clients that already manage bearer authentication may alternatively use `POST /assets/staging` with `Authorization`, `Idempotency-Key`, `X-Memento-Asset-Kind` and `X-Memento-Asset-Version` headers, then reconcile with `GET /assets/staging/{staged_asset_id}`. Stages are principal-scoped and expire after 24 hours; ticket upload authorisation expires after one hour. Skill/body compatibility is checked again when the proposal consumes the stage. Proposal creation and stage consumption commit atomically; consumed staging bytes are removed after being copied into proposal asset storage.
 
 | Tool | Required role | Purpose |
 |---|---|---|
@@ -418,7 +420,7 @@ Proposal records live in `control.sqlite`, but the tool contract exposes a stabl
 * `memory_propose` stores a deterministic proposal and does not mutate Git.
 * `memory_proposal_review` accepts `decision` values `approve`, `reject`, `request_changes`.
 * `request_changes` moves the proposal back to `draft`.
-* Proposal authors cannot self-approve.
+* A curator may review an authorised proposal regardless of authorship. Review still requires curator role membership and write access to every affected path.
 * Applied or expired proposals cannot be reviewed again.
 * `memory_proposal_apply` requires proposal status `approved`.
 * Applies are revision-safe and idempotent.

@@ -118,7 +118,7 @@ A proposal through `memory_execute` looks like:
 }
 ```
 
-Review and apply are separate operations. Do not assume proposal authors may approve their own submissions; deployments can enforce separation. An apply operation is commit-capable, so keep at most one commit-capable operation in an execution plan.
+Review and apply are separate operations. An authenticated curator may review a proposal they authored when their policy grants write access to every affected path. Use the same curator profile for propose, review, apply and retrieval; do not swap credentials to manufacture a second identity. An apply operation is commit-capable, so keep at most one commit-capable operation in an execution plan.
 
 Direct creates and patches require:
 
@@ -143,11 +143,11 @@ The trusted `/graph` debugger can show the full repository and simulate managed 
 
 ## Skills And Assets
 
-A shared skill is an ordinary concept under `/skills/`, tagged `skill`, with an attached versioned asset pack whose root `SKILL.md` matches the concept body.
+A shared skill is an ordinary concept under `/skills/`, tagged `skill`, with an attached versioned asset pack whose root `SKILL.md` matches the concept body byte-for-byte.
 
-Use `memory_asset_get` with the concept path, `asset_kind="skill"` and an optional version. Validate the returned digest and manifest before installing files into an agent skill directory. Memento stores and returns skill packs; it does not execute them.
+Publish packs that fit the configured MCP request ceiling with an `attach_asset_pack` change containing `zip_base64`. This keeps the complete proposal inside MCP. Read the created proposal and verify its generated manifest, SHA-256, target path, asset kind and version before review. After apply, retrieve the accepted version with `memory_asset_get`, then verify the returned manifest, SHA-256 and decoded ZIP bytes before installing it. Memento stores and returns skill packs; it does not execute them.
 
-To publish a local ZIP from a Piclaw session, call `memory_asset_stage_begin`, upload the raw file to its returned `upload_path` with the one-time `X-Memento-Upload-Ticket`, then call `memory_asset_stage_status`. Use the returned `staged_asset_id` in an ordinary `attach_asset_pack` proposal. Do not pass an agent bearer token to the upload command; the ticket is short-lived, principal-bound and single-use.
+Use staging when the complete base64 request would exceed the MCP ceiling, or when the client deliberately uses the separate raw binary HTTP path: call `memory_asset_stage_begin`, upload the raw file to its returned `upload_path` with the one-time `X-Memento-Upload-Ticket`, then call `memory_asset_stage_status` and put its `staged_asset_id` in the proposal. Do not pass an agent bearer token to the upload command; the ticket is short-lived, principal-bound and single-use.
 
 Skill changes should normally use proposals so a curator reviews both Markdown and packaged files.
 

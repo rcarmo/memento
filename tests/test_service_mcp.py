@@ -84,6 +84,12 @@ def service_config(tmp_path: Path) -> ServiceConfig:
                     read_prefixes=("/secret/",),
                     write_prefixes=(),
                 ),
+                "narrow": NamespacePolicy(
+                    roles=("reader", "proposer", "curator"),
+                    token_env="MEMENTO_TOKEN_NARROW",
+                    read_prefixes=("/instances/",),
+                    write_prefixes=("/instances/",),
+                ),
             }
         ),
     )
@@ -179,6 +185,11 @@ def flint() -> ServiceContext:
 
 
 @pytest.fixture()
+def narrow() -> ServiceContext:
+    return ServiceContext(Principal(name="narrow", roles=("reader", "proposer", "curator")))
+
+
+@pytest.fixture()
 def ghost() -> ServiceContext:
     return ServiceContext(Principal(name="ghost", roles=("reader",)))
 
@@ -227,7 +238,7 @@ def test_proposal_lifecycle_self_approval_stale_apply_and_idempotency(
 ) -> None:
     base_revision = get_main_revision(repo_paths)
     proposed = service.memory_propose(
-        flint,
+        smith,
         intent="Update Piclaw",
         base_revision=base_revision,
         changes=[
@@ -244,17 +255,14 @@ def test_proposal_lifecycle_self_approval_stale_apply_and_idempotency(
     proposal_id = proposed_data["proposal"]["proposal_id"]
     assert "Updated by proposal" in proposed_data["proposal"]["diff"]
 
-    self_approve = service.memory_proposal_review(
-        flint, proposal_id=proposal_id, decision="approve"
-    )
-    assert self_approve.status == "error"
-    assert self_approve.error_class == "forbidden"
-
     approved = service.memory_proposal_review(
         smith, proposal_id=proposal_id, decision="approve", comment="ok"
     )
     assert approved.status == "success"
-    assert success_data(approved)["proposal"]["status"] == "approved"
+    approved_proposal = success_data(approved)["proposal"]
+    assert approved_proposal["status"] == "approved"
+    assert approved_proposal["author_principal"] == "smith"
+    assert approved_proposal["reviewed_by"] == "smith"
 
     applied = service.memory_proposal_apply(
         smith,
@@ -319,6 +327,42 @@ def test_proposal_lifecycle_self_approval_stale_apply_and_idempotency(
     )
     assert idempotency_conflict.status == "error"
     assert idempotency_conflict.error_class == "idempotency_conflict"
+
+
+def test_proposal_review_keeps_role_and_write_scope_checks(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+    flint: ServiceContext,
+    narrow: ServiceContext,
+) -> None:
+    proposed = service.memory_propose(
+        smith,
+        intent="Check review authorization",
+        base_revision=get_main_revision(repo_paths),
+        changes=[
+            {
+                "kind": "patch",
+                "path": "/projects/piclaw.md",
+                "body": "# Piclaw\n\nReview authorization test.\n",
+            }
+        ],
+    )
+    proposal_id = success_data(proposed)["proposal"]["proposal_id"]
+
+    non_curator = service.memory_proposal_review(flint, proposal_id=proposal_id, decision="approve")
+    assert non_curator.status == "error"
+    assert non_curator.error_class == "forbidden"
+
+    outside_write_scope = service.memory_proposal_review(
+        narrow, proposal_id=proposal_id, decision="approve"
+    )
+    assert outside_write_scope.status == "error"
+    assert outside_write_scope.error_class == "forbidden"
+
+    current = success_data(service.memory_proposal_get(smith, proposal_id=proposal_id))["proposal"]
+    assert current["status"] == "submitted"
+    assert current["reviewed_by"] is None
 
 
 def test_direct_rename_rewrites_inbound_links_atomically(
@@ -495,19 +539,22 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         asyncio.run(server.resource_template_workflow("asset_pack"))["text"]
     )
     assert [step["operation"] for step in asset_workflow["steps"]] == [
-        "asset_stage_begin",
-        "raw_upload",
-        "asset_stage_status",
+        "prepare_asset_pack",
         "propose",
+        "proposal_get",
+        "proposal_review",
+        "proposal_apply",
+        "asset_get",
     ]
-    proposal_change = asset_workflow["steps"][-1]["arguments"]["changes"][0]
+    proposal_change = asset_workflow["steps"][1]["arguments"]["changes"][0]
     assert proposal_change == {
         "kind": "attach_asset_pack",
         "path": "/skills/example.md",
         "asset_kind": "skill",
         "version": "1.1.0",
-        "staged_asset_id": "<asset_stage_status.data.staged_asset_id>",
+        "zip_base64": "<base64 ZIP bytes>",
     }
+    assert asset_workflow["staging_fallback"]["proposal_field"] == "staged_asset_id"
     templates = server.discover_resource_templates()["resourceTemplates"]
     by_template = {item["uriTemplate"]: item for item in templates}
     assert "asset_stage_begin" in by_template["memory://catalog/{operation}"]["description"]
@@ -548,9 +595,11 @@ def test_tool_discovery_surfaces_and_catalog_resources(
             target_path="/skills/example.md", asset_kind="skill", version="1.1.0"
         )
     )
-    assert "memory_asset_stage_begin" in prompt
     assert "memory://workflow/asset_pack" in prompt
-    assert '"staged_asset_id": "<data.staged_asset_id>"' in prompt
+    assert '"zip_base64": "<base64 ZIP bytes>"' in prompt
+    assert "same authenticated curator profile" in prompt
+    assert "memory_asset_stage_begin" in prompt
+    assert "only when the MCP request would exceed" in prompt
     execute_schema = next(
         item["inputSchema"]
         for item in server.discover_tools()["tools"]
@@ -674,10 +723,13 @@ def test_asset_pack_tool_discovery_and_catalog_schemas(
     assert [item["operation"] for item in asset_pack_workflow["operations"]] == [
         "search",
         "read",
+        "propose",
+        "proposal_get",
+        "proposal_review",
+        "proposal_apply",
+        "asset_get",
         "asset_stage_begin",
         "asset_stage_status",
-        "propose",
-        "asset_get",
         "asset_prune",
     ]
 
@@ -771,7 +823,7 @@ def test_asset_pack_skill_lifecycle_uses_generic_propose_review_apply_and_get(
     encoded, zip_bytes = _skill_zip(skill_md)
     base_revision = get_main_revision(repo_paths)
     proposed = service.memory_propose(
-        flint,
+        smith,
         intent="Share complete skill",
         base_revision=base_revision,
         rationale="share complete skill",
@@ -799,12 +851,11 @@ def test_asset_pack_skill_lifecycle_uses_generic_propose_review_apply_and_get(
     assert "zip_base64" not in proposal["changes"][1]
     assert proposal["changes"][1]["asset_kind"] == "skill"
     assert proposal["changes"][1]["version"] == "1.0.0"
-
-    self_review = service.memory_proposal_review(
-        flint, proposal_id=proposal["proposal_id"], decision="approve"
-    )
-    assert self_review.status == "error"
-    assert self_review.error_class == "forbidden"
+    assert proposal["changes"][1]["zip_sha256"] == proposal["changes"][1]["manifest"]["sha256"]
+    assert {entry["path"] for entry in proposal["changes"][1]["manifest"]["entries"]} == {
+        "SKILL.md",
+        "scripts/run.ts",
+    }
 
     approved = service.memory_proposal_review(
         smith,
@@ -812,7 +863,10 @@ def test_asset_pack_skill_lifecycle_uses_generic_propose_review_apply_and_get(
         decision="approve",
         comment="validated",
     )
-    assert success_data(approved)["proposal"]["status"] == "approved"
+    approved_proposal = success_data(approved)["proposal"]
+    assert approved_proposal["status"] == "approved"
+    assert approved_proposal["author_principal"] == "smith"
+    assert approved_proposal["reviewed_by"] == "smith"
 
     applied = service.memory_proposal_apply(
         smith,
@@ -839,17 +893,19 @@ def test_asset_pack_skill_lifecycle_uses_generic_propose_review_apply_and_get(
     assert replayed["replayed"] is True
     assert replayed["changed_paths"] == applied_data["changed_paths"]
 
-    searched = success_data(service.memory_search(flint, query="Demo Skill"))
+    searched = success_data(service.memory_search(smith, query="Demo Skill"))
     assert [item["path"] for item in searched["results"]] == ["/skills/demo-skill.md"]
-    read_back = success_data(service.memory_read(flint, id_or_path="/skills/demo-skill.md"))
+    read_back = success_data(service.memory_read(smith, id_or_path="/skills/demo-skill.md"))
     assert read_back["frontmatter"]["title"] == "Demo Skill"
     assert "skill" in read_back["frontmatter"]["tags"]
     recalled = success_data(
-        service.memory_asset_get(flint, id_or_path="/skills/demo-skill.md", asset_kind="skill")
+        service.memory_asset_get(smith, id_or_path="/skills/demo-skill.md", asset_kind="skill")
     )
     assert recalled["concept_path"] == "/skills/demo-skill.md"
     assert recalled["version"] == "1.0.0"
     assert recalled["versions"] == ["1.0.0"]
+    assert recalled["zip_sha256"] == proposal["changes"][1]["zip_sha256"]
+    assert recalled["manifest"] == proposal["changes"][1]["manifest"]
     assert base64.b64decode(recalled["zip_base64"]) == zip_bytes
 
     duplicate = service.memory_propose(
@@ -1232,6 +1288,43 @@ def test_execute_limits_auth_and_error_control(
     smith: ServiceContext,
     flint: ServiceContext,
 ) -> None:
+    failed_saved_operation = service.memory_execute(
+        flint,
+        plan={
+            "operations": [
+                {
+                    "op": "proposal_review",
+                    "args": {"proposal_id": "missing", "decision": "approve"},
+                    "save_as": "review",
+                }
+            ],
+            "returns": [{"name": "review", "ref": "$review"}],
+        },
+    )
+    assert failed_saved_operation.status == "success"
+    failed_data = success_data(failed_saved_operation)
+    assert failed_data["trace"][0]["status"] == "error"
+    assert failed_data["trace"][0]["error_class"] == "forbidden"
+    assert failed_data["returns"] == {}
+    assert failed_data["stop_reason"] == "operation 1 failed"
+
+    continued_after_failed_overwrite = service.memory_execute(
+        flint,
+        plan={
+            "stop_on_error": False,
+            "operations": [
+                {"op": "status", "args": {}, "save_as": "result"},
+                {
+                    "op": "proposal_review",
+                    "args": {"proposal_id": "missing", "decision": "approve"},
+                    "save_as": "result",
+                },
+            ],
+            "returns": [{"name": "principal", "ref": "$result.principal"}],
+        },
+    )
+    assert success_data(continued_after_failed_overwrite)["returns"]["principal"] == "flint"
+
     forbidden = service.memory_execute(
         flint,
         plan={

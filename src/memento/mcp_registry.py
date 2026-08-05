@@ -291,51 +291,32 @@ WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
         ],
     },
     "asset_pack": {
-        "description": "Stage, upload, reconcile, and attach a versioned asset pack through a proposal.",
+        "description": "Publish and verify a versioned asset pack through an authorised proposal.",
         "operations": [
             "search",
             "read",
+            "propose",
+            "proposal_get",
+            "proposal_review",
+            "proposal_apply",
+            "asset_get",
             "asset_stage_begin",
             "asset_stage_status",
-            "propose",
-            "asset_get",
             "asset_prune",
         ],
+        "profile": "Use one authenticated principal with reader, proposer, and curator roles plus write access to every affected path.",
         "steps": [
             {
                 "step": 1,
-                "operation": "asset_stage_begin",
-                "arguments": {
-                    "asset_kind": "skill",
-                    "version": "1.1.0",
-                    "idempotency_key": "upload-example-skill-1.1.0",
-                },
-                "result": "Use upload_path, upload_method, upload_content_type, upload_ticket_header, and upload_ticket from the response.",
+                "operation": "prepare_asset_pack",
+                "result": "For a skill, make the concept body and ZIP-root SKILL.md byte-identical. Base64-encode the ZIP.",
             },
             {
                 "step": 2,
-                "operation": "raw_upload",
-                "request": {
-                    "method": "POST",
-                    "path_from": "asset_stage_begin.data.upload_path",
-                    "content_type": "application/zip",
-                    "header_name_from": "asset_stage_begin.data.upload_ticket_header",
-                    "header_value_from": "asset_stage_begin.data.upload_ticket",
-                    "body": "raw ZIP bytes",
-                },
-            },
-            {
-                "step": 3,
-                "operation": "asset_stage_status",
-                "arguments": {"idempotency_key": "upload-example-skill-1.1.0"},
-                "result": "Wait for state=uploaded and save data.staged_asset_id.",
-            },
-            {
-                "step": 4,
                 "operation": "propose",
                 "via_compact_tool": "memory_execute",
                 "arguments": {
-                    "intent": "Publish the staged skill pack",
+                    "intent": "Publish the skill pack",
                     "base_revision": "<current repository revision>",
                     "changes": [
                         {
@@ -343,13 +324,39 @@ WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
                             "path": "/skills/example.md",
                             "asset_kind": "skill",
                             "version": "1.1.0",
-                            "staged_asset_id": "<asset_stage_status.data.staged_asset_id>",
+                            "zip_base64": "<base64 ZIP bytes>",
                         }
                     ],
                     "rationale": "Attach the reviewed skill pack to its concept.",
                 },
+                "result": "Use zip_base64 when the complete MCP request fits the configured request ceiling.",
+            },
+            {
+                "step": 3,
+                "operation": "proposal_get",
+                "result": "Verify the generated manifest, SHA-256, target path, asset kind, and version before review.",
+            },
+            {
+                "step": 4,
+                "operation": "proposal_review",
+                "result": "Approve with the same authenticated curator profile after the manifest and concept diff match the intended pack.",
+            },
+            {
+                "step": 5,
+                "operation": "proposal_apply",
+                "result": "Apply with the current expected revision and a durable idempotency key.",
+            },
+            {
+                "step": 6,
+                "operation": "asset_get",
+                "result": "Retrieve the accepted version and verify its manifest, SHA-256, and decoded ZIP bytes.",
             },
         ],
+        "staging_fallback": {
+            "when": "Use only when the MCP request would exceed the configured ceiling or the client deliberately uses raw binary HTTP upload.",
+            "operations": ["asset_stage_begin", "raw_upload", "asset_stage_status"],
+            "proposal_field": "staged_asset_id",
+        },
     },
 }
 

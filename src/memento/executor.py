@@ -478,7 +478,16 @@ class MemoryExecutor:
                     self._check_time(started)
                 if entry["status"] == "error" and parsed.stop_on_error:
                     break
-            returns = self._project_returns(parsed, saved, last_success)
+            failed_save_as = {
+                str(entry["save_as"])
+                for entry in trace
+                if entry["status"] == "error"
+                and entry["save_as"] is not None
+                and entry["save_as"] not in saved
+            }
+            returns = self._project_returns(
+                parsed, saved, last_success, failed_save_as=failed_save_as
+            )
             payload = {
                 "trace": trace,
                 "revisions": revisions,
@@ -506,12 +515,19 @@ class MemoryExecutor:
         return cast(SuccessEnvelope[dict[str, Any]] | ErrorEnvelope, method(context, **args))
 
     def _project_returns(
-        self, plan: ExecutePlan, saved: dict[str, Any], last_success: dict[str, Any] | None
+        self,
+        plan: ExecutePlan,
+        saved: dict[str, Any],
+        last_success: dict[str, Any] | None,
+        *,
+        failed_save_as: set[str],
     ) -> dict[str, Any]:
         if not plan.returns:
             return {"result": last_success}
         projected: dict[str, Any] = {}
         for item in plan.returns:
+            if item.ref.removeprefix("$").split(".", 1)[0] in failed_save_as:
+                continue
             value = _resolve_reference(item.ref, saved)
             if item.fields:
                 if not isinstance(value, list):
