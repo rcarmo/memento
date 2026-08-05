@@ -24,6 +24,28 @@ def steps(document: dict[str, Any]) -> Iterator[dict[str, Any]]:
         yield from cast(list[dict[str, Any]], job.get("steps", []))
 
 
+def test_ci_runs_for_main_and_pull_requests_only_and_cancels_superseded_runs() -> None:
+    ci = workflow("ci.yml")
+    triggers = cast(dict[str, Any], ci.get("on") or ci.get(cast(Any, True)))
+    assert triggers["push"] == {"branches": ["main"]}
+    assert triggers["pull_request"] is None
+    assert ci["concurrency"] == {
+        "group": "ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}",
+        "cancel-in-progress": True,
+    }
+
+
+def test_release_remains_tag_scoped_and_never_cancels_running_releases() -> None:
+    release = workflow("release.yml")
+    triggers = cast(dict[str, Any], release.get("on") or release.get(cast(Any, True)))
+    assert triggers["push"] == {"tags": ["v*"]}
+    assert "workflow_dispatch" in triggers
+    assert release["concurrency"] == {
+        "group": "release-${{ github.ref }}",
+        "cancel-in-progress": False,
+    }
+
+
 def test_workflows_have_no_lfs_configuration_or_commands() -> None:
     for name in ("ci.yml", "release.yml"):
         text = (ROOT / ".github" / "workflows" / name).read_text(encoding="utf-8")
