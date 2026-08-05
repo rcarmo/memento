@@ -1,9 +1,9 @@
 # Visual memory debugger implementation plan
 
-**Status:** in progress
+**Status:** current-state debugger implemented and deployed; revision playback deferred
 **Decision:** [ADR 0011](decisions/0011-embed-a-gated-visual-memory-debugger.md)
 
-The visual debugger is a built-in `/graph` view for understanding how Memento creates, links and maintains shared memory. The Plan sidebar tracks the active phase; this document holds the API, rendering and release details that should survive the session.
+The visual debugger is a built-in `/graph` view for understanding how Memento creates, links and maintains shared memory. This document records the implemented API, rendering, validation and release details, then collects the deferred history features at the end.
 
 ## Scope And Invariants
 
@@ -129,7 +129,7 @@ PNG comes from the current WebGL canvas. SVG contains a bounded selected neighbo
 
 Generated fixtures cover 500, 2,000 and 10,000 concepts, including chains, stars, dense groups, isolates, broken links, proposals, assets, stale embeddings, duplicates and size outliers.
 
-Playwright runs on Chromium, Firefox and WebKit. It covers disabled/enabled routing, overview, selection, camera input, keyboard and tablet touch, filters, layer and force changes, expansion, inspector, diagnostics, refresh and exports. Light and dark screenshots catch visual drift.
+The Playwright suite defines Chromium, Firefox, WebKit and tablet projects. Fixture and screenshot cases cover disabled/enabled routing, overview, selection, camera input, keyboard and tablet touch, filters, layer and force changes, expansion, inspector, diagnostics, refresh and exports; browser-specific skips keep unsupported rendering paths explicit. Light and dark screenshots catch visual drift.
 
 Measured fields include response bytes, server query time, first useful paint, layout start/stability, selection feedback, expansion start, p50/p05 frame rate, dropped frames and browser heap. The target is:
 
@@ -156,9 +156,9 @@ make install-wheel
 make diff-check
 ```
 
-The release pipeline also runs Python 3.12-3.14, the Rust workspace, Needle's 360-case parity set, GTE parity, browser/vendor tests, amd64/arm64 image builds and the Westmere no-AVX smoke.
+The release pipeline runs Python 3.12-3.14, the Rust workspace, Needle's 360-case parity set, GTE parity, browser module/vendor checks, amd64/arm64 image builds and the Westmere no-AVX smoke. The full Playwright project is a local pre-release and visual-regression gate rather than a GitHub Actions step.
 
-A tagged candidate is pulled or loaded through Portainer and applied to stack 111 without moving the previous tag. DiskStation validation checks unauthenticated `/graph`, authenticated MCP, desktop Chromium, tablet touch, response/render timings, RSS, restart behaviour and selected/visible embedding refresh. The graph stays enabled only on the agreed trusted LAN.
+A tagged candidate is pulled through Portainer and applied to stack 111 without moving the previous tag. Operator validation checks unauthenticated `/graph`, authenticated MCP, response/render timings, RSS, restart behaviour and selected/visible embedding refresh. Local Chromium/Firefox/WebKit/tablet runs cover the interaction matrix; the graph stays enabled only on the agreed trusted LAN.
 
 ## Deferred
 

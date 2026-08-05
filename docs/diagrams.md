@@ -110,11 +110,11 @@ flowchart TD
     curator[curator surface]
     admin[admin surface]
 
-    compact --> ctools[6 direct tools<br/>7 with memory_answer]
+    compact --> ctools[8 direct tools<br/>10 with answer and route]
     readonly --> rtools[9 direct tools]
-    standard --> stools[20 direct tools]
-    curator --> curtools[11 direct tools<br/>12 with memory_answer]
-    admin --> atools[21 direct tools]
+    standard --> stools[22 direct tools]
+    curator --> curtools[13 direct tools<br/>15 with answer and route]
+    admin --> atools[23 direct tools<br/>24 with route]
 
     curator --> execonly[create / patch / rename are execute-only here]
     standard --> directmut[create / patch / rename are direct tools]
@@ -235,7 +235,7 @@ An `UNKNOWN` router result stops before search or mutation. A model-produced pro
 
 ## Proposal lifecycle
 
-Models and ordinary clients may create proposals. Only authorised curators can review and apply them.
+Models and ordinary clients may create proposals. Only authorised curators with write access to every affected path can review and apply them; curator authority is unchanged when author and reviewer are the same principal.
 
 ```mermaid
 stateDiagram-v2

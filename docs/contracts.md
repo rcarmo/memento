@@ -141,7 +141,9 @@ They expose generated descriptions, roles, examples and input schemas. Current w
 * `inspect` -> `search`, `read`
 * `propose` -> `search`, `read`, `propose`, `propose_freeform`, `propose_update`
 * `curate` -> `proposal_list`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_prune`, `create`, `patch`, `rename`
-* `asset_pack` -> `search`, `read`, `asset_stage_begin`, `asset_stage_status`, `propose`, `asset_get`, `asset_prune`
+* `asset_pack` -> `search`, `read`, `propose`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_get`, `asset_stage_begin`, `asset_stage_status`, `asset_prune`
+
+The asset workflow uses `zip_base64` first, then verifies the proposal manifest, review, apply and retrieval with one authenticated curator profile. Staging is the fallback when the complete MCP request would exceed the configured ceiling or a client deliberately chooses raw binary HTTP upload.
 
 ### `memory_help`
 
@@ -527,6 +529,7 @@ Operation names are stable literals:
 * If the runtime deadline expires after a commit-capable operation succeeds, execution stops and returns success with the committed revisions, operation ID and warning `memory_execute_deadline_exceeded_after_commit`. A deadline reached before any commit remains a `validation_error`.
 * If `stop_on_error` is `true`, execution stops at the first operation-level error.
 * If `stop_on_error` is `false`, later steps may still run and successful projections may still be returned.
+* A failed operation does not populate its `save_as` value. Return projections rooted in that unavailable value are omitted so the operation trace and original error remain visible instead of being replaced by an `unknown reference` validation error. A previously saved value with the same name remains available when later execution is allowed.
 
 ### Execute limits
 

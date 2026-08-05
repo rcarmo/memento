@@ -38,6 +38,6 @@ python3 tools/prepare_runtime_models.py
 
 That prerequisite applies both to the fine-tuned checkpoint and to the family-separated train/validation/test corpora.
 
-## Pending evidence
+## Release records
 
-Source provenance is documented here. Additional release-time evidence, such as shipped artefact manifests tying those crates and models to published binaries, remains pending.
+`models/runtime-models.json` ties runtime model files to release-hosted archives and SHA-256 digests. Native image builds verify those files before publication, and GitHub releases record the immutable multi-architecture OCI digest. An attached SBOM remains the provenance gap tracked in [`PLAN.md`](../PLAN.md).

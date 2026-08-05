@@ -337,11 +337,11 @@ The service supports catalog-first compact discovery as well as direct compatibi
 
 | `mcp.tool_surface` | Direct tools |
 |---|---|
-| `compact` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_execute`, plus `memory_answer` when enabled (**5** or **6**) |
-| `standard` | the full **18** direct compatibility tools |
-| `read_only` | the **8** direct discovery and read tools |
-| `curator` | compact tools plus `memory_proposal_get`, `memory_proposal_list`, `memory_proposal_review`, `memory_proposal_apply`; direct create/patch/rename stay execute-only here (**9** or **10**) |
-| `admin` | the **19**-tool full direct surface plus `memory_execute` |
+| `compact` | core help/status/search/read/execute, asset staging begin/status and asset retrieval (**8**); optional answer and route tools raise this to **10** |
+| `standard` | the full **22** direct compatibility tools, including proposals, staging, asset retrieval/pruning and direct mutations |
+| `read_only` | the **9** direct discovery, concept-read and asset-read tools |
+| `curator` | compact tools plus proposal get/list/review/apply and asset pruning (**13**); optional answer and route tools raise this to **15**, while create/patch/rename remain execute-only |
+| `admin` | the **23**-tool full direct memory surface plus optional `memory_route` (**24**); managed administrators additionally discover role-filtered `access_*` tools |
 
 ### Catalog resources
 
@@ -371,7 +371,7 @@ That filtering matters. The payload reflects the active surface and whether the 
 
 ### Tool names
 
-Read and discovery:
+Read, discovery and local routing:
 
 * `memory_help`
 * `memory_status`
@@ -381,8 +381,10 @@ Read and discovery:
 * `memory_graph`
 * `memory_audit`
 * `memory_answer`
+* `memory_route`
+* `memory_asset_get`
 
-Proposal and write:
+Proposal, assets and write:
 
 * `memory_propose`
 * `memory_propose_freeform`
@@ -391,6 +393,9 @@ Proposal and write:
 * `memory_proposal_list`
 * `memory_proposal_review`
 * `memory_proposal_apply`
+* `memory_asset_stage_begin`
+* `memory_asset_stage_status`
+* `memory_asset_prune`
 * `memory_create`
 * `memory_patch`
 * `memory_rename`
@@ -668,49 +673,13 @@ Treat MCP arguments, Markdown, frontmatter, links, retrieved text, model output 
 * Never log secrets, tokens, complete concepts or full sensitive prompts by default.
 * Bound bodies, diffs, result counts, queues, retries, subprocesses, model steps and timeouts.
 
-## What is implemented versus what is merely live-verified
+## Validation and deployment state
 
-### Implemented in tree
+The repository, transaction, proposal, indexing, MCP, model, access-management, debugger, backup and restore paths are covered by local tests. CI runs the same Python 3.12-3.14 quality, coverage, wheel-install, Rust and container/model checks on `main` and pull requests. Release tags run their own non-cancelling validation before publishing native amd64/arm64 images and exercising the amd64 image under a Westmere CPU model.
 
-These pieces are implemented and exercised by local tests:
+The operator-managed DiskStation deployment serves authenticated MCP clients from the pinned multi-architecture container, persists Git/control/derived state, exposes the trusted-LAN graph debugger and has exercised distinct managed principals, namespace filtering, curator proposal review/apply (including same-principal authorship), asset publication/retrieval and container replacement. Published releases carry immutable OCI digests and BuildKit provenance attestations.
 
-* deterministic repository core and concept serialisation
-* Git transaction manager with temporary worktrees and compare-and-swap publication
-* operation journal, proposal workflow and idempotency handling
-* FTS5 search, graph indexing and semantic-search runtime integration
-* authenticated MCP server with compact catalog resources and `memory_execute`
-* exact-cache, hot-memory, deep-answer, model-proposal and Dream code paths behind configuration
-* backup, restore, audit and rebuild commands
-* Python 3.12-3.14 support, wheel build and container build coverage
-
-### Pending deployment evidence or live verification
-
-These are still pending operational proof and should not be described as completed production facts:
-
-* published SBOM and provenance artefacts
-* final production image digests
-* live Docker/systemd parity in an operator-run deployment
-* clean-host production restore drill evidence
-* long-running multi-client operational evidence beyond local and CI-style validation
-
-## Operational completion gates
-
-A production-ready deployment still needs to satisfy the acceptance bar:
-
-* at least one Docker or systemd deployment serves at least two Piclaw clients
-* clients authenticate as distinct principals
-* read/search results honour namespace policy
-* the Git repository remains the sole canonical knowledge source
-* operations and idempotency survive restarts
-* concurrent stale writes conflict safely
-* proposal review/apply is fully audited
-* the derived index can be deleted and rebuilt without data loss
-* crash-boundary recovery tests pass
-* backup/restore succeeds on a clean host
-* Piclaw connects through Streamable HTTP without legacy fallback after uMCP modernisation
-* Docker and systemd deployment documentation is tested
-
-Those are live acceptance conditions, not claims about the current repository state.
+Remaining operational gaps are collected in [`PLAN.md`](../PLAN.md): a clean-host production restore drill, real ARM64 performance measurements, an attached SBOM and TLS before any exposure beyond the trusted LAN. The systemd units and reverse-proxy example remain reference configurations rather than claims of production parity.
 
 ## Dynamic access plane
 

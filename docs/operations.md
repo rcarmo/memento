@@ -4,7 +4,7 @@ The state boundaries used by backup and recovery are recorded in [ADR 0003](deci
 
 Memento runs as a single authoritative writer. The daemon is the normal live interface. The local maintenance CLI is for offline or otherwise exclusive operator work.
 
-This document covers Docker, Compose, systemd and reverse-proxy deployments. The examples have local checks; production results are not included.
+This document covers Docker, Compose, systemd and reverse-proxy deployments. The DiskStation container profile is live; the generic Compose, systemd and reverse-proxy files remain reference configurations.
 
 ## Operator decisions
 
@@ -159,13 +159,12 @@ Timer safety, as the files exist today:
 
 ## Deployment references
 
-These artefacts exist and are useful for local packaging checks, but they are still pending production verification:
-
-* Container: [`Dockerfile`](../Dockerfile)
-* Compose: [`compose.example.yaml`](../compose.example.yaml)
-* systemd: [`deploy/systemd/`](../deploy/systemd/)
-* reverse proxy: [`deploy/nginx/memento.conf`](../deploy/nginx/memento.conf)
+* [`Dockerfile`](../Dockerfile) publishes the tested non-root amd64/arm64 image. The operator-managed DiskStation deployment pins a release tag and persists `/var/lib/memento`.
+* [`deploy/diskstation.compose.yaml`](../deploy/diskstation.compose.yaml) is the live trusted-LAN profile; [`docs/diskstation.md`](diskstation.md) records its J3455 limits and update process.
+* [`compose.example.yaml`](../compose.example.yaml) is the local packaging reference.
+* [`deploy/systemd/`](../deploy/systemd/) contains lease-aware reference units that still need an operator-run parity exercise.
+* [`deploy/nginx/memento.conf`](../deploy/nginx/memento.conf) is a reverse-proxy reference. TLS and deployment-specific authentication remain operator responsibilities.
 
 ## Access operations
 
-Set `MEMENTO_ADMIN_MASTER_KEY` as a container secret. The initial trusted-LAN value may be `nenhuma`, but replace it before wider exposure. Open `/admin` with the preserved bootstrap credential; it authenticates as `sandbox`. Back up `control.sqlite` and the master key together. Rotate the key only with the explicit one-shot `rotate-master-key` container command documented in [Access Management](access-management.md); rotation is not available through HTTP or MCP.
+Set `MEMENTO_ADMIN_MASTER_KEY` as a strong container secret before first production startup. The example value `nenhuma` exists only to make an isolated trusted-LAN bootstrap obvious and must not survive setup. Open `/admin` with the preserved bootstrap credential; it authenticates as `sandbox`. Back up `control.sqlite` and the master key together. Rotate the key only with the explicit one-shot `rotate-master-key` container command documented in [Access Management](access-management.md); rotation is not available through HTTP or MCP.

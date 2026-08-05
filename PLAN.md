@@ -3,7 +3,7 @@
 **Python:** 3.12-3.14
 **Architecture:** [`docs/implementation.md`](docs/implementation.md)
 
-Memento's repository, transaction, MCP, proposal, search, model and container foundations are in place. This file tracks current work and the few remaining deployment gaps; the architecture documents and Git history hold the completed milestone detail.
+Memento's repository, transaction, MCP, proposal, search, model, debugger and container foundations are in place. This file keeps the remaining engineering and operational gaps together; the architecture documents and Git history hold completed milestone detail.
 
 ## Working Rules
 
@@ -19,8 +19,8 @@ Memento's repository, transaction, MCP, proposal, search, model and container fo
 
 * Strict concept schema, stable IDs, links, path containment and repository audit
 * Git worktree transactions with compare-and-swap publication and restart recovery
-* Proposal review/apply plus curator create, patch and rename
-* Versioned Git asset packs and complete skill recall
+* Proposal review/apply, including authorised curator self-review, plus curator create, patch and rename
+* Versioned Git asset packs, MCP-native base64 publication, raw-upload staging and complete skill recall
 * Writer lease, idempotent replay, stale-write conflicts, backups and restore
 
 ### Retrieval And MCP
@@ -39,18 +39,18 @@ Memento's repository, transaction, MCP, proposal, search, model and container fo
 * GHCR release pipeline for amd64 and arm64, including Westmere scalar inference
 * Portainer deployment on the Intel J3455 DiskStation
 
-## Visual Memory Debugger
+### Visual Memory Debugger
 
-[ADR 0011](docs/decisions/0011-embed-a-gated-visual-memory-debugger.md) records the decision, and [`docs/graph-explorer-plan.md`](docs/graph-explorer-plan.md) contains the API, rendering and release details. The Plan sidebar tracks the active implementation phase.
-
-The current work adds a trusted-LAN `/graph` view with progressive 2.5D rendering, provenance, explicit and semantic layers, diagnostics, embedding refresh and bounded exports. Revision playback and animated diffs follow after the current-state view.
+* Trusted-LAN `/graph` view with progressive 2.5D rendering, provenance, explicit and semantic layers, diagnostics, embedding refresh and bounded exports
+* Browser-native Three.js/Preact client with desktop, tablet and 2,000-node fixture checks
+* Current-state graph deployed on the DiskStation profile; [ADR 0011](docs/decisions/0011-embed-a-gated-visual-memory-debugger.md) records the boundary and [`docs/graph-explorer-plan.md`](docs/graph-explorer-plan.md) keeps the implemented API plus deferred work
 
 ## Remaining Live Work
 
-* Exercise distinct deployed principals through the write/proposal workflow.
 * Repeat model performance checks on a real ARM64 host.
 * Run a live restore drill for the selected primary deployment path.
 * Attach SBOM material to published releases.
+* Add a TLS reverse proxy before exposing any HTTP surface beyond the trusted LAN.
 
 ## Later
 

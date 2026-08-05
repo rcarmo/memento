@@ -1,10 +1,10 @@
 # DiskStation deployment notes
 
-The deployment candidate targets a Synology DiskStation with an Intel Celeron J3455 (Apollo Lake). That CPU supports SSE4.2 but not AVX, AVX2 or FMA.
+The live deployment runs on a Synology DiskStation with an Intel Celeron J3455 (Apollo Lake). That CPU supports SSE4.2 but not AVX, AVX2 or FMA.
 
 Memento's vector kernels select AVX2/FMA only after runtime feature detection. On the J3455 they use the scalar implementation automatically. The amd64 release build also sets Rust's target CPU to baseline `x86-64`, which prevents the GitHub runner's newer CPU features from leaking into ordinary generated code.
 
-Before any NAS deployment, the release workflow runs the amd64 image under QEMU's Westmere CPU model and checks:
+Before publishing any NAS candidate, the release workflow runs the amd64 image under QEMU's Westmere CPU model and checks:
 
 * SSE4.2 is visible;
 * AVX2 and FMA are not visible;
@@ -46,13 +46,13 @@ The deployed J3455 profile uses a 30-second `memory_execute` budget. A real-targ
 
 A commit may finish just after the execute deadline and still return a controlled timeout to the client. Mutation callers must reconcile an ambiguous timeout using the idempotency key, repository revision and target path before retrying. Raw punctuation in lexical queries also needs FTS5 quoting or escaping; ordinary term queries are the safer default.
 
-No DiskStation deployment is performed by GitHub Actions. Release automation builds and tests the image, then publishes it to GHCR. Updating the NAS remains a separate operator action with an explicit version and rollback plan.
+No DiskStation deployment is performed by GitHub Actions. Release automation builds and tests the image, then publishes it to GHCR. An operator pulls the immutable release, updates the Portainer stack with an explicit version and verifies container, MCP, graph and revision health before considering the update complete.
 
 ## Progressive embeddings
 
 The DiskStation profile uses one low-priority concept every 30 seconds after a two-minute startup grace and 15 seconds of interactive idle time. Work pauses when sampled CPU utilization exceeds 75% over a 15-second window. Linux I/O wait is treated as idle, so normal NAS storage load does not block progress. `nice 15` and single-thread native pool variables keep inference subordinate to MCP and storage workloads. The `/volume1/docker/memento/state:/var/lib/memento` mount preserves `derived.sqlite` and completed vectors across image upgrades.
 
-Do not delete `derived.sqlite` during routine releases. A deliberate rebuild now reuses unchanged embeddings and schedules only stale/missing paths. Live `v0.3.12` validation preserved 99 ready rows through an image update/rebuild, then progressively completed six queued paths with no errors until repository, index and embedding revisions matched.
+Do not delete `derived.sqlite` during routine releases. A deliberate rebuild reuses unchanged embeddings and schedules only stale or missing paths. The original live `v0.3.12` exercise preserved 99 ready rows through an image update/rebuild, then progressively completed six queued paths with no errors until repository, index and embedding revisions matched. Later image replacements use the same persisted state and gated worker path.
 
 ## Managed access on DiskStation
 

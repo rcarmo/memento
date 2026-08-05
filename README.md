@@ -43,7 +43,7 @@ Writes normally go through review:
 search -> read -> propose -> review -> apply -> Git commit -> index update
 ```
 
-Memento checks the caller's namespace, the expected repository revision and the request's idempotency key. A retry returns the recorded result instead of creating another commit. Curators can also create, patch and rename concepts directly when those tools are exposed. Memento has no client-facing hard delete.
+Memento checks the caller's namespace, the expected repository revision and the request's idempotency key. A retry returns the recorded result instead of creating another commit. Curators may review proposals they authored when they have write access to every affected path; `author_principal` and `reviewed_by` preserve that fact in the audit trail. Curators can also create, patch and rename concepts directly when those tools are exposed. Memento has no client-facing hard delete.
 
 Administrators manage principals through the preset-driven [`/admin`](docs/access-management.md) UI or role-filtered `access_*` tools on the same `/mcp` endpoint. Ordinary principals cannot discover or invoke those tools. New and rotated credentials are shown once; only verifiers are retained.
 
@@ -61,9 +61,9 @@ Model setup and measurements live in [`docs/semantic-search.md`](docs/semantic-s
 
 ## Assets And Skills
 
-A concept can carry an immutable versioned asset pack as an ordinary Git blob. The Markdown remains searchable while diagrams, templates, datasets or a complete agent skill travel in an attached ZIP. Large ZIPs can be staged as raw binary and referenced from an ordinary proposal, avoiding base64 expansion in MCP JSON. Piclaw agents discover `memory_asset_stage_begin`/`memory_asset_stage_status`; the begin call returns a one-time upload ticket so the raw upload command does not need the principal's bearer token.
+A concept can carry an immutable versioned asset pack as an ordinary Git blob. The Markdown remains searchable while diagrams, templates, datasets or a complete agent skill travel in an attached ZIP. Packs that fit the configured MCP request ceiling use `attach_asset_pack.zip_base64`, keeping proposal creation inside MCP. Larger packs can use `memory_asset_stage_begin`/`memory_asset_stage_status`; the begin call returns a one-time raw-upload ticket so the upload command does not need the principal's bearer token.
 
-Skill concepts live under `/skills/`, carry the `skill` tag and match the `SKILL.md` inside their pack. `memory_asset_get` returns a selected version and its manifest; `memento-skill-import` validates it again before placing it in a workspace. Memento does not install or execute recalled skills on behalf of a client.
+Skill concepts live under `/skills/`, carry the `skill` tag and match the ZIP-root `SKILL.md` byte-for-byte. Reviewers check the generated manifest and digest before approval; clients check them again against the ZIP returned by `memory_asset_get`. `memento-skill-import` validates a recalled pack before placing it in a workspace. Memento does not install or execute recalled skills on behalf of a client.
 
 The repository also ships an Agent Skills package at [`.agents/skills/memento/SKILL.md`](.agents/skills/memento/SKILL.md). It gives Pi, Piclaw and Codex agents a compact workflow for search, reads, proposals, curation, namespaces, assets and retry reconciliation.
 
@@ -73,7 +73,7 @@ The optional `/graph` surface helps humans inspect how memories are being create
 
 ![Memento visual debugger showing linked memories and the selected-memory inspector](docs/memento-graph-debugger.png)
 
-The debugger is disabled by default and unauthenticated when enabled. It is meant for a trusted development network, not an Internet-facing service. [ADR 0011](docs/decisions/0011-embed-a-gated-visual-memory-debugger.md) and [`docs/graph-explorer-plan.md`](docs/graph-explorer-plan.md) describe the boundary and delivery plan.
+The debugger is disabled by default and unauthenticated when enabled. It is meant for a trusted development network, not an Internet-facing service. [ADR 0011](docs/decisions/0011-embed-a-gated-visual-memory-debugger.md) and [`docs/graph-explorer-plan.md`](docs/graph-explorer-plan.md) describe the boundary, implemented API and deferred revision-playback work.
 
 ## Running It
 

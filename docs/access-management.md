@@ -4,7 +4,7 @@ Memento manages principals dynamically in `control.sqlite`. The canonical knowle
 
 ## Bootstrap
 
-Set the container master key before starting the access-management MVP:
+Set the container master key before starting managed access:
 
 ```text
 MEMENTO_ADMIN_MASTER_KEY=nenhuma

@@ -8,7 +8,9 @@ These reports were generated on 2026-07-17 from a Linux x86_64 development host.
 
 Each JSON document records the Git revision, host and Python information, operation counts, throughput, latency percentiles, errors, invariants and threshold results. `passed=true` means every included scenario and invariant passed.
 
-The Python 3.14 local container rebuild also produced image ID `sha256:2b508ad4e469d272bf9d43559fcbc2e1825f5b31f60c83f1ed2940b457e1726d`, and the image-contained model digest matched `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`. That image ID is a local observation only, not a published immutable digest claim: the Dockerfile currently builds from floating `rust:1-slim` and `python:3.14-slim` bases, so later local rebuilds can legitimately produce a different image ID.
+The historical Python 3.14 local container rebuild produced image ID `sha256:2b508ad4e469d272bf9d43559fcbc2e1825f5b31f60c83f1ed2940b457e1726d`, and the image-contained model digest matched `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`. That image ID belongs only to the recorded local run. Current release images use digest-pinned Rust 1.88 and Python 3.12 Bookworm bases; each GitHub release records its immutable multi-architecture OCI digest.
+
+Graph evidence includes the 2,000-node fixture performance record and a DiskStation browser capture under [`graph/`](graph/). The real-target MCP benchmark is [`diskstation-memory-benchmark-2026-07-19.json`](diskstation-memory-benchmark-2026-07-19.json).
 
 ## Reproduction commands
 

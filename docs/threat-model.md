@@ -28,7 +28,7 @@ client tool input (untrusted)
 ## Current mitigations
 
 * Strict Pydantic v2 models cover config, principals, envelopes and concept frontmatter.
-* Principal bearer tokens come only from trusted server configuration via each principal's `token_env` environment variable.
+* Principal bearer tokens resolve through authenticated request context. Bootstrap/recovery tokens come from configured `token_env` variables; managed credentials are checked against HMAC verifiers in `control.sqlite` without retaining bearer plaintext.
 * `ruamel.yaml` keeps deterministic serialisation under control.
 * Reserved-path enforcement happens before filesystem writes.
 * Bundle scan and repository audit cover every concept file.
@@ -40,9 +40,9 @@ client tool input (untrusted)
 
 The local CLI is not a parallel administration plane. `status`, `audit`, `rebuild-index` and `backup` all go through runtime startup and therefore need the same exclusive lease as the daemon. For live status inspection, prefer MCP `memory_status` or `memory://status` instead of trying to race the running service.
 
-## Pending evidence
+## Deployment boundary
 
-These controls are implemented as described in code and tests. Production deployment evidence, especially around reverse proxies, transport context handling and operator hardening, is still pending.
+The trusted-LAN DiskStation deployment exercises bearer-authenticated Streamable HTTP, namespace filtering, dynamic principals, a read-only non-root container, dropped capabilities and persistent state. The graph and admin surfaces are deliberately limited to that network. The supplied reverse-proxy file remains a reference: TLS termination, Internet exposure and an operator-run systemd parity exercise are not production claims.
 
 ## Managed-access threats
 

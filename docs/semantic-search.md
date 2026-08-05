@@ -2,7 +2,7 @@
 
 The choice to keep lexical search primary is recorded in [ADR 0006](decisions/0006-keep-lexical-search-primary.md).
 
-Semantic search is optional and rebuildable. FTS5 stays the default because it is cheap to recover and always available. Local benchmark reports are included; production measurements are not.
+Semantic search is optional and rebuildable. FTS5 stays the default because it is cheap to recover and always available. Local semantic-load measurements live under `docs/evidence/`; the DiskStation notes record deployed memory, scheduling and revision checks, while a production semantic-throughput benchmark is still outstanding.
 
 ## What operators decide
 
@@ -103,6 +103,6 @@ PYTHONPATH=src .venv/bin/python tools/load_test.py \
 
 `--semantic-enabled` matters here. It tells the harness to build the local Rust artefacts if needed and enable semantic search in the temporary test config instead of merely asking for semantic queries against a lexical-only runtime.
 
-## Pending verification
+## Remaining measurements
 
-Production benchmark data, model operating envelopes and packaged deployment evidence remain pending.
+The release container and DiskStation profile have verified packaged model loading, 384-dimensional output, persisted-vector reuse, progressive refresh, memory limits and scalar J3455 operation. A repeatable production semantic-search latency/throughput report and real ARM64 hardware measurements remain outstanding.
