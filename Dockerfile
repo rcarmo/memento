@@ -66,7 +66,7 @@ ENV MEMENTO_FFI_LIBRARY=/usr/local/lib/memento/libmemento_ffi.so \
 
 USER 65532:65532
 VOLUME ["/var/lib/memento", "/models"]
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5m --retries=3 \
     CMD ["python", "-c", "import socket; socket.create_connection(('127.0.0.1', 8000), 2).close()"]
 ENTRYPOINT ["memento-serve"]
 CMD ["--help"]

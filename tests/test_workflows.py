@@ -12,6 +12,11 @@ RUNTIME_PATHS = {
     "models/needle/memento-router.ndl",
     "models/needle/needle.model",
 }
+NODE24_ACTIONS = {
+    "actions/cache": "55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+    "actions/upload-artifact": "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
+    "actions/download-artifact": "3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c",
+}
 
 
 def workflow(name: str) -> dict[str, Any]:
@@ -44,6 +49,19 @@ def test_release_remains_tag_scoped_and_never_cancels_running_releases() -> None
         "group": "release-${{ github.ref }}",
         "cancel-in-progress": False,
     }
+
+
+def test_workflows_pin_cache_and_artifact_actions_to_node24_releases() -> None:
+    seen: set[str] = set()
+    for name in ("ci.yml", "release.yml"):
+        for step in steps(workflow(name)):
+            uses = str(step.get("uses", ""))
+            repository, separator, revision = uses.partition("@")
+            if repository in NODE24_ACTIONS:
+                seen.add(repository)
+                assert separator == "@"
+                assert revision == NODE24_ACTIONS[repository]
+    assert seen == set(NODE24_ACTIONS)
 
 
 def test_workflows_have_no_lfs_configuration_or_commands() -> None:

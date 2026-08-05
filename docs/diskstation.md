@@ -38,7 +38,7 @@ docker compose \
   -f deploy/diskstation.compose.yaml up -d
 ```
 
-The template pins `MEMENTO_VERSION`, publishes MCP on port 18081, runs as UID/GID 65532, drops Linux capabilities, uses a read-only root filesystem and sets a 512 MiB memory limit for Needle plus subprocess GTE embedding refresh. The bearer-token file is mounted read-only and sourced by the container entrypoint because a remote Portainer server cannot resolve an endpoint-local `env_file` during Compose parsing.
+The template pins `MEMENTO_VERSION`, publishes MCP on port 18081, runs as UID/GID 65532, drops Linux capabilities, uses a read-only root filesystem and sets a 512 MiB memory limit for Needle plus subprocess GTE embedding refresh. Its TCP healthcheck has a five-minute startup grace because persisted-state reconciliation and SQLite/Git recovery complete before the listener opens. The bearer-token file is mounted read-only and sourced by the container entrypoint because a remote Portainer server cannot resolve an endpoint-local `env_file` during Compose parsing.
 
 The trusted-LAN profile also enables the visual debugger at `http://192.168.1.250:18081/graph`. Browser module requests carry an Origin header, so the exact LAN origin appears in `mcp.allowed_origins`; arbitrary origins remain blocked. Leave `observability.graph_explorer.enabled` off on an Internet-facing deployment.
 
@@ -46,7 +46,7 @@ The deployed J3455 profile uses a 30-second `memory_execute` budget. A real-targ
 
 A commit may finish just after the execute deadline and still return a controlled timeout to the client. Mutation callers must reconcile an ambiguous timeout using the idempotency key, repository revision and target path before retrying. Raw punctuation in lexical queries also needs FTS5 quoting or escaping; ordinary term queries are the safer default.
 
-No DiskStation deployment is performed by GitHub Actions. Release automation builds and tests the image, then publishes it to GHCR. An operator pulls the immutable release, updates the Portainer stack with an explicit version and verifies container, MCP, graph and revision health before considering the update complete.
+No DiskStation deployment is performed by GitHub Actions. Release automation builds and tests the image, then publishes it to GHCR. An operator pulls the immutable release, runs a uniquely named one-shot config helper to completion, updates the Portainer stack with an explicit version and verifies container, MCP, graph and revision health before considering the update complete. The helper runs as root only to rewrite the root-owned config bind; it has no network, capabilities or writable root filesystem, and only the config directory is writable. Helper or stack failures stop the deployment instead of being treated as an asynchronous success.
 
 ## Progressive embeddings
 

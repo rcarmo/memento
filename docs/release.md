@@ -23,7 +23,7 @@ The base images are pinned Debian Bookworm manifests: Rust 1.88 for the builder 
 
 ## CI and publication
 
-Ordinary CI runs for pushes to `main` and pull requests, cancelling superseded runs for the same branch or pull request. It does not run for release tags or special asset refs. Tag releases and manual release dispatches use a separate, non-cancelling workflow with their own Python 3.12--3.14 quality matrix, Rust checks, wheel install and clean-diff gate before image publication. Stable `v*` tags then publish native `linux/amd64` and `linux/arm64` images to GHCR, create a multi-architecture OCI index, publish a GitHub release and retain five releases. Fresh untagged architecture manifests are protected for seven days so cleanup cannot break a tagged index.
+Ordinary CI runs for pushes to `main` and pull requests, cancelling superseded runs for the same branch or pull request. It does not run for release tags or special asset refs. Tag releases and manual release dispatches use a separate, non-cancelling workflow with their own Python 3.12--3.14 quality matrix, Rust checks, wheel install and clean-diff gate before image publication. Cache and artifact transfers use commit-pinned Node 24 action releases. Stable `v*` tags then publish native `linux/amd64` and `linux/arm64` images to GHCR, create a multi-architecture OCI index, publish a GitHub release and retain five releases. Fresh untagged architecture manifests are protected for seven days so cleanup cannot break a tagged index.
 
 Published tags include the full version, major/minor, major and stable-only `latest`.
 

@@ -10,6 +10,7 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from typing import Any
+from uuid import uuid4
 
 
 @dataclass(frozen=True, slots=True)
@@ -184,10 +185,11 @@ def portainer_request(
 
 
 def update_config(args: argparse.Namespace) -> None:
+    helper_name = f"memento-config-update-{uuid4().hex[:12]}"
     create = portainer_request(
         "POST",
         "/api/endpoints/18/docker/containers/create?"
-        + urllib.parse.urlencode({"name": "memento-config-update-make"}),
+        + urllib.parse.urlencode({"name": helper_name}),
         data={
             "Image": f"ghcr.io/rcarmo/memento:{args.version}",
             "Entrypoint": ["python"],
@@ -201,22 +203,43 @@ def update_config(args: argparse.Namespace) -> None:
                 "path.write_text(json.dumps(data, indent=2, sort_keys=False)+'\\n')\n"
                 "print('updated memento config')\n",
             ],
+            "User": "0:0",
+            "NetworkDisabled": True,
             "HostConfig": {
                 "Binds": ["/volume1/docker/memento/config:/config"],
-                "AutoRemove": True,
+                "AutoRemove": False,
+                "ReadonlyRootfs": True,
+                "CapDrop": ["ALL"],
+                "SecurityOpt": ["no-new-privileges:true"],
             },
         },
         timeout=60,
     )
-    container_id = create["Id"]
-    portainer_request(
-        "POST", f"/api/endpoints/18/docker/containers/{container_id}/start", timeout=60
-    )
-    print("config update helper started", container_id[:12], flush=True)
+    container_id = str(create["Id"])
+    container_path = f"/api/endpoints/18/docker/containers/{container_id}"
+    try:
+        portainer_request("POST", f"{container_path}/start", timeout=60)
+        deadline = time.monotonic() + 120
+        while time.monotonic() < deadline:
+            inspected = portainer_request("GET", f"{container_path}/json", timeout=30)
+            state = inspected.get("State", {})
+            status = state.get("Status")
+            if status in {"exited", "dead"}:
+                exit_code = state.get("ExitCode")
+                if exit_code != 0:
+                    raise SystemExit(
+                        f"config update helper {container_id[:12]} failed with exit code {exit_code}"
+                    )
+                print("config update helper completed", container_id[:12], flush=True)
+                return
+            time.sleep(1)
+        raise SystemExit(f"config update helper {container_id[:12]} timed out")
+    finally:
+        portainer_request("DELETE", f"{container_path}?force=true&v=true", timeout=60)
 
 
 def compose(version: str) -> str:
-    return f"""services:\n  memento:\n    image: ghcr.io/rcarmo/memento:{version}\n    container_name: memento\n    restart: unless-stopped\n    user: "65532:65532"\n    read_only: true\n    init: true\n    entrypoint: ["/bin/sh","-ec"]\n    command:\n      - |\n        set -a\n        . /run/secrets/memento.env\n        set +a\n        exec memento-serve --config /etc/memento/config.json serve --host 0.0.0.0 --port 8000 --endpoint /mcp\n    environment:\n      RAYON_NUM_THREADS: "1"\n      OMP_NUM_THREADS: "1"\n      OPENBLAS_NUM_THREADS: "1"\n      MKL_NUM_THREADS: "1"\n    ports:\n      - "18081:8000"\n    volumes:\n      - /volume1/docker/memento/config/config.json:/etc/memento/config.json:ro\n      - /volume1/docker/memento/config/memento.env:/run/secrets/memento.env:ro\n      - /volume1/docker/memento/state:/var/lib/memento\n    tmpfs:\n      - /tmp:size=32m,mode=1777\n    mem_limit: 512m\n    mem_reservation: 256m\n    pids_limit: 128\n    security_opt:\n      - no-new-privileges:true\n    cap_drop:\n      - ALL\n    healthcheck:\n      test: ["CMD","python","-c","import socket; socket.create_connection(('127.0.0.1',8000),2).close()"]\n      interval: 30s\n      timeout: 5s\n      start_period: 60s\n      retries: 3"""
+    return f"""services:\n  memento:\n    image: ghcr.io/rcarmo/memento:{version}\n    container_name: memento\n    restart: unless-stopped\n    user: "65532:65532"\n    read_only: true\n    init: true\n    entrypoint: ["/bin/sh","-ec"]\n    command:\n      - |\n        set -a\n        . /run/secrets/memento.env\n        set +a\n        exec memento-serve --config /etc/memento/config.json serve --host 0.0.0.0 --port 8000 --endpoint /mcp\n    environment:\n      RAYON_NUM_THREADS: "1"\n      OMP_NUM_THREADS: "1"\n      OPENBLAS_NUM_THREADS: "1"\n      MKL_NUM_THREADS: "1"\n    ports:\n      - "18081:8000"\n    volumes:\n      - /volume1/docker/memento/config/config.json:/etc/memento/config.json:ro\n      - /volume1/docker/memento/config/memento.env:/run/secrets/memento.env:ro\n      - /volume1/docker/memento/state:/var/lib/memento\n    tmpfs:\n      - /tmp:size=32m,mode=1777\n    mem_limit: 512m\n    mem_reservation: 256m\n    pids_limit: 128\n    security_opt:\n      - no-new-privileges:true\n    cap_drop:\n      - ALL\n    healthcheck:\n      test: ["CMD","python","-c","import socket; socket.create_connection(('127.0.0.1', 8000), 2).close()"]\n      interval: 30s\n      timeout: 5s\n      start_period: 5m\n      retries: 3"""
 
 
 def deploy(args: argparse.Namespace) -> None:
@@ -228,21 +251,18 @@ def deploy(args: argparse.Namespace) -> None:
     )
     print(f"pulled ghcr.io/rcarmo/memento:{args.version}", flush=True)
     update_config(args)
-    try:
-        portainer_request(
-            "PUT",
-            "/api/stacks/111?" + urllib.parse.urlencode({"endpointId": "18"}),
-            data={
-                "StackFileContent": compose(args.version),
-                "Env": [],
-                "Prune": True,
-                "PullImage": False,
-            },
-            timeout=args.deploy_timeout,
-        )
-    except SystemExit as exc:
-        print(f"stack update returned before completion: {exc}", flush=True)
-    print("stack update requested", flush=True)
+    portainer_request(
+        "PUT",
+        "/api/stacks/111?" + urllib.parse.urlencode({"endpointId": "18"}),
+        data={
+            "StackFileContent": compose(args.version),
+            "Env": [],
+            "Prune": True,
+            "PullImage": False,
+        },
+        timeout=args.deploy_timeout,
+    )
+    print("stack update completed", flush=True)
 
 
 def refresh_embeddings(args: argparse.Namespace) -> None:

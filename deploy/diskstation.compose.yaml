@@ -42,5 +42,5 @@ services:
         - import socket; socket.create_connection(('127.0.0.1', 8000), 2).close()
       interval: 30s
       timeout: 5s
-      start_period: 30s
+      start_period: 5m
       retries: 3
