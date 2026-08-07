@@ -11,6 +11,8 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from memento.evidence import EvidenceSet
+
 UNKNOWN_ANSWER = "UNKNOWN"
 
 
@@ -63,6 +65,7 @@ class AnswerRecord(BaseModel):
     confidence: str
     unresolved: tuple[str, ...] = ()
     citations: tuple[AnswerCitation, ...] = ()
+    evidence: EvidenceSet | None = None
     trace_id: str | None = None
     model_chain: tuple[ModelAttempt, ...] = ()
 
@@ -89,6 +92,11 @@ class ReadConcept:
     title: str
     body: str
     revision: str
+    status: str = "active"
+    tags: tuple[str, ...] = ()
+    source_refs: tuple[str, ...] = ()
+    supersedes: tuple[str, ...] = ()
+    updated_at: datetime | None = None
 
 
 @dataclass(frozen=True, slots=True)

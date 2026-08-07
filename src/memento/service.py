@@ -78,10 +78,22 @@ from memento.derived.index import (
     DerivedIndex,
     DerivedIndexUnavailableError,
     DerivedSearchError,
+    GraphEdge,
     SearchFreshness,
     SearchMode,
 )
 from memento.envelopes import ErrorEnvelope, SuccessEnvelope, error_envelope, success_envelope
+from memento.evidence import (
+    EvidenceItem,
+    EvidenceRank,
+    EvidenceSet,
+    QueryProfile,
+    evidence_is_sufficient,
+    is_currently_ineligible,
+    is_sensitive_evidence,
+    namespace_matches,
+    profile_question,
+)
 from memento.executor import ExecuteLimits, MemoryExecutor
 from memento.mcp_registry import OPERATION_SPECS, WORKFLOW_TEMPLATES, tool_names_for_surface
 from memento.repository.asset_packs import (
@@ -244,6 +256,13 @@ class ServiceContext:
     client_instance_id: str | None = None
     mcp_session_id: str | None = None
     source_chat: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class RankedConcept:
+    concept: ReadConcept
+    rank: int
+    score: float
 
 
 class NeedleRouterProtocol(Protocol):
@@ -561,8 +580,8 @@ class MemoryService:
             return self._success(
                 {
                     "center_id": graph.center_id,
-                    "outbound": [edge.__dict__ for edge in graph.outbound],
-                    "inbound": [edge.__dict__ for edge in graph.inbound],
+                    "outbound": [self._graph_edge_payload(edge) for edge in graph.outbound],
+                    "inbound": [self._graph_edge_payload(edge) for edge in graph.inbound],
                     "broken_targets": graph.broken_targets,
                 },
                 repo_revision=graph.repo_revision,
@@ -589,12 +608,30 @@ class MemoryService:
                 roles=policy.roles,
                 read_prefixes=policy.read_prefixes,
             )
+            profile = profile_question(question)
+            revision = get_main_revision(self._deps.repo_paths)
+            if profile.secret_intent:
+                abstention = AnswerRecord(
+                    answer=UNKNOWN_ANSWER,
+                    answer_source="policy_abstention",
+                    confidence="low",
+                    unresolved=("secret_intent",),
+                    citations=(),
+                    evidence=EvidenceSet(
+                        query_profile=profile,
+                        authorization_scope=scope_key,
+                        retrieval_strategy="abstain_before_retrieval",
+                        abstention_reason="secret_intent",
+                    ),
+                    trace_id=None,
+                    model_chain=(),
+                )
+                return self._success(abstention.model_dump(mode="json"), repo_revision=revision)
             now = self._now()
             tier_config = self._deps.config.intelligent_tiers
             deep_config = tier_config.deep_answers
             cache_config = tier_config.exact_answer_cache
             hot_config = tier_config.hot_working_memory
-            revision = get_main_revision(self._deps.repo_paths)
             cache_key = exact_cache_key(
                 repo_revision=revision,
                 normalized_question=normalized,
@@ -606,7 +643,7 @@ class MemoryService:
             )
             if cache_config.enabled:
                 cached = self._answers.get_exact_cache(cache_key=cache_key, now=now)
-                if cached is not None:
+                if cached is not None and cached.evidence is not None:
                     return self._success(cached.model_dump(mode="json"), repo_revision=revision)
             if hot_config.enabled and self._deps.model_client is not None:
                 hot = self._answer_from_hot_memory(
@@ -614,6 +651,7 @@ class MemoryService:
                     question=question,
                     normalized_question=normalized,
                     scope_key=scope_key,
+                    profile=profile,
                     answer_mode=answer_mode,
                     cancelled=cancelled,
                 )
@@ -626,6 +664,7 @@ class MemoryService:
                     confidence="low",
                     unresolved=("memory_answer is disabled",),
                     citations=(),
+                    evidence=None,
                     trace_id=None,
                     model_chain=(),
                 )
@@ -635,6 +674,7 @@ class MemoryService:
                 question=question,
                 normalized_question=normalized,
                 scope_key=scope_key,
+                profile=profile,
                 answer_mode=answer_mode,
                 cancelled=cancelled,
             )
@@ -2070,6 +2110,18 @@ class MemoryService:
                 if isinstance(change, RenameChange):
                     authorize_path(policy, change.new_path, action=item_action)
 
+    @staticmethod
+    def _graph_edge_payload(edge: GraphEdge) -> dict[str, str | int | bool]:
+        return {
+            "concept_id": edge.concept_id,
+            "path": edge.path,
+            "title": edge.title,
+            "depth": edge.depth,
+            "direction": edge.direction,
+            "broken_link_count": edge.broken_link_count,
+            "orphan_flag": edge.orphan_flag,
+        }
+
     def _resolve_path(self, id_or_path: str) -> str:
         if id_or_path.startswith("/"):
             return id_or_path
@@ -2085,6 +2137,131 @@ class MemoryService:
         entry = read_bundle_entry(self._deps.repo_paths.current_dir, id_or_path)
         return entry.document.frontmatter.id
 
+    @staticmethod
+    def _concept_is_eligible(profile: QueryProfile, concept: ReadConcept) -> bool:
+        if is_sensitive_evidence(tags=concept.tags):
+            return False
+        if not namespace_matches(profile, path=concept.path):
+            return False
+        return not (
+            profile.temporal_intent == "current"
+            and is_currently_ineligible(status=concept.status, tags=concept.tags)
+        )
+
+    def _filter_ranked_concepts(
+        self, profile: QueryProfile, concepts: list[RankedConcept]
+    ) -> list[RankedConcept]:
+        eligible: list[RankedConcept] = []
+        seen: set[str] = set()
+        for ranked in concepts:
+            concept = ranked.concept
+            if concept.concept_id in seen or not self._concept_is_eligible(profile, concept):
+                continue
+            seen.add(concept.concept_id)
+            eligible.append(ranked)
+        if profile.temporal_intent == "historical":
+            return eligible
+        superseded_ids = {
+            concept_id for ranked in eligible for concept_id in ranked.concept.supersedes
+        }
+        return [ranked for ranked in eligible if ranked.concept.concept_id not in superseded_ids]
+
+    @staticmethod
+    def _evidence_item(
+        ranked: RankedConcept,
+        *,
+        source: Literal["hybrid", "lexical_fallback", "hot_memory"],
+        authorization_scope: str,
+    ) -> EvidenceItem:
+        concept = ranked.concept
+        if concept.updated_at is None:
+            raise ServiceError(f"evidence timestamp is missing: {concept.path}")
+        reasons = [f"{source}_primary"]
+        if concept.supersedes:
+            reasons.append("supersession_authority")
+        return EvidenceItem(
+            id=concept.concept_id,
+            path=concept.path,
+            title=concept.title,
+            revision=concept.revision,
+            status=concept.status,
+            updated_at=concept.updated_at,
+            tags=concept.tags,
+            source_refs=concept.source_refs,
+            supersedes=concept.supersedes,
+            retrieval_reasons=tuple(reasons),
+            ranks=(EvidenceRank(source=source, rank=ranked.rank, score=ranked.score),),
+            support_chain=(concept.concept_id,),
+            authorization_scope=authorization_scope,
+        )
+
+    @staticmethod
+    def _graph_evidence_item(
+        concept: ReadConcept,
+        *,
+        anchor: ReadConcept,
+        edge: GraphEdge,
+        rank: int,
+        authorization_scope: str,
+    ) -> EvidenceItem:
+        if concept.updated_at is None:
+            raise ServiceError(f"evidence timestamp is missing: {concept.path}")
+        direction: Literal["outbound", "inbound"] = (
+            "outbound" if edge.direction == "outbound" else "inbound"
+        )
+        return EvidenceItem(
+            id=concept.concept_id,
+            path=concept.path,
+            title=concept.title,
+            revision=concept.revision,
+            status=concept.status,
+            updated_at=concept.updated_at,
+            tags=concept.tags,
+            source_refs=concept.source_refs,
+            supersedes=concept.supersedes,
+            retrieval_reasons=("relational_graph_closure",),
+            ranks=(EvidenceRank(source="graph", rank=rank),),
+            support_chain=(anchor.concept_id, concept.concept_id),
+            graph_anchor_id=anchor.concept_id,
+            graph_anchor_path=anchor.path,
+            graph_depth=edge.depth,
+            graph_direction=direction,
+            authorization_scope=authorization_scope,
+        )
+
+    @staticmethod
+    def _evidence_sufficient(profile: QueryProfile, concepts: list[RankedConcept]) -> bool:
+        return evidence_is_sufficient(
+            profile,
+            texts=[(item.concept.title, item.concept.body) for item in concepts],
+            paths=[item.concept.path for item in concepts],
+            statuses_and_tags=[(item.concept.status, item.concept.tags) for item in concepts],
+        )
+
+    @staticmethod
+    def _record_with_evidence(record: AnswerRecord, evidence: EvidenceSet) -> AnswerRecord:
+        if record.answer == UNKNOWN_ANSWER:
+            return record.model_copy(update={"evidence": evidence})
+        items_by_id = {item.id: item for item in evidence.items}
+        citations: list[AnswerCitation] = []
+        seen: set[str] = set()
+        for citation in record.citations:
+            item = items_by_id.get(citation.id)
+            chain = item.support_chain if item is not None else (citation.id,)
+            for concept_id in chain:
+                chain_item = items_by_id.get(concept_id)
+                if chain_item is None or concept_id in seen:
+                    continue
+                citations.append(
+                    AnswerCitation(
+                        id=chain_item.id,
+                        path=chain_item.path,
+                        revision=chain_item.revision,
+                    )
+                )
+                seen.add(concept_id)
+        return record.model_copy(update={"citations": tuple(citations), "evidence": evidence})
+
     def _answer_from_hot_memory(
         self,
         *,
@@ -2092,6 +2269,7 @@ class MemoryService:
         question: str,
         normalized_question: str,
         scope_key: str,
+        profile: QueryProfile,
         answer_mode: str,
         cancelled: Callable[[], bool] | None,
     ) -> AnswerRecord | None:
@@ -2104,18 +2282,32 @@ class MemoryService:
             repo_revision=revision,
             now=self._now(),
         )
-        if exact_hot is not None:
+        if exact_hot is not None and exact_hot.evidence is not None:
             return exact_hot.model_copy(update={"answer_source": "hot_memory"})
         if not changed_ids:
             return None
-        concepts = [
-            concept
-            for concept_id in changed_ids
-            if (concept := self._read_concept_by_id(policy, concept_id)) is not None
-        ]
-        if not concepts:
+        ranked = self._filter_ranked_concepts(
+            profile,
+            [
+                RankedConcept(concept=concept, rank=rank, score=0.0)
+                for rank, concept_id in enumerate(changed_ids, start=1)
+                if (concept := self._read_concept_by_id(policy, concept_id)) is not None
+            ],
+        )[: hot_config.max_changed_concepts]
+        if not ranked:
             return None
-        prompt = self._hot_prompt(question, concepts[: hot_config.max_changed_concepts])
+        concepts = [item.concept for item in ranked]
+        evidence = EvidenceSet(
+            query_profile=profile,
+            authorization_scope=scope_key,
+            retrieval_strategy="hot_memory",
+            sufficient=self._evidence_sufficient(profile, ranked),
+            items=tuple(
+                self._evidence_item(item, source="hot_memory", authorization_scope=scope_key)
+                for item in ranked
+            ),
+        )
+        prompt = self._hot_prompt(question, concepts)
         response = self._run_model(
             task="memory_answer_hot",
             prompt=prompt[: hot_config.max_excerpt_chars],
@@ -2135,12 +2327,13 @@ class MemoryService:
         record = self._parse_model_answer(response, source="hot_memory")
         if record.answer == UNKNOWN_ANSWER:
             return None
-        return self._validated_record(
+        validated = self._validated_record(
             record,
             read_concepts=tuple(concepts),
             revision=revision,
             source_on_repair="hot_memory",
         )
+        return self._record_with_evidence(validated, evidence)
 
     def _answer_from_deep_traversal(
         self,
@@ -2149,67 +2342,181 @@ class MemoryService:
         question: str,
         normalized_question: str,
         scope_key: str,
+        profile: QueryProfile,
         answer_mode: str,
         cancelled: Callable[[], bool] | None,
     ) -> DeepAnswerResult:
-        del scope_key
+        del normalized_question
         deep_config = self._deps.config.intelligent_tiers.deep_answers
         limits = deep_config.limits
         start = monotonic()
         steps: list[SearchStep] = []
-        read_concepts: list[ReadConcept] = []
         self._check_cancel(cancelled)
+        search_query = question
+        if {"changed", "recent", "recently"}.intersection(profile.terms):
+            search_query = f"{question} updated"
         search = self._deps.derived_index.search(
             policy=policy,
-            query=self._search_query(question),
-            limit=min(limits.max_concepts, 5),
+            query=search_query,
+            limit=5,
             freshness=SearchFreshness.STRICT,
             timeout_seconds=limits.max_time_seconds,
+            search_mode=SearchMode.HYBRID,
+            query_syntax="plain",
         )
-        steps.append(SearchStep(action="search_knowledge", detail=question[:200]))
-        self._check_cancel(cancelled)
-        for item in search.results:
-            if len(steps) >= limits.max_steps or len(read_concepts) >= limits.max_concepts:
-                break
-            concept = self._read_concept_by_path(policy, item.path, revision=search.repo_revision)
-            read_concepts.append(concept)
-            steps.append(SearchStep(action="read_concept", detail=item.path))
-            if len(read_concepts) == 1 and len(steps) < limits.max_steps:
+        concepts_by_path: dict[str, ReadConcept] = {}
+
+        def read_ranked_candidates() -> list[RankedConcept]:
+            candidates: list[RankedConcept] = []
+            for rank, item in enumerate(search.results, start=1):
+                self._check_cancel(cancelled)
+                if is_sensitive_evidence(tags=item.tags) or not namespace_matches(
+                    profile, path=item.path
+                ):
+                    continue
+                if profile.temporal_intent == "current" and is_currently_ineligible(
+                    status=item.status, tags=item.tags
+                ):
+                    continue
+                concept = concepts_by_path.get(item.path)
+                if concept is None:
+                    concept = self._read_concept_by_path(
+                        policy, item.path, revision=search.repo_revision
+                    )
+                    concepts_by_path[item.path] = concept
+                candidates.append(RankedConcept(concept=concept, rank=rank, score=item.score))
+            return self._filter_ranked_concepts(profile, candidates)
+
+        ranked_candidates = read_ranked_candidates()
+        escalated = not self._evidence_sufficient(profile, ranked_candidates)
+        if escalated:
+            self._check_cancel(cancelled)
+            initial_revision = search.repo_revision
+            search = self._deps.derived_index.search(
+                policy=policy,
+                query=search_query,
+                limit=10,
+                freshness=SearchFreshness.STRICT,
+                timeout_seconds=limits.max_time_seconds,
+                search_mode=SearchMode.HYBRID,
+                query_syntax="plain",
+            )
+            if search.repo_revision != initial_revision:
+                concepts_by_path.clear()
+            ranked_candidates = read_ranked_candidates()
+        steps.append(
+            SearchStep(
+                action="search_knowledge",
+                detail=("hybrid_top_10" if escalated else "hybrid_top_5"),
+            )
+        )
+        source: Literal["hybrid", "lexical_fallback"] = (
+            "lexical_fallback" if search.warnings else "hybrid"
+        )
+        graph_reserve = min(2, max(0, limits.max_concepts - 1)) if profile.relational else 0
+        primary_limit = max(1, limits.max_concepts - graph_reserve)
+        primary = ranked_candidates[:primary_limit]
+        read_concepts = [ranked.concept for ranked in primary]
+        evidence_items = [
+            self._evidence_item(ranked, source=source, authorization_scope=scope_key)
+            for ranked in primary
+        ]
+        for ranked in primary:
+            if len(steps) < limits.max_steps:
+                steps.append(SearchStep(action="read_concept", detail=ranked.concept.path))
+
+        graph_rank = 0
+        graph_attempted = False
+        seen_ids = {concept.concept_id for concept in read_concepts}
+        superseded_ids = {
+            concept_id for ranked in primary for concept_id in ranked.concept.supersedes
+        }
+        if profile.relational and len(read_concepts) < limits.max_concepts:
+            for anchor_ranked in primary[:2]:
+                self._check_cancel(cancelled)
+                graph_attempted = True
                 graph = self._deps.derived_index.graph(
                     policy=policy,
-                    concept_id=item.concept_id,
+                    concept_id=anchor_ranked.concept.concept_id,
                     depth=1,
                     freshness=SearchFreshness.EVENTUAL,
+                    timeout_seconds=limits.max_time_seconds,
                 )
-                steps.append(SearchStep(action="graph_neighbors", detail=item.path))
                 for edge in graph.outbound + graph.inbound:
-                    if len(steps) >= limits.max_steps or len(read_concepts) >= limits.max_concepts:
+                    if len(read_concepts) >= limits.max_concepts:
                         break
-                    if any(existing.concept_id == edge.concept_id for existing in read_concepts):
+                    if edge.concept_id in seen_ids:
                         continue
-                    read_concepts.append(
-                        self._read_concept_by_path(policy, edge.path, revision=graph.repo_revision)
+                    concept = self._read_concept_by_path(
+                        policy, edge.path, revision=search.repo_revision
                     )
-                    steps.append(SearchStep(action="read_concept", detail=edge.path))
-            self._check_cancel(cancelled)
-        if not read_concepts and len(steps) < limits.max_steps:
-            bundle = scan_bundle(self._deps.repo_paths.current_dir)
-            steps.append(SearchStep(action="list_directory", detail="/"))
-            for entry in bundle.entries:
-                if len(read_concepts) >= limits.max_concepts or len(steps) >= limits.max_steps:
-                    break
-                if not self._is_authorized(policy, entry.bundle_path, action="read"):
-                    continue
-                read_concepts.append(
-                    ReadConcept(
-                        concept_id=entry.document.frontmatter.id,
-                        path=entry.bundle_path,
-                        title=entry.document.frontmatter.title,
-                        body=entry.document.body,
-                        revision=search.repo_revision,
+                    if not self._concept_is_eligible(profile, concept):
+                        continue
+                    if (
+                        profile.temporal_intent != "historical"
+                        and concept.concept_id in superseded_ids
+                    ):
+                        continue
+                    graph_rank += 1
+                    seen_ids.add(concept.concept_id)
+                    read_concepts.append(concept)
+                    evidence_items.append(
+                        self._graph_evidence_item(
+                            concept,
+                            anchor=anchor_ranked.concept,
+                            edge=edge,
+                            rank=graph_rank,
+                            authorization_scope=scope_key,
+                        )
                     )
-                )
-                steps.append(SearchStep(action="read_concept", detail=entry.bundle_path))
+                    if len(steps) < limits.max_steps:
+                        steps.append(SearchStep(action="read_concept", detail=concept.path))
+        if graph_attempted and len(steps) < limits.max_steps:
+            steps.insert(
+                min(1 + len(primary), len(steps)),
+                SearchStep(
+                    action="graph_neighbors",
+                    detail=",".join(ranked.concept.path for ranked in primary[:2]),
+                ),
+            )
+            steps = steps[: limits.max_steps]
+
+        final_ranked = [
+            RankedConcept(concept=concept, rank=index, score=0.0)
+            for index, concept in enumerate(read_concepts, start=1)
+        ]
+        strategy = "hybrid_top_5_to_10" if escalated else "hybrid_top_5"
+        if source == "lexical_fallback":
+            strategy = f"{strategy}_lexical_fallback"
+        if graph_attempted:
+            strategy = f"{strategy}_relational_depth_1"
+        evidence = EvidenceSet(
+            query_profile=profile,
+            authorization_scope=scope_key,
+            retrieval_strategy=strategy,
+            escalated=escalated,
+            sufficient=self._evidence_sufficient(profile, final_ranked),
+            items=tuple(evidence_items),
+        )
+        if not read_concepts:
+            record = AnswerRecord(
+                answer=UNKNOWN_ANSWER,
+                answer_source="evidence_abstention",
+                confidence="low",
+                unresolved=("insufficient_evidence",),
+                citations=(),
+                evidence=evidence.model_copy(update={"abstention_reason": "insufficient_evidence"}),
+                trace_id=None,
+                model_chain=(),
+            )
+            return DeepAnswerResult(
+                record=record,
+                read_concepts=(),
+                steps=tuple(steps),
+                duration_ms=max(0, int((monotonic() - start) * 1000)),
+                usage={},
+            )
+
         prompt = self._deep_prompt(question, read_concepts, limits.max_chars)
         response = self._run_model(
             task="memory_answer_deep",
@@ -2221,12 +2528,13 @@ class MemoryService:
             slot_name="deep_query",
             data_classification="internal",
         )
-        record = self._validated_record(
+        validated = self._validated_record(
             self._parse_model_answer(response, source="deep_agent"),
             read_concepts=tuple(read_concepts),
             revision=search.repo_revision,
             source_on_repair="deep_agent",
         )
+        record = self._record_with_evidence(validated, evidence)
         return DeepAnswerResult(
             record=record.model_copy(update={"trace_id": str(uuid4())}),
             read_concepts=tuple(read_concepts),
@@ -2487,12 +2795,8 @@ class MemoryService:
                 continue
             if not self._is_authorized(policy, entry.bundle_path, action="read"):
                 return None
-            return ReadConcept(
-                concept_id=entry.document.frontmatter.id,
-                path=entry.bundle_path,
-                title=entry.document.frontmatter.title,
-                body=entry.document.body,
-                revision=get_main_revision(self._deps.repo_paths),
+            return self._read_concept_from_entry(
+                entry, revision=get_main_revision(self._deps.repo_paths)
             )
         return None
 
@@ -2501,12 +2805,22 @@ class MemoryService:
     ) -> ReadConcept:
         authorize_path(policy, path, action="read")
         entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
+        return self._read_concept_from_entry(entry, revision=revision)
+
+    @staticmethod
+    def _read_concept_from_entry(entry: Any, *, revision: str) -> ReadConcept:
+        frontmatter = entry.document.frontmatter
         return ReadConcept(
-            concept_id=entry.document.frontmatter.id,
-            path=path,
-            title=entry.document.frontmatter.title,
+            concept_id=frontmatter.id,
+            path=entry.bundle_path,
+            title=frontmatter.title,
             body=entry.document.body,
             revision=revision,
+            status=str(frontmatter.status),
+            tags=frontmatter.tags,
+            source_refs=frontmatter.source_refs,
+            supersedes=frontmatter.supersedes,
+            updated_at=frontmatter.updated_at,
         )
 
     def _check_cancel(self, cancelled: Callable[[], bool] | None) -> None:
@@ -2951,15 +3265,7 @@ class MemoryService:
             if entity not in by_path or entity in seen:
                 continue
             entry = by_path[entity]
-            consulted.append(
-                ReadConcept(
-                    concept_id=entry.document.frontmatter.id,
-                    path=entity,
-                    title=entry.document.frontmatter.title,
-                    body=entry.document.body,
-                    revision=revision,
-                )
-            )
+            consulted.append(self._read_concept_from_entry(entry, revision=revision))
             seen.add(entity)
         return tuple(
             consulted[

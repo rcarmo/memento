@@ -229,6 +229,42 @@ def test_memory_list_includes_light_frontmatter_metadata(
     ]
 
 
+def test_memory_graph_serializes_typed_edges_and_preserves_scope(
+    service: MemoryService, flint: ServiceContext, narrow: ServiceContext
+) -> None:
+    payload = success_data(service.memory_graph(flint, id_or_path="/instances/smith.md"))
+    assert payload == {
+        "center_id": "smith-id",
+        "outbound": [
+            {
+                "concept_id": "piclaw-id",
+                "path": "/projects/piclaw.md",
+                "title": "Piclaw",
+                "depth": 1,
+                "direction": "outbound",
+                "broken_link_count": 0,
+                "orphan_flag": False,
+            }
+        ],
+        "inbound": [
+            {
+                "concept_id": "piclaw-id",
+                "path": "/projects/piclaw.md",
+                "title": "Piclaw",
+                "depth": 1,
+                "direction": "inbound",
+                "broken_link_count": 0,
+                "orphan_flag": False,
+            }
+        ],
+        "broken_targets": (),
+    }
+
+    scoped = success_data(service.memory_graph(narrow, id_or_path="/instances/smith.md"))
+    assert scoped["outbound"] == []
+    assert scoped["inbound"] == []
+
+
 def test_proposal_lifecycle_self_approval_stale_apply_and_idempotency(
     service: MemoryService,
     control_connection: sqlite3.Connection,

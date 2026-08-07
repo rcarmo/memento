@@ -63,6 +63,16 @@ For a bounded compound read, use `memory_execute` with saved references:
 
 Keep plans small. Use saved references instead of copying paths between steps. Project only the fields you need when responses may be large.
 
+When `memory_answer` is enabled, use it for a bounded cited answer rather than as a shortcut around search policy:
+
+```text
+memory_answer(question="Which rack owns Atlas?", answer_mode="summary")
+```
+
+Inspect `evidence` as well as the prose. The query profile, authorization fingerprint, retrieval strategy, ranks, concept state and support chains explain what reached the reader. Graph-derived citations include their primary anchor chain. `policy_abstention` means the question requested secret material and no cache, retrieval or model call ran; `evidence_abstention` means authorized support was insufficient. Do not rephrase either result to evade the policy.
+
+Explicit personal/work wording narrows evidence to that namespace. Current questions exclude deprecated, stale and conflicting concepts, while historical wording may deliberately retain them.
+
 ## Decide What Belongs
 
 Good shared memories include:

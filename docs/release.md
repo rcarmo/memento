@@ -33,6 +33,14 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Answer-evidence checks for 0.3.23
+
+The 0.3.23 answer path adds deterministic query profiling, secret-first abstention, authorization-scoped evidence, hybrid top-5/top-10 escalation and bounded relational support chains to `memory_answer`. It also fixes natural-language lexical normalization and typed `memory_graph` edge serialization.
+
+Release validation must cover lexical misses, stop-word-only input, repeated terms and explicit `query_syntax="fts5"`; namespace isolation across retrieval and graph traversal; secret abstention before cache or model access; stale/current conflicts and supersession; prompt-injection excerpts marked as untrusted; exact-revision citations; and complete graph anchor chains.
+
+The disposable 23-concept corpus passed all five policy gates with GTE-small ready. Three clean current-tree runs peaked between 333532 KiB and 333628 KiB RSS against the saved 332920 KiB baseline; query-phase growth was between 6384 KiB and 6428 KiB against 5928 KiB. The earlier 707652 KiB sample did not reproduce and is excluded as a contaminated run. Release and deployed-build reruns must stay within the existing bounded model-worker and container ceilings.
+
 ## Progressive embedding release checks
 
 Release validation covers pointer-only/rebuild reuse, restart-derived pending work, model-revision invalidation, manual priority, startup and interactive idle gates, `/proc/stat` CPU sampling with I/O wait treated as idle, pacing, `nice` command construction, and one-thread native environments. The operator-run DiskStation deployment preserves `/var/lib/memento`, then checks status and graph revision fields including `pause_reason`, `current_path` and `completed`.

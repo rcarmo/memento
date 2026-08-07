@@ -552,12 +552,49 @@ These limits are exact:
 ```json
 {
   "answer": "... or UNKNOWN",
-  "answer_source": "exact_cache | hot_memory | deep_agent | disabled",
+  "answer_source": "exact_cache | hot_memory | deep_agent | policy_abstention | evidence_abstention | disabled",
   "confidence": "low | medium | high",
   "unresolved": ["..."],
   "citations": [
     {"id": "<concept-id>", "path": "/projects/piclaw.md", "revision": "<git-sha>"}
   ],
+  "evidence": {
+    "schema_version": 1,
+    "query_profile": {
+      "secret_intent": false,
+      "temporal_intent": "current | historical | neutral",
+      "relational": false,
+      "namespace_hint": "personal | work | null",
+      "terms": ["piclaw"]
+    },
+    "authorization_scope": "<scope-fingerprint>",
+    "retrieval_strategy": "hybrid_top_5 | hybrid_top_5_to_10 | ...",
+    "escalated": false,
+    "sufficient": true,
+    "abstention_reason": null,
+    "items": [
+      {
+        "id": "<concept-id>",
+        "path": "/projects/piclaw.md",
+        "title": "Piclaw",
+        "revision": "<git-sha>",
+        "status": "active",
+        "updated_at": "<UTC timestamp>",
+        "tags": ["shared"],
+        "source_refs": [],
+        "supersedes": [],
+        "retrieval_reasons": ["hybrid_primary"],
+        "ranks": [{"source": "hybrid", "rank": 1, "score": 0.91}],
+        "support_chain": ["<concept-id>"],
+        "graph_anchor_id": null,
+        "graph_anchor_path": null,
+        "graph_depth": null,
+        "graph_direction": null,
+        "authorization_scope": "<scope-fingerprint>",
+        "untrusted": true
+      }
+    ]
+  },
   "trace_id": "<uuid-or-null>",
   "model_chain": [
     {"model": "local/llama", "outcome": "timeout"},
@@ -568,9 +605,15 @@ These limits are exact:
 
 ### Answer-tier rules
 
-* Exact-cache keys include repository revision, normalized question, authorization-scope fingerprint, answer mode, model-policy revision, prompt version and tool version.
-* Hot working memory and exact cache are scope-isolated and independently feature-gated.
-* Deep answers may only cite concepts actually read during that traversal at the exact reported revision.
+* Query profiling runs before every enabled tier. It classifies secret, current, historical, relational and explicit personal/work namespace intent without model involvement.
+* Secret intent returns `UNKNOWN` with `answer_source="policy_abstention"` before exact-cache lookup, retrieval, concept reads or model invocation.
+* Exact-cache keys include repository revision, normalized question, authorization-scope fingerprint, answer mode, model-policy revision, prompt version and tool version. Legacy cached answers without an `EvidenceSet` are ignored and replaced.
+* Hot working memory and exact cache are scope-isolated and independently feature-gated. Enabled hot and deep answers carry an `EvidenceSet`; disabled answers keep `evidence=null`.
+* Deep retrieval starts with hybrid top-5 and runs hybrid top-10 only when the deterministic sufficiency check fails. Semantic unavailability is reported as a lexical fallback instead of being hidden.
+* Explicit personal/work intent restricts evidence to that namespace after the ordinary principal authorization filter. Sensitive-tagged concepts never reach the reader.
+* Current queries reject deprecated, tombstoned, stale, historical, obsolete and conflicting evidence. Historical queries may retain deprecated evidence. Outside historical mode, selected superseders remove the concept IDs they replace.
+* Graph closure runs only for relational profiles, at depth one from the first two primary anchors. Primary items remain first, the entire set stays within `max_concepts`, and graph items identify their anchor, direction, depth and minimal support chain.
+* Deep answers may only cite concepts actually read during that traversal at the exact reported revision. A citation to graph-derived evidence is expanded to include its primary anchor chain.
 * Task routing is fixed: `memory_answer_hot` -> `hot_query`, `memory_answer_deep` -> `deep_query`, `memory_proposal_draft` -> `proposal`, `dream_proposal_draft` -> `dream`.
 * Retries and fallbacks apply only to one model generation step and only for configured transient failures.
 * Auth, policy, malformed output, caller cancellation and 429-by-default never fallback.

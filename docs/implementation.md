@@ -544,11 +544,25 @@ Concept bodies are still read fresh. Intersecting writes invalidate overlapping 
 
 ### Deep read-only answers
 
-The `memory_answer` pipeline is:
+The `memory_answer` pipeline profiles the question before any tier can return data:
 
 ```text
-exact_cache -> hot_memory -> deep_agent
+query profile
+  -> secret intent: UNKNOWN before cache/retrieval/model
+  -> exact cache
+  -> hot memory
+  -> hybrid top-5
+       -> sufficient: bounded reader
+       -> insufficient: hybrid top-10
+  -> relational profile only: depth-one closure from the first two anchors
+  -> citation validation and complete support chains
 ```
+
+The profile and every selected item are attached to the answer as a scoped `EvidenceSet`. Each item records the Git revision, concept state, timestamp, tags, source references, supersession metadata, retrieval reason and rank, authorization-scope fingerprint, support chain and an explicit `untrusted=true` marker. Graph items also record their primary anchor, direction and depth.
+
+Authorization constrains search and graph candidates before concept reads, then the reader applies namespace intent and evidence-state policy. Explicit personal/work questions cannot mix those namespaces. Sensitive-tagged concepts are dropped; current questions reject stale, conflicting, deprecated and tombstoned concepts; historical questions can retain deprecated material. A selected current concept also removes any concept IDs named in its `supersedes` metadata.
+
+The sufficiency check is lexical and deterministic. Hybrid top-5 is the normal path; top-10 runs only when the first page lacks enough query, namespace or temporal support. Relational closure is depth one from at most two primary anchors and the primary items stay first within `max_concepts`.
 
 Deep-answer limits are exact:
 

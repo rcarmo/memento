@@ -14,6 +14,7 @@
 | [0010](0010-use-tiled-matrix-kernels-for-local-inference.md) | Use tiled matrix kernels for GTE and Needle inference | accepted |
 | [0011](0011-embed-a-gated-visual-memory-debugger.md) | Embed a gated visual memory debugger | accepted |
 | [0012](0012-manage-access-in-the-control-plane.md) | Manage dynamic principals and credentials in the control plane | accepted |
+| [0013](0013-bind-answers-to-scoped-evidence.md) | Bind model answers to authorization-scoped, bounded evidence | accepted |
 
 ## Discussed but not adopted
 

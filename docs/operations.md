@@ -12,6 +12,7 @@ This document covers Docker, Compose, systemd and reverse-proxy deployments. The
 * Set `MEMENTO_ADMIN_MASTER_KEY` and the configured bootstrap/recovery principal tokens before first managed-access startup. The example imports `MEMENTO_TOKEN_SANDBOX_BOOTSTRAP` and `MEMENTO_TOKEN_WORK_AGENT_BOOTSTRAP`; managed control-database principals become authoritative afterwards.
 * Set remote provider credentials only through environment variables named by each endpoint's `api_key_env` field. Do not place secrets in JSON.
 * Semantic search path overrides are optional. Use `MEMENTO_FFI_LIBRARY`, `MEMENTO_SQLITE_VECTOR_EXTENSION` and `MEMENTO_GTE_MODEL` only when JSON does not already set those paths.
+* `memory_answer` is discoverable only when both `mcp.compact_answer_enabled` and `intelligent_tiers.deep_answers.enabled` are true. Enabling the compact tool without the deep-answer tier does not expose a half-configured answer path.
 * Allow query fallback across trust boundaries only when a slot explicitly sets `allow_cross_trust_boundary: true`. Proposal and Dream fallback stay off by default for a reason.
 
 ## CLI

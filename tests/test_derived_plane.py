@@ -280,6 +280,20 @@ def test_fts_syntax_error_returns_validation_error_without_quarantine(
 
     plain = index.search(policy=policy, query="visible---", query_syntax="plain")
     assert [result.path for result in plain.results] == ["/instances/smith.md"]
+    natural_language = index.search(
+        policy=policy,
+        query="What is the primary visible instance?",
+        query_syntax="plain",
+    )
+    assert [result.path for result in natural_language.results] == ["/instances/smith.md"]
+    assert natural_language.results[0].score > 0
+    assert natural_language.results[0].snippet
+    explicit = index.search(
+        policy=policy,
+        query='"visible" AND "instance"',
+        query_syntax="fts5",
+    )
+    assert [result.path for result in explicit.results] == ["/instances/smith.md"]
     with pytest.raises(ValueError, match="unsupported query_syntax"):
         index.search(policy=policy, query="visible", query_syntax="unknown")
     with pytest.raises(ValueError, match="at least one word"):

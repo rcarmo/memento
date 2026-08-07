@@ -18,7 +18,7 @@ sys.modules[SPEC.name] = release_deploy
 SPEC.loader.exec_module(release_deploy)
 
 
-def deploy_args(version: str = "0.3.22") -> argparse.Namespace:
+def deploy_args(version: str = "0.3.23") -> argparse.Namespace:
     return argparse.Namespace(
         version=version,
         pull_timeout=300.0,
@@ -27,9 +27,9 @@ def deploy_args(version: str = "0.3.22") -> argparse.Namespace:
 
 
 def test_compose_uses_bounded_persisted_state_startup_grace() -> None:
-    document = yaml.safe_load(release_deploy.compose("0.3.22"))
+    document = yaml.safe_load(release_deploy.compose("0.3.23"))
     service = document["services"]["memento"]
-    assert service["image"] == "ghcr.io/rcarmo/memento:0.3.22"
+    assert service["image"] == "ghcr.io/rcarmo/memento:0.3.23"
     expected_healthcheck = {
         "test": [
             "CMD",

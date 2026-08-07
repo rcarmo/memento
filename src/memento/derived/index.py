@@ -40,6 +40,54 @@ MAX_SEARCH_LIMIT = 100
 MAX_GRAPH_DEPTH = 2
 POLL_INTERVAL_SECONDS = 0.02
 RRF_K = 60
+HYBRID_LEXICAL_WEIGHT = 0.5
+PLAIN_QUERY_STOP_WORDS = frozenset(
+    {
+        "a",
+        "about",
+        "an",
+        "and",
+        "are",
+        "at",
+        "be",
+        "been",
+        "being",
+        "by",
+        "can",
+        "could",
+        "did",
+        "do",
+        "does",
+        "for",
+        "from",
+        "how",
+        "in",
+        "is",
+        "it",
+        "me",
+        "of",
+        "on",
+        "please",
+        "should",
+        "tell",
+        "the",
+        "this",
+        "to",
+        "was",
+        "were",
+        "what",
+        "when",
+        "where",
+        "which",
+        "who",
+        "whom",
+        "whose",
+        "why",
+        "will",
+        "with",
+        "would",
+    }
+)
 
 MIGRATIONS = (
     """
@@ -1187,7 +1235,7 @@ class DerivedIndex:
         limit: int,
         offset: int,
     ) -> list[sqlite3.Row]:
-        conditions = ["f.rowid IN (SELECT rowid FROM concept_fts WHERE concept_fts MATCH ?)"]
+        conditions = ["concept_fts MATCH ?"]
         parameters: list[object] = [query]
         prefix_conditions = _authorized_prefix_conditions(policy.read_prefixes)
         conditions.append(prefix_conditions.sql)
@@ -1217,8 +1265,8 @@ class DerivedIndex:
                     c.tags_json,
                     snippet(concept_fts, 5, '', '', ' … ', 16) AS snippet,
                     bm25(concept_fts, 10.0, 5.0, 5.0, 4.0, 1.0, 5.0) AS score
-                FROM concept_fts AS f
-                JOIN concepts AS c ON c.id = f.concept_id
+                FROM concept_fts
+                JOIN concepts AS c ON c.id = concept_fts.concept_id
                 WHERE {where_clause}
                 ORDER BY score, c.id
                 LIMIT ? OFFSET ?
@@ -1273,8 +1321,10 @@ class DerivedIndex:
             if search_mode is SearchMode.SEMANTIC:
                 final_score = cosine_score
             else:
-                lexical_component = 1.0 / (
-                    RRF_K + lexical_rank.get(row["id"], len(lexical_rows) + 1)
+                lexical_component = (
+                    HYBRID_LEXICAL_WEIGHT / (RRF_K + lexical_rank[row["id"]])
+                    if row["id"] in lexical_rank
+                    else 0.0
                 )
                 semantic_component = 1.0 / (RRF_K + semantic_rank[row["id"]])
                 final_score = lexical_component + semantic_component
@@ -1604,7 +1654,11 @@ def _lexical_query(query: str, *, query_syntax: str) -> str:
     terms = re.findall(r"\w+", query, flags=re.UNICODE)
     if not terms:
         raise DerivedSearchError("plain search query must contain at least one word")
-    return " ".join(f'"{term.replace(chr(34), chr(34) * 2)}"' for term in terms)
+    significant_terms = [term for term in terms if term.casefold() not in PLAIN_QUERY_STOP_WORDS]
+    selected_terms = significant_terms or terms
+    return " OR ".join(
+        f'"{term.replace(chr(34), chr(34) * 2)}"' for term in dict.fromkeys(selected_terms)
+    )
 
 
 def _decode_cursor(cursor: str | None) -> int:

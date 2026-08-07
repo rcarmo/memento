@@ -22,6 +22,10 @@ client tool input (untrusted)
 * Markdown rewrite corruption: use `markdown-it-py` token structure instead of regular expressions.
 * Link integrity drift: audit broken links and duplicate IDs on every repository scan.
 * Authorisation bypass: take principal identity from trusted request context, never from tool arguments.
+* Answer-tier scope bypass: bind cache, retrieval, graph expansion, concept reads, model context and returned evidence to the same authorization fingerprint.
+* Secret disclosure through retrieval: classify explicit secret intent before cache lookup or repository access, and reject sensitive-tagged concepts before the reader.
+* Prompt injection in concept bodies: mark repository excerpts as untrusted data, delimit each concept and validate every returned citation against the exact read revision.
+* Stale-answer confusion: distinguish current and historical intent, reject conflicting/deprecated evidence for current questions and apply explicit supersession metadata.
 * Lease bypass or split-brain writes: require one active writer lease for the local runtime and reject contending operator processes.
 * Backup self-destruction: avoid storing recovery sets under `repository.root_path`, because restore replaces that tree.
 
@@ -32,7 +36,9 @@ client tool input (untrusted)
 * `ruamel.yaml` keeps deterministic serialisation under control.
 * Reserved-path enforcement happens before filesystem writes.
 * Bundle scan and repository audit cover every concept file.
-* Authorisation is configured by role and namespace.
+* Authorisation is configured by role and namespace. Explicit personal/work answer queries narrow that authorized set further instead of broadening it.
+* Enabled hot and deep answers expose a bounded `EvidenceSet` with source ranks, state, revision, scope and support chains. Relational graph closure is depth one from no more than two primary anchors.
+* Secret-intent answers abstain before cache, retrieval and model calls. Current-answer filters and exact-revision citation validation run in service code, not in prompts.
 * Runtime startup acquires the writer lease before serving or running local maintenance commands.
 * Backup restore verifies checksums, rejects tar links and path escapes, validates archived `refs/heads/main` against the manifest, then materialises `current/` from the archived bare repository.
 
