@@ -13,17 +13,19 @@ The release workflow passed its Python 3.12-3.14, Rust, wheel, container, amd64,
 
 ## DiskStation acceptance
 
-Portainer stack 111 on endpoint 18 was updated once to the immutable release. On 2026-08-07 the replacement container was:
+Portainer stack 111 on endpoint 18 was initially updated to the immutable release. An operator-requested same-version redeployment on 2026-08-07 replaced the original accepted container with:
 
-* container `c8fbf878dcca81ce53cd345ae532067da30580b5af4036ef9445044fcee8acb4`;
-* running image `ghcr.io/rcarmo/memento:0.3.23` with local image ID `sha256:86907b6b5958057a82dd8e22c2fddb5b5bce68127080a68c7ab9a44640ee6681`;
-* healthy after the configured five-minute startup grace, with the last three recorded health checks successful;
+* container `17a82ea53110ea570b5d44c0e348eff49b98ac0af2a0888b68423c0362458dd1`;
+* running image `ghcr.io/rcarmo/memento:0.3.23` with local image ID `sha256:86907b6b5958057a82dd8e22c2fddb5b5bce68127080a68c7ab9a44640ee6681` and repository digest `sha256:0a15f653b323e07008edc8f7337207089a277031a0f6dfef1f3f260741ee00d8`;
+* healthy after two successive successful health checks;
 * running as `65532:65532`, with a read-only root filesystem, all capabilities dropped, `no-new-privileges:true`, init enabled, a 512 MiB memory limit and a 256 MiB reservation;
-* not restarting, dead or OOM-killed, with exit code zero.
+* not restarting, dead or OOM-killed, with exit code zero and restart count zero.
 
-Startup logs contained the structured `serve_starting` event and the Streamable HTTP listener message, with no traceback or restart loop. One bounded stats snapshot showed 164,696,064 bytes of memory usage, including 126,996,480 bytes of cache and 37,699,584 bytes of RSS.
+The replacement started at 15:35:30Z but initially remained unhealthy while PID 8 was blocked in an uninterruptible `fdatasync()` on `derived.sqlite-wal`; `/proc` reported `wait_current_trans` on the Synology Btrfs volume. Disk space was ample. The filesystem transaction cleared without bypassing SQLite durability, the service began listening on port 8000 and health checks succeeded at 15:47:58Z and 15:48:30Z. This twelve-minute startup stall remains operational evidence to investigate if it recurs.
 
-Docker inspection reported no effective PIDs limit even though `deploy/diskstation.compose.yaml` requests `pids_limit: 128`. This needs an operator check against the Synology Docker/Compose implementation and remains a production hardening gap.
+The original deployment's startup logs contained the structured `serve_starting` event and the Streamable HTTP listener message, with no traceback or restart loop. After the same-version redeployment, a bounded stats snapshot showed 181,956,608 bytes of memory usage, including 153,272,320 bytes of cache and 28,684,288 bytes of RSS.
+
+Docker inspection still reported no effective PIDs limit after the container was recreated, even though `deploy/diskstation.compose.yaml` requests `pids_limit: 128`. This needs an operator check against the Synology Docker/Compose implementation and remains a production hardening gap.
 
 ## Service and contract checks
 
@@ -33,7 +35,7 @@ Authenticated `memory_status` reported service version `0.3.23`, 114 visible con
 84dae8e9f218ad39e7634f44a43bb824ea9b1a97
 ```
 
-The following live checks passed:
+The following live checks passed again after the same-version redeployment:
 
 * unauthenticated MCP requests returned HTTP 401;
 * an ordinary plain hybrid query, `Memento: DiskStation?`, treated punctuation literally and returned `/instances/memento-diskstation.md` first;
