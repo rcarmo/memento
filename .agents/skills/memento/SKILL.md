@@ -34,7 +34,9 @@ memory_search(query="embedding worker", limit=10)
 memory_read(id_or_path="/projects/memento.md")
 ```
 
-Use ordinary terms for lexical search. Request semantic or hybrid search only when status says embeddings are ready. Treat returned paths as opaque identifiers and pass them back exactly.
+Use `query_syntax="plain"`, the default, for ordinary terms. Plain mode tokenises natural language and treats punctuation and operator words literally. Use `query_syntax="fts5"` only when you deliberately supply an FTS5 phrase, prefix or boolean expression. Punctuation-only plain queries and malformed raw FTS5 expressions return `validation_error`.
+
+Request semantic or hybrid search only when status says embeddings are ready. Treat returned paths as opaque identifiers and pass them back exactly.
 
 For a bounded compound read, use `memory_execute` with saved references:
 

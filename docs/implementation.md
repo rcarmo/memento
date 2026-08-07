@@ -693,7 +693,7 @@ The repository, transaction, proposal, indexing, MCP, model, access-management, 
 
 The operator-managed DiskStation deployment serves authenticated MCP clients from the pinned multi-architecture container, persists Git/control/derived state, exposes the trusted-LAN graph debugger and has exercised distinct managed principals, namespace filtering, curator proposal review/apply (including same-principal authorship), asset publication/retrieval and container replacement. Published releases carry immutable OCI digests and BuildKit provenance attestations.
 
-Remaining operational gaps are collected in [`PLAN.md`](../PLAN.md): a clean-host production restore drill, real ARM64 performance measurements, an attached SBOM and TLS before any exposure beyond the trusted LAN. The systemd units and reverse-proxy example remain reference configurations rather than claims of production parity.
+Remaining operational gaps are collected in [`PLAN.md`](../PLAN.md): enforcement of the requested production PIDs limit, a clean-host production restore drill, real ARM64 performance measurements, an attached SBOM and TLS before any exposure beyond the trusted LAN. The systemd units and reverse-proxy example remain reference configurations rather than claims of production parity.
 
 ## Dynamic access plane
 

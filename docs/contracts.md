@@ -332,9 +332,21 @@ Returns:
 Returns:
 
 * `center_id`
-* `outbound`
-* `inbound`
+* `outbound[]`
+* `inbound[]`
 * `broken_targets`
+
+Each public `outbound` or `inbound` edge has the same bounded typed payload:
+
+* `concept_id`
+* `path`
+* `title`
+* `depth`
+* `direction`
+* `broken_link_count`
+* `orphan_flag`
+
+These are the MCP graph-neighbour fields. The visual debugger has a separate, richer edge contract for rendering and diagnostics.
 
 ### `memory_audit`
 

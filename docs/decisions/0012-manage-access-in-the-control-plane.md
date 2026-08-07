@@ -1,8 +1,7 @@
-# 0012 — Manage access in the control plane
+# ADR 0012: Manage access in the control plane
 
-## Status
-
-Accepted.
+**Status:** accepted
+**Date:** 2026-07-25
 
 ## Decision
 

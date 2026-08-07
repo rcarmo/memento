@@ -1,6 +1,7 @@
 # ADR 0013: Bind answers to scoped evidence
 
-Status: accepted
+**Status:** accepted
+**Date:** 2026-08-07
 
 ## Context
 

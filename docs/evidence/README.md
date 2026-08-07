@@ -1,6 +1,6 @@
-# Local validation reports
+# Validation reports
 
-These reports were generated on 2026-07-17 from a Linux x86_64 development host. Thresholds are bounded regression checks for this environment, not production service-level objectives.
+The original reports below were generated on 2026-07-17 from a Linux x86_64 development host. Thresholds are bounded regression checks for that environment, not production service-level objectives.
 
 * `load-operational-local.json` -- 250 concepts, 16 workers and 1,000 direct requests, followed by same-base write contention, an idempotent replay storm, proposal concurrency and a backup/restore drill. All scenarios passed.
 * `load-http-local.json` -- the bounded direct/operational checks plus 3,010 authenticated Streamable HTTP tool calls over 10 seconds at eight concurrent workers. The HTTP mix was 40% status and 60% search. No HTTP operation failed.
@@ -11,6 +11,10 @@ Each JSON document records the Git revision, host and Python information, operat
 The historical Python 3.14 local container rebuild produced image ID `sha256:2b508ad4e469d272bf9d43559fcbc2e1825f5b31f60c83f1ed2940b457e1726d`, and the image-contained model digest matched `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`. That image ID belongs only to the recorded local run. Current release images use digest-pinned Rust 1.88 and Python 3.12 Bookworm bases; each GitHub release records its immutable multi-architecture OCI digest.
 
 Graph evidence includes the 2,000-node fixture performance record and a DiskStation browser capture under [`graph/`](graph/). The real-target MCP benchmark is [`diskstation-memory-benchmark-2026-07-19.json`](diskstation-memory-benchmark-2026-07-19.json).
+
+## Release and deployment evidence
+
+[`release-0.3.23.md`](release-0.3.23.md) records the immutable release identity, DiskStation container and MCP acceptance checks, disabled production answer surface, tagged-source corpus comparison and remaining operational gaps. It distinguishes release gates from checks that actually ran against the live service.
 
 ## Reproduction commands
 

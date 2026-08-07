@@ -44,9 +44,15 @@ The trusted-LAN profile also enables the visual debugger at `http://192.168.1.25
 
 The deployed J3455 profile uses a 30-second `memory_execute` budget. A real-target benchmark found exact reads at 9.32 ms p50, lexical search at 601 ms p50/1.80 s p95, graph lookup through `memory_execute` at 392 ms p50, Git-backed patch/rename operations at 2.1--3.1 seconds and scalar Needle routes at 10--13 seconds. The full report is [`docs/evidence/diskstation-memory-benchmark-2026-07-19.json`](evidence/diskstation-memory-benchmark-2026-07-19.json).
 
-A commit may finish just after the execute deadline and still return a controlled timeout to the client. Mutation callers must reconcile an ambiguous timeout using the idempotency key, repository revision and target path before retrying. Raw punctuation in lexical queries also needs FTS5 quoting or escaping; ordinary term queries are the safer default.
+A commit may finish just after the execute deadline and still return a controlled timeout to the client. Mutation callers must reconcile an ambiguous timeout using the idempotency key, repository revision and target path before retrying. Natural-language search should use the default `query_syntax="plain"`, which tokenises terms and treats punctuation and operator words literally. Use `query_syntax="fts5"` only for deliberate raw FTS5 expressions.
 
 No DiskStation deployment is performed by GitHub Actions. Release automation builds and tests the image, then publishes it to GHCR. An operator pulls the immutable release, runs a uniquely named one-shot config helper to completion, updates the Portainer stack with an explicit version and verifies container, MCP, graph and revision health before considering the update complete. The helper runs as UID/GID 65532, writes and fsyncs a sibling file, then atomically replaces the root-owned `config.json`; this fits the Synology ACL, where the service UID owns the directory but cannot overwrite that file in place. It has no network, capabilities or writable root filesystem, and only the config directory is writable. Helper or stack failures stop the deployment instead of being treated as an asynchronous success.
+
+## Current release
+
+The trusted-LAN service runs `ghcr.io/rcarmo/memento:0.3.23` from the immutable multi-architecture manifest `sha256:0a15f653b323e07008edc8f7337207089a277031a0f6dfef1f3f260741ee00d8`. The 2026-08-07 acceptance check found the replacement container healthy, non-root, read-only, capability-free, within its 512 MiB limit and not restarting or OOM-killed. MCP status, plain and raw-FTS5 search, typed graph edges, authorization boundaries and graph revisions passed. The complete record, including the tagged-source corpus comparison and residual risks, is [`docs/evidence/release-0.3.23.md`](evidence/release-0.3.23.md).
+
+Production deliberately omits `memory_answer`: the compact answer tool is disabled and no provider slots are configured. Release tests cover the versioned evidence contract and secret-first abstention, but the DiskStation check does not claim a live model answer. Docker inspection also reported no effective PIDs limit despite the template's `pids_limit: 128`; operators must resolve that Synology/Compose discrepancy before treating the limit as enforced.
 
 ## Progressive embeddings
 

@@ -39,7 +39,9 @@ The 0.3.23 answer path adds deterministic query profiling, secret-first abstenti
 
 Release validation must cover lexical misses, stop-word-only input, repeated terms and explicit `query_syntax="fts5"`; namespace isolation across retrieval and graph traversal; secret abstention before cache or model access; stale/current conflicts and supersession; prompt-injection excerpts marked as untrusted; exact-revision citations; and complete graph anchor chains.
 
-The disposable 23-concept corpus passed all five policy gates with GTE-small ready. Three clean current-tree runs peaked between 333532 KiB and 333628 KiB RSS against the saved 332920 KiB baseline; query-phase growth was between 6384 KiB and 6428 KiB against 5928 KiB. The earlier 707652 KiB sample did not reproduce and is excluded as a contaminated run. Release and deployed-build reruns must stay within the existing bounded model-worker and container ceilings.
+The disposable 23-concept corpus passed all five policy gates with GTE-small ready. A post-release rerun at the exact `0.3.23` commit reached 333052 KiB peak RSS against the saved 332920 KiB `0.3.22` baseline; query-phase growth was 6408 KiB against 5928 KiB. Plain lexical top-5 mean recall rose from 0.0000 to 0.8333 while hybrid top-5 recall remained 0.8974. The complete release, production and corpus record is [`docs/evidence/release-0.3.23.md`](evidence/release-0.3.23.md).
+
+The production compact surface has answers disabled and no configured provider slots, so live acceptance verifies the absent `memory_answer` tool rather than claiming a model or secret-abstention result. Those paths remain release-test requirements whenever the feature is enabled.
 
 ## Progressive embedding release checks
 

@@ -55,7 +55,7 @@ FTS5 handles exact and lexical search. Markdown links supply backlinks and graph
 
 GTE-small can add semantic ranking when different wording describes the same subject. Embeddings live in persistent `derived.sqlite`: they remain rebuildable from Markdown, but routine container updates and derived rebuilds preserve reusable vectors. On memory-constrained hosts, progressive mode processes one missing or stale concept at a time in a short-lived, low-priority, single-threaded worker, pauses for recent requests or high sampled CPU use, and releases model RAM after each item.
 
-A fine-tuned 26M-parameter [Needle][needle] model can route a small set of natural-language read requests. It emits a candidate action that Memento validates before running. Other configured model slots may produce cited answers or draft proposals and maintenance suggestions.
+A fine-tuned 26M-parameter [Needle][needle] model can route a small set of natural-language read requests. It emits a candidate action that Memento validates before running. When configured, `memory_answer` assembles a versioned, authorization-scoped evidence set before asking a model for a cited answer. Secret intent abstains before cache lookup, retrieval, repository reads, graph access or model invocation. Other optional model slots can draft proposals and maintenance suggestions; deployments without a configured provider keep the answer tool disabled.
 
 Model setup and measurements live in [`docs/semantic-search.md`](docs/semantic-search.md), [`docs/needle-fine-tuning.md`](docs/needle-fine-tuning.md) and [`docs/needle-performance.md`](docs/needle-performance.md).
 

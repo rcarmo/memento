@@ -57,7 +57,7 @@ The base model handled direct search and read requests reasonably, but confused 
 
 The complete per-case output is stored in [`docs/evidence/needle/base-routing-amd64.json`](../evidence/needle/base-routing-amd64.json).
 
-## Embeddability findings
+## Historical Python-path findings
 
 Needle is small at the model level -- 26.3 million parameters and a 53 MB checkpoint -- but the checked-in Python/JAX inference path is not an embedded runtime:
 
@@ -67,9 +67,9 @@ Needle is small at the model level -- 26.3 million parameters and a 53 MB checkp
 * JAX compilation dominated the first call and peak RSS reached 1.2 GB during repeated evaluation.
 * The repository does not provide a stable C ABI, Cactus binding or embedded artefact manifest.
 
-A production candidate needs either a split inference-only package or a verified Cactus library path with pinned local assets, no telemetry or download code, bounded cancellation and explicit AMD64 and ARM64 evidence.
+At this experiment stage, a production candidate needed either a split inference-only package or a verified embedded library path with pinned local assets, no telemetry or download code, bounded cancellation and explicit AMD64 and ARM64 evidence. The later NDL1 Rust runtime described under [Embedded runtime acceptance](#embedded-runtime-acceptance) replaced this Python/JAX path.
 
-## Why the full-plan approach failed
+## Why the rejected full-plan approach failed
 
 Needle's constrained decoder can restrict tool names and top-level argument keys. It does not guarantee valid nested `memory_execute` plans, authoritative path extraction or stable abstention. That is tolerable for toy function calling and not tolerable for a service that must never invent a mutation path.
 

@@ -30,14 +30,14 @@ Memento's repository, transaction, MCP, proposal, search, model, debugger and co
 * FTS5 search, backlinks, graph neighbourhoods and index rebuild/parity checks
 * Local GTE semantic and hybrid search with persistent progressive state and short-lived low-priority single-item workers
 * Fine-tuned Needle shallow routing through the Rust runtime
-* Cited answers, exact cache, hot memory, proposal drafting and Dream modes behind independent settings
+* Cited answers with versioned authorization-scoped evidence, secret-first abstention, exact cache and bounded relational support chains, plus hot memory, proposal drafting and Dream modes behind independent settings
 
 ### Operations
 
 * Non-root multi-architecture container with read-only root and one writable state mount
 * Structured logs, metrics, health/readiness, graceful drain and recovery
 * GHCR release pipeline for amd64 and arm64, including Westmere scalar inference
-* Portainer deployment on the Intel J3455 DiskStation
+* Healthy immutable `0.3.23` Portainer deployment on the Intel J3455 DiskStation, with the acceptance record in [`docs/evidence/release-0.3.23.md`](docs/evidence/release-0.3.23.md)
 
 ### Visual Memory Debugger
 
@@ -48,6 +48,7 @@ Memento's repository, transaction, MCP, proposal, search, model, debugger and co
 ## Remaining Live Work
 
 * Repeat model performance checks on a real ARM64 host.
+* Enforce or explain the missing production PIDs limit requested by the DiskStation Compose profile.
 * Run a live restore drill for the selected primary deployment path.
 * Attach SBOM material to published releases.
 * Add a TLS reverse proxy before exposing any HTTP surface beyond the trusted LAN.
