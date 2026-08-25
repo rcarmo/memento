@@ -24,6 +24,7 @@ from memento.repository.bundle import (
 )
 from memento.repository.frontmatter import (
     FrontmatterError,
+    normalize_concept_body,
     parse_concept_text,
     serialize_concept,
 )
@@ -108,6 +109,12 @@ def test_frontmatter_parse_and_deterministic_serialize() -> None:
     assert "  - assistant" in serialized_once
     assert serialized_once.endswith("\n")
     assert "smith-piclaw\n" in serialized_once
+
+
+@pytest.mark.parametrize("body", ["# Café", "# Cafe\u0301"])
+def test_concept_body_normalization_preserves_unicode_code_points(body: str) -> None:
+    assert normalize_concept_body(body) == body
+    assert normalize_concept_body(f"\r\n{body}  \r\n") == body
 
 
 def test_concept_serialization_is_thread_safe() -> None:

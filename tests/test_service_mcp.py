@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import hashlib
 import io
 import json
 import sqlite3
@@ -583,6 +584,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "proposal_apply",
         "asset_get",
     ]
+    assert "no trailing whitespace or final newline" in asset_workflow["steps"][0]["result"]
     proposal_change = asset_workflow["steps"][1]["arguments"]["changes"][0]
     assert proposal_change == {
         "kind": "attach_asset_pack",
@@ -634,6 +636,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     )
     assert "memory://workflow/asset_pack" in prompt
     assert '"zip_base64": "<base64 ZIP bytes>"' in prompt
+    assert "canonical UTF-8/LF text with no trailing whitespace or final newline" in prompt
     assert "same authenticated curator profile" in prompt
     assert "memory_asset_stage_begin" in prompt
     assert "only when the MCP request would exceed" in prompt
@@ -829,7 +832,7 @@ def test_staged_skill_asset_is_consumed_by_proposal(
             staged_asset_store=store,
         )
     )
-    skill_md = "---\nname: staged-skill\ndescription: Staged\n---\n# Staged Skill\n"
+    skill_md = "---\nname: staged-skill\ndescription: Staged\n---\n# Staged Skill"
     _encoded, zip_bytes = _skill_zip(skill_md)
     staged, _ = store.put(
         principal="flint",
@@ -883,13 +886,59 @@ def test_staged_skill_asset_is_consumed_by_proposal(
     assert "not ready" in replay.message
 
 
+@pytest.mark.parametrize(
+    ("body", "root_skill_md", "message"),
+    [
+        ("# Demo\n", "# Demo\n", "canonical UTF-8 text"),
+        ("# Demo\r\nBody", "# Demo\r\nBody", "canonical UTF-8 text"),
+        ("# Demo\rBody", "# Demo\rBody", "canonical UTF-8 text"),
+        ("# Demo\nBody  ", "# Demo\nBody  ", "canonical UTF-8 text"),
+        ("# Demo\nBody", "# Demo\r\nBody", "exactly match"),
+    ],
+)
+def test_skill_asset_proposal_rejects_noncanonical_or_mismatched_root(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+    body: str,
+    root_skill_md: str,
+    message: str,
+) -> None:
+    encoded, _zip_bytes = _skill_zip(root_skill_md)
+    result = service.memory_propose(
+        smith,
+        intent="Reject non-canonical skill",
+        base_revision=get_main_revision(repo_paths),
+        changes=[
+            {
+                "kind": "create",
+                "path": "/skills/canonical-skill.md",
+                "concept_type": "project",
+                "title": "Canonical Skill",
+                "tags": ["skill"],
+                "body": body,
+            },
+            {
+                "kind": "attach_asset_pack",
+                "path": "/skills/canonical-skill.md",
+                "asset_kind": "skill",
+                "version": "1.0.0",
+                "zip_base64": encoded,
+            },
+        ],
+    )
+
+    assert result.status == "error"
+    assert message in result.message
+
+
 def test_asset_pack_skill_lifecycle_uses_generic_propose_review_apply_and_get(
     service: MemoryService,
     repo_paths: GitRepositoryPaths,
     smith: ServiceContext,
     flint: ServiceContext,
 ) -> None:
-    skill_md = "---\nname: demo-skill\ndescription: Demo\n---\n# Demo Skill\n"
+    skill_md = "---\nname: demo-skill\ndescription: Demo\n---\n# Demo Skill\n\nCafe\u0301"
     encoded, zip_bytes = _skill_zip(skill_md)
     base_revision = get_main_revision(repo_paths)
     proposed = service.memory_propose(
@@ -976,7 +1025,16 @@ def test_asset_pack_skill_lifecycle_uses_generic_propose_review_apply_and_get(
     assert recalled["versions"] == ["1.0.0"]
     assert recalled["zip_sha256"] == proposal["changes"][1]["zip_sha256"]
     assert recalled["manifest"] == proposal["changes"][1]["manifest"]
-    assert base64.b64decode(recalled["zip_base64"]) == zip_bytes
+    recalled_zip = base64.b64decode(recalled["zip_base64"])
+    assert recalled_zip == zip_bytes
+    root_entry = next(
+        entry for entry in recalled["manifest"]["entries"] if entry["path"] == "SKILL.md"
+    )
+    body_bytes = read_back["body"].encode("utf-8")
+    assert body_bytes == skill_md.encode("utf-8")
+    assert hashlib.sha256(body_bytes).hexdigest() == root_entry["sha256"]
+    with zipfile.ZipFile(io.BytesIO(recalled_zip)) as archive:
+        assert archive.read("SKILL.md") == body_bytes
 
     duplicate = service.memory_propose(
         flint,

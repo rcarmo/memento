@@ -155,7 +155,7 @@ The trusted `/graph` debugger can show the full repository and simulate managed 
 
 ## Skills And Assets
 
-A shared skill is an ordinary concept under `/skills/`, tagged `skill`, with an attached versioned asset pack whose root `SKILL.md` matches the concept body byte-for-byte.
+A shared skill is an ordinary concept under `/skills/`, tagged `skill`, with an attached versioned asset pack whose root `SKILL.md` matches the concept body byte-for-byte. Before submission, both use canonical UTF-8 text with LF endings, no trailing whitespace, no leading or trailing blank lines and no final newline. Unicode code points are preserved rather than converted between NFC and NFD. Non-canonical or mismatched skill submissions are rejected.
 
 Publish packs that fit the configured MCP request ceiling with an `attach_asset_pack` change containing `zip_base64`. This keeps the complete proposal inside MCP. Read the created proposal and verify its generated manifest, SHA-256, target path, asset kind and version before review. After apply, retrieve the accepted version with `memory_asset_get`, then verify the returned manifest, SHA-256 and decoded ZIP bytes before installing it. Memento stores and returns skill packs; it does not execute them.
 

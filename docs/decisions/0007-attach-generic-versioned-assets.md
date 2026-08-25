@@ -14,7 +14,7 @@ A memory concept may carry immutable, versioned ZIP assets. Accepted packs are s
 
 Binary bytes for pending proposals live in `control.sqlite`; proposal JSON stores the asset ID, digest and manifest. Review and apply use the ordinary proposal lifecycle.
 
-Skills are not a server-side content type. A skill is a normal concept under `/skills/`, tagged `skill`, with an attached `asset_kind="skill"` pack. Its Markdown body must match the ZIP-root `SKILL.md`. Piclaw imports a recalled pack into `.pi/skills/<name>/`; Memento does not install or run it.
+Skills are not a server-side content type. A skill is a normal concept under `/skills/`, tagged `skill`, with an attached `asset_kind="skill"` pack. Its canonical Markdown body must match the ZIP-root `SKILL.md` byte-for-byte. Canonical skill text is UTF-8 with LF endings, no trailing whitespace, no leading or trailing blank lines and no final newline; Unicode code points are preserved without NFC/NFD conversion. Piclaw imports a recalled pack into `.pi/skills/<name>/`; Memento does not install or run it.
 
 ## Why
 

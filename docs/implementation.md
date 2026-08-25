@@ -92,9 +92,11 @@ The formatter is deterministic:
 * deterministic frontmatter key ordering
 * two-space YAML indentation
 * sorted/deduplicated tags and aliases
-* one trailing newline
+* one trailing newline on each serialised concept file
 * normalised timestamps
 * no trailing whitespace
+
+Concept body values use LF endings, strip trailing whitespace from each line, omit leading and trailing blank lines, and have no final newline. Unicode code points are preserved without NFC/NFD conversion. Skill publication accepts only bodies already in that canonical form and requires the ZIP-root `SKILL.md` to contain the same UTF-8 bytes; it rejects rather than silently rewriting submitted ZIPs and their manifests.
 
 That matters because the same semantic mutation at the same base revision should produce byte-identical output.
 

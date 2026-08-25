@@ -111,7 +111,12 @@ from memento.repository.bundle import (
     read_bundle_entry,
     scan_bundle,
 )
-from memento.repository.frontmatter import FrontmatterError, parse_concept_text, serialize_concept
+from memento.repository.frontmatter import (
+    FrontmatterError,
+    normalize_concept_body,
+    parse_concept_text,
+    serialize_concept,
+)
 from memento.repository.git import (
     GitError,
     GitRepositoryPaths,
@@ -1979,10 +1984,16 @@ class MemoryService:
             skill_name = Path(path).stem
             expected_body = self._resulting_body_for_asset(changes, path)
             if asset_kind == "skill":
+                canonical_body = normalize_concept_body(expected_body)
+                if expected_body != canonical_body:
+                    raise ServiceError(
+                        "skill concept body must be canonical UTF-8 text with LF endings, "
+                        "no trailing whitespace and no final newline"
+                    )
                 pack = validate_skill_pack(
                     skill_name=skill_name,
                     version=version,
-                    skill_md=expected_body,
+                    skill_md=canonical_body,
                     zip_bytes=zip_bytes,
                 )
             else:

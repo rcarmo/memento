@@ -909,7 +909,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                 f"Asset kind: {asset_kind}",
                 f"Version: {version}",
                 "1. Read memory://workflow/asset_pack and memory://catalog/propose.",
-                "2. For a skill pack, make the concept body and ZIP-root SKILL.md byte-identical, then base64-encode the ZIP.",
+                "2. For a skill pack, use canonical UTF-8/LF text with no trailing whitespace or final newline; make the concept body and ZIP-root SKILL.md byte-identical, then base64-encode the ZIP.",
                 "3. Submit a propose operation (directly or through memory_execute) using the current repository revision and this change:",
                 json.dumps(
                     {

@@ -373,7 +373,7 @@ Asset kinds and versions use lowercase/hyphen names and stable `MAJOR.MINOR.PATC
 
 `memory_propose` accepts an `attach_asset_pack` change containing `path`, `asset_kind`, `version` and exactly one of `zip_base64` or `staged_asset_id`. Stored proposal JSON replaces either transport reference with an asset ID, digest and generated manifest. `memory_proposal_get/list/review/apply` remain the only proposal lifecycle.
 
-MCP clients should use `zip_base64` when the complete request fits `mcp.max_request_bytes`. This keeps proposal creation inside the authenticated MCP exchange. A skill concept's body must byte-match the ZIP-root `SKILL.md`; clients verify the generated manifest before review and verify the manifest, SHA-256 and decoded ZIP after retrieval.
+MCP clients should use `zip_base64` when the complete request fits `mcp.max_request_bytes`. This keeps proposal creation inside the authenticated MCP exchange. A skill concept body and ZIP-root `SKILL.md` must both be canonical UTF-8 text with LF endings, no trailing whitespace, no leading or trailing blank lines and no final newline. Unicode code points are preserved without NFC/NFD conversion. Proposal validation rejects non-canonical or byte-mismatched skill text before generating the manifest. Clients verify that manifest before review and verify the manifest, SHA-256 and decoded ZIP after retrieval.
 
 For larger requests, or clients deliberately using raw binary HTTP, `memory_asset_stage_begin` creates a one-hour, one-time, principal-bound upload ticket and returns `/assets/staging/upload`, the `X-Memento-Upload-Ticket` header name and the ticket value. The client sends the ZIP as a raw `application/zip` body without exposing its bearer token to the upload command. `memory_asset_stage_status` reconciles `pending`, `uploaded` or `expired` ticket state and returns the generated `staged_asset_id`, SHA-256 and manifest after upload.
 
@@ -386,7 +386,7 @@ Clients that already manage bearer authentication may alternatively use `POST /a
 | `memory_asset_get` | `reader` | retrieve latest or explicit version, manifest and ZIP as base64 |
 | `memory_asset_prune` | `curator` | remove retained versions beyond the keep count |
 
-Skills are ordinary concepts tagged `skill`; their body must byte-match ZIP-root `SKILL.md`. Search and read use `memory_search` and `memory_read`. Omitted asset versions resolve to the highest accepted stable version. The latest five are retained by default; active proposal references are protected. Recall never extracts files server-side.
+Skills are ordinary concepts tagged `skill`; their canonical body must byte-match ZIP-root `SKILL.md` as specified above. Search and read use `memory_search` and `memory_read`. Omitted asset versions resolve to the highest accepted stable version. The latest five are retained by default; active proposal references are protected. Recall never extracts files server-side.
 
 The Streamable HTTP request limit defaults to 72 MiB so the compatibility base64 path can carry a 50 MiB decoded ZIP after JSON overhead. Raw binary staging avoids base64 expansion but retains the same decoded ZIP and archive-safety limits.
 

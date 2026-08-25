@@ -309,7 +309,7 @@ WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
             {
                 "step": 1,
                 "operation": "prepare_asset_pack",
-                "result": "For a skill, make the concept body and ZIP-root SKILL.md byte-identical. Base64-encode the ZIP.",
+                "result": "For a skill, use canonical UTF-8/LF text with no trailing whitespace or final newline, then make the concept body and ZIP-root SKILL.md byte-identical. Base64-encode the ZIP.",
             },
             {
                 "step": 2,

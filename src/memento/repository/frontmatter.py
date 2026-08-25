@@ -42,7 +42,7 @@ def parse_concept_text(text: str) -> ConceptDocument:
         model = ConceptFrontmatter.model_validate(post.metadata)
     except Exception as exc:
         raise FrontmatterError("frontmatter validation failed") from exc
-    return ConceptDocument(frontmatter=model, body=_normalize_body(post.content))
+    return ConceptDocument(frontmatter=model, body=normalize_concept_body(post.content))
 
 
 def parse_concept_file(path: Path) -> ConceptDocument:
@@ -58,7 +58,7 @@ def serialize_concept(document: ConceptDocument) -> str:
     yaml.indent(mapping=2, sequence=4, offset=2)
     yaml.width = 4096
     yaml.dump(metadata, yaml_output)
-    body = _normalize_body(document.body)
+    body = normalize_concept_body(document.body)
     return f"---\n{yaml_output.getvalue()}---\n{body}\n"
 
 
@@ -80,7 +80,8 @@ def _format_timestamp(value: datetime) -> str:
     return value.astimezone(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def _normalize_body(body: str) -> str:
-    lines = [line.rstrip() for line in body.replace("\r\n", "\n").split("\n")]
-    normalized = "\n".join(lines).strip("\n")
-    return normalized
+def normalize_concept_body(body: str) -> str:
+    """Return the canonical body value used by concept reads and writes."""
+    line_normalized = body.replace("\r\n", "\n").replace("\r", "\n")
+    lines = [line.rstrip() for line in line_normalized.split("\n")]
+    return "\n".join(lines).strip("\n")
