@@ -171,9 +171,11 @@ impl<'a> TensorView<'a> {
     #[must_use]
     pub fn to_f32_vec(&self) -> Vec<f32> {
         self.data
-            .chunks_exact(2)
+            .as_chunks::<2>()
+            .0
+            .iter()
             .map(|chunk| {
-                let word = u16::from_le_bytes(chunk.try_into().expect("2-byte chunk"));
+                let word = u16::from_le_bytes(*chunk);
                 f32::from_bits(u32::from(word) << 16)
             })
             .collect()
