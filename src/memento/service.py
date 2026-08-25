@@ -1461,7 +1461,7 @@ class MemoryService:
                 "description": change.description
                 if change.description is not None
                 else entry.document.frontmatter.description,
-                "status": change.status
+                "status": change.status.value
                 if change.status is not None
                 else entry.document.frontmatter.status,
                 "tags": change.tags if change.tags is not None else entry.document.frontmatter.tags,
@@ -1585,7 +1585,7 @@ class MemoryService:
                             "description": change.description
                             if change.description is not None
                             else entry.document.frontmatter.description,
-                            "status": change.status
+                            "status": change.status.value
                             if change.status is not None
                             else entry.document.frontmatter.status,
                             "tags": change.tags

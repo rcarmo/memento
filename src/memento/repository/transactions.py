@@ -107,6 +107,7 @@ class TransactionManager:
         self, request: TransactionRequest, mutate: MutationCallback
     ) -> TransactionResult:
         operation = create_operation(self._connection, request.operation)
+        operation_id = operation.op_id
         if operation.state is OperationState.SUCCEEDED and operation.result_revision is not None:
             payload = operation.replay_payload or {}
             replayed_paths = payload.get("changed_paths", ())
@@ -127,7 +128,7 @@ class TransactionManager:
             if request.expected_revision != base_revision:
                 conflict = mark_operation_conflict(
                     self._connection,
-                    request.operation.op_id,
+                    operation_id,
                     error_message=(
                         "expected revision "
                         f"{request.expected_revision} does not match {base_revision}"
@@ -136,12 +137,12 @@ class TransactionManager:
                 raise TransactionConflictError(conflict.error_message or "revision conflict")
             operation = mark_operation_running(
                 self._connection,
-                request.operation.op_id,
+                operation_id,
                 base_revision=base_revision,
             )
             worktree = create_operation_worktree(
                 self._paths,
-                op_id=request.operation.op_id,
+                op_id=operation_id,
                 base_revision=base_revision,
             )
             self._checkpoints.hit("worktree_created")
@@ -165,7 +166,7 @@ class TransactionManager:
             if not published:
                 mark_operation_conflict(
                     self._connection,
-                    request.operation.op_id,
+                    operation_id,
                     error_message="repository head moved before publication",
                 )
                 raise TransactionConflictError("repository head moved before publication")
@@ -177,7 +178,7 @@ class TransactionManager:
             self._checkpoints.hit("derived_updated")
             operation = mark_operation_succeeded(
                 self._connection,
-                request.operation.op_id,
+                operation_id,
                 result_revision=commit.revision,
                 result={"changed_paths": list(commit.changed_paths)},
             )
@@ -197,14 +198,14 @@ class TransactionManager:
         except Exception as exc:
             mark_operation_failed(
                 self._connection,
-                request.operation.op_id,
+                operation_id,
                 error_class=exc.__class__.__name__,
                 error_message=str(exc),
             )
             raise
         finally:
             if cleanup_worktree:
-                remove_operation_worktree(self._paths, request.operation.op_id)
+                remove_operation_worktree(self._paths, operation_id)
 
     def recover_startup(self) -> tuple[RecoveryRecord, ...]:
         head_revision = get_main_revision(self._paths)

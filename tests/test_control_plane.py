@@ -212,6 +212,63 @@ def test_transaction_pipeline_commits_and_materializes_current(
     assert get_operation(control_connection, "op-success").state is OperationState.SUCCEEDED
 
 
+def test_transaction_pipeline_retries_failed_operation_with_persisted_id(
+    control_connection: sqlite3.Connection,
+    repo_paths: GitRepositoryPaths,
+) -> None:
+    manager = TransactionManager(control_connection, repo_paths)
+    expected_revision = get_main_revision(repo_paths)
+    request_json = '{"path":"/instances/smith.md"}'
+
+    def fail_mutation(_worktree: Path) -> tuple[str, ...]:
+        raise RuntimeError("transient failure")
+
+    with pytest.raises(RuntimeError, match="transient failure"):
+        manager.apply(
+            TransactionRequest(
+                operation=OperationRequest(
+                    op_id="op-failed-first",
+                    principal="smith",
+                    idempotency_key="idem-retry-failed",
+                    tool_name="memory_patch",
+                    request_json=request_json,
+                ),
+                expected_revision=expected_revision,
+                commit_message="memory: retry smith",
+                author_name="Rui Carmo",
+                author_email="rui.carmo@gmail.com",
+            ),
+            fail_mutation,
+        )
+    assert get_operation(control_connection, "op-failed-first").state is OperationState.FAILED
+
+    result = manager.apply(
+        TransactionRequest(
+            operation=OperationRequest(
+                op_id="op-failed-retry-request",
+                principal="smith",
+                idempotency_key="idem-retry-failed",
+                tool_name="memory_patch",
+                request_json=request_json,
+            ),
+            expected_revision=expected_revision,
+            commit_message="memory: retry smith",
+            author_name="Rui Carmo",
+            author_email="rui.carmo@gmail.com",
+        ),
+        lambda worktree: _write_file(
+            worktree,
+            "/instances/smith.md",
+            "# Smith\n\nRetried.\n",
+        ),
+    )
+
+    assert result.operation.op_id == "op-failed-first"
+    assert result.operation.state is OperationState.SUCCEEDED
+    with pytest.raises(KeyError):
+        get_operation(control_connection, "op-failed-retry-request")
+
+
 def test_transaction_pipeline_rejects_stale_revision(
     control_connection: sqlite3.Connection,
     repo_paths: GitRepositoryPaths,

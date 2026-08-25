@@ -1495,6 +1495,38 @@ def test_execute_search_read_and_projection(service: MemoryService, flint: Servi
     assert success_data(result)["returns"]["title"] == "Piclaw"
 
 
+@pytest.mark.parametrize("status", ["deprecated", "tombstone"])
+def test_execute_applies_and_replays_status_only_patches(
+    service: MemoryService,
+    smith: ServiceContext,
+    repo_paths: GitRepositoryPaths,
+    status: str,
+) -> None:
+    plan = {
+        "operations": [
+            {
+                "op": "patch",
+                "args": {
+                    "path": "/projects/piclaw.md",
+                    "expected_revision": get_main_revision(repo_paths),
+                    "idempotency_key": f"status-only-{status}",
+                    "status": status,
+                },
+            }
+        ]
+    }
+
+    first = service.memory_execute(smith, plan=plan)
+    assert first.status == "success", first.model_dump(mode="python")
+    assert success_data(first)["trace"][0]["status"] == "success"
+    concept = success_data(service.memory_read(smith, id_or_path="/projects/piclaw.md"))
+    assert concept["frontmatter"]["status"] == status
+
+    replay = service.memory_execute(smith, plan=plan)
+    assert replay.status == "success", replay.model_dump(mode="python")
+    assert success_data(replay)["trace"][0]["data"]["replayed"] is True
+
+
 def test_execute_rejects_invalid_references_and_multiple_commit_ops(
     service: MemoryService,
     smith: ServiceContext,
