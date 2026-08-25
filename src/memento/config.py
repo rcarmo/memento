@@ -56,6 +56,18 @@ class AuthorizationConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     principals: dict[str, NamespacePolicy]
+    protected_read_prefixes: tuple[str, ...] = ()
+
+    @field_validator("protected_read_prefixes")
+    @classmethod
+    def validate_protected_read_prefixes(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        normalized = tuple(sorted(dict.fromkeys(value)))
+        for item in normalized:
+            if item == "/" or not item.startswith("/") or not item.endswith("/"):
+                raise ValueError(
+                    "protected namespace prefixes must start and end with '/' and cannot be '/'"
+                )
+        return normalized
 
 
 class RepositoryConfig(BaseModel):

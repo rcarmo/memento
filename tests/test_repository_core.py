@@ -11,10 +11,11 @@ from pydantic import ValidationError
 from memento.authz import (
     AuthorizationError,
     authorize_path,
+    broad_read_grant_warning,
     filter_authorized_paths,
     resolve_policy,
 )
-from memento.config import Principal, ServiceConfig
+from memento.config import AuthorizationConfig, NamespacePolicy, Principal, ServiceConfig
 from memento.envelopes import error_envelope, success_envelope
 from memento.repository.bundle import (
     audit_repository,
@@ -90,6 +91,78 @@ def test_strict_config_and_authorization() -> None:
                 "extra": True,
             }
         )
+
+
+def test_protected_namespaces_require_explicit_read_grants() -> None:
+    authorization = AuthorizationConfig(
+        principals={
+            "root-reader": NamespacePolicy(
+                roles=("reader",), token_env="ROOT", read_prefixes=("/",)
+            ),
+            "protected-reader": NamespacePolicy(
+                roles=("reader",),
+                token_env="PROTECTED",
+                read_prefixes=("/", "/personal/"),
+            ),
+            "nested-reader": NamespacePolicy(
+                roles=("reader",),
+                token_env="NESTED",
+                read_prefixes=("/", "/personal/rui/"),
+            ),
+            "admin": NamespacePolicy(roles=("admin",), token_env="ADMIN", read_prefixes=("/",)),
+        },
+        protected_read_prefixes=("/personal/",),
+    )
+
+    root_reader = resolve_policy(authorization, Principal(name="root-reader", roles=("reader",)))
+    authorize_path(root_reader, "/projects/visible.md", action="read")
+    with pytest.raises(AuthorizationError):
+        authorize_path(root_reader, "/personal/rui/private.md", action="read")
+    assert (
+        broad_read_grant_warning(
+            roles=root_reader.roles,
+            read_prefixes=root_reader.read_prefixes,
+            protected_read_prefixes=root_reader.protected_read_prefixes,
+        )
+        is not None
+    )
+
+    protected_reader = resolve_policy(
+        authorization, Principal(name="protected-reader", roles=("reader",))
+    )
+    authorize_path(protected_reader, "/personal/rui/private.md", action="read")
+    assert (
+        broad_read_grant_warning(
+            roles=protected_reader.roles,
+            read_prefixes=protected_reader.read_prefixes,
+            protected_read_prefixes=protected_reader.protected_read_prefixes,
+        )
+        is None
+    )
+
+    nested_reader = resolve_policy(
+        authorization, Principal(name="nested-reader", roles=("reader",))
+    )
+    authorize_path(nested_reader, "/personal/rui/private.md", action="read")
+    with pytest.raises(AuthorizationError):
+        authorize_path(nested_reader, "/personal/other.md", action="read")
+
+    admin = resolve_policy(authorization, Principal(name="admin", roles=("admin",)))
+    authorize_path(admin, "/personal/rui/private.md", action="read")
+    assert (
+        broad_read_grant_warning(
+            roles=admin.roles,
+            read_prefixes=admin.read_prefixes,
+            protected_read_prefixes=admin.protected_read_prefixes,
+        )
+        is None
+    )
+
+
+@pytest.mark.parametrize("prefix", ["/", "personal/", "/personal"])
+def test_protected_namespace_prefixes_are_strict(prefix: str) -> None:
+    with pytest.raises(ValidationError, match="protected namespace prefixes"):
+        AuthorizationConfig(principals={}, protected_read_prefixes=(prefix,))
 
 
 def test_envelopes_are_strict() -> None:

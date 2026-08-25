@@ -9,7 +9,7 @@
       "piclaw-workspace": {
         "roles": ["reader", "proposer", "curator"],
         "token_env": "MEMENTO_TOKEN_SANDBOX_BOOTSTRAP",
-        "read_prefixes": ["/"],
+        "read_prefixes": ["/", "/work/", "/personal/", "/infrastructure/"],
         "write_prefixes": ["/instances/", "/people/", "/projects/", "/services/", "/systems/", "/skills/", "/work/", "/personal/", "/infrastructure/", "/public/"]
       },
       "work-agent": {
@@ -18,7 +18,8 @@
         "read_prefixes": ["/work/", "/skills/", "/public/"],
         "write_prefixes": ["/work/"]
       }
-    }
+    },
+    "protected_read_prefixes": ["/work/", "/personal/", "/infrastructure/"]
   },
   "limits": {
     "max_concept_bytes": 262144,

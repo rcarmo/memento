@@ -12,6 +12,7 @@ from typing import Any
 
 from memento.access import AccessStore
 from memento.app import MementoRuntime, build_runtime, load_service_config, runtime_paths_for
+from memento.authz import broad_read_grant_warning
 from memento.backup import create_backup, restore_backup
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.logging import JsonLogger
@@ -216,7 +217,26 @@ async def drain_server(server: object) -> None:
 def _audit(runtime: MementoRuntime, *, path: str | None) -> dict[str, Any]:
     audit = audit_repository(runtime.paths.repo_paths.current_dir)
     issues = [issue.__dict__ for issue in audit.issues if path is None or issue.bundle_path == path]
-    return {"ok": not issues, "issues": issues}
+    protected = runtime.config.authorization.protected_read_prefixes
+    if runtime.access_store is not None:
+        policies = (
+            (item.name, item.roles, item.read_prefixes) for item in runtime.access_store.list()
+        )
+    else:
+        policies = (
+            (name, policy.roles, policy.read_prefixes)
+            for name, policy in runtime.config.authorization.principals.items()
+        )
+    warnings = []
+    for name, roles, read_prefixes in policies:
+        warning = broad_read_grant_warning(
+            roles=roles,
+            read_prefixes=read_prefixes,
+            protected_read_prefixes=protected,
+        )
+        if warning is not None:
+            warnings.append({"principal": name, "warning": warning})
+    return {"ok": not issues, "issues": issues, "warnings": warnings}
 
 
 def _emit_json(payload: dict[str, Any]) -> None:

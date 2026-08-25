@@ -10,7 +10,14 @@ from typing import Any, cast
 
 import pytest
 
-from memento.answers import UNKNOWN_ANSWER, ModelAttempt, ModelClient, ModelRequest, ModelResponse
+from memento.answers import (
+    UNKNOWN_ANSWER,
+    ModelAttempt,
+    ModelClient,
+    ModelRequest,
+    ModelResponse,
+    scope_fingerprint,
+)
 from memento.config import (
     AuthorizationConfig,
     DeepAnswerLimitsConfig,
@@ -343,16 +350,17 @@ def answer_config(tmp_path: Path) -> ServiceConfig:
                 "smith": NamespacePolicy(
                     roles=("reader", "proposer", "curator"),
                     token_env="MEMENTO_TOKEN_SMITH",
-                    read_prefixes=("/",),
+                    read_prefixes=("/", "/personal/"),
                     write_prefixes=("/instances/", "/projects/"),
                 ),
                 "flint": NamespacePolicy(
                     roles=("reader", "proposer"),
                     token_env="MEMENTO_TOKEN_FLINT",
-                    read_prefixes=("/instances/", "/projects/"),
+                    read_prefixes=("/",),
                     write_prefixes=("/projects/",),
                 ),
-            }
+            },
+            protected_read_prefixes=("/personal/",),
         ),
         intelligent_tiers=IntelligentTiersConfig(
             deep_answers=DeepAnswersConfig(
@@ -483,6 +491,17 @@ def test_memory_answer_returns_deterministic_unknown_when_flags_are_off(
     assert first == second
     assert first["answer"] == UNKNOWN_ANSWER
     assert first["answer_source"] == "disabled"
+
+
+def test_answer_cache_scope_includes_protected_namespaces() -> None:
+    unprotected = scope_fingerprint(principal="reader", roles=("reader",), read_prefixes=("/",))
+    protected = scope_fingerprint(
+        principal="reader",
+        roles=("reader",),
+        read_prefixes=("/",),
+        protected_read_prefixes=("/personal/",),
+    )
+    assert protected != unprotected
 
 
 def test_memory_answer_exact_cache_is_revision_scoped_and_scope_isolated(

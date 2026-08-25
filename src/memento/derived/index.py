@@ -14,7 +14,13 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Lock
 
-from memento.authz import EffectivePolicy
+from memento.authz import (
+    AuthorizationError,
+    EffectivePolicy,
+    authorize_path,
+    filter_authorized_paths,
+    protected_read_grants,
+)
 from memento.config import SemanticSearchConfig
 from memento.repository.bundle import scan_bundle
 from memento.repository.frontmatter import parse_concept_file
@@ -516,14 +522,15 @@ class DerivedIndex:
                     connection, policy, concept_id, "inbound", bounded_depth
                 )
                 broken = tuple(
-                    row[0]
+                    str(row[0])
                     for row in connection.execute(
-                        "SELECT DISTINCT raw_target "
+                        "SELECT DISTINCT raw_target, target_path "
                         "FROM links "
                         "WHERE source_id = ? AND target_id IS NULL "
                         "ORDER BY raw_target",
                         (concept_id,),
                     ).fetchall()
+                    if filter_authorized_paths(policy, [str(row[1] or row[0])], action="read")
                 )
         except sqlite3.DatabaseError as exc:
             self._handle_corruption(exc)
@@ -570,7 +577,7 @@ class DerivedIndex:
                     status=self._get_state(connection, "status"),
                     quarantine_path=self._get_state_optional(connection, "quarantine_path"),
                 )
-                prefixes = _authorized_prefix_conditions(policy.read_prefixes)
+                prefixes = _authorized_prefix_conditions(policy)
                 row = connection.execute(
                     f"SELECT COUNT(*) AS total FROM concepts AS c WHERE {prefixes.sql}",
                     prefixes.parameters,
@@ -1237,7 +1244,7 @@ class DerivedIndex:
     ) -> list[sqlite3.Row]:
         conditions = ["concept_fts MATCH ?"]
         parameters: list[object] = [query]
-        prefix_conditions = _authorized_prefix_conditions(policy.read_prefixes)
+        prefix_conditions = _authorized_prefix_conditions(policy)
         conditions.append(prefix_conditions.sql)
         parameters.extend(prefix_conditions.parameters)
         if concept_type is not None:
@@ -1350,8 +1357,8 @@ class DerivedIndex:
     ) -> list[sqlite3.Row]:
         conditions = ["e.status = 'ready'"]
         parameters: list[object] = []
-        prefix_conditions = _authorized_prefix_conditions(policy.read_prefixes)
-        conditions.append(prefix_conditions.sql.replace("c.", "e."))
+        prefix_conditions = _authorized_prefix_conditions(policy, alias="e")
+        conditions.append(prefix_conditions.sql)
         parameters.extend(prefix_conditions.parameters)
         if concept_type is not None:
             conditions.append("c.type = ?")
@@ -1431,7 +1438,7 @@ class DerivedIndex:
             current_id, current_depth = frontier.pop(0)
             if current_depth >= depth:
                 continue
-            query, parameters = self._neighbor_query(direction, policy.read_prefixes)
+            query, parameters = self._neighbor_query(direction, policy)
             rows = connection.execute(query, (current_id, *parameters)).fetchall()
             for row in rows:
                 target_id = row["id"]
@@ -1440,6 +1447,9 @@ class DerivedIndex:
                 seen.add(target_id)
                 next_depth = current_depth + 1
                 frontier.append((target_id, next_depth))
+                broken_link_count, orphan_flag = self._scoped_graph_metrics(
+                    connection, policy, target_id
+                )
                 edges.append(
                     GraphEdge(
                         concept_id=target_id,
@@ -1447,37 +1457,65 @@ class DerivedIndex:
                         title=row["title"],
                         depth=next_depth,
                         direction=direction,
-                        broken_link_count=int(row["broken_link_count"]),
-                        orphan_flag=bool(row["orphan_flag"]),
+                        broken_link_count=broken_link_count,
+                        orphan_flag=orphan_flag,
                     )
                 )
         return tuple(sorted(edges, key=lambda item: (item.depth, item.path, item.concept_id)))
 
     def _neighbor_query(
-        self, direction: str, prefixes: tuple[str, ...]
+        self, direction: str, policy: EffectivePolicy
     ) -> tuple[str, tuple[str, ...]]:
-        prefix_conditions = _authorized_prefix_conditions(prefixes, alias="c")
+        prefix_conditions = _authorized_prefix_conditions(policy, alias="c")
         if direction == "outbound":
             return (
                 f"""
-                SELECT c.id, c.path, c.title, m.broken_link_count, m.orphan_flag
+                SELECT c.id, c.path, c.title
                 FROM links AS l
                 JOIN concepts AS c ON c.id = l.target_id
-                JOIN graph_metrics AS m ON m.concept_id = c.id
                 WHERE l.source_id = ? AND {prefix_conditions.sql}
                 """,
                 prefix_conditions.parameters,
             )
         return (
             f"""
-            SELECT c.id, c.path, c.title, m.broken_link_count, m.orphan_flag
+            SELECT c.id, c.path, c.title
             FROM links AS l
             JOIN concepts AS c ON c.id = l.source_id
-            JOIN graph_metrics AS m ON m.concept_id = c.id
             WHERE l.target_id = ? AND {prefix_conditions.sql}
             """,
             prefix_conditions.parameters,
         )
+
+    def _scoped_graph_metrics(
+        self, connection: sqlite3.Connection, policy: EffectivePolicy, concept_id: str
+    ) -> tuple[int, bool]:
+        broken_link_count = sum(
+            1
+            for row in connection.execute(
+                "SELECT DISTINCT raw_target, target_path FROM links "
+                "WHERE source_id = ? AND target_id IS NULL",
+                (concept_id,),
+            ).fetchall()
+            if filter_authorized_paths(policy, [str(row[1] or row[0])], action="read")
+        )
+        outbound_query, outbound_parameters = self._neighbor_query("outbound", policy)
+        inbound_query, inbound_parameters = self._neighbor_query("inbound", policy)
+        has_outbound = (
+            connection.execute(
+                f"SELECT 1 FROM ({outbound_query}) LIMIT 1",
+                (concept_id, *outbound_parameters),
+            ).fetchone()
+            is not None
+        )
+        has_inbound = (
+            connection.execute(
+                f"SELECT 1 FROM ({inbound_query}) LIMIT 1",
+                (concept_id, *inbound_parameters),
+            ).fetchone()
+            is not None
+        )
+        return broken_link_count, not has_outbound and not has_inbound
 
     def _authorize_concept_id(
         self, connection: sqlite3.Connection, policy: EffectivePolicy, concept_id: str
@@ -1485,8 +1523,10 @@ class DerivedIndex:
         row = connection.execute("SELECT path FROM concepts WHERE id = ?", (concept_id,)).fetchone()
         if row is None:
             raise KeyError(concept_id)
-        if not _path_allowed(row["path"], policy.read_prefixes):
-            raise KeyError(concept_id)
+        try:
+            authorize_path(policy, row["path"], action="read")
+        except AuthorizationError as exc:
+            raise KeyError(concept_id) from exc
 
     def _connect(self) -> sqlite3.Connection:
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1679,21 +1719,33 @@ class _PrefixConditions:
     parameters: tuple[str, ...]
 
 
-def _authorized_prefix_conditions(
-    prefixes: tuple[str, ...], *, alias: str = "c"
-) -> _PrefixConditions:
+def _prefix_conditions(prefixes: tuple[str, ...], *, column: str) -> _PrefixConditions:
     clauses: list[str] = []
     parameters: list[str] = []
     for prefix in prefixes:
-        clauses.append(
-            f"{alias}.path = substr(?, 1, length(?) - 1) OR {alias}.path LIKE ? ESCAPE '\\'"
-        )
+        clauses.append(f"{column} = substr(?, 1, length(?) - 1) OR {column} LIKE ? ESCAPE '\\'")
         parameters.extend((prefix, prefix, f"{_escape_like(prefix)}%"))
-    return _PrefixConditions(sql="(" + " OR ".join(clauses) + ")", parameters=tuple(parameters))
+    sql = "(" + " OR ".join(f"({clause})" for clause in clauses) + ")"
+    return _PrefixConditions(sql=sql, parameters=tuple(parameters))
 
 
-def _path_allowed(path: str, prefixes: tuple[str, ...]) -> bool:
-    return any(path == prefix[:-1] or path.startswith(prefix) for prefix in prefixes)
+def _authorized_prefix_conditions(
+    policy: EffectivePolicy, *, alias: str = "c"
+) -> _PrefixConditions:
+    column = f"{alias}.path"
+    allowed = _prefix_conditions(policy.read_prefixes, column=column)
+    sql = allowed.sql
+    parameters = list(allowed.parameters)
+    for protected, explicit_grants in protected_read_grants(policy):
+        protected_condition = _prefix_conditions((protected,), column=column)
+        parameters.extend(protected_condition.parameters)
+        if explicit_grants:
+            explicit_condition = _prefix_conditions(explicit_grants, column=column)
+            sql += f" AND (NOT {protected_condition.sql} OR {explicit_condition.sql})"
+            parameters.extend(explicit_condition.parameters)
+        else:
+            sql += f" AND NOT {protected_condition.sql}"
+    return _PrefixConditions(sql=f"({sql})", parameters=tuple(parameters))
 
 
 def _escape_like(value: str) -> str:

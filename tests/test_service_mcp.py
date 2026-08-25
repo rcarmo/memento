@@ -16,6 +16,7 @@ from typing import Any, Literal, cast
 import pytest
 
 from memento.access import AccessStore
+from memento.authz import AuthorizationError
 from memento.config import (
     AuthorizationConfig,
     MCPConfig,
@@ -37,7 +38,7 @@ from memento.server import (
     execute_tool_schema,
     normalize_execute_tool_arguments,
 )
-from memento.service import MemoryService, ServiceContext, ServiceDependencies
+from memento.service import MemoryService, RenameChange, ServiceContext, ServiceDependencies
 from memento.staged_assets import StagedAssetStore
 
 
@@ -114,8 +115,8 @@ def service_config(tmp_path: Path) -> ServiceConfig:
                 "flint": NamespacePolicy(
                     roles=("reader", "proposer"),
                     token_env="MEMENTO_TOKEN_FLINT",
-                    read_prefixes=("/instances/", "/projects/", "/skills/"),
-                    write_prefixes=("/projects/", "/skills/"),
+                    read_prefixes=("/",),
+                    write_prefixes=("/projects/", "/skills/", "/secret/"),
                 ),
                 "ghost": NamespacePolicy(
                     roles=("reader",),
@@ -129,7 +130,8 @@ def service_config(tmp_path: Path) -> ServiceConfig:
                     read_prefixes=("/instances/",),
                     write_prefixes=("/instances/",),
                 ),
-            }
+            },
+            protected_read_prefixes=("/secret/",),
         ),
     )
 
@@ -245,9 +247,67 @@ def test_auth_visibility_and_standard_envelopes(
     assert read_hidden.status == "error"
     assert read_hidden.error_class == "forbidden"
 
+    listed = success_data(service.memory_list(flint))
+    assert "/secret/ghost.md" not in [item["path"] for item in listed["entries"]]
+    status = success_data(service.memory_status(flint))
+    assert status["visible_concepts"] == 2
+
+    asset = service.memory_asset_get(flint, id_or_path="/secret/ghost.md", asset_kind="skill")
+    assert asset.status == "error"
+    assert asset.error_class == "forbidden"
+
     hidden_visible = service.memory_read(ghost, id_or_path="/secret/ghost.md")
     assert hidden_visible.status == "success"
     assert success_data(hidden_visible)["frontmatter"]["title"] == "Ghost"
+
+
+def test_audit_skips_protected_content_and_broken_targets(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+) -> None:
+    visible = repo_paths.current_dir / "projects" / "piclaw.md"
+    visible.write_text(
+        visible.read_text(encoding="utf-8")
+        + "\n[Visible missing](/projects/missing.md)\n"
+        + "[Protected missing](/secret/missing.md)\n",
+        encoding="utf-8",
+    )
+    hidden = repo_paths.current_dir / "secret" / "malformed.md"
+    hidden.write_text("not valid frontmatter\n", encoding="utf-8")
+
+    listed = success_data(service.memory_list(flint))
+    assert "/secret/malformed.md" not in [item["path"] for item in listed["entries"]]
+    payload = success_data(service.memory_audit(flint))
+    messages = [issue["message"] for issue in payload["issues"]]
+    assert messages == ["broken link to /projects/missing.md"]
+    assert all("/secret/" not in message for message in messages)
+
+
+def test_protected_proposals_are_hidden_without_explicit_read_access(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+) -> None:
+    proposed = service.memory_propose(
+        flint,
+        intent="Update protected memory",
+        base_revision=get_main_revision(repo_paths),
+        changes=[
+            {
+                "kind": "patch",
+                "path": "/secret/ghost.md",
+                "body": "# Updated ghost\n",
+            }
+        ],
+    )
+    proposal_id = success_data(proposed)["proposal"]["proposal_id"]
+
+    fetched = service.memory_proposal_get(flint, proposal_id=proposal_id)
+    assert fetched.status == "error"
+    assert fetched.error_class == "forbidden"
+    listed = success_data(service.memory_proposal_list(flint))
+    assert proposal_id not in [item["proposal_id"] for item in listed["proposals"]]
 
 
 def test_memory_list_includes_light_frontmatter_metadata(
@@ -302,6 +362,10 @@ def test_memory_graph_serializes_typed_edges_and_preserves_scope(
     scoped = success_data(service.memory_graph(narrow, id_or_path="/instances/smith.md"))
     assert scoped["outbound"] == []
     assert scoped["inbound"] == []
+
+    protected = service.memory_graph(flint, id_or_path="/secret/ghost.md")
+    assert protected.status == "error"
+    assert protected.error_class == "forbidden"
 
 
 def test_proposal_lifecycle_self_approval_stale_apply_and_idempotency(
@@ -460,6 +524,50 @@ def test_direct_rename_rewrites_inbound_links_atomically(
     updated = (repo_paths.current_dir / "instances" / "smith.md").read_text(encoding="utf-8")
     assert "/projects/shared-piclaw.md" in updated
     assert "/projects/piclaw.md" not in updated
+
+
+def test_rename_rejects_unauthorised_backlink_rewrites(
+    service: MemoryService,
+    smith: ServiceContext,
+    tmp_path: Path,
+) -> None:
+    worktree = tmp_path / "rename-scope"
+    original = worktree / "projects" / "visible.md"
+    protected = worktree / "secret" / "backlink.md"
+    write_concept(
+        original,
+        concept_id="visible-id",
+        concept_type="project",
+        title="Visible",
+        description="Visible project.",
+        tags=("visible",),
+        body="# Visible\n",
+    )
+    write_concept(
+        protected,
+        concept_id="backlink-id",
+        concept_type="project",
+        title="Protected backlink",
+        description="Protected backlink.",
+        tags=("hidden",),
+        body="# Protected\n\nSee [Visible](/projects/visible.md).\n",
+    )
+
+    with pytest.raises(AuthorizationError, match="cannot write /secret/backlink.md"):
+        service._apply_rename(
+            worktree,
+            RenameChange(
+                kind="rename",
+                path="/projects/visible.md",
+                new_path="/projects/renamed.md",
+            ),
+            actor="smith",
+            policy=service._policy(smith),
+        )
+
+    assert original.exists()
+    assert not (worktree / "projects" / "renamed.md").exists()
+    assert "/projects/visible.md" in protected.read_text(encoding="utf-8")
 
 
 def _server_for(

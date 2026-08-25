@@ -71,7 +71,7 @@ memento/example/infrastructure-agent
 memento/example/shared-reader
 ```
 
-Memento applies each principal's namespace prefixes before search ranking, graph traversal and writes. The trusted visual debugger's **View as** selector simulates those policies for diagnosis; it does not replace MCP authorization.
+Memento applies each principal's namespace prefixes before search ranking, graph traversal and writes. If the deployment configures protected read prefixes, a non-admin `read_prefixes: ["/"]` grant excludes them; add an equal or nested grant such as `/work/` only to profiles that need it. The trusted visual debugger's **View as** selector simulates the complete effective policy, including protected namespaces, for diagnosis; it does not replace MCP authorization.
 
 ## Troubleshooting
 

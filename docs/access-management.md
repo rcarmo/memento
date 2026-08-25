@@ -34,6 +34,8 @@ Use a dedicated principal for onboarding and credential management. Do not give 
 
 Roles are explicit rather than inherited. An administrator needs `reader` for status and ordinary inspection, but does not need `curator` or content write prefixes. A curator should have only the namespaces it manages, such as `/skills/`, `/work/` or `/public/`. Ordinary agents normally read shared namespaces and write only below their own prefix.
 
+Deployments may set `authorization.protected_read_prefixes`, commonly to `/work/`, `/personal/` and `/infrastructure/`. For non-admins, a broad `/` read grant then covers only unprotected namespaces. Add an equal or nested prefix explicitly when that principal should read protected content. The `admin` role bypasses this mask; it does not imply `reader`, `proposer` or `curator` actions. The Principals view warns when a non-admin broad reader needs explicit protected grants.
+
 The web form's **Administrator** preset includes curator roles and shared content writes for operators who deliberately combine both jobs. For a dedicated onboarding principal, remove `proposer` and `curator`, then clear the write-prefix field before creating it.
 
 ## Web UI
@@ -56,7 +58,7 @@ The form starts with editable presets:
 | Curator | `reader`, `proposer`, `curator` | `/` | shared writable namespaces |
 | Administrator | curator roles plus `admin` | `/` | shared writable namespaces |
 
-Every write prefix must be inside a readable prefix. Broad root access and `admin` are visibly called out before creation.
+Every write prefix must be inside a readable prefix. Broad root access and `admin` are visibly called out before creation. When protected namespaces are configured, review any broad-root warning and add only the intended protected read prefixes.
 
 ## MCP Tools
 

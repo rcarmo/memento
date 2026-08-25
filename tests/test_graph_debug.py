@@ -7,6 +7,7 @@ import pytest
 from pydantic import ValidationError
 from umcp_shared import MCPHTTPResponse
 
+from memento.authz import EffectivePolicy
 from memento.config import AuthorizationConfig, GraphExplorerConfig, NamespacePolicy
 from memento.graph_debug import GraphDebugHTTPHandler
 from memento.graph_debug.snapshot import GraphSnapshotService
@@ -24,24 +25,20 @@ class _Snapshot:
     def __init__(self) -> None:
         self.cluster_id = "cluster:skills:0:abc"
         self.detail_id = "node:1"
-        self.read_prefixes: list[tuple[str, ...] | None] = []
+        self.policies: list[EffectivePolicy | None] = []
 
-    def expand_cluster(
-        self, cluster_id: str, *, read_prefixes: tuple[str, ...] | None = None
-    ) -> _Payload:
-        self.read_prefixes.append(read_prefixes)
+    def expand_cluster(self, cluster_id: str, *, policy: EffectivePolicy | None = None) -> _Payload:
+        self.policies.append(policy)
         assert cluster_id == self.cluster_id
         return _Payload({"cluster_id": cluster_id})
 
-    def detail(self, concept_id: str, *, read_prefixes: tuple[str, ...] | None = None) -> _Payload:
-        self.read_prefixes.append(read_prefixes)
+    def detail(self, concept_id: str, *, policy: EffectivePolicy | None = None) -> _Payload:
+        self.policies.append(policy)
         assert concept_id == self.detail_id
         return _Payload({"node": {"id": concept_id}})
 
-    def search(
-        self, query: str, *, read_prefixes: tuple[str, ...] | None = None
-    ) -> dict[str, object]:
-        self.read_prefixes.append(read_prefixes)
+    def search(self, query: str, *, policy: EffectivePolicy | None = None) -> dict[str, object]:
+        self.policies.append(policy)
         assert query == "alpha graph"
         return {
             "schema_version": 1,
@@ -131,7 +128,8 @@ def simulated_authorization() -> AuthorizationConfig:
                 read_prefixes=("/projects/",),
                 write_prefixes=(),
             )
-        }
+        },
+        protected_read_prefixes=("/private/",),
     )
 
 
@@ -149,11 +147,13 @@ def test_graph_principal_simulation_exposes_safe_metadata_and_scopes_requests() 
         "principals": [
             {
                 "name": "projects-reader",
+                "protected_read_prefixes": ["/private/"],
                 "read_prefixes": ["/projects/"],
                 "roles": ["reader"],
                 "write_prefixes": [],
             }
         ],
+        "protected_read_prefixes": ["/private/"],
         "schema_version": 1,
     }
     response = request(
@@ -164,7 +164,10 @@ def test_graph_principal_simulation_exposes_safe_metadata_and_scopes_requests() 
         headers={"x-memento-simulated-principal": "projects-reader"},
     )
     assert response is not None and response.status == 200
-    assert snapshot.read_prefixes[-1] == ("/projects/",)
+    simulated = snapshot.policies[-1]
+    assert simulated is not None
+    assert simulated.read_prefixes == ("/projects/",)
+    assert simulated.protected_read_prefixes == ("/private/",)
     unknown = request(
         handler,
         "/graph/api/v1/status",

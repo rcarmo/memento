@@ -6,7 +6,8 @@ from pathlib import Path
 import pytest
 
 from memento.access import AccessError, AccessStore
-from memento.config import AuthorizationConfig, NamespacePolicy
+from memento.authz import AuthorizationError, authorize_path, resolve_policy
+from memento.config import AuthorizationConfig, NamespacePolicy, Principal
 from memento.control.db import connect_control_db, migrate_control_db
 
 
@@ -105,6 +106,21 @@ def test_lifecycle_and_last_admin_guard(tmp_path: Path) -> None:
         "principal.create",
     ]
     connection.close()
+
+
+def test_managed_principal_policy_inherits_protected_namespaces() -> None:
+    principal = Principal(name="managed-reader", roles=("reader",))
+    authorization = AuthorizationConfig(
+        principals={
+            "managed-reader": NamespacePolicy(
+                roles=("reader",), token_env="MANAGED", read_prefixes=("/",)
+            )
+        },
+        protected_read_prefixes=("/personal/",),
+    )
+    policy = resolve_policy(authorization, principal)
+    with pytest.raises(AuthorizationError):
+        authorize_path(policy, "/personal/rui.md", action="read")
 
 
 def test_master_key_rotation_preserves_credentials(tmp_path: Path) -> None:

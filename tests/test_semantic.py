@@ -147,8 +147,9 @@ def visible_policy() -> EffectivePolicy:
     return EffectivePolicy(
         principal="smith",
         roles=("reader",),
-        read_prefixes=("/projects/",),
+        read_prefixes=("/",),
         write_prefixes=("/projects/",),
+        protected_read_prefixes=("/secret/",),
     )
 
 
@@ -157,8 +158,9 @@ def hidden_policy() -> EffectivePolicy:
     return EffectivePolicy(
         principal="ghost",
         roles=("reader",),
-        read_prefixes=("/projects/", "/secret/"),
+        read_prefixes=("/", "/secret/"),
         write_prefixes=("/projects/", "/secret/"),
+        protected_read_prefixes=("/secret/",),
     )
 
 

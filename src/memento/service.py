@@ -402,10 +402,13 @@ class MemoryService:
             index_stale = index_revision != repository_revision or state.status != "ready"
             visible_concepts = snapshot.visible_concepts
             if state.status != "ready" or not state.repo_revision or not state.index_revision:
-                visible_concepts = sum(
-                    1
-                    for entry in scan_bundle(self._deps.repo_paths.current_dir).entries
-                    if self._is_authorized(policy, entry.bundle_path, action="read")
+                visible_concepts = len(
+                    scan_bundle(
+                        self._deps.repo_paths.current_dir,
+                        include_path=lambda candidate: self._is_authorized(
+                            policy, candidate, action="read"
+                        ),
+                    ).entries
                 )
             proposals = list_proposals(self._deps.control_connection)
             visible_proposals = [
@@ -525,7 +528,7 @@ class MemoryService:
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
-            bundle_path = self._resolve_path(id_or_path)
+            bundle_path = self._resolve_path(id_or_path, policy=policy, action="read")
             authorize_path(policy, bundle_path, action="read")
             entry = read_bundle_entry(self._deps.repo_paths.current_dir, bundle_path)
             return self._success(
@@ -546,12 +549,15 @@ class MemoryService:
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
-            bundle = scan_bundle(self._deps.repo_paths.current_dir)
+            bundle = scan_bundle(
+                self._deps.repo_paths.current_dir,
+                include_path=lambda candidate: self._is_authorized(
+                    policy, candidate, action="read"
+                ),
+            )
             visible = []
             for entry in bundle.entries:
                 if not entry.bundle_path.startswith(path_prefix):
-                    continue
-                if not self._is_authorized(policy, entry.bundle_path, action="read"):
                     continue
                 visible.append(
                     {
@@ -578,6 +584,8 @@ class MemoryService:
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
+            if id_or_path.startswith("/"):
+                authorize_path(policy, id_or_path, action="read")
             concept_id = self._resolve_concept_id(id_or_path)
             graph = self._deps.derived_index.graph(
                 policy=policy, concept_id=concept_id, depth=depth
@@ -612,6 +620,7 @@ class MemoryService:
                 principal=policy.principal,
                 roles=policy.roles,
                 read_prefixes=policy.read_prefixes,
+                protected_read_prefixes=policy.protected_read_prefixes,
             )
             profile = profile_question(question)
             revision = get_main_revision(self._deps.repo_paths)
@@ -733,12 +742,16 @@ class MemoryService:
             policy = self._policy(context)
             if path is not None:
                 authorize_path(policy, path, action="read")
-            audit = audit_repository(self._deps.repo_paths.current_dir)
+            audit = audit_repository(
+                self._deps.repo_paths.current_dir,
+                include_path=lambda candidate: self._is_authorized(
+                    policy, candidate, action="read"
+                ),
+            )
             issues = [
                 issue.__dict__
                 for issue in audit.issues
-                if (path is None or issue.bundle_path == path)
-                and self._is_authorized(policy, issue.bundle_path, action="read")
+                if path is None or issue.bundle_path == path
             ]
             if path is not None and not self._is_authorized(policy, path, action="read"):
                 raise ForbiddenError(f"principal {policy.principal} cannot read {path}")
@@ -1015,6 +1028,7 @@ class MemoryService:
                     worktree,
                     changes,
                     actor=policy.principal,
+                    policy=policy,
                     proposal_id=proposal_id,
                 ),
             )
@@ -1052,7 +1066,7 @@ class MemoryService:
         try:
             policy = self._policy(context)
             require_role(policy, "reader")
-            path = self._resolve_path(id_or_path)
+            path = self._resolve_path(id_or_path, policy=policy, action="read")
             authorize_path(policy, path, action="read")
             entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
             resolved = resolve_asset_version(
@@ -1111,7 +1125,7 @@ class MemoryService:
         try:
             policy = self._policy(context)
             require_role(policy, "curator")
-            path = self._resolve_path(id_or_path)
+            path = self._resolve_path(id_or_path, policy=policy, action="write")
             authorize_path(policy, path, action="write")
             entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
             versions = list_asset_versions(
@@ -1366,7 +1380,9 @@ class MemoryService:
             )
             result = self._deps.transaction_manager.apply(
                 request,
-                lambda worktree: self._apply_changes(worktree, changes, actor=policy.principal),
+                lambda worktree: self._apply_changes(
+                    worktree, changes, actor=policy.principal, policy=policy
+                ),
             )
             self._record_changed_concepts(policy, result.changed_paths)
             return self._success(
@@ -1388,6 +1404,7 @@ class MemoryService:
         changes: list[ProposalChange],
         *,
         actor: str,
+        policy: EffectivePolicy,
         proposal_id: str | None = None,
     ) -> tuple[str, ...]:
         changed_paths: set[str] = set()
@@ -1399,7 +1416,7 @@ class MemoryService:
                 self._apply_patch(worktree, change, actor=actor)
                 changed_paths.add(change.path)
             elif isinstance(change, RenameChange):
-                rewritten = self._apply_rename(worktree, change, actor=actor)
+                rewritten = self._apply_rename(worktree, change, actor=actor, policy=policy)
                 changed_paths.update(rewritten)
             elif isinstance(change, AttachAssetPackChange):
                 if proposal_id is None:
@@ -1497,7 +1514,14 @@ class MemoryService:
             )
         )
 
-    def _apply_rename(self, worktree: Path, change: RenameChange, *, actor: str) -> set[str]:
+    def _apply_rename(
+        self,
+        worktree: Path,
+        change: RenameChange,
+        *,
+        actor: str,
+        policy: EffectivePolicy,
+    ) -> set[str]:
         old_target = validate_repository_write_path(worktree, change.path)
         new_target = validate_repository_write_path(worktree, change.new_path)
         if not old_target.absolute_path.exists():
@@ -1505,6 +1529,18 @@ class MemoryService:
         if new_target.absolute_path.exists():
             raise ConflictError(f"path already exists: {change.new_path}")
         entry = read_bundle_entry(worktree, change.path)
+        rewrites = []
+        for candidate in sorted(worktree.rglob("*.md")):
+            bundle_path = "/" + candidate.relative_to(worktree).as_posix()
+            if bundle_path == change.path:
+                continue
+            original = parse_concept_text(candidate.read_text(encoding="utf-8"))
+            rewritten = rewrite_links_for_rename(
+                original.body, old_path=change.path, new_path=change.new_path
+            )
+            if rewritten.changed:
+                authorize_path(policy, bundle_path, action="write")
+                rewrites.append((candidate, bundle_path, original, rewritten.content))
         document = ConceptDocument(
             frontmatter=entry.document.frontmatter.model_copy(
                 update={"updated_at": self._now(), "updated_by": actor}
@@ -1515,23 +1551,15 @@ class MemoryService:
         new_target.absolute_path.write_text(serialize_concept(document), encoding="utf-8")
         old_target.absolute_path.unlink()
         changed_paths = {change.path, change.new_path}
-        for candidate in sorted(worktree.rglob("*.md")):
-            bundle_path = "/" + candidate.relative_to(worktree).as_posix()
-            if bundle_path == change.new_path:
-                continue
-            original = parse_concept_text(candidate.read_text(encoding="utf-8"))
-            rewritten = rewrite_links_for_rename(
-                original.body, old_path=change.path, new_path=change.new_path
+        for candidate, bundle_path, original, rewritten_body in rewrites:
+            updated = ConceptDocument(
+                frontmatter=original.frontmatter.model_copy(
+                    update={"updated_at": self._now(), "updated_by": actor}
+                ),
+                body=rewritten_body,
             )
-            if rewritten.changed:
-                updated = ConceptDocument(
-                    frontmatter=original.frontmatter.model_copy(
-                        update={"updated_at": self._now(), "updated_by": actor}
-                    ),
-                    body=rewritten.content,
-                )
-                candidate.write_text(serialize_concept(updated), encoding="utf-8")
-                changed_paths.add(bundle_path)
+            candidate.write_text(serialize_concept(updated), encoding="utf-8")
+            changed_paths.add(bundle_path)
         return changed_paths
 
     def _preview_changes(self, changes: list[ProposalChange]) -> str:
@@ -1920,15 +1948,10 @@ class MemoryService:
         if proposal.author_principal != policy.principal and "curator" not in policy.roles:
             return False
         try:
-            self._validate_change_auth(
-                policy,
-                self._normalize_changes(proposal.patch["changes"]),
-                action="write" if require_write else "read",
-            )
-            if not require_write:
-                self._validate_change_auth(
-                    policy, self._normalize_changes(proposal.patch["changes"]), action="write"
-                )
+            changes = self._normalize_changes(proposal.patch["changes"])
+            self._validate_change_auth(policy, changes, action="read")
+            if require_write:
+                self._validate_change_auth(policy, changes, action="write")
             return True
         except (AuthorizationError, ServiceError):
             return False
@@ -2133,10 +2156,13 @@ class MemoryService:
             "orphan_flag": edge.orphan_flag,
         }
 
-    def _resolve_path(self, id_or_path: str) -> str:
+    def _resolve_path(self, id_or_path: str, *, policy: EffectivePolicy, action: str) -> str:
         if id_or_path.startswith("/"):
             return id_or_path
-        bundle = scan_bundle(self._deps.repo_paths.current_dir)
+        bundle = scan_bundle(
+            self._deps.repo_paths.current_dir,
+            include_path=lambda candidate: self._is_authorized(policy, candidate, action=action),
+        )
         for entry in bundle.entries:
             if entry.document.frontmatter.id == id_or_path:
                 return entry.bundle_path
@@ -2790,6 +2816,7 @@ class MemoryService:
             principal=policy.principal,
             roles=policy.roles,
             read_prefixes=policy.read_prefixes,
+            protected_read_prefixes=policy.protected_read_prefixes,
         )
         self._answers.put_hot_changed_concepts(
             scope_key=scope_key,
@@ -2800,12 +2827,13 @@ class MemoryService:
         self._answers.invalidate_hot_answers(changed_concept_ids=changed_ids)
 
     def _read_concept_by_id(self, policy: EffectivePolicy, concept_id: str) -> ReadConcept | None:
-        bundle = scan_bundle(self._deps.repo_paths.current_dir)
+        bundle = scan_bundle(
+            self._deps.repo_paths.current_dir,
+            include_path=lambda candidate: self._is_authorized(policy, candidate, action="read"),
+        )
         for entry in bundle.entries:
             if entry.document.frontmatter.id != concept_id:
                 continue
-            if not self._is_authorized(policy, entry.bundle_path, action="read"):
-                return None
             return self._read_concept_from_entry(
                 entry, revision=get_main_revision(self._deps.repo_paths)
             )
@@ -3356,7 +3384,10 @@ class MemoryService:
         if self._deps.access_store is not None:
             managed = self._deps.access_store.policy(context.principal.name)
             if managed is not None:
-                authorization = AuthorizationConfig(principals={context.principal.name: managed})
+                authorization = AuthorizationConfig(
+                    principals={context.principal.name: managed},
+                    protected_read_prefixes=self._deps.config.authorization.protected_read_prefixes,
+                )
                 return resolve_policy(authorization, context.principal)
         return resolve_policy(self._deps.config.authorization, context.principal)
 

@@ -9,7 +9,7 @@
       "piclaw-workspace": {
         "roles": ["reader", "proposer", "curator"],
         "token_env": "MEMENTO_TOKEN_WORKSPACE",
-        "read_prefixes": ["/"],
+        "read_prefixes": ["/", "/work/", "/personal/", "/infrastructure/"],
         "write_prefixes": ["/instances/", "/people/", "/projects/", "/services/", "/systems/", "/skills/", "/work/", "/personal/", "/infrastructure/", "/public/"]
       },
       "flint": {
@@ -24,7 +24,8 @@
         "read_prefixes": ["/work/", "/skills/", "/public/"],
         "write_prefixes": ["/work/"]
       }
-    }
+    },
+    "protected_read_prefixes": ["/work/", "/personal/", "/infrastructure/"]
   },
   "mcp": {
     "tool_surface": "compact",

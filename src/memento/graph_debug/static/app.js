@@ -64,6 +64,9 @@ function normalizePrincipals(payload) {
         : Array.isArray(item.writePrefixes)
           ? item.writePrefixes.filter((value) => typeof value === "string")
           : [],
+      protected_read_prefixes: Array.isArray(item.protected_read_prefixes)
+        ? item.protected_read_prefixes.filter((value) => typeof value === "string")
+        : [],
     }))
     .filter((item) => item.name);
 }
@@ -81,7 +84,10 @@ function principalOptionLabel(principal) {
 }
 
 function principalDetail(principal) {
-  return `Roles: ${principalRoles(principal)} · Read: ${principalPrefixes(principal.read_prefixes)} · Write: ${principalPrefixes(principal.write_prefixes)}`;
+  const protectedDetail = principal.roles.includes("admin")
+    ? `bypassed (${principalPrefixes(principal.protected_read_prefixes)})`
+    : principalPrefixes(principal.protected_read_prefixes);
+  return `Roles: ${principalRoles(principal)} · Read: ${principalPrefixes(principal.read_prefixes)} · Protected: ${protectedDetail} · Write: ${principalPrefixes(principal.write_prefixes)}`;
 }
 
 function App() {

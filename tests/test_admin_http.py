@@ -30,11 +30,21 @@ def handler(tmp_path: Path) -> AdminHTTPHandler:
                     token_env="READER",
                     read_prefixes=("/skills/",),
                 ),
-            }
+                "broad-reader": NamespacePolicy(
+                    roles=("reader",),
+                    token_env="BROAD_READER",
+                    read_prefixes=("/",),
+                ),
+            },
+            protected_read_prefixes=("/personal/",),
         ),
-        {"piclaw-workspace": "admin-token", "reader": "reader-token"},
+        {
+            "piclaw-workspace": "admin-token",
+            "reader": "reader-token",
+            "broad-reader": "broad-reader-token",
+        },
     )
-    return AdminHTTPHandler(store)
+    return AdminHTTPHandler(store, protected_read_prefixes=("/personal/",))
 
 
 def request(
@@ -67,6 +77,10 @@ def test_admin_page_and_api_auth(tmp_path: Path) -> None:
     assert allowed.status == 200
     assert payload is not None
     assert any(item["name"] == "sandbox" for item in payload["principals"])
+    broad_reader = next(item for item in payload["principals"] if item["name"] == "broad-reader")
+    assert "explicit read prefixes" in broad_reader["warnings"][0]
+    sandbox = next(item for item in payload["principals"] if item["name"] == "sandbox")
+    assert "warnings" not in sandbox
 
 
 def test_admin_create_returns_one_time_credential(tmp_path: Path) -> None:

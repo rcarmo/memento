@@ -8,15 +8,19 @@ from typing import Any
 
 from umcp_shared import MCPHTTPResponse
 
-from memento.access import AccessError, AccessStore
+from memento.access import AccessError, AccessStore, ManagedPrincipal
+from memento.authz import broad_read_grant_warning
 from memento.config import Principal
 
 _HEADERS = (("Cache-Control", "no-store"), ("X-Content-Type-Options", "nosniff"))
 
 
 class AdminHTTPHandler:
-    def __init__(self, store: AccessStore | None) -> None:
+    def __init__(
+        self, store: AccessStore | None, *, protected_read_prefixes: tuple[str, ...] = ()
+    ) -> None:
         self._store = store
+        self._protected_read_prefixes = protected_read_prefixes
         self._static_root = files("memento.admin").joinpath("static")
 
     def handle(
@@ -50,7 +54,9 @@ class AdminHTTPHandler:
             if not isinstance(payload, dict):
                 raise AccessError("request body must be an object")
             if method == "GET" and path == "/admin/api/principals":
-                return self._json({"principals": [asdict(item) for item in self._store.list()]})
+                return self._json(
+                    {"principals": [self._principal(item) for item in self._store.list()]}
+                )
             if method == "GET" and path == "/admin/api/activity":
                 return self._json({"events": list(self._store.audit())})
             if method == "POST" and path == "/admin/api/principals":
@@ -61,7 +67,7 @@ class AdminHTTPHandler:
                     read_prefixes=tuple(payload.get("read_prefixes", ())),
                     write_prefixes=tuple(payload.get("write_prefixes", ())),
                 )
-                return self._json({"principal": asdict(item), "credential": token}, 201)
+                return self._json({"principal": self._principal(item), "credential": token}, 201)
             prefix = "/admin/api/principals/"
             if method == "POST" and path.startswith(prefix):
                 tail = path.removeprefix(prefix).split("/")
@@ -114,6 +120,17 @@ class AdminHTTPHandler:
         except (AccessError, json.JSONDecodeError, TypeError) as exc:
             return self._json({"error": str(exc)}, 400)
         return self._json({"error": "not found"}, 404)
+
+    def _principal(self, item: ManagedPrincipal) -> dict[str, Any]:
+        payload = asdict(item)
+        warning = broad_read_grant_warning(
+            roles=item.roles,
+            read_prefixes=item.read_prefixes,
+            protected_read_prefixes=self._protected_read_prefixes,
+        )
+        if warning is not None:
+            payload["warnings"] = [warning]
+        return payload
 
     def _authenticate(self, headers: Mapping[str, str]) -> Principal | None:
         value = headers.get("authorization", "")

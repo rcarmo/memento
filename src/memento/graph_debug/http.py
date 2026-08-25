@@ -9,7 +9,8 @@ from urllib.parse import unquote
 from umcp_shared import MCPHTTPResponse
 
 from memento.access import AccessStore
-from memento.config import AuthorizationConfig, GraphExplorerConfig, NamespacePolicy
+from memento.authz import EffectivePolicy
+from memento.config import AuthorizationConfig, GraphExplorerConfig
 from memento.graph_debug.export import export_graph_json, export_graph_svg
 from memento.graph_debug.refresh import GraphEmbeddingRefreshCoordinator
 from memento.graph_debug.snapshot import GraphSnapshotError, GraphSnapshotService
@@ -40,6 +41,9 @@ class GraphDebugHTTPHandler:
         self._snapshot_service = snapshot_service
         self._refresh_coordinator = refresh_coordinator
         self._principal_policies = dict(authorization.principals) if authorization else {}
+        self._protected_read_prefixes = (
+            authorization.protected_read_prefixes if authorization else ()
+        )
         self._access_store = access_store
         self._static_root = files("memento.graph_debug").joinpath("static")
 
@@ -62,13 +66,13 @@ class GraphDebugHTTPHandler:
             simulated = self._simulated_policy(headers)
         except GraphSnapshotError as exc:
             return self._json({"error": str(exc)}, status=400)
-        read_prefixes = simulated.read_prefixes if simulated else None
+        policy = simulated
         principals_path = f"{prefix}/api/v1/principals"
         if method == "GET" and path == principals_path:
             return self._principals()
         search_path = f"{prefix}/api/v1/search"
         if method == "POST" and path == search_path:
-            return self._search(body, read_prefixes=read_prefixes)
+            return self._search(body, policy=policy)
         refresh_path = f"{prefix}/api/v1/embeddings/refresh"
         if method == "POST" and path == refresh_path:
             if simulated is not None:
@@ -80,7 +84,7 @@ class GraphDebugHTTPHandler:
             f"{prefix}/api/v1/export/json",
             f"{prefix}/api/v1/export/svg",
         }:
-            return self._export(path.rsplit("/", 1)[-1], body, read_prefixes=read_prefixes)
+            return self._export(path.rsplit("/", 1)[-1], body, policy=policy)
         if method != "GET":
             return MCPHTTPResponse(
                 405,
@@ -111,27 +115,27 @@ class GraphDebugHTTPHandler:
                     return self._json({"available": False})
                 return self._json(self._refresh_coordinator.state_dict())
             if path == f"{prefix}/api/v1/overview":
-                return self._snapshot_json("overview", read_prefixes=read_prefixes)
+                return self._snapshot_json("overview", policy=policy)
             cluster_prefix = f"{prefix}/api/v1/clusters/"
             if path.startswith(cluster_prefix):
                 return self._snapshot_json(
                     "cluster",
                     unquote(path.removeprefix(cluster_prefix)),
-                    read_prefixes=read_prefixes,
+                    policy=policy,
                 )
             memory_prefix = f"{prefix}/api/v1/memories/"
             if path.startswith(memory_prefix):
                 return self._snapshot_json(
                     "detail",
                     unquote(path.removeprefix(memory_prefix)),
-                    read_prefixes=read_prefixes,
+                    policy=policy,
                 )
             neighbourhood_prefix = f"{prefix}/api/v1/neighbourhood/"
             if path.startswith(neighbourhood_prefix):
                 return self._snapshot_json(
                     "neighbourhood",
                     unquote(path.removeprefix(neighbourhood_prefix)),
-                    read_prefixes=read_prefixes,
+                    policy=policy,
                 )
         except GraphSnapshotError as exc:
             return self._json({"error": str(exc)}, status=404)
@@ -140,23 +144,30 @@ class GraphDebugHTTPHandler:
             return self._static(relative)
         return self._not_found()
 
-    def _simulated_policy(self, headers: Mapping[str, str]) -> NamespacePolicy | None:
+    def _simulated_policy(self, headers: Mapping[str, str]) -> EffectivePolicy | None:
         name = headers.get("x-memento-simulated-principal", "").strip()
         if not name:
             return None
-        policy = (
+        namespace_policy = (
             self._access_store.policy(name)
             if self._access_store is not None
             else self._principal_policies.get(name)
         )
-        if policy is None:
+        if namespace_policy is None:
             raise GraphSnapshotError("unknown simulated principal")
-        return policy
+        return EffectivePolicy(
+            principal=name,
+            roles=namespace_policy.roles,
+            read_prefixes=namespace_policy.read_prefixes,
+            write_prefixes=namespace_policy.write_prefixes,
+            protected_read_prefixes=self._protected_read_prefixes,
+        )
 
     def _principals(self) -> MCPHTTPResponse:
         return self._json(
             {
                 "schema_version": 1,
+                "protected_read_prefixes": self._protected_read_prefixes,
                 "principals": self._principal_payloads(),
             }
         )
@@ -169,6 +180,7 @@ class GraphDebugHTTPHandler:
                     "roles": item.roles,
                     "read_prefixes": item.read_prefixes,
                     "write_prefixes": item.write_prefixes,
+                    "protected_read_prefixes": self._protected_read_prefixes,
                 }
                 for item in self._access_store.list()
                 if item.enabled and not item.revoked and not item.deleted
@@ -179,6 +191,7 @@ class GraphDebugHTTPHandler:
                 "roles": policy.roles,
                 "read_prefixes": policy.read_prefixes,
                 "write_prefixes": policy.write_prefixes,
+                "protected_read_prefixes": self._protected_read_prefixes,
             }
             for name, policy in sorted(self._principal_policies.items())
         ]
@@ -206,7 +219,7 @@ class GraphDebugHTTPHandler:
         export_type: str,
         body: bytes,
         *,
-        read_prefixes: tuple[str, ...] | None = None,
+        policy: EffectivePolicy | None = None,
     ) -> MCPHTTPResponse:
         if self._snapshot_service is None:
             return self._json({"error": "graph snapshot unavailable"}, status=503)
@@ -218,7 +231,7 @@ class GraphDebugHTTPHandler:
             if not isinstance(ids, list) or not all(isinstance(item, str) for item in ids):
                 raise GraphSnapshotError("concept_ids must be an array of strings")
             nodes, edges, revisions = self._snapshot_service.export_selection(
-                tuple(ids), read_prefixes=read_prefixes
+                tuple(ids), policy=policy
             )
             if export_type == "json":
                 output = export_graph_json(
@@ -241,9 +254,7 @@ class GraphDebugHTTPHandler:
         except (GraphSnapshotError, ValueError) as exc:
             return self._json({"error": str(exc)}, status=400)
 
-    def _search(
-        self, body: bytes, *, read_prefixes: tuple[str, ...] | None = None
-    ) -> MCPHTTPResponse:
+    def _search(self, body: bytes, *, policy: EffectivePolicy | None = None) -> MCPHTTPResponse:
         if self._snapshot_service is None:
             return self._json({"error": "graph snapshot unavailable"}, status=503)
         try:
@@ -253,7 +264,7 @@ class GraphDebugHTTPHandler:
             query = payload.get("query")
             if not isinstance(query, str):
                 raise GraphSnapshotError("search query must be a string")
-            return self._json(self._snapshot_service.search(query, read_prefixes=read_prefixes))
+            return self._json(self._snapshot_service.search(query, policy=policy))
         except (json.JSONDecodeError, UnicodeDecodeError):
             return self._json({"error": "invalid JSON"}, status=400)
         except GraphSnapshotError as exc:
@@ -285,23 +296,21 @@ class GraphDebugHTTPHandler:
         operation: str,
         concept_id: str | None = None,
         *,
-        read_prefixes: tuple[str, ...] | None = None,
+        policy: EffectivePolicy | None = None,
     ) -> MCPHTTPResponse:
         if self._snapshot_service is None:
             return self._json({"error": "graph snapshot unavailable"}, status=503)
         if operation == "overview":
-            encoded = self._snapshot_service.overview(read_prefixes=read_prefixes).model_dump_json()
+            encoded = self._snapshot_service.overview(policy=policy).model_dump_json()
         elif operation == "cluster" and concept_id:
             encoded = self._snapshot_service.expand_cluster(
-                concept_id, read_prefixes=read_prefixes
+                concept_id, policy=policy
             ).model_dump_json()
         elif operation == "detail" and concept_id:
-            encoded = self._snapshot_service.detail(
-                concept_id, read_prefixes=read_prefixes
-            ).model_dump_json()
+            encoded = self._snapshot_service.detail(concept_id, policy=policy).model_dump_json()
         elif operation == "neighbourhood" and concept_id:
             encoded = self._snapshot_service.neighbourhood(
-                concept_id, read_prefixes=read_prefixes
+                concept_id, policy=policy
             ).model_dump_json()
         else:  # pragma: no cover - internal dispatch invariant
             raise GraphSnapshotError("invalid graph snapshot operation")

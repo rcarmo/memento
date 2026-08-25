@@ -85,18 +85,20 @@ def policy() -> EffectivePolicy:
     return EffectivePolicy(
         principal="smith",
         roles=("reader",),
-        read_prefixes=("/instances/", "/projects/"),
+        read_prefixes=("/",),
         write_prefixes=("/instances/", "/projects/"),
+        protected_read_prefixes=("/secret/",),
     )
 
 
 @pytest.fixture()
 def hidden_policy() -> EffectivePolicy:
     return EffectivePolicy(
-        principal="admin",
+        principal="explicit-reader",
         roles=("reader",),
-        read_prefixes=("/instances/", "/projects/", "/secret/"),
+        read_prefixes=("/", "/secret/"),
         write_prefixes=("/instances/", "/projects/", "/secret/"),
+        protected_read_prefixes=("/secret/",),
     )
 
 
@@ -171,9 +173,38 @@ def test_graph_metrics_and_bounded_neighborhood(
     derived_index: DerivedIndex,
     policy: EffectivePolicy,
 ) -> None:
+    with sqlite3.connect(derived_index.db_path) as connection:
+        connection.executemany(
+            "INSERT INTO links VALUES(?,?,?,?,?,?,?,?,?)",
+            (
+                (
+                    "smith-id",
+                    None,
+                    "/projects/secret-alias.md",
+                    "/secret/missing.md",
+                    None,
+                    "markdown",
+                    "broken",
+                    "rev-1",
+                    "rev-1",
+                ),
+                (
+                    "piclaw-id",
+                    None,
+                    "/secret/other.md",
+                    "/secret/other.md",
+                    None,
+                    "markdown",
+                    "broken",
+                    "rev-1",
+                    "rev-1",
+                ),
+            ),
+        )
     graph = derived_index.graph(policy=policy, concept_id="smith-id", depth=2)
     assert [edge.path for edge in graph.outbound] == ["/projects/piclaw.md"]
     assert [edge.path for edge in graph.inbound] == ["/projects/piclaw.md"]
+    assert all(edge.broken_link_count == 0 for edge in (*graph.outbound, *graph.inbound))
     assert graph.broken_targets == ("/projects/missing.md",)
 
     smith_metrics = derived_index.metrics("smith-id")

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -49,11 +50,15 @@ class RepositoryBundle:
         raise BundleError(f"unknown bundle path: {bundle_path}")
 
 
-def scan_bundle(root: Path) -> RepositoryBundle:
+def scan_bundle(
+    root: Path, *, include_path: Callable[[str], bool] | None = None
+) -> RepositoryBundle:
     entries: list[BundleEntry] = []
     for path in sorted(root.rglob("*.md")):
         bundle_path = "/" + path.relative_to(root).as_posix()
-        if is_reserved_bundle_path(bundle_path):
+        if is_reserved_bundle_path(bundle_path) or (
+            include_path is not None and not include_path(bundle_path)
+        ):
             continue
         validate_repository_read_path(root, bundle_path)
         try:
@@ -110,9 +115,11 @@ def generate_root_log(bundle: RepositoryBundle) -> str:
     return "\n".join(lines) + "\n"
 
 
-def audit_repository(root: Path) -> RepositoryAudit:
+def audit_repository(
+    root: Path, *, include_path: Callable[[str], bool] | None = None
+) -> RepositoryAudit:
     issues: list[AuditIssue] = []
-    bundle = scan_bundle(root)
+    bundle = scan_bundle(root, include_path=include_path)
     seen_ids: dict[str, str] = {}
     for entry in bundle.entries:
         concept_id = entry.document.frontmatter.id
@@ -132,7 +139,9 @@ def audit_repository(root: Path) -> RepositoryAudit:
             if not link.href.startswith("/"):
                 continue
             target_path = link.href.split("#", 1)[0]
-            if is_reserved_bundle_path(target_path):
+            if is_reserved_bundle_path(target_path) or (
+                include_path is not None and not include_path(target_path)
+            ):
                 continue
             if target_path not in {item.bundle_path for item in bundle.entries}:
                 issues.append(

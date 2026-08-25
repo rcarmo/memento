@@ -317,19 +317,27 @@ Roles are checked as literal membership in the principal record. The service doe
 
 ```json
 {
-  "smith": {
-    "roles": ["reader", "proposer"],
-    "read_prefixes": ["/shared/", "/instances/smith/"],
-    "write_prefixes": ["/instances/smith/"]
-  }
+  "principals": {
+    "smith": {
+      "roles": ["reader", "proposer"],
+      "read_prefixes": ["/", "/work/smith/"],
+      "write_prefixes": ["/work/smith/"]
+    }
+  },
+  "protected_read_prefixes": ["/work/", "/personal/", "/infrastructure/"]
 }
 ```
 
+Protected prefixes are a deployment-level mask and default to an empty list for compatibility. For a non-admin principal, `"/"` reads only unprotected namespaces. Reading a protected path requires an equal or nested explicit grant, such as `/work/` or `/work/smith/`; an `admin` role bypasses the mask. Prefixes must start and end with `/`, and `/` itself cannot be protected.
+
 Rules that matter in practice:
 
-* search results are filtered before ranking and output
-* proposal visibility follows author/curator permissions and write scope
+* filtering happens before lexical or semantic ranking, graph traversal, metrics and output
+* direct reads, lists, status counts, answers/citations, proposals, assets and `memory_execute` use the same effective policy
+* answer-cache scope fingerprints include the protected-prefix mask
+* proposal visibility follows author/curator permissions and namespace scope
 * model-assisted proposal drafting still uses normal read/write prefix checks
+* `/admin` and the offline `audit` command warn about non-admin principals whose broad `/` grant excludes protected namespaces
 
 ## MCP surface in the implemented service
 

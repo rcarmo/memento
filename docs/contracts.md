@@ -187,8 +187,10 @@ Memento checks for explicit role strings. It does not infer that one role implie
 
 * The authenticated principal comes from trusted uMCP request context. Memento never accepts `principal` as a tool argument.
 * Namespace policy constrains `read_prefixes` and `write_prefixes`.
-* Search results are filtered before ranking or output to prevent namespace leakage.
-* Proposal access and write access are checked against the caller's write prefixes.
+* `authorization.protected_read_prefixes` defaults to empty. Each configured prefix starts and ends with `/` and cannot be `/`.
+* For non-admins, a broad `/` read grant excludes protected namespaces. A protected path requires an equal or nested explicit read grant; `admin` bypasses this mask but does not otherwise grant actions or content scope.
+* Authorisation is applied before lexical or semantic ranking, graph traversal, metrics and output. Direct reads, lists, status counts, answers/citations, proposals, assets and `memory_execute` use the same effective policy.
+* Proposal access and write access are checked against the caller's namespace grants.
 
 ## Tool reference
 

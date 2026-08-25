@@ -259,7 +259,10 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                     f"duplicate principal name configured for bearer tokens: {principal.name}"
                 )
             self._principals_by_name[principal.name] = principal
-        self._admin_http = AdminHTTPHandler(access_store)
+        self._admin_http = AdminHTTPHandler(
+            access_store,
+            protected_read_prefixes=service._deps.config.authorization.protected_read_prefixes,
+        )
         self._staging_http = (
             AssetStagingHTTPHandler(service._deps.staged_asset_store, self._authenticate_headers)
             if service._deps.staged_asset_store is not None

@@ -12,6 +12,12 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Literal
 
+from memento.authz import (
+    AuthorizationError,
+    EffectivePolicy,
+    authorize_path,
+    protected_read_grants,
+)
 from memento.config import GraphExplorerConfig
 from memento.graph_debug.diagnostics import apply_diagnostic_ids, diagnose_graph
 from memento.graph_debug.layout import aggregate_layout
@@ -191,21 +197,30 @@ def _graph_snippet(value: str) -> str:
     return compact[:_GRAPH_SNIPPET_CHARS]
 
 
-def _path_scope_sql(column: str, read_prefixes: tuple[str, ...] | None) -> tuple[str, list[str]]:
-    if read_prefixes is None or "/" in read_prefixes:
-        return "", []
+def _prefix_scope_sql(column: str, prefixes: tuple[str, ...]) -> tuple[str, list[str]]:
     clauses: list[str] = []
     parameters: list[str] = []
-    for prefix in read_prefixes:
+    for prefix in prefixes:
+        escaped = prefix.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
         clauses.append(f"({column} = ? OR {column} LIKE ? ESCAPE '\\')")
-        parameters.extend((prefix[:-1], f"{prefix.replace('%', r'\%').replace('_', r'\_')}%"))
+        parameters.extend((prefix[:-1], f"{escaped}%"))
     return f"({' OR '.join(clauses)})", parameters
 
 
-def _path_visible(path: str, read_prefixes: tuple[str, ...] | None) -> bool:
-    return read_prefixes is None or any(
-        prefix == "/" or path == prefix[:-1] or path.startswith(prefix) for prefix in read_prefixes
-    )
+def _path_scope_sql(column: str, policy: EffectivePolicy | None) -> tuple[str, list[str]]:
+    if policy is None:
+        return "", []
+    sql, parameters = _prefix_scope_sql(column, policy.read_prefixes)
+    for protected, explicit_grants in protected_read_grants(policy):
+        protected_sql, protected_parameters = _prefix_scope_sql(column, (protected,))
+        parameters.extend(protected_parameters)
+        if explicit_grants:
+            explicit_sql, explicit_parameters = _prefix_scope_sql(column, explicit_grants)
+            sql += f" AND (NOT {protected_sql} OR {explicit_sql})"
+            parameters.extend(explicit_parameters)
+        else:
+            sql += f" AND NOT {protected_sql}"
+    return f"({sql})", parameters
 
 
 def _scoped_nodes(nodes: list[GraphNode], explicit_edges: Sequence[GraphEdge]) -> list[GraphNode]:
@@ -251,7 +266,7 @@ class GraphSnapshotService:
         self,
         concept_ids: tuple[str, ...],
         *,
-        read_prefixes: tuple[str, ...] | None = None,
+        policy: EffectivePolicy | None = None,
     ) -> tuple[tuple[GraphNode, ...], tuple[GraphEdge, ...], GraphRevisions]:
         unique = tuple(sorted(dict.fromkeys(concept_ids)))
         if not unique or len(unique) > self._config.export_node_limit:
@@ -261,23 +276,21 @@ class GraphSnapshotService:
         with self._derived() as derived, self._control() as control:
             nodes = self._nodes(
                 derived,
-                proposal_counts=self._proposal_counts(control),
+                proposal_counts=self._proposal_counts(control, policy),
                 concept_ids=unique,
                 limit=self._config.export_node_limit,
-                read_prefixes=read_prefixes,
+                policy=policy,
             )
             if len(nodes) != len(unique):
                 raise GraphSnapshotError("export selection includes unknown memories")
             ids = {node.id for node in nodes}
-            edges = self._edges(derived, ids=ids, limit=self._config.edge_limit)
+            edges = self._edges(derived, ids=ids, limit=self._config.edge_limit, policy=policy)
             nodes = _scoped_nodes(nodes, edges)
             return tuple(nodes), tuple(edges), self._revisions(derived)
 
-    def search(
-        self, query: str, *, read_prefixes: tuple[str, ...] | None = None
-    ) -> dict[str, object]:
+    def search(self, query: str, *, policy: EffectivePolicy | None = None) -> dict[str, object]:
         expression = _plain_fts_query(query.strip())
-        scope_sql, scope_parameters = _path_scope_sql("c.path", read_prefixes)
+        scope_sql, scope_parameters = _path_scope_sql("c.path", policy)
         conditions = ["concept_fts MATCH ?"]
         if scope_sql:
             conditions.append(scope_sql)
@@ -320,20 +333,22 @@ class GraphSnapshotService:
         by_id = {str(row["id"]): str(row["path"]) for row in rows}
         return tuple(by_id[concept_id] for concept_id in concept_ids if concept_id in by_id)
 
-    def overview(self, *, read_prefixes: tuple[str, ...] | None = None) -> GraphOverview:
+    def overview(self, *, policy: EffectivePolicy | None = None) -> GraphOverview:
         with self._derived() as derived, self._control() as control:
             revisions = self._revisions(derived)
-            proposal_counts = self._proposal_counts(control)
+            proposal_counts = self._proposal_counts(control, policy)
             nodes = self._nodes(
                 derived,
                 proposal_counts=proposal_counts,
                 limit=self._config.direct_node_limit + 1,
-                read_prefixes=read_prefixes,
+                policy=policy,
             )
             truncated = len(nodes) > self._config.direct_node_limit
             visible = nodes[: self._config.direct_node_limit]
             visible_ids = {node.id for node in visible}
-            explicit_edges = self._edges(derived, ids=visible_ids, limit=self._config.edge_limit)
+            explicit_edges = self._edges(
+                derived, ids=visible_ids, limit=self._config.edge_limit, policy=policy
+            )
             visible = _scoped_nodes(visible, explicit_edges)
             diagnostics = diagnose_graph(
                 visible,
@@ -366,13 +381,14 @@ class GraphSnapshotService:
                     derived,
                     proposal_counts=proposal_counts,
                     limit=self._config.refresh_max_paths,
-                    read_prefixes=read_prefixes,
+                    policy=policy,
                 )
                 all_ids = {node.id for node in all_nodes}
                 all_explicit_edges = self._edges(
                     derived,
                     ids=all_ids,
                     limit=self._config.edge_limit,
+                    policy=policy,
                 )
                 all_nodes = _scoped_nodes(all_nodes, all_explicit_edges)
                 # Aggregate layout remains canonical/contextual. Semantic edges are
@@ -444,21 +460,23 @@ class GraphSnapshotService:
         cluster_id: str,
         *,
         cursor: int = 0,
-        read_prefixes: tuple[str, ...] | None = None,
+        policy: EffectivePolicy | None = None,
     ) -> GraphClusterExpansion:
         if cursor < 0:
             raise GraphSnapshotError("cluster cursor must be non-negative")
         with self._derived() as derived, self._control() as control:
             revisions = self._revisions(derived)
-            proposal_counts = self._proposal_counts(control)
+            proposal_counts = self._proposal_counts(control, policy)
             all_nodes = self._nodes(
                 derived,
                 proposal_counts=proposal_counts,
                 limit=self._config.refresh_max_paths,
-                read_prefixes=read_prefixes,
+                policy=policy,
             )
             all_ids = {node.id for node in all_nodes}
-            all_edges = self._edges(derived, ids=all_ids, limit=self._config.edge_limit)
+            all_edges = self._edges(
+                derived, ids=all_ids, limit=self._config.edge_limit, policy=policy
+            )
             all_nodes = _scoped_nodes(all_nodes, all_edges)
             semantic_edges = _semantic_edges(
                 derived,
@@ -506,17 +524,17 @@ class GraphSnapshotService:
             )
 
     def detail(
-        self, concept_id: str, *, read_prefixes: tuple[str, ...] | None = None
+        self, concept_id: str, *, policy: EffectivePolicy | None = None
     ) -> GraphMemoryDetail:
         with self._derived() as derived, self._control() as control:
             revisions = self._revisions(derived)
-            proposal_counts = self._proposal_counts(control)
+            proposal_counts = self._proposal_counts(control, policy)
             nodes = self._nodes(
                 derived,
                 proposal_counts=proposal_counts,
                 concept_ids=(concept_id,),
                 limit=1,
-                read_prefixes=read_prefixes,
+                policy=policy,
             )
             if not nodes:
                 raise GraphSnapshotError("unknown memory")
@@ -524,18 +542,20 @@ class GraphSnapshotService:
             path = self._repository_path(node.path)
             document = parse_concept_file(path)
             preview = document.body[: self._config.preview_chars]
-            visible_ids = self._visible_ids(derived, read_prefixes)
+            visible_ids = self._visible_ids(derived, policy)
             outbound = self._edges(
                 derived,
                 ids=visible_ids,
                 source_id=concept_id,
                 limit=self._config.edge_limit,
+                policy=policy,
             )
             inbound = self._edges(
                 derived,
                 ids=visible_ids,
                 target_id=concept_id,
                 limit=self._config.edge_limit,
+                policy=policy,
             )
             node = _scoped_nodes([node], [*outbound, *inbound])[0]
             return GraphMemoryDetail(
@@ -546,7 +566,7 @@ class GraphSnapshotService:
                 outbound=tuple(outbound),
                 inbound=tuple(inbound),
                 assets=self._assets(node.id),
-                proposals=self._proposals(control, node.path),
+                proposals=self._proposals(control, node.path, policy),
             )
 
     def neighbourhood(
@@ -554,29 +574,31 @@ class GraphSnapshotService:
         concept_id: str,
         *,
         depth: int = 1,
-        read_prefixes: tuple[str, ...] | None = None,
+        policy: EffectivePolicy | None = None,
     ) -> GraphNeighbourhood:
         if depth != 1:
             raise GraphSnapshotError("MVP neighbourhood depth must be 1")
         with self._derived() as derived, self._control() as control:
             center = self._nodes(
                 derived,
-                proposal_counts=self._proposal_counts(control),
+                proposal_counts=self._proposal_counts(control, policy),
                 concept_ids=(concept_id,),
                 limit=1,
-                read_prefixes=read_prefixes,
+                policy=policy,
             )
             if not center:
                 raise GraphSnapshotError("unknown memory")
             revisions = self._revisions(derived)
-            visible_ids = self._visible_ids(derived, read_prefixes)
-            visible_edges = self._edges(derived, ids=visible_ids, limit=self._config.edge_limit)
+            visible_ids = self._visible_ids(derived, policy)
+            visible_edges = self._edges(
+                derived, ids=visible_ids, limit=self._config.edge_limit, policy=policy
+            )
             visible_nodes = self._nodes(
                 derived,
-                proposal_counts=self._proposal_counts(control),
+                proposal_counts=self._proposal_counts(control, policy),
                 concept_ids=tuple(sorted(visible_ids)),
                 limit=self._config.semantic_edge_node_limit,
-                read_prefixes=read_prefixes,
+                policy=policy,
             )
             semantic_edges = _semantic_edges(
                 derived,
@@ -596,13 +618,13 @@ class GraphSnapshotService:
             ids = tuple(sorted(neighbour_ids)[: self._config.expansion_node_limit])
             nodes = self._nodes(
                 derived,
-                proposal_counts=self._proposal_counts(control),
+                proposal_counts=self._proposal_counts(control, policy),
                 concept_ids=ids,
                 limit=self._config.expansion_node_limit,
-                read_prefixes=read_prefixes,
+                policy=policy,
             )
             visible = {node.id for node in nodes}
-            edges = self._edges(derived, ids=visible, limit=self._config.edge_limit)
+            edges = self._edges(derived, ids=visible, limit=self._config.edge_limit, policy=policy)
             edges.extend(
                 edge
                 for edge in semantic_edges
@@ -617,10 +639,8 @@ class GraphSnapshotService:
             )
 
     @staticmethod
-    def _visible_ids(
-        connection: sqlite3.Connection, read_prefixes: tuple[str, ...] | None
-    ) -> set[str]:
-        scope_sql, parameters = _path_scope_sql("path", read_prefixes)
+    def _visible_ids(connection: sqlite3.Connection, policy: EffectivePolicy | None) -> set[str]:
+        scope_sql, parameters = _path_scope_sql("path", policy)
         query = "SELECT id FROM concepts" + (f" WHERE {scope_sql}" if scope_sql else "")
         return {str(row["id"]) for row in connection.execute(query, parameters)}
 
@@ -631,7 +651,7 @@ class GraphSnapshotService:
         proposal_counts: dict[str, tuple[int, int]],
         limit: int,
         concept_ids: tuple[str, ...] | None = None,
-        read_prefixes: tuple[str, ...] | None = None,
+        policy: EffectivePolicy | None = None,
     ) -> list[GraphNode]:
         clauses: list[str] = []
         parameters: list[object] = []
@@ -640,7 +660,7 @@ class GraphSnapshotService:
                 return []
             clauses.append(f"c.id IN ({','.join('?' for _ in concept_ids)})")
             parameters.extend(concept_ids)
-        scope_sql, scope_parameters = _path_scope_sql("c.path", read_prefixes)
+        scope_sql, scope_parameters = _path_scope_sql("c.path", policy)
         if scope_sql:
             clauses.append(scope_sql)
             parameters.extend(scope_parameters)
@@ -715,6 +735,7 @@ class GraphSnapshotService:
         ids: set[str] | None = None,
         source_id: str | None = None,
         target_id: str | None = None,
+        policy: EffectivePolicy | None = None,
     ) -> list[GraphEdge]:
         clauses: list[str] = []
         parameters: list[object] = []
@@ -724,6 +745,19 @@ class GraphSnapshotService:
         if target_id is not None:
             clauses.append("target_id = ?")
             parameters.append(target_id)
+        if ids is not None:
+            if not ids:
+                return []
+            ordered_ids = tuple(sorted(ids))
+            placeholders = ",".join("?" for _ in ordered_ids)
+            clauses.append(f"source_id IN ({placeholders})")
+            parameters.extend(ordered_ids)
+            clauses.append(f"(target_id IS NULL OR target_id IN ({placeholders}))")
+            parameters.extend(ordered_ids)
+        if policy is not None:
+            scope_sql, scope_parameters = _path_scope_sql("target_path", policy)
+            clauses.append(f"(target_id IS NOT NULL OR {scope_sql})")
+            parameters.extend(scope_parameters)
         rows = connection.execute(
             "SELECT rowid, * FROM links"
             + (f" WHERE {' AND '.join(clauses)}" if clauses else "")
@@ -736,6 +770,11 @@ class GraphSnapshotService:
             target = str(row["target_id"]) if row["target_id"] is not None else None
             if ids is not None and (source not in ids or target is not None and target not in ids):
                 continue
+            if target is None and policy is not None:
+                try:
+                    authorize_path(policy, str(row["target_path"]), action="read")
+                except AuthorizationError:
+                    continue
             result.append(
                 GraphEdge(
                     id=f"explicit:{row['rowid']}",
@@ -748,6 +787,8 @@ class GraphSnapshotService:
                     last_checked_revision=str(row["last_checked_revision"]),
                 )
             )
+            if len(result) >= limit:
+                break
         return result
 
     @staticmethod
@@ -765,11 +806,15 @@ class GraphSnapshotService:
             rows = connection.execute("SELECT id, content_hash FROM concepts ORDER BY id")
         return {str(row["id"]): str(row["content_hash"]) for row in rows}
 
-    def _proposal_counts(self, connection: sqlite3.Connection) -> dict[str, tuple[int, int]]:
+    def _proposal_counts(
+        self, connection: sqlite3.Connection, policy: EffectivePolicy | None
+    ) -> dict[str, tuple[int, int]]:
         counts: dict[str, list[int]] = {}
         for row in connection.execute(
-            "SELECT status, patch_json FROM proposals ORDER BY proposal_id"
+            "SELECT status, patch_json, author_principal FROM proposals ORDER BY proposal_id"
         ):
+            if not self._proposal_visible(row, policy):
+                continue
             for path in self._proposal_paths(str(row["patch_json"])):
                 values = counts.setdefault(path, [0, 0])
                 values[0] += 1
@@ -778,10 +823,15 @@ class GraphSnapshotService:
         return {path: (values[0], values[1]) for path, values in counts.items()}
 
     def _proposals(
-        self, connection: sqlite3.Connection, concept_path: str
+        self,
+        connection: sqlite3.Connection,
+        concept_path: str,
+        policy: EffectivePolicy | None,
     ) -> tuple[GraphProposalSummary, ...]:
         summaries = []
         for row in connection.execute("SELECT * FROM proposals ORDER BY created_at, proposal_id"):
+            if not self._proposal_visible(row, policy):
+                continue
             if concept_path not in self._proposal_paths(str(row["patch_json"])):
                 continue
             summaries.append(
@@ -797,6 +847,21 @@ class GraphSnapshotService:
                 )
             )
         return tuple(summaries[: self._config.overview_cluster_limit])
+
+    def _proposal_visible(self, row: sqlite3.Row, policy: EffectivePolicy | None) -> bool:
+        if policy is None:
+            return True
+        if str(row["author_principal"]) != policy.principal and "curator" not in policy.roles:
+            return False
+        paths = self._proposal_paths(str(row["patch_json"]))
+        if not paths:
+            return False
+        try:
+            for path in paths:
+                authorize_path(policy, path, action="read")
+        except AuthorizationError:
+            return False
+        return True
 
     def _assets(self, concept_id: str) -> tuple[GraphAssetSummary, ...]:
         directory = self._repository_root / ".assets" / concept_id

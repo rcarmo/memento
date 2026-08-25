@@ -479,12 +479,19 @@ def normalize_question(question: str) -> str:
     return " ".join(question.split()).strip().casefold()
 
 
-def scope_fingerprint(*, principal: str, roles: Sequence[str], read_prefixes: Sequence[str]) -> str:
+def scope_fingerprint(
+    *,
+    principal: str,
+    roles: Sequence[str],
+    read_prefixes: Sequence[str],
+    protected_read_prefixes: Sequence[str] = (),
+) -> str:
     material = json.dumps(
         {
             "principal": principal,
             "roles": list(sorted(dict.fromkeys(roles))),
             "read_prefixes": list(sorted(dict.fromkeys(read_prefixes))),
+            "protected_read_prefixes": list(sorted(dict.fromkeys(protected_read_prefixes))),
         },
         sort_keys=True,
     )

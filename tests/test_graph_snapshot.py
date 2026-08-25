@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+from memento.authz import EffectivePolicy
 from memento.config import GraphExplorerConfig
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.graph_debug.models import GraphOverview
@@ -45,7 +46,11 @@ def _write_concept(root: Path, path: str, *, concept_id: str, title: str, body: 
 
 
 def _snapshot(
-    tmp_path: Path, *, direct_limit: int = 2, preview_chars: int = 12
+    tmp_path: Path,
+    *,
+    direct_limit: int = 2,
+    preview_chars: int = 12,
+    edge_limit: int = 5_000,
 ) -> GraphSnapshotService:
     root = tmp_path / "current"
     _write_concept(
@@ -204,6 +209,7 @@ def _snapshot(
             enabled=True,
             direct_node_limit=direct_limit,
             preview_chars=preview_chars,
+            edge_limit=edge_limit,
         ),
         repository_root=root,
         derived_db_path=derived_path,
@@ -297,7 +303,7 @@ def test_detail_and_neighbourhood_are_bounded_and_revision_aware(tmp_path: Path)
 
 
 def test_simulated_prefix_scope_hides_nodes_search_links_and_metrics(tmp_path: Path) -> None:
-    service = _snapshot(tmp_path, direct_limit=10)
+    service = _snapshot(tmp_path, direct_limit=10, edge_limit=1)
     _write_concept(
         service._repository_root,
         "/private/c.md",
@@ -374,12 +380,39 @@ def test_simulated_prefix_scope_hides_nodes_search_links_and_metrics(tmp_path: P
                     "rev-1",
                     "rev-1",
                 ),
+                (
+                    "a-id",
+                    None,
+                    "/projects/private-alias.md",
+                    "/private/missing.md",
+                    None,
+                    "markdown",
+                    "broken",
+                    "rev-1",
+                    "rev-1",
+                ),
+            ),
+        )
+        connection.commit()
+    with sqlite3.connect(service._control_db_path) as connection:
+        connection.execute(
+            "UPDATE proposals SET author_principal = ?, patch_json = ? WHERE proposal_id = ?",
+            (
+                "projects-reader",
+                '{"changes":[{"path":"/projects/a.md"},{"path":"/private/c.md"}]}',
+                "proposal-1",
             ),
         )
         connection.commit()
 
-    prefixes = ("/projects/",)
-    overview = service.overview(read_prefixes=prefixes)
+    policy = EffectivePolicy(
+        principal="projects-reader",
+        roles=("reader", "proposer"),
+        read_prefixes=("/",),
+        write_prefixes=("/",),
+        protected_read_prefixes=("/private/",),
+    )
+    overview = service.overview(policy=policy)
     assert overview.mode == "direct"
     assert {node.path for node in overview.nodes} == {"/projects/a.md", "/projects/b.md"}
     assert overview.metrics.memory_count == 2
@@ -387,15 +420,17 @@ def test_simulated_prefix_scope_hides_nodes_search_links_and_metrics(tmp_path: P
     assert overview.metrics.broken_edges == 0
     assert overview.metrics.orphan_count == 0
     assert all(edge.source != "c-id" and edge.target != "c-id" for edge in overview.edges)
-    assert service.search("secret", read_prefixes=prefixes)["results"] == []
+    assert service.search("secret", policy=policy)["results"] == []
     with pytest.raises(GraphSnapshotError, match="unknown memory"):
-        service.detail("c-id", read_prefixes=prefixes)
-    detail = service.detail("a-id", read_prefixes=prefixes)
+        service.detail("c-id", policy=policy)
+    detail = service.detail("a-id", policy=policy)
+    assert detail.node.proposal_count == 0
+    assert detail.proposals == ()
     assert [edge.target for edge in detail.outbound] == ["b-id"]
-    neighbourhood = service.neighbourhood("a-id", read_prefixes=prefixes)
+    neighbourhood = service.neighbourhood("a-id", policy=policy)
     assert {node.id for node in neighbourhood.nodes} == {"a-id", "b-id"}
     with pytest.raises(GraphSnapshotError, match="unknown"):
-        service.export_selection(("a-id", "c-id"), read_prefixes=prefixes)
+        service.export_selection(("a-id", "c-id"), policy=policy)
 
 
 def test_snapshot_reports_stale_revisions(tmp_path: Path) -> None:
