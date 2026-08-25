@@ -14,6 +14,7 @@ from typing import Any, Literal, cast
 
 import pytest
 
+from memento.access import AccessStore
 from memento.config import (
     AuthorizationConfig,
     MCPConfig,
@@ -644,6 +645,39 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     serialized_execute_schema = json.dumps(execute_schema, sort_keys=True)
     assert "attach_asset_pack" in serialized_execute_schema
     assert "staged_asset_id" in serialized_execute_schema
+
+
+def test_managed_access_instructions_and_tool_descriptions(
+    service: MemoryService,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    access_store = AccessStore(service._deps.control_connection, "test-master-key")
+    access_store.create(
+        actor="bootstrap",
+        name="onboarding-admin",
+        roles=("admin", "reader"),
+        read_prefixes=("/",),
+        write_prefixes=(),
+        idempotency_key="create-onboarding-admin",
+    )
+    server = MementoMCPServer(service, bearer_tokens={}, access_store=access_store)
+    monkeypatch.setattr(
+        "memento.server.get_request_context",
+        lambda: SimpleNamespace(principal="onboarding-admin", session_id="session-admin"),
+    )
+
+    instructions = server.get_instructions()
+    assert "direct access_* tools, not memory_execute operations" in instructions
+    assert "administrator bearer token out of ordinary agent runtimes" in instructions
+    assert "tool input or output" in instructions
+    assert "separate admin profile" in instructions
+    assert "credentials returned once by create or rotate" in instructions
+
+    tools = {item["name"]: item for item in server.discover_tools()["tools"]}
+    assert "least-privilege principal" in tools["access_principal_create"]["description"]
+    assert "separate from routine curation" in tools["access_principal_update"]["description"]
+    assert "secret-store capture" in tools["access_credential_rotate"]["description"]
+    assert tools["access_principal_create"]["annotations"]["roles"] == ["admin"]
 
 
 def test_mcp_asset_stage_ticket_and_status_bridge(

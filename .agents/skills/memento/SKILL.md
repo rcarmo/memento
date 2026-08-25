@@ -182,4 +182,8 @@ Before reporting success:
 
 ## Access Management
 
-Principals are managed through `/admin` or admin-only `access_*` tools on the existing MCP endpoint. Non-admin agents cannot discover or invoke them. Credentials are shown once on create/rotate; never file them in Memento or copy them into concepts. Use least-privilege presets and keep ordinary agents off the `sandbox` administrator credential.
+Principals are managed through `/admin` or admin-only `access_*` tools on the existing MCP endpoint. The access tools are direct MCP tools, not `memory_execute` operations; non-admin agents cannot discover or invoke them.
+
+Use a separate administrator profile with `admin`, `reader`, root read access and no content write prefixes. Give curators `reader`, `proposer`, `curator` and only the namespaces they manage. Ordinary agents use their own reader/proposer credentials. Do not configure or use the administrator token in an ordinary agent runtime, memory operation, chat or tool input/output.
+
+Create and rotate return new principal credentials once. Capture them directly into the intended keychain or secret store, remove temporary files, and never file them in Memento or copy them into concepts, chat or logs. Keep ordinary agents off the `sandbox` bootstrap credential. The separate-runtime Piclaw and Pi setup is in `docs/access-management.md`.

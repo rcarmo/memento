@@ -84,3 +84,5 @@ Common failures:
 ## Obtain a principal credential
 
 An administrator creates a least-privilege principal through `/admin` or an admin-only `access_principal_create` call. Save the one-time credential immediately. Do not use the `sandbox` administrator credential for ordinary Pi work. Rotation is the only recovery when a credential is lost.
+
+[Access Management](access-management.md#onboard-principals-through-a-separate-profile) gives separate `memento` and `memento-admin` runtime configurations. Start the ordinary Pi process with only its ordinary token; launch a separate operator process with the administrator token only for principal lifecycle work.

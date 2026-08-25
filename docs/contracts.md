@@ -181,7 +181,7 @@ Memento checks for explicit role strings. It does not infer that one role implie
 | `proposer` | proposal creation and proposal record access |
 | `curator` | proposal review/apply and direct mutation authority |
 | `maintainer` | Dream and maintenance execution |
-| `admin` | no extra imaginary tool family; any broader authority comes from explicit role assignment and configuration |
+| `admin` | managed principal and credential lifecycle through direct `access_*` tools; no content curation authority is inherited |
 
 ### Authorisation rules
 

@@ -85,4 +85,6 @@ Piclaw's implementation and tests are in `runtime/src/secure/mcp-keychain.ts` an
 
 ## Obtain a principal credential
 
-Create the instance from the matching `/admin` preset and import the one-time credential into Piclaw's keychain. Keep the generated `.pi/mcp.json` keychain reference; never paste a literal bearer token into it. Ordinary Piclaw instances should not use the `sandbox` administrator credential. The existing `/mcp` configuration automatically discovers `access_*` only when the authenticated principal has `admin`.
+Create the instance from the matching `/admin` preset and import the one-time credential into Piclaw's keychain. Keep the generated `.pi/mcp.json` keychain reference; never paste a literal bearer token into it. Ordinary Piclaw instances should not use the `sandbox` administrator credential.
+
+[Access Management](access-management.md#onboard-principals-through-a-separate-profile) gives separate `memento` and `memento-admin` runtime configurations. Put the administrator configuration in an operator-only workspace or session; never reference its keychain entry from an ordinary agent's `.pi/mcp.json`.

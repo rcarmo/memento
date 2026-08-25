@@ -309,7 +309,7 @@ Roles are checked as literal membership in the principal record. The service doe
 | `proposer` | `memory_propose`, `memory_propose_freeform`, `memory_propose_update`, `memory_proposal_get`, `memory_proposal_list` |
 | `curator` | `memory_proposal_review`, `memory_proposal_apply`, and create/patch/rename authority |
 | `maintainer` | graph maintenance and Dream execution |
-| `admin` | no separate hidden tool family; deployment or policy code may assign broad role sets explicitly |
+| `admin` | direct `access_*` tools for managed principal and credential lifecycle; content authority still requires its own roles and namespace policy |
 
 ### Namespace policy
 

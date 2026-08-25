@@ -288,6 +288,13 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         )
         if self._execute_tool_available():
             message += " memory_execute can compose additional execute-only operations listed in the catalog."
+        if self._access_store is not None:
+            message += (
+                " Managed administrators receive direct access_* tools, not memory_execute "
+                "operations. Keep the administrator bearer token out of ordinary agent runtimes, "
+                "memory, chat and tool input or output. Use a separate admin profile for principal "
+                "lifecycle; capture credentials returned once by create or rotate in a secret store."
+            )
         return message
 
     def discover_tools(self) -> dict[str, Any]:
@@ -323,7 +330,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             ),
             (
                 "access_principal_create",
-                "Create a principal and return its credential once.",
+                "Create a least-privilege principal; return its credential once for immediate secret-store capture.",
                 {
                     "name": {"type": "string"},
                     "roles": {"type": "array", "items": {"type": "string"}},
@@ -334,7 +341,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             ),
             (
                 "access_principal_update",
-                "Update principal roles and namespaces.",
+                "Replace principal roles and namespaces; keep administration separate from routine curation.",
                 {
                     "name": {"type": "string"},
                     "roles": {"type": "array", "items": {"type": "string"}},
@@ -351,7 +358,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             ("access_principal_enable", "Enable a principal.", {"name": {"type": "string"}}),
             (
                 "access_credential_rotate",
-                "Rotate and return a credential once.",
+                "Rotate a principal credential and return it once for immediate secret-store capture.",
                 {"name": {"type": "string"}, "idempotency_key": {"type": "string"}},
             ),
             (

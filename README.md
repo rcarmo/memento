@@ -77,7 +77,7 @@ The debugger is disabled by default and unauthenticated when enabled. It is mean
 
 ## Running It
 
-Memento supports Python 3.12-3.14 and ships as a non-root multi-architecture container. Start with [`examples/config.v1.json`](examples/config.v1.json), set `MEMENTO_ADMIN_MASTER_KEY`, then use [`docs/operations.md`](docs/operations.md) for deployment, health checks, backup and recovery. [`docs/access-management.md`](docs/access-management.md) covers bootstrap, `/admin`, MCP access tools, one-time credentials and explicit container master-key rotation.
+Memento supports Python 3.12-3.14 and ships as a non-root multi-architecture container. Start with [`examples/config.v1.json`](examples/config.v1.json), set `MEMENTO_ADMIN_MASTER_KEY`, then use [`docs/operations.md`](docs/operations.md) for deployment, health checks, backup and recovery. [`docs/access-management.md`](docs/access-management.md) covers the dedicated admin/curator profile split, Piclaw and Pi MCP configuration, `/admin`, direct MCP access tools, one-time credentials and explicit container master-key rotation.
 
 For development:
 

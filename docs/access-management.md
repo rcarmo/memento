@@ -22,6 +22,20 @@ Existing client keychain references keep working because the token is preserved 
 
 After bootstrap, dynamic control-database principals are authoritative. Environment-backed principals remain an import and emergency-recovery source, not the normal management interface.
 
+## Separate Administration From Curation
+
+Use a dedicated principal for onboarding and credential management. Do not give its token to the agents that search or curate memory every day.
+
+| Profile | Roles | Read | Write | Use |
+|---|---|---|---|---|
+| `*-admin` | `admin`, `reader` | `/` | none | create principals, rotate credentials and change access policy |
+| `*-curator` | `reader`, `proposer`, `curator` | the namespaces it manages | the same managed namespaces | review, apply and directly curate content |
+| ordinary agent | `reader`, optionally `proposer` | its working namespaces plus shared read-only namespaces | its own namespace when proposing | search, read and propose changes |
+
+Roles are explicit rather than inherited. An administrator needs `reader` for status and ordinary inspection, but does not need `curator` or content write prefixes. A curator should have only the namespaces it manages, such as `/skills/`, `/work/` or `/public/`. Ordinary agents normally read shared namespaces and write only below their own prefix.
+
+The web form's **Administrator** preset includes curator roles and shared content writes for operators who deliberately combine both jobs. For a dedicated onboarding principal, remove `proposer` and `curator`, then clear the write-prefix field before creating it.
+
 ## Web UI
 
 Open `/admin`. Enter the `sandbox` bearer credential. The browser:
@@ -62,6 +76,95 @@ access_audit_list
 ```
 
 Non-admin principals cannot discover or invoke these tools. Server-side authorization is always enforced independently of discovery. MCP create and rotate calls require an `idempotency_key`; a replay is rejected because a one-time credential cannot safely be returned twice.
+
+These are direct MCP tools on the normal `/mcp` endpoint. They are added for managed administrators regardless of the configured regular memory-tool surface; they are not operations accepted by `memory_execute`. A client using an MCP proxy can discover and call them through that proxy. The `/admin` page is the browser alternative over `/admin/api/*`.
+
+## Onboard Principals Through A Separate Profile
+
+Create the dedicated administrator with the bootstrap credential or another existing administrator. Save the returned credential immediately: create and rotate responses show it only once.
+
+For Piclaw, store ordinary and administrator credentials under different keychain names. Import them from permission-restricted temporary files rather than putting either token on a command line:
+
+```bash
+chmod 600 /path/to/memento.token /path/to/memento-admin.token
+piclaw keychain set memento/example/agent \
+  --type token --secret-file /path/to/memento.token
+piclaw keychain set memento/example/admin \
+  --type token --secret-file /path/to/memento-admin.token
+rm -f /path/to/memento.token /path/to/memento-admin.token
+```
+
+Keep the ordinary Piclaw workspace's `.pi/mcp.json` limited to its ordinary principal:
+
+```json
+{
+  "mcpServers": {
+    "memento": {
+      "url": "http://memento.example:18081/mcp",
+      "auth": "bearer",
+      "bearerTokenKeychain": "memento/example/agent",
+      "bearerTokenEnv": "PICLAW_MCP_MEMENTO_TOKEN",
+      "lifecycle": "lazy",
+      "directTools": false
+    }
+  }
+}
+```
+
+Use another Piclaw workspace or operator-only session for administration. Its `.pi/mcp.json` contains only the administrator profile:
+
+```json
+{
+  "mcpServers": {
+    "memento-admin": {
+      "url": "http://memento.example:18081/mcp",
+      "auth": "bearer",
+      "bearerTokenKeychain": "memento/example/admin",
+      "bearerTokenEnv": "PICLAW_MCP_MEMENTO_ADMIN_TOKEN",
+      "lifecycle": "lazy",
+      "directTools": false
+    }
+  }
+}
+```
+
+Do not combine these entries in an ordinary agent workspace. Piclaw only decrypts keychain entries referenced by that runtime's configuration, so the administrator token stays out of the ordinary agent's process and tool output. `directTools: false` keeps each server behind Piclaw's MCP proxy; it does not remove Memento's admin-only tools.
+
+Plain Pi uses the same runtime split. Its ordinary workspace has only:
+
+```json
+{
+  "mcpServers": {
+    "memento": {
+      "url": "http://memento.example:18081/mcp",
+      "auth": "bearer",
+      "bearerTokenEnv": "MEMENTO_TOKEN",
+      "lifecycle": "lazy",
+      "directTools": false
+    }
+  }
+}
+```
+
+A separate operator workspace has only:
+
+```json
+{
+  "mcpServers": {
+    "memento-admin": {
+      "url": "http://memento.example:18081/mcp",
+      "auth": "bearer",
+      "bearerTokenEnv": "MEMENTO_ADMIN_TOKEN",
+      "lifecycle": "lazy",
+      "directTools": false
+    }
+  }
+}
+```
+
+Launch the ordinary Pi process with only `MEMENTO_TOKEN` and the operator process with only `MEMENTO_ADMIN_TOKEN`. Supply each through a shell keychain, service manager or secret launcher. Never paste an administrator token into chat, tool arguments, tool output, committed configuration or logs. Delete temporary credential files after keychain import; rotate the credential if its one-time value was exposed. Disable and revoke profiles that are no longer needed, then delete them if their retained audit history is no longer required operationally.
+
+Use the administrator profile only long enough to create, update, rotate, revoke or remove principals. Put each newly issued credential into that principal's own keychain entry, verify its reported roles and namespace visibility, then return to the ordinary or curator profile.
 
 ## Credentials
 
