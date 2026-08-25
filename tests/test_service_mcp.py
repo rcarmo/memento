@@ -513,6 +513,183 @@ def test_memory_inventory_is_available_directly_and_via_execute(
     assert "body" not in inventory["entries"][0]
 
 
+def test_compare_manifest_classifies_generic_entries_and_assets(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+) -> None:
+    concepts = {
+        "same": ("same-id", "# Same"),
+        "renamed": ("12345678-abcd-1234-abcd-123456789abc", "# Remote old"),
+        "memento-newer": ("newer-id", "# Remote new"),
+        "remote-only": ("remote-only-id", "# Remote only"),
+    }
+    for name, (concept_id, body) in concepts.items():
+        write_concept(
+            repo_paths.current_dir / "compare" / f"{name}.md",
+            concept_id=concept_id,
+            concept_type="concept",
+            title=name,
+            description="Manifest comparison fixture.",
+            tags=("comparison",),
+            body=body,
+        )
+
+    _encoded, zip_bytes = _skill_zip("comparison asset\n")
+    pack = validate_asset_pack(asset_kind="templates", version="1.0.0", zip_bytes=zip_bytes)
+    write_asset_version(
+        repo_paths.current_dir,
+        concept_id=concepts["renamed"][0],
+        concept_path="/compare/renamed.md",
+        asset_kind="templates",
+        version="1.0.0",
+        zip_bytes=pack.zip_bytes,
+        manifest=pack.manifest,
+        accepted_by="flint",
+        source_proposal_id="proposal-compare",
+    )
+
+    def digest(body: str) -> str:
+        return hashlib.sha256(body.encode("utf-8")).hexdigest()
+
+    result = service.memory_execute(
+        flint,
+        plan={
+            "operations": [
+                {
+                    "op": "compare_manifest",
+                    "args": {
+                        "path_prefix": "/compare/",
+                        "items": [
+                            {
+                                "name": "same",
+                                "local_path": "/local/same.md",
+                                "local_updated_at": "2026-07-17T12:00:00Z",
+                                "local_body_sha256": digest("# Same"),
+                                "local_bytes": len(b"# Same"),
+                            },
+                            {
+                                "name": "old-name",
+                                "local_path": "/local/renamed.md",
+                                "local_updated_at": "2026-08-25T12:00:00Z",
+                                "local_body_sha256": digest("# Local new"),
+                                "local_bytes": len(b"# Local new"),
+                            },
+                            {
+                                "name": "memento-newer",
+                                "local_path": "/local/memento-newer.md",
+                                "local_updated_at": "2026-01-01T00:00:00Z",
+                                "local_body_sha256": digest("# Local old"),
+                                "local_bytes": len(b"# Local old"),
+                            },
+                            {
+                                "name": "local-only",
+                                "local_path": "/local/local-only.md",
+                                "local_updated_at": "2026-08-25T12:00:00Z",
+                                "local_body_sha256": digest("# Local only"),
+                                "local_bytes": len(b"# Local only"),
+                            },
+                        ],
+                        "match": {
+                            "path_template": "/compare/{name}.md",
+                            "aliases": {"old-name": "renamed"},
+                        },
+                        "include_asset_metadata": True,
+                    },
+                }
+            ]
+        },
+    )
+    comparison = success_data(result)["trace"][0]["data"]
+
+    assert comparison["counts"] == {
+        "matching": 1,
+        "differing": 2,
+        "local_only": 1,
+        "memento_only": 1,
+    }
+    assert comparison["matching"][0]["name"] == "same"
+    assert comparison["matching"][0]["body_match"] is True
+    differing = {entry["name"]: entry for entry in comparison["differing"]}
+    assert differing["old-name"]["memento_path"] == "/compare/renamed.md"
+    assert differing["old-name"]["likely_newer"] == "local"
+    assert differing["old-name"]["asset_present"] is True
+    assert differing["old-name"]["assets"] == [
+        {
+            "kind": "templates",
+            "latest_version": "1.0.0",
+            "latest_sha256": pack.manifest.sha256,
+        }
+    ]
+    assert differing["memento-newer"]["likely_newer"] == "memento"
+    assert comparison["local_only"][0]["memento_path"] == "/compare/local-only.md"
+    assert comparison["memento_only"][0]["memento_path"] == "/compare/remote-only.md"
+    assert '"body":' not in json.dumps(comparison)
+
+
+def test_compare_manifest_enforces_scope_and_bounds_before_content_access(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+) -> None:
+    hidden = repo_paths.current_dir / "secret" / "malformed.md"
+    hidden.write_text("not valid frontmatter\n", encoding="utf-8")
+    local_item = {
+        "name": "piclaw",
+        "local_path": "/local/piclaw.md",
+        "memento_path": "/projects/piclaw.md",
+        "local_updated_at": datetime(2026, 7, 17, 12, 0, tzinfo=UTC),
+        "local_body_sha256": "0" * 64,
+        "local_bytes": 1,
+    }
+    visible = success_data(
+        service.memory_compare_manifest(
+            flint,
+            path_prefix="/projects/",
+            items=[local_item],
+        )
+    )
+    assert visible["counts"] == {
+        "matching": 0,
+        "differing": 1,
+        "local_only": 0,
+        "memento_only": 0,
+    }
+
+    forbidden = service.memory_compare_manifest(
+        flint,
+        path_prefix="/",
+        items=[{**local_item, "memento_path": "/secret/ghost.md"}],
+    )
+    assert forbidden.status == "error"
+    assert forbidden.error_class == "forbidden"
+
+    for index in range(51):
+        write_concept(
+            repo_paths.current_dir / "bulk" / f"{index:02d}.md",
+            concept_id=f"bulk-{index}",
+            concept_type="concept",
+            title=f"Bulk {index}",
+            description="Bounded comparison fixture.",
+            tags=(),
+            body=f"# Bulk {index}",
+        )
+    oversized = service.memory_compare_manifest(
+        flint,
+        path_prefix="/bulk/",
+        items=[
+            {
+                **local_item,
+                "name": "bulk-0",
+                "memento_path": "/bulk/00.md",
+            }
+        ],
+    )
+    assert oversized.status == "error"
+    assert oversized.error_class == "validation_error"
+    assert "exceeds 50 concepts" in oversized.message
+
+
 def test_memory_graph_serializes_typed_edges_and_preserves_scope(
     service: MemoryService, flint: ServiceContext, narrow: ServiceContext
 ) -> None:
@@ -905,6 +1082,15 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "execute",
     ]
     assert any(item["operation"] == "proposal_apply" for item in catalog["execute_only_operations"])
+    assert any(
+        item["operation"] == "compare_manifest" for item in catalog["execute_only_operations"]
+    )
+    comparison_operation = json.loads(
+        asyncio.run(server.resource_template_catalog("compare_manifest"))["text"]
+    )
+    assert comparison_operation["direct_tool_available"] is False
+    assert comparison_operation["available_via_execute"] is True
+    assert comparison_operation["input_schema"]["properties"]["items"]["maxItems"] == 50
     operation = json.loads(asyncio.run(server.resource_template_catalog("propose"))["text"])
     assert operation["tool"] == "memory_propose"
     assert operation["direct_tool_available"] is False
@@ -924,6 +1110,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "memory_search",
         "memory_read",
     ]
+    assert help_payload["mcp"]["execute_only_operations"]["inspect"] == ("compare_manifest",)
     assert help_payload["mcp"]["execute_only_operations"]["propose"] == (
         "propose",
         "propose_freeform",
@@ -945,6 +1132,9 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "search",
         "inventory",
         "read",
+    ]
+    assert [item["operation"] for item in workflow["execute_only_operations"]] == [
+        "compare_manifest"
     ]
     propose_workflow = json.loads(asyncio.run(server.resource_template_workflow("propose"))["text"])
     assert [item["operation"] for item in propose_workflow["operations"]] == ["search", "read"]

@@ -85,6 +85,29 @@ OPERATION_SPECS: tuple[OperationSpec, ...] = (
         examples=({"path_prefix": "/skills/", "limit": 50},),
     ),
     OperationSpec(
+        op_name="compare_manifest",
+        tool_name="memory_compare_manifest",
+        method_name="memory_compare_manifest",
+        description="Compare a bounded caller-provided manifest with an authorised namespace inventory.",
+        roles=("reader",),
+        discovery_surfaces=frozenset(),
+        examples=(
+            {
+                "path_prefix": "/projects/",
+                "items": [
+                    {
+                        "name": "piclaw",
+                        "local_path": "/workspace/projects/piclaw.md",
+                        "memento_path": "/projects/piclaw.md",
+                        "local_updated_at": "2026-08-25T12:00:00Z",
+                        "local_body_sha256": "0" * 64,
+                        "local_bytes": 123,
+                    }
+                ],
+            },
+        ),
+    ),
+    OperationSpec(
         op_name="graph",
         tool_name="memory_graph",
         method_name="memory_graph",
@@ -282,7 +305,7 @@ OPERATION_SPEC_BY_OP = {item.op_name: item for item in OPERATION_SPECS}
 WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
     "inspect": {
         "description": "Find relevant concepts, inventory namespaces, then read exact paths when bodies are needed.",
-        "operations": ["search", "inventory", "read"],
+        "operations": ["search", "inventory", "compare_manifest", "read"],
     },
     "propose": {
         "description": "Search and read context, then submit a proposal instead of writing directly.",

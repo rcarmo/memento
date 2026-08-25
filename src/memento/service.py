@@ -656,6 +656,221 @@ class MemoryService:
         except Exception as exc:
             return self._failure(exc)
 
+    def memory_compare_manifest(
+        self,
+        context: ServiceContext,
+        *,
+        path_prefix: str = "/",
+        items: Sequence[Mapping[str, Any]],
+        match: Mapping[str, Any] | None = None,
+        include_asset_metadata: bool = False,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        try:
+            policy = self._policy(context)
+            require_role(policy, "reader")
+            prefix = self._validate_inventory_prefix(path_prefix)
+            if not self._inventory_prefix_is_readable(policy, prefix):
+                raise ForbiddenError(
+                    f"principal {policy.principal} cannot compare manifests under {prefix}"
+                )
+            if not items or len(items) > 50:
+                raise ServiceError("manifest comparison requires between 1 and 50 items")
+
+            match_config = dict(match or {})
+            unknown_match_fields = sorted(set(match_config) - {"path_template", "aliases"})
+            if unknown_match_fields:
+                raise ServiceError(
+                    f"unsupported manifest match fields: {', '.join(unknown_match_fields)}"
+                )
+            template = match_config.get("path_template")
+            if template is not None:
+                if not isinstance(template, str) or len(template) > 1024:
+                    raise ServiceError("manifest path_template must be a bounded string")
+                remainder = template.replace("{name}", "", 1)
+                if template.count("{name}") != 1 or "{" in remainder or "}" in remainder:
+                    raise ServiceError("manifest path_template must contain only one {name} field")
+            aliases_value = match_config.get("aliases", {})
+            if not isinstance(aliases_value, Mapping) or len(aliases_value) > 50:
+                raise ServiceError("manifest aliases must be a mapping with at most 50 entries")
+            aliases: dict[str, str] = {}
+            for alias, mapped_name in aliases_value.items():
+                if not isinstance(alias, str) or not isinstance(mapped_name, str):
+                    raise ServiceError("manifest aliases must map strings to strings")
+                if not alias or len(alias) > 128 or not mapped_name or len(mapped_name) > 128:
+                    raise ServiceError("manifest alias names must contain 1 to 128 characters")
+                aliases[alias] = mapped_name
+
+            normalized_items: list[dict[str, Any]] = []
+            names: set[str] = set()
+            target_paths: set[str] = set()
+            for raw_item in items:
+                item = dict(raw_item)
+                unknown_item_fields = sorted(
+                    set(item)
+                    - {
+                        "name",
+                        "local_path",
+                        "memento_path",
+                        "local_updated_at",
+                        "local_body_sha256",
+                        "local_bytes",
+                    }
+                )
+                if unknown_item_fields:
+                    raise ServiceError(
+                        f"unsupported manifest item fields: {', '.join(unknown_item_fields)}"
+                    )
+                name = item.get("name")
+                local_path = item.get("local_path")
+                digest = item.get("local_body_sha256")
+                local_bytes = item.get("local_bytes")
+                if not isinstance(name, str) or not name or len(name) > 128:
+                    raise ServiceError("manifest item name must contain 1 to 128 characters")
+                if name in names:
+                    raise ServiceError(f"duplicate manifest item name: {name}")
+                if not isinstance(local_path, str) or not local_path or len(local_path) > 512:
+                    raise ServiceError("manifest local_path must contain 1 to 512 characters")
+                if not isinstance(digest, str) or re.fullmatch(r"[0-9a-fA-F]{64}", digest) is None:
+                    raise ServiceError("manifest local_body_sha256 must be a SHA-256 hex digest")
+                if (
+                    not isinstance(local_bytes, int)
+                    or isinstance(local_bytes, bool)
+                    or local_bytes < 0
+                ):
+                    raise ServiceError("manifest local_bytes must be a non-negative integer")
+                local_updated_at = self._manifest_timestamp(item.get("local_updated_at"))
+
+                target = item.get("memento_path")
+                if target is None:
+                    if template is None:
+                        raise ServiceError(
+                            "manifest items without memento_path require match.path_template"
+                        )
+                    target = template.replace("{name}", aliases.get(name, name))
+                if not isinstance(target, str):
+                    raise ServiceError("manifest memento_path must be a string")
+                self._validate_manifest_target(target, prefix=prefix)
+                authorize_path(policy, target, action="read")
+                validate_repository_write_path(self._deps.repo_paths.current_dir, target)
+                if target in target_paths:
+                    raise ServiceError(f"duplicate manifest memento_path: {target}")
+                names.add(name)
+                target_paths.add(target)
+                normalized_items.append(
+                    {
+                        "name": name,
+                        "local_path": local_path,
+                        "memento_path": target,
+                        "local_updated_at": self._format_timestamp(local_updated_at),
+                        "local_updated_value": local_updated_at,
+                        "local_body_sha256": digest.lower(),
+                        "local_bytes": local_bytes,
+                    }
+                )
+
+            inventory_fields = ["path", "updated_at", "body_sha256", "body_bytes"]
+            if include_asset_metadata:
+                inventory_fields.append("assets")
+            inventory = self.memory_inventory(
+                context,
+                path_prefix=prefix,
+                fields=inventory_fields,
+                limit=51,
+            )
+            if isinstance(inventory, ErrorEnvelope):
+                return inventory
+            remote_entries = list(inventory.data["entries"])
+            if len(remote_entries) > 50 or inventory.data["next_cursor"] is not None:
+                raise ServiceError(
+                    "manifest comparison namespace exceeds 50 concepts; use a narrower path_prefix"
+                )
+            remote_by_path = {str(entry["path"]): entry for entry in remote_entries}
+            memento_only_paths = set(remote_by_path) - target_paths
+            if len(normalized_items) + len(memento_only_paths) > 50:
+                raise ServiceError(
+                    "manifest comparison exceeds 50 combined records; narrow the manifest or path_prefix"
+                )
+
+            matching: list[dict[str, Any]] = []
+            differing: list[dict[str, Any]] = []
+            local_only: list[dict[str, Any]] = []
+            for item in normalized_items:
+                path = str(item["memento_path"])
+                remote = remote_by_path.get(path)
+                local_payload = {
+                    key: value for key, value in item.items() if key != "local_updated_value"
+                }
+                if remote is None:
+                    local_only.append(
+                        {
+                            **local_payload,
+                            "local_present": True,
+                            "memento_present": False,
+                            "body_match": None,
+                        }
+                    )
+                    continue
+                body_match = item["local_body_sha256"] == remote["body_sha256"]
+                remote_updated = self._manifest_timestamp(remote["updated_at"])
+                comparison = {
+                    **local_payload,
+                    "local_present": True,
+                    "memento_present": True,
+                    "body_match": body_match,
+                    "body_bytes_match": item["local_bytes"] == remote["body_bytes"],
+                    "memento_updated_at": remote["updated_at"],
+                    "memento_body_sha256": remote["body_sha256"],
+                    "memento_bytes": remote["body_bytes"],
+                }
+                if include_asset_metadata:
+                    comparison.update(self._manifest_asset_summary(remote.get("assets")))
+                if body_match:
+                    matching.append(comparison)
+                else:
+                    local_updated = item["local_updated_value"]
+                    if local_updated > remote_updated:
+                        newer = "local"
+                    elif remote_updated > local_updated:
+                        newer = "memento"
+                    else:
+                        newer = "unknown"
+                    comparison["likely_newer"] = newer
+                    differing.append(comparison)
+
+            memento_only: list[dict[str, Any]] = []
+            for path in sorted(memento_only_paths):
+                remote = remote_by_path[path]
+                comparison = {
+                    "memento_path": path,
+                    "local_present": False,
+                    "memento_present": True,
+                    "memento_updated_at": remote["updated_at"],
+                    "memento_body_sha256": remote["body_sha256"],
+                    "memento_bytes": remote["body_bytes"],
+                }
+                if include_asset_metadata:
+                    comparison.update(self._manifest_asset_summary(remote.get("assets")))
+                memento_only.append(comparison)
+
+            return self._success(
+                {
+                    "path_prefix": prefix,
+                    "matching": matching,
+                    "differing": differing,
+                    "local_only": local_only,
+                    "memento_only": memento_only,
+                    "counts": {
+                        "matching": len(matching),
+                        "differing": len(differing),
+                        "local_only": len(local_only),
+                        "memento_only": len(memento_only),
+                    },
+                },
+                repo_revision=inventory.repo_revision,
+            )
+        except Exception as exc:
+            return self._failure(exc)
+
     def memory_graph(
         self,
         context: ServiceContext,
@@ -3572,6 +3787,57 @@ class MemoryService:
         if any(not part for part in parts[:-1]):
             raise ServiceError("inventory path_prefix must not contain empty segments")
         return path_prefix
+
+    @staticmethod
+    def _validate_manifest_target(target: str, *, prefix: str) -> None:
+        if (
+            not target.startswith("/")
+            or not target.endswith(".md")
+            or not target.startswith(prefix)
+            or "\\" in target
+            or "\x00" in target
+            or "//" in target
+        ):
+            raise ServiceError("manifest memento_path must be a concept path under path_prefix")
+        parts = target.removeprefix("/").split("/")
+        if any(part in {"", ".", ".."} for part in parts):
+            raise ServiceError("manifest memento_path is unsafe")
+
+    @staticmethod
+    def _manifest_timestamp(value: Any) -> datetime:
+        if isinstance(value, str):
+            try:
+                value = datetime.fromisoformat(value.replace("Z", "+00:00"))
+            except ValueError as exc:
+                raise ServiceError("manifest timestamps must be ISO 8601 values") from exc
+        if not isinstance(value, datetime) or value.tzinfo is None:
+            raise ServiceError("manifest timestamps must be timezone-aware")
+        return value.astimezone(UTC)
+
+    @staticmethod
+    def _format_timestamp(value: datetime) -> str:
+        return value.astimezone(UTC).isoformat().replace("+00:00", "Z")
+
+    @staticmethod
+    def _manifest_asset_summary(value: Any) -> dict[str, Any]:
+        assets = value if isinstance(value, list) else []
+        summaries = [
+            {
+                "kind": asset["kind"],
+                "latest_version": asset["latest_version"],
+                "latest_sha256": asset["latest_sha256"],
+            }
+            for asset in assets[:20]
+            if isinstance(asset, Mapping)
+            and isinstance(asset.get("kind"), str)
+            and isinstance(asset.get("latest_version"), str)
+            and isinstance(asset.get("latest_sha256"), str)
+        ]
+        return {
+            "asset_present": bool(assets),
+            "assets": summaries,
+            "asset_kinds_truncated": len(assets) > len(summaries),
+        }
 
     def _inventory_prefix_is_readable(self, policy: EffectivePolicy, path_prefix: str) -> bool:
         for grant in policy.read_prefixes:

@@ -20,6 +20,7 @@ from memento.executor import (
     AssetStageBeginArgs,
     AssetStageStatusArgs,
     AuditArgs,
+    CompareManifestArgs,
     CreateArgs,
     EmptyArgs,
     GraphArgs,
@@ -88,6 +89,7 @@ OperationName = Literal[
     "read",
     "list",
     "inventory",
+    "compare_manifest",
     "graph",
     "audit",
     "answer",
@@ -125,6 +127,7 @@ _TOOL_ARG_MODELS: dict[str, type[BaseModel]] = {
     "memory_read": ReadArgs,
     "memory_list": ListArgs,
     "memory_inventory": InventoryArgs,
+    "memory_compare_manifest": CompareManifestArgs,
     "memory_graph": GraphArgs,
     "memory_audit": AuditArgs,
     "memory_answer": AnswerArgs,
@@ -221,6 +224,8 @@ EXECUTE_CAPABLE_OPERATIONS = frozenset(
         "search",
         "read",
         "list",
+        "inventory",
+        "compare_manifest",
         "graph",
         "audit",
         "answer",
@@ -547,6 +552,21 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             fields=fields,
             limit=limit,
             cursor=cursor,
+        ).model_dump(mode="json")
+
+    async def tool_memory_compare_manifest(
+        self,
+        path_prefix: str,
+        items: list[dict[str, Any]],
+        match: dict[str, Any] | None = None,
+        include_asset_metadata: bool = False,
+    ) -> dict[str, Any]:
+        return self._service.memory_compare_manifest(
+            self._context(),
+            path_prefix=path_prefix,
+            items=items,
+            match=match,
+            include_asset_metadata=include_asset_metadata,
         ).model_dump(mode="json")
 
     async def tool_memory_graph(self, id_or_path: str, depth: int = 1) -> dict[str, Any]:

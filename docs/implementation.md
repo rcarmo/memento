@@ -347,11 +347,11 @@ The service supports catalog-first compact discovery as well as direct compatibi
 
 | `mcp.tool_surface` | Direct tools |
 |---|---|
-| `compact` | core help/status/search/read/execute, asset staging begin/status and asset retrieval (**8**); optional answer and route tools raise this to **10** |
-| `standard` | the full **22** direct compatibility tools, including proposals, staging, asset retrieval/pruning and direct mutations |
-| `read_only` | the **9** direct discovery, concept-read and asset-read tools |
-| `curator` | compact tools plus proposal get/list/review/apply and asset pruning (**13**); optional answer and route tools raise this to **15**, while create/patch/rename remain execute-only |
-| `admin` | the **23**-tool full direct memory surface plus optional `memory_route` (**24**); managed administrators additionally discover role-filtered `access_*` tools |
+| `compact` | core help/status/search/read/inventory/execute, asset staging begin/status and asset retrieval (**9**); optional answer and route tools raise this to **11** |
+| `standard` | the full **23** direct compatibility tools, including inventory, proposals, staging, asset retrieval/pruning and direct mutations |
+| `read_only` | the **10** direct discovery, concept-read and asset-read tools |
+| `curator` | compact tools plus proposal get/list/review/apply and asset pruning (**14**); optional answer and route tools raise this to **16**, while compare/create/patch/rename remain execute-only |
+| `admin` | the **24**-tool full direct memory surface plus optional `memory_route` (**25**); managed administrators additionally discover role-filtered `access_*` tools |
 
 ### Catalog resources
 
@@ -413,6 +413,8 @@ Proposal, assets and write:
 * `memory_execute`
 
 Every tool returns the standard envelope with `status`, `data`, `warnings`, `next_tools`, `repo_revision`, `index_revision`, `index_stale` and `operation_id`.
+
+The execute-only `compare_manifest` operation maps up to 50 caller-provided local manifest rows onto any authorised namespace. It reuses the bounded inventory primitive, classifies matching, differing, local-only and Memento-only records, derives the likely newer side from timezone-aware mtimes, and optionally projects generic asset metadata. The server treats local paths as opaque labels and never reads caller files.
 
 ## Read path
 

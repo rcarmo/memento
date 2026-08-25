@@ -138,7 +138,7 @@ These MCP resources are always read-only:
 
 They expose generated descriptions, roles, examples and input schemas. Current workflow templates are:
 
-* `inspect` -> `search`, `inventory`, `read`
+* `inspect` -> `search`, `inventory`, `compare_manifest`, `read`
 * `propose` -> `search`, `read`, `propose`, `propose_freeform`, `propose_update`
 * `curate` -> `proposal_list`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_prune`, `create`, `patch`, `rename`
 * `asset_pack` -> `search`, `read`, `propose`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_get`, `asset_stage_begin`, `asset_stage_status`, `asset_prune`
@@ -341,6 +341,19 @@ Returns at most 100 authorised concepts in deterministic path order. `path_prefi
 
 The response never includes concept bodies. Namespace and protected-prefix checks prune traversal before frontmatter parsing, digesting, asset lookup, pagination or output.
 
+### `compare_manifest` execute operation
+
+`compare_manifest` compares a caller-provided local manifest with one authorised inventory page. It is available through `memory_execute`, not as a direct tool. Arguments are:
+
+* `path_prefix` -- an absolute directory prefix
+* `items` -- 1 to 50 entries containing `name`, `local_path`, optional `memento_path`, timezone-aware `local_updated_at`, `local_body_sha256` and `local_bytes`
+* `match.path_template` and `match.aliases` -- optional generic path mapping; the template may contain exactly one `{name}` field
+* `include_asset_metadata=false` -- include bounded generic asset-kind, latest-version and latest-SHA summaries
+
+The result separates `matching`, `differing`, `local_only` and `memento_only` entries and includes category counts. Differing entries report `likely_newer` as `local`, `memento` or `unknown` from the two mtimes. Matching is based on body SHA-256; byte counts are reported separately. The server never reads caller-local paths or returns concept bodies.
+
+The comparison rejects namespaces above 50 concepts or unions above 50 records, so classifications are complete rather than silently truncated. Every mapped Memento path must be under `path_prefix` and individually readable. Protected directories are pruned before inventory parsing.
+
 ### `memory_graph`
 
 Returns:
@@ -525,6 +538,8 @@ Operation names are stable literals:
 * `search`
 * `read`
 * `list`
+* `inventory`
+* `compare_manifest`
 * `graph`
 * `audit`
 * `answer`

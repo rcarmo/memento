@@ -2,10 +2,19 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import UTC, datetime
 from time import monotonic
 from typing import Any, Literal, cast
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    TypeAdapter,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 
 from memento.envelopes import ErrorEnvelope, SuccessEnvelope, error_envelope
 from memento.mcp_registry import OPERATION_SPEC_BY_OP
@@ -78,6 +87,54 @@ class InventoryArgs(BaseModel):
     fields: tuple[InventoryField, ...] = Field(default=INVENTORY_FIELDS, min_length=1)
     limit: int = Field(default=50, ge=1, le=100)
     cursor: str | None = None
+
+
+class ManifestItemArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    name: str = Field(min_length=1, max_length=128)
+    local_path: str = Field(min_length=1, max_length=512)
+    memento_path: str | None = Field(default=None, min_length=4, max_length=1024)
+    local_updated_at: datetime
+    local_body_sha256: str = Field(pattern=r"^[0-9a-fA-F]{64}$")
+    local_bytes: int = Field(ge=0)
+
+    @field_validator("local_updated_at")
+    @classmethod
+    def normalize_updated_at(cls, value: datetime) -> datetime:
+        if value.tzinfo is None:
+            raise ValueError("local_updated_at must be timezone-aware")
+        return value.astimezone(UTC)
+
+
+class ManifestMatchArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    path_template: str | None = Field(default=None, min_length=5, max_length=1024)
+    aliases: dict[str, str] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def validate_match(self) -> ManifestMatchArgs:
+        if len(self.aliases) > 50:
+            raise ValueError("manifest aliases exceed 50 entries")
+        return self
+
+
+class CompareManifestArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    path_prefix: str = Field(default="/", min_length=1, max_length=1024)
+    items: list[ManifestItemArgs] = Field(min_length=1, max_length=50)
+    match: ManifestMatchArgs | None = None
+    include_asset_metadata: bool = False
+
+    @model_validator(mode="after")
+    def require_mapping(self) -> CompareManifestArgs:
+        if any(item.memento_path is None for item in self.items) and (
+            self.match is None or self.match.path_template is None
+        ):
+            raise ValueError("items without memento_path require match.path_template")
+        return self
 
 
 class GraphArgs(BaseModel):
@@ -320,6 +377,11 @@ class InventoryOperation(ExecuteOperationBase):
     args: InventoryArgs = Field(default_factory=InventoryArgs)
 
 
+class CompareManifestOperation(ExecuteOperationBase):
+    op: Literal["compare_manifest"]
+    args: CompareManifestArgs
+
+
 class GraphOperation(ExecuteOperationBase):
     op: Literal["graph"]
     args: GraphArgs
@@ -392,6 +454,7 @@ ExecuteOperation = (
     | ReadOperation
     | ListOperation
     | InventoryOperation
+    | CompareManifestOperation
     | GraphOperation
     | AuditOperation
     | AnswerOperation
