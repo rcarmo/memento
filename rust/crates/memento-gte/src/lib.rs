@@ -127,8 +127,10 @@ impl Weights {
         Ok(Self {
             data: WeightData::Owned(
                 bytes
-                    .chunks_exact(std::mem::size_of::<f32>())
-                    .map(|chunk| f32::from_le_bytes(chunk.try_into().expect("4-byte chunk")))
+                    .as_chunks::<4>()
+                    .0
+                    .iter()
+                    .map(|chunk| f32::from_le_bytes(*chunk))
                     .collect(),
             ),
         })
