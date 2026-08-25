@@ -82,9 +82,11 @@ test("semantic layer is default-off and selected nodes reveal bounded neighbours
   await expect.poll(async()=>page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return scene.edges.filter((edge:any)=>edge.kind==="semantic_similarity").length;})).toBeGreaterThan(0);
   const selectedCount=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return scene.edges.filter((edge:any)=>edge.kind==="semantic_similarity").length;});
   expect(selectedCount).toBeLessThanOrEqual(5);
-  const selectedRendering=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return{semanticTubes:scene.selectedEdgeGroup.userData.semantic||0,dashed:scene.edgeGroup.children.some((child:any)=>child.material?.type==="LineDashedMaterial")};});
+  const selectedRendering=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return{semanticTubes:scene.selectedEdgeGroup.userData.semantic||0,dashedColours:scene.edgeGroup.children.filter((child:any)=>child.material?.type==="LineDashedMaterial").map((child:any)=>child.material.color.getHex()),selectedColours:scene.selectedEdgeGroup.children.filter((child:any)=>child.userData.direction==="semantic").map((child:any)=>child.material.color.getHex())};});
   expect(selectedRendering.semanticTubes).toBeGreaterThan(0);
-  expect(selectedRendering.dashed).toBe(true);
+  expect(selectedRendering.dashedColours.length).toBeGreaterThan(0);
+  expect(selectedRendering.dashedColours.every((colour:number)=>[0x3f9f68,0x50b878,0x60c870].includes(colour))).toBe(true);
+  expect(selectedRendering.selectedColours.every((colour:number)=>colour===0x60c870)).toBe(true);
   await page.locator('label:has-text("Show semantic layer") input').check();
   await expect.poll(async()=>page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return scene.edges.filter((edge:any)=>edge.kind==="semantic_similarity").length;})).toBeGreaterThan(selectedCount);
   await expect(page.locator(".inspector")).toContainText("Semantic neighbours");
