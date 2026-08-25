@@ -35,8 +35,8 @@ pub fn validate_f32le(blob: &[u8]) -> Result<usize, VectorError> {
     if !blob.len().is_multiple_of(4) {
         return Err(VectorError::InvalidByteLength(blob.len()));
     }
-    for (index, chunk) in blob.chunks_exact(4).enumerate() {
-        let value = f32::from_le_bytes(chunk.try_into().expect("4-byte chunk"));
+    for (index, chunk) in blob.as_chunks::<4>().0.iter().enumerate() {
+        let value = f32::from_le_bytes(*chunk);
         if !value.is_finite() {
             return Err(VectorError::NonFinite { index });
         }
@@ -47,8 +47,10 @@ pub fn validate_f32le(blob: &[u8]) -> Result<usize, VectorError> {
 pub fn decode_f32le(blob: &[u8]) -> Result<Vec<f32>, VectorError> {
     validate_f32le(blob)?;
     Ok(blob
-        .chunks_exact(4)
-        .map(|chunk| f32::from_le_bytes(chunk.try_into().expect("4-byte chunk")))
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|chunk| f32::from_le_bytes(*chunk))
         .collect())
 }
 
