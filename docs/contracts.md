@@ -388,7 +388,7 @@ Clients that already manage bearer authentication may alternatively use `POST /a
 
 Skills are ordinary concepts tagged `skill`; their canonical body must byte-match ZIP-root `SKILL.md` as specified above. Search and read use `memory_search` and `memory_read`. Omitted asset versions resolve to the highest accepted stable version. The latest five are retained by default; active proposal references are protected. Recall never extracts files server-side.
 
-The Streamable HTTP request limit defaults to 72 MiB so the compatibility base64 path can carry a 50 MiB decoded ZIP after JSON overhead. Raw binary staging avoids base64 expansion but retains the same decoded ZIP and archive-safety limits.
+The Streamable HTTP request limit defaults to 72 MiB so the compatibility base64 path can carry a 50 MiB decoded ZIP after JSON overhead. Raw binary staging avoids base64 expansion but retains the same decoded ZIP and archive-safety limits. Non-`initialize` requests require a supported `MCP-Protocol-Version` header. A missing or unsupported value returns `400 application/json` with an actionable error plus the preferred and supported versions.
 
 ## Proposal records and lifecycle
 

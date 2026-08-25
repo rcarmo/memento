@@ -6,7 +6,7 @@ The optional visual debugger vendors [Three.js](https://threejs.org/) 0.180.0 an
 
 ## uMCP
 
-Memento uses [`rcarmo/umcp`](https://github.com/rcarmo/umcp) for its MCP server, Streamable HTTP transport, request context, authentication and authorization hooks. The Python package pins commit `b6ef9af55c93c7742e7bc64c9c9bba2c53527692` through the `mcp` optional dependency.
+Memento uses [`rcarmo/umcp`](https://github.com/rcarmo/umcp) for its MCP server, Streamable HTTP transport, request context, authentication and authorization hooks. The Python package pins commit `02d9d7b3c4d06108d668d13dba8a98b1a3b44fbb` through the `mcp` optional dependency.
 
 ## Rust workspace
 

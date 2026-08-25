@@ -41,6 +41,43 @@ from memento.service import MemoryService, ServiceContext, ServiceDependencies
 from memento.staged_assets import StagedAssetStore
 
 
+class HTTPTestReader:
+    def __init__(self, request: str, body: bytes) -> None:
+        self._lines = [line.encode("ascii") + b"\r\n" for line in request.splitlines()]
+        self._lines.append(b"\r\n")
+        self._body = body
+
+    async def readline(self) -> bytes:
+        return self._lines.pop(0) if self._lines else b""
+
+    async def readexactly(self, size: int) -> bytes:
+        return self._body[:size]
+
+
+class HTTPTestWriter:
+    def __init__(self) -> None:
+        self.chunks: list[bytes] = []
+        self.closed = False
+
+    def write(self, data: bytes) -> None:
+        self.chunks.append(data)
+
+    async def drain(self) -> None:
+        return None
+
+    def close(self) -> None:
+        self.closed = True
+
+    async def wait_closed(self) -> None:
+        return None
+
+    def is_closing(self) -> bool:
+        return self.closed
+
+    def get_extra_info(self, name: str) -> tuple[str, int] | None:
+        return ("127.0.0.1", 50000) if name == "peername" else None
+
+
 class FakeNeedleRouter:
     def __init__(self, output: str) -> None:
         self.output = output
@@ -441,6 +478,51 @@ def _server_for(
         )
     )
     return MementoMCPServer(variant_service, bearer_tokens=tokens)
+
+
+@pytest.mark.parametrize(
+    ("version", "expected_error"),
+    [
+        (None, "missing MCP-Protocol-Version header"),
+        ("not-a-version", "unsupported MCP-Protocol-Version header"),
+    ],
+)
+def test_streamable_http_explains_invalid_protocol_version(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    version: str | None,
+    expected_error: str,
+) -> None:
+    server = _server_for(service, service_config)
+    body = json.dumps({"jsonrpc": "2.0", "id": 3, "method": "tools/list", "params": {}}).encode(
+        "utf-8"
+    )
+    headers = [
+        "POST /mcp HTTP/1.1",
+        "Host: memento.test",
+        "Authorization: Bearer smith-token",
+        "Content-Type: application/json",
+        "Accept: application/json, text/event-stream",
+    ]
+    if version is not None:
+        headers.append(f"MCP-Protocol-Version: {version}")
+    headers.append(f"Content-Length: {len(body)}")
+    reader = HTTPTestReader("\n".join(headers), body)
+    writer = HTTPTestWriter()
+
+    asyncio.run(
+        cast(Any, server)._handle_streamable_http_client(reader, writer, "/mcp", [], 1024 * 1024)
+    )
+    response_headers, response_body = b"".join(writer.chunks).split(b"\r\n\r\n", 1)
+    payload = json.loads(response_body)
+
+    assert b"400 Bad Request" in response_headers
+    assert b"Content-Type: application/json" in response_headers
+    assert payload["error"] == expected_error
+    assert payload["expected"] == "2025-03-26"
+    assert payload["supported"] == ["2025-03-26", "2024-11-05"]
+    if version is not None:
+        assert payload["received"] == version
 
 
 def test_status_reports_canonical_state_when_derived_index_is_empty(

@@ -7,7 +7,7 @@
 
 Memento uses [`rcarmo/umcp`](https://github.com/rcarmo/umcp) as its MCP server and transport core. Network clients connect through Streamable HTTP with bearer authentication. Caller identity comes from uMCP's request context, never from tool arguments.
 
-The package pins uMCP commit `691af9f159757d45c180856ec0dfb89da7aa341c`. Memento keeps stdio and the wider uMCP compatibility work outside its own service logic.
+The package pins uMCP commit `02d9d7b3c4d06108d668d13dba8a98b1a3b44fbb`. Memento keeps stdio and the wider uMCP compatibility work outside its own service logic. The transport returns actionable JSON for missing or unsupported `MCP-Protocol-Version` headers rather than an empty `400`.
 
 ## Why
 

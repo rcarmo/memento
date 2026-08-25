@@ -31,7 +31,7 @@ memento-skill-import = "memento.skill_import:main"
 
 [project.optional-dependencies]
 dev = [
-    "umcp @ git+https://github.com/rcarmo/umcp.git@b6ef9af55c93c7742e7bc64c9c9bba2c53527692",
+    "umcp @ git+https://github.com/rcarmo/umcp.git@02d9d7b3c4d06108d668d13dba8a98b1a3b44fbb",
     "mypy>=1.11",
     "pytest>=8",
     "pytest-cov>=5",
@@ -39,7 +39,7 @@ dev = [
     "ruff>=0.9",
 ]
 mcp = [
-    "umcp @ git+https://github.com/rcarmo/umcp.git@b6ef9af55c93c7742e7bc64c9c9bba2c53527692",
+    "umcp @ git+https://github.com/rcarmo/umcp.git@02d9d7b3c4d06108d668d13dba8a98b1a3b44fbb",
 ]
 
 [tool.setuptools.packages.find]
