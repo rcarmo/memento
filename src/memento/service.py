@@ -8,7 +8,7 @@ import math
 import re
 import sqlite3
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from time import monotonic
@@ -749,9 +749,7 @@ class MemoryService:
                 ),
             )
             issues = [
-                issue.__dict__
-                for issue in audit.issues
-                if path is None or issue.bundle_path == path
+                asdict(issue) for issue in audit.issues if path is None or issue.bundle_path == path
             ]
             if path is not None and not self._is_authorized(policy, path, action="read"):
                 raise ForbiddenError(f"principal {policy.principal} cannot read {path}")

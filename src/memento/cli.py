@@ -7,6 +7,7 @@ import os
 import signal
 from collections.abc import Sequence
 from contextlib import suppress
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -216,7 +217,7 @@ async def drain_server(server: object) -> None:
 
 def _audit(runtime: MementoRuntime, *, path: str | None) -> dict[str, Any]:
     audit = audit_repository(runtime.paths.repo_paths.current_dir)
-    issues = [issue.__dict__ for issue in audit.issues if path is None or issue.bundle_path == path]
+    issues = [asdict(issue) for issue in audit.issues if path is None or issue.bundle_path == path]
     protected = runtime.config.authorization.protected_read_prefixes
     if runtime.access_store is not None:
         policies = (
