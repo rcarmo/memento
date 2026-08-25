@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -50,19 +51,56 @@ class RepositoryBundle:
         raise BundleError(f"unknown bundle path: {bundle_path}")
 
 
-def scan_bundle(
-    root: Path, *, include_path: Callable[[str], bool] | None = None
-) -> RepositoryBundle:
-    entries: list[BundleEntry] = []
-    for path in sorted(root.rglob("*.md")):
+def list_bundle_paths(
+    root: Path,
+    *,
+    include_path: Callable[[str], bool] | None = None,
+    include_directory: Callable[[str], bool] | None = None,
+) -> tuple[str, ...]:
+    if include_directory is None:
+        paths = sorted(root.rglob("*.md"))
+    else:
+        paths = []
+        for directory, directory_names, file_names in os.walk(root, topdown=True):
+            directory_path = Path(directory)
+            retained_directories: list[str] = []
+            for name in sorted(directory_names):
+                child = directory_path / name
+                bundle_directory = "/" + child.relative_to(root).as_posix() + "/"
+                if child.is_symlink() or is_reserved_bundle_path(bundle_directory):
+                    continue
+                if include_directory(bundle_directory):
+                    retained_directories.append(name)
+            directory_names[:] = retained_directories
+            paths.extend(
+                directory_path / name for name in sorted(file_names) if name.endswith(".md")
+            )
+    bundle_paths: list[str] = []
+    for path in sorted(paths):
         bundle_path = "/" + path.relative_to(root).as_posix()
         if is_reserved_bundle_path(bundle_path) or (
             include_path is not None and not include_path(bundle_path)
         ):
             continue
         validate_repository_read_path(root, bundle_path)
+        bundle_paths.append(bundle_path)
+    return tuple(bundle_paths)
+
+
+def scan_bundle(
+    root: Path,
+    *,
+    include_path: Callable[[str], bool] | None = None,
+    include_directory: Callable[[str], bool] | None = None,
+) -> RepositoryBundle:
+    entries: list[BundleEntry] = []
+    for bundle_path in list_bundle_paths(
+        root,
+        include_path=include_path,
+        include_directory=include_directory,
+    ):
         try:
-            document = parse_concept_file(path)
+            document = parse_concept_file(root / bundle_path.removeprefix("/"))
         except FrontmatterError as exc:
             raise BundleError(f"invalid concept at {bundle_path}") from exc
         entries.append(BundleEntry(bundle_path=bundle_path, document=document))

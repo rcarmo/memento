@@ -63,6 +63,18 @@ def write_asset_version(
     return tuple(sorted((metadata_path, zip_path)))
 
 
+def list_asset_kinds(root: Path, concept_id: str) -> tuple[str, ...]:
+    if not re.fullmatch(r"[0-9a-fA-F-]{8,64}", concept_id):
+        return ()
+    directory = root / ".assets" / concept_id
+    if not directory.exists():
+        return ()
+    kinds = [path.name for path in directory.iterdir() if path.is_dir()]
+    for asset_kind in kinds:
+        validate_asset_kind(asset_kind)
+    return tuple(sorted(kinds))
+
+
 def list_asset_versions(root: Path, concept_id: str, asset_kind: str) -> tuple[str, ...]:
     validate_asset_kind(asset_kind)
     directory = root / ".assets" / concept_id / asset_kind

@@ -3,11 +3,12 @@ from __future__ import annotations
 import base64
 import binascii
 import difflib
+import hashlib
 import json
 import math
 import re
 import sqlite3
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -94,10 +95,11 @@ from memento.evidence import (
     namespace_matches,
     profile_question,
 )
-from memento.executor import ExecuteLimits, MemoryExecutor
+from memento.executor import INVENTORY_FIELDS, ExecuteLimits, MemoryExecutor
 from memento.mcp_registry import OPERATION_SPECS, WORKFLOW_TEMPLATES, tool_names_for_surface
 from memento.repository.asset_packs import (
     asset_version_paths,
+    list_asset_kinds,
     list_asset_versions,
     load_asset_metadata,
     resolve_asset_version,
@@ -108,6 +110,7 @@ from memento.repository.asset_packs import (
 from memento.repository.bundle import (
     BundleError,
     audit_repository,
+    list_bundle_paths,
     read_bundle_entry,
     scan_bundle,
 )
@@ -572,6 +575,84 @@ class MemoryService:
                     }
                 )
             return self._success({"entries": visible})
+        except Exception as exc:
+            return self._failure(exc)
+
+    def memory_inventory(
+        self,
+        context: ServiceContext,
+        *,
+        path_prefix: str = "/",
+        fields: Sequence[str] | None = None,
+        limit: int = 50,
+        cursor: str | None = None,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        try:
+            policy = self._policy(context)
+            require_role(policy, "reader")
+            prefix = self._validate_inventory_prefix(path_prefix)
+            if not self._inventory_prefix_is_readable(policy, prefix):
+                raise ForbiddenError(
+                    f"principal {policy.principal} cannot read inventory under {prefix}"
+                )
+            if limit < 1 or limit > 100:
+                raise ServiceError("inventory limit must be between 1 and 100")
+            if cursor is not None and (not cursor.startswith(prefix) or not cursor.endswith(".md")):
+                raise ServiceError("inventory cursor must be a concept path under path_prefix")
+            requested_fields = tuple(dict.fromkeys(INVENTORY_FIELDS if fields is None else fields))
+            if not requested_fields:
+                raise ServiceError("inventory fields must not be empty")
+            unknown_fields = sorted(set(requested_fields) - set(INVENTORY_FIELDS))
+            if unknown_fields:
+                raise ServiceError(f"unsupported inventory fields: {', '.join(unknown_fields)}")
+
+            paths = list_bundle_paths(
+                self._deps.repo_paths.current_dir,
+                include_path=lambda candidate: (
+                    candidate.startswith(prefix)
+                    and self._is_authorized(policy, candidate, action="read")
+                ),
+                include_directory=lambda directory: (
+                    (prefix.startswith(directory) or directory.startswith(prefix))
+                    and self._inventory_prefix_is_readable(policy, directory)
+                ),
+            )
+            candidates = [path for path in paths if cursor is None or path > cursor]
+            selected = candidates[:limit]
+            entries: list[dict[str, Any]] = []
+            for path in selected:
+                entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
+                frontmatter = entry.document.frontmatter.model_dump(mode="json")
+                available: dict[str, Any] = {
+                    "path": entry.bundle_path,
+                    "id": frontmatter["id"],
+                    "title": frontmatter["title"],
+                    "status": frontmatter["status"],
+                    "type": frontmatter["type"],
+                    "tags": frontmatter["tags"],
+                    "created_at": frontmatter["created_at"],
+                    "updated_at": frontmatter["updated_at"],
+                    "updated_by": frontmatter["updated_by"],
+                }
+                if {"body_sha256", "body_bytes"} & set(requested_fields):
+                    body_bytes = entry.document.body.encode("utf-8")
+                    available["body_sha256"] = hashlib.sha256(body_bytes).hexdigest()
+                    available["body_bytes"] = len(body_bytes)
+                if "assets" in requested_fields:
+                    available["assets"] = self._inventory_assets(str(frontmatter["id"]))
+                entries.append(
+                    {field: available[field] for field in requested_fields if field in available}
+                )
+            next_cursor = selected[-1] if len(candidates) > len(selected) and selected else None
+            return self._success(
+                {
+                    "path_prefix": prefix,
+                    "fields": requested_fields,
+                    "entries": entries,
+                    "next_cursor": next_cursor,
+                },
+                repo_revision=get_main_revision(self._deps.repo_paths),
+            )
         except Exception as exc:
             return self._failure(exc)
 
@@ -3476,6 +3557,55 @@ class MemoryService:
             author_name="Rui Carmo",
             author_email="rui.carmo@gmail.com",
         )
+
+    @staticmethod
+    def _validate_inventory_prefix(path_prefix: str) -> str:
+        if not path_prefix.startswith("/") or not path_prefix.endswith("/"):
+            raise ServiceError("inventory path_prefix must be an absolute directory prefix")
+        parts = path_prefix.removeprefix("/").split("/")
+        if (
+            any(part in {".", ".."} for part in parts)
+            or "\\" in path_prefix
+            or "\x00" in path_prefix
+        ):
+            raise ServiceError("inventory path_prefix is unsafe")
+        if any(not part for part in parts[:-1]):
+            raise ServiceError("inventory path_prefix must not contain empty segments")
+        return path_prefix
+
+    def _inventory_prefix_is_readable(self, policy: EffectivePolicy, path_prefix: str) -> bool:
+        for grant in policy.read_prefixes:
+            if path_prefix.startswith(grant):
+                intersection = path_prefix
+            elif grant.startswith(path_prefix):
+                intersection = grant
+            else:
+                continue
+            if self._is_authorized(policy, intersection, action="read"):
+                return True
+        return False
+
+    def _inventory_assets(self, concept_id: str) -> list[dict[str, Any]]:
+        assets: list[dict[str, Any]] = []
+        root = self._deps.repo_paths.current_dir
+        for asset_kind in list_asset_kinds(root, concept_id):
+            versions = list_asset_versions(root, concept_id, asset_kind)
+            if not versions:
+                continue
+            latest_version = versions[-1]
+            metadata = load_asset_metadata(root, concept_id, asset_kind, latest_version)
+            latest_sha256 = metadata.get("zip_sha256")
+            if not isinstance(latest_sha256, str):
+                raise ServiceError("asset metadata is missing zip_sha256")
+            assets.append(
+                {
+                    "kind": asset_kind,
+                    "versions": versions,
+                    "latest_version": latest_version,
+                    "latest_sha256": latest_sha256,
+                }
+            )
+        return assets
 
     def _is_authorized(self, policy: EffectivePolicy, path: str, *, action: str) -> bool:
         try:

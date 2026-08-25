@@ -23,6 +23,8 @@ from memento.executor import (
     CreateArgs,
     EmptyArgs,
     GraphArgs,
+    InventoryArgs,
+    InventoryField,
     ListArgs,
     PatchArgs,
     ProposalApplyArgs,
@@ -85,6 +87,7 @@ OperationName = Literal[
     "search",
     "read",
     "list",
+    "inventory",
     "graph",
     "audit",
     "answer",
@@ -121,6 +124,7 @@ _TOOL_ARG_MODELS: dict[str, type[BaseModel]] = {
     "memory_search": SearchArgs,
     "memory_read": ReadArgs,
     "memory_list": ListArgs,
+    "memory_inventory": InventoryArgs,
     "memory_graph": GraphArgs,
     "memory_audit": AuditArgs,
     "memory_answer": AnswerArgs,
@@ -529,6 +533,21 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         return self._service.memory_list(self._context(), path_prefix=path_prefix).model_dump(
             mode="json"
         )
+
+    async def tool_memory_inventory(
+        self,
+        path_prefix: str = "/",
+        fields: list[InventoryField] | None = None,
+        limit: int = 50,
+        cursor: str | None = None,
+    ) -> dict[str, Any]:
+        return self._service.memory_inventory(
+            self._context(),
+            path_prefix=path_prefix,
+            fields=fields,
+            limit=limit,
+            cursor=cursor,
+        ).model_dump(mode="json")
 
     async def tool_memory_graph(self, id_or_path: str, depth: int = 1) -> dict[str, Any]:
         return self._service.memory_graph(

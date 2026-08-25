@@ -9,6 +9,7 @@ import pytest
 
 from memento.repository.asset_packs import (
     asset_version_paths,
+    list_asset_kinds,
     list_asset_versions,
     load_asset_metadata,
     resolve_asset_version,
@@ -43,6 +44,7 @@ def test_write_resolve_and_retention(tmp_path: Path) -> None:
         resolve_asset_version(tmp_path, "12345678-abcd-1234-abcd-123456789abc", "templates", None)
         == "1.10.0"
     )
+    assert list_asset_kinds(tmp_path, "12345678-abcd-1234-abcd-123456789abc") == ("templates",)
     assert list_asset_versions(tmp_path, "12345678-abcd-1234-abcd-123456789abc", "templates") == (
         "1.9.0",
         "1.10.0",

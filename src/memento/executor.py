@@ -41,6 +41,45 @@ class ListArgs(BaseModel):
     path_prefix: str = "/"
 
 
+InventoryField = Literal[
+    "path",
+    "id",
+    "title",
+    "status",
+    "type",
+    "tags",
+    "created_at",
+    "updated_at",
+    "updated_by",
+    "body_sha256",
+    "body_bytes",
+    "assets",
+]
+INVENTORY_FIELDS: tuple[InventoryField, ...] = (
+    "path",
+    "id",
+    "title",
+    "status",
+    "type",
+    "tags",
+    "created_at",
+    "updated_at",
+    "updated_by",
+    "body_sha256",
+    "body_bytes",
+    "assets",
+)
+
+
+class InventoryArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    path_prefix: str = "/"
+    fields: tuple[InventoryField, ...] = Field(default=INVENTORY_FIELDS, min_length=1)
+    limit: int = Field(default=50, ge=1, le=100)
+    cursor: str | None = None
+
+
 class GraphArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -276,6 +315,11 @@ class ListOperation(ExecuteOperationBase):
     args: ListArgs = Field(default_factory=ListArgs)
 
 
+class InventoryOperation(ExecuteOperationBase):
+    op: Literal["inventory"]
+    args: InventoryArgs = Field(default_factory=InventoryArgs)
+
+
 class GraphOperation(ExecuteOperationBase):
     op: Literal["graph"]
     args: GraphArgs
@@ -347,6 +391,7 @@ ExecuteOperation = (
     | SearchOperation
     | ReadOperation
     | ListOperation
+    | InventoryOperation
     | GraphOperation
     | AuditOperation
     | AnswerOperation

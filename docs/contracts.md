@@ -120,11 +120,11 @@ Configured `mcp.tool_surface` controls regular memory-tool discovery. When manag
 
 | Surface | Exposed direct tools |
 |---|---|
-| `compact` | core help/status/search/read/execute, asset staging begin/status and `memory_asset_get`, plus optional `memory_answer` and `memory_route` (**8** to **10**) |
-| `standard` | the **22** direct compatibility tools, including staging, generic asset retrieval and pruning |
-| `read_only` | the **9** discovery, concept-read and asset-read tools; no upload ticket tools |
-| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**13** or **14** with `memory_answer`) |
-| `admin` | the **23**-tool full direct memory surface plus `memory_execute`; managed administrators additionally receive the role-filtered `access_*` family |
+| `compact` | core help/status/search/read/inventory/execute, asset staging begin/status and `memory_asset_get`, plus optional `memory_answer` and `memory_route` (**9** to **11**) |
+| `standard` | the **23** direct compatibility tools, including inventory, staging, generic asset retrieval and pruning |
+| `read_only` | the **10** discovery, concept-read and asset-read tools; no upload ticket tools |
+| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**14** or **15** with `memory_answer`) |
+| `admin` | the **24**-tool full direct memory surface plus `memory_execute`; managed administrators additionally receive the role-filtered `access_*` family |
 
 ### Catalog resources
 
@@ -138,7 +138,7 @@ These MCP resources are always read-only:
 
 They expose generated descriptions, roles, examples and input schemas. Current workflow templates are:
 
-* `inspect` -> `search`, `read`
+* `inspect` -> `search`, `inventory`, `read`
 * `propose` -> `search`, `read`, `propose`, `propose_freeform`, `propose_update`
 * `curate` -> `proposal_list`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_prune`, `create`, `patch`, `rename`
 * `asset_pack` -> `search`, `read`, `propose`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_get`, `asset_stage_begin`, `asset_stage_status`, `asset_prune`
@@ -205,6 +205,7 @@ All tool names below are exact.
 | `memory_search` | `query`, `concept_type?`, `limit=20`, `cursor?`, `search_mode?`, `query_syntax="plain"` | lexical, semantic or hybrid retrieval |
 | `memory_read` | `id_or_path` | path or concept ID; returns the whole concept payload |
 | `memory_list` | `path_prefix="/"` | visible concepts under a prefix |
+| `memory_inventory` | `path_prefix="/"`, `fields?`, `limit=50`, `cursor?` | bounded metadata, body digests and asset summaries without bodies |
 | `memory_graph` | `id_or_path`, `depth=1` | bounded graph neighbours and backlinks |
 | `memory_audit` | `path?` | repository audit for visible scope |
 | `memory_answer` | `question`, `answer_mode="summary"` | optional read-only answer tier |
@@ -309,7 +310,7 @@ Successful `memory_search` returns:
   * `snippet`
 * `next_cursor`
 
-## `memory_read`, `memory_list`, `memory_graph`, `memory_audit`
+## `memory_read`, `memory_list`, `memory_inventory`, `memory_graph`, `memory_audit`
 
 ### `memory_read`
 
@@ -328,6 +329,17 @@ Returns:
   * `id`
   * `title`
   * `type`
+
+### `memory_inventory`
+
+Returns at most 100 authorised concepts in deterministic path order. `path_prefix` is an absolute directory prefix. `cursor` is the last path from the previous page. The default fields are:
+
+* `path`, `id`, `title`, `status`, `type` and `tags`
+* `created_at`, `updated_at` and `updated_by`
+* `body_sha256` and `body_bytes`, computed from the canonical UTF-8 body returned by `memory_read`
+* `assets[]`, with `kind`, ordered `versions`, `latest_version` and `latest_sha256`
+
+The response never includes concept bodies. Namespace and protected-prefix checks prune traversal before frontmatter parsing, digesting, asset lookup, pagination or output.
 
 ### `memory_graph`
 

@@ -307,7 +307,7 @@ Roles are checked as literal membership in the principal record. The service doe
 
 | Role | Permission family |
 |---|---|
-| `reader` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_list`, `memory_graph`, `memory_audit`, optional `memory_answer`, and `memory_execute` where the referenced operation is otherwise allowed |
+| `reader` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_list`, `memory_inventory`, `memory_graph`, `memory_audit`, optional `memory_answer`, and `memory_execute` where the referenced operation is otherwise allowed |
 | `proposer` | `memory_propose`, `memory_propose_freeform`, `memory_propose_update`, `memory_proposal_get`, `memory_proposal_list` |
 | `curator` | `memory_proposal_review`, `memory_proposal_apply`, and create/patch/rename authority |
 | `maintainer` | graph maintenance and Dream execution |
@@ -333,7 +333,7 @@ Protected prefixes are a deployment-level mask and default to an empty list for 
 Rules that matter in practice:
 
 * filtering happens before lexical or semantic ranking, graph traversal, metrics and output
-* direct reads, lists, status counts, answers/citations, proposals, assets and `memory_execute` use the same effective policy
+* direct reads, lists, inventories, status counts, answers/citations, proposals, assets and `memory_execute` use the same effective policy
 * answer-cache scope fingerprints include the protected-prefix mask
 * proposal visibility follows author/curator permissions and namespace scope
 * model-assisted proposal drafting still uses normal read/write prefix checks
@@ -388,6 +388,7 @@ Read, discovery and local routing:
 * `memory_search`
 * `memory_read`
 * `memory_list`
+* `memory_inventory`
 * `memory_graph`
 * `memory_audit`
 * `memory_answer`

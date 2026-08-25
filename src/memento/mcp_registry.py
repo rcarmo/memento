@@ -74,6 +74,17 @@ OPERATION_SPECS: tuple[OperationSpec, ...] = (
         discovery_surfaces=frozenset({READ_ONLY_SURFACE, STANDARD_SURFACE, ADMIN_SURFACE}),
     ),
     OperationSpec(
+        op_name="inventory",
+        tool_name="memory_inventory",
+        method_name="memory_inventory",
+        description="Read a bounded namespace inventory with stable body digests and asset metadata, without concept bodies.",
+        roles=("reader",),
+        discovery_surfaces=frozenset(
+            {READ_ONLY_SURFACE, COMPACT_SURFACE, STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}
+        ),
+        examples=({"path_prefix": "/skills/", "limit": 50},),
+    ),
+    OperationSpec(
         op_name="graph",
         tool_name="memory_graph",
         method_name="memory_graph",
@@ -270,8 +281,8 @@ OPERATION_SPEC_BY_OP = {item.op_name: item for item in OPERATION_SPECS}
 
 WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
     "inspect": {
-        "description": "Find relevant concepts, then read exact paths returned from search.",
-        "operations": ["search", "read"],
+        "description": "Find relevant concepts, inventory namespaces, then read exact paths when bodies are needed.",
+        "operations": ["search", "inventory", "read"],
     },
     "propose": {
         "description": "Search and read context, then submit a proposal instead of writing directly.",

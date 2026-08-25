@@ -29,6 +29,7 @@ from memento.config import (
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.proposals import ProposalStatus, update_proposal_status
 from memento.derived.index import DerivedIndex
+from memento.repository.asset_packs import write_asset_version
 from memento.repository.frontmatter import serialize_concept
 from memento.repository.git import GitRepositoryPaths, bootstrap_repository, get_main_revision
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter, ConceptStatus
@@ -39,6 +40,7 @@ from memento.server import (
     normalize_execute_tool_arguments,
 )
 from memento.service import MemoryService, RenameChange, ServiceContext, ServiceDependencies
+from memento.skill_packs import validate_asset_pack
 from memento.staged_assets import StagedAssetStore
 
 
@@ -326,6 +328,189 @@ def test_memory_list_includes_light_frontmatter_metadata(
             "tags": ("shared",),
         }
     ]
+
+
+def test_memory_inventory_returns_stable_digests_assets_and_pagination(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    concept_id = "12345678-abcd-1234-abcd-123456789abc"
+    body = "# Inventory asset\n\nStable body."
+    write_concept(
+        repo_paths.current_dir / "skills" / "inventory.md",
+        concept_id=concept_id,
+        concept_type="concept",
+        title="Inventory asset",
+        description="Digest fixture.",
+        tags=("inventory", "skill"),
+        body=body,
+    )
+    write_concept(
+        repo_paths.current_dir / "root.md",
+        concept_id="root-id",
+        concept_type="concept",
+        title="Root concept",
+        description="Pagination ordering fixture.",
+        tags=(),
+        body="# Root",
+    )
+    latest_sha256 = ""
+    for version in ("1.0.0", "1.1.0"):
+        _encoded, zip_bytes = _skill_zip(f"asset {version}\n")
+        pack = validate_asset_pack(asset_kind="templates", version=version, zip_bytes=zip_bytes)
+        write_asset_version(
+            repo_paths.current_dir,
+            concept_id=concept_id,
+            concept_path="/skills/inventory.md",
+            asset_kind="templates",
+            version=version,
+            zip_bytes=pack.zip_bytes,
+            manifest=pack.manifest,
+            accepted_by="smith",
+            source_proposal_id=f"proposal-{version}",
+        )
+        latest_sha256 = pack.manifest.sha256
+
+    payload = success_data(service.memory_inventory(smith, path_prefix="/skills/", limit=50))
+    assert payload["next_cursor"] is None
+    assert len(payload["entries"]) == 1
+    entry = payload["entries"][0]
+    assert entry["path"] == "/skills/inventory.md"
+    assert entry["created_at"] == "2026-07-17T12:00:00Z"
+    assert entry["updated_at"] == "2026-07-17T12:00:00Z"
+    assert entry["updated_by"] == "rui/tests"
+    assert entry["body_sha256"] == hashlib.sha256(body.encode("utf-8")).hexdigest()
+    assert entry["body_bytes"] == len(body.encode("utf-8"))
+    assert "body" not in entry
+    assert entry["assets"] == [
+        {
+            "kind": "templates",
+            "versions": ("1.0.0", "1.1.0"),
+            "latest_version": "1.1.0",
+            "latest_sha256": latest_sha256,
+        }
+    ]
+
+    first_page = success_data(service.memory_inventory(flint, limit=1, fields=["path"]))
+    assert first_page["entries"] == [{"path": "/instances/smith.md"}]
+    assert first_page["next_cursor"] == "/instances/smith.md"
+    second_page = success_data(
+        service.memory_inventory(
+            flint,
+            limit=1,
+            fields=["path"],
+            cursor=first_page["next_cursor"],
+        )
+    )
+    assert second_page["entries"] == [{"path": "/projects/piclaw.md"}]
+    assert second_page["next_cursor"] == "/projects/piclaw.md"
+    final_page = success_data(
+        service.memory_inventory(
+            flint,
+            limit=1,
+            fields=["path"],
+            cursor=second_page["next_cursor"],
+        )
+    )
+    assert final_page["entries"] == [{"path": "/root.md"}]
+    assert final_page["next_cursor"] == "/root.md"
+    last_page = success_data(
+        service.memory_inventory(
+            flint,
+            limit=1,
+            fields=["path"],
+            cursor=final_page["next_cursor"],
+        )
+    )
+    assert last_page["entries"] == [{"path": "/skills/inventory.md"}]
+    assert last_page["next_cursor"] is None
+
+
+def test_memory_inventory_filters_protected_namespaces_before_parsing(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+    ghost: ServiceContext,
+) -> None:
+    hidden = repo_paths.current_dir / "secret" / "malformed.md"
+    hidden.write_text("not valid frontmatter\n", encoding="utf-8")
+
+    visible = success_data(service.memory_inventory(flint, fields=["path"]))
+    assert [entry["path"] for entry in visible["entries"]] == [
+        "/instances/smith.md",
+        "/projects/piclaw.md",
+    ]
+    forbidden = service.memory_inventory(flint, path_prefix="/secret/")
+    assert forbidden.status == "error"
+    assert forbidden.error_class == "forbidden"
+
+    hidden.unlink()
+    protected = success_data(service.memory_inventory(ghost, path_prefix="/secret/"))
+    assert [entry["path"] for entry in protected["entries"]] == ["/secret/ghost.md"]
+
+
+def test_memory_inventory_parses_only_the_bounded_page(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+) -> None:
+    malformed = repo_paths.current_dir / "projects" / "zzz-malformed.md"
+    malformed.write_text("not valid frontmatter\n", encoding="utf-8")
+
+    first = success_data(
+        service.memory_inventory(
+            flint,
+            path_prefix="/projects/",
+            fields=["path"],
+            limit=1,
+        )
+    )
+    assert first["entries"] == [{"path": "/projects/piclaw.md"}]
+    assert first["next_cursor"] == "/projects/piclaw.md"
+
+    invalid_page = service.memory_inventory(
+        flint,
+        path_prefix="/projects/",
+        fields=["path"],
+        limit=1,
+        cursor=first["next_cursor"],
+    )
+    assert invalid_page.status == "error"
+    assert invalid_page.error_class == "validation_error"
+
+
+def test_memory_inventory_is_available_directly_and_via_execute(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    flint: ServiceContext,
+) -> None:
+    server = _server_for(
+        service,
+        service_config.model_copy(update={"mcp": MCPConfig(tool_surface="compact")}),
+    )
+    tools = {item["name"] for item in server.discover_tools()["tools"]}
+    assert "memory_inventory" in tools
+    result = service.memory_execute(
+        flint,
+        plan={
+            "operations": [
+                {
+                    "op": "inventory",
+                    "args": {
+                        "path_prefix": "/projects/",
+                        "fields": ["path", "body_sha256", "updated_at"],
+                        "limit": 10,
+                    },
+                }
+            ]
+        },
+    )
+    inventory = success_data(result)["trace"][0]["data"]
+    assert inventory["entries"][0]["path"] == "/projects/piclaw.md"
+    assert "body_sha256" in inventory["entries"][0]
+    assert "body" not in inventory["entries"][0]
 
 
 def test_memory_graph_serializes_typed_edges_and_preserves_scope(
@@ -692,11 +877,11 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     expected_counts: tuple[
         tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
     ] = (
-        ("compact", 8),
-        ("standard", 22),
-        ("read_only", 9),
-        ("curator", 13),
-        ("admin", 23),
+        ("compact", 9),
+        ("standard", 23),
+        ("read_only", 10),
+        ("curator", 14),
+        ("admin", 24),
     )
     for surface, count in expected_counts:
         server = _server_for(
@@ -713,6 +898,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "status",
         "search",
         "read",
+        "inventory",
         "asset_stage_begin",
         "asset_stage_status",
         "asset_get",
@@ -755,7 +941,11 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "prompt": "publish_asset_pack",
     }
     workflow = json.loads(asyncio.run(server.resource_template_workflow("inspect"))["text"])
-    assert [item["operation"] for item in workflow["operations"]] == ["search", "read"]
+    assert [item["operation"] for item in workflow["operations"]] == [
+        "search",
+        "inventory",
+        "read",
+    ]
     propose_workflow = json.loads(asyncio.run(server.resource_template_workflow("propose"))["text"])
     assert [item["operation"] for item in propose_workflow["operations"]] == ["search", "read"]
     assert [item["operation"] for item in propose_workflow["execute_only_operations"]] == [
@@ -1454,6 +1644,7 @@ def test_memory_route_disabled_and_server_discovery(
         "memory_status",
         "memory_search",
         "memory_read",
+        "memory_inventory",
         "memory_route",
         "memory_asset_stage_begin",
         "memory_asset_stage_status",
