@@ -14,7 +14,9 @@ Graph evidence includes the 2,000-node fixture performance record and a DiskStat
 
 ## Release and deployment evidence
 
-[`release-0.3.23.md`](release-0.3.23.md) records the immutable release identity, DiskStation container and MCP acceptance checks, disabled production answer surface, tagged-source corpus comparison and remaining operational gaps. It distinguishes release gates from checks that actually ran against the live service.
+[`release-0.3.24.md`](release-0.3.24.md) records the current immutable release identity, DiskStation container and MCP acceptance checks, bounded inventory and manifest comparison results, progressive embedding state and remaining operational gaps.
+
+[`release-0.3.23.md`](release-0.3.23.md) remains the historical answer-evidence, redeployment and tagged-source corpus record. Both reports distinguish release gates from checks that actually ran against the live service.
 
 ## Reproduction commands
 

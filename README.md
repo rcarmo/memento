@@ -35,7 +35,7 @@ The common read path is short:
 search -> read -> follow links if needed
 ```
 
-The compact MCP surface exposes those frequent operations and keeps less common schemas in `memory://catalog` and `memory://workflow/{goal}`. `memory_execute` can chain known operations using saved results, such as searching for a project and reading the first match.
+The compact MCP surface exposes those frequent operations and keeps less common schemas in `memory://catalog` and `memory://workflow/{goal}`. `memory_inventory` returns bounded metadata, body digests and asset summaries without concept bodies. The execute-only `compare_manifest` operation compares a caller-provided local manifest with one authorised namespace page; Memento treats local paths as opaque labels and never reads caller files. `memory_execute` can also chain known operations using saved results, such as searching for a project and reading the first match.
 
 Writes normally go through review:
 
@@ -55,7 +55,7 @@ FTS5 handles exact and lexical search. Markdown links supply backlinks and graph
 
 GTE-small can add semantic ranking when different wording describes the same subject. Embeddings live in persistent `derived.sqlite`: they remain rebuildable from Markdown, but routine container updates and derived rebuilds preserve reusable vectors. On memory-constrained hosts, progressive mode processes one missing or stale concept at a time in a short-lived, low-priority, single-threaded worker, pauses for recent requests or high sampled CPU use, and releases model RAM after each item.
 
-A fine-tuned 26M-parameter [Needle][needle] model can route a small set of natural-language read requests. It emits a candidate action that Memento validates before running. When configured, `memory_answer` assembles a versioned, authorization-scoped evidence set before asking a model for a cited answer. Secret intent abstains before cache lookup, retrieval, repository reads, graph access or model invocation. Other optional model slots can draft proposals and maintenance suggestions; deployments without a configured provider keep the answer tool disabled.
+A fine-tuned 26M-parameter [Needle][needle] model can route a small set of natural-language read requests. It emits a candidate action that Memento validates before running. When configured, `memory_answer` assembles a versioned, authorisation-scoped evidence set before asking a model for a cited answer. Secret intent abstains before cache lookup, retrieval, repository reads, graph access or model invocation. Other optional model slots can draft proposals and maintenance suggestions; deployments without a configured provider keep the answer tool disabled.
 
 Model setup and measurements live in [`docs/semantic-search.md`](docs/semantic-search.md), [`docs/needle-fine-tuning.md`](docs/needle-fine-tuning.md) and [`docs/needle-performance.md`](docs/needle-performance.md).
 
@@ -65,7 +65,7 @@ A concept can carry an immutable versioned asset pack as an ordinary Git blob. T
 
 Skill concepts live under `/skills/`, carry the `skill` tag and match the ZIP-root `SKILL.md` byte-for-byte. Reviewers check the generated manifest and digest before approval; clients check them again against the ZIP returned by `memory_asset_get`. `memento-skill-import` validates a recalled pack before placing it in a workspace. Memento does not install or execute recalled skills on behalf of a client.
 
-The repository also ships an Agent Skills package at [`.agents/skills/memento/SKILL.md`](.agents/skills/memento/SKILL.md). It gives Pi, Piclaw and Codex agents a compact workflow for search, reads, proposals, curation, namespaces, assets and retry reconciliation.
+The repository also ships an Agent Skills package at [`.agents/skills/memento/SKILL.md`](.agents/skills/memento/SKILL.md). It gives Pi, Piclaw and Codex agents a compact workflow for search, reads, inventory, manifest comparison, proposals, curation, namespaces, assets and retry reconciliation.
 
 ## Visual Debugging
 

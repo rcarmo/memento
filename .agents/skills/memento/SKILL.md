@@ -1,6 +1,6 @@
 ---
 name: memento
-description: Use Memento shared memory effectively through MCP. Covers discovery, scoped search and reading, proposals and curation, assets and shared skills, namespace policies, retry reconciliation, and the trusted graph debugger. Use whenever an agent needs to recall, file, review, or diagnose durable shared knowledge.
+description: Use Memento shared memory effectively through MCP. Covers discovery, scoped search and reading, inventory and manifest comparison, proposals and curation, assets and shared skills, namespace policies, retry reconciliation, and the trusted graph debugger. Use whenever an agent needs to recall, file, compare, review, or diagnose durable shared knowledge.
 license: MIT
 compatibility: Requires an MCP client connected to a Memento Streamable HTTP endpoint.
 ---
@@ -65,13 +65,17 @@ For a bounded compound read, use `memory_execute` with saved references:
 
 Keep plans small. Use saved references instead of copying paths between steps. Project only the fields you need when responses may be large.
 
+For a bounded namespace overview, use `memory_inventory`. It returns stable path-ordered metadata, canonical body digests and asset summaries without concept bodies. Use its `next_cursor` for another page rather than raising the limit beyond the advertised ceiling.
+
+To compare local documents with Memento, build a local manifest and pass it to the execute-only `compare_manifest` operation. It accepts at most 50 caller-supplied rows and one authorised inventory page, then separates matching, differing, local-only and Memento-only records. Memento never reads the local paths; treat them as opaque labels. Do not look for a direct `compare_manifest` tool.
+
 When `memory_answer` is enabled, use it for a bounded cited answer rather than as a shortcut around search policy:
 
 ```text
 memory_answer(question="Which rack owns Atlas?", answer_mode="summary")
 ```
 
-Inspect `evidence` as well as the prose. The query profile, authorization fingerprint, retrieval strategy, ranks, concept state and support chains explain what reached the reader. Graph-derived citations include their primary anchor chain. `policy_abstention` means the question requested secret material and no cache, retrieval or model call ran; `evidence_abstention` means authorized support was insufficient. Do not rephrase either result to evade the policy.
+Inspect `evidence` as well as the prose. The query profile, authorisation fingerprint, retrieval strategy, ranks, concept state and support chains explain what reached the reader. Graph-derived citations include their primary anchor chain. `policy_abstention` means the question requested secret material and no cache, retrieval or model call ran; `evidence_abstention` means authorised support was insufficient. Do not rephrase either result to evade the policy.
 
 Explicit personal/work wording narrows evidence to that namespace. Current questions exclude deprecated, stale and conflicting concepts, while historical wording may deliberately retain them.
 
@@ -149,7 +153,9 @@ If a mutation times out or the connection drops, reconcile before retrying:
 
 Paths define knowledge domains. A deployment can share `/skills/` and `/public/` while isolating `/work/`, `/personal/` and `/infrastructure/` through principal read/write prefixes.
 
-Never accept a principal name as a memory operation argument. Identity comes from the authenticated MCP request. Search ranking, graph traversal and writes are filtered by the effective namespace policy.
+When `authorization.protected_read_prefixes` is configured, a broad `/` read grant covers only unprotected paths. A non-admin principal needs an explicit equal or nested read prefix for each protected namespace it should see. The `admin` role bypasses that mask but does not imply ordinary read or write roles.
+
+Never accept a principal name as a memory operation argument. Identity comes from the authenticated MCP request. Search ranking, inventory, graph traversal and writes are filtered by the effective namespace policy before content is ranked, parsed or returned.
 
 The trusted `/graph` debugger can show the full repository and simulate managed principals with **View as**. Simulation is diagnostic only and is labelled as not being an authorisation boundary.
 
@@ -177,7 +183,7 @@ Before reporting success:
 * confirm the intended path is readable by the expected principal;
 * confirm proposal backlog or operation status when writes were involved;
 * verify links resolve and tags are present;
-* verify embedding readiness only when semantic behavior matters;
+* verify embedding readiness only when semantic behaviour matters;
 * keep tokens and client configuration out of concepts and logs.
 
 ## Access Management

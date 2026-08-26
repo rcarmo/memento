@@ -35,13 +35,21 @@ Real GTE and Needle model coverage runs against the built container. Pointer-awa
 
 ## Answer-evidence checks for 0.3.23
 
-The 0.3.23 answer path adds deterministic query profiling, secret-first abstention, authorization-scoped evidence, hybrid top-5/top-10 escalation and bounded relational support chains to `memory_answer`. It also fixes natural-language lexical normalization and typed `memory_graph` edge serialization.
+The 0.3.23 answer path adds deterministic query profiling, secret-first abstention, authorisation-scoped evidence, hybrid top-5/top-10 escalation and bounded relational support chains to `memory_answer`. It also fixes natural-language lexical normalization and typed `memory_graph` edge serialization.
 
 Release validation must cover lexical misses, stop-word-only input, repeated terms and explicit `query_syntax="fts5"`; namespace isolation across retrieval and graph traversal; secret abstention before cache or model access; stale/current conflicts and supersession; prompt-injection excerpts marked as untrusted; exact-revision citations; and complete graph anchor chains.
 
 The disposable 23-concept corpus passed all five policy gates with GTE-small ready. A post-release rerun at the exact `0.3.23` commit reached 333052 KiB peak RSS against the saved 332920 KiB `0.3.22` baseline; query-phase growth was 6408 KiB against 5928 KiB. Plain lexical top-5 mean recall rose from 0.0000 to 0.8333 while hybrid top-5 recall remained 0.8974. The complete release, production and corpus record is [`docs/evidence/release-0.3.23.md`](evidence/release-0.3.23.md).
 
 The production compact surface has answers disabled and no configured provider slots, so live acceptance verifies the absent `memory_answer` tool rather than claiming a model or secret-abstention result. Those paths remain release-test requirements whenever the feature is enabled.
+
+## Inventory and comparison checks for 0.3.24
+
+The 0.3.24 read path adds direct bounded `memory_inventory`, execute-only `compare_manifest` and optional protected read namespaces. It also preserves the original operation ID across failed idempotent retries, serialises status-only `deprecated` and `tombstone` patches correctly, and returns repository audit issues from slotted dataclasses.
+
+Release validation must cover deterministic inventory pagination and field projection; digest and byte parity with `memory_read`; asset summaries; namespace pruning before parsing; 50-row manifest and namespace ceilings; explicit matching, differing, local-only and Memento-only classifications; timezone-aware likely-newer decisions; and rejection of paths that escape the authorised prefix. `compare_manifest` must remain absent from the direct tool surface and available through `memory_execute`.
+
+Protected-prefix checks must show that a broad `/` reader loses protected paths, an explicit equal or nested grant restores them and `admin` bypasses the mask without inheriting ordinary content roles. Status-only patch replay and failed-operation retry tests must verify idempotent operation identity. The complete release and live deployment record is [`docs/evidence/release-0.3.24.md`](evidence/release-0.3.24.md).
 
 ## Progressive embedding release checks
 
@@ -53,4 +61,4 @@ Base-image manifests and GitHub Actions are pinned. SBOM attachment remains a fu
 
 ## Access-management release checks
 
-Release validation must cover the v7 control migration, bootstrap rename to `sandbox`, admin-only tool discovery, `/admin` authentication, one-time credential behavior and the explicit offline master-key rotation command. Runtime deployment requires `MEMENTO_ADMIN_MASTER_KEY`; per-principal environment tokens are bootstrap/recovery inputs.
+Release validation must cover the v7 control migration, bootstrap rename to `sandbox`, admin-only tool discovery, `/admin` authentication, one-time credential behaviour and the explicit offline master-key rotation command. Runtime deployment requires `MEMENTO_ADMIN_MASTER_KEY`; per-principal environment tokens are bootstrap/recovery inputs.

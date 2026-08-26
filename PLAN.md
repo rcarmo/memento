@@ -27,17 +27,18 @@ Memento's repository, transaction, MCP, proposal, search, model, debugger and co
 
 * Authenticated Streamable HTTP through uMCP
 * Compact and full tool surfaces, catalog/workflow resources and `memory_execute`
+* Bounded namespace inventory plus execute-only local-manifest comparison without server-side local file access
 * FTS5 search, backlinks, graph neighbourhoods and index rebuild/parity checks
 * Local GTE semantic and hybrid search with persistent progressive state and short-lived low-priority single-item workers
 * Fine-tuned Needle shallow routing through the Rust runtime
-* Cited answers with versioned authorization-scoped evidence, secret-first abstention, exact cache and bounded relational support chains, plus hot memory, proposal drafting and Dream modes behind independent settings
+* Cited answers with versioned authorisation-scoped evidence, secret-first abstention, exact cache and bounded relational support chains, plus hot memory, proposal drafting and Dream modes behind independent settings
 
 ### Operations
 
 * Non-root multi-architecture container with read-only root and one writable state mount
 * Structured logs, metrics, health/readiness, graceful drain and recovery
 * GHCR release pipeline for amd64 and arm64, including Westmere scalar inference
-* Healthy immutable `0.3.23` Portainer deployment on the Intel J3455 DiskStation, with the acceptance record in [`docs/evidence/release-0.3.23.md`](docs/evidence/release-0.3.23.md)
+* Healthy immutable `0.3.24` Portainer deployment on the Intel J3455 DiskStation, with the acceptance record in [`docs/evidence/release-0.3.24.md`](docs/evidence/release-0.3.24.md)
 
 ### Visual Memory Debugger
 
@@ -49,6 +50,8 @@ Memento's repository, transaction, MCP, proposal, search, model, debugger and co
 
 * Repeat model performance checks on a real ARM64 host.
 * Enforce or explain the missing production PIDs limit requested by the DiskStation Compose profile.
+* Complete the current progressive semantic-embedding refresh and confirm that repository, index and embedding revisions converge.
+* Decide when to enable protected read prefixes on the existing DiskStation configuration and migrate broad-reader grants explicitly.
 * Run a live restore drill for the selected primary deployment path.
 * Attach SBOM material to published releases.
 * Add a TLS reverse proxy before exposing any HTTP surface beyond the trusted LAN.
