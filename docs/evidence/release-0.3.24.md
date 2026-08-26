@@ -53,7 +53,9 @@ Lexical search, inventory, manifest comparison and explicit graph traversal were
 
 At `2026-08-26T00:02:40Z`, graph status reported 16 completed paths from the original 154-path queued scope, `pending: true`, `running: false`, `pause_reason: "cpu-sampling"`, `current_path: null` and no last error. MCP status consequently reported `embedding_revision: "partial"` and 138 of 154 embeddings not ready. A 30-minute observer reached its client timeout with work still pending, rather than a worker failure.
 
-The persisted state should remain mounted and the progressive worker should be allowed to converge. Semantic and hybrid ranking must not be described as ready until `memory_status` reports readiness and the repository, index and embedding revisions agree.
+At `2026-08-26T03:02:05Z`, graph status reported all 154 paths complete, `pending: false`, `running: false`, `current_path: null` and no last error. Authenticated MCP status reported semantic readiness with the `rust-gte` model, 384 dimensions and SQLite vector search enabled. Repository, lexical-index and embedding revisions all matched `d16f3f7c84a8bd0d5a7aee5e0b8a6d924b4e854f`, with `index_stale: false`; an authenticated semantic search completed without warnings.
+
+The mounted progressive state converged without another refresh or container restart. Semantic and hybrid ranking are ready for the current repository revision.
 
 ## Protected namespaces and remaining work
 
@@ -61,7 +63,6 @@ The release and configuration examples support `authorization.protected_read_pre
 
 Remaining operational work is:
 
-* allow the progressive embedding refresh to finish and record convergence;
 * enforce or explain the missing production PIDs limit;
 * migrate principal grants before enabling protected read prefixes on the existing deployment;
 * run a clean-host restore drill;

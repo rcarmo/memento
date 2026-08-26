@@ -54,7 +54,7 @@ The trusted-LAN service runs `ghcr.io/rcarmo/memento:0.3.24` from the immutable 
 
 The existing production configuration has not yet opted into `authorization.protected_read_prefixes`; enabling the example's `/work/`, `/personal/` and `/infrastructure/` mask requires an explicit migration of broad-reader grants. Production deliberately omits `memory_answer`: the compact answer tool is disabled and no provider slots are configured. Release tests cover protected namespace policy, the versioned evidence contract and secret-first abstention, but the DiskStation check does not claim those disabled paths as live acceptance.
 
-Docker inspection still reports no effective PIDs limit despite the template's `pids_limit: 128`; operators must resolve that Synology/Compose discrepancy before treating the limit as enforced. The release changed the derived embedding revision, so the low-priority progressive worker is rebuilding the 154-concept corpus. Lexical search and repository/index parity remain healthy while semantic readiness reports `partial`; wait for convergence before relying on semantic or hybrid ranking.
+Docker inspection still reports no effective PIDs limit despite the template's `pids_limit: 128`; operators must resolve that Synology/Compose discrepancy before treating the limit as enforced. The low-priority progressive worker completed the release's 154-concept rebuild on 2026-08-26 without an error or restart. Repository, lexical-index and embedding revisions now agree, and semantic and hybrid ranking are ready.
 
 ## Progressive embeddings
 

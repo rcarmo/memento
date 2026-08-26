@@ -50,7 +50,6 @@ Memento's repository, transaction, MCP, proposal, search, model, debugger and co
 
 * Repeat model performance checks on a real ARM64 host.
 * Enforce or explain the missing production PIDs limit requested by the DiskStation Compose profile.
-* Complete the current progressive semantic-embedding refresh and confirm that repository, index and embedding revisions converge.
 * Decide when to enable protected read prefixes on the existing DiskStation configuration and migrate broad-reader grants explicitly.
 * Run a live restore drill for the selected primary deployment path.
 * Attach SBOM material to published releases.
