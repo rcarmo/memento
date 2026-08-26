@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sqlite3
 from collections.abc import Generator
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -16,9 +17,11 @@ from memento.control.operations import (
     get_operation,
 )
 from memento.repository.git import (
+    GitError,
     GitRepositoryPaths,
     bootstrap_repository,
     get_main_revision,
+    get_path_commit_timestamp,
     materialize_current_checkout,
 )
 from memento.repository.lease import WriterLeaseError, acquire_writer_lease
@@ -52,6 +55,24 @@ def repo_paths(tmp_path: Path) -> GitRepositoryPaths:
     )
     bootstrap_repository(paths, seed)
     return paths
+
+
+def test_path_commit_timestamp_comes_from_git_history(
+    repo_paths: GitRepositoryPaths,
+) -> None:
+    timestamp = get_path_commit_timestamp(
+        repo_paths,
+        revision=get_main_revision(repo_paths),
+        repository_path="/instances/smith.md",
+    )
+    parsed = datetime.fromisoformat(timestamp)
+    assert parsed.tzinfo is not None
+    with pytest.raises(GitError, match="invalid repository path"):
+        get_path_commit_timestamp(
+            repo_paths,
+            revision=get_main_revision(repo_paths),
+            repository_path="/instances/../secret.md",
+        )
 
 
 def test_empty_repository_bootstrap_materializes_and_recovers(tmp_path: Path) -> None:

@@ -81,6 +81,30 @@ def get_main_revision(paths: GitRepositoryPaths) -> str:
     return _git_stdout("--git-dir", paths.bare_dir, "rev-parse", "refs/heads/main").strip()
 
 
+def get_path_commit_timestamp(
+    paths: GitRepositoryPaths, *, revision: str, repository_path: str
+) -> str:
+    if not repository_path.startswith("/") or repository_path.startswith("//"):
+        raise GitError("invalid repository path")
+    path = repository_path.removeprefix("/")
+    if not path or any(part in {"", ".", ".."} for part in path.split("/")):
+        raise GitError("invalid repository path")
+    timestamp = _git_stdout(
+        "--git-dir",
+        paths.bare_dir,
+        "log",
+        "-1",
+        "--diff-filter=A",
+        "--format=%aI",
+        revision,
+        "--",
+        path,
+    ).strip()
+    if not timestamp:
+        raise GitError(f"repository path has no commit timestamp: {repository_path}")
+    return timestamp
+
+
 def create_operation_worktree(
     paths: GitRepositoryPaths, *, op_id: str, base_revision: str
 ) -> Worktree:

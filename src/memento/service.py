@@ -125,6 +125,7 @@ from memento.repository.git import (
     GitRepositoryPaths,
     diff_main_paths,
     get_main_revision,
+    get_path_commit_timestamp,
 )
 from memento.repository.links import extract_structural_links, rewrite_links_for_rename
 from memento.repository.paths import PathSafetyError, validate_repository_write_path
@@ -144,10 +145,15 @@ from memento.router import (
 from memento.skill_packs import (
     MAX_ZIP_BYTES,
     SkillPackManifest,
+    parse_stable_semver,
     validate_asset_pack,
     validate_skill_pack,
 )
 from memento.staged_assets import StagedAssetError, StagedAssetStore
+
+_MAX_ASSET_METADATA_KINDS = 50
+_MAX_ASSET_METADATA_VERSIONS = 50
+_MAX_ASSET_METADATA_FILES = 500
 
 
 class ServiceError(RuntimeError):
@@ -867,6 +873,134 @@ class MemoryService:
                     },
                 },
                 repo_revision=inventory.repo_revision,
+            )
+        except Exception as exc:
+            return self._failure(exc)
+
+    def memory_asset_metadata(
+        self,
+        context: ServiceContext,
+        *,
+        id_or_path: str | None = None,
+        path_prefix: str | None = None,
+        asset_kind: str | None = None,
+        version: str | None = None,
+        limit: int = 20,
+        cursor: str | None = None,
+        version_limit: int = 5,
+        include_files: bool = False,
+        file_limit: int = 50,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        try:
+            policy = self._policy(context)
+            require_role(policy, "reader")
+            if id_or_path is not None and path_prefix is not None:
+                raise ServiceError("asset metadata accepts id_or_path or path_prefix, not both")
+            if id_or_path is not None and cursor is not None:
+                raise ServiceError("asset metadata cursor requires path_prefix scope")
+            if version is not None and asset_kind is None:
+                raise ServiceError("asset metadata version requires asset_kind")
+            if limit < 1 or limit > 20:
+                raise ServiceError("asset metadata limit must be between 1 and 20")
+            if version_limit < 1 or version_limit > 5:
+                raise ServiceError("asset metadata version_limit must be between 1 and 5")
+            if file_limit < 1 or file_limit > 100:
+                raise ServiceError("asset metadata file_limit must be between 1 and 100")
+            if asset_kind is not None:
+                validate_asset_kind(asset_kind)
+            if version is not None:
+                parse_stable_semver(version)
+
+            prefix: str | None = None
+            if id_or_path is not None:
+                selected = [self._resolve_path(id_or_path, policy=policy, action="read")]
+                next_cursor = None
+            else:
+                prefix = self._validate_inventory_prefix(path_prefix or "/")
+                if not self._inventory_prefix_is_readable(policy, prefix):
+                    raise ForbiddenError(
+                        f"principal {policy.principal} cannot read asset metadata under {prefix}"
+                    )
+                if cursor is not None and (
+                    not cursor.startswith(prefix) or not cursor.endswith(".md")
+                ):
+                    raise ServiceError(
+                        "asset metadata cursor must be a concept path under path_prefix"
+                    )
+                paths = list_bundle_paths(
+                    self._deps.repo_paths.current_dir,
+                    include_path=lambda candidate: (
+                        candidate.startswith(prefix)
+                        and self._is_authorized(policy, candidate, action="read")
+                    ),
+                    include_directory=lambda directory: (
+                        (prefix.startswith(directory) or directory.startswith(prefix))
+                        and self._inventory_prefix_is_readable(policy, directory)
+                    ),
+                )
+                candidates = [path for path in paths if cursor is None or path > cursor]
+                selected = candidates[:limit]
+                next_cursor = selected[-1] if len(candidates) > len(selected) and selected else None
+
+            revision = get_main_revision(self._deps.repo_paths)
+            entries: list[dict[str, Any]] = []
+            kind_records = 0
+            version_records = 0
+            file_records = 0
+            for path in selected:
+                authorize_path(policy, path, action="read")
+                entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
+                body_bytes = entry.document.body.encode("utf-8")
+                current_body_sha256 = hashlib.sha256(body_bytes).hexdigest()
+                assets, kinds_seen, versions_seen, files_seen = self._asset_metadata_assets(
+                    concept_id=str(entry.document.frontmatter.id),
+                    current_body_sha256=current_body_sha256,
+                    revision=revision,
+                    asset_kind=asset_kind,
+                    version=version,
+                    version_limit=version_limit,
+                    include_files=include_files,
+                    file_limit=file_limit,
+                    kind_budget=_MAX_ASSET_METADATA_KINDS - kind_records,
+                    version_budget=_MAX_ASSET_METADATA_VERSIONS - version_records,
+                    file_budget=_MAX_ASSET_METADATA_FILES - file_records,
+                )
+                kind_records += kinds_seen
+                version_records += versions_seen
+                file_records += files_seen
+                if kind_records > _MAX_ASSET_METADATA_KINDS:
+                    raise ServiceError(
+                        "asset metadata exceeds 50 asset kinds; narrow path_prefix or asset_kind"
+                    )
+                if version_records > _MAX_ASSET_METADATA_VERSIONS:
+                    raise ServiceError(
+                        "asset metadata exceeds 50 version records; narrow the request"
+                    )
+                if file_records > _MAX_ASSET_METADATA_FILES:
+                    raise ServiceError(
+                        "asset metadata exceeds 500 file records; lower file_limit or narrow the request"
+                    )
+                entries.append(
+                    {
+                        "path": path,
+                        "id": entry.document.frontmatter.id,
+                        "current_concept_body_sha256": current_body_sha256,
+                        "current_concept_body_bytes": len(body_bytes),
+                        "asset_present": bool(assets),
+                        "assets": assets,
+                    }
+                )
+            return self._success(
+                {
+                    "id_or_path": id_or_path,
+                    "path_prefix": prefix,
+                    "asset_kind": asset_kind,
+                    "version": version,
+                    "include_files": include_files,
+                    "entries": entries,
+                    "next_cursor": next_cursor,
+                },
+                repo_revision=revision,
             )
         except Exception as exc:
             return self._failure(exc)
@@ -1805,6 +1939,7 @@ class MemoryService:
                 manifest=manifest,
                 accepted_by=actor,
                 source_proposal_id=proposal_id,
+                created_at=self._now(),
             )
         )
 
@@ -3872,6 +4007,219 @@ class MemoryService:
                 }
             )
         return assets
+
+    def _asset_metadata_assets(
+        self,
+        *,
+        concept_id: str,
+        current_body_sha256: str,
+        revision: str,
+        asset_kind: str | None,
+        version: str | None,
+        version_limit: int,
+        include_files: bool,
+        file_limit: int,
+        kind_budget: int,
+        version_budget: int,
+        file_budget: int,
+    ) -> tuple[list[dict[str, Any]], int, int, int]:
+        assets: list[dict[str, Any]] = []
+        version_records = 0
+        file_records = 0
+        root = self._deps.repo_paths.current_dir
+        assets_root = root / ".assets"
+        concept_assets = assets_root / concept_id
+        if assets_root.is_symlink() or concept_assets.is_symlink():
+            raise ServiceError("asset metadata directories must not be symbolic links")
+        if concept_assets.exists() and not concept_assets.is_dir():
+            raise ServiceError("concept asset metadata path must be a directory")
+        kinds = list_asset_kinds(root, concept_id)
+        selected_kinds = tuple(kind for kind in kinds if asset_kind in {None, kind})
+        if len(selected_kinds) > kind_budget:
+            raise ServiceError(
+                "asset metadata exceeds 50 asset kinds; narrow path_prefix or asset_kind"
+            )
+        for kind in selected_kinds:
+            kind_directory = concept_assets / kind
+            if kind_directory.is_symlink() or not kind_directory.is_dir():
+                raise ServiceError("asset kind metadata path must be a regular directory")
+            versions = list_asset_versions(root, concept_id, kind)
+            if not versions:
+                continue
+            detailed_versions: tuple[str, ...]
+            if version is not None:
+                detailed_versions = (version,) if version in versions else ()
+            else:
+                detailed_versions = tuple(reversed(versions[-version_limit:]))
+            if len(detailed_versions) > version_budget - version_records:
+                raise ServiceError("asset metadata exceeds 50 version records; narrow the request")
+            details: list[dict[str, Any]] = []
+            for detailed_version in detailed_versions:
+                detail, files_seen = self._asset_version_metadata(
+                    concept_id=concept_id,
+                    current_body_sha256=current_body_sha256,
+                    revision=revision,
+                    asset_kind=kind,
+                    version=detailed_version,
+                    include_files=include_files,
+                    file_limit=file_limit,
+                )
+                details.append(detail)
+                file_records += files_seen
+                if file_records > file_budget:
+                    raise ServiceError(
+                        "asset metadata exceeds 500 file records; lower file_limit or narrow the request"
+                    )
+            latest_metadata = self._load_regular_asset_metadata(
+                concept_id=concept_id,
+                asset_kind=kind,
+                version=versions[-1],
+            )
+            latest_sha256 = latest_metadata.get("zip_sha256")
+            if (
+                not isinstance(latest_sha256, str)
+                or re.fullmatch(r"[0-9a-f]{64}", latest_sha256) is None
+            ):
+                raise ServiceError("asset metadata has an invalid zip_sha256")
+            version_records += len(details)
+            if version is None:
+                reported_versions = versions[-version_limit:]
+            elif version in versions:
+                reported_versions = (version,)
+            else:
+                reported_versions = ()
+            asset_payload: dict[str, Any] = {
+                "kind": kind,
+                "versions": reported_versions,
+                "version_count": len(versions),
+                "versions_truncated": len(reported_versions) < len(versions),
+                "latest_version": versions[-1],
+                "latest_sha256": latest_sha256,
+                "version_metadata": details,
+                "version_metadata_truncated": (
+                    version is None and len(versions) > len(detailed_versions)
+                ),
+            }
+            if version is not None:
+                asset_payload["requested_version_present"] = version in versions
+            assets.append(asset_payload)
+        return assets, len(assets), version_records, file_records
+
+    def _asset_version_metadata(
+        self,
+        *,
+        concept_id: str,
+        current_body_sha256: str,
+        revision: str,
+        asset_kind: str,
+        version: str,
+        include_files: bool,
+        file_limit: int,
+    ) -> tuple[dict[str, Any], int]:
+        root = self._deps.repo_paths.current_dir
+        metadata_path, zip_path = asset_version_paths(concept_id, asset_kind, version)
+        metadata = self._load_regular_asset_metadata(
+            concept_id=concept_id,
+            asset_kind=asset_kind,
+            version=version,
+        )
+        if metadata.get("schema_version") != 1:
+            raise ServiceError("asset metadata has an invalid schema_version")
+        if metadata.get("kind") != "asset_pack_version":
+            raise ServiceError("asset metadata has an invalid kind")
+        expected_identity = {
+            "concept_id": concept_id,
+            "asset_kind": asset_kind,
+            "version": version,
+        }
+        for field, expected in expected_identity.items():
+            if metadata.get(field) != expected:
+                raise ServiceError(f"asset metadata has an invalid {field}")
+        published_path = metadata.get("concept_path")
+        if not isinstance(published_path, str) or not published_path.startswith("/"):
+            raise ServiceError("asset metadata has an invalid concept_path")
+
+        zip_sha256 = metadata.get("zip_sha256")
+        if not isinstance(zip_sha256, str) or re.fullmatch(r"[0-9a-f]{64}", zip_sha256) is None:
+            raise ServiceError("asset metadata has an invalid zip_sha256")
+        created_by = metadata.get("accepted_by")
+        if not isinstance(created_by, str) or not created_by:
+            raise ServiceError("asset metadata has an invalid accepted_by")
+        source_proposal_id = metadata.get("source_proposal_id")
+        if not isinstance(source_proposal_id, str) or not source_proposal_id:
+            raise ServiceError("asset metadata has an invalid source_proposal_id")
+        manifest = SkillPackManifest.model_validate(metadata.get("manifest"))
+        if manifest.sha256 != zip_sha256:
+            raise ServiceError("asset metadata manifest and ZIP digests differ")
+        manifest_payload = manifest.model_dump(mode="json")
+        manifest_sha256 = hashlib.sha256(
+            json.dumps(manifest_payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+
+        created_at_value = metadata.get("created_at")
+        if created_at_value is None:
+            created_at_value = get_path_commit_timestamp(
+                self._deps.repo_paths,
+                revision=revision,
+                repository_path=metadata_path,
+            )
+        created_at = self._format_timestamp(self._manifest_timestamp(created_at_value))
+        zip_file = root / zip_path.removeprefix("/")
+        if zip_file.is_symlink() or not zip_file.is_file():
+            raise ServiceError("asset ZIP must be a regular file")
+
+        ordered_files = sorted(manifest.entries, key=lambda entry: entry.path)
+        selected_files = ordered_files[:file_limit] if include_files else []
+        result: dict[str, Any] = {
+            "version": version,
+            "created_at": created_at,
+            "created_by": created_by,
+            "source_proposal_id": source_proposal_id,
+            "zip_sha256": zip_sha256,
+            "zip_bytes": zip_file.stat().st_size,
+            "manifest_sha256": manifest_sha256,
+            "file_count": manifest.file_count,
+            "total_uncompressed_bytes": manifest.total_uncompressed_bytes,
+        }
+        if include_files:
+            result["files"] = [
+                {
+                    "path": entry.path,
+                    "sha256": entry.sha256,
+                    "bytes": entry.size,
+                    "media_type": entry.media_type,
+                }
+                for entry in selected_files
+            ]
+            result["files_truncated"] = len(selected_files) < len(ordered_files)
+
+        if asset_kind == "skill":
+            root_skill = next(
+                (entry for entry in manifest.entries if entry.path == "SKILL.md"), None
+            )
+            if root_skill is None:
+                raise ServiceError("skill asset metadata is missing root SKILL.md")
+            result["concept_body_sha256_at_publish"] = root_skill.sha256
+            result["kind_invariants"] = {
+                "skill_root_matches_current_concept_body": (
+                    root_skill.sha256 == current_body_sha256
+                )
+            }
+        return result, len(selected_files)
+
+    def _load_regular_asset_metadata(
+        self, *, concept_id: str, asset_kind: str, version: str
+    ) -> dict[str, object]:
+        metadata_path, _zip_path = asset_version_paths(concept_id, asset_kind, version)
+        metadata_file = self._deps.repo_paths.current_dir / metadata_path.removeprefix("/")
+        if metadata_file.is_symlink() or not metadata_file.is_file():
+            raise ServiceError("asset metadata must be a regular file")
+        return load_asset_metadata(
+            self._deps.repo_paths.current_dir,
+            concept_id,
+            asset_kind,
+            version,
+        )
 
     def _is_authorized(self, policy: EffectivePolicy, path: str, *, action: str) -> bool:
         try:

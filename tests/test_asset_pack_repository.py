@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 import subprocess
 import zipfile
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -39,6 +40,7 @@ def test_write_resolve_and_retention(tmp_path: Path) -> None:
             manifest=item.manifest,
             accepted_by="curator",
             source_proposal_id=f"p-{item.version}",
+            created_at=datetime(2026, 8, 26, 6, 30, tzinfo=timezone(timedelta(hours=2))),
         )
     assert (
         resolve_asset_version(tmp_path, "12345678-abcd-1234-abcd-123456789abc", "templates", None)
@@ -53,6 +55,7 @@ def test_write_resolve_and_retention(tmp_path: Path) -> None:
         tmp_path, "12345678-abcd-1234-abcd-123456789abc", "templates", "1.10.0"
     )
     assert metadata["concept_path"] == "/projects/demo.md"
+    assert metadata["created_at"] == "2026-08-26T04:30:00Z"
     assert not (tmp_path / ".gitattributes").exists()
     assert retention_partition(("1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0")) == (
         ("1.5.0", "1.4.0", "1.3.0", "1.2.0", "1.1.0"),

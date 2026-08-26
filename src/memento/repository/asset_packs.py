@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import UTC, datetime
 from pathlib import Path
 
 from memento.skill_packs import SkillPackManifest, SkillPackValidationError, parse_stable_semver
@@ -37,6 +38,7 @@ def write_asset_version(
     manifest: SkillPackManifest,
     accepted_by: str,
     source_proposal_id: str,
+    created_at: datetime | None = None,
 ) -> tuple[str, ...]:
     metadata_path, zip_path = asset_version_paths(concept_id, asset_kind, version)
     metadata_file = worktree / metadata_path.removeprefix("/")
@@ -58,6 +60,10 @@ def write_asset_version(
         "source_proposal_id": source_proposal_id,
         "manifest": manifest.model_dump(mode="json"),
     }
+    if created_at is not None:
+        if created_at.tzinfo is None:
+            raise ValueError("created_at must be timezone-aware")
+        metadata["created_at"] = created_at.astimezone(UTC).isoformat().replace("+00:00", "Z")
     metadata_file.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
     zip_file.write_bytes(zip_bytes)
     return tuple(sorted((metadata_path, zip_path)))
@@ -102,7 +108,10 @@ def load_asset_metadata(
     root: Path, concept_id: str, asset_kind: str, version: str
 ) -> dict[str, object]:
     metadata_path, _zip_path = asset_version_paths(concept_id, asset_kind, version)
-    value = json.loads((root / metadata_path.removeprefix("/")).read_text())
+    metadata_file = root / metadata_path.removeprefix("/")
+    if metadata_file.is_symlink() or not metadata_file.is_file():
+        raise SkillPackValidationError("asset metadata must be a regular file")
+    value = json.loads(metadata_file.read_text())
     if not isinstance(value, dict) or value.get("kind") != "asset_pack_version":
         raise SkillPackValidationError("invalid asset metadata")
     return value

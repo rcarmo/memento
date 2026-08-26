@@ -108,6 +108,21 @@ OPERATION_SPECS: tuple[OperationSpec, ...] = (
         ),
     ),
     OperationSpec(
+        op_name="asset_metadata",
+        tool_name="memory_asset_metadata",
+        method_name="memory_asset_metadata",
+        description="Inspect bounded asset version metadata and concept-body parity without returning ZIPs or concept bodies.",
+        roles=("reader",),
+        discovery_surfaces=frozenset(),
+        examples=(
+            {
+                "id_or_path": "/skills/memento.md",
+                "asset_kind": "skill",
+                "include_files": True,
+            },
+        ),
+    ),
+    OperationSpec(
         op_name="graph",
         tool_name="memory_graph",
         method_name="memory_graph",
@@ -305,7 +320,13 @@ OPERATION_SPEC_BY_OP = {item.op_name: item for item in OPERATION_SPECS}
 WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
     "inspect": {
         "description": "Find relevant concepts, inventory namespaces, then read exact paths when bodies are needed.",
-        "operations": ["search", "inventory", "compare_manifest", "read"],
+        "operations": [
+            "search",
+            "inventory",
+            "compare_manifest",
+            "asset_metadata",
+            "read",
+        ],
     },
     "propose": {
         "description": "Search and read context, then submit a proposal instead of writing directly.",

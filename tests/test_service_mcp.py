@@ -513,6 +513,309 @@ def test_memory_inventory_is_available_directly_and_via_execute(
     assert "body" not in inventory["entries"][0]
 
 
+def test_asset_metadata_returns_generic_versions_files_timestamps_and_skill_parity(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+) -> None:
+    concept_id = "12345678-abcd-1234-abcd-123456789abc"
+    skill_body = "---\nname: metadata-skill\ndescription: Metadata fixture\n---\n# Metadata skill"
+    write_concept(
+        repo_paths.current_dir / "skills" / "metadata.md",
+        concept_id=concept_id,
+        concept_type="concept",
+        title="Metadata skill",
+        description="Asset metadata fixture.",
+        tags=("skill",),
+        body=skill_body,
+    )
+    created_at = datetime(2026, 8, 26, 6, 30, tzinfo=UTC)
+    expected_zip_bytes = 0
+    expected_zip_sha256 = ""
+    for version in ("1.0.0", "1.1.0"):
+        _encoded, zip_bytes = _skill_zip(skill_body, script=f"console.log('{version}')\n")
+        pack = validate_asset_pack(asset_kind="skill", version=version, zip_bytes=zip_bytes)
+        write_asset_version(
+            repo_paths.current_dir,
+            concept_id=concept_id,
+            concept_path="/skills/original-metadata.md",
+            asset_kind="skill",
+            version=version,
+            zip_bytes=pack.zip_bytes,
+            manifest=pack.manifest,
+            accepted_by="smith",
+            source_proposal_id=f"proposal-{version}",
+            created_at=created_at,
+        )
+        expected_zip_bytes = len(pack.zip_bytes)
+        expected_zip_sha256 = pack.manifest.sha256
+
+    for version in ("2.0.0", "2.1.0", "2.2.0"):
+        _encoded, template_bytes = _skill_zip(f"template payload {version}\n")
+        template_pack = validate_asset_pack(
+            asset_kind="templates", version=version, zip_bytes=template_bytes
+        )
+        write_asset_version(
+            repo_paths.current_dir,
+            concept_id=concept_id,
+            concept_path="/skills/original-metadata.md",
+            asset_kind="templates",
+            version=version,
+            zip_bytes=template_pack.zip_bytes,
+            manifest=template_pack.manifest,
+            accepted_by="smith",
+            source_proposal_id=f"proposal-templates-{version}",
+            created_at=created_at,
+        )
+
+    payload = success_data(
+        service.memory_asset_metadata(
+            smith,
+            id_or_path="/skills/metadata.md",
+            asset_kind="skill",
+            include_files=True,
+        )
+    )
+    assert payload["next_cursor"] is None
+    assert len(payload["entries"]) == 1
+    entry = payload["entries"][0]
+    assert entry["path"] == "/skills/metadata.md"
+    assert (
+        entry["current_concept_body_sha256"]
+        == hashlib.sha256(skill_body.encode("utf-8")).hexdigest()
+    )
+    assert entry["current_concept_body_bytes"] == len(skill_body.encode("utf-8"))
+    assert entry["asset_present"] is True
+    assert len(entry["assets"]) == 1
+    asset = entry["assets"][0]
+    assert asset["kind"] == "skill"
+    assert asset["versions"] == ("1.0.0", "1.1.0")
+    assert asset["latest_version"] == "1.1.0"
+    assert asset["latest_sha256"] == expected_zip_sha256
+    assert asset["version_metadata_truncated"] is False
+    assert [item["version"] for item in asset["version_metadata"]] == [
+        "1.1.0",
+        "1.0.0",
+    ]
+    latest = asset["version_metadata"][0]
+    assert latest["created_at"] == "2026-08-26T06:30:00Z"
+    assert latest["created_by"] == "smith"
+    assert latest["source_proposal_id"] == "proposal-1.1.0"
+    assert latest["zip_sha256"] == expected_zip_sha256
+    assert latest["zip_bytes"] == expected_zip_bytes
+    assert latest["file_count"] == 2
+    assert latest["total_uncompressed_bytes"] == sum(item["bytes"] for item in latest["files"])
+    assert latest["files_truncated"] is False
+    assert [item["path"] for item in latest["files"]] == [
+        "SKILL.md",
+        "scripts/run.ts",
+    ]
+    assert latest["concept_body_sha256_at_publish"] == entry["current_concept_body_sha256"]
+    assert latest["kind_invariants"] == {"skill_root_matches_current_concept_body": True}
+    assert "body" not in entry
+    assert "body" not in latest
+    assert "zip_base64" not in latest
+
+    generic = success_data(
+        service.memory_asset_metadata(
+            smith,
+            id_or_path="/skills/metadata.md",
+            asset_kind="templates",
+            version_limit=2,
+            include_files=True,
+        )
+    )["entries"][0]["assets"][0]
+    assert generic["kind"] == "templates"
+    assert generic["versions"] == ("2.1.0", "2.2.0")
+    assert generic["version_count"] == 3
+    assert generic["versions_truncated"] is True
+    assert generic["version_metadata_truncated"] is True
+    assert [item["version"] for item in generic["version_metadata"]] == [
+        "2.2.0",
+        "2.1.0",
+    ]
+    assert "kind_invariants" not in generic["version_metadata"][0]
+    assert "concept_body_sha256_at_publish" not in generic["version_metadata"][0]
+
+    truncated_files = success_data(
+        service.memory_asset_metadata(
+            smith,
+            id_or_path="/skills/metadata.md",
+            asset_kind="skill",
+            version="1.1.0",
+            include_files=True,
+            file_limit=1,
+        )
+    )["entries"][0]["assets"][0]["version_metadata"][0]
+    assert len(truncated_files["files"]) == 1
+    assert truncated_files["files_truncated"] is True
+
+    write_concept(
+        repo_paths.current_dir / "skills" / "metadata.md",
+        concept_id=concept_id,
+        concept_type="concept",
+        title="Metadata skill",
+        description="Asset metadata fixture.",
+        tags=("skill",),
+        body=skill_body + "\n\nChanged.",
+    )
+    changed = success_data(
+        service.memory_asset_metadata(
+            smith,
+            id_or_path=concept_id,
+            asset_kind="skill",
+            version="1.0.0",
+        )
+    )
+    selected = changed["entries"][0]["assets"][0]["version_metadata"]
+    assert [item["version"] for item in selected] == ["1.0.0"]
+    assert selected[0]["kind_invariants"] == {"skill_root_matches_current_concept_body": False}
+    missing = success_data(
+        service.memory_asset_metadata(
+            smith,
+            id_or_path="/skills/metadata.md",
+            asset_kind="skill",
+            version="9.0.0",
+        )
+    )["entries"][0]
+    assert missing["asset_present"] is True
+    assert missing["assets"][0]["requested_version_present"] is False
+    assert missing["assets"][0]["versions"] == ()
+    assert missing["assets"][0]["version_metadata"] == []
+
+
+def test_asset_metadata_prunes_protected_paths_before_parsing_and_pages_batches(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+) -> None:
+    write_concept(
+        repo_paths.current_dir / "skills" / "a.md",
+        concept_id="asset-a-id",
+        concept_type="concept",
+        title="Asset A",
+        description="Batch fixture A.",
+        tags=(),
+        body="# Asset A",
+    )
+    write_concept(
+        repo_paths.current_dir / "skills" / "b.md",
+        concept_id="asset-b-id",
+        concept_type="concept",
+        title="Asset B",
+        description="Batch fixture B.",
+        tags=(),
+        body="# Asset B",
+    )
+    malformed = repo_paths.current_dir / "secret" / "malformed.md"
+    malformed.write_text("not valid frontmatter\n", encoding="utf-8")
+
+    first = success_data(service.memory_asset_metadata(flint, path_prefix="/skills/", limit=1))
+    assert [item["path"] for item in first["entries"]] == ["/skills/a.md"]
+    assert first["entries"][0]["asset_present"] is False
+    assert first["next_cursor"] == "/skills/a.md"
+    second = success_data(
+        service.memory_asset_metadata(
+            flint,
+            path_prefix="/skills/",
+            limit=1,
+            cursor=first["next_cursor"],
+        )
+    )
+    assert [item["path"] for item in second["entries"]] == ["/skills/b.md"]
+    assert second["next_cursor"] is None
+
+    visible = success_data(service.memory_asset_metadata(flint, path_prefix="/"))
+    assert all(not item["path"].startswith("/secret/") for item in visible["entries"])
+    forbidden = service.memory_asset_metadata(flint, id_or_path="/secret/malformed.md")
+    assert forbidden.status == "error"
+    assert forbidden.error_class == "forbidden"
+
+
+def test_asset_metadata_validates_scope_bounds_and_persisted_metadata(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    flint: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    invalid_calls = (
+        {
+            "id_or_path": "/projects/piclaw.md",
+            "path_prefix": "/projects/",
+        },
+        {"id_or_path": "/projects/piclaw.md", "cursor": "/projects/piclaw.md"},
+        {"id_or_path": "/projects/piclaw.md", "version": "1.0.0"},
+        {"path_prefix": "/projects/", "limit": 21},
+        {"path_prefix": "/projects/", "version_limit": 6},
+        {"path_prefix": "/projects/", "file_limit": 101},
+        {"path_prefix": "/projects/", "asset_kind": "Invalid Kind"},
+    )
+    for arguments in invalid_calls:
+        result = service.memory_asset_metadata(flint, **arguments)
+        assert result.status == "error"
+        assert result.error_class == "validation_error"
+
+    concept_id = "87654321-abcd-1234-abcd-123456789abc"
+    write_concept(
+        repo_paths.current_dir / "projects" / "malformed-asset.md",
+        concept_id=concept_id,
+        concept_type="concept",
+        title="Malformed asset",
+        description="Persisted metadata boundary fixture.",
+        tags=(),
+        body="# Malformed asset",
+    )
+    metadata_dir = repo_paths.current_dir / ".assets" / concept_id / "templates"
+    metadata_dir.mkdir(parents=True)
+    metadata_file = metadata_dir / "1.0.0.json"
+    metadata_file.write_text(json.dumps({"kind": "asset_pack_version"}), encoding="utf-8")
+    malformed = service.memory_asset_metadata(flint, id_or_path="/projects/malformed-asset.md")
+    assert malformed.status == "error"
+    assert malformed.error_class == "validation_error"
+
+    metadata_file.unlink()
+    metadata_file.symlink_to(repo_paths.current_dir / "secret" / "ghost.md")
+
+    def fail_if_loaded(*_args: object, **_kwargs: object) -> dict[str, object]:
+        pytest.fail("symbolic-link metadata must be rejected before loading")
+
+    monkeypatch.setattr("memento.service.load_asset_metadata", fail_if_loaded)
+    linked = service.memory_asset_metadata(flint, id_or_path="/projects/malformed-asset.md")
+    assert linked.status == "error"
+    assert linked.error_class == "validation_error"
+
+
+def test_asset_metadata_is_execute_only_with_service_execute_parity(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    flint: ServiceContext,
+) -> None:
+    server = _server_for(
+        service,
+        service_config.model_copy(update={"mcp": MCPConfig(tool_surface="compact")}),
+    )
+    tools = {item["name"] for item in server.discover_tools()["tools"]}
+    assert "memory_asset_metadata" not in tools
+    catalog = json.loads(asyncio.run(server.resource_catalog())["text"])
+    assert any(item["operation"] == "asset_metadata" for item in catalog["execute_only_operations"])
+
+    direct = success_data(service.memory_asset_metadata(flint, id_or_path="/projects/piclaw.md"))
+    executed = success_data(
+        service.memory_execute(
+            flint,
+            plan={
+                "operations": [
+                    {
+                        "op": "asset_metadata",
+                        "args": {"id_or_path": "/projects/piclaw.md"},
+                    }
+                ]
+            },
+        )
+    )["trace"][0]["data"]
+    assert executed == direct
+
+
 def test_compare_manifest_classifies_generic_entries_and_assets(
     service: MemoryService,
     repo_paths: GitRepositoryPaths,
@@ -1085,6 +1388,14 @@ def test_tool_discovery_surfaces_and_catalog_resources(
     assert any(
         item["operation"] == "compare_manifest" for item in catalog["execute_only_operations"]
     )
+    assert any(item["operation"] == "asset_metadata" for item in catalog["execute_only_operations"])
+    asset_metadata_operation = json.loads(
+        asyncio.run(server.resource_template_catalog("asset_metadata"))["text"]
+    )
+    assert asset_metadata_operation["direct_tool_available"] is False
+    assert asset_metadata_operation["available_via_execute"] is True
+    assert asset_metadata_operation["input_schema"]["properties"]["limit"]["maximum"] == 20
+    assert asset_metadata_operation["input_schema"]["properties"]["file_limit"]["maximum"] == 100
     comparison_operation = json.loads(
         asyncio.run(server.resource_template_catalog("compare_manifest"))["text"]
     )
@@ -1110,7 +1421,10 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "memory_search",
         "memory_read",
     ]
-    assert help_payload["mcp"]["execute_only_operations"]["inspect"] == ("compare_manifest",)
+    assert help_payload["mcp"]["execute_only_operations"]["inspect"] == (
+        "compare_manifest",
+        "asset_metadata",
+    )
     assert help_payload["mcp"]["execute_only_operations"]["propose"] == (
         "propose",
         "propose_freeform",
@@ -1134,7 +1448,8 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "read",
     ]
     assert [item["operation"] for item in workflow["execute_only_operations"]] == [
-        "compare_manifest"
+        "compare_manifest",
+        "asset_metadata",
     ]
     propose_workflow = json.loads(asyncio.run(server.resource_template_workflow("propose"))["text"])
     assert [item["operation"] for item in propose_workflow["operations"]] == ["search", "read"]

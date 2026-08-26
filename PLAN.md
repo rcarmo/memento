@@ -27,7 +27,7 @@ Memento's repository, transaction, MCP, proposal, search, model, debugger and co
 
 * Authenticated Streamable HTTP through uMCP
 * Compact and full tool surfaces, catalog/workflow resources and `memory_execute`
-* Bounded namespace inventory plus execute-only local-manifest comparison without server-side local file access
+* Bounded namespace inventory, execute-only local-manifest comparison, and generic asset metadata/parity inspection without server-side local file access or ZIP retrieval
 * FTS5 search, backlinks, graph neighbourhoods and index rebuild/parity checks
 * Local GTE semantic and hybrid search with persistent progressive state and short-lived low-priority single-item workers
 * Fine-tuned Needle shallow routing through the Rust runtime

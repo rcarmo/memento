@@ -307,7 +307,7 @@ Roles are checked as literal membership in the principal record. The service doe
 
 | Role | Permission family |
 |---|---|
-| `reader` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_list`, `memory_inventory`, `memory_graph`, `memory_audit`, optional `memory_answer`, and `memory_execute` where the referenced operation is otherwise allowed |
+| `reader` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_list`, `memory_inventory`, `memory_graph`, `memory_audit`, optional `memory_answer`, and `memory_execute` where the referenced operation, including `asset_metadata`, is otherwise allowed |
 | `proposer` | `memory_propose`, `memory_propose_freeform`, `memory_propose_update`, `memory_proposal_get`, `memory_proposal_list` |
 | `curator` | `memory_proposal_review`, `memory_proposal_apply`, and create/patch/rename authority |
 | `maintainer` | graph maintenance and Dream execution |
@@ -350,7 +350,7 @@ The service supports catalog-first compact discovery as well as direct compatibi
 | `compact` | core help/status/search/read/inventory/execute, asset staging begin/status and asset retrieval (**9**); optional answer and route tools raise this to **11** |
 | `standard` | the full **23** direct compatibility tools, including inventory, proposals, staging, asset retrieval/pruning and direct mutations |
 | `read_only` | the **10** direct discovery, concept-read and asset-read tools |
-| `curator` | compact tools plus proposal get/list/review/apply and asset pruning (**14**); optional answer and route tools raise this to **16**, while compare/create/patch/rename remain execute-only |
+| `curator` | compact tools plus proposal get/list/review/apply and asset pruning (**14**); optional answer and route tools raise this to **16**, while compare/asset-metadata/create/patch/rename remain execute-only |
 | `admin` | the **24**-tool full direct memory surface plus optional `memory_route` (**25**); managed administrators additionally discover role-filtered `access_*` tools |
 
 ### Catalog resources
@@ -414,7 +414,9 @@ Proposal, assets and write:
 
 Every tool returns the standard envelope with `status`, `data`, `warnings`, `next_tools`, `repo_revision`, `index_revision`, `index_stale` and `operation_id`.
 
-The execute-only `compare_manifest` operation maps up to 50 caller-provided local manifest rows onto any authorised namespace. It reuses the bounded inventory primitive, classifies matching, differing, local-only and Memento-only records, derives the likely newer side from timezone-aware mtimes, and optionally projects generic asset metadata. The server treats local paths as opaque labels and never reads caller files.
+The execute-only `compare_manifest` operation maps up to 50 caller-provided local manifest rows onto any authorised namespace. It reuses the bounded inventory primitive, classifies matching, differing, local-only and Memento-only records, derives the likely newer side from timezone-aware mtimes, and optionally projects generic asset summaries. The server treats local paths as opaque labels and never reads caller files.
+
+The execute-only `asset_metadata` operation reads immutable generic sidecars and ZIP filesystem metadata, never ZIP payload bytes. Exact concept lookup or 20-concept path pagination happens only inside the caller's effective read policy. The implementation caps one response at 50 asset kinds, 50 detailed versions and 500 opted-in file rows before the executor's configured record, byte and deadline checks. Version metadata includes stable digests, compressed and uncompressed sizes, publication identity and timestamps. New sidecars store `created_at`; historical sidecars resolve it from the Git path commit. Skill packs alone compare the ZIP-root `SKILL.md` digest with the current canonical concept-body digest; no generic asset kind is forced through skill semantics.
 
 ## Read path
 

@@ -137,6 +137,30 @@ class CompareManifestArgs(BaseModel):
         return self
 
 
+class AssetMetadataArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    id_or_path: str | None = Field(default=None, min_length=1, max_length=1024)
+    path_prefix: str | None = Field(default=None, min_length=1, max_length=1024)
+    asset_kind: str | None = Field(default=None, pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+    version: str | None = Field(default=None, pattern=r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
+    limit: int = Field(default=20, ge=1, le=20)
+    cursor: str | None = Field(default=None, min_length=4, max_length=1024)
+    version_limit: int = Field(default=5, ge=1, le=5)
+    include_files: bool = False
+    file_limit: int = Field(default=50, ge=1, le=100)
+
+    @model_validator(mode="after")
+    def validate_scope(self) -> AssetMetadataArgs:
+        if self.id_or_path is not None and self.path_prefix is not None:
+            raise ValueError("asset metadata accepts id_or_path or path_prefix, not both")
+        if self.id_or_path is not None and self.cursor is not None:
+            raise ValueError("asset metadata cursor requires path_prefix scope")
+        if self.version is not None and self.asset_kind is None:
+            raise ValueError("asset metadata version requires asset_kind")
+        return self
+
+
 class GraphArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -382,6 +406,11 @@ class CompareManifestOperation(ExecuteOperationBase):
     args: CompareManifestArgs
 
 
+class AssetMetadataOperation(ExecuteOperationBase):
+    op: Literal["asset_metadata"]
+    args: AssetMetadataArgs = Field(default_factory=AssetMetadataArgs)
+
+
 class GraphOperation(ExecuteOperationBase):
     op: Literal["graph"]
     args: GraphArgs
@@ -455,6 +484,7 @@ ExecuteOperation = (
     | ListOperation
     | InventoryOperation
     | CompareManifestOperation
+    | AssetMetadataOperation
     | GraphOperation
     | AuditOperation
     | AnswerOperation

@@ -138,7 +138,7 @@ These MCP resources are always read-only:
 
 They expose generated descriptions, roles, examples and input schemas. Current workflow templates are:
 
-* `inspect` -> `search`, `inventory`, `compare_manifest`, `read`
+* `inspect` -> `search`, `inventory`, `compare_manifest`, `asset_metadata`, `read`
 * `propose` -> `search`, `read`, `propose`, `propose_freeform`, `propose_update`
 * `curate` -> `proposal_list`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_prune`, `create`, `patch`, `rename`
 * `asset_pack` -> `search`, `read`, `propose`, `proposal_get`, `proposal_review`, `proposal_apply`, `asset_get`, `asset_stage_begin`, `asset_stage_status`, `asset_prune`
@@ -354,6 +354,25 @@ The result separates `matching`, `differing`, `local_only` and `memento_only` en
 
 The comparison rejects namespaces above 50 concepts or unions above 50 records, so classifications are complete rather than silently truncated. Every mapped Memento path must be under `path_prefix` and individually readable. Protected directories are pruned before inventory parsing.
 
+### `asset_metadata` execute operation
+
+`asset_metadata` inspects generic asset sidecars without returning concept bodies, ZIP bytes or base64 payloads. It is available through `memory_execute`, not as a direct tool. Reader authority is sufficient.
+
+Arguments are:
+
+* at most one scope: `id_or_path` for one concept, or `path_prefix` for an authorised namespace; omitting both uses `/`
+* `asset_kind?` -- optional lowercase/hyphen kind filter
+* `version?` -- optional stable semantic version, which requires `asset_kind`
+* `limit=20` and `cursor?` -- deterministic concept-path pagination for prefix scope; the maximum page is 20
+* `version_limit=5` -- latest detailed versions per matching asset kind
+* `include_files=false` and `file_limit=50` -- optionally include up to 100 sorted manifest entries per version
+
+Each concept record includes its path, ID, current canonical body SHA-256 and byte count, whether a matching asset kind is present, and matching asset kinds. Each kind reports bounded version names, total version count, truncation state, latest version/SHA-256 and newest-first `version_metadata`; an explicit version filter also reports `requested_version_present`. Version metadata contains the publication timestamp and principal, source proposal ID, ZIP digest and byte size, canonical manifest digest, file count and total uncompressed bytes. Opted-in file rows contain only path, SHA-256, byte size and media type.
+
+Skill versions additionally report the publication-time ZIP-root `SKILL.md` digest and `skill_root_matches_current_concept_body`. Other kinds do not receive skill-specific fields. New publications persist `created_at`; older immutable sidecars derive the timestamp from the Git commit that introduced the metadata path.
+
+A response is capped at 50 asset kinds, 50 detailed versions and 500 returned file rows, in addition to the configured `memory_execute` record, byte and runtime limits. Version and file arrays report truncation explicitly. Authorisation prunes protected namespaces before concept parsing or asset lookup, and every selected path is authorised again before access.
+
 ### `memory_graph`
 
 Returns:
@@ -410,6 +429,7 @@ Clients that already manage bearer authentication may alternatively use `POST /a
 |---|---|---|
 | `memory_asset_stage_begin` | `proposer` | issue a one-time raw ZIP upload ticket and upload instructions |
 | `memory_asset_stage_status` | `proposer` | reconcile ticket/upload state and retrieve `staged_asset_id` |
+| `asset_metadata` through `memory_execute` | `reader` | inspect bounded generic sidecar, digest, size, timestamp and parity metadata without ZIP retrieval |
 | `memory_asset_get` | `reader` | retrieve latest or explicit version, manifest and ZIP as base64 |
 | `memory_asset_prune` | `curator` | remove retained versions beyond the keep count |
 
@@ -540,6 +560,7 @@ Operation names are stable literals:
 * `list`
 * `inventory`
 * `compare_manifest`
+* `asset_metadata`
 * `graph`
 * `audit`
 * `answer`

@@ -16,6 +16,7 @@ from memento.config import Principal
 from memento.executor import (
     AnswerArgs,
     AssetGetArgs,
+    AssetMetadataArgs,
     AssetPruneArgs,
     AssetStageBeginArgs,
     AssetStageStatusArgs,
@@ -90,6 +91,7 @@ OperationName = Literal[
     "list",
     "inventory",
     "compare_manifest",
+    "asset_metadata",
     "graph",
     "audit",
     "answer",
@@ -128,6 +130,7 @@ _TOOL_ARG_MODELS: dict[str, type[BaseModel]] = {
     "memory_list": ListArgs,
     "memory_inventory": InventoryArgs,
     "memory_compare_manifest": CompareManifestArgs,
+    "memory_asset_metadata": AssetMetadataArgs,
     "memory_graph": GraphArgs,
     "memory_audit": AuditArgs,
     "memory_answer": AnswerArgs,
@@ -226,6 +229,7 @@ EXECUTE_CAPABLE_OPERATIONS = frozenset(
         "list",
         "inventory",
         "compare_manifest",
+        "asset_metadata",
         "graph",
         "audit",
         "answer",
@@ -567,6 +571,31 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             items=items,
             match=match,
             include_asset_metadata=include_asset_metadata,
+        ).model_dump(mode="json")
+
+    async def tool_memory_asset_metadata(
+        self,
+        id_or_path: str | None = None,
+        path_prefix: str | None = None,
+        asset_kind: str | None = None,
+        version: str | None = None,
+        limit: int = 20,
+        cursor: str | None = None,
+        version_limit: int = 5,
+        include_files: bool = False,
+        file_limit: int = 50,
+    ) -> dict[str, Any]:
+        return self._service.memory_asset_metadata(
+            self._context(),
+            id_or_path=id_or_path,
+            path_prefix=path_prefix,
+            asset_kind=asset_kind,
+            version=version,
+            limit=limit,
+            cursor=cursor,
+            version_limit=version_limit,
+            include_files=include_files,
+            file_limit=file_limit,
         ).model_dump(mode="json")
 
     async def tool_memory_graph(self, id_or_path: str, depth: int = 1) -> dict[str, Any]:
