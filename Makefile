@@ -1,7 +1,7 @@
 PYTHON ?= python3
 VENV ?= .venv
 BIN := $(VENV)/bin
-MEMENTO_VERSION ?= 0.3.25
+MEMENTO_VERSION ?= 0.3.26
 RELEASE_TAG ?= v$(MEMENTO_VERSION)
 PORTAINER_URL ?= https://ops.local:9443
 PICLAW ?= piclaw
