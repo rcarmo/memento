@@ -38,7 +38,7 @@ Memento's repository, transaction, MCP, proposal, search, model, debugger and co
 * Non-root multi-architecture container with read-only root and one writable state mount
 * Structured logs, metrics, health/readiness, graceful drain and recovery
 * GHCR release pipeline for amd64 and arm64, including Westmere scalar inference
-* Healthy immutable `0.3.24` Portainer deployment on the Intel J3455 DiskStation, with the acceptance record in [`docs/evidence/release-0.3.24.md`](docs/evidence/release-0.3.24.md)
+* Healthy immutable `0.3.26` Portainer deployment on the Intel J3455 DiskStation, with persistent POST sessions and SSE notification delivery recorded in [`docs/evidence/release-0.3.26.md`](docs/evidence/release-0.3.26.md)
 
 ### Visual Memory Debugger
 
