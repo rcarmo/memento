@@ -3,11 +3,16 @@ from __future__ import annotations
 import asyncio
 import base64
 import hashlib
+import http.client
 import io
 import json
+import socket
 import sqlite3
+import threading
+import time
 import zipfile
 from collections.abc import Generator
+from contextlib import contextmanager, suppress
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
@@ -15,6 +20,7 @@ from typing import Any, Literal, cast
 
 import pytest
 
+from memento import __version__
 from memento.access import AccessStore
 from memento.authz import AuthorizationError
 from memento.config import (
@@ -79,6 +85,107 @@ class HTTPTestWriter:
 
     def get_extra_info(self, name: str) -> tuple[str, int] | None:
         return ("127.0.0.1", 50000) if name == "peername" else None
+
+
+@contextmanager
+def running_streamable_server(
+    server: MementoMCPServer,
+) -> Generator[tuple[int, asyncio.AbstractEventLoop], None, None]:
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        port = int(probe.getsockname()[1])
+    ready = threading.Event()
+    holder: dict[str, Any] = {}
+    errors: list[BaseException] = []
+
+    def run() -> None:
+        async def serve() -> None:
+            task = asyncio.current_task()
+            assert task is not None
+            holder["loop"] = asyncio.get_running_loop()
+            holder["task"] = task
+            ready.set()
+            with suppress(asyncio.CancelledError):
+                await server.run_streamable_http_async(host="127.0.0.1", port=port)
+
+        try:
+            asyncio.run(serve())
+        except BaseException as exc:  # pragma: no cover - surfaced in the caller
+            errors.append(exc)
+
+    thread = threading.Thread(target=run, name="memento-http-test", daemon=True)
+    thread.start()
+    assert ready.wait(timeout=2.0)
+    deadline = time.monotonic() + 2.0
+    while time.monotonic() < deadline:
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=0.05):
+                break
+        except OSError:
+            time.sleep(0.02)
+    else:
+        raise AssertionError("Memento Streamable HTTP server did not start")
+    try:
+        yield port, cast(asyncio.AbstractEventLoop, holder["loop"])
+    finally:
+        loop = cast(asyncio.AbstractEventLoop, holder["loop"])
+        task = cast(asyncio.Task[None], holder["task"])
+        loop.call_soon_threadsafe(task.cancel)
+        thread.join(timeout=2.0)
+        assert not thread.is_alive()
+        if errors:
+            raise errors[0]
+
+
+def mcp_post(
+    connection: http.client.HTTPConnection,
+    payload: dict[str, Any],
+    *,
+    session_id: str | None = None,
+) -> tuple[http.client.HTTPResponse, dict[str, Any]]:
+    body = json.dumps(payload).encode("utf-8")
+    headers = {
+        "Accept": "application/json",
+        "Authorization": "Bearer smith-token",
+        "Content-Type": "application/json",
+        "Content-Length": str(len(body)),
+    }
+    if payload.get("method") != "initialize":
+        headers["MCP-Protocol-Version"] = "2025-03-26"
+    if session_id is not None:
+        headers["Mcp-Session-Id"] = session_id
+    connection.request("POST", "/mcp", body=body, headers=headers)
+    response = connection.getresponse()
+    response_body = response.read()
+    return response, cast(dict[str, Any], json.loads(response_body))
+
+
+def open_mcp_event_stream(
+    port: int, session_id: str
+) -> tuple[http.client.HTTPConnection, http.client.HTTPResponse]:
+    connection = http.client.HTTPConnection("127.0.0.1", port, timeout=2.0)
+    connection.request(
+        "GET",
+        "/mcp",
+        headers={
+            "Accept": "text/event-stream",
+            "Authorization": "Bearer smith-token",
+            "MCP-Protocol-Version": "2025-03-26",
+            "Mcp-Session-Id": session_id,
+        },
+    )
+    return connection, connection.getresponse()
+
+
+def read_sse_payload(response: http.client.HTTPResponse) -> dict[str, Any]:
+    while True:
+        line = response.readline()
+        if line == b"":
+            raise AssertionError("SSE stream closed before an event arrived")
+        if line.startswith(b"data: "):
+            payload = cast(dict[str, Any], json.loads(line.removeprefix(b"data: ")))
+            assert response.readline() in (b"\r\n", b"\n")
+            return payload
 
 
 class FakeNeedleRouter:
@@ -1296,6 +1403,156 @@ def test_streamable_http_explains_invalid_protocol_version(
     assert payload["supported"] == ["2025-03-26", "2024-11-05"]
     if version is not None:
         assert payload["received"] == version
+
+
+def test_streamable_http_reuses_post_connection_and_preserves_session(
+    service: MemoryService,
+    service_config: ServiceConfig,
+) -> None:
+    server = _server_for(service, service_config)
+    with running_streamable_server(server) as (port, _loop):
+        connection = http.client.HTTPConnection("127.0.0.1", port, timeout=2.0)
+        initialized, payload = mcp_post(
+            connection,
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2025-03-26",
+                    "capabilities": {},
+                    "clientInfo": {"name": "Memento integration test", "version": "1"},
+                },
+            },
+        )
+        session_id = initialized.getheader("Mcp-Session-Id")
+        assert initialized.status == 200
+        assert initialized.will_close is False
+        assert session_id is not None
+        assert payload["result"]["serverInfo"] == {"name": "memento", "version": __version__}
+        assert payload["result"]["capabilities"] == {
+            "tools": {},
+            "resources": {"subscribe": True, "listChanged": True},
+            "logging": {},
+        }
+        original_socket = connection.sock
+
+        listed, listed_payload = mcp_post(
+            connection,
+            {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}},
+            session_id=session_id,
+        )
+        assert listed.status == 200
+        assert listed.will_close is False
+        assert connection.sock is original_socket
+        assert "memory_status" in {tool["name"] for tool in listed_payload["result"]["tools"]}
+        connection.close()
+
+        replacement = http.client.HTTPConnection("127.0.0.1", port, timeout=2.0)
+        resumed, resumed_payload = mcp_post(
+            replacement,
+            {"jsonrpc": "2.0", "id": 3, "method": "tools/list", "params": {}},
+            session_id=session_id,
+        )
+        assert resumed.status == 200
+        assert resumed_payload["id"] == 3
+        replacement.request(
+            "DELETE",
+            "/mcp",
+            headers={
+                "Authorization": "Bearer smith-token",
+                "MCP-Protocol-Version": "2025-03-26",
+                "Mcp-Session-Id": session_id,
+            },
+        )
+        deleted = replacement.getresponse()
+        assert deleted.status == 200
+        deleted.read()
+        replacement.close()
+
+
+def test_streamable_http_delivers_subscribed_notifications_after_reconnect(
+    service: MemoryService,
+    service_config: ServiceConfig,
+) -> None:
+    server = _server_for(service, service_config)
+    server.streamable_http_keepalive_seconds = 0.05
+    with running_streamable_server(server) as (port, loop):
+        control = http.client.HTTPConnection("127.0.0.1", port, timeout=2.0)
+        initialized, _payload = mcp_post(
+            control,
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2025-03-26",
+                    "capabilities": {},
+                    "clientInfo": {"name": "Memento SSE test", "version": "1"},
+                },
+            },
+        )
+        session_id = initialized.getheader("Mcp-Session-Id")
+        assert session_id is not None
+        subscribed, subscribed_payload = mcp_post(
+            control,
+            {
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "resources/subscribe",
+                "params": {"uri": "memory://status"},
+            },
+            session_id=session_id,
+        )
+        assert subscribed.status == 200
+        assert subscribed_payload["result"] == {}
+
+        stream_connection, stream = open_mcp_event_stream(port, session_id)
+        assert stream.status == 200
+        assert stream.getheader("Content-Type") == "text/event-stream"
+        assert stream.readline().startswith(b": connected")
+        assert stream.readline() in (b"\r\n", b"\n")
+        asyncio.run_coroutine_threadsafe(
+            server.notify_resource_updated("memory://status"), loop
+        ).result(timeout=2.0)
+        notification = read_sse_payload(stream)
+        assert notification["method"] == "notifications/resources/updated"
+        assert notification["params"] == {"uri": "memory://status"}
+
+        stream.close()
+        stream_connection.close()
+        session = cast(Any, server)._streamable_http_sessions[session_id]
+        deadline = time.monotonic() + 1.0
+        while session.writer is not None and time.monotonic() < deadline:
+            time.sleep(0.02)
+        assert session.writer is None
+
+        reconnected_connection, reconnected = open_mcp_event_stream(port, session_id)
+        assert reconnected.status == 200
+        assert reconnected.readline().startswith(b": connected")
+        assert reconnected.readline() in (b"\r\n", b"\n")
+        asyncio.run_coroutine_threadsafe(
+            server.notify_resource_updated("memory://status"), loop
+        ).result(timeout=2.0)
+        assert read_sse_payload(reconnected)["method"] == "notifications/resources/updated"
+
+        control.request(
+            "DELETE",
+            "/mcp",
+            headers={
+                "Authorization": "Bearer smith-token",
+                "MCP-Protocol-Version": "2025-03-26",
+                "Mcp-Session-Id": session_id,
+            },
+        )
+        deleted = control.getresponse()
+        assert deleted.status == 200
+        deleted.read()
+        assert reconnected.readline() == b""
+        reconnected.close()
+        reconnected_connection.close()
+        control.close()
+        assert cast(Any, server)._streamable_http_sessions == {}
 
 
 def test_status_reports_canonical_state_when_derived_index_is_empty(

@@ -9,6 +9,7 @@ from typing import Any, Literal, cast, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict
 
+from memento import __version__
 from memento.access import AccessStore
 from memento.activity import ActivityClock
 from memento.admin import AdminHTTPHandler
@@ -293,6 +294,16 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         if self._umcp_log_file is not None:
             self.log_file = self._umcp_log_file
         super()._setup_logging()
+
+    def get_config(self) -> dict[str, Any]:
+        config = cast(dict[str, Any], super().get_config())
+        config["serverInfo"] = {"name": "memento", "version": __version__}
+        config["capabilities"] = {
+            "tools": {},
+            "resources": {"subscribe": True, "listChanged": True},
+            "logging": {},
+        }
+        return config
 
     def get_instructions(self) -> str:
         visible_specs = self._visible_operation_specs()

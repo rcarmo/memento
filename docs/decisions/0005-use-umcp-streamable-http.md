@@ -7,7 +7,7 @@
 
 Memento uses [`rcarmo/umcp`](https://github.com/rcarmo/umcp) as its MCP server and transport core. Network clients connect through Streamable HTTP with bearer authentication. Caller identity comes from uMCP's request context, never from tool arguments.
 
-The package pins uMCP commit `02d9d7b3c4d06108d668d13dba8a98b1a3b44fbb`. Memento keeps stdio and the wider uMCP compatibility work outside its own service logic. The transport returns actionable JSON for missing or unsupported `MCP-Protocol-Version` headers rather than an empty `400`.
+The package pins the uMCP `v0.2.2` release commit, `9c89a708d14ae804e32aa65de10af7c02922617d`. Memento keeps stdio and the wider uMCP compatibility work outside its own service logic. The transport reuses HTTP/1.1 connections, binds MCP session IDs to authenticated principals, and delivers subscribed resource notifications over reconnectable GET/SSE streams. Invalid `MCP-Protocol-Version` headers return actionable JSON rather than an empty `400`.
 
 ## Why
 
@@ -20,7 +20,7 @@ Streamable HTTP works across hosts and containers without giving clients filesys
 * Every MCP principal has a separate bearer token and namespace policy; managed credentials are verified from control-plane records after bootstrap.
 * The server accepts principal identity only from authenticated request context. Admin-only `access_*` tools use the same endpoint and are hidden from non-admin discovery.
 * Large asset proposals use a configured 72 MiB HTTP request ceiling; decoded ZIP validation has its own 50 MiB limit.
-* Reverse proxies must preserve the Authorization header and permit the configured request size.
+* Reverse proxies must preserve the Authorization, `Mcp-Session-Id`, `MCP-Protocol-Version` and `Last-Event-ID` headers, permit GET/POST/DELETE/OPTIONS, and allow the configured request size.
 * Transport upgrades are made in uMCP and pinned deliberately in Memento.
 * The release image includes the pinned Git dependency because the `umcp` name on PyPI belongs to another project.
 
