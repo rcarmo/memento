@@ -51,6 +51,12 @@ Release validation must cover deterministic inventory pagination and field proje
 
 Protected-prefix checks must show that a broad `/` reader loses protected paths, an explicit equal or nested grant restores them and `admin` bypasses the mask without inheriting ordinary content roles. Status-only patch replay and failed-operation retry tests must verify idempotent operation identity. The complete release and live deployment record is [`docs/evidence/release-0.3.24.md`](evidence/release-0.3.24.md).
 
+## MCP access contract checks for 0.3.27
+
+The managed-access schema now gives clients the exact principal-name, role and namespace-prefix constraints. `access_principal_create` also repeats its five required fields in the tool description because some Codex catalog paths reduce a structured MCP schema to an unknown argument type. An empty call returns the complete missing-field list and the `/path/` prefix syntax in one response; it cannot recover values that the client omitted.
+
+Release validation sends both empty and complete create requests through raw JSON-RPC dispatch against a disposable control database. Live checks use deliberately invalid principal names or `memory://` prefixes so production validation reaches the expected rule without creating a credential or principal.
+
 ## Persistent transport checks for 0.3.26
 
 The 0.3.26 transport path pins uMCP `v0.2.2` at `9c89a708d14ae804e32aa65de10af7c02922617d`. Wheel validation must install the `mcp` extra in a clean environment and confirm that Memento, uMCP and `aioumcp` resolve from that environment.

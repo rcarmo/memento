@@ -79,6 +79,8 @@ access_audit_list
 
 Non-admin principals cannot discover or invoke these tools. Server-side authorization is always enforced independently of discovery. MCP create and rotate calls require an `idempotency_key`; a replay is rejected because a one-time credential cannot safely be returned twice.
 
+`access_principal_create` takes `name`, `roles`, `read_prefixes`, `write_prefixes` and `idempotency_key` inside the MCP `params.arguments` object. Namespace prefixes are repository paths such as `/skills/`, not resource URIs such as `memory://skills`, and every write prefix must sit inside a read prefix. The tool description repeats this contract so clients that lose the structured schema during catalog projection can still construct a valid call; an empty call returns the complete missing-field list rather than stopping at `name`.
+
 These are direct MCP tools on the normal `/mcp` endpoint. They are added for managed administrators regardless of the configured regular memory-tool surface; they are not operations accepted by `memory_execute`. A client using an MCP proxy can discover and call them through that proxy. The `/admin` page is the browser alternative over `/admin/api/*`.
 
 ## Onboard Principals Through A Separate Profile

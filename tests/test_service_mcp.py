@@ -1819,10 +1819,81 @@ def test_managed_access_instructions_and_tool_descriptions(
     assert "credentials returned once by create or rotate" in instructions
 
     tools = {item["name"]: item for item in server.discover_tools()["tools"]}
-    assert "least-privilege principal" in tools["access_principal_create"]["description"]
+    create_tool = tools["access_principal_create"]
+    assert "least-privilege principal" in create_tool["description"]
+    assert "MCP params.arguments" in create_tool["description"]
+    for field in ("name", "roles", "read_prefixes", "write_prefixes", "idempotency_key"):
+        assert f"`{field}`" in create_tool["description"]
+    assert "never `memory://` resource URIs" in create_tool["description"]
     assert "separate from routine curation" in tools["access_principal_update"]["description"]
     assert "secret-store capture" in tools["access_credential_rotate"]["description"]
-    assert tools["access_principal_create"]["annotations"]["roles"] == ["admin"]
+    assert create_tool["annotations"]["roles"] == ["admin"]
+
+    schema = create_tool["inputSchema"]
+    assert schema["required"] == [
+        "name",
+        "roles",
+        "read_prefixes",
+        "write_prefixes",
+        "idempotency_key",
+    ]
+    assert schema["properties"]["name"]["pattern"] == "^[a-z0-9][a-z0-9-]{0,62}$"
+    assert schema["properties"]["roles"]["items"]["enum"] == [
+        "reader",
+        "proposer",
+        "curator",
+        "admin",
+    ]
+    assert schema["properties"]["read_prefixes"]["items"]["pattern"] == "^/(?:.*/)?$"
+    assert "not memory:// resource URIs" in schema["properties"]["write_prefixes"]["description"]
+
+    empty_call = asyncio.run(
+        server.process_request_async(
+            json.dumps(
+                {
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "tools/call",
+                    "params": {"name": "access_principal_create", "arguments": {}},
+                }
+            )
+        )
+    )
+    assert empty_call is not None
+    assert empty_call["error"]["code"] == -32602
+    assert empty_call["error"]["message"] == (
+        "access_principal_create requires MCP params.arguments fields: name, roles, "
+        "read_prefixes, write_prefixes, idempotency_key. Prefixes are namespace paths such as "
+        "'/skills/', not memory:// resource URIs."
+    )
+
+    valid_call = asyncio.run(
+        server.process_request_async(
+            json.dumps(
+                {
+                    "jsonrpc": "2.0",
+                    "id": 2,
+                    "method": "tools/call",
+                    "params": {
+                        "name": "access_principal_create",
+                        "arguments": {
+                            "name": "codex-probe",
+                            "roles": ["reader"],
+                            "read_prefixes": ["/codex-probe/"],
+                            "write_prefixes": [],
+                            "idempotency_key": "codex-probe-create",
+                        },
+                    },
+                }
+            )
+        )
+    )
+    assert valid_call is not None
+    assert valid_call["result"]["structuredContent"]["principal"]["name"] == "codex-probe"
+    assert valid_call["result"]["structuredContent"]["principal"]["read_prefixes"] == [
+        "/codex-probe/"
+    ]
+    assert valid_call["result"]["structuredContent"]["credential"].startswith("memento_")
 
 
 def test_mcp_asset_stage_ticket_and_status_bridge(

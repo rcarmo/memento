@@ -61,6 +61,7 @@ The skill describes the search/read workflow, proposal lifecycle, direct curator
 * `401 Unauthorized` -- confirm `MEMENTO_TOKEN` is present in the Codex process environment and maps to a live principal.
 * `403 Forbidden` -- the token is valid but its roles or write/read prefixes do not allow the operation.
 * status shows the wrong visible count -- verify that the intended principal token, rather than a broad curator token, was exported.
+* a tool reports that every required argument is missing -- the server received an empty `params.arguments` object. Restart Codex so it refreshes the MCP catalog, then compare the raw `tools/list` schema with the active callable declaration; [Codex issue #36298](https://github.com/openai/codex/issues/36298) tracks structured schemas being reduced to an unknown argument type during catalog projection. Memento's access-tool descriptions repeat their required fields and prefix syntax so the model has a usable contract even on that degraded path.
 * long writes or connection resets -- reconcile the repository revision and target path before retrying with the same idempotency key.
 
 The Codex MCP configuration reference is published at [developers.openai.com/codex/mcp](https://developers.openai.com/codex/mcp/).

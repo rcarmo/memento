@@ -348,6 +348,35 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     @staticmethod
     def _access_tools() -> list[dict[str, Any]]:
         object_schema = {"type": "object", "additionalProperties": False}
+        principal_name_schema = {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 63,
+            "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+            "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+        }
+        roles_schema = {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": True,
+            "items": {"type": "string", "enum": ["reader", "proposer", "curator", "admin"]},
+            "description": "One or more managed roles.",
+        }
+        prefix_schema = {
+            "type": "array",
+            "uniqueItems": True,
+            "items": {
+                "type": "string",
+                "pattern": "^/(?:.*/)?$",
+                "description": "Namespace path beginning and ending with '/', such as '/skills/'.",
+            },
+            "description": "Namespace paths, not memory:// resource URIs.",
+        }
+        idempotency_key_schema = {
+            "type": "string",
+            "minLength": 1,
+            "description": "Durable retry key for this operation.",
+        }
         entries: list[tuple[str, str, dict[str, Any]]] = [
             ("access_principal_list", "List managed principals.", {}),
             (
@@ -357,46 +386,54 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             ),
             (
                 "access_principal_create",
-                "Create a least-privilege principal; return its credential once for immediate secret-store capture.",
+                "Create a least-privilege principal and return its credential once for immediate "
+                "secret-store capture. Required MCP params.arguments fields are `name`, `roles`, "
+                "`read_prefixes`, `write_prefixes` and `idempotency_key`. Prefixes are namespace "
+                "paths such as `/skills/`, never `memory://` resource URIs; every write prefix must "
+                "be inside a read prefix.",
                 {
-                    "name": {"type": "string"},
-                    "roles": {"type": "array", "items": {"type": "string"}},
-                    "read_prefixes": {"type": "array", "items": {"type": "string"}},
-                    "write_prefixes": {"type": "array", "items": {"type": "string"}},
-                    "idempotency_key": {"type": "string"},
+                    "name": principal_name_schema,
+                    "roles": roles_schema,
+                    "read_prefixes": prefix_schema,
+                    "write_prefixes": prefix_schema,
+                    "idempotency_key": idempotency_key_schema,
                 },
             ),
             (
                 "access_principal_update",
-                "Replace principal roles and namespaces; keep administration separate from routine curation.",
+                "Replace principal roles and namespaces; keep administration separate from routine "
+                "curation. Required MCP params.arguments fields are `name`, `roles`, "
+                "`read_prefixes` and `write_prefixes`. Prefixes are namespace paths such as "
+                "`/skills/`, never `memory://` resource URIs; every write prefix must be inside a "
+                "read prefix.",
                 {
-                    "name": {"type": "string"},
-                    "roles": {"type": "array", "items": {"type": "string"}},
-                    "read_prefixes": {"type": "array", "items": {"type": "string"}},
-                    "write_prefixes": {"type": "array", "items": {"type": "string"}},
+                    "name": principal_name_schema,
+                    "roles": roles_schema,
+                    "read_prefixes": prefix_schema,
+                    "write_prefixes": prefix_schema,
                 },
             ),
             (
                 "access_principal_rename",
                 "Rename a principal.",
-                {"name": {"type": "string"}, "new_name": {"type": "string"}},
+                {"name": principal_name_schema, "new_name": principal_name_schema},
             ),
-            ("access_principal_disable", "Disable a principal.", {"name": {"type": "string"}}),
-            ("access_principal_enable", "Enable a principal.", {"name": {"type": "string"}}),
+            ("access_principal_disable", "Disable a principal.", {"name": principal_name_schema}),
+            ("access_principal_enable", "Enable a principal.", {"name": principal_name_schema}),
             (
                 "access_credential_rotate",
                 "Rotate a principal credential and return it once for immediate secret-store capture.",
-                {"name": {"type": "string"}, "idempotency_key": {"type": "string"}},
+                {"name": principal_name_schema, "idempotency_key": idempotency_key_schema},
             ),
             (
                 "access_principal_revoke",
                 "Revoke a principal credential.",
-                {"name": {"type": "string"}},
+                {"name": principal_name_schema},
             ),
             (
                 "access_principal_delete",
                 "Tombstone a disabled, revoked principal.",
-                {"name": {"type": "string"}},
+                {"name": principal_name_schema},
             ),
         ]
         tools = []
@@ -911,12 +948,35 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
 
     async def tool_access_principal_create(
         self,
-        name: str,
-        roles: list[str],
-        read_prefixes: list[str],
-        write_prefixes: list[str],
-        idempotency_key: str,
+        name: str | None = None,
+        roles: list[str] | None = None,
+        read_prefixes: list[str] | None = None,
+        write_prefixes: list[str] | None = None,
+        idempotency_key: str | None = None,
     ) -> dict[str, Any]:
+        if (
+            name is None
+            or roles is None
+            or read_prefixes is None
+            or write_prefixes is None
+            or idempotency_key is None
+        ):
+            missing = [
+                field
+                for field, value in (
+                    ("name", name),
+                    ("roles", roles),
+                    ("read_prefixes", read_prefixes),
+                    ("write_prefixes", write_prefixes),
+                    ("idempotency_key", idempotency_key),
+                )
+                if value is None
+            ]
+            raise ValueError(
+                "access_principal_create requires MCP params.arguments fields: "
+                + ", ".join(missing)
+                + ". Prefixes are namespace paths such as '/skills/', not memory:// resource URIs."
+            )
         actor = self._require_access_admin()
         principal, token = self._access().create(
             actor=actor.name,
