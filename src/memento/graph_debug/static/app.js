@@ -12,6 +12,21 @@ const forceDefaults = {
   shared_provenance: 0.006,
 };
 const simulatedWarning = "Simulated visibility — not an authorization boundary";
+const directSizeMetrics = [
+  "combined_bytes",
+  "markdown_bytes",
+  "asset_bytes",
+  "explicit_in_degree",
+  "explicit_out_degree",
+];
+
+function availableSizeMetrics(payload) {
+  return payload?.mode === "aggregated" ? [...directSizeMetrics, "member_count"] : directSizeMetrics;
+}
+
+function effectiveSizeMetric(payload, metric) {
+  return availableSizeMetrics(payload).includes(metric) ? metric : "combined_bytes";
+}
 
 export function semanticDisplayEdges(edges, selectedId, enabled, threshold, neighbours) {
   const semantic = edges
@@ -174,7 +189,7 @@ function App() {
     scene.current?.setGraph(
       nodes,
       semanticDisplayEdges(edges, selected?.id, semanticEnabled, semanticThreshold, semanticNeighbours),
-      { sizeMetric, forces },
+      { sizeMetric: effectiveSizeMetric(payload, sizeMetric), forces },
     );
   }
 
@@ -246,10 +261,6 @@ function App() {
   }
 
   useEffect(() => {
-    if (graph) draw(graph);
-  }, [sizeMetric, forces, semanticEnabled, semanticThreshold, semanticNeighbours]);
-
-  useEffect(() => {
     const value = query.trim();
     if (value.length < 2) {
       setSearchResults([]);
@@ -298,11 +309,15 @@ function App() {
         semanticThreshold,
         semanticNeighbours,
       ),
-      { sizeMetric, forces },
+      { sizeMetric: effectiveSizeMetric(graph, sizeMetric), forces },
     );
   }
 
-  useEffect(redrawFiltered, [filtered, semanticEnabled, semanticThreshold, semanticNeighbours]);
+  useEffect(redrawFiltered, [filtered, sizeMetric, forces, semanticEnabled, semanticThreshold, semanticNeighbours]);
+
+  useEffect(() => {
+    if (graph && !availableSizeMetrics(graph).includes(sizeMetric)) setSizeMetric("combined_bytes");
+  }, [graph?.mode, sizeMetric]);
 
   async function changeView(name) {
     const next = typeof name === "string" ? name.trim() : "";
@@ -352,7 +367,7 @@ function App() {
       const settings = {
         query,
         type,
-        sizeMetric,
+        sizeMetric: effectiveSizeMetric(graph, sizeMetric),
         forces,
         include_preview: includePreview,
         semantic_enabled: semanticEnabled,
@@ -492,11 +507,13 @@ function App() {
         "Size",
         h(
           "select",
-          { value: sizeMetric, onChange: (event) => setSizeMetric(event.currentTarget.value) },
-          ["combined_bytes", "markdown_bytes", "asset_bytes", "explicit_in_degree", "explicit_out_degree", "member_count"].map((value) =>
-            h("option", { value }, value),
-          ),
+          {
+            value: effectiveSizeMetric(graph, sizeMetric),
+            onChange: (event) => setSizeMetric(event.currentTarget.value),
+          },
+          availableSizeMetrics(graph).map((value) => h("option", { value }, value)),
         ),
+        h("small", { class: "selection-detail" }, "Relative logarithmic scale within the current view."),
       ]),
       h("details", { open: true }, [
         h("summary", {}, "Semantic similarity"),

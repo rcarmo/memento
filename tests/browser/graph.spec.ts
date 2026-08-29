@@ -1,9 +1,13 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 
 const evidence = "docs/evidence/graph";
 
 test.beforeAll(async () => { await mkdir(evidence, { recursive: true }); });
+
+async function renderedScales(page:Page, ids:string[]) {
+  return page.evaluate((wanted)=>{const scene:any=(window as any).__mementoGraphScene;const scales:Record<string,number>={};for(const mesh of scene.meshes){const values=mesh.instanceMatrix?.array;if(!values)continue;mesh.userData.globalIndices.forEach((globalIndex:number,instanceIndex:number)=>{const id=scene.nodes[globalIndex]?.id;if(!wanted.includes(id))return;const offset=instanceIndex*16;scales[id]=Math.hypot(values[offset],values[offset+1],values[offset+2]);});}return scales;},ids);
+}
 
 test("loads WebGL graph, filters, selects and exports", async ({ page, browserName, isMobile }) => {
   test.skip(isMobile, "desktop interaction is covered separately from tablet touch");
@@ -36,6 +40,47 @@ test("loads WebGL graph, filters, selects and exports", async ({ page, browserNa
     await page.screenshot({path:`${evidence}/overview-dark.png`,fullPage:true});
   }
   expect(errors).toEqual([]);
+});
+
+test("uses available size metrics to produce visibly distinct rendered scales", async ({ page, browserName, isMobile }) => {
+  test.skip(isMobile || browserName!=="chromium","rendered metric sizing is asserted once in Chromium");
+  await page.goto("/graph",{waitUntil:"networkidle"});
+  await page.waitForFunction(()=>Boolean((window as any).__mementoGraphScene?.nodes?.length));
+  const selector=page.locator('label:has-text("Size") select');
+  await expect(selector.locator("option")).toHaveText(["combined_bytes","markdown_bytes","asset_bytes","explicit_in_degree","explicit_out_degree"]);
+  const combined=await renderedScales(page,["node-0","node-1","node-8"]);
+  await selector.selectOption("markdown_bytes");
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.settings.sizeMetric)).toBe("markdown_bytes");
+  const markdown=await renderedScales(page,["node-0"]);
+  expect(combined["node-0"]-markdown["node-0"]).toBeGreaterThan(.4);
+  await selector.selectOption("asset_bytes");
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.settings.sizeMetric)).toBe("asset_bytes");
+  const asset=await renderedScales(page,["node-0","node-1"]);
+  expect(asset["node-0"]-asset["node-1"]).toBeGreaterThan(.5);
+  await selector.selectOption("explicit_in_degree");
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.settings.sizeMetric)).toBe("explicit_in_degree");
+  const degree=await renderedScales(page,["node-0","node-8"]);
+  expect(degree["node-8"]-degree["node-0"]).toBeGreaterThan(.5);
+  await expect(page.locator('label:has-text("Size") .selection-detail')).toContainText("Relative logarithmic scale");
+});
+
+test("offers member count only while viewing aggregate nodes", async ({ page, browserName, isMobile }) => {
+  test.skip(isMobile || browserName!=="chromium","aggregate metric availability is asserted once in Chromium");
+  await page.route("**/graph/api/v1/overview",async route=>{const response=await route.fetch();const payload=await response.json();const clusters=[
+    {id:"cluster-small",label:"Small namespace",namespace:"/small/",member_count:1,markdown_bytes:100,asset_bytes:0,combined_bytes:100,explicit_in_degree:1,explicit_out_degree:0,type_counts:[["project",1]],coarse_position:{x:-3,y:0,z:0}},
+    {id:"cluster-large",label:"Large namespace",namespace:"/large/",member_count:100,markdown_bytes:10000,asset_bytes:1000,combined_bytes:11000,explicit_in_degree:8,explicit_out_degree:9,type_counts:[["project",100]],coarse_position:{x:3,y:0,z:0}},
+  ];await route.fulfill({response,json:{...payload,mode:"aggregated",nodes:[],edges:[],clusters,cluster_edges:[],truncated:true}});});
+  await page.goto("/graph",{waitUntil:"networkidle"});
+  const selector=page.locator('label:has-text("Size") select');
+  await expect(selector.locator('option[value="member_count"]')).toHaveCount(1);
+  await selector.selectOption("member_count");
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.settings.sizeMetric)).toBe("member_count");
+  const aggregate=await renderedScales(page,["cluster-small","cluster-large"]);
+  expect(aggregate["cluster-large"]-aggregate["cluster-small"]).toBeGreaterThan(.5);
+  await page.evaluate(()=>(window as any).__mementoGraphScene.callbacks.select((window as any).__mementoGraphScene.nodes[0]));
+  await expect(selector.locator('option[value="member_count"]')).toHaveCount(0);
+  await expect(selector).toHaveValue("combined_bytes");
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.settings.sizeMetric)).toBe("combined_bytes");
 });
 
 test("keeps picking bounds synchronized after worker layout", async ({ page, browserName, isMobile }) => {
