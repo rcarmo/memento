@@ -2,7 +2,8 @@
 
 **Status:** current-state debugger implemented and deployed on the trusted-LAN DiskStation; revision playback deferred
 **Decision:** [ADR 0011](decisions/0011-embed-a-gated-visual-memory-debugger.md)
-**Current acceptance:** [`0.3.24` release and deployment evidence](evidence/release-0.3.24.md)
+**Current deployment:** [`0.3.26` release and deployment evidence](evidence/release-0.3.26.md)
+**Latest graph-specific acceptance:** [`0.3.25` live graph checks](evidence/release-0.3.25.md)
 
 The visual debugger is a built-in `/graph` view for understanding how Memento creates, links and maintains shared memory. This document records the implemented API, rendering, validation and release details, then collects the deferred history features at the end.
 

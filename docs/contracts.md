@@ -123,8 +123,8 @@ Configured `mcp.tool_surface` controls regular memory-tool discovery. When manag
 | `compact` | core help/status/search/read/inventory/execute, asset staging begin/status and `memory_asset_get`, plus optional `memory_answer` and `memory_route` (**9** to **11**) |
 | `standard` | the **23** direct compatibility tools, including inventory, staging, generic asset retrieval and pruning |
 | `read_only` | the **10** discovery, concept-read and asset-read tools; no upload ticket tools |
-| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**14** or **15** with `memory_answer`) |
-| `admin` | the **24**-tool full direct memory surface plus `memory_execute`; managed administrators additionally receive the role-filtered `access_*` family |
+| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**14**, each optional `memory_answer` or `memory_route` adds one, **16** with both) |
+| `admin` | the **24**-tool full direct memory surface, including `memory_execute`, plus optional `memory_route` (**25**); managed administrators additionally receive the role-filtered `access_*` family |
 
 ### Catalog resources
 

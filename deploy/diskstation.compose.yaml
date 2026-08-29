@@ -1,6 +1,6 @@
 services:
   memento:
-    image: ghcr.io/rcarmo/memento:${MEMENTO_VERSION:?set MEMENTO_VERSION to a release such as 0.2.3}
+    image: ghcr.io/rcarmo/memento:${MEMENTO_VERSION:?set MEMENTO_VERSION to a release such as 0.3.26}
     container_name: memento
     restart: unless-stopped
     user: "65532:65532"

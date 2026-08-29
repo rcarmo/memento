@@ -21,6 +21,8 @@ Streamable HTTP works across hosts and containers without giving clients filesys
 * The server accepts principal identity only from authenticated request context. Admin-only `access_*` tools use the same endpoint and are hidden from non-admin discovery.
 * Large asset proposals use a configured 72 MiB HTTP request ceiling; decoded ZIP validation has its own 50 MiB limit.
 * Reverse proxies must preserve the Authorization, `Mcp-Session-Id`, `MCP-Protocol-Version` and `Last-Event-ID` headers, permit GET/POST/DELETE/OPTIONS, and allow the configured request size.
+* One GET/SSE stream may own a session at a time. Authenticated `DELETE /mcp` releases it immediately; an abruptly closed stream may make replacement GETs return `409` until a notification or periodic keepalive write detects the closure.
+* Reconnection starts a fresh stream. Notifications missed while disconnected are not replayed, including when the client sends `Last-Event-ID`.
 * Transport upgrades are made in uMCP and pinned deliberately in Memento.
 * The release image includes the pinned Git dependency because the `umcp` name on PyPI belongs to another project.
 

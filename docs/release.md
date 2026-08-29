@@ -51,6 +51,12 @@ Release validation must cover deterministic inventory pagination and field proje
 
 Protected-prefix checks must show that a broad `/` reader loses protected paths, an explicit equal or nested grant restores them and `admin` bypasses the mask without inheriting ordinary content roles. Status-only patch replay and failed-operation retry tests must verify idempotent operation identity. The complete release and live deployment record is [`docs/evidence/release-0.3.24.md`](evidence/release-0.3.24.md).
 
+## Persistent transport checks for 0.3.26
+
+The 0.3.26 transport path pins uMCP `v0.2.2` at `9c89a708d14ae804e32aa65de10af7c02922617d`. Wheel validation must install the `mcp` extra in a clean environment and confirm that Memento, uMCP and `aioumcp` resolve from that environment.
+
+Memento's integration tests cover its advertised server identity and capability object, multiple POST requests on one persistent HTTP/1.1 connection and MCP session, session resumption on a replacement POST connection, subscribed resource notifications over a reconnectable GET/SSE stream and authenticated session deletion. Live acceptance additionally checks a longer repeated-request sequence and abrupt SSE replacement. An abrupt closure is detected when a notification or periodic keepalive write fails, so replacement GETs may return `409` in the interim; reconnecting does not replay missed notifications. The complete release and live deployment record is [`docs/evidence/release-0.3.26.md`](evidence/release-0.3.26.md).
+
 ## Progressive embedding release checks
 
 Release validation covers pointer-only/rebuild reuse, restart-derived pending work, model-revision invalidation, manual priority, startup and interactive idle gates, `/proc/stat` CPU sampling with I/O wait treated as idle, pacing, `nice` command construction, and one-thread native environments. The operator-run DiskStation deployment preserves `/var/lib/memento`, then checks status and graph revision fields including `pause_reason`, `current_path` and `completed`.

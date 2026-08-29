@@ -110,11 +110,11 @@ flowchart TD
     curator[curator surface]
     admin[admin surface]
 
-    compact --> ctools[8 direct tools<br/>10 with answer and route]
-    readonly --> rtools[9 direct tools]
-    standard --> stools[22 direct tools]
-    curator --> curtools[13 direct tools<br/>15 with answer and route]
-    admin --> atools[23 direct tools<br/>24 with route]
+    compact --> ctools[9 direct tools<br/>11 with answer and route]
+    readonly --> rtools[10 direct tools]
+    standard --> stools[23 direct tools]
+    curator --> curtools[14 direct tools<br/>each optional tool adds one<br/>16 with both]
+    admin --> atools[24 direct tools<br/>25 with route]
 
     curator --> execonly[create / patch / rename are execute-only here]
     standard --> directmut[create / patch / rename are direct tools]

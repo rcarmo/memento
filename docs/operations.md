@@ -161,7 +161,7 @@ Timer safety, as the files exist today:
 ## Deployment references
 
 * [`Dockerfile`](../Dockerfile) publishes the tested non-root amd64/arm64 image. The operator-managed DiskStation deployment pins a release tag and persists `/var/lib/memento`.
-* [`deploy/diskstation.compose.yaml`](../deploy/diskstation.compose.yaml) is the live trusted-LAN profile; [`docs/diskstation.md`](diskstation.md) records its J3455 limits and update process. The [`0.3.24` acceptance record](evidence/release-0.3.24.md) includes the current deployment checks, progressive embedding state and unresolved production PIDs-limit discrepancy.
+* [`deploy/diskstation.compose.yaml`](../deploy/diskstation.compose.yaml) is the live trusted-LAN profile; [`docs/diskstation.md`](diskstation.md) records its J3455 limits and update process. The [`0.3.26` acceptance record](evidence/release-0.3.26.md) includes the current persistent-session and SSE checks, preserved derived state and unresolved production PIDs-limit discrepancy.
 * [`compose.example.yaml`](../compose.example.yaml) is the local packaging reference.
 * [`deploy/systemd/`](../deploy/systemd/) contains lease-aware reference units that still need an operator-run parity exercise.
 * [`deploy/nginx/memento.conf`](../deploy/nginx/memento.conf) is a reverse-proxy reference. TLS and deployment-specific authentication remain operator responsibilities.
