@@ -33,6 +33,14 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Proposal curation and graph audit checks for 0.4.0
+
+The 0.4.0 curation path keeps proposal appraisal inside MCP without returning full bodies by default. Release validation covers 200-item summary bounds, cursor pagination, generic concept-body digest matching across attached asset entries, manifest-only metadata, bounded file chunks, stale per-path conflict checks, body/asset-complete subset revision, and current-policy filtering for proposals, staged assets and operation reconciliation.
+
+Commit reconciliation must distinguish committed, in-progress, conflict, failed-before-mutation and indeterminate outcomes by the caller's operation ID or idempotency key. Direct mutations return proposal-first guidance, and body patches to concepts with published assets are rejected before the transaction begins. The checks use ordinary project, instance and template concepts; none of these contracts depends on a `/skills/` namespace or skill asset kind.
+
+`memory_audit` requires the literal `proposer` role. Its graph diagnostics are filtered to namespaces the caller can both read and write, exclude protected paths without an explicit grant, reject stale or mismatched cursors, and never run a repair action. The release also loads the SQLite vector extension through SQLite's supplied extension API table rather than linking a second SQLite implementation into the process.
+
 ## Answer-evidence checks for 0.3.23
 
 The 0.3.23 answer path adds deterministic query profiling, secret-first abstention, authorisation-scoped evidence, hybrid top-5/top-10 escalation and bounded relational support chains to `memory_answer`. It also fixes natural-language lexical normalization and typed `memory_graph` edge serialization.
