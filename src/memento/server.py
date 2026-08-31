@@ -311,7 +311,10 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         message = (
             "Deterministic shared memory service backed by Git Markdown. "
             f"Configured tool surface: {self._service._deps.config.mcp.tool_surface}. "
-            f"Direct tools: {visible_tools}. See memory://catalog and memory://workflow/inspect."
+            f"Direct tools: {visible_tools}. See memory://catalog and memory://workflow/inspect. "
+            "Do not use scripts or hand-built/raw MCP protocol calls to work around missing "
+            "interactions. Use supported MCP tools and documented upload workflows, and file a GitHub issue at "
+            "https://github.com/rcarmo/memento/issues when an interaction mode is missing."
         )
         if self._execute_tool_available():
             message += " memory_execute can compose additional execute-only operations listed in the catalog."
@@ -651,8 +654,22 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             self._context(), id_or_path=id_or_path, depth=depth
         ).model_dump(mode="json")
 
-    async def tool_memory_audit(self, path: str | None = None) -> dict[str, Any]:
-        return self._service.memory_audit(self._context(), path=path).model_dump(mode="json")
+    async def tool_memory_audit(
+        self,
+        path: str | None = None,
+        rule: str | None = None,
+        severity: Literal["info", "warning", "error"] | None = None,
+        limit: int = 50,
+        cursor: str | None = None,
+    ) -> dict[str, Any]:
+        return self._service.memory_audit(
+            self._context(),
+            path=path,
+            rule=rule,
+            severity=severity,
+            limit=limit,
+            cursor=cursor,
+        ).model_dump(mode="json")
 
     async def tool_memory_answer(
         self, question: str, answer_mode: str = "summary"
@@ -695,15 +712,69 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             self._context(), instruction=instruction, target_hint=target_hint
         ).model_dump(mode="json")
 
-    async def tool_memory_proposal_get(self, proposal_id: str) -> dict[str, Any]:
+    async def tool_memory_proposal_get(
+        self,
+        proposal_id: str,
+        view: Literal["summary", "detailed"] = "detailed",
+    ) -> dict[str, Any]:
         return self._service.memory_proposal_get(
-            self._context(), proposal_id=proposal_id
+            self._context(), proposal_id=proposal_id, view=view
         ).model_dump(mode="json")
 
-    async def tool_memory_proposal_list(self, status: str | None = None) -> dict[str, Any]:
-        return self._service.memory_proposal_list(self._context(), status=status).model_dump(
-            mode="json"
-        )
+    async def tool_memory_proposal_list(
+        self,
+        status: str | None = None,
+        limit: int = 50,
+        cursor: str | None = None,
+    ) -> dict[str, Any]:
+        return self._service.memory_proposal_list(
+            self._context(), status=status, limit=limit, cursor=cursor
+        ).model_dump(mode="json")
+
+    async def tool_memory_proposal_asset_get(
+        self,
+        proposal_id: str,
+        asset_id: str,
+        file_path: str | None = None,
+        offset: int = 0,
+        limit: int = 65_536,
+    ) -> dict[str, Any]:
+        return self._service.memory_proposal_asset_get(
+            self._context(),
+            proposal_id=proposal_id,
+            asset_id=asset_id,
+            file_path=file_path,
+            offset=offset,
+            limit=limit,
+        ).model_dump(mode="json")
+
+    async def tool_memory_proposal_revise(
+        self,
+        proposal_id: str,
+        selected_change_indexes: tuple[int, ...],
+        expected_revision: str,
+        intent: str | None = None,
+        rationale: str | None = None,
+    ) -> dict[str, Any]:
+        return self._service.memory_proposal_revise(
+            self._context(),
+            proposal_id=proposal_id,
+            selected_change_indexes=selected_change_indexes,
+            expected_revision=expected_revision,
+            intent=intent,
+            rationale=rationale,
+        ).model_dump(mode="json")
+
+    async def tool_memory_operation_get(
+        self,
+        idempotency_key: str | None = None,
+        operation_id: str | None = None,
+    ) -> dict[str, Any]:
+        return self._service.memory_operation_get(
+            self._context(),
+            idempotency_key=idempotency_key,
+            operation_id=operation_id,
+        ).model_dump(mode="json")
 
     async def tool_memory_proposal_review(
         self, proposal_id: str, decision: str, comment: str | None = None

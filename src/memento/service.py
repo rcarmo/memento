@@ -4,10 +4,12 @@ import base64
 import binascii
 import difflib
 import hashlib
+import io
 import json
 import math
 import re
 import sqlite3
+import zipfile
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
@@ -46,8 +48,10 @@ from memento.authz import (
 from memento.config import AuthorizationConfig, Principal, ServiceConfig
 from memento.control.operations import (
     IdempotencyConflictError,
+    OperationRecord,
     OperationRequest,
     OperationState,
+    get_operation,
     get_operation_by_idempotency,
 )
 from memento.control.proposals import (
@@ -96,6 +100,8 @@ from memento.evidence import (
     profile_question,
 )
 from memento.executor import INVENTORY_FIELDS, ExecuteLimits, MemoryExecutor
+from memento.graph_debug.models import GraphDiagnostic
+from memento.graph_debug.snapshot import GraphSnapshotError, GraphSnapshotService
 from memento.mcp_registry import OPERATION_SPECS, WORKFLOW_TEMPLATES, tool_names_for_surface
 from memento.repository.asset_packs import (
     asset_version_paths,
@@ -154,6 +160,9 @@ from memento.staged_assets import StagedAssetError, StagedAssetStore
 _MAX_ASSET_METADATA_KINDS = 50
 _MAX_ASSET_METADATA_VERSIONS = 50
 _MAX_ASSET_METADATA_FILES = 500
+_MAX_PROPOSAL_SUMMARY_CHANGES = 200
+_MAX_PROPOSAL_SUMMARY_ASSETS = 200
+_MAX_PROPOSAL_SUMMARY_TEXT_CHARS = 2_000
 
 
 class ServiceError(RuntimeError):
@@ -301,6 +310,7 @@ class ServiceDependencies:
     control_connection: sqlite3.Connection
     derived_index: DerivedIndex
     transaction_manager: TransactionManager
+    graph_snapshot_service: GraphSnapshotService | None = None
     model_client: ModelClient | None = None
     needle_router: NeedleRouterProtocol | None = None
     access_store: AccessStore | None = None
@@ -392,7 +402,7 @@ class MemoryService:
                 "mcp": {
                     "tool_surface": self._deps.config.mcp.tool_surface,
                     "direct_tools": tuple(sorted(visible_tools)),
-                    "compact_instructions": "Use memory_search, then memory_read, or use memory_execute with saved references like $hits.results.0.path. For staged ZIP uploads, read memory://workflow/asset_pack and memory://catalog/propose before submitting an attach_asset_pack change. If enabled, memory_route can classify one shallow read request into a deterministic action.",
+                    "compact_instructions": "Use memory_search, then memory_read, or use memory_execute with saved references like $hits.results.0.path. For staged ZIP uploads, read memory://workflow/asset_pack and memory://catalog/propose before submitting an attach_asset_pack change. Do not use scripts or hand-built/raw MCP protocol calls to work around interaction gaps; use supported MCP tools and documented upload workflows, and file a GitHub issue at https://github.com/rcarmo/memento/issues when an interaction mode is missing. If enabled, memory_route can classify one shallow read request into a deterministic action.",
                     "execute_limits": self._deps.config.mcp.execute.model_dump(mode="python"),
                     "execute_only_operations": execute_only_operations,
                 },
@@ -442,7 +452,7 @@ class MemoryService:
                     "features": {
                         "resources": True,
                         "streamable_http": True,
-                        "proposal_rebase": False,
+                        "proposal_rebase": True,
                         "model_proposals": self._deps.config.intelligent_tiers.model_proposals.enabled,
                         "dream_mode": self._deps.config.intelligent_tiers.dream.mode,
                         "semantic_search": semantic.enabled,
@@ -468,6 +478,116 @@ class MemoryService:
                 index_revision=index_revision,
                 index_stale=index_stale,
                 warnings=semantic.warnings + (("derived_index_stale",) if index_stale else ()),
+            )
+        except Exception as exc:
+            return self._failure(exc)
+
+    def memory_operation_get(
+        self,
+        context: ServiceContext,
+        *,
+        idempotency_key: str | None = None,
+        operation_id: str | None = None,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        try:
+            policy = self._policy(context)
+            require_role(policy, "curator")
+            if (idempotency_key is None) == (operation_id is None):
+                raise ServiceError("provide exactly one of idempotency_key or operation_id")
+            operation: OperationRecord | None
+            if idempotency_key is not None:
+                operation = get_operation_by_idempotency(
+                    self._deps.control_connection, policy.principal, idempotency_key
+                )
+                if operation is None:
+                    return self._success(
+                        {
+                            "final_state": "not_committed",
+                            "operation": None,
+                            "changed_paths": (),
+                            "partial": False,
+                            "safe_to_retry": True,
+                            "retry_guidance": (
+                                "No operation exists for this principal and idempotency key; "
+                                "retry the original request with the same key."
+                            ),
+                        }
+                    )
+            else:
+                operation = get_operation(self._deps.control_connection, str(operation_id))
+                if operation.principal != policy.principal:
+                    raise ForbiddenError("operation belongs to another principal")
+            replay = operation.replay_payload or {}
+            raw_paths = replay.get("changed_paths", [])
+            changed_paths = (
+                tuple(
+                    str(item)
+                    for item in raw_paths
+                    if isinstance(item, str)
+                    and self._is_authorized(policy, item, action="read")
+                    and self._is_authorized(policy, item, action="write")
+                )
+                if isinstance(raw_paths, list)
+                else ()
+            )
+            if operation.state is OperationState.SUCCEEDED:
+                final_state = "committed"
+                safe_to_retry = False
+                guidance = "The commit completed; do not retry the mutation."
+            elif operation.state in {
+                OperationState.QUEUED,
+                OperationState.RUNNING,
+                OperationState.RECOVERING,
+            }:
+                final_state = "in_progress"
+                safe_to_retry = False
+                guidance = "The outcome is not final; wait and reconcile again."
+            elif operation.state is OperationState.CONFLICT:
+                final_state = "not_committed"
+                safe_to_retry = False
+                guidance = (
+                    "Nothing was published by this operation. Read current state, then use a "
+                    "fresh expected revision and a new idempotency key."
+                )
+            else:
+                current_revision = get_main_revision(self._deps.repo_paths)
+                final_state = (
+                    "indeterminate"
+                    if operation.base_revision is not None
+                    and current_revision != operation.base_revision
+                    else "failed_before_mutation"
+                )
+                safe_to_retry = final_state == "failed_before_mutation"
+                guidance = (
+                    "Repository history advanced after this operation began; inspect affected "
+                    "paths before retrying."
+                    if final_state == "indeterminate"
+                    else "The operation failed before publication; retry the identical request with the same key."
+                )
+            return self._success(
+                {
+                    "final_state": final_state,
+                    "operation": {
+                        "operation_id": operation.op_id,
+                        "idempotency_key": operation.idempotency_key,
+                        "tool_name": operation.tool_name,
+                        "state": operation.state.value,
+                        "base_revision": operation.base_revision,
+                        "result_revision": operation.result_revision,
+                        "error_class": operation.error_class,
+                        "error_message": (
+                            operation.error_message[:500]
+                            if operation.error_message is not None
+                            else None
+                        ),
+                    },
+                    "changed_paths": changed_paths,
+                    "partial": False,
+                    "safe_to_retry": safe_to_retry,
+                    "retry_guidance": guidance,
+                },
+                repo_revision=operation.result_revision,
+                operation_id=operation.op_id,
             )
         except Exception as exc:
             return self._failure(exc)
@@ -1167,23 +1287,48 @@ class MemoryService:
         context: ServiceContext,
         *,
         path: str | None = None,
+        rule: str | None = None,
+        severity: Literal["info", "warning", "error"] | None = None,
+        limit: int = 50,
+        cursor: str | None = None,
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
+            require_role(policy, "proposer")
+            audit_policy = self._writable_audit_policy(policy)
             if path is not None:
                 authorize_path(policy, path, action="read")
+                authorize_path(policy, path, action="write")
+            if limit < 1 or limit > 200:
+                raise ServiceError("limit must be between 1 and 200")
             audit = audit_repository(
                 self._deps.repo_paths.current_dir,
                 include_path=lambda candidate: self._is_authorized(
-                    policy, candidate, action="read"
+                    audit_policy, candidate, action="read"
                 ),
             )
             issues = [
                 asdict(issue) for issue in audit.issues if path is None or issue.bundle_path == path
             ]
-            if path is not None and not self._is_authorized(policy, path, action="read"):
-                raise ForbiddenError(f"principal {policy.principal} cannot read {path}")
-            return self._success({"ok": not issues, "issues": issues})
+            revision = get_main_revision(self._deps.repo_paths)
+            graph = self._audit_graph_diagnostics(
+                audit_policy,
+                repo_revision=revision,
+                path=path,
+                rule=rule,
+                severity=severity,
+                limit=limit,
+                cursor=cursor,
+            )
+            return self._success(
+                {
+                    "ok": not issues and not graph["diagnostics"],
+                    "issues": issues,
+                    "graph_diagnostics": graph,
+                },
+                repo_revision=revision,
+                index_revision=graph["index_revision"],
+            )
         except Exception as exc:
             return self._failure(exc)
 
@@ -1314,13 +1459,18 @@ class MemoryService:
         context: ServiceContext,
         *,
         proposal_id: str,
+        view: Literal["summary", "detailed"] = "detailed",
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
-            record = self._visible_proposal(policy, proposal_id)
-            preview = self._preview_changes(self._normalize_changes(record.patch["changes"]))
-            record = self._refresh_proposal_status(record)
-            return self._success({"proposal": self._proposal_payload(record, preview)})
+            require_role(policy, "proposer")
+            record = self._refresh_proposal_status(self._visible_proposal(policy, proposal_id))
+            if view == "summary":
+                payload = self._proposal_summary_payload(record)
+            else:
+                preview = self._preview_changes(self._normalize_changes(record.patch["changes"]))
+                payload = self._proposal_payload(record, preview)
+            return self._success({"proposal": payload})
         except Exception as exc:
             return self._failure(exc)
 
@@ -1329,20 +1479,201 @@ class MemoryService:
         context: ServiceContext,
         *,
         status: str | None = None,
+        limit: int = 50,
+        cursor: str | None = None,
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
             require_role(policy, "proposer")
             requested_status = ProposalStatus(status) if status is not None else None
-            proposals = list_proposals(self._deps.control_connection, status=requested_status)
-            visible: list[dict[str, Any]] = []
-            for proposal in proposals:
+            if limit < 1 or limit > 200:
+                raise ServiceError("proposal list limit must be between 1 and 200")
+            visible: list[ProposalRecord] = []
+            for proposal in list_proposals(self._deps.control_connection):
                 if not self._can_access_proposal(policy, proposal, require_write=True):
                     continue
                 refreshed = self._refresh_proposal_status(proposal)
-                preview = self._preview_changes(self._normalize_changes(refreshed.patch["changes"]))
-                visible.append(self._proposal_payload(refreshed, preview))
-            return self._success({"proposals": visible})
+                if requested_status is None or refreshed.status is requested_status:
+                    visible.append(refreshed)
+            if cursor is not None:
+                positions = [
+                    index
+                    for index, proposal in enumerate(visible)
+                    if proposal.proposal_id == cursor
+                ]
+                if len(positions) != 1:
+                    raise ServiceError("invalid proposal list cursor")
+                visible = visible[positions[0] + 1 :]
+            selected = visible[:limit]
+            next_cursor = (
+                selected[-1].proposal_id if len(visible) > len(selected) and selected else None
+            )
+            return self._success(
+                {
+                    "proposals": [
+                        self._proposal_summary_payload(item, include_conflicts=False)
+                        for item in selected
+                    ],
+                    "next_cursor": next_cursor,
+                }
+            )
+        except Exception as exc:
+            return self._failure(exc)
+
+    def memory_proposal_asset_get(
+        self,
+        context: ServiceContext,
+        *,
+        proposal_id: str,
+        asset_id: str,
+        file_path: str | None = None,
+        offset: int = 0,
+        limit: int = 65_536,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        try:
+            policy = self._policy(context)
+            require_role(policy, "proposer")
+            self._visible_proposal(policy, proposal_id)
+            if offset < 0:
+                raise ServiceError("asset file offset must not be negative")
+            if limit < 1 or limit > 262_144:
+                raise ServiceError("asset file limit must be between 1 and 262144")
+            asset = get_proposal_asset(self._deps.control_connection, proposal_id, asset_id)
+            authorize_path(policy, asset.concept_path, action="read")
+            payload: dict[str, Any] = {
+                "proposal_id": proposal_id,
+                "asset_id": asset.asset_id,
+                "concept_path": asset.concept_path,
+                "asset_kind": asset.asset_kind,
+                "version": asset.version,
+                "media_type": asset.media_type,
+                "zip_sha256": asset.sha256,
+                "manifest": asset.manifest,
+            }
+            if file_path is None:
+                return self._success(payload)
+            manifest_entries = {
+                str(item["path"]): item
+                for item in asset.manifest.get("entries", [])
+                if isinstance(item, dict) and isinstance(item.get("path"), str)
+            }
+            manifest_entry = manifest_entries.get(file_path)
+            if manifest_entry is None:
+                raise NotFoundError("proposal asset file not found")
+            with zipfile.ZipFile(io.BytesIO(asset.blob_bytes)) as archive:
+                info = archive.getinfo(file_path)
+                with archive.open(info) as stream:
+                    if offset:
+                        stream.seek(offset)
+                    content = stream.read(limit + 1)
+            truncated = len(content) > limit
+            content = content[:limit]
+            payload["file"] = {
+                "path": file_path,
+                "offset": offset,
+                "returned_bytes": len(content),
+                "total_bytes": info.file_size,
+                "truncated": truncated or offset + len(content) < info.file_size,
+                "next_offset": (
+                    offset + len(content) if offset + len(content) < info.file_size else None
+                ),
+                "sha256": manifest_entry.get("sha256"),
+                "content_sha256": hashlib.sha256(content).hexdigest(),
+            }
+            try:
+                payload["file"]["encoding"] = "utf-8"
+                payload["file"]["content"] = content.decode("utf-8")
+            except UnicodeDecodeError:
+                payload["file"]["encoding"] = "base64"
+                payload["file"]["content"] = base64.b64encode(content).decode("ascii")
+            return self._success(payload)
+        except Exception as exc:
+            return self._failure(exc)
+
+    def memory_proposal_revise(
+        self,
+        context: ServiceContext,
+        *,
+        proposal_id: str,
+        selected_change_indexes: tuple[int, ...],
+        expected_revision: str,
+        intent: str | None = None,
+        rationale: str | None = None,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        try:
+            policy = self._policy(context)
+            require_role(policy, "curator")
+            source = get_proposal(self._deps.control_connection, proposal_id)
+            self._require_proposal_access(policy, source, require_write=True)
+            source = self._refresh_proposal_status(source)
+            if source.status is not ProposalStatus.STALE:
+                raise ConflictError("only stale proposals can be revised")
+            current_revision = get_main_revision(self._deps.repo_paths)
+            if expected_revision != current_revision:
+                raise ConflictError(
+                    f"expected revision {expected_revision} does not match {current_revision}"
+                )
+            indexes = tuple(sorted(set(selected_change_indexes)))
+            changes = source.patch.get("changes", [])
+            if not indexes:
+                raise ServiceError("selected_change_indexes must not be empty")
+            if any(index < 0 or index >= len(changes) for index in indexes):
+                raise ServiceError("selected_change_indexes contains an invalid index")
+            conflicts = {item["index"]: item for item in self._proposal_conflicts(source)}
+            blocked = [index for index in indexes if conflicts[index]["status"] != "clean"]
+            if blocked:
+                raise ConflictError(
+                    "selected changes conflict with current memory: "
+                    + ", ".join(str(index) for index in blocked)
+                )
+            self._validate_selected_asset_pairs(changes, indexes)
+            selected_raw = [dict(changes[index]) for index in indexes]
+            normalized = self._normalize_changes(selected_raw)
+            self._validate_change_auth(policy, normalized, action="write")
+            self._validate_skill_asset_bindings(normalized)
+            selected_asset_ids = {
+                change.asset_id
+                for change in normalized
+                if isinstance(change, AttachAssetPackChange)
+            }
+            assets: list[ProposalAssetInput] = []
+            for asset_id in sorted(selected_asset_ids):
+                asset = get_proposal_asset(self._deps.control_connection, proposal_id, asset_id)
+                assets.append(
+                    ProposalAssetInput(
+                        asset_id=asset.asset_id,
+                        concept_path=asset.concept_path,
+                        asset_kind=asset.asset_kind,
+                        version=asset.version,
+                        media_type=asset.media_type,
+                        sha256=asset.sha256,
+                        blob_bytes=asset.blob_bytes,
+                        manifest_json=asset.manifest_json,
+                    )
+                )
+            revised = create_proposal(
+                self._deps.control_connection,
+                proposal_id=str(uuid4()),
+                author_principal=policy.principal,
+                client_instance_id=context.client_instance_id,
+                base_revision=current_revision,
+                intent=intent or f"Revise proposal {proposal_id}",
+                rationale=rationale or f"Selected clean changes from stale proposal {proposal_id}.",
+                patch={
+                    "changes": [item.model_dump(mode="json") for item in normalized],
+                    "source_proposal_id": proposal_id,
+                    "source_change_indexes": list(indexes),
+                },
+                assets=assets,
+            )
+            return self._success(
+                {
+                    "proposal": self._proposal_payload(revised, self._preview_changes(normalized)),
+                    "source_proposal_id": proposal_id,
+                    "selected_change_indexes": indexes,
+                },
+                repo_revision=current_revision,
+            )
         except Exception as exc:
             return self._failure(exc)
 
@@ -1796,6 +2127,7 @@ class MemoryService:
             policy = self._policy(context)
             require_role(policy, "curator")
             self._validate_change_auth(policy, changes, action="write")
+            warnings = self._direct_mutation_warnings(changes)
             request = self._transaction_request(
                 context,
                 idempotency_key=idempotency_key,
@@ -1822,9 +2154,35 @@ class MemoryService:
                 repo_revision=result.result_revision,
                 index_revision=result.result_revision,
                 operation_id=result.operation.op_id,
+                warnings=warnings,
             )
         except Exception as exc:
             return self._failure(exc)
+
+    def _direct_mutation_warnings(self, changes: list[ProposalChange]) -> tuple[str, ...]:
+        warnings = (
+            "direct_mutation_bypasses_proposal_review; prefer memory_propose, "
+            "memory_proposal_review and memory_proposal_apply",
+        )
+        for change in changes:
+            if not isinstance(change, PatchChange) or change.body is None:
+                continue
+            try:
+                concept = read_bundle_entry(
+                    self._deps.repo_paths.current_dir, change.path
+                ).document.frontmatter
+            except (BundleError, FrontmatterError, FileNotFoundError):
+                continue
+            asset_kinds = list_asset_kinds(self._deps.repo_paths.current_dir, concept.id)
+            if any(
+                list_asset_versions(self._deps.repo_paths.current_dir, concept.id, asset_kind)
+                for asset_kind in asset_kinds
+            ):
+                raise ConflictError(
+                    "direct concept body patch would bypass asset parity review; submit a proposal "
+                    "that updates the concept body together with all corresponding asset packs"
+                )
+        return warnings
 
     def _apply_changes(
         self,
@@ -2086,13 +2444,130 @@ class MemoryService:
             "applied_operation_id": record.applied_operation_id,
             "applied_revision": record.applied_revision,
             "expires_at": record.expires_at,
+            "current_revision": get_main_revision(self._deps.repo_paths),
             "changes": patch["changes"],
+            "conflicts": self._proposal_conflicts(record),
             "consulted_concepts": patch.get("consulted_concepts", []),
             "contradictions": patch.get("contradictions", []),
             "reciprocal_links": patch.get("reciprocal_links", []),
             "target_hint": patch.get("target_hint"),
             "diff": preview,
         }
+
+    def _proposal_summary_payload(
+        self, record: ProposalRecord, *, include_conflicts: bool = True
+    ) -> dict[str, Any]:
+        changes = record.patch.get("changes", [])
+        summaries: list[dict[str, Any]] = []
+        for index, raw in enumerate(changes[:_MAX_PROPOSAL_SUMMARY_CHANGES]):
+            if not isinstance(raw, dict):
+                continue
+            summary = {
+                "index": index,
+                "kind": raw.get("kind"),
+                "path": raw.get("path"),
+            }
+            if raw.get("kind") == "rename":
+                summary["new_path"] = raw.get("new_path")
+            summaries.append(summary)
+        all_assets = list_proposal_assets(
+            self._deps.control_connection, proposal_id=record.proposal_id
+        )
+        assets = []
+        for asset in all_assets[:_MAX_PROPOSAL_SUMMARY_ASSETS]:
+            manifest = asset.manifest
+            matching_body_entries: tuple[str, ...] = ()
+            body_entry_matches: bool | None = None
+            try:
+                body = self._resulting_body_for_asset(changes, asset.concept_path)
+                body_sha256 = hashlib.sha256(
+                    normalize_concept_body(body).encode("utf-8")
+                ).hexdigest()
+                matching_body_entries = tuple(
+                    sorted(
+                        str(item["path"])
+                        for item in manifest.get("entries", [])
+                        if isinstance(item, dict)
+                        and isinstance(item.get("path"), str)
+                        and item.get("sha256") == body_sha256
+                    )
+                )
+                body_entry_matches = bool(matching_body_entries)
+            except (BundleError, FrontmatterError, FileNotFoundError):
+                body_entry_matches = None
+            assets.append(
+                {
+                    "asset_id": asset.asset_id,
+                    "concept_path": asset.concept_path,
+                    "asset_kind": asset.asset_kind,
+                    "version": asset.version,
+                    "file_count": manifest.get("file_count"),
+                    "total_uncompressed_bytes": manifest.get("total_uncompressed_bytes"),
+                    "zip_sha256": asset.sha256,
+                    "concept_body_matching_entries": matching_body_entries,
+                    "concept_body_matches_asset": body_entry_matches,
+                }
+            )
+        return {
+            "proposal_id": record.proposal_id,
+            "author_principal": record.author_principal,
+            "intent": record.intent[:_MAX_PROPOSAL_SUMMARY_TEXT_CHARS],
+            "intent_truncated": len(record.intent) > _MAX_PROPOSAL_SUMMARY_TEXT_CHARS,
+            "status": record.status.value,
+            "base_revision": record.base_revision,
+            "current_revision": get_main_revision(self._deps.repo_paths),
+            "reviewed_by": record.reviewed_by,
+            "applied_operation_id": record.applied_operation_id,
+            "applied_revision": record.applied_revision,
+            "created_at": record.created_at,
+            "updated_at": record.updated_at,
+            "expires_at": record.expires_at,
+            "change_count": len(changes),
+            "changes_truncated": len(changes) > len(summaries),
+            "changes": summaries,
+            "conflicts_included": include_conflicts,
+            "conflicts": (
+                self._proposal_conflicts(record, limit=_MAX_PROPOSAL_SUMMARY_CHANGES)
+                if include_conflicts
+                else []
+            ),
+            "asset_count": len(all_assets),
+            "assets_truncated": len(all_assets) > len(assets),
+            "assets": assets,
+        }
+
+    def _proposal_conflicts(
+        self, record: ProposalRecord, *, limit: int | None = None
+    ) -> list[dict[str, Any]]:
+        current_revision = get_main_revision(self._deps.repo_paths)
+        changed = (
+            set(
+                diff_main_paths(
+                    self._deps.repo_paths,
+                    base_revision=record.base_revision,
+                    end_revision=current_revision,
+                )
+            )
+            if record.base_revision != current_revision
+            else set()
+        )
+        result: list[dict[str, Any]] = []
+        changes = record.patch.get("changes", [])
+        if limit is not None:
+            changes = changes[:limit]
+        for index, raw in enumerate(changes):
+            paths = [str(raw.get("path", ""))]
+            if raw.get("kind") == "rename":
+                paths.append(str(raw.get("new_path", "")))
+            conflicting = tuple(sorted(path for path in paths if path in changed))
+            result.append(
+                {
+                    "index": index,
+                    "status": "conflict" if conflicting else "clean",
+                    "conflicting_paths": conflicting,
+                }
+            )
+        return result
 
     def _draft_model_proposal(
         self,
@@ -2527,6 +3002,31 @@ class MemoryService:
             else:
                 adapted.append(change)
         return adapted
+
+    @staticmethod
+    def _validate_selected_asset_pairs(
+        changes: list[dict[str, Any]], indexes: tuple[int, ...]
+    ) -> None:
+        selected = set(indexes)
+        for asset_index, raw in enumerate(changes):
+            if raw.get("kind") != "attach_asset_pack":
+                continue
+            path = raw.get("path")
+            body_indexes = {
+                index
+                for index, candidate in enumerate(changes)
+                if candidate.get("path") == path
+                and candidate.get("kind") in {"create", "patch"}
+                and isinstance(candidate.get("body"), str)
+            }
+            if not body_indexes:
+                continue
+            pair = {asset_index, *body_indexes}
+            if selected.intersection(pair) and not pair.issubset(selected):
+                raise ConflictError(
+                    "concept body and matching asset pack must be selected together: "
+                    + ", ".join(str(index) for index in sorted(pair))
+                )
 
     def _validate_skill_asset_bindings(self, changes: list[ProposalChange]) -> None:
         for change in changes:
@@ -3136,7 +3636,7 @@ class MemoryService:
                 "TASK: Draft a proposal from freeform memory content.",
                 f"INTENT_HINT: {intent or ''}",
                 f"SUGGESTED_PATH: {suggested_path or ''}",
-                "MODEL RULES: search was already performed; cite every consulted concept; prefer enriching an owning concept over creating fragments; identify contradictions explicitly; propose reciprocal links where justified; output strict JSON only; never propose secrets; never review, apply or write.",
+                "MODEL RULES: search was already performed; cite every consulted concept; read current proposal and memory evidence first; prefer the smallest local merge or improvement over wholesale replacement; preserve unaffected content; identify contradictions explicitly; propose reciprocal links where justified; output strict JSON only; never propose secrets; never review, apply or write; never use scripts or hand-built MCP protocol calls to bypass missing interactions -- file a GitHub issue instead.",
                 "UNTRUSTED_INPUT_BEGIN",
                 content,
                 "UNTRUSTED_INPUT_END",
@@ -3148,7 +3648,7 @@ class MemoryService:
             [
                 "TASK: Draft a proposal to update existing knowledge.",
                 f"TARGET_HINT: {target_hint or ''}",
-                "MODEL RULES: search was already performed; cite every consulted concept; prefer enriching an owning concept over creating fragments; identify contradictions explicitly; propose reciprocal links where justified; output strict JSON only; never propose secrets; never review, apply or write.",
+                "MODEL RULES: search was already performed; cite every consulted concept; read current proposal and memory evidence first; prefer the smallest local merge or improvement over wholesale replacement; preserve unaffected content; identify contradictions explicitly; propose reciprocal links where justified; output strict JSON only; never propose secrets; never review, apply or write; never use scripts or hand-built MCP protocol calls to bypass missing interactions -- file a GitHub issue instead.",
                 "UNTRUSTED_INPUT_BEGIN",
                 instruction,
                 "UNTRUSTED_INPUT_END",
@@ -3168,6 +3668,8 @@ class MemoryService:
             "Every consulted concept must appear exactly once in consulted_concepts with id, path, revision and title.",
             "Each change must be one of: create(path, concept_type, title, body, description?, tags?, aliases?) or patch(path, title?, description?, body?, status?, tags?, aliases?).",
             "Rename changes are forbidden.",
+            "Read current memory and proposal evidence before drafting. Prefer the smallest local merge or improvement; never replace unaffected content wholesale.",
+            "Do not use or recommend scripts, raw protocol calls, review, apply or direct writes. If MCP lacks an interaction mode, file a GitHub issue instead of inventing a workaround.",
             prompt,
         ]
         remaining = limits.max_context_chars
@@ -4220,6 +4722,192 @@ class MemoryService:
             asset_kind,
             version,
         )
+
+    def _audit_graph_diagnostics(
+        self,
+        policy: EffectivePolicy,
+        *,
+        repo_revision: str,
+        path: str | None,
+        rule: str | None,
+        severity: str | None,
+        limit: int,
+        cursor: str | None,
+    ) -> dict[str, Any]:
+        filters = {"path": path, "rule": rule, "severity": severity}
+        empty = {
+            "available": False,
+            "reason": "not_configured",
+            "repository_revision": repo_revision,
+            "index_revision": None,
+            "filters": filters,
+            "diagnostics": [],
+            "next_cursor": None,
+        }
+        if not policy.read_prefixes:
+            return {**empty, "available": True, "reason": None, "scope_empty": True}
+        snapshots = self._deps.graph_snapshot_service
+        if snapshots is None:
+            return empty
+        try:
+            overview = snapshots.overview(policy=policy)
+        except GraphSnapshotError as exc:
+            reason = "index_stale" if "stale" in str(exc).lower() else "index_unavailable"
+            return {**empty, "reason": reason}
+        except (OSError, sqlite3.Error):
+            return {**empty, "reason": "index_unavailable"}
+        if overview.revisions.stale or overview.revisions.index != repo_revision:
+            return {
+                **empty,
+                "reason": "index_stale",
+                "index_revision": overview.revisions.index,
+            }
+
+        node_paths = {node.id: node.path for node in overview.nodes}
+        diagnostics = list(overview.diagnostics)
+        filtered: list[tuple[tuple[str, str, str], GraphDiagnostic, tuple[str, ...]]] = []
+        for item in diagnostics:
+            paths = tuple(
+                sorted(
+                    {
+                        node_paths[concept_id]
+                        for concept_id in item.concept_ids
+                        if concept_id in node_paths
+                    }
+                )
+            )
+            if path is not None and path not in paths:
+                continue
+            if rule is not None and item.rule != rule:
+                continue
+            if severity is not None and item.severity != severity:
+                continue
+            key = (item.severity, item.rule, item.id)
+            filtered.append((key, item, paths))
+        filtered.sort(key=lambda row: row[0])
+        after = self._decode_audit_cursor(
+            cursor,
+            repo_revision=repo_revision,
+            filters=filters,
+        )
+        if after is not None:
+            filtered = [row for row in filtered if row[0] > after]
+        selected = filtered[:limit]
+        next_cursor = None
+        if len(filtered) > len(selected) and selected:
+            next_cursor = self._encode_audit_cursor(
+                selected[-1][0],
+                repo_revision=repo_revision,
+                filters=filters,
+            )
+        payloads = []
+        for _key, item, paths in selected:
+            payload = item.model_dump(mode="json")
+            payload["paths"] = paths
+            payload["repair_guidance"] = self._graph_repair_guidance(item, paths)
+            payloads.append(payload)
+        return {
+            "available": True,
+            "reason": None,
+            "scope_empty": False,
+            "repository_revision": repo_revision,
+            "index_revision": overview.revisions.index,
+            "filters": filters,
+            "diagnostics": payloads,
+            "next_cursor": next_cursor,
+        }
+
+    @staticmethod
+    def _writable_audit_policy(policy: EffectivePolicy) -> EffectivePolicy:
+        candidates: set[str] = set()
+        for write_prefix in policy.write_prefixes:
+            for read_prefix in policy.read_prefixes:
+                if write_prefix.startswith(read_prefix):
+                    candidates.add(write_prefix)
+                elif read_prefix.startswith(write_prefix):
+                    candidates.add(read_prefix)
+        allowed: set[str] = set()
+        for candidate in candidates:
+            try:
+                authorize_path(policy, candidate, action="read")
+                authorize_path(policy, candidate, action="write")
+            except AuthorizationError:
+                continue
+            allowed.add(candidate)
+        return EffectivePolicy(
+            principal=policy.principal,
+            roles=policy.roles,
+            read_prefixes=tuple(sorted(allowed)),
+            write_prefixes=tuple(sorted(allowed)),
+            protected_read_prefixes=policy.protected_read_prefixes,
+        )
+
+    @staticmethod
+    def _graph_repair_guidance(
+        diagnostic: GraphDiagnostic, paths: tuple[str, ...]
+    ) -> dict[str, Any]:
+        actions: list[dict[str, Any]] = [
+            {"tool": "memory_read", "arguments": {"id_or_path": path}} for path in paths[:2]
+        ]
+        if diagnostic.rule == "pending_proposals":
+            actions.append({"tool": "memory_proposal_list", "arguments": {"status": "submitted"}})
+        elif diagnostic.rule == "embedding_health":
+            actions.append({"tool": "memory_status", "arguments": {}})
+        elif paths:
+            actions.append(
+                {
+                    "tool": "memory_propose_update",
+                    "arguments": {
+                        "instruction": (
+                            f"Address graph diagnostic {diagnostic.id}. Read the current memory first; "
+                            "preserve unaffected content and make the smallest local merge or patch."
+                        ),
+                        "target_hint": paths[0],
+                    },
+                }
+            )
+        return {
+            "read_only": True,
+            "summary": (
+                "Inspect current memory and related proposals first. Draft a normal proposal for "
+                "the smallest justified local repair; curator review and apply remain required."
+            ),
+            "actions": actions[:4],
+        }
+
+    @staticmethod
+    def _encode_audit_cursor(
+        key: tuple[str, str, str], *, repo_revision: str, filters: dict[str, Any]
+    ) -> str:
+        raw = json.dumps(
+            {"v": 1, "revision": repo_revision, "filters": filters, "after": key},
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        return base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
+
+    @staticmethod
+    def _decode_audit_cursor(
+        cursor: str | None, *, repo_revision: str, filters: dict[str, Any]
+    ) -> tuple[str, str, str] | None:
+        if cursor is None:
+            return None
+        try:
+            raw = base64.urlsafe_b64decode(cursor + "=" * (-len(cursor) % 4))
+            value = json.loads(raw)
+            after = value["after"]
+            if (
+                value.get("v") != 1
+                or value.get("revision") != repo_revision
+                or value.get("filters") != filters
+                or not isinstance(after, list)
+                or len(after) != 3
+                or not all(isinstance(item, str) for item in after)
+            ):
+                raise ValueError
+            return (after[0], after[1], after[2])
+        except (ValueError, KeyError, TypeError, json.JSONDecodeError, binascii.Error) as exc:
+            raise ServiceError("invalid or stale audit cursor") from exc
 
     def _is_authorized(self, policy: EffectivePolicy, path: str, *, action: str) -> bool:
         try:

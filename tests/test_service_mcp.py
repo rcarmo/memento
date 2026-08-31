@@ -22,7 +22,7 @@ import pytest
 
 from memento import __version__
 from memento.access import AccessStore
-from memento.authz import AuthorizationError
+from memento.authz import AuthorizationError, EffectivePolicy, authorize_path
 from memento.config import (
     AuthorizationConfig,
     MCPConfig,
@@ -35,6 +35,7 @@ from memento.config import (
 from memento.control.db import connect_control_db, migrate_control_db
 from memento.control.proposals import ProposalStatus, update_proposal_status
 from memento.derived.index import DerivedIndex
+from memento.graph_debug.snapshot import GraphSnapshotService
 from memento.repository.asset_packs import write_asset_version
 from memento.repository.frontmatter import serialize_concept
 from memento.repository.git import GitRepositoryPaths, bootstrap_repository, get_main_revision
@@ -313,6 +314,13 @@ def service(
             derived_index.rebuild(materialized_root, repo_revision=repo_revision)
 
     manager = TransactionManager(control_connection, repo_paths, derived_update=apply_update)
+    control_db_path = Path(str(control_connection.execute("PRAGMA database_list").fetchone()[2]))
+    graph_snapshots = GraphSnapshotService(
+        service_config.observability.graph_explorer,
+        repository_root=repo_paths.current_dir,
+        derived_db_path=derived_index.db_path,
+        control_db_path=control_db_path,
+    )
     return MemoryService(
         ServiceDependencies(
             config=service_config,
@@ -320,6 +328,7 @@ def service(
             control_connection=control_connection,
             derived_index=derived_index,
             transaction_manager=manager,
+            graph_snapshot_service=graph_snapshots,
         )
     )
 
@@ -1615,10 +1624,10 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
     ] = (
         ("compact", 9),
-        ("standard", 23),
-        ("read_only", 10),
-        ("curator", 14),
-        ("admin", 24),
+        ("standard", 26),
+        ("read_only", 9),
+        ("curator", 18),
+        ("admin", 27),
     )
     for surface, count in expected_counts:
         server = _server_for(
@@ -2020,10 +2029,490 @@ def test_asset_pack_tool_discovery_and_catalog_schemas(
     ]
 
 
-def _skill_zip(skill_md: str, script: str = "console.log('ok')\n") -> tuple[str, bytes]:
+def test_audit_graph_diagnostics_are_role_scoped_paginated_and_stale_safe(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+    narrow: ServiceContext,
+    ghost: ServiceContext,
+) -> None:
+    first = success_data(service.memory_audit(smith, limit=1))
+    graph = first["graph_diagnostics"]
+    assert graph["available"] is True
+    assert len(graph["diagnostics"]) == 1
+    assert graph["next_cursor"] is not None
+    assert graph["diagnostics"][0]["repair_guidance"]["read_only"] is True
+
+    second = success_data(service.memory_audit(smith, limit=1, cursor=graph["next_cursor"]))
+    assert second["graph_diagnostics"]["diagnostics"]
+    mismatched_cursor = service.memory_audit(
+        smith,
+        severity="warning",
+        limit=1,
+        cursor=graph["next_cursor"],
+    )
+    assert mismatched_cursor.status == "error"
+    assert "invalid or stale audit cursor" in mismatched_cursor.message
+
+    narrow_graph = success_data(service.memory_audit(narrow))["graph_diagnostics"]
+    assert all(
+        path.startswith("/instances/")
+        for diagnostic in narrow_graph["diagnostics"]
+        for path in diagnostic["paths"]
+    )
+    flint_graph = success_data(service.memory_audit(flint))["graph_diagnostics"]
+    assert all(
+        not path.startswith("/secret/")
+        for diagnostic in flint_graph["diagnostics"]
+        for path in diagnostic["paths"]
+    )
+    denied = service.memory_audit(ghost)
+    assert denied.status == "error"
+    assert denied.error_class == "forbidden"
+
+    protected_scope = service._writable_audit_policy(
+        EffectivePolicy(
+            principal="scoped",
+            roles=("proposer",),
+            read_prefixes=("/", "/secret/allowed/"),
+            write_prefixes=("/secret/",),
+            protected_read_prefixes=("/secret/",),
+        )
+    )
+    authorize_path(protected_scope, "/secret/allowed/item.md", action="read")
+    with pytest.raises(AuthorizationError):
+        authorize_path(protected_scope, "/secret/other.md", action="read")
+
+    with sqlite3.connect(service._deps.derived_index.db_path) as connection:
+        connection.execute(
+            "UPDATE index_state SET value = ? WHERE key = 'index_revision'", ("stale-index",)
+        )
+    stale = success_data(service.memory_audit(smith))
+    assert stale["issues"] == []
+    assert stale["graph_diagnostics"]["available"] is False
+    assert stale["graph_diagnostics"]["reason"] == "index_stale"
+    assert stale["graph_diagnostics"]["diagnostics"] == []
+
+
+def test_proposal_summary_pagination_and_bounded_asset_inspection(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+    narrow: ServiceContext,
+) -> None:
+    concept_body = "---\nname: inspectable\ndescription: Inspectable\n---\n# Inspectable"
+    encoded, _zip_bytes = _skill_zip(
+        concept_body,
+        script="console.log('inspectable')\n",
+        entry_path="CONCEPT.md",
+    )
+    first = success_data(
+        service.memory_propose(
+            smith,
+            intent="Inspectable proposal",
+            base_revision=get_main_revision(repo_paths),
+            changes=[
+                {
+                    "kind": "create",
+                    "path": "/projects/inspectable.md",
+                    "concept_type": "project",
+                    "title": "Inspectable",
+                    "tags": ["asset-backed"],
+                    "body": concept_body,
+                },
+                {
+                    "kind": "attach_asset_pack",
+                    "path": "/projects/inspectable.md",
+                    "asset_kind": "templates",
+                    "version": "1.0.0",
+                    "zip_base64": encoded,
+                },
+            ],
+        )
+    )["proposal"]
+    second_id = success_data(
+        service.memory_propose(
+            smith,
+            intent="Second bounded proposal",
+            base_revision=get_main_revision(repo_paths),
+            changes=[
+                {
+                    "kind": "patch",
+                    "path": "/projects/piclaw.md",
+                    "title": "Piclaw bounded",
+                }
+            ],
+        )
+    )["proposal"]["proposal_id"]
+
+    page_one = success_data(service.memory_proposal_list(smith, limit=1))
+    assert len(page_one["proposals"]) == 1
+    assert page_one["next_cursor"] is not None
+    page_two = success_data(
+        service.memory_proposal_list(smith, limit=1, cursor=page_one["next_cursor"])
+    )
+    listed_ids = {
+        page_one["proposals"][0]["proposal_id"],
+        page_two["proposals"][0]["proposal_id"],
+    }
+    assert listed_ids == {first["proposal_id"], second_id}
+    assert concept_body not in json.dumps(page_one)
+    assert concept_body not in json.dumps(page_two)
+
+    summary = success_data(
+        service.memory_proposal_get(smith, proposal_id=first["proposal_id"], view="summary")
+    )["proposal"]
+    assert summary["changes"] == [
+        {"index": 0, "kind": "create", "path": "/projects/inspectable.md"},
+        {"index": 1, "kind": "attach_asset_pack", "path": "/projects/inspectable.md"},
+    ]
+    assert summary["assets"][0]["concept_body_matching_entries"] == ("CONCEPT.md",)
+    assert summary["assets"][0]["concept_body_matches_asset"] is True
+    assert summary["assets"][0]["file_count"] == 2
+    assert "manifest" not in summary["assets"][0]
+    asset_id = summary["assets"][0]["asset_id"]
+
+    metadata = success_data(
+        service.memory_proposal_asset_get(
+            smith, proposal_id=first["proposal_id"], asset_id=asset_id
+        )
+    )
+    root_entry = next(
+        item for item in metadata["manifest"]["entries"] if item["path"] == "CONCEPT.md"
+    )
+    chunk = success_data(
+        service.memory_proposal_asset_get(
+            smith,
+            proposal_id=first["proposal_id"],
+            asset_id=asset_id,
+            file_path="CONCEPT.md",
+            limit=12,
+        )
+    )["file"]
+    assert chunk["encoding"] == "utf-8"
+    assert chunk["returned_bytes"] == 12
+    assert chunk["truncated"] is True
+    assert chunk["next_offset"] == 12
+    assert chunk["sha256"] == root_entry["sha256"]
+    assert chunk["content_sha256"] == hashlib.sha256(chunk["content"].encode("utf-8")).hexdigest()
+    missing = service.memory_proposal_asset_get(
+        smith,
+        proposal_id=first["proposal_id"],
+        asset_id=asset_id,
+        file_path="missing.txt",
+    )
+    assert missing.status == "error"
+    assert missing.error_class == "not_found"
+    hidden = service.memory_proposal_asset_get(
+        narrow, proposal_id=first["proposal_id"], asset_id=asset_id
+    )
+    assert hidden.status == "error"
+    assert hidden.error_class == "forbidden"
+
+
+def test_stale_proposal_conflicts_and_safe_subset_revision(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+) -> None:
+    skill_md = "---\nname: selected\ndescription: Selected\n---\n# Selected"
+    encoded, _zip_bytes = _skill_zip(skill_md)
+    base_revision = get_main_revision(repo_paths)
+    source = success_data(
+        service.memory_propose(
+            smith,
+            intent="Independent stale suggestions",
+            base_revision=base_revision,
+            changes=[
+                {
+                    "kind": "patch",
+                    "path": "/projects/piclaw.md",
+                    "title": "Proposed Piclaw",
+                },
+                {
+                    "kind": "patch",
+                    "path": "/instances/smith.md",
+                    "title": "Proposed Smith",
+                },
+                {
+                    "kind": "create",
+                    "path": "/projects/selected.md",
+                    "concept_type": "project",
+                    "title": "Selected",
+                    "tags": ["asset-backed"],
+                    "body": skill_md,
+                },
+                {
+                    "kind": "attach_asset_pack",
+                    "path": "/projects/selected.md",
+                    "asset_kind": "templates",
+                    "version": "1.0.0",
+                    "zip_base64": encoded,
+                },
+            ],
+        )
+    )["proposal"]
+    advanced = service.memory_patch(
+        smith,
+        path="/projects/piclaw.md",
+        title="Current Piclaw",
+        expected_revision=base_revision,
+        idempotency_key="advance-before-revision",
+    )
+    assert advanced.status == "success"
+    current_revision = advanced.repo_revision
+
+    summary = success_data(
+        service.memory_proposal_get(smith, proposal_id=source["proposal_id"], view="summary")
+    )["proposal"]
+    assert summary["status"] == "stale"
+    assert summary["current_revision"] == current_revision
+    assert summary["conflicts"] == [
+        {"index": 0, "status": "conflict", "conflicting_paths": ("/projects/piclaw.md",)},
+        {"index": 1, "status": "clean", "conflicting_paths": ()},
+        {"index": 2, "status": "clean", "conflicting_paths": ()},
+        {"index": 3, "status": "clean", "conflicting_paths": ()},
+    ]
+    blocked = service.memory_proposal_revise(
+        smith,
+        proposal_id=source["proposal_id"],
+        selected_change_indexes=(0,),
+        expected_revision=str(current_revision),
+    )
+    assert blocked.status == "error"
+    assert blocked.error_class == "conflict"
+
+    unpaired = service.memory_proposal_revise(
+        smith,
+        proposal_id=source["proposal_id"],
+        selected_change_indexes=(2,),
+        expected_revision=str(current_revision),
+    )
+    assert unpaired.status == "error"
+    assert "must be selected together" in unpaired.message
+
+    revised = success_data(
+        service.memory_proposal_revise(
+            smith,
+            proposal_id=source["proposal_id"],
+            selected_change_indexes=(1, 2, 3),
+            expected_revision=str(current_revision),
+            intent="Adopt clean subset",
+        )
+    )
+    assert revised["source_proposal_id"] == source["proposal_id"]
+    assert revised["selected_change_indexes"] == (1, 2, 3)
+    assert revised["proposal"]["base_revision"] == current_revision
+    assert [change["path"] for change in revised["proposal"]["changes"]] == [
+        "/instances/smith.md",
+        "/projects/selected.md",
+        "/projects/selected.md",
+    ]
+
+
+def test_commit_operation_reconciliation_is_principal_scoped_and_actionable(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+    narrow: ServiceContext,
+) -> None:
+    created = service.memory_create(
+        smith,
+        path="/projects/reconciled.md",
+        concept_type="project",
+        title="Reconciled",
+        body="# Reconciled\n",
+        expected_revision=get_main_revision(repo_paths),
+        idempotency_key="reconcile-created",
+    )
+    assert created.status == "success"
+    committed = success_data(
+        service.memory_operation_get(smith, idempotency_key="reconcile-created")
+    )
+    assert committed["final_state"] == "committed"
+    assert committed["operation"]["operation_id"] == created.operation_id
+    assert committed["operation"]["result_revision"] == created.repo_revision
+    assert committed["changed_paths"] == ("/projects/reconciled.md",)
+    assert committed["partial"] is False
+    assert committed["safe_to_retry"] is False
+
+    restricted_config = service._deps.config.model_copy(
+        update={
+            "authorization": service._deps.config.authorization.model_copy(
+                update={
+                    "principals": {
+                        **service._deps.config.authorization.principals,
+                        "smith": NamespacePolicy(
+                            roles=("reader", "proposer", "curator"),
+                            token_env="MEMENTO_TOKEN_SMITH",
+                            read_prefixes=("/instances/",),
+                            write_prefixes=("/instances/",),
+                        ),
+                    }
+                }
+            )
+        }
+    )
+    restricted_service = MemoryService(
+        ServiceDependencies(
+            config=restricted_config,
+            repo_paths=service._deps.repo_paths,
+            control_connection=service._deps.control_connection,
+            derived_index=service._deps.derived_index,
+            transaction_manager=service._deps.transaction_manager,
+            graph_snapshot_service=service._deps.graph_snapshot_service,
+        )
+    )
+    restricted = success_data(
+        restricted_service.memory_operation_get(smith, idempotency_key="reconcile-created")
+    )
+    assert restricted["changed_paths"] == ()
+
+    by_id = success_data(
+        service.memory_operation_get(smith, operation_id=str(created.operation_id))
+    )
+    assert by_id == committed
+    absent = success_data(service.memory_operation_get(smith, idempotency_key="never-submitted"))
+    assert absent["final_state"] == "not_committed"
+    assert absent["safe_to_retry"] is True
+
+    cross_principal = service.memory_operation_get(narrow, operation_id=str(created.operation_id))
+    assert cross_principal.status == "error"
+    assert cross_principal.error_class == "forbidden"
+
+    conflict = service.memory_patch(
+        smith,
+        path="/projects/reconciled.md",
+        title="Should conflict",
+        expected_revision="not-current",
+        idempotency_key="reconcile-conflict",
+    )
+    assert conflict.status == "error"
+    reconciled_conflict = success_data(
+        service.memory_operation_get(smith, idempotency_key="reconcile-conflict")
+    )
+    assert reconciled_conflict["final_state"] == "not_committed"
+    assert reconciled_conflict["safe_to_retry"] is False
+    assert "fresh expected revision" in reconciled_conflict["retry_guidance"]
+
+    failed = service.memory_create(
+        smith,
+        path="/projects/reconciled.md",
+        concept_type="project",
+        title="Duplicate",
+        body="# Duplicate\n",
+        expected_revision=get_main_revision(repo_paths),
+        idempotency_key="reconcile-failed",
+    )
+    assert failed.status == "error"
+    failed_state = success_data(
+        service.memory_operation_get(smith, idempotency_key="reconcile-failed")
+    )
+    assert failed_state["final_state"] == "failed_before_mutation"
+    assert failed_state["safe_to_retry"] is True
+    assert len(failed_state["operation"]["error_message"]) <= 500
+
+    invalid = service.memory_operation_get(smith)
+    assert invalid.status == "error"
+    assert "exactly one" in invalid.message
+
+
+def test_direct_mutations_warn_and_preserve_generic_asset_parity(
+    service: MemoryService,
+    repo_paths: GitRepositoryPaths,
+    smith: ServiceContext,
+) -> None:
+    skill_md = "---\nname: parity\ndescription: Parity\n---\n# Parity"
+    encoded, _zip_bytes = _skill_zip(skill_md)
+    base_revision = get_main_revision(repo_paths)
+    proposal = success_data(
+        service.memory_propose(
+            smith,
+            intent="Publish parity fixture",
+            base_revision=base_revision,
+            changes=[
+                {
+                    "kind": "create",
+                    "path": "/projects/parity.md",
+                    "concept_type": "project",
+                    "title": "Parity",
+                    "tags": ["asset-backed"],
+                    "body": skill_md,
+                },
+                {
+                    "kind": "attach_asset_pack",
+                    "path": "/projects/parity.md",
+                    "asset_kind": "templates",
+                    "version": "1.0.0",
+                    "zip_base64": encoded,
+                },
+            ],
+        )
+    )["proposal"]
+    assert (
+        service.memory_proposal_review(
+            smith, proposal_id=proposal["proposal_id"], decision="approve"
+        ).status
+        == "success"
+    )
+    applied = service.memory_proposal_apply(
+        smith,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=base_revision,
+        idempotency_key="apply-parity-fixture",
+    )
+    assert applied.status == "success"
+
+    parity_break = service.memory_patch(
+        smith,
+        path="/projects/parity.md",
+        body=skill_md + "Changed without asset.\n",
+        expected_revision=get_main_revision(repo_paths),
+        idempotency_key="break-skill-parity",
+    )
+    assert parity_break.status == "error"
+    assert parity_break.error_class == "conflict"
+    assert "asset parity review" in parity_break.message
+
+    metadata_only = service.memory_patch(
+        smith,
+        path="/projects/parity.md",
+        title="Parity metadata update",
+        expected_revision=get_main_revision(repo_paths),
+        idempotency_key="skill-metadata-warning",
+    )
+    assert metadata_only.status == "success"
+    assert any(
+        warning.startswith("direct_mutation_bypasses_proposal_review")
+        for warning in metadata_only.warnings
+    )
+
+    direct_create = service.memory_create(
+        smith,
+        path="/instances/direct-warning.md",
+        concept_type="instance",
+        title="Direct warning",
+        body="# Direct warning\n",
+        tags=("direct",),
+        expected_revision=get_main_revision(repo_paths),
+        idempotency_key="direct-skill-warning",
+    )
+    assert direct_create.status == "success"
+    assert any(
+        warning.startswith("direct_mutation_bypasses_proposal_review")
+        for warning in direct_create.warnings
+    )
+
+
+def _skill_zip(
+    skill_md: str,
+    script: str = "console.log('ok')\n",
+    *,
+    entry_path: str = "SKILL.md",
+) -> tuple[str, bytes]:
     stream = io.BytesIO()
     with zipfile.ZipFile(stream, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        archive.writestr("SKILL.md", skill_md)
+        archive.writestr(entry_path, skill_md)
         archive.writestr("scripts/run.ts", script)
     data = stream.getvalue()
     return base64.b64encode(data).decode("ascii"), data

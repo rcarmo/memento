@@ -307,9 +307,9 @@ Roles are checked as literal membership in the principal record. The service doe
 
 | Role | Permission family |
 |---|---|
-| `reader` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_list`, `memory_inventory`, `memory_graph`, `memory_audit`, optional `memory_answer`, and `memory_execute` where the referenced operation, including `asset_metadata`, is otherwise allowed |
-| `proposer` | `memory_propose`, `memory_propose_freeform`, `memory_propose_update`, `memory_proposal_get`, `memory_proposal_list` |
-| `curator` | `memory_proposal_review`, `memory_proposal_apply`, and create/patch/rename authority |
+| `reader` | `memory_help`, `memory_status`, `memory_search`, `memory_read`, `memory_list`, `memory_inventory`, `memory_graph`, optional `memory_answer`, and `memory_execute` where the referenced operation, including `asset_metadata`, is otherwise allowed |
+| `proposer` | `memory_audit`, `memory_propose`, `memory_propose_freeform`, `memory_propose_update`, `memory_proposal_get`, `memory_proposal_list` and `memory_proposal_asset_get` |
+| `curator` | `memory_proposal_revise`, `memory_operation_get`, `memory_proposal_review`, `memory_proposal_apply`, and create/patch/rename authority |
 | `maintainer` | graph maintenance and Dream execution |
 | `admin` | direct `access_*` tools for managed principal and credential lifecycle; content authority still requires its own roles and namespace policy |
 
@@ -348,10 +348,10 @@ The service supports catalog-first compact discovery as well as direct compatibi
 | `mcp.tool_surface` | Direct tools |
 |---|---|
 | `compact` | core help/status/search/read/inventory/execute, asset staging begin/status and asset retrieval (**9**); optional answer and route tools raise this to **11** |
-| `standard` | the full **23** direct compatibility tools, including inventory, proposals, staging, asset retrieval/pruning and direct mutations |
-| `read_only` | the **10** direct discovery, concept-read and asset-read tools |
-| `curator` | compact tools plus proposal get/list/review/apply and asset pruning (**14**); optional answer and route tools raise this to **16**, while compare/asset-metadata/create/patch/rename remain execute-only |
-| `admin` | the **24**-tool full direct memory surface plus optional `memory_route` (**25**); managed administrators additionally discover role-filtered `access_*` tools |
+| `standard` | the full **26** direct compatibility tools, including diagnostics, proposals, staged proposal inspection, reconciliation, staging, asset retrieval/pruning and direct mutations |
+| `read_only` | the **9** direct discovery, concept-read and asset-read tools; `memory_audit` is excluded because its repair guidance requires the literal `proposer` role |
+| `curator` | compact tools plus diagnostics, proposal get/list/asset inspection/revision/review/apply, operation reconciliation and asset pruning (**18**); optional answer and route tools raise this to **20**, while compare/asset-metadata/create/patch/rename remain execute-only |
+| `admin` | the **27**-tool full direct memory surface plus optional `memory_route` (**28**); managed administrators additionally discover role-filtered `access_*` tools |
 
 ### Catalog resources
 
@@ -402,6 +402,9 @@ Proposal, assets and write:
 * `memory_propose_update`
 * `memory_proposal_get`
 * `memory_proposal_list`
+* `memory_proposal_asset_get`
+* `memory_proposal_revise`
+* `memory_operation_get`
 * `memory_proposal_review`
 * `memory_proposal_apply`
 * `memory_asset_stage_begin`
@@ -413,6 +416,12 @@ Proposal, assets and write:
 * `memory_execute`
 
 Every tool returns the standard envelope with `status`, `data`, `warnings`, `next_tools`, `repo_revision`, `index_revision`, `index_stale` and `operation_id`.
+
+Proposal lists contain cursor-paginated summaries rather than bodies or manifests. `memory_proposal_get` adds a bounded summary view with current-revision conflict checks and concept-body digest matches against every attached asset entry. Curators can copy a conflict-free, body/asset-complete subset from a stale proposal into a fresh proposal. `memory_proposal_asset_get` returns staged metadata or one bounded manifest-listed file, while `memory_operation_get` reconciles a timed-out commit by operation ID or the caller's idempotency key.
+
+`memory_audit` combines repository checks with graph diagnostics from the exact current index revision. It only includes paths the caller can both read and write, honours protected namespaces, caps each page at 200 diagnostics and carries revision and filter state in its cursor. Repair guidance is returned as a bounded proposal-first sequence; the audit itself does not mutate repository or control state.
+
+Direct concept mutations carry proposal-first guidance. A direct body patch is rejected when the concept already has any published asset kind, because changing one side outside proposal review would make the pair difficult to reconcile after a transport timeout.
 
 The execute-only `compare_manifest` operation maps up to 50 caller-provided local manifest rows onto any authorised namespace. It reuses the bounded inventory primitive, classifies matching, differing, local-only and Memento-only records, derives the likely newer side from timezone-aware mtimes, and optionally projects generic asset summaries. The server treats local paths as opaque labels and never reads caller files.
 

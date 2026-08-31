@@ -21,37 +21,41 @@ const SQLITE_OK: c_int = 0;
 const SQLITE_BLOB: c_int = 4;
 const SQLITE_NULL: c_int = 5;
 
-#[link(name = "sqlite3")]
 extern "C" {
-    fn sqlite3_create_function_v2(
+    fn memento_sqlite_api_init(api: *mut c_void) -> c_int;
+    fn memento_sqlite_create_function_v2(
         db: *mut sqlite3,
-        z_function_name: *const c_char,
-        n_arg: c_int,
-        e_text_rep: c_int,
-        p_app: *mut c_void,
-        x_func: Sqlite3Callback,
-        x_step: Option<unsafe extern "C" fn()>,
-        x_final: Option<unsafe extern "C" fn()>,
-        x_destroy: Option<unsafe extern "C" fn(*mut c_void)>,
+        name: *const c_char,
+        argc: c_int,
+        flags: c_int,
+        app: *mut c_void,
+        function: Sqlite3Callback,
+        step: Sqlite3Callback,
+        final_callback: Option<unsafe extern "C" fn(*mut sqlite3_context)>,
+        destroy: Option<unsafe extern "C" fn(*mut c_void)>,
     ) -> c_int;
-    fn sqlite3_result_int(context: *mut sqlite3_context, value: c_int);
-    fn sqlite3_result_double(context: *mut sqlite3_context, value: f64);
-    fn sqlite3_result_null(context: *mut sqlite3_context);
-    fn sqlite3_result_error(context: *mut sqlite3_context, message: *const c_char, len: c_int);
-    fn sqlite3_value_type(value: *mut sqlite3_value) -> c_int;
-    fn sqlite3_value_blob(value: *mut sqlite3_value) -> *const c_void;
-    fn sqlite3_value_bytes(value: *mut sqlite3_value) -> c_int;
+    fn memento_sqlite_result_int(context: *mut sqlite3_context, value: c_int);
+    fn memento_sqlite_result_double(context: *mut sqlite3_context, value: f64);
+    fn memento_sqlite_result_null(context: *mut sqlite3_context);
+    fn memento_sqlite_result_error(
+        context: *mut sqlite3_context,
+        message: *const c_char,
+        length: c_int,
+    );
+    fn memento_sqlite_value_type(value: *mut sqlite3_value) -> c_int;
+    fn memento_sqlite_value_blob(value: *mut sqlite3_value) -> *const c_void;
+    fn memento_sqlite_value_bytes(value: *mut sqlite3_value) -> c_int;
 }
 
 unsafe fn blob_arg(value: *mut sqlite3_value) -> Option<&'static [u8]> {
-    if sqlite3_value_type(value) == SQLITE_NULL {
+    if memento_sqlite_value_type(value) == SQLITE_NULL {
         return None;
     }
-    if sqlite3_value_type(value) != SQLITE_BLOB {
+    if memento_sqlite_value_type(value) != SQLITE_BLOB {
         return Some(&[]);
     }
-    let ptr = sqlite3_value_blob(value).cast::<u8>();
-    let len = sqlite3_value_bytes(value) as usize;
+    let ptr = memento_sqlite_value_blob(value).cast::<u8>();
+    let len = memento_sqlite_value_bytes(value) as usize;
     Some(std::slice::from_raw_parts(ptr, len))
 }
 
@@ -61,13 +65,13 @@ unsafe extern "C" fn vector_is_valid_fn(
     values: *mut *mut sqlite3_value,
 ) {
     if arg_count != 1 {
-        sqlite3_result_null(ctx);
+        memento_sqlite_result_null(ctx);
         return;
     }
     let value = *values;
     match blob_arg(value) {
-        None => sqlite3_result_null(ctx),
-        Some(blob) => sqlite3_result_int(ctx, i32::from(validate_f32le(blob).is_ok())),
+        None => memento_sqlite_result_null(ctx),
+        Some(blob) => memento_sqlite_result_int(ctx, i32::from(validate_f32le(blob).is_ok())),
     }
 }
 
@@ -77,17 +81,17 @@ unsafe extern "C" fn vector_dimensions_fn(
     values: *mut *mut sqlite3_value,
 ) {
     if arg_count != 1 {
-        sqlite3_result_null(ctx);
+        memento_sqlite_result_null(ctx);
         return;
     }
     match blob_arg(*values) {
-        None => sqlite3_result_null(ctx),
+        None => memento_sqlite_result_null(ctx),
         Some(blob) => match validate_f32le(blob) {
             Ok(dim) => match c_int::try_from(dim) {
-                Ok(value) => sqlite3_result_int(ctx, value),
-                Err(_) => sqlite3_result_null(ctx),
+                Ok(value) => memento_sqlite_result_int(ctx, value),
+                Err(_) => memento_sqlite_result_null(ctx),
             },
-            Err(_) => sqlite3_result_null(ctx),
+            Err(_) => memento_sqlite_result_null(ctx),
         },
     }
 }
@@ -98,25 +102,25 @@ unsafe extern "C" fn vector_cosine_fn(
     values: *mut *mut sqlite3_value,
 ) {
     if arg_count != 2 {
-        sqlite3_result_null(ctx);
+        memento_sqlite_result_null(ctx);
         return;
     }
     let value_slice = std::slice::from_raw_parts(values, 2);
     let Some(left_blob) = blob_arg(value_slice[0]) else {
-        sqlite3_result_null(ctx);
+        memento_sqlite_result_null(ctx);
         return;
     };
     let Some(right_blob) = blob_arg(value_slice[1]) else {
-        sqlite3_result_null(ctx);
+        memento_sqlite_result_null(ctx);
         return;
     };
     let result = decode_f32le(left_blob)
         .and_then(|left| decode_f32le(right_blob).and_then(|right| cosine(&left, &right)));
     match result {
-        Ok(value) => sqlite3_result_double(ctx, f64::from(value)),
+        Ok(value) => memento_sqlite_result_double(ctx, f64::from(value)),
         Err(err) => {
             let msg = CString::new(err.to_string()).expect("cstring");
-            sqlite3_result_error(ctx, msg.as_ptr(), -1);
+            memento_sqlite_result_error(ctx, msg.as_ptr(), -1);
         }
     }
 }
@@ -129,8 +133,12 @@ unsafe extern "C" fn vector_cosine_fn(
 pub unsafe extern "C" fn sqlite3_mementosqlitevector_init(
     db: *mut sqlite3,
     _pz_err_msg: *mut *mut c_char,
-    _p_api: *mut c_void,
+    p_api: *mut c_void,
 ) -> c_int {
+    let init_rc = memento_sqlite_api_init(p_api);
+    if init_rc != SQLITE_OK {
+        return init_rc;
+    }
     for (name, argc, func) in [
         (
             "vector_is_valid",
@@ -149,7 +157,7 @@ pub unsafe extern "C" fn sqlite3_mementosqlitevector_init(
         ),
     ] {
         let cname = CString::new(name).expect("cstring");
-        let rc = sqlite3_create_function_v2(
+        let rc = memento_sqlite_create_function_v2(
             db,
             cname.as_ptr(),
             argc,

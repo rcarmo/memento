@@ -76,6 +76,7 @@ class MementoRuntime:
     control_connection: sqlite3.Connection
     derived_index: DerivedIndex
     transaction_manager: TransactionManager
+    graph_snapshot_service: GraphSnapshotService
     service: MemoryService
     lease: WriterLease
     embedding_refresh_worker: SemanticEmbeddingRefreshWorker | None = None
@@ -88,16 +89,10 @@ class MementoRuntime:
         self._require_open()
         log_file = self.paths.root / "logs" / "umcp.log"
         log_file.parent.mkdir(parents=True, exist_ok=True)
-        graph_snapshot_service = GraphSnapshotService(
-            self.config.observability.graph_explorer,
-            repository_root=self.paths.repo_paths.current_dir,
-            derived_db_path=self.paths.derived_db,
-            control_db_path=self.paths.control_db,
-        )
         graph_refresh_coordinator = GraphEmbeddingRefreshCoordinator(
             self.config.observability.graph_explorer,
             repository_root=self.paths.repo_paths.current_dir,
-            snapshot_service=graph_snapshot_service,
+            snapshot_service=self.graph_snapshot_service,
             worker=self.embedding_refresh_worker,
         )
         return MementoMCPServer(
@@ -106,7 +101,7 @@ class MementoRuntime:
             access_store=self.access_store,
             activity=self.activity,
             log_file=log_file,
-            graph_snapshot_service=graph_snapshot_service,
+            graph_snapshot_service=self.graph_snapshot_service,
             graph_refresh_coordinator=graph_refresh_coordinator,
         )
 
@@ -400,6 +395,12 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
         )
         staged_asset_store = StagedAssetStore(control_connection)
         staged_asset_store.expire()
+        graph_snapshot_service = GraphSnapshotService(
+            config.observability.graph_explorer,
+            repository_root=paths.repo_paths.current_dir,
+            derived_db_path=paths.derived_db,
+            control_db_path=paths.control_db,
+        )
         service = MemoryService(
             ServiceDependencies(
                 config=config,
@@ -407,6 +408,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                 control_connection=control_connection,
                 derived_index=derived_index,
                 transaction_manager=manager,
+                graph_snapshot_service=graph_snapshot_service,
                 model_client=routed_client,
                 needle_router=needle_router,
                 access_store=access_store,
@@ -480,6 +482,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
             control_connection=control_connection,
             derived_index=derived_index,
             transaction_manager=manager,
+            graph_snapshot_service=graph_snapshot_service,
             service=service,
             lease=lease,
             embedding_refresh_worker=embedding_refresh_worker,

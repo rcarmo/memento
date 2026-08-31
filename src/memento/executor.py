@@ -172,6 +172,10 @@ class AuditArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     path: str | None = None
+    rule: str | None = Field(default=None, min_length=1, max_length=100)
+    severity: Literal["info", "warning", "error"] | None = None
+    limit: int = Field(default=50, ge=1, le=200)
+    cursor: str | None = None
 
 
 class AnswerArgs(BaseModel):
@@ -272,12 +276,42 @@ class ProposalGetArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     proposal_id: str
+    view: Literal["summary", "detailed"] = "detailed"
 
 
 class ProposalListArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     status: str | None = None
+    limit: int = Field(default=50, ge=1, le=200)
+    cursor: str | None = None
+
+
+class ProposalAssetGetArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    proposal_id: str
+    asset_id: str
+    file_path: str | None = None
+    offset: int = Field(default=0, ge=0)
+    limit: int = Field(default=65_536, ge=1, le=262_144)
+
+
+class ProposalReviseArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    proposal_id: str
+    selected_change_indexes: tuple[int, ...]
+    expected_revision: str
+    intent: str | None = None
+    rationale: str | None = None
+
+
+class OperationGetArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    idempotency_key: str | None = None
+    operation_id: str | None = None
 
 
 class ProposalReviewArgs(BaseModel):
@@ -451,6 +485,21 @@ class ProposalListOperation(ExecuteOperationBase):
     args: ProposalListArgs = Field(default_factory=ProposalListArgs)
 
 
+class ProposalAssetGetOperation(ExecuteOperationBase):
+    op: Literal["proposal_asset_get"]
+    args: ProposalAssetGetArgs
+
+
+class ProposalReviseOperation(ExecuteOperationBase):
+    op: Literal["proposal_revise"]
+    args: ProposalReviseArgs
+
+
+class OperationGetOperation(ExecuteOperationBase):
+    op: Literal["operation_get"]
+    args: OperationGetArgs
+
+
 class ProposalReviewOperation(ExecuteOperationBase):
     op: Literal["proposal_review"]
     args: ProposalReviewArgs
@@ -493,6 +542,9 @@ ExecuteOperation = (
     | ProposeUpdateOperation
     | ProposalGetOperation
     | ProposalListOperation
+    | ProposalAssetGetOperation
+    | ProposalReviseOperation
+    | OperationGetOperation
     | ProposalReviewOperation
     | ProposalApplyOperation
     | CreateOperation
