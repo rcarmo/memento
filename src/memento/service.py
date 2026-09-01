@@ -1489,7 +1489,10 @@ class MemoryService:
             if limit < 1 or limit > 200:
                 raise ServiceError("proposal list limit must be between 1 and 200")
             visible: list[ProposalRecord] = []
-            for proposal in list_proposals(self._deps.control_connection):
+            for proposal in list_proposals(
+                self._deps.control_connection,
+                status=requested_status,
+            ):
                 if not self._can_access_proposal(policy, proposal, require_write=True):
                     continue
                 refreshed = self._refresh_proposal_status(proposal)

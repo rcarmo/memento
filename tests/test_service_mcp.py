@@ -33,7 +33,7 @@ from memento.config import (
     ServiceConfig,
 )
 from memento.control.db import connect_control_db, migrate_control_db
-from memento.control.proposals import ProposalStatus, update_proposal_status
+from memento.control.proposals import ProposalStatus, list_proposals, update_proposal_status
 from memento.derived.index import DerivedIndex
 from memento.graph_debug.snapshot import GraphSnapshotService
 from memento.repository.asset_packs import write_asset_version
@@ -2208,6 +2208,34 @@ def test_proposal_summary_pagination_and_bounded_asset_inspection(
     )
     assert hidden.status == "error"
     assert hidden.error_class == "forbidden"
+
+
+def test_memory_proposal_list_filters_status_in_control_query(
+    service: MemoryService,
+    smith: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed_statuses: list[ProposalStatus | None] = []
+
+    def tracked_list_proposals(
+        connection: sqlite3.Connection,
+        *,
+        status: ProposalStatus | None = None,
+        author_principal: str | None = None,
+    ) -> tuple[Any, ...]:
+        observed_statuses.append(status)
+        return list_proposals(
+            connection,
+            status=status,
+            author_principal=author_principal,
+        )
+
+    monkeypatch.setattr("memento.service.list_proposals", tracked_list_proposals)
+
+    listed = service.memory_proposal_list(smith, status="submitted", limit=1)
+
+    assert listed.status == "success"
+    assert observed_statuses == [ProposalStatus.SUBMITTED]
 
 
 def test_stale_proposal_conflicts_and_safe_subset_revision(

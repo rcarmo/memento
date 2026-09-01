@@ -35,7 +35,7 @@ Real GTE and Needle model coverage runs against the built container. Pointer-awa
 
 ## Proposal curation and graph audit checks for 0.4.0
 
-The 0.4.0 curation path keeps proposal appraisal inside MCP without returning full bodies by default. Release validation covers 200-item summary bounds, cursor pagination, generic concept-body digest matching across attached asset entries, manifest-only metadata, bounded file chunks, stale per-path conflict checks, body/asset-complete subset revision, and current-policy filtering for proposals, staged assets and operation reconciliation.
+The 0.4.0 curation path keeps proposal appraisal inside MCP without returning full bodies by default. Release validation covers 200-item summary bounds, cursor pagination, generic concept-body digest matching across attached asset entries, manifest-only metadata, bounded file chunks, stale per-path conflict checks, body/asset-complete subset revision, and current-policy filtering for proposals, staged assets and operation reconciliation. The 0.4.1 production-acceptance patch pushes an explicit proposal status filter into the control query so routine submitted/stale appraisal does not deserialize the historical proposal archive before applying the bound.
 
 Commit reconciliation must distinguish committed, in-progress, conflict, failed-before-mutation and indeterminate outcomes by the caller's operation ID or idempotency key. Direct mutations return proposal-first guidance, and body patches to concepts with published assets are rejected before the transaction begins. The checks use ordinary project, instance and template concepts; none of these contracts depends on a `/skills/` namespace or skill asset kind.
 
