@@ -14,9 +14,9 @@ Graph evidence includes the 2,000-node fixture performance record and a DiskStat
 
 ## Release and deployment evidence
 
-[`release-0.3.27.md`](release-0.3.27.md) records the current immutable release identity, issue 13 contract and diagnostic checks, and state-preserving DiskStation deployment.
+[`release-0.4.2.md`](release-0.4.2.md) records the current immutable release identity, issues 14--19 acceptance, graph-audit checks and state-preserving DiskStation deployment.
 
-[`release-0.3.26.md`](release-0.3.26.md) records the previous pinned uMCP dependency, persistent Streamable HTTP checks and state-preserving deployment. [`release-0.3.25.md`](release-0.3.25.md) records the earlier embedding-preserving deployment, live graph and semantic state, and execute-only asset metadata checks. [`release-0.3.24.md`](release-0.3.24.md) records the bounded inventory and manifest comparison deployment, including progressive embedding convergence. [`release-0.3.23.md`](release-0.3.23.md) remains the historical answer, redeployment and tagged-source corpus record. These reports distinguish release gates from checks that ran against the live service.
+[`release-0.3.27.md`](release-0.3.27.md) records the previous issue 13 contract and diagnostic checks, pinned uMCP dependency and state-preserving deployment. [`release-0.3.26.md`](release-0.3.26.md) records the earlier persistent Streamable HTTP checks and state-preserving deployment. [`release-0.3.25.md`](release-0.3.25.md) records the earlier embedding-preserving deployment, live graph and semantic state, and execute-only asset metadata checks. [`release-0.3.24.md`](release-0.3.24.md) records the bounded inventory and manifest comparison deployment, including progressive embedding convergence. [`release-0.3.23.md`](release-0.3.23.md) remains the historical answer, redeployment and tagged-source corpus record. These reports distinguish release gates from checks that ran against the live service.
 
 ## Reproduction commands
 
