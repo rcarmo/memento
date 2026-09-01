@@ -351,6 +351,10 @@ class MemoryService:
             ],
             "curate": [
                 "memory_proposal_list",
+                "memory_proposal_get",
+                "memory_proposal_asset_get",
+                "memory_proposal_revise",
+                "memory_operation_get",
                 "memory_proposal_review",
                 "memory_proposal_apply",
                 "memory_create",

@@ -1696,6 +1696,19 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "propose_freeform",
         "propose_update",
     )
+    assert help_payload["mcp"]["execute_only_operations"]["curate"] == (
+        "proposal_list",
+        "proposal_get",
+        "proposal_asset_get",
+        "proposal_revise",
+        "operation_get",
+        "proposal_review",
+        "proposal_apply",
+        "asset_prune",
+        "create",
+        "patch",
+        "rename",
+    )
     assert help_payload["catalog"]["workflow_values"] == (
         "inspect",
         "propose",
@@ -1724,6 +1737,20 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "propose_freeform",
         "propose_update",
     ]
+    curate_workflow = json.loads(asyncio.run(server.resource_template_workflow("curate"))["text"])
+    assert [item["operation"] for item in curate_workflow["execute_only_operations"]] == [
+        "proposal_list",
+        "proposal_get",
+        "proposal_asset_get",
+        "proposal_revise",
+        "operation_get",
+        "proposal_review",
+        "proposal_apply",
+        "asset_prune",
+        "create",
+        "patch",
+        "rename",
+    ]
     asset_workflow = json.loads(
         asyncio.run(server.resource_template_workflow("asset_pack"))["text"]
     )
@@ -1731,8 +1758,10 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "prepare_asset_pack",
         "propose",
         "proposal_get",
+        "proposal_asset_get",
         "proposal_review",
         "proposal_apply",
+        "operation_get",
         "asset_get",
     ]
     assert "no trailing whitespace or final newline" in asset_workflow["steps"][0]["result"]
@@ -2020,8 +2049,10 @@ def test_asset_pack_tool_discovery_and_catalog_schemas(
         "read",
         "propose",
         "proposal_get",
+        "proposal_asset_get",
         "proposal_review",
         "proposal_apply",
+        "operation_get",
         "asset_get",
         "asset_stage_begin",
         "asset_stage_status",
