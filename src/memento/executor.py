@@ -594,6 +594,9 @@ class MemoryExecutor:
     def run(
         self, context: Any, *, plan: dict[str, Any]
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        commit_succeeded = False
+        trace: list[dict[str, Any]] = []
+        revisions: list[dict[str, Any]] = []
         try:
             parsed = ExecutePlan.model_validate(plan)
             if len(parsed.operations) > self._limits.max_operations:
@@ -605,8 +608,6 @@ class MemoryExecutor:
                 raise ValueError("plan may contain at most one commit-capable operation")
             started = monotonic()
             saved: dict[str, Any] = {}
-            trace: list[dict[str, Any]] = []
-            revisions: list[dict[str, Any]] = []
             last_success: dict[str, Any] | None = None
             stopped = False
             stop_reason: str | None = None
@@ -694,7 +695,22 @@ class MemoryExecutor:
             )
         except ValidationError as exc:
             return error_envelope("validation_error", str(exc))
-        except ValueError as exc:
+        except (ValueError, IndexError, TypeError) as exc:
+            if commit_succeeded:
+                payload = {
+                    "trace": trace,
+                    "revisions": revisions,
+                    "returns": {},
+                    "stopped": True,
+                    "stop_reason": f"post-commit processing failed: {exc}",
+                }
+                return cast(
+                    SuccessEnvelope[dict[str, Any]],
+                    self._service._success(
+                        self._fit_output_payload(payload, commit_succeeded=True),
+                        warnings=("memory_execute_error_after_commit; reconcile before retrying",),
+                    ),
+                )
             return error_envelope("validation_error", str(exc))
 
     def _dispatch(

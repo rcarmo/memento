@@ -357,3 +357,30 @@ def test_concept_schema_validation_model() -> None:
                 "updated_by": "rui\noperator",
             }
         )
+
+
+@pytest.mark.parametrize(
+    "path", ["/./secret/item.md", "//secret/item.md", "/secret/../item.md", "/secret//item.md"]
+)
+def test_authorization_rejects_noncanonical_paths(path: str) -> None:
+    config = AuthorizationConfig(
+        protected_read_prefixes=("/secret/",),
+        principals={
+            "reader": NamespacePolicy(
+                token_env="TOKEN_READER", roles=("reader",), read_prefixes=("/",), write_prefixes=()
+            )
+        },
+    )
+    policy = resolve_policy(config, Principal(name="reader", roles=("reader",)))
+    with pytest.raises(AuthorizationError):
+        authorize_path(policy, path, action="read")
+
+
+def test_write_path_rejects_dangling_symlink(tmp_path: Path) -> None:
+    root = tmp_path / "root"
+    root.mkdir()
+    outside = tmp_path / "outside.md"
+    (root / "link.md").symlink_to(outside)
+    with pytest.raises(PathSafetyError):
+        validate_repository_write_path(root, "/link.md")
+    assert not outside.exists()

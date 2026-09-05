@@ -3426,3 +3426,69 @@ def write_concept(
         body=body,
     )
     path.write_text(serialize_concept(document), encoding="utf-8")
+
+
+@pytest.mark.parametrize(
+    "path,body",
+    [("/projects/bad.txt", "small"), ("/projects/large.md", "界" * 100_000)],
+    ids=["extension", "utf8-limit"],
+)
+def test_explicit_creates_enforce_concept_invariants(
+    service: MemoryService, smith: ServiceContext, path: str, body: str
+) -> None:
+    revision = get_main_revision(service._deps.repo_paths)
+    result = service.memory_create(
+        smith,
+        path=path,
+        concept_type="project",
+        title="Invalid",
+        body=body,
+        expected_revision=revision,
+        idempotency_key="invalid-concept",
+    )
+    assert result.status == "error"
+    assert get_main_revision(service._deps.repo_paths) == revision
+    proposal = service.memory_propose(
+        smith,
+        intent="Invalid",
+        base_revision=revision,
+        changes=[
+            {
+                "kind": "create",
+                "path": path,
+                "concept_type": "project",
+                "title": "Invalid",
+                "body": body,
+            }
+        ],
+    )
+    assert proposal.status == "error"
+
+
+def test_execute_bad_projection_preserves_committed_result(
+    service: MemoryService, smith: ServiceContext
+) -> None:
+    result = service.memory_execute(
+        smith,
+        plan={
+            "operations": [
+                {
+                    "op": "create",
+                    "args": {
+                        "path": "/projects/committed.md",
+                        "concept_type": "project",
+                        "title": "Committed",
+                        "body": "body",
+                        "expected_revision": get_main_revision(service._deps.repo_paths),
+                        "idempotency_key": "projection-commit",
+                    },
+                }
+            ],
+            "returns": [{"ref": "$missing"}],
+        },
+    )
+    data = success_data(result)
+    assert data["stopped"] is True
+    assert data["revisions"][0]["operation_id"]
+    assert data["revisions"][0]["repo_revision"] == get_main_revision(service._deps.repo_paths)
+    assert result.warnings

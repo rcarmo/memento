@@ -2221,6 +2221,12 @@ class MemoryService:
                 raise TypeError(f"unsupported change: {type(change)!r}")
         return tuple(sorted(changed_paths))
 
+    def _serialize_bounded_concept(self, document: ConceptDocument) -> str:
+        text = serialize_concept(document)
+        if len(text.encode("utf-8")) > self._deps.config.limits.max_concept_bytes:
+            raise ServiceError("serialised concept exceeds max_concept_bytes")
+        return text
+
     def _apply_create(self, worktree: Path, change: CreateChange, *, actor: str) -> None:
         target = validate_repository_write_path(worktree, change.path)
         if target.absolute_path.exists():
@@ -2244,7 +2250,7 @@ class MemoryService:
             body=change.body,
         )
         target.absolute_path.parent.mkdir(parents=True, exist_ok=True)
-        target.absolute_path.write_text(serialize_concept(document), encoding="utf-8")
+        target.absolute_path.write_text(self._serialize_bounded_concept(document), encoding="utf-8")
 
     def _apply_patch(self, worktree: Path, change: PatchChange, *, actor: str) -> None:
         entry = read_bundle_entry(worktree, change.path)
@@ -2272,7 +2278,7 @@ class MemoryService:
             body=change.body if change.body is not None else entry.document.body,
         )
         target = validate_repository_write_path(worktree, change.path)
-        target.absolute_path.write_text(serialize_concept(document), encoding="utf-8")
+        target.absolute_path.write_text(self._serialize_bounded_concept(document), encoding="utf-8")
 
     def _apply_asset_pack(
         self,
@@ -2342,7 +2348,9 @@ class MemoryService:
             body=entry.document.body,
         )
         new_target.absolute_path.parent.mkdir(parents=True, exist_ok=True)
-        new_target.absolute_path.write_text(serialize_concept(document), encoding="utf-8")
+        new_target.absolute_path.write_text(
+            self._serialize_bounded_concept(document), encoding="utf-8"
+        )
         old_target.absolute_path.unlink()
         changed_paths = {change.path, change.new_path}
         for candidate, bundle_path, original, rewritten_body in rewrites:
@@ -2352,7 +2360,7 @@ class MemoryService:
                 ),
                 body=rewritten_body,
             )
-            candidate.write_text(serialize_concept(updated), encoding="utf-8")
+            candidate.write_text(self._serialize_bounded_concept(updated), encoding="utf-8")
             changed_paths.add(bundle_path)
         return changed_paths
 
@@ -2360,7 +2368,7 @@ class MemoryService:
         diffs: list[str] = []
         for change in changes:
             if isinstance(change, CreateChange):
-                new_text = serialize_concept(self._preview_create_document(change))
+                new_text = self._serialize_bounded_concept(self._preview_create_document(change))
                 diffs.extend(
                     difflib.unified_diff(
                         [],
@@ -2396,7 +2404,7 @@ class MemoryService:
                     ),
                     body=change.body if change.body is not None else entry.document.body,
                 )
-                after = serialize_concept(doc)
+                after = self._serialize_bounded_concept(doc)
                 diffs.extend(
                     difflib.unified_diff(
                         before.splitlines(keepends=True),
@@ -3074,6 +3082,13 @@ class MemoryService:
         self, policy: EffectivePolicy, changes: list[ProposalChange], *, action: str
     ) -> None:
         for change in changes:
+            paths = (
+                (change.path, change.new_path)
+                if isinstance(change, RenameChange)
+                else (change.path,)
+            )
+            if any(not path.endswith(".md") for path in paths):
+                raise ServiceError("concept paths must end with .md")
             actions = (action,) if action in {"read", "write"} else ("read", "write")
             for item_action in actions:
                 authorize_path(policy, change.path, action=item_action)

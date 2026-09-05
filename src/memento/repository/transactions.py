@@ -213,7 +213,11 @@ class TransactionManager:
         for operation in list_interrupted_operations(self._connection):
             worktree_path = self._paths.worktrees_dir / operation.op_id
             worktree_revision = resolve_worktree_revision(worktree_path)
-            if worktree_revision == head_revision:
+            if (
+                worktree_revision == head_revision
+                and operation.base_revision is not None
+                and worktree_revision != operation.base_revision
+            ):
                 updated = mark_operation_succeeded(
                     self._connection,
                     operation.op_id,

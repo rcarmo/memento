@@ -441,3 +441,39 @@ def _mutate_with_extra_unstaged_file(worktree: Path) -> tuple[str, ...]:
     _write_file(worktree, "/instances/smith.md", "# Smith\n\nExact staging.\n")
     _write_file(worktree, "/instances/ignored.md", "# Ignored\n")
     return ("/instances/smith.md",)
+
+
+@pytest.mark.parametrize("checkpoint", ["worktree_created", "mutation_applied", "commit_created"])
+def test_unpublished_crashes_never_recover_as_success(
+    control_connection: sqlite3.Connection, repo_paths: GitRepositoryPaths, checkpoint: str
+) -> None:
+    revision = get_main_revision(repo_paths)
+    request = TransactionRequest(
+        operation=OperationRequest(
+            op_id="unpublished",
+            principal="smith",
+            idempotency_key="unpublished",
+            tool_name="memory_patch",
+            request_json="{}",
+        ),
+        expected_revision=revision,
+        commit_message="unpublished",
+        author_name="Test",
+        author_email="test@example.invalid",
+    )
+    manager = TransactionManager(
+        control_connection,
+        repo_paths,
+        checkpoints=CheckpointHook(callback=FailAtCheckpoint(checkpoint)),
+    )
+    with pytest.raises(CheckpointError):
+        manager.apply(request, lambda root: _write_file(root, "/instances/smith.md", "new content"))
+    recovery = TransactionManager(control_connection, repo_paths).recover_startup()
+    assert recovery[0].classification == "retryable"
+    assert get_operation(control_connection, "unpublished").state is not OperationState.SUCCEEDED
+    assert get_main_revision(repo_paths) == revision
+    retry = TransactionManager(control_connection, repo_paths).apply(
+        request, lambda root: _write_file(root, "/instances/smith.md", "new content")
+    )
+    assert not retry.replayed
+    assert retry.result_revision != revision

@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from memento.config import AuthorizationConfig, Principal
+from memento.repository.paths import PathSafetyError, validate_bundle_path
 
 
 class AuthorizationError(Exception):
@@ -89,6 +90,11 @@ def protected_read_grants(
 
 
 def authorize_path(policy: EffectivePolicy, path: str, *, action: str) -> AuthorizedNamespace:
+    try:
+        # Directory scopes use one trailing slash; never normalise interior aliases.
+        validate_bundle_path(path[:-1] if path != "/" and path.endswith("/") else path)
+    except PathSafetyError as exc:
+        raise AuthorizationError(str(exc)) from exc
     prefixes = policy.read_prefixes if action == "read" else policy.write_prefixes
     if not any(path_matches_prefix(path, prefix) for prefix in prefixes):
         raise AuthorizationError(f"principal {policy.principal} cannot {action} {path}")

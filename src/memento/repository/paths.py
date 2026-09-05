@@ -19,6 +19,16 @@ class SafeRepositoryPath:
     absolute_path: Path
 
 
+def validate_bundle_path(bundle_path: str) -> None:
+    """Reject aliases before either authorisation or filesystem interpretation."""
+    if not bundle_path.startswith("/") or "\\" in bundle_path:
+        raise PathSafetyError("bundle paths must be canonical absolute paths")
+    if bundle_path != "/" and any(part in {"", ".", ".."} for part in bundle_path[1:].split("/")):
+        raise PathSafetyError("bundle paths must not contain empty or dot components")
+    if any(ord(char) < 32 or ord(char) == 127 for char in bundle_path):
+        raise PathSafetyError("bundle paths must not contain control characters")
+
+
 def _reject_unsafe_parts(relative_path: Path) -> None:
     if relative_path.is_absolute():
         raise PathSafetyError("absolute paths are not allowed")
@@ -30,9 +40,10 @@ def _check_existing_parents(root: Path, relative_path: Path) -> None:
     current = root
     for part in relative_path.parts[:-1]:
         current = current / part
-        if not current.exists():
+        try:
+            mode = os.lstat(current).st_mode
+        except FileNotFoundError:
             continue
-        mode = os.lstat(current).st_mode
         if stat.S_ISLNK(mode):
             raise PathSafetyError("symlink path components are not allowed")
         if not stat.S_ISDIR(mode):
@@ -40,9 +51,10 @@ def _check_existing_parents(root: Path, relative_path: Path) -> None:
 
 
 def _check_existing_target(path: Path) -> None:
-    if not path.exists():
+    try:
+        mode = os.lstat(path).st_mode
+    except FileNotFoundError:
         return
-    mode = os.lstat(path).st_mode
     if stat.S_ISLNK(mode):
         raise PathSafetyError("symlink target is not allowed")
     if not stat.S_ISREG(mode):
@@ -50,8 +62,9 @@ def _check_existing_target(path: Path) -> None:
 
 
 def validate_repository_write_path(root: Path, bundle_path: str) -> SafeRepositoryPath:
-    if not bundle_path.startswith("/"):
-        raise PathSafetyError("bundle paths must start with '/'")
+    validate_bundle_path(bundle_path)
+    if root.is_symlink() or not root.is_dir():
+        raise PathSafetyError("repository root must be a real directory")
     relative_path = Path(bundle_path.removeprefix("/"))
     _reject_unsafe_parts(relative_path)
     filename = relative_path.name
