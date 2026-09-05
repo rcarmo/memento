@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import asyncio
+import copy
 import json
 from collections.abc import Mapping
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from inspect import Parameter, signature
 from pathlib import Path
 from typing import Any, Literal, cast, get_args, get_origin
@@ -14,6 +16,7 @@ from memento.access import AccessStore
 from memento.activity import ActivityClock
 from memento.admin import AdminHTTPHandler
 from memento.config import Principal
+from memento.envelopes import ErrorEnvelope, SuccessEnvelope
 from memento.executor import (
     AnswerArgs,
     AssetGetArgs,
@@ -263,6 +266,12 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         self._umcp_log_file = log_file
         super().__init__()
         self._service = service
+        self._execute_busy = False
+        self._worker_tasks: set[asyncio.Task[dict[str, Any]]] = set()
+        self._closing = False
+        self._control_db_path = Path(
+            str(service._deps.control_connection.execute("PRAGMA database_list").fetchone()[2])
+        )
         self._bearer_tokens = dict(bearer_tokens)
         self._access_store = access_store
         self._activity = activity or ActivityClock()
@@ -574,25 +583,28 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         search_mode: str | None = None,
         query_syntax: str = "plain",
     ) -> dict[str, Any]:
-        return self._service.memory_search(
-            self._context(),
-            query=query,
-            concept_type=concept_type,
-            limit=limit,
-            cursor=cursor,
-            search_mode=search_mode,
-            query_syntax=query_syntax,
+        return (
+            await self._memory_call(
+                "memory_search",
+                self._context(),
+                query=query,
+                concept_type=concept_type,
+                limit=limit,
+                cursor=cursor,
+                search_mode=search_mode,
+                query_syntax=query_syntax,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_read(self, id_or_path: str) -> dict[str, Any]:
-        return self._service.memory_read(self._context(), id_or_path=id_or_path).model_dump(
-            mode="json"
-        )
+        return (
+            await self._memory_call("memory_read", self._context(), id_or_path=id_or_path)
+        ).model_dump(mode="json")
 
     async def tool_memory_list(self, path_prefix: str = "/") -> dict[str, Any]:
-        return self._service.memory_list(self._context(), path_prefix=path_prefix).model_dump(
-            mode="json"
-        )
+        return (
+            await self._memory_call("memory_list", self._context(), path_prefix=path_prefix)
+        ).model_dump(mode="json")
 
     async def tool_memory_inventory(
         self,
@@ -601,12 +613,15 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         limit: int = 50,
         cursor: str | None = None,
     ) -> dict[str, Any]:
-        return self._service.memory_inventory(
-            self._context(),
-            path_prefix=path_prefix,
-            fields=fields,
-            limit=limit,
-            cursor=cursor,
+        return (
+            await self._memory_call(
+                "memory_inventory",
+                self._context(),
+                path_prefix=path_prefix,
+                fields=fields,
+                limit=limit,
+                cursor=cursor,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_compare_manifest(
@@ -616,12 +631,15 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         match: dict[str, Any] | None = None,
         include_asset_metadata: bool = False,
     ) -> dict[str, Any]:
-        return self._service.memory_compare_manifest(
-            self._context(),
-            path_prefix=path_prefix,
-            items=items,
-            match=match,
-            include_asset_metadata=include_asset_metadata,
+        return (
+            await self._memory_call(
+                "memory_compare_manifest",
+                self._context(),
+                path_prefix=path_prefix,
+                items=items,
+                match=match,
+                include_asset_metadata=include_asset_metadata,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_asset_metadata(
@@ -636,22 +654,27 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         include_files: bool = False,
         file_limit: int = 50,
     ) -> dict[str, Any]:
-        return self._service.memory_asset_metadata(
-            self._context(),
-            id_or_path=id_or_path,
-            path_prefix=path_prefix,
-            asset_kind=asset_kind,
-            version=version,
-            limit=limit,
-            cursor=cursor,
-            version_limit=version_limit,
-            include_files=include_files,
-            file_limit=file_limit,
+        return (
+            await self._memory_call(
+                "memory_asset_metadata",
+                self._context(),
+                id_or_path=id_or_path,
+                path_prefix=path_prefix,
+                asset_kind=asset_kind,
+                version=version,
+                limit=limit,
+                cursor=cursor,
+                version_limit=version_limit,
+                include_files=include_files,
+                file_limit=file_limit,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_graph(self, id_or_path: str, depth: int = 1) -> dict[str, Any]:
-        return self._service.memory_graph(
-            self._context(), id_or_path=id_or_path, depth=depth
+        return (
+            await self._memory_call(
+                "memory_graph", self._context(), id_or_path=id_or_path, depth=depth
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_audit(
@@ -662,25 +685,32 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         limit: int = 50,
         cursor: str | None = None,
     ) -> dict[str, Any]:
-        return self._service.memory_audit(
-            self._context(),
-            path=path,
-            rule=rule,
-            severity=severity,
-            limit=limit,
-            cursor=cursor,
+        return (
+            await self._memory_call(
+                "memory_audit",
+                self._context(),
+                path=path,
+                rule=rule,
+                severity=severity,
+                limit=limit,
+                cursor=cursor,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_answer(
         self, question: str, answer_mode: str = "summary"
     ) -> dict[str, Any]:
-        return self._service.memory_answer(
-            self._context(), question=question, answer_mode=answer_mode
+        return (
+            await self._memory_call(
+                "memory_answer", self._context(), question=question, answer_mode=answer_mode
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_route(self, request: str, execute: bool = True) -> dict[str, Any]:
-        return self._service.memory_route(
-            self._context(), request=request, execute=execute
+        return (
+            await self._memory_call(
+                "memory_route", self._context(), request=request, execute=execute
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_propose(
@@ -690,26 +720,40 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         changes: list[dict[str, Any]],
         rationale: str | None = None,
     ) -> dict[str, Any]:
-        return self._service.memory_propose(
-            self._context(),
-            intent=intent,
-            base_revision=base_revision,
-            changes=changes,
-            rationale=rationale,
+        return (
+            await self._memory_call(
+                "memory_propose",
+                self._context(),
+                intent=intent,
+                base_revision=base_revision,
+                changes=changes,
+                rationale=rationale,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_propose_freeform(
         self, content: str, suggested_path: str | None = None, intent: str | None = None
     ) -> dict[str, Any]:
-        return self._service.memory_propose_freeform(
-            self._context(), content=content, suggested_path=suggested_path, intent=intent
+        return (
+            await self._memory_call(
+                "memory_propose_freeform",
+                self._context(),
+                content=content,
+                suggested_path=suggested_path,
+                intent=intent,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_propose_update(
         self, instruction: str, target_hint: str | None = None
     ) -> dict[str, Any]:
-        return self._service.memory_propose_update(
-            self._context(), instruction=instruction, target_hint=target_hint
+        return (
+            await self._memory_call(
+                "memory_propose_update",
+                self._context(),
+                instruction=instruction,
+                target_hint=target_hint,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_proposal_get(
@@ -717,8 +761,10 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         proposal_id: str,
         view: Literal["summary", "detailed"] = "detailed",
     ) -> dict[str, Any]:
-        return self._service.memory_proposal_get(
-            self._context(), proposal_id=proposal_id, view=view
+        return (
+            await self._memory_call(
+                "memory_proposal_get", self._context(), proposal_id=proposal_id, view=view
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_proposal_list(
@@ -727,8 +773,10 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         limit: int = 50,
         cursor: str | None = None,
     ) -> dict[str, Any]:
-        return self._service.memory_proposal_list(
-            self._context(), status=status, limit=limit, cursor=cursor
+        return (
+            await self._memory_call(
+                "memory_proposal_list", self._context(), status=status, limit=limit, cursor=cursor
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_proposal_asset_get(
@@ -739,13 +787,16 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         offset: int = 0,
         limit: int = 65_536,
     ) -> dict[str, Any]:
-        return self._service.memory_proposal_asset_get(
-            self._context(),
-            proposal_id=proposal_id,
-            asset_id=asset_id,
-            file_path=file_path,
-            offset=offset,
-            limit=limit,
+        return (
+            await self._memory_call(
+                "memory_proposal_asset_get",
+                self._context(),
+                proposal_id=proposal_id,
+                asset_id=asset_id,
+                file_path=file_path,
+                offset=offset,
+                limit=limit,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_proposal_revise(
@@ -756,13 +807,16 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         intent: str | None = None,
         rationale: str | None = None,
     ) -> dict[str, Any]:
-        return self._service.memory_proposal_revise(
-            self._context(),
-            proposal_id=proposal_id,
-            selected_change_indexes=selected_change_indexes,
-            expected_revision=expected_revision,
-            intent=intent,
-            rationale=rationale,
+        return (
+            await self._memory_call(
+                "memory_proposal_revise",
+                self._context(),
+                proposal_id=proposal_id,
+                selected_change_indexes=selected_change_indexes,
+                expected_revision=expected_revision,
+                intent=intent,
+                rationale=rationale,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_operation_get(
@@ -770,23 +824,33 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         idempotency_key: str | None = None,
         operation_id: str | None = None,
     ) -> dict[str, Any]:
-        return self._service.memory_operation_get(
-            self._context(),
-            idempotency_key=idempotency_key,
-            operation_id=operation_id,
+        return (
+            await self._memory_call(
+                "memory_operation_get",
+                self._context(),
+                idempotency_key=idempotency_key,
+                operation_id=operation_id,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_proposal_review(
         self, proposal_id: str, decision: str, comment: str | None = None
     ) -> dict[str, Any]:
-        return self._service.memory_proposal_review(
-            self._context(), proposal_id=proposal_id, decision=decision, comment=comment
+        return (
+            await self._memory_call(
+                "memory_proposal_review",
+                self._context(),
+                proposal_id=proposal_id,
+                decision=decision,
+                comment=comment,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_proposal_apply(
         self, proposal_id: str, expected_revision: str, idempotency_key: str
     ) -> dict[str, Any]:
-        envelope = self._service.memory_proposal_apply(
+        envelope = await self._memory_call(
+            "memory_proposal_apply",
             self._context(),
             proposal_id=proposal_id,
             expected_revision=expected_revision,
@@ -884,11 +948,14 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     async def tool_memory_asset_get(
         self, id_or_path: str, asset_kind: str, version: str | None = None
     ) -> dict[str, Any]:
-        return self._service.memory_asset_get(
-            self._context(),
-            id_or_path=id_or_path,
-            asset_kind=asset_kind,
-            version=version,
+        return (
+            await self._memory_call(
+                "memory_asset_get",
+                self._context(),
+                id_or_path=id_or_path,
+                asset_kind=asset_kind,
+                version=version,
+            )
         ).model_dump(mode="json")
 
     async def tool_memory_asset_prune(
@@ -900,7 +967,8 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         expected_revision: str,
         idempotency_key: str,
     ) -> dict[str, Any]:
-        envelope = self._service.memory_asset_prune(
+        envelope = await self._memory_call(
+            "memory_asset_prune",
             self._context(),
             id_or_path=id_or_path,
             asset_kind=asset_kind,
@@ -923,7 +991,8 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         tags: tuple[str, ...] = (),
         aliases: tuple[str, ...] = (),
     ) -> dict[str, Any]:
-        envelope = self._service.memory_create(
+        envelope = await self._memory_call(
+            "memory_create",
             self._context(),
             path=path,
             concept_type=concept_type,
@@ -950,7 +1019,8 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         tags: tuple[str, ...] | None = None,
         aliases: tuple[str, ...] | None = None,
     ) -> dict[str, Any]:
-        envelope = self._service.memory_patch(
+        envelope = await self._memory_call(
+            "memory_patch",
             self._context(),
             path=path,
             expected_revision=expected_revision,
@@ -968,7 +1038,8 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     async def tool_memory_rename(
         self, path: str, new_path: str, expected_revision: str, idempotency_key: str
     ) -> dict[str, Any]:
-        envelope = self._service.memory_rename(
+        envelope = await self._memory_call(
+            "memory_rename",
             self._context(),
             path=path,
             new_path=new_path,
@@ -977,6 +1048,84 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         )
         await self._notify_for_envelope(envelope.model_dump(mode="json"))
         return envelope.model_dump(mode="json")
+
+    async def _memory_call(
+        self, method: str, context: ServiceContext, **arguments: Any
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        if self._closing or self._execute_busy:
+            return self._service._failure(ValueError("service busy; reconcile before retrying"))
+        self._execute_busy = True
+        task = asyncio.create_task(
+            asyncio.to_thread(self._call_in_worker, method, context, arguments)
+        )
+        self._worker_tasks.add(task)
+
+        def completed(future: asyncio.Task[Any]) -> None:
+            self._worker_tasks.discard(future)
+            self._execute_busy = False
+            if not future.cancelled():
+                future.exception()
+
+        task.add_done_callback(completed)
+        try:
+            return cast(
+                SuccessEnvelope[dict[str, Any]] | ErrorEnvelope,
+                await asyncio.wait_for(asyncio.shield(task), timeout=30),
+            )
+        except TimeoutError:
+            return self._service._failure(
+                RuntimeError(
+                    "outcome indeterminate; reconcile original idempotency key before retrying"
+                )
+            )
+
+    async def drain_workers(self) -> None:
+        self._closing = True
+        if self._worker_tasks:
+            await asyncio.gather(
+                *(asyncio.shield(task) for task in self._worker_tasks), return_exceptions=True
+            )
+
+    def _execute_in_worker(self, context: ServiceContext, plan: dict[str, Any]) -> dict[str, Any]:
+        return cast(
+            dict[str, Any],
+            self._call_in_worker("memory_execute", context, {"plan": plan}).model_dump(mode="json"),
+        )
+
+    def _call_in_worker(
+        self, method: str, context: ServiceContext, arguments: dict[str, Any]
+    ) -> Any:
+        # Each job owns its connection; never disable SQLite thread checks.
+        from memento.control.db import connect_control_db
+        from memento.repository.transactions import TransactionManager
+        from memento.staged_assets import StagedAssetStore
+
+        deps = self._service._deps
+        connection = connect_control_db(self._control_db_path)
+        try:
+            access = copy.copy(deps.access_store) if deps.access_store is not None else None
+            if access is not None:
+                access._connection = connection
+            manager = TransactionManager(
+                connection,
+                deps.repo_paths,
+                derived_update=deps.transaction_manager._derived_update,
+            )
+            service = MemoryService(
+                replace(
+                    deps,
+                    control_connection=connection,
+                    transaction_manager=manager,
+                    access_store=access,
+                    staged_asset_store=StagedAssetStore(connection)
+                    if deps.staged_asset_store is not None
+                    else None,
+                )
+            )
+            service._proposal_cursor_cipher = self._service._proposal_cursor_cipher
+            return getattr(service, method)(context, **arguments)
+        finally:
+            connection.close()
 
     async def tool_memory_execute(
         self,
@@ -994,9 +1143,62 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             )
         except ValueError as exc:
             return self._service._failure(exc).model_dump(mode="json")
-        envelope = self._service.memory_execute(self._context(), plan=normalized)
-        await self._notify_for_envelope(envelope.model_dump(mode="json"))
-        return envelope.model_dump(mode="json")
+        reconciliation = all(
+            item.get("op") == "operation_get" for item in normalized.get("operations", [])
+        ) and bool(normalized.get("operations"))
+        if (
+            self._closing
+            or len(self._worker_tasks) >= 2
+            or (self._execute_busy and not reconciliation)
+        ):
+            return {
+                "status": "error",
+                "error_class": "busy",
+                "message": "An execute request is still running; reconcile before retrying.",
+            }
+        context = self._context()
+        if not reconciliation:
+            self._execute_busy = True
+        task = asyncio.create_task(asyncio.to_thread(self._execute_in_worker, context, normalized))
+
+        self._worker_tasks.add(task)
+
+        def completed(future: asyncio.Task[dict[str, Any]]) -> None:
+            self._worker_tasks.discard(future)
+            if not reconciliation:
+                self._execute_busy = False
+            if not future.cancelled():
+                future.exception()
+
+        task.add_done_callback(completed)
+        try:
+            envelope = await asyncio.wait_for(asyncio.shield(task), timeout=30)
+        except TimeoutError:
+            return {
+                "status": "error",
+                "error_class": "indeterminate",
+                "message": "Execution continues; use operation_get with the original idempotency key before retrying.",
+            }
+        if reconciliation and self._execute_busy:
+            # An admitted worker may not have inserted its operation yet. A
+            # missing row must not be advertised as permission to retry.
+            def mark_pending(value: Any) -> None:
+                if isinstance(value, dict):
+                    if value.get("operation", False) is None and value.get("safe_to_retry") is True:
+                        value.update(
+                            final_state="in_progress",
+                            safe_to_retry=False,
+                            retry_guidance="A worker is active; reconcile again after it finishes.",
+                        )
+                    for child in value.values():
+                        mark_pending(child)
+                elif isinstance(value, list):
+                    for child in value:
+                        mark_pending(child)
+
+            mark_pending(envelope)
+        await self._notify_for_envelope(envelope)
+        return envelope
 
     def _require_access_admin(self) -> Principal:
         principal = self._context().principal

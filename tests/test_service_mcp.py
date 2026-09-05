@@ -3531,3 +3531,99 @@ def test_stale_filter_uses_effective_status_with_bounded_query(
     page = success_data(service.memory_proposal_list(smith, status="stale", limit=1))
     assert page["proposals"][0]["proposal_id"] == proposal["proposal"]["proposal_id"]
     assert observed == [2]
+
+
+def test_execute_worker_does_not_block_event_loop(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import time
+
+    server = _server_for(service, service_config)
+    monkeypatch.setattr(server, "_context", lambda: smith)
+    original = server._execute_in_worker
+
+    def delayed(context: ServiceContext, plan: dict[str, Any]) -> dict[str, Any]:
+        time.sleep(0.1)
+        return original(context, plan)
+
+    monkeypatch.setattr(server, "_execute_in_worker", delayed)
+
+    async def run() -> None:
+        task = asyncio.create_task(
+            server.tool_memory_execute(plan={"operations": [{"op": "status", "args": {}}]})
+        )
+        await asyncio.sleep(0.02)
+        assert not task.done()
+        busy = await server.tool_memory_execute(plan={"operations": [{"op": "status", "args": {}}]})
+        assert busy["error_class"] == "busy"
+        result = await task
+        assert result["status"] == "success"
+
+    asyncio.run(run())
+
+
+def test_worker_commit_reconciliation_and_shutdown(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import threading
+
+    server = _server_for(service, service_config)
+    monkeypatch.setattr(server, "_context", lambda: smith)
+    entered = threading.Event()
+    release = threading.Event()
+    original = server._execute_in_worker
+
+    def blocked(context: ServiceContext, plan: dict[str, Any]) -> dict[str, Any]:
+        if plan["operations"][0]["op"] == "create":
+            entered.set()
+            assert release.wait(5)
+        return original(context, plan)
+
+    monkeypatch.setattr(server, "_execute_in_worker", blocked)
+
+    async def run() -> None:
+        task = asyncio.create_task(
+            server.tool_memory_execute(
+                plan={
+                    "operations": [
+                        {
+                            "op": "create",
+                            "args": {
+                                "path": "/projects/worker.md",
+                                "concept_type": "project",
+                                "title": "Worker",
+                                "body": "body",
+                                "expected_revision": get_main_revision(service._deps.repo_paths),
+                                "idempotency_key": "worker-commit",
+                            },
+                        }
+                    ]
+                }
+            )
+        )
+        assert await asyncio.to_thread(entered.wait, 5)
+        reconciliation = await server.tool_memory_execute(
+            plan={
+                "operations": [
+                    {"op": "operation_get", "args": {"idempotency_key": "worker-commit"}}
+                ]
+            }
+        )
+        assert reconciliation["status"] == "success"
+        draining = asyncio.create_task(server.drain_workers())
+        await asyncio.sleep(0.01)
+        assert not draining.done()
+        release.set()
+        result = await task
+        await draining
+        assert result["status"] == "success"
+        assert result["data"]["trace"][0]["status"] == "success"
+        assert (service._deps.repo_paths.current_dir / "projects/worker.md").exists()
+
+    asyncio.run(run())

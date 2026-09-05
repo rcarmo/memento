@@ -205,6 +205,9 @@ async def run_server(
 
 
 async def drain_server(server: object) -> None:
+    drain = getattr(server, "drain_workers", None)
+    if drain is not None:
+        await drain()
     for name in ("shutdown", "aclose", "close"):
         candidate = getattr(server, name, None)
         if candidate is None:
