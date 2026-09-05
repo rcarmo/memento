@@ -82,10 +82,13 @@ class EndpointModelClient(ModelClient):
             )
             with urllib.request.urlopen(http_request, timeout=request.timeout_seconds) as response:
                 status_code = response.getcode()
-                body = response.read().decode("utf-8")
+                raw_body = response.read(1_048_577)
+                if len(raw_body) > 1_048_576:
+                    raise ModelClientError("model response exceeds 1 MiB limit")
+                body = raw_body.decode("utf-8")
         except urllib.error.HTTPError as exc:
             status_code = exc.code
-            body = exc.read().decode("utf-8", errors="replace")
+            body = exc.read(4096).decode("utf-8", errors="replace")
             raise ModelHTTPError(
                 status_code,
                 body or f"HTTP {status_code}",

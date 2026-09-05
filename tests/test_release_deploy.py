@@ -131,10 +131,30 @@ def test_deploy_propagates_stack_update_failure(monkeypatch: pytest.MonkeyPatch)
     ) -> Any:
         if method == "PUT" and path.startswith("/api/stacks/111?"):
             raise SystemExit("stack update failed")
-        return None
+        if path.endswith("/file"):
+            return {
+                "StackFileContent": "services:\n  memento:\n    image: ghcr.io/rcarmo/memento:0.4.2\n"
+            }
+        if "/images/" in path and method == "GET":
+            return {"RepoDigests": ["ghcr.io/rcarmo/memento@sha256:" + "a" * 64]}
+        return {"Env": []}
 
     monkeypatch.setattr(release_deploy, "portainer_request", request)
-    monkeypatch.setattr(release_deploy, "update_config", lambda _args: None)
+    monkeypatch.setattr(
+        release_deploy,
+        "release_image",
+        lambda _version: "ghcr.io/rcarmo/memento@sha256:" + "a" * 64,
+    )
 
     with pytest.raises(SystemExit, match="stack update failed"):
         release_deploy.deploy(deploy_args())
+
+
+def test_stack_image_replacement_preserves_all_other_configuration() -> None:
+    stack = "services:\n  memento:\n    image: ghcr.io/rcarmo/memento:0.4.2\n    volumes:\n      - models:/models\n    environment:\n      CUSTOM: retained\n"
+    image = "ghcr.io/rcarmo/memento@sha256:" + "b" * 64
+    assert release_deploy.replace_stack_image(stack, image) == stack.replace(
+        "ghcr.io/rcarmo/memento:0.4.2", image
+    )
+    with pytest.raises(SystemExit):
+        release_deploy.replace_stack_image("services: {}", image)

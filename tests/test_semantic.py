@@ -781,6 +781,11 @@ def test_python_ctypes_wrapper_surfaces_vector_errors_and_sqlite_vector_matches_
     assert row[1] == 4
     assert row[2] == pytest.approx(expected, rel=1e-6)
 
+    for invalid in ("garbage", 42):
+        assert connection.execute(
+            "SELECT vector_is_valid(?), vector_dimensions(?)", (invalid, invalid)
+        ).fetchone() == (0, None)
+
     malformed = b"abc"
     nan_blob = pack_f32le((1.0, float("nan")))
     with pytest.raises(sqlite3.OperationalError):

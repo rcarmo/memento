@@ -170,6 +170,7 @@ def publish_main_compare_and_swap(
         capture_output=True,
         text=True,
         check=False,
+        timeout=30,
     )
     if result.returncode == 0:
         return True
@@ -250,6 +251,7 @@ def _git_stdout(*args: object) -> str:
         capture_output=True,
         text=True,
         check=False,
+        timeout=30,
     )
     if result.returncode != 0:
         raise GitError(result.stderr.strip() or "git command failed")

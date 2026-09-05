@@ -52,10 +52,17 @@ unsafe fn blob_arg(value: *mut sqlite3_value) -> Option<&'static [u8]> {
         return None;
     }
     if memento_sqlite_value_type(value) != SQLITE_BLOB {
-        return Some(&[]);
+        // Deliberately invalid f32 byte length: SQL types are not empty vectors.
+        return Some(&[0]);
     }
     let ptr = memento_sqlite_value_blob(value).cast::<u8>();
     let len = memento_sqlite_value_bytes(value) as usize;
+    if len == 0 {
+        return Some(&[]);
+    }
+    if ptr.is_null() {
+        return None;
+    }
     Some(std::slice::from_raw_parts(ptr, len))
 }
 

@@ -57,7 +57,7 @@ build-wheel:
 	$(BIN)/python -m build --wheel
 
 install-wheel: build-wheel
-	$(BIN)/python -m pip install --force-reinstall dist/*.whl
+	$(BIN)/python -m pip install --force-reinstall dist/memento-$(MEMENTO_VERSION)-py3-none-any.whl
 
 diff-check:
 	git diff --exit-code -- . ':(exclude).coverage'

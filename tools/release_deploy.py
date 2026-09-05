@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import time
 import urllib.error
@@ -253,27 +254,58 @@ def compose(version: str) -> str:
     return f"""services:\n  memento:\n    image: ghcr.io/rcarmo/memento:{version}\n    container_name: memento\n    restart: unless-stopped\n    user: "65532:65532"\n    read_only: true\n    init: true\n    entrypoint: ["/bin/sh","-ec"]\n    command:\n      - |\n        set -a\n        . /run/secrets/memento.env\n        set +a\n        exec memento-serve --config /etc/memento/config.json serve --host 0.0.0.0 --port 8000 --endpoint /mcp\n    environment:\n      RAYON_NUM_THREADS: "1"\n      OMP_NUM_THREADS: "1"\n      OPENBLAS_NUM_THREADS: "1"\n      MKL_NUM_THREADS: "1"\n    ports:\n      - "18081:8000"\n    volumes:\n      - /volume1/docker/memento/config/config.json:/etc/memento/config.json:ro\n      - /volume1/docker/memento/config/memento.env:/run/secrets/memento.env:ro\n      - /volume1/docker/memento/state:/var/lib/memento\n    tmpfs:\n      - /tmp:size=32m,mode=1777\n    mem_limit: 512m\n    mem_reservation: 256m\n    pids_limit: 128\n    security_opt:\n      - no-new-privileges:true\n    cap_drop:\n      - ALL\n    healthcheck:\n      test: ["CMD","python","-c","import socket; socket.create_connection(('127.0.0.1', 8000), 2).close()"]\n      interval: 30s\n      timeout: 5s\n      start_period: 5m\n      retries: 3"""
 
 
+def release_image(version: str) -> str:
+    result = request_json(
+        "GET",
+        f"https://api.github.com/repos/rcarmo/memento/releases/tags/v{version}",
+        token=github_token(),
+        timeout=30,
+    )
+    if result.status != 200 or result.payload.get("draft"):
+        raise SystemExit("published release not found")
+    matches = re.findall(r"sha256:[0-9a-f]{64}", str(result.payload.get("body", "")))
+    if len(set(matches)) != 1:
+        raise SystemExit("release must identify exactly one immutable image digest")
+    return f"ghcr.io/rcarmo/memento@{matches[0]}"
+
+
+def replace_stack_image(stack: str, image: str) -> str:
+    pattern = (
+        r"(?m)^(\s*image:\s*)[\"']?ghcr\.io/rcarmo/memento(?:[:@][^\s\"']+)[\"']?(\s*(?:#.*)?)$"
+    )
+    updated, count = re.subn(pattern, lambda match: match[1] + image + match[2], stack)
+    if count != 1:
+        raise SystemExit("existing stack must contain exactly one Memento image")
+    return updated
+
+
 def deploy(args: argparse.Namespace) -> None:
+    image = release_image(args.version)
+    metadata = portainer_request("GET", "/api/stacks/111")
+    existing = portainer_request("GET", "/api/stacks/111/file")["StackFileContent"]
+    updated = replace_stack_image(existing, image)
     portainer_request(
         "POST",
-        "/api/endpoints/18/docker/images/create?"
-        + urllib.parse.urlencode({"fromImage": "ghcr.io/rcarmo/memento", "tag": args.version}),
+        "/api/endpoints/18/docker/images/create?" + urllib.parse.urlencode({"fromImage": image}),
         timeout=args.pull_timeout,
     )
-    print(f"pulled ghcr.io/rcarmo/memento:{args.version}", flush=True)
-    update_config(args)
+    inspected = portainer_request(
+        "GET", "/api/endpoints/18/docker/images/" + urllib.parse.quote(image, safe="") + "/json"
+    )
+    if image not in inspected.get("RepoDigests", []):
+        raise SystemExit("pulled image does not match release digest")
     portainer_request(
         "PUT",
-        "/api/stacks/111?" + urllib.parse.urlencode({"endpointId": "18"}),
+        "/api/stacks/111?endpointId=18",
         data={
-            "StackFileContent": compose(args.version),
-            "Env": [],
-            "Prune": True,
+            "StackFileContent": updated,
+            "Env": metadata.get("Env", []),
+            "Prune": False,
             "PullImage": False,
         },
         timeout=args.deploy_timeout,
     )
-    print("stack update completed", flush=True)
+    print("stack updated with verified digest; configuration preserved", flush=True)
 
 
 def refresh_embeddings(args: argparse.Namespace) -> None:
