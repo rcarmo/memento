@@ -33,6 +33,16 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Safety and recovery checks for 0.5.0
+
+The 0.5 release rejects noncanonical paths before authorisation, blocks dangling symlinks and enforces the serialised UTF-8 concept limit and Markdown filenames. Rename preserves Markdown source and excludes generated indexes. Recovery no longer treats an unchanged worktree as a published mutation, and execute errors after a commit retain its operation information.
+
+Proposal pages use effective lifecycle status and bounded row batches. Cursors are encrypted, scoped to the principal, grants, filter and repository revision, and expire when the server restarts. A page can contain fewer visible results than its limit; follow its cursor until it is absent.
+
+Memory tool work uses worker-owned SQLite connections and bounded admission. Calls have a 30-second response deadline; timed-out writes can continue, so reconcile the original idempotency key rather than retrying. Shutdown drains active workers before releasing runtime dependencies. Git subprocesses and model response sizes are bounded. The SQLite vector extension rejects non-BLOB arguments.
+
+Restore requires the writer lease and mandatory checksums, retaining the lock inode during state replacement. The deployment helper preserves existing Compose and environment settings, changes only the Memento image reference, and verifies the pulled release digest. Configuration migration is not part of routine deployment.
+
 ## Proposal curation and graph audit checks for 0.4.0
 
 The 0.4.0 curation path keeps proposal appraisal inside MCP without returning full bodies by default. Release validation covers 200-item summary bounds, cursor pagination, generic concept-body digest matching across attached asset entries, manifest-only metadata, bounded file chunks, stale per-path conflict checks, body/asset-complete subset revision, and current-policy filtering for proposals, staged assets and operation reconciliation. The 0.4.1 production-acceptance patch pushes an explicit proposal status filter into the control query so routine submitted/stale appraisal does not deserialize the historical proposal archive before applying the bound. The 0.4.2 discovery patch includes staged-file inspection, subset revision and operation reconciliation in the compact curation workflow, and includes staged-file inspection and reconciliation in the asset-pack review sequence.
