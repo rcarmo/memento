@@ -2253,12 +2253,14 @@ def test_memory_proposal_list_filters_status_in_control_query(
         *,
         status: ProposalStatus | None = None,
         author_principal: str | None = None,
+        **kwargs: Any,
     ) -> tuple[Any, ...]:
         observed_statuses.append(status)
         return list_proposals(
             connection,
             status=status,
             author_principal=author_principal,
+            **kwargs,
         )
 
     monkeypatch.setattr("memento.service.list_proposals", tracked_list_proposals)
@@ -3492,3 +3494,40 @@ def test_execute_bad_projection_preserves_committed_result(
     assert data["revisions"][0]["operation_id"]
     assert data["revisions"][0]["repo_revision"] == get_main_revision(service._deps.repo_paths)
     assert result.warnings
+
+
+def test_stale_filter_uses_effective_status_with_bounded_query(
+    service: MemoryService, smith: ServiceContext, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from memento.control.proposals import list_proposals
+
+    revision = get_main_revision(service._deps.repo_paths)
+    proposal = success_data(
+        service.memory_propose(
+            smith,
+            intent="stale",
+            base_revision=revision,
+            changes=[{"kind": "patch", "path": "/projects/piclaw.md", "body": "candidate"}],
+        )
+    )
+    success_data(
+        service.memory_create(
+            smith,
+            path="/projects/advance.md",
+            concept_type="project",
+            title="Advance",
+            body="advance",
+            expected_revision=revision,
+            idempotency_key="advance-stale",
+        )
+    )
+    observed: list[int] = []
+
+    def bounded(connection: sqlite3.Connection, **kwargs: Any) -> Any:
+        observed.append(kwargs["limit"])
+        return list_proposals(connection, **kwargs)
+
+    monkeypatch.setattr("memento.service.list_proposals", bounded)
+    page = success_data(service.memory_proposal_list(smith, status="stale", limit=1))
+    assert page["proposals"][0]["proposal_id"] == proposal["proposal"]["proposal_id"]
+    assert observed == [2]

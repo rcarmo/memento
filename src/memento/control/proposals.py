@@ -177,19 +177,42 @@ def list_proposals(
     *,
     status: ProposalStatus | None = None,
     author_principal: str | None = None,
+    current_revision: str | None = None,
+    now: str | None = None,
+    limit: int | None = None,
+    cursor: str | None = None,
 ) -> tuple[ProposalRecord, ...]:
     conditions: list[str] = []
     parameters: list[object] = []
     if status is not None:
-        conditions.append("status = ?")
-        parameters.append(status.value)
+        if current_revision is not None and now is not None:
+            conditions.append("""(CASE
+                WHEN expires_at IS NOT NULL AND expires_at < ? AND status != 'applied' THEN 'expired'
+                WHEN status IN ('submitted','approved') AND base_revision != ? THEN 'stale'
+                ELSE status END) = ?""")
+            parameters.extend((now, current_revision, status.value))
+        else:
+            conditions.append("status = ?")
+            parameters.append(status.value)
+    if cursor is not None:
+        row = connection.execute(
+            "SELECT created_at,proposal_id FROM proposals WHERE proposal_id=?", (cursor,)
+        ).fetchone()
+        if row is None:
+            raise ValueError("invalid proposal list cursor")
+        conditions.append("(created_at,proposal_id) > (?,?)")
+        parameters.extend((row["created_at"], row["proposal_id"]))
     if author_principal is not None:
         conditions.append("author_principal = ?")
         parameters.append(author_principal)
     where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
-    rows = connection.execute(
-        f"SELECT * FROM proposals {where} ORDER BY created_at, proposal_id", parameters
-    ).fetchall()
+    query = f"SELECT * FROM proposals {where} ORDER BY created_at, proposal_id"
+    if limit is not None:
+        if limit < 1:
+            raise ValueError("proposal query limit must be positive")
+        query += " LIMIT ?"
+        parameters.append(limit)
+    rows = connection.execute(query, parameters).fetchall()
     return tuple(proposal_from_row(row) for row in rows)
 
 

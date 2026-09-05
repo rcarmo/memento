@@ -425,3 +425,32 @@ def write_concept(path: Path, *, title: str, body: str) -> None:
         body=body,
     )
     path.write_text(serialize_concept(document), encoding="utf-8")
+
+
+def test_restore_refuses_active_writer(seeded_root: tuple[Path, Path], tmp_path: Path) -> None:
+    config = load_service_config(seeded_root[0])
+    from memento.app import build_runtime as build_config_runtime
+    from memento.repository.lease import WriterLeaseError
+
+    config_path = tmp_path / "restore-config.json"
+    config_path.write_text(config.model_dump_json())
+    runtime = build_config_runtime(config_path)
+    try:
+        with pytest.raises(WriterLeaseError):
+            restore_backup(config, tmp_path / "backup")
+        assert runtime.paths.control_db.exists()
+    finally:
+        runtime.close()
+
+
+def test_restore_requires_mandatory_checksums(
+    seeded_root: tuple[Path, Path], tmp_path: Path
+) -> None:
+    config = load_service_config(seeded_root[0])
+    backup = tmp_path / "backup"
+    backup.mkdir()
+    (backup / "manifest.json").write_text(
+        json.dumps({"schema_version": 1, "repo_revision": "unused", "files": {}})
+    )
+    with pytest.raises(ValueError, match="required checksums"):
+        restore_backup(config, backup)

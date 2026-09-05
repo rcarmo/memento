@@ -384,3 +384,13 @@ def test_write_path_rejects_dangling_symlink(tmp_path: Path) -> None:
     with pytest.raises(PathSafetyError):
         validate_repository_write_path(root, "/link.md")
     assert not outside.exists()
+
+
+def test_rename_preserves_markdown_source_and_code() -> None:
+    text = '# Heading\n\n[inline](/old.md#anchor) and [reference][ref].\n\n`[code](/old.md)`\n\n[ref]: /old.md "Title"\n'
+    expected = text.replace("](/old.md#anchor)", "](/new.md#anchor)").replace(
+        "[ref]: /old.md", "[ref]: /new.md"
+    )
+    result = rewrite_links_for_rename(text, old_path="/old.md", new_path="/new.md")
+    assert result.content == expected
+    assert len(extract_structural_links(result.content)) == 2

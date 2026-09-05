@@ -36,25 +36,40 @@ def extract_structural_links(content: str) -> list[MarkdownLink]:
 
 
 def rewrite_links_for_rename(content: str, *, old_path: str, new_path: str) -> RenameRewriteResult:
-    tokens = _MARKDOWN.parse(content)
-    changed = False
-    for token in _walk_tokens(tokens):
-        if token.type not in {"link_open", "image"}:
+    # Edit source, never rendered HTML. Ask the Markdown parser whether each
+    # candidate actually changes a destination, excluding prose and code spans.
+    original = content
+    destinations = _destinations(content)
+    positions: list[int] = []
+    start = 0
+    while (position := content.find(old_path, start)) >= 0:
+        positions.append(position)
+        start = position + len(old_path)
+    for position in reversed(positions):
+        candidate = content[:position] + new_path + content[position + len(old_path) :]
+        updated = _destinations(candidate)
+        if len(updated) != len(destinations):
             continue
-        raw_href = token.attrGet("href") if token.type == "link_open" else token.attrGet("src")
-        if not isinstance(raw_href, str):
-            continue
-        rewritten = _rewrite_href(raw_href, old_path=old_path, new_path=new_path)
-        href = raw_href
-        if rewritten == href:
-            continue
-        changed = True
-        attr_name = "href" if token.type == "link_open" else "src"
-        token.attrSet(attr_name, rewritten)
-    if not changed:
-        return RenameRewriteResult(content=content, changed=False)
-    rendered = _MARKDOWN.renderer.render(tokens, _MARKDOWN.options, {})
-    return RenameRewriteResult(content=rendered, changed=True)
+        differences = [
+            (before, after)
+            for before, after in zip(destinations, updated, strict=True)
+            if before != after
+        ]
+        if differences and all(
+            _rewrite_href(before, old_path=old_path, new_path=new_path) == after
+            for before, after in differences
+        ):
+            content = candidate
+            destinations = updated
+    return RenameRewriteResult(content=content, changed=content != original)
+
+
+def _destinations(content: str) -> list[str]:
+    return [
+        str(token.attrGet("href" if token.type == "link_open" else "src"))
+        for token in _walk_tokens(_MARKDOWN.parse(content))
+        if token.type in {"link_open", "image"}
+    ]
 
 
 def _extract_inline_links(children: list[Token], line: int | None) -> list[MarkdownLink]:

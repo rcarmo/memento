@@ -18,6 +18,7 @@ from time import monotonic
 from typing import Any, Literal, Protocol
 from uuid import uuid4
 
+from cryptography.fernet import Fernet, InvalidToken
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from memento import __version__
@@ -123,7 +124,6 @@ from memento.repository.bundle import (
 from memento.repository.frontmatter import (
     FrontmatterError,
     normalize_concept_body,
-    parse_concept_text,
     serialize_concept,
 )
 from memento.repository.git import (
@@ -320,6 +320,7 @@ class ServiceDependencies:
 class MemoryService:
     def __init__(self, deps: ServiceDependencies) -> None:
         self._deps = deps
+        self._proposal_cursor_cipher = Fernet(Fernet.generate_key())
         self._answers = AnswerStore(deps.control_connection)
         self._answers.migrate()
 
@@ -1492,29 +1493,51 @@ class MemoryService:
             requested_status = ProposalStatus(status) if status is not None else None
             if limit < 1 or limit > 200:
                 raise ServiceError("proposal list limit must be between 1 and 200")
-            visible: list[ProposalRecord] = []
-            for proposal in list_proposals(
+            revision = get_main_revision(self._deps.repo_paths)
+            scope = {
+                "principal": policy.principal,
+                "status": status,
+                "revision": revision,
+                "reads": list(policy.read_prefixes),
+                "writes": list(policy.write_prefixes),
+                "protected": list(policy.protected_read_prefixes),
+                "roles": list(policy.roles),
+            }
+            after = None
+            if cursor is not None:
+                try:
+                    decoded = json.loads(
+                        self._proposal_cursor_cipher.decrypt(cursor.encode("ascii"))
+                    )
+                    if decoded["scope"] != scope:
+                        raise ValueError("cursor scope changed")
+                    after = str(decoded["after"])
+                except (InvalidToken, ValueError, KeyError, UnicodeError) as exc:
+                    raise ServiceError("invalid or stale proposal list cursor") from exc
+            candidates = list_proposals(
                 self._deps.control_connection,
                 status=requested_status,
-            ):
-                if not self._can_access_proposal(policy, proposal, require_write=True):
-                    continue
-                refreshed = self._refresh_proposal_status(proposal)
-                if requested_status is None or refreshed.status is requested_status:
-                    visible.append(refreshed)
-            if cursor is not None:
-                positions = [
-                    index
-                    for index, proposal in enumerate(visible)
-                    if proposal.proposal_id == cursor
-                ]
-                if len(positions) != 1:
-                    raise ServiceError("invalid proposal list cursor")
-                visible = visible[positions[0] + 1 :]
-            selected = visible[:limit]
-            next_cursor = (
-                selected[-1].proposal_id if len(visible) > len(selected) and selected else None
+                author_principal=None if "curator" in policy.roles else policy.principal,
+                current_revision=revision,
+                now=self._now().isoformat().replace("+00:00", "Z"),
+                limit=limit + 1,
+                cursor=after,
             )
+            selected = [
+                self._refresh_proposal_status(item)
+                for item in candidates[:limit]
+                if self._can_access_proposal(policy, item, require_write=True)
+            ]
+            next_cursor = None
+            if len(candidates) > limit:
+                next_cursor = self._proposal_cursor_cipher.encrypt(
+                    json.dumps(
+                        {
+                            "scope": scope,
+                            "after": candidates[limit - 1].proposal_id,
+                        }
+                    ).encode("utf-8")
+                ).decode("ascii")
             return self._success(
                 {
                     "proposals": [
@@ -2330,11 +2353,11 @@ class MemoryService:
             raise ConflictError(f"path already exists: {change.new_path}")
         entry = read_bundle_entry(worktree, change.path)
         rewrites = []
-        for candidate in sorted(worktree.rglob("*.md")):
-            bundle_path = "/" + candidate.relative_to(worktree).as_posix()
+        for bundle_path in list_bundle_paths(worktree):
             if bundle_path == change.path:
                 continue
-            original = parse_concept_text(candidate.read_text(encoding="utf-8"))
+            candidate = worktree / bundle_path.removeprefix("/")
+            original = read_bundle_entry(worktree, bundle_path).document
             rewritten = rewrite_links_for_rename(
                 original.body, old_path=change.path, new_path=change.new_path
             )

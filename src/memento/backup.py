@@ -14,6 +14,7 @@ from typing import Any
 from memento.app import MementoRuntime, runtime_paths_for
 from memento.config import ServiceConfig
 from memento.repository.git import materialize_current_checkout
+from memento.repository.lease import acquire_writer_lease
 
 
 @dataclass(frozen=True, slots=True)
@@ -73,8 +74,22 @@ def restore_backup(
 ) -> dict[str, Any]:
     paths = runtime_paths_for(config)
     _reject_nested_state_path(backup_dir, paths.root, kind="backup source")
+    with acquire_writer_lease(paths.writer_lock, owner="memento-restore"):
+        return _restore_backup_locked(config, backup_dir, rebuild_derived=rebuild_derived)
+
+
+def _restore_backup_locked(
+    config: ServiceConfig, backup_dir: Path, *, rebuild_derived: bool
+) -> dict[str, Any]:
+    paths = runtime_paths_for(config)
+    _reject_nested_state_path(backup_dir, paths.root, kind="backup source")
     manifest_path = backup_dir / MANIFEST_NAME
     manifest = BackupManifest(**json.loads(manifest_path.read_text(encoding="utf-8")))
+    required = {"repo.git.tar.gz", "control.sqlite"}
+    if manifest.schema_version != 1 or not required <= manifest.files.keys():
+        raise ValueError("backup manifest must include supported schema and required checksums")
+    if set(manifest.files) - (required | {"derived.sqlite"}):
+        raise ValueError("unsupported backup manifest file")
     for name, digest in manifest.files.items():
         path = backup_dir / name
         if not path.exists():
@@ -122,14 +137,30 @@ def restore_backup(
                 staged_paths.repo_paths.current_dir,
                 repo_revision=manifest.repo_revision,
             )
-        backup_old = paths.root.with_name(paths.root.name + ".pre-restore")
-        if backup_old.exists():
-            shutil.rmtree(backup_old)
-        if paths.root.exists():
-            paths.root.rename(backup_old)
-        staging_root.rename(paths.root)
-        if backup_old.exists():
-            shutil.rmtree(backup_old)
+        # Keep the root and locks directory in place so the held flock inode
+        # remains the same for existing and newly starting daemons.
+        backup_old = Path(temp_dir) / "previous"
+        backup_old.mkdir()
+        installed: list[Path] = []
+        moved: list[Path] = []
+        try:
+            for child in paths.root.iterdir():
+                if child.name == "locks":
+                    continue
+                child.rename(backup_old / child.name)
+                moved.append(child)
+            for child in staging_root.iterdir():
+                if child.name == "locks":
+                    continue
+                destination = paths.root / child.name
+                child.rename(destination)
+                installed.append(destination)
+        except BaseException:
+            for child in installed:
+                child.rename(staging_root / child.name)
+            for child in moved:
+                (backup_old / child.name).rename(child)
+            raise
     return {
         "repo_revision": manifest.repo_revision,
         "restored_root": str(paths.root),
