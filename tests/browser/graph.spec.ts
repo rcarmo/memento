@@ -260,3 +260,22 @@ test('each shared force drives layout with other forces disabled', async ({page,
   });
   for(const pair of Object.values(distances) as any[]){expect(pair.off).toBe(10);expect(pair.on).toBeCloseTo(3.6,1);}
 });
+
+test('Show Trash sends inclusion header and adds/removes trash nodes', async ({page,browserName,isMobile})=>{
+  test.skip(isMobile||browserName!=='chromium','assert once');
+  await page.route('**/graph/api/v1/overview', async route=>{
+    const response=await route.fetch();const payload=await response.json();
+    if(route.request().headers()['x-memento-include-trash']==='true'){
+      payload.nodes.push({...payload.nodes[0],id:'trash-fixture',path:'/trash/projects/fixture.md',namespace:'/trash/',title:'Trashed fixture'});
+    }
+    await route.fulfill({response,json:payload});
+  });
+  await page.goto('/graph',{waitUntil:'networkidle'});
+  await page.waitForFunction(()=>Boolean((window as any).__mementoGraphScene?.nodes.length));
+  const toggle=page.locator('label:has-text("Show Trash") input');
+  await toggle.check();
+  await page.waitForFunction(()=>(window as any).__mementoGraphScene.nodes.some((n:any)=>n.id==='trash-fixture'));
+  await expect(page.locator('.cluster-label').filter({hasText:/^Trash$/})).toHaveCount(1);
+  await toggle.uncheck();
+  await page.waitForFunction(()=>(window as any).__mementoGraphScene.nodes.every((n:any)=>n.id!=='trash-fixture'));
+});
