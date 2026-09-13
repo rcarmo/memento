@@ -4,6 +4,14 @@ Deletion has two stages. `trash` moves `/projects/example.md` to `/trash/project
 
 Git history is retained in every case. Purge does not erase old commits, proposal records, staged submissions or backups, and is not a privacy-erasure operation.
 
+## Reviewed archival
+
+To inspect consequences before archiving, submit a proposal with `changes: [{"kind": "trash", "path": "/projects/example.md"}]` and the current `base_revision`. An archival proposal may contain 1--20 distinct trash targets and cannot mix in other mutations. Explicit creation, inspection, curator review and apply use the normal proposal workflow; model-generated archival is not allowed.
+
+The response and `proposal_get` include `archival_impact`: the destination, concept ID, current revision, readable inbound references that will become unresolved, accepted asset kinds/versions/digests that will be retained, and link/history behaviour. Reports are bounded to 100 inbound references and 100 accepted asset versions per target; excessive input fails before a proposal is stored. Hidden backlinks are never listed. A curator inspecting a current proposal receives a fresh report under their own permissions; stored reports are filtered again if grants change.
+
+Approval and apply require a current content index and repository revision. Stale archival proposals must be submitted again for a fresh impact report rather than adopted through generic subset revision. Source or destination conflicts prevent the whole transaction. Apply uses a durable idempotency key and can be reconciled through `operation_get`; retries do not archive twice. Use reviewed archival for routine cleanup. Direct curator operations below remain available for exceptional use.
+
 ## Authenticated operations
 
 Use `memory_execute` on the compact MCP surface, or `memory_trash`, `memory_restore` and `memory_purge` on the standard/curator/admin surfaces. Each requires the curator role, read and write permission on the original path, a fresh `expected_revision` and a durable `idempotency_key`. Purge additionally requires `confirm: true` and only accepts a path already under `/trash/`.

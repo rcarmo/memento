@@ -211,6 +211,12 @@ class ProposePatchChange(BaseModel):
     aliases: tuple[str, ...] | None = None
 
 
+class ProposeTrashChange(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    kind: Literal["trash"]
+    path: str
+
+
 class ProposeRenameChange(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -245,7 +251,13 @@ class ProposeAssetChange(BaseModel):
         return self
 
 
-ProposeChange = ProposeCreateChange | ProposePatchChange | ProposeRenameChange | ProposeAssetChange
+ProposeChange = (
+    ProposeCreateChange
+    | ProposePatchChange
+    | ProposeRenameChange
+    | ProposeAssetChange
+    | ProposeTrashChange
+)
 
 
 class ProposeArgs(BaseModel):

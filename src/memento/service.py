@@ -215,6 +215,12 @@ class PatchChange(BaseModel):
     aliases: tuple[str, ...] | None = None
 
 
+class TrashChange(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    kind: Literal["trash"]
+    path: str
+
+
 class RenameChange(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -270,7 +276,7 @@ class ModelProposalDraft(BaseModel):
     changes: tuple[ProposalChange, ...]
 
 
-ProposalChange = CreateChange | PatchChange | RenameChange | AttachAssetPackChange
+ProposalChange = CreateChange | PatchChange | RenameChange | AttachAssetPackChange | TrashChange
 
 
 @dataclass(frozen=True, slots=True)
@@ -1361,6 +1367,7 @@ class MemoryService:
             self._validate_change_auth(policy, normalized, action="write")
             self._validate_skill_asset_bindings(normalized)
             preview = self._preview_changes(normalized)
+            impact = self._archival_impact(policy, normalized, base_revision)
             with self._deps.control_connection:
                 record = create_proposal(
                     self._deps.control_connection,
@@ -1370,7 +1377,10 @@ class MemoryService:
                     base_revision=base_revision,
                     intent=intent,
                     rationale=rationale,
-                    patch={"changes": [item.model_dump(mode="json") for item in normalized]},
+                    patch={
+                        "changes": [item.model_dump(mode="json") for item in normalized],
+                        "archival_impact": impact,
+                    },
                     assets=proposal_assets,
                     manage_transaction=False,
                 )
@@ -1381,7 +1391,9 @@ class MemoryService:
                         proposal_id=proposal_id,
                         manage_transaction=False,
                     )
-            return self._success({"proposal": self._proposal_payload(record, preview)})
+            payload = self._proposal_payload(record, preview)
+            payload["archival_impact"] = self._visible_archival_impact(record, policy)
+            return self._success({"proposal": payload})
         except Exception as exc:
             return self._failure(exc)
 
@@ -1479,6 +1491,7 @@ class MemoryService:
             else:
                 preview = self._preview_changes(self._normalize_changes(record.patch["changes"]))
                 payload = self._proposal_payload(record, preview)
+            payload["archival_impact"] = self._visible_archival_impact(record, policy)
             return self._success({"proposal": payload})
         except Exception as exc:
             return self._failure(exc)
@@ -1660,6 +1673,8 @@ class MemoryService:
                     "selected changes conflict with current memory: "
                     + ", ".join(str(index) for index in blocked)
                 )
+            if any(changes[index].get("kind") == "trash" for index in indexes):
+                raise ConflictError("submit a fresh archival proposal with a current impact report")
             self._validate_selected_asset_pairs(changes, indexes)
             selected_raw = [dict(changes[index]) for index in indexes]
             normalized = self._normalize_changes(selected_raw)
@@ -1728,6 +1743,12 @@ class MemoryService:
             if proposal.status in {ProposalStatus.APPLIED, ProposalStatus.EXPIRED}:
                 raise ConflictError(
                     f"proposal {proposal.proposal_id} is already {proposal.status.value}"
+                )
+            if decision == "approve" and proposal.patch.get("archival_impact"):
+                self._archival_impact(
+                    policy,
+                    self._normalize_changes(proposal.patch["changes"]),
+                    proposal.base_revision,
                 )
             new_status = {
                 "approve": ProposalStatus.APPROVED,
@@ -1807,6 +1828,7 @@ class MemoryService:
             changes = self._normalize_changes(proposal.patch["changes"])
             changes = self._adapt_existing_asset_concepts(changes)
             self._validate_change_auth(policy, changes, action="write")
+            self._archival_impact(policy, changes, expected_revision)
             request = self._transaction_request(
                 context,
                 idempotency_key=idempotency_key,
@@ -2351,6 +2373,21 @@ class MemoryService:
             elif isinstance(change, PatchChange):
                 self._apply_patch(worktree, change, actor=actor)
                 changed_paths.add(change.path)
+            elif isinstance(change, TrashChange):
+                from memento.repository.trash import trash_path
+
+                destination = trash_path(change.path)
+                for affected_path in (change.path, destination):
+                    authorize_path(policy, affected_path, action="read")
+                    authorize_path(policy, affected_path, action="write")
+                read_bundle_entry(worktree, change.path)
+                source = validate_repository_write_path(worktree, change.path).absolute_path
+                target = validate_repository_write_path(worktree, destination).absolute_path
+                if target.exists():
+                    raise ConflictError("trash destination already exists")
+                target.parent.mkdir(parents=True, exist_ok=True)
+                source.rename(target)
+                changed_paths.update((change.path, destination))
             elif isinstance(change, RenameChange):
                 rewritten = self._apply_rename(worktree, change, actor=actor, policy=policy)
                 changed_paths.update(rewritten)
@@ -2556,6 +2593,10 @@ class MemoryService:
                         tofile=f"b{change.path}",
                     )
                 )
+            elif isinstance(change, TrashChange):
+                diffs.append(
+                    f"archive {change.path} -> /trash{change.path}; assets and Git history retained; inbound links left unchanged\n"
+                )
             elif isinstance(change, RenameChange):
                 diffs.append(f"rename {change.path} -> {change.new_path}\n")
             elif isinstance(change, AttachAssetPackChange):
@@ -2587,6 +2628,126 @@ class MemoryService:
             ),
             body=change.body,
         )
+
+    def _archival_impact(
+        self, policy: EffectivePolicy, changes: list[ProposalChange], revision: str
+    ) -> list[dict[str, Any]]:
+        from memento.repository.trash import trash_path
+
+        archival = [change for change in changes if isinstance(change, TrashChange)]
+        if not archival:
+            return []
+        self._validate_archival_batch(changes)
+        if revision != get_main_revision(self._deps.repo_paths):
+            raise ConflictError("archival impact requires the current repository revision")
+        reports: list[dict[str, Any]] = []
+        with sqlite3.connect(
+            f"file:{self._deps.derived_index.db_path}?mode=ro", uri=True
+        ) as connection:
+            connection.row_factory = sqlite3.Row
+            state = dict(connection.execute("SELECT key,value FROM index_state").fetchall())
+            if state.get("index_revision") != revision or state.get("status") != "ready":
+                raise ConflictError("archival impact requires a fresh content index")
+            for change in archival:
+                authorize_path(policy, change.path, action="read")
+                authorize_path(policy, change.path, action="write")
+                destination = trash_path(change.path)
+                entry = read_bundle_entry(self._deps.repo_paths.current_dir, change.path)
+                target = validate_repository_write_path(
+                    self._deps.repo_paths.current_dir, destination
+                )
+                if target.absolute_path.exists():
+                    raise ConflictError("trash destination already exists")
+                rows = connection.execute(
+                    "SELECT DISTINCT c.path,l.raw_target,l.resolution_state FROM links l "
+                    "JOIN concepts c ON c.id=l.source_id WHERE l.target_path=? "
+                    "AND c.path NOT LIKE '/trash/%' ORDER BY c.path,l.raw_target LIMIT 101",
+                    (change.path,),
+                ).fetchall()
+                if len(rows) > 100:
+                    raise ServiceError(
+                        "archival impact exceeds 100 inbound references; curate references first"
+                    )
+                references = [
+                    {
+                        "path": str(row["path"]),
+                        "target": str(row["raw_target"]),
+                        "resolution": str(row["resolution_state"]),
+                        "after_archival": "unresolved",
+                    }
+                    for row in rows
+                    if self._is_authorized(policy, str(row["path"]), action="read")
+                ]
+                assets: list[dict[str, Any]] = []
+                for kind in list_asset_kinds(
+                    self._deps.repo_paths.current_dir, entry.document.frontmatter.id
+                ):
+                    for version in list_asset_versions(
+                        self._deps.repo_paths.current_dir, entry.document.frontmatter.id, kind
+                    ):
+                        if len(assets) >= 100:
+                            raise ServiceError(
+                                "archival impact exceeds 100 accepted asset versions"
+                            )
+                        metadata = load_asset_metadata(
+                            self._deps.repo_paths.current_dir,
+                            entry.document.frontmatter.id,
+                            kind,
+                            version,
+                        )
+                        assets.append(
+                            {
+                                "kind": kind,
+                                "version": version,
+                                "sha256": metadata.get("zip_sha256"),
+                                "action": "retained",
+                            }
+                        )
+                reports.append(
+                    {
+                        "path": change.path,
+                        "destination": destination,
+                        "concept_id": entry.document.frontmatter.id,
+                        "revision": revision,
+                        "inbound_references": references,
+                        "reference_scope": "currently readable sources only; other namespaces may also refer to this item",
+                        "assets": assets,
+                        "assets_action": "retained for restore; explicit purge removes current accepted versions",
+                        "links_action": "not rewritten; inbound links become unresolved until restore",
+                        "history_retained": True,
+                        "conflicts": [],
+                    }
+                )
+        if revision != get_main_revision(self._deps.repo_paths):
+            raise ConflictError("repository changed during archival impact inspection")
+        return reports
+
+    def _visible_archival_impact(
+        self, record: ProposalRecord, policy: EffectivePolicy
+    ) -> list[dict[str, Any]]:
+        reports = record.patch.get("archival_impact", [])
+        if (
+            reports
+            and record.status in {ProposalStatus.SUBMITTED, ProposalStatus.APPROVED}
+            and record.base_revision == get_main_revision(self._deps.repo_paths)
+        ):
+            # Curators may see references the author could not. Recompute at the
+            # same revision under the current reviewer's policy before review.
+            return self._archival_impact(
+                policy, self._normalize_changes(record.patch["changes"]), record.base_revision
+            )
+        visible = []
+        for report in reports:
+            if not self._is_authorized(policy, report["path"], action="read"):
+                continue
+            scoped = dict(report)
+            scoped["inbound_references"] = [
+                row
+                for row in report["inbound_references"]
+                if self._is_authorized(policy, row["path"], action="read")
+            ]
+            visible.append(scoped)
+        return visible
 
     def _proposal_payload(self, record: ProposalRecord, preview: str) -> dict[str, Any]:
         patch = record.patch
@@ -2717,6 +2878,8 @@ class MemoryService:
             paths = [str(raw.get("path", ""))]
             if raw.get("kind") == "rename":
                 paths.append(str(raw.get("new_path", "")))
+            if raw.get("kind") == "trash":
+                paths.append("/trash" + str(raw.get("path", "")))
             conflicting = tuple(sorted(path for path in paths if path in changed))
             result.append(
                 {
@@ -2910,8 +3073,8 @@ class MemoryService:
                 raise ServiceError("model proposal citations must match consulted concepts")
         self._validate_change_auth(policy, list(draft.changes), action="write")
         for change in draft.changes:
-            if isinstance(change, RenameChange):
-                raise ServiceError("model-assisted proposals may not rename concepts")
+            if isinstance(change, (RenameChange, TrashChange)):
+                raise ServiceError("model-assisted proposals may not rename or archive concepts")
             path = change.path
             if not self._is_authorized(policy, path, action="read") and not self._is_authorized(
                 policy, path, action="write"
@@ -3215,15 +3378,28 @@ class MemoryService:
                 normalized.append(PatchChange.model_validate(item))
             elif kind == "rename":
                 normalized.append(RenameChange.model_validate(item))
+            elif kind == "trash":
+                normalized.append(TrashChange.model_validate(item))
             elif kind == "attach_asset_pack":
                 normalized.append(AttachAssetPackChange.model_validate(item))
             else:
                 raise ServiceError(f"unsupported change kind: {kind}")
         return normalized
 
+    def _validate_archival_batch(self, changes: list[ProposalChange]) -> None:
+        if not any(isinstance(change, TrashChange) for change in changes):
+            return
+        if len(changes) > 20 or any(not isinstance(change, TrashChange) for change in changes):
+            raise ServiceError(
+                "archival proposals require 1-20 trash changes without mixed mutations"
+            )
+        if len({change.path for change in changes}) != len(changes):
+            raise ServiceError("duplicate archival target")
+
     def _validate_change_auth(
         self, policy: EffectivePolicy, changes: list[ProposalChange], *, action: str
     ) -> None:
+        self._validate_archival_batch(changes)
         for change in changes:
             paths = (
                 (change.path, change.new_path)
