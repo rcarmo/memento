@@ -43,7 +43,7 @@ Writes normally go through review:
 search -> read -> propose -> review -> apply -> Git commit -> index update
 ```
 
-Memento checks the caller's namespace, the expected repository revision and the request's idempotency key. A retry returns the recorded result instead of creating another commit. Curators may review proposals they authored when they have write access to every affected path; `author_principal` and `reviewed_by` preserve that fact in the audit trail. Curators can also create, patch and rename concepts directly when those tools are exposed. Memento has no client-facing hard delete.
+Memento checks the caller's namespace, the expected repository revision and the request's idempotency key. A retry returns the recorded result instead of creating another commit. Curators may review proposals they authored when they have write access to every affected path; `author_principal` and `reviewed_by` preserve that fact in the audit trail. Curators can also create, patch and rename concepts directly when those tools are exposed. Curators can also [trash, restore or purge concepts](docs/trash.md). Trash preserves original namespace permissions; purge removes current content and assets with explicit confirmation, retaining Git history.
 
 Administrators manage principals through the preset-driven [`/admin`](docs/access-management.md) UI or role-filtered `access_*` tools on the same `/mcp` endpoint. Ordinary principals cannot discover or invoke those tools. New and rotated credentials are shown once; only verifiers are retained.
 

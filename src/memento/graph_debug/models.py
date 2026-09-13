@@ -121,6 +121,7 @@ class GraphAggregateEdge(GraphModel):
     explicit_edge_count: int
     kind: GraphEdgeKind = "explicit"
     canonical: bool = True
+    similarity: float | None = None
 
 
 class GraphOverview(GraphModel):

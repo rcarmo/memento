@@ -37,6 +37,7 @@ class AggregateEdge:
     explicit_edge_count: int
     kind: GraphEdgeKind = "explicit"
     canonical: bool = True
+    similarity: float | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -65,15 +66,25 @@ def aggregate_layout(
     for namespace, members in sorted(by_namespace.items()):
         namespace_members = tuple(members)
         components = _explicit_components(namespace_members, ordered_edges)
-        if _is_sparse_namespace(namespace_members, components):
-            cluster_id = _cluster_id(namespace, 0, namespace_members)
+        if namespace == "/trash/" or _is_sparse_namespace(namespace_members, components):
+            cluster_id = (
+                "cluster:trash"
+                if namespace == "/trash/"
+                else _cluster_id(namespace, 0, namespace_members)
+            )
             groups.append((cluster_id, namespace_members))
             continue
         for index, component in enumerate(components):
             cluster_id = _cluster_id(namespace, index, component)
             groups.append((cluster_id, component))
     if len(groups) > cluster_limit:
-        groups = _merge_small_groups(groups, cluster_limit)
+        trash_groups = [group for group in groups if group[0] == "cluster:trash"]
+        if trash_groups and cluster_limit > 1:
+            groups = trash_groups + _merge_small_groups(
+                [group for group in groups if group[0] != "cluster:trash"], cluster_limit - 1
+            )
+        else:
+            groups = _merge_small_groups(groups, cluster_limit)
 
     memberships = {node.id: cluster_id for cluster_id, members in groups for node in members}
     clusters = tuple(
@@ -87,6 +98,7 @@ def aggregate_layout(
         for index, (cluster_id, members) in enumerate(groups)
     )
     counts: Counter[tuple[GraphEdgeKind, str, str]] = Counter()
+    similarity_sums: dict[tuple[GraphEdgeKind, str, str], float] = {}
     for edge in ordered_edges:
         if edge.target is None:
             continue
@@ -95,6 +107,9 @@ def aggregate_layout(
         if source is None or target is None or source == target:
             continue
         counts[(edge.kind, source, target)] += 1
+        if edge.kind == "semantic_similarity":
+            key = (edge.kind, source, target)
+            similarity_sums[key] = similarity_sums.get(key, 0.0) + (edge.similarity or 0.0)
     aggregate_edges = tuple(
         AggregateEdge(
             id=f"cluster-{kind}:{source}:{target}",
@@ -103,6 +118,9 @@ def aggregate_layout(
             explicit_edge_count=count if kind == "explicit" else 0,
             kind=kind,
             canonical=kind == "explicit",
+            similarity=similarity_sums[(kind, source, target)] / count
+            if kind == "semantic_similarity"
+            else None,
         )
         for (kind, source, target), count in sorted(counts.items())
     )
@@ -195,7 +213,11 @@ def _aggregate_node(
     namespace = members[0].namespace if members else "/"
     return AggregateNode(
         id=cluster_id,
-        label=namespace if len(members) != 1 else members[0].title,
+        label="Trash"
+        if namespace == "/trash/"
+        else namespace
+        if len(members) != 1
+        else members[0].title,
         namespace=namespace,
         member_count=len(members),
         markdown_bytes=sum(node.markdown_bytes for node in members),

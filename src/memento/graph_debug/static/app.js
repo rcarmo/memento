@@ -10,6 +10,8 @@ const forceDefaults = {
   shared_namespace: 0.018,
   shared_type: 0.006,
   shared_provenance: 0.006,
+  repulsion: 0.12,
+  distance: 3,
 };
 const simulatedWarning = "Simulated visibility — not an authorization boundary";
 const directSizeMetrics = [
@@ -45,7 +47,7 @@ export function semanticDisplayEdges(edges, selectedId, enabled, threshold, neig
       }
     }
   }
-  if (selectedId) {
+  if (enabled && selectedId) {
     let count = 0;
     for (const edge of semantic) {
       if ((edge.source === selectedId || edge.target === selectedId) && count < neighbours) {
@@ -107,6 +109,8 @@ function principalDetail(principal) {
 
 function App() {
   const canvas = useRef(null);
+  const selectNodeRef = useRef(null);
+  const [includeTrash, setIncludeTrash] = useState(false);
   const scene = useRef(null);
   const exportDialog = useRef(null);
   const [graph, setGraph] = useState(null);
@@ -135,7 +139,7 @@ function App() {
       if (!canvas.current.getContext("webgl2")) {
         throw new Error("WebGL2 is unavailable in this browser or graphics environment.");
       }
-      scene.current = new GraphScene(canvas.current, { select: (node) => selectNode(node), performance: setPerf });
+      scene.current = new GraphScene(canvas.current, { select: (node) => selectNodeRef.current?.(node), performance: setPerf });
       window.__mementoGraphScene = scene.current;
       loadPrincipals();
       load();
@@ -189,25 +193,14 @@ function App() {
     scene.current?.setGraph(
       nodes,
       semanticDisplayEdges(edges, selected?.id, semanticEnabled, semanticThreshold, semanticNeighbours),
-      { sizeMetric: effectiveSizeMetric(payload, sizeMetric), forces },
+      { sizeMetric: effectiveSizeMetric(payload, sizeMetric), forces, clusters: payload.clusters || [] },
     );
   }
 
+  selectNodeRef.current = selectNode;
   async function selectNode(node) {
     setSelected(node);
     scene.current?.focus(node);
-    const currentGraph = graphRef.current;
-    if (currentGraph?.mode === "direct") {
-      scene.current?.setEdges(
-        semanticDisplayEdges(
-          currentGraph.edges,
-          node.id,
-          semanticEnabled,
-          semanticThreshold,
-          semanticNeighbours,
-        ),
-      );
-    }
     try {
       if (node.member_count) {
         const { payload } = await graphApi.cluster(node.id);
@@ -309,7 +302,7 @@ function App() {
         semanticThreshold,
         semanticNeighbours,
       ),
-      { sizeMetric: effectiveSizeMetric(graph, sizeMetric), forces },
+      { sizeMetric: effectiveSizeMetric(graph, sizeMetric), forces, clusters: graph.clusters || [] },
     );
   }
 
@@ -412,7 +405,7 @@ function App() {
               h("path", { d: "M8 12h8M8 16h8" }),
             ]);
 
-  const selectedSemanticEdges = selected && graph?.mode === "direct"
+  const selectedSemanticEdges = semanticEnabled && selected && graph?.mode === "direct"
     ? graph.edges
         .filter(
           (edge) =>
@@ -446,6 +439,7 @@ function App() {
         simulatedPrincipal ? simulatedWarning : "Unauthenticated -- trusted networks only",
       ),
       h("button", { onClick: load }, "Overview"),
+      h("label", { class: "check" }, [h("input", { type: "checkbox", checked: includeTrash, onChange: (event) => { const value=event.currentTarget.checked; setIncludeTrash(value); graphApi.setIncludeTrash(value); load(); } }), "Show Trash"]),
     ]),
     h("aside", { class: "controls" }, [
       h("label", { class: "search-control" }, [
@@ -547,18 +541,19 @@ function App() {
             onInput: (event) => setSemanticNeighbours(Number(event.currentTarget.value)),
           }),
         ]),
-        h("small", {}, "Selected nodes always reveal their strongest semantic neighbours."),
+        h("small", {}, "Semantic edges participate in layout only while this layer is enabled."),
       ]),
       h("details", {}, [
         h("summary", {}, "Forces"),
+        h("button", { onClick: () => setForces({ ...forceDefaults }) }, "Reset forces"),
         ...Object.entries(forces).map(([key, value]) =>
           h("label", { class: "slider" }, [
-            key,
+            `${key.replaceAll("_", " ")} ${value.toFixed(key === "distance" ? 1 : 3)}`,
             h("input", {
               type: "range",
-              min: 0,
-              max: 0.25,
-              step: 0.001,
+              min: key === "distance" ? 0.5 : 0,
+              max: key === "distance" ? 12 : key === "repulsion" ? 1 : 0.5,
+              step: key === "distance" ? 0.1 : 0.005,
               value,
               onInput: (event) => setForces({ ...forces, [key]: Number(event.currentTarget.value) }),
             }),
@@ -701,6 +696,7 @@ function App() {
             detail,
             selected,
             semanticEdges: selectedSemanticEdges,
+            referenceNodes: graph?.nodes || [],
             onTag: (tag) => {
               setType("all");
               setQuery(tag);
@@ -712,12 +708,23 @@ function App() {
   ]);
 }
 
-function Inspector({ detail, selected, semanticEdges, onTag, onMemory }) {
+export function uniqueReferences(edges = [], direction) {
+  const seen = new Set();
+  return edges.filter(edge => {
+    const key = edge[direction] || (edge.raw_target || "").split("#")[0];
+    if (seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+}
+
+function Inspector({ detail, selected, semanticEdges, referenceNodes = [], onTag, onMemory }) {
   const node = detail.node || selected;
+  const inbound = uniqueReferences(detail.inbound, "source");
+  const outbound = uniqueReferences(detail.outbound, "target");
   const tags = node.tags || [];
   const edgeLine = (edge, id) =>
     h("li", {}, [
-      h("button", { class: "link-button", disabled: !id, onClick: () => id && onMemory(id) }, edge.raw_target || id || "missing"),
+      h("button", { class: "link-button", disabled: !id, onClick: () => id && onMemory(id) }, edge.source === node.id ? edge.raw_target || id || "missing" : referenceNodes.find(item => item.id === id)?.path || id || "missing"),
       " ",
       h("small", {}, edge.resolution || edge.kind || ""),
     ]);
@@ -774,20 +781,21 @@ function Inspector({ detail, selected, semanticEdges, onTag, onMemory }) {
         .flatMap(([key, value]) => [h("dt", {}, key), h("dd", {}, String(value))]),
     ),
     detail.preview && h("pre", { class: "preview" }, detail.preview),
+    node.path?.startsWith("/trash/") && h("p", {}, "Trashed. Restore or permanently delete through authenticated memory tools. Git history is retained."),
     members,
     h("h3", {}, "Explicit links"),
-    h("p", {}, `${detail.inbound?.length || 0} inbound / ${detail.outbound?.length || 0} outbound`),
+    h("p", {}, `${inbound?.length || 0} inbound / ${outbound?.length || 0} outbound`),
     h("div", { class: "link-lists" }, [
-      detail.inbound?.length
+      inbound?.length
         ? h("div", {}, [
             h("h4", {}, "Inbound"),
-            h("ul", {}, detail.inbound.slice(0, 30).map((edge) => edgeLine(edge, edge.source))),
+            h("ul", {}, inbound.slice(0, 30).map((edge) => edgeLine(edge, edge.source))),
           ])
         : null,
-      detail.outbound?.length
+      outbound?.length
         ? h("div", {}, [
             h("h4", {}, "Outbound"),
-            h("ul", {}, detail.outbound.slice(0, 30).map((edge) => edgeLine(edge, edge.target))),
+            h("ul", {}, outbound.slice(0, 30).map((edge) => edgeLine(edge, edge.target))),
           ])
         : null,
     ]),

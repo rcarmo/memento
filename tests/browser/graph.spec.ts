@@ -117,32 +117,31 @@ test("transient embedding diagnostics do not ring every node", async ({ page, br
   expect(halos).toBe(1);
 });
 
-test("semantic layer is default-off and selected nodes reveal bounded neighbours", async ({ page, browserName, isMobile }) => {
-  test.skip(isMobile || browserName!=="chromium","semantic controls are asserted once in Chromium");
+test("semantic toggle hides all semantic edges including selection", async ({page,browserName,isMobile}) => {
+  test.skip(isMobile || browserName!=="chromium","assert once");
   await page.goto("/graph",{waitUntil:"networkidle"});
   await page.waitForFunction(()=>Boolean((window as any).__mementoGraphScene?.nodes?.length));
-  const initial=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return scene.edges.filter((edge:any)=>edge.kind==="semantic_similarity").length;});
-  expect(initial).toBe(0);
+  const semanticCount=()=>page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return scene.edges.filter((edge:any)=>edge.kind==="semantic_similarity").length;});
+  expect(await semanticCount()).toBe(0);
   await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;scene.callbacks.select(scene.nodes[7]);});
-  await expect.poll(async()=>page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return scene.edges.filter((edge:any)=>edge.kind==="semantic_similarity").length;})).toBeGreaterThan(0);
-  const selectedCount=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return scene.edges.filter((edge:any)=>edge.kind==="semantic_similarity").length;});
-  expect(selectedCount).toBeLessThanOrEqual(5);
-  const selectedRendering=await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return{semanticTubes:scene.selectedEdgeGroup.userData.semantic||0,dashedColours:scene.edgeGroup.children.filter((child:any)=>child.material?.type==="LineDashedMaterial").map((child:any)=>child.material.color.getHex()),selectedColours:scene.selectedEdgeGroup.children.filter((child:any)=>child.userData.direction==="semantic").map((child:any)=>child.material.color.getHex())};});
-  expect(selectedRendering.semanticTubes).toBeGreaterThan(0);
-  expect(selectedRendering.dashedColours.length).toBeGreaterThan(0);
-  expect(selectedRendering.dashedColours.every((colour:number)=>[0x3f9f68,0x50b878,0x60c870].includes(colour))).toBe(true);
-  expect(selectedRendering.selectedColours.every((colour:number)=>colour===0x60c870)).toBe(true);
-  await page.locator('label:has-text("Show semantic layer") input').check();
-  await expect.poll(async()=>page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;return scene.edges.filter((edge:any)=>edge.kind==="semantic_similarity").length;})).toBeGreaterThan(selectedCount);
-  await expect(page.locator(".inspector")).toContainText("Semantic neighbours");
-  await expect(page.locator(".inspector")).toContainText("cosine");
+  await expect(page.locator(".inspector h2")).toBeVisible();
+  expect(await semanticCount()).toBe(0);
+  const toggle=page.locator('label:has-text("Show semantic layer") input');
+  await toggle.check();
+  await expect.poll(semanticCount).toBeGreaterThan(0);
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.selectedEdgeGroup.userData.semantic||0)).toBeGreaterThan(0);
+  await toggle.uncheck();
+  await expect.poll(semanticCount).toBe(0);
+  await page.evaluate(()=>{const scene:any=(window as any).__mementoGraphScene;scene.callbacks.select(scene.nodes[8]);});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.selectedEdgeGroup.userData.semantic||0)).toBe(0);
+  expect(await semanticCount()).toBe(0);
 });
 
 test("focuses smoothly without rotating and reveals FTS search results", async ({ page, browserName,isMobile }) => {
   test.skip(isMobile || browserName!=="chromium","camera interpolation is asserted once in Chromium");
   await page.goto("/graph",{waitUntil:"networkidle"});
   await expect.poll(async()=>Number((await page.locator(".perf dd").first().textContent())||0),{timeout:15000}).toBeGreaterThan(0);
-  const focus=await page.evaluate(async()=>{const scene:any=(window as any).__mementoGraphScene;const node=scene.nodes[20];scene.yaw=1.2;scene.pitch=.3;const before={target:scene.target.toArray(),yaw:scene.yaw,pitch:scene.pitch};scene.focus(node);const immediate={target:scene.target.toArray(),active:!!scene.focusTween};await new Promise(resolve=>setTimeout(resolve,260));const middle={target:scene.target.toArray(),active:!!scene.focusTween};await new Promise(resolve=>setTimeout(resolve,400));const end={target:scene.target.toArray(),yaw:scene.yaw,pitch:scene.pitch,active:!!scene.focusTween,position:[node.coarse_position.x,node.coarse_position.y,node.coarse_position.z]};return{before,immediate,middle,end};});
+  const focus=await page.evaluate(async()=>{const scene:any=(window as any).__mementoGraphScene;const node=scene.nodes[20];scene.yaw=1.2;scene.pitch=.3;const position=[node.coarse_position.x,node.coarse_position.y,node.coarse_position.z];const before={target:scene.target.toArray(),yaw:scene.yaw,pitch:scene.pitch};scene.focus(node);const immediate={target:scene.target.toArray(),active:!!scene.focusTween};await new Promise(resolve=>setTimeout(resolve,260));const middle={target:scene.target.toArray(),active:!!scene.focusTween};await new Promise(resolve=>setTimeout(resolve,400));const end={target:scene.target.toArray(),yaw:scene.yaw,pitch:scene.pitch,active:!!scene.focusTween,position};return{before,immediate,middle,end};});
   expect(focus.immediate.target).toEqual(focus.before.target);
   expect(focus.middle.target).not.toEqual(focus.before.target);
   expect(focus.end.target).toEqual(focus.end.position);
@@ -190,4 +189,41 @@ test("tablet touch layout remains usable", async ({ page, isMobile }) => {
   await expect(page.locator(".controls")).toBeVisible();
   await page.touchscreen.tap(600,400);
   await page.screenshot({path:`${evidence}/tablet-touch.png`,fullPage:true});
+});
+
+test('cluster labels, reference deduplication and force controls', async ({page,browserName,isMobile})=>{
+  test.skip(isMobile||browserName!=='chromium','assert once');
+  await page.goto('/graph',{waitUntil:'networkidle'});
+  await expect(page.locator('.cluster-label')).toHaveCount(6);
+  await expect(page.locator('.cluster-label').filter({hasText:'/projects/'})).toBeVisible();
+  const result=await page.evaluate(async()=>{
+    const app=await import('/graph/assets/app.js');
+    return app.uniqueReferences([{source:'a',raw_target:'/b'},{source:'a',raw_target:'/b#x'},{source:'c',raw_target:'/b'}],'source').length;
+  });
+  expect(result).toBe(2);
+  await page.locator('summary').filter({hasText:/^Forces$/}).click();
+  const before=await page.evaluate(()=>(window as any).__mementoGraphScene.layoutId);
+  await page.locator('label.slider').filter({hasText:'distance'}).locator('input').fill('7');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.settings.forces.distance)).toBe(7);
+  expect(await page.evaluate(()=>(window as any).__mementoGraphScene.layoutId)).toBeGreaterThan(before);
+});
+
+test('layout worker yields, responds to forces, settles and cancels old jobs', async ({page,browserName,isMobile})=>{
+  test.skip(isMobile||browserName!=='chromium','assert once');
+  await page.goto('/graph',{waitUntil:'networkidle'});
+  const result=await page.evaluate(async()=>{
+    const worker=new Worker('/graph/assets/layout-worker.js',{type:'module'});
+    const messages:any[]=[];
+    const settled=(id:number,distance:number)=>new Promise<any>((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(Error('did not settle')),15000);
+      worker.onmessage=({data})=>{messages.push(data.layoutId);if(data.layoutId===id&&data.settled){clearTimeout(timer);resolve(data);}};
+      worker.postMessage({type:'layout',layoutId:id,nodes:[{id:'a',coarse_position:{x:0,y:0,z:0}},{id:'b',coarse_position:{x:10,y:0,z:0}}],edges:[{source:'a',target:'b',kind:'explicit'}],forces:{explicit:.15,distance,repulsion:0}});
+    });
+    const first=await settled(1,2);const second=await settled(2,7);
+    const distance=(data:any)=>Math.abs(data.positions[1].x-data.positions[0].x);
+    worker.postMessage({type:'stop'});const count=messages.length;await new Promise(r=>setTimeout(r,100));worker.terminate();
+    return {first:distance(first),second:distance(second),count,after:messages.length,steps:first.step};
+  });
+  expect(result.first).toBeCloseTo(2,1);expect(result.second).toBeCloseTo(7,1);
+  expect(result.count).toBeGreaterThan(2);expect(result.after).toBe(result.count);
 });

@@ -390,6 +390,17 @@ class PatchArgs(BaseModel):
     aliases: tuple[str, ...] | None = None
 
 
+class TrashArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    path: str
+    expected_revision: str
+    idempotency_key: str
+
+
+class PurgeArgs(TrashArgs):
+    confirm: bool = False
+
+
 class RenameArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -525,6 +536,16 @@ class RenameOperation(ExecuteOperationBase):
     args: RenameArgs
 
 
+class TrashOperation(ExecuteOperationBase):
+    op: Literal["trash", "restore"]
+    args: TrashArgs
+
+
+class PurgeOperation(ExecuteOperationBase):
+    op: Literal["purge"]
+    args: PurgeArgs
+
+
 ExecuteOperation = (
     HelpOperation
     | StatusOperation
@@ -550,6 +571,8 @@ ExecuteOperation = (
     | CreateOperation
     | PatchOperation
     | RenameOperation
+    | TrashOperation
+    | PurgeOperation
 )
 
 EXECUTE_OPERATION_ADAPTER: TypeAdapter[ExecuteOperation] = TypeAdapter(ExecuteOperation)
