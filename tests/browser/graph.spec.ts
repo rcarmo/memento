@@ -227,3 +227,36 @@ test('layout worker yields, responds to forces, settles and cancels old jobs', a
   expect(result.first).toBeCloseTo(2,1);expect(result.second).toBeCloseTo(7,1);
   expect(result.count).toBeGreaterThan(2);expect(result.after).toBe(result.count);
 });
+
+test('semantic alpha changes only semantic materials without restarting forces', async ({page,browserName,isMobile})=>{
+  test.skip(isMobile||browserName!=='chromium','assert once');
+  await page.goto('/graph',{waitUntil:'networkidle'});
+  await page.locator('label:has-text("Show semantic layer") input').check();
+  await page.evaluate(()=>{const s:any=(window as any).__mementoGraphScene;s.callbacks.select(s.nodes[7]);});
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.selectedEdgeGroup.userData.semantic||0)).toBeGreaterThan(0);
+  const before=await page.evaluate(()=>{const s:any=(window as any).__mementoGraphScene;return {layoutId:s.layoutId,explicit:s.selectedEdgeGroup.children.filter((c:any)=>c.userData.direction!=='semantic').map((c:any)=>c.material.opacity),opacity:s.selectedEdgeGroup.children.find((c:any)=>c.userData.direction==='semantic').material.opacity};});
+  expect(before.opacity).toBeCloseTo(.52*.6);
+  await page.locator('label.slider').filter({hasText:'Semantic opacity'}).locator('input').fill('0.25');
+  await expect.poll(()=>page.evaluate(()=>(window as any).__mementoGraphScene.selectedEdgeGroup.children.find((c:any)=>c.userData.direction==='semantic').material.opacity)).toBeCloseTo(.52*.25);
+  const after=await page.evaluate(()=>{const s:any=(window as any).__mementoGraphScene;return {layoutId:s.layoutId,explicit:s.selectedEdgeGroup.children.filter((c:any)=>c.userData.direction!=='semantic').map((c:any)=>c.material.opacity)};});
+  expect(after.layoutId).toBe(before.layoutId);expect(after.explicit).toEqual(before.explicit);
+});
+
+test('each shared force drives layout with other forces disabled', async ({page,browserName,isMobile})=>{
+  test.skip(isMobile||browserName!=='chromium','assert once');
+  await page.goto('/graph',{waitUntil:'networkidle'});
+  const distances=await page.evaluate(async()=>{
+    const result:any={};
+    for(const kind of ['shared_tag','shared_namespace','shared_type','shared_provenance']){
+      const run=(strength:number)=>new Promise<number>((resolve,reject)=>{
+        const worker=new Worker('/graph/assets/layout-worker.js',{type:'module'});
+        const timer=setTimeout(()=>{worker.terminate();reject(Error(kind+' did not settle'));},15000);
+        worker.onmessage=({data})=>{if(data.settled){clearTimeout(timer);worker.terminate();resolve(Math.abs(data.positions[1].x-data.positions[0].x));}};
+        worker.postMessage({type:'layout',layoutId:1,nodes:[{id:'a',coarse_position:{x:0,y:0,z:0}},{id:'b',coarse_position:{x:10,y:0,z:0}}],edges:[{source:'a',target:'b',kind}],forces:{[kind]:strength,repulsion:0,distance:3}});
+      });
+      result[kind]={off:await run(0),on:await run(.2)};
+    }
+    return result;
+  });
+  for(const pair of Object.values(distances) as any[]){expect(pair.off).toBe(10);expect(pair.on).toBeCloseTo(3.6,1);}
+});

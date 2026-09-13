@@ -33,6 +33,10 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Graph force and opacity checks for 0.5.3
+
+Semantic opacity defaults to 60%, independently adjustable without reheating layout or changing explicit links. Shared namespace, type and provenance now have bounded relationship edges alongside shared tags; their controls show available counts and disable when inactive. Degree normalisation is per force kind so unrelated edges do not dilute slider effects. Tests verify alpha on both dashed and selected semantic links and actual layout motion with each shared force enabled and disabled. This release includes the reviewed archival workflow from 0.5.2.
+
 ## Reviewed archival checks for 0.5.2
 
 Issue #20 adds `kind: trash` proposal changes and a bounded, policy-scoped `archival_impact` report. Curators inspect affected inbound references and retained accepted assets before review/apply. Archival proposals require current revisions and fresh indexes; stale reviews, mixed changes and duplicate targets fail. Apply uses the existing transaction and reconciliation pipeline. Tests cover assets, permissions, backlink visibility, stale revisions, approval and replay. Git history remains unchanged by archival.

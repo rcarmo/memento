@@ -53,6 +53,7 @@ class GraphNode(GraphModel):
     namespace: str
     updated_at: str
     updated_by: str | None = None
+    provenance_keys: tuple[str, ...] = ()
     markdown_bytes: int = 0
     asset_bytes: int = 0
     combined_bytes: int = 0
@@ -68,7 +69,12 @@ class GraphNode(GraphModel):
 
 
 GraphEdgeKind = Literal[
-    "explicit", "shared_tag", "shared_namespace", "shared_type", "semantic_similarity"
+    "explicit",
+    "shared_tag",
+    "shared_namespace",
+    "shared_type",
+    "shared_provenance",
+    "semantic_similarity",
 ]
 
 

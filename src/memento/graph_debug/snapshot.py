@@ -7,7 +7,7 @@ import re
 import sqlite3
 import struct
 from collections import Counter, defaultdict
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Literal
@@ -27,6 +27,7 @@ from memento.graph_debug.models import (
     GraphAssetSummary,
     GraphClusterExpansion,
     GraphEdge,
+    GraphEdgeKind,
     GraphEmbeddingState,
     GraphMemoryDetail,
     GraphMetrics,
@@ -59,34 +60,55 @@ def _is_sparse_overview(nodes: Sequence[GraphNode], edges: Sequence[GraphEdge]) 
     return orphan_count / len(nodes) >= 0.5
 
 
-def _overlay_edges(
-    nodes: Sequence[GraphNode], repository_revision: str, limit: int
-) -> list[GraphEdge]:
+def _overlay_edges(nodes: list[GraphNode], revision: str, limit: int) -> list[GraphEdge]:
+    """Bounded deterministic chains, interleaved so no shared kind starves another."""
     if limit <= 0:
         return []
-    by_tag: dict[str, list[GraphNode]] = defaultdict(list)
+    groups: dict[GraphEdgeKind, dict[str, list[GraphNode]]] = {
+        kind: defaultdict(list)
+        for kind in ("shared_tag", "shared_namespace", "shared_type", "shared_provenance")
+    }
     for node in sorted(nodes, key=lambda item: item.id):
         for tag in sorted(set(node.tags)):
-            by_tag[tag].append(node)
-    result: list[GraphEdge] = []
-    for tag, members in sorted(by_tag.items()):
-        for left, right in zip(members, members[1:], strict=False):
-            result.append(
-                GraphEdge(
-                    id=f"shared-tag:{tag}:{left.id}:{right.id}",
+            groups["shared_tag"][tag].append(node)
+        groups["shared_namespace"][node.namespace].append(node)
+        groups["shared_type"][node.type].append(node)
+        for key in sorted(set(node.provenance_keys)):
+            groups["shared_provenance"][key].append(node)
+
+    def candidates(kind: GraphEdgeKind) -> Iterator[GraphEdge]:
+        seen: set[tuple[str, str]] = set()
+        for key, members in sorted(groups[kind].items()):
+            for left, right in zip(members, members[1:], strict=False):
+                pair = (left.id, right.id)
+                if pair in seen:
+                    continue
+                seen.add(pair)
+                yield GraphEdge(
+                    id=f"{kind}:{left.id}:{right.id}",
                     source=left.id,
                     target=right.id,
-                    raw_target=tag,
-                    kind="shared_tag",
+                    raw_target=kind if kind == "shared_provenance" else key,
+                    kind=kind,
                     canonical=False,
                     resolution="derived",
-                    first_seen_revision=repository_revision,
-                    last_checked_revision=repository_revision,
+                    first_seen_revision=revision,
+                    last_checked_revision=revision,
                 )
-            )
-            if len(result) >= limit:
-                return result
-    return result
+
+    streams = [candidates(kind) for kind in groups]
+    edges: list[GraphEdge] = []
+    while streams and len(edges) < limit:
+        remaining = []
+        for stream in streams:
+            item = next(stream, None)
+            if item is not None:
+                edges.append(item)
+                remaining.append(stream)
+                if len(edges) == limit:
+                    break
+        streams = remaining
+    return edges
 
 
 def _semantic_edges(
@@ -722,6 +744,7 @@ class GraphSnapshotService:
                     namespace=self._namespace(path),
                     updated_at=str(row["updated_at"]),
                     updated_by=self._updated_by(path),
+                    provenance_keys=self._provenance_keys(path),
                     markdown_bytes=markdown_bytes,
                     asset_bytes=asset_bytes,
                     combined_bytes=markdown_bytes + asset_bytes,
@@ -937,6 +960,13 @@ class GraphSnapshotService:
             return self._repository_path(bundle_path).stat().st_size
         except (GraphSnapshotError, OSError):
             return 0
+
+    def _provenance_keys(self, path: str) -> tuple[str, ...]:
+        try:
+            refs = parse_concept_file(self._repository_path(path)).frontmatter.source_refs
+            return tuple(sorted({hashlib.sha256(ref.encode("utf-8")).hexdigest() for ref in refs}))
+        except (GraphSnapshotError, OSError, ValueError):
+            return ()
 
     def _updated_by(self, bundle_path: str) -> str | None:
         try:
