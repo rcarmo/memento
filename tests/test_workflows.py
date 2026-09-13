@@ -117,3 +117,9 @@ def test_training_and_checkpoint_paths_are_absent_from_workflows() -> None:
         "needle.vocab",
     ):
         assert path not in text
+
+
+def test_release_retention_excludes_runtime_model_asset_releases() -> None:
+    script = workflow("release.yml")["jobs"]["cleanup"]["steps"][0]["with"]["script"]
+    assert r".filter(release => /^v\d+\.\d+\.\d+(?:[-+].*)?$/.test(release.tag_name))" in script
+    assert script.index(".filter(release =>") < script.index("releases.slice(keep)")

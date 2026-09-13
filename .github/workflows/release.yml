@@ -386,9 +386,11 @@ jobs:
             const keep = 5;
             const { owner, repo } = context.repo;
 
-            const releases = await github.paginate(github.rest.repos.listReleases, {
+            // Runtime-model bundles and other asset releases are not application
+            // releases. Keep their immutable download URLs out of retention.
+            const releases = (await github.paginate(github.rest.repos.listReleases, {
               owner, repo, per_page: 100,
-            });
+            })).filter(release => /^v\d+\.\d+\.\d+(?:[-+].*)?$/.test(release.tag_name));
             releases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             for (const release of releases.slice(keep)) {
               core.info(`Deleting release and tag ${release.tag_name}`);
