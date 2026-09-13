@@ -33,6 +33,10 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Reviewed archival checks for 0.5.2
+
+Issue #20 adds `kind: trash` proposal changes and a bounded, policy-scoped `archival_impact` report. Curators inspect affected inbound references and retained accepted assets before review/apply. Archival proposals require current revisions and fresh indexes; stale reviews, mixed changes and duplicate targets fail. Apply uses the existing transaction and reconciliation pipeline. Tests cover assets, permissions, backlink visibility, stale revisions, approval and replay. Git history remains unchanged by archival.
+
 ## Graph and Trash checks for 0.5.1
 
 External URLs no longer count as broken repository links; existing derived indexes reclassify them on migration. The graph displays cluster names, deduplicates neighbour references, obeys the semantic toggle for selected nodes too, and runs a cancellable force simulation until movement settles. Force controls expose strength, repulsion and preferred distance. Browser tests cover those interactions and the existing navigation, picking and touch paths.

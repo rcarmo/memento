@@ -3871,3 +3871,263 @@ def test_trash_move_indexes_destination_before_lexically_later_source(
         success_data(service.memory_search(smith, query="Lexical"))["results"][0]["path"]
         == "/projects/zz.md"
     )
+
+
+def test_reviewed_archival_reports_backlinks_and_replays(
+    service: MemoryService, smith: ServiceContext, narrow: ServiceContext
+) -> None:
+    revision = get_main_revision(service._deps.repo_paths)
+    proposed = success_data(
+        service.memory_execute(
+            smith,
+            plan={
+                "operations": [
+                    {
+                        "op": "propose",
+                        "args": {
+                            "intent": "Archive fixture",
+                            "base_revision": revision,
+                            "changes": [{"kind": "trash", "path": "/projects/piclaw.md"}],
+                        },
+                    }
+                ]
+            },
+        )
+    )["trace"][0]
+    assert proposed["status"] == "success"
+    proposal = proposed["data"]["proposal"]
+    report = proposal["archival_impact"][0]
+    assert report["inbound_references"][0]["path"] == "/instances/smith.md"
+    assert report["inbound_references"][0]["after_archival"] == "unresolved"
+    assert report["history_retained"] and report["assets"] == []
+    pid = proposal["proposal_id"]
+    assert service.memory_proposal_get(narrow, proposal_id=pid).status == "error"
+    assert (
+        service.memory_proposal_apply(
+            smith, proposal_id=pid, expected_revision=revision, idempotency_key="reviewed-trash"
+        ).status
+        == "error"
+    )
+    success_data(service.memory_proposal_review(smith, proposal_id=pid, decision="approve"))
+    summary = success_data(service.memory_proposal_get(smith, proposal_id=pid, view="summary"))[
+        "proposal"
+    ]
+    assert summary["archival_impact"] == proposal["archival_impact"]
+    applied = success_data(
+        service.memory_proposal_apply(
+            smith, proposal_id=pid, expected_revision=revision, idempotency_key="reviewed-trash"
+        )
+    )
+    assert "/trash/projects/piclaw.md" in applied["changed_paths"]
+    assert success_data(
+        service.memory_proposal_apply(
+            smith, proposal_id=pid, expected_revision=revision, idempotency_key="reviewed-trash"
+        )
+    )["replayed"]
+    assert (
+        success_data(service.memory_operation_get(smith, idempotency_key="reviewed-trash"))[
+            "final_state"
+        ]
+        == "committed"
+    )
+    assert all(
+        item["path"] != "/trash/projects/piclaw.md"
+        for item in success_data(service.memory_search(smith, query="Piclaw"))["results"]
+    )
+
+
+def test_archival_proposal_rejects_mixed_duplicate_and_stale_requests(
+    service: MemoryService, smith: ServiceContext
+) -> None:
+    revision = get_main_revision(service._deps.repo_paths)
+    trash = {"kind": "trash", "path": "/projects/piclaw.md"}
+    for changes in [
+        [trash, trash],
+        [trash, {"kind": "patch", "path": "/projects/piclaw.md", "body": "changed"}],
+    ]:
+        assert (
+            service.memory_propose(
+                smith, intent="invalid", base_revision=revision, changes=changes
+            ).status
+            == "error"
+        )
+    proposed = success_data(
+        service.memory_propose(smith, intent="stale", base_revision=revision, changes=[trash])
+    )["proposal"]
+    success_data(
+        service.memory_create(
+            smith,
+            path="/projects/moved-head.md",
+            concept_type="project",
+            title="Advance",
+            body="advance",
+            expected_revision=revision,
+            idempotency_key="advance-archival",
+        )
+    )
+    assert (
+        service.memory_proposal_review(
+            smith, proposal_id=proposed["proposal_id"], decision="approve"
+        ).status
+        == "error"
+    )
+    assert (
+        service.memory_propose(smith, intent="old", base_revision=revision, changes=[trash]).status
+        == "error"
+    )
+
+
+def test_archival_impact_retains_asset_versions_and_scopes_references(
+    service: MemoryService, smith: ServiceContext
+) -> None:
+    body = "# Review archive asset"
+    encoded, _ = _skill_zip(body)
+    proposal = success_data(
+        service.memory_propose(
+            smith,
+            intent="fixture",
+            base_revision=get_main_revision(service._deps.repo_paths),
+            changes=[
+                {
+                    "kind": "create",
+                    "path": "/projects/review-asset.md",
+                    "concept_type": "project",
+                    "title": "Fixture",
+                    "body": body,
+                    "tags": ["skill"],
+                },
+                {
+                    "kind": "attach_asset_pack",
+                    "path": "/projects/review-asset.md",
+                    "asset_kind": "skill",
+                    "version": "1.0.0",
+                    "zip_base64": encoded,
+                },
+            ],
+        )
+    )["proposal"]
+    success_data(
+        service.memory_proposal_review(
+            smith, proposal_id=proposal["proposal_id"], decision="approve"
+        )
+    )
+    success_data(
+        service.memory_proposal_apply(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="review-asset-create",
+        )
+    )
+    revision = get_main_revision(service._deps.repo_paths)
+    archived = success_data(
+        service.memory_propose(
+            smith,
+            intent="archive",
+            base_revision=revision,
+            changes=[{"kind": "trash", "path": "/projects/review-asset.md"}],
+        )
+    )["proposal"]
+    assert archived["archival_impact"][0]["assets"][0]["version"] == "1.0.0"
+    assert archived["archival_impact"][0]["assets"][0]["action"] == "retained"
+    success_data(
+        service.memory_proposal_review(
+            smith, proposal_id=archived["proposal_id"], decision="approve"
+        )
+    )
+    success_data(
+        service.memory_proposal_apply(
+            smith,
+            proposal_id=archived["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="review-asset-archive",
+        )
+    )
+    assert (
+        success_data(
+            service.memory_asset_get(
+                smith, id_or_path="/trash/projects/review-asset.md", asset_kind="skill"
+            )
+        )["version"]
+        == "1.0.0"
+    )
+
+
+def test_archival_impact_filters_hidden_and_revoked_backlinks(
+    service: MemoryService, smith: ServiceContext
+) -> None:
+    from dataclasses import replace
+
+    from memento.authz import EffectivePolicy
+    from memento.control.proposals import get_proposal
+    from memento.service import TrashChange
+
+    revision = get_main_revision(service._deps.repo_paths)
+    proposal = success_data(
+        service.memory_propose(
+            smith,
+            intent="scope",
+            base_revision=revision,
+            changes=[{"kind": "trash", "path": "/projects/piclaw.md"}],
+        )
+    )["proposal"]
+    policy = replace(
+        service._policy(smith), read_prefixes=("/projects/",), write_prefixes=("/projects/",)
+    )
+    report = service._visible_archival_impact(
+        get_proposal(service._deps.control_connection, proposal["proposal_id"]), policy
+    )
+    assert report[0]["inbound_references"] == []
+    assert (
+        service._archival_impact(
+            policy, [TrashChange(kind="trash", path="/projects/piclaw.md")], revision
+        )[0]["inbound_references"]
+        == []
+    )
+    assert isinstance(policy, EffectivePolicy)
+
+
+def test_reviewed_archival_rejects_collision_and_oversized_impact(
+    service: MemoryService, smith: ServiceContext
+) -> None:
+    from memento.control.proposals import list_proposals
+
+    root = service._deps.repo_paths.current_dir
+    destination = root / "trash/projects/piclaw.md"
+    destination.parent.mkdir(parents=True)
+    destination.write_text("collision")
+    revision = get_main_revision(service._deps.repo_paths)
+    before = len(list_proposals(service._deps.control_connection))
+    args: dict[str, Any] = {
+        "intent": "reject",
+        "base_revision": revision,
+        "changes": [{"kind": "trash", "path": "/projects/piclaw.md"}],
+    }
+    assert service.memory_propose(smith, **args).status == "error"
+    destination.unlink()
+    with sqlite3.connect(service._deps.derived_index.db_path) as connection:
+        source_id = connection.execute(
+            "SELECT id FROM concepts WHERE path='/instances/smith.md'"
+        ).fetchone()[0]
+        target_id = connection.execute(
+            "SELECT id FROM concepts WHERE path='/projects/piclaw.md'"
+        ).fetchone()[0]
+        connection.executemany(
+            "INSERT INTO links(source_id,target_id,raw_target,target_path,anchor,link_kind,resolution_state,first_seen_revision,last_checked_revision) VALUES(?,?,?,?,?,'markdown','resolved',?,?)",
+            [
+                (
+                    source_id,
+                    target_id,
+                    f"/projects/piclaw.md#{i}",
+                    "/projects/piclaw.md",
+                    str(i),
+                    revision,
+                    revision,
+                )
+                for i in range(101)
+            ],
+        )
+    result = service.memory_propose(smith, **args)
+    assert result.status == "error"
+    assert "100 inbound" in result.message
+    assert len(list_proposals(service._deps.control_connection)) == before

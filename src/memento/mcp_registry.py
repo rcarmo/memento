@@ -400,8 +400,19 @@ WORKFLOW_TEMPLATES: dict[str, dict[str, Any]] = {
         ],
     },
     "trash": {
-        "description": "Move to /trash/<original path>, restore or explicitly purge current content and accepted assets. Original path permissions and Git history are retained. Inbound links are not rewritten.",
-        "operations": ["inventory", "read", "trash", "restore", "purge", "operation_get"],
+        "description": "Prefer propose with kind=trash, inspect archival_impact via proposal_get, then review and apply. Use current revisions and operation_get for retries. Direct trash/restore/purge retain original path permissions and Git history.",
+        "operations": [
+            "inventory",
+            "read",
+            "propose",
+            "proposal_get",
+            "proposal_review",
+            "proposal_apply",
+            "trash",
+            "restore",
+            "purge",
+            "operation_get",
+        ],
     },
     "asset_pack": {
         "description": "Publish and verify a versioned asset pack through an authorised proposal.",
