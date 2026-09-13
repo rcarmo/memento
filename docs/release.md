@@ -33,6 +33,10 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Trash visibility check for 0.5.4
+
+Live verification with archived fixtures exposed a missing browser request header: Show Trash changed local state without requesting trashed nodes. The browser now sends `X-Memento-Include-Trash: true`, and a regression checks that toggling the view both adds and removes the returned Trash nodes. This patch includes the reviewed archival and graph-force changes below.
+
 ## Graph force and opacity checks for 0.5.3
 
 Semantic opacity defaults to 60%, independently adjustable without reheating layout or changing explicit links. Shared namespace, type and provenance now have bounded relationship edges alongside shared tags; their controls show available counts and disable when inactive. Degree normalisation is per force kind so unrelated edges do not dilute slider effects. Tests verify alpha on both dashed and selected semantic links and actual layout motion with each shared force enabled and disabled. This release includes the reviewed archival workflow from 0.5.2.

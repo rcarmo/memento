@@ -7,6 +7,7 @@ function buildHeaders(headers = {}) {
   const merged = new Headers(headers || {});
   if (!merged.has("Content-Type")) merged.set("Content-Type", "application/json");
   if (simulatedPrincipal) merged.set("X-Memento-Simulated-Principal", simulatedPrincipal);
+  if (includeTrash) merged.set("X-Memento-Include-Trash", "true");
   return merged;
 }
 
