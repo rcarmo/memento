@@ -33,6 +33,12 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Graph and Trash checks for 0.5.1
+
+External URLs no longer count as broken repository links; existing derived indexes reclassify them on migration. The graph displays cluster names, deduplicates neighbour references, obeys the semantic toggle for selected nodes too, and runs a cancellable force simulation until movement settles. Force controls expose strength, repulsion and preferred distance. Browser tests cover those interactions and the existing navigation, picking and touch paths.
+
+Curators can move concepts to Trash, restore them, or explicitly purge their current Markdown and accepted assets while retaining Git history. Original namespace permissions apply inside Trash, restore rejects collisions, and every mutation requires a fresh revision and durable idempotency key. Regression tests cover the round trip, denied access, replay, current-asset deletion, retained historical content and index updates. See [trash.md](trash.md) for the contract. The unauthenticated graph debugger only displays Trash; mutations remain on authenticated MCP tools.
+
 ## Safety and recovery checks for 0.5.0
 
 The 0.5 release rejects noncanonical paths before authorisation, blocks dangling symlinks and enforces the serialised UTF-8 concept limit and Markdown filenames. Rename preserves Markdown source and excludes generated indexes. Recovery no longer treats an unchanged worktree as a published mutation, and execute errors after a commit retain its operation information.
