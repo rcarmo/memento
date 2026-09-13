@@ -115,7 +115,14 @@ class GraphDebugHTTPHandler:
                     return self._json({"available": False})
                 return self._json(self._refresh_coordinator.state_dict())
             if path == f"{prefix}/api/v1/overview":
-                return self._snapshot_json("overview", policy=policy)
+                if self._snapshot_service is None:
+                    return self._json({"error": "graph snapshot unavailable"}, status=503)
+                return self._json(
+                    self._snapshot_service.overview(
+                        policy=policy,
+                        include_trash=headers.get("x-memento-include-trash") == "true",
+                    ).model_dump(mode="json")
+                )
             cluster_prefix = f"{prefix}/api/v1/clusters/"
             if path.startswith(cluster_prefix):
                 return self._snapshot_json(

@@ -1,6 +1,7 @@
 const prefix = document.documentElement.dataset.graphPrefix || "/graph";
 
 let simulatedPrincipal = "";
+let includeTrash = false;
 
 function buildHeaders(headers = {}) {
   const merged = new Headers(headers || {});
@@ -45,6 +46,7 @@ async function download(path, payload) {
 }
 
 export const graphApi = {
+  setIncludeTrash(value) { includeTrash = Boolean(value); },
   status: () => request("/status"),
   principals: () => request("/principals"),
   setSimulatedPrincipal: (name) => {

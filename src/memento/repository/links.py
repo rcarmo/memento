@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from markdown_it import MarkdownIt
@@ -23,6 +24,11 @@ class RenameRewriteResult:
 
 class MarkdownLinkError(Exception):
     """Raised when Markdown link processing fails."""
+
+
+def is_external_link(href: str) -> bool:
+    """URI schemes and network-path references are not repository targets."""
+    return href.startswith("//") or re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", href) is not None
 
 
 def extract_structural_links(content: str) -> list[MarkdownLink]:

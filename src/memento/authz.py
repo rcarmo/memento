@@ -95,6 +95,11 @@ def authorize_path(policy: EffectivePolicy, path: str, *, action: str) -> Author
         validate_bundle_path(path[:-1] if path != "/" and path.endswith("/") else path)
     except PathSafetyError as exc:
         raise AuthorizationError(str(exc)) from exc
+    # A trash grant cannot widen access: authorise the embedded original path.
+    if path.startswith("/trash/"):
+        path = path.removeprefix("/trash")
+        if path.startswith("/trash/"):
+            raise AuthorizationError("nested trash paths are not allowed")
     prefixes = policy.read_prefixes if action == "read" else policy.write_prefixes
     if not any(path_matches_prefix(path, prefix) for prefix in prefixes):
         raise AuthorizationError(f"principal {policy.principal} cannot {action} {path}")

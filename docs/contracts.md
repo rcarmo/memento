@@ -535,7 +535,7 @@ Required fields:
 * `memory_create`, `memory_patch`, `memory_rename` and `memory_proposal_apply` are commit-capable.
 * All commit-capable operations require `expected_revision` and `idempotency_key` at the tool layer, except proposal creation itself.
 * Renames preserve concept `id` and rewrite inbound links atomically.
-* There is no general client-facing hard delete.
+* `memory_trash`, `memory_restore` and `memory_purge` are curator-only commit operations, also available as `trash`, `restore`, and `purge` through execute. All accept `path`, `expected_revision` and `idempotency_key`. Purge requires `confirm=true`, accepts only trashed paths, and removes current Markdown and accepted assets while retaining Git history. See [trash semantics](trash.md) for original-namespace permissions, collisions and inventory.
 
 ## `memory_execute`
 
@@ -828,7 +828,7 @@ The implemented service and optional tiers use these exact defaults and bounds.
 | `semantic_edge_node_limit` | `300` | `1..2000` |
 | `semantic_edge_limit` | `1500` | `1..12000` |
 
-The browser defaults to five neighbours per node and cosine `0.85`; selected nodes reveal semantic neighbours even while the global semantic layer is off.
+The browser defaults to five neighbours per node and cosine `0.85`. Turning the semantic layer off hides all semantic edges, including selected-node highlights. Aggregate edges carry mean similarity when bounded semantic data is available. The worker yields between batches and runs until movement settles; force changes restart it from current positions. Cluster names remain visible, and the inspector deduplicates references by neighbouring concept. External URI/network links are not broken repository links. The optional Show Trash view applies original-namespace permissions.
 
 ## Safety invariants
 

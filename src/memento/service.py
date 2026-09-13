@@ -691,7 +691,10 @@ class MemoryService:
             )
             visible = []
             for entry in bundle.entries:
-                if not entry.bundle_path.startswith(path_prefix):
+                if not entry.bundle_path.startswith(path_prefix) or (
+                    entry.bundle_path.startswith("/trash/")
+                    and not path_prefix.startswith("/trash/")
+                ):
                     continue
                 visible.append(
                     {
@@ -741,6 +744,7 @@ class MemoryService:
                 self._deps.repo_paths.current_dir,
                 include_path=lambda candidate: (
                     candidate.startswith(prefix)
+                    and (prefix.startswith("/trash/") or not candidate.startswith("/trash/"))
                     and self._is_authorized(policy, candidate, action="read")
                 ),
                 include_directory=lambda directory: (
@@ -2143,6 +2147,122 @@ class MemoryService:
         )
         return executor.run(context, plan=plan)
 
+    def memory_trash(
+        self, context: ServiceContext, *, path: str, expected_revision: str, idempotency_key: str
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        return self._trash_mutation(
+            context,
+            path=path,
+            action="trash",
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+        )
+
+    def memory_restore(
+        self, context: ServiceContext, *, path: str, expected_revision: str, idempotency_key: str
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        return self._trash_mutation(
+            context,
+            path=path,
+            action="restore",
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+        )
+
+    def memory_purge(
+        self,
+        context: ServiceContext,
+        *,
+        path: str,
+        expected_revision: str,
+        idempotency_key: str,
+        confirm: bool = False,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        if confirm is not True:
+            return self._failure(
+                ServiceError("permanent deletion requires confirm=true; Git history is retained")
+            )
+        return self._trash_mutation(
+            context,
+            path=path,
+            action="purge",
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+        )
+
+    def _trash_mutation(
+        self,
+        context: ServiceContext,
+        *,
+        path: str,
+        action: str,
+        expected_revision: str,
+        idempotency_key: str,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        from memento.repository.trash import original_path, trash_path
+
+        try:
+            policy = self._policy(context)
+            require_role(policy, "curator")
+            destination = trash_path(path) if action == "trash" else original_path(path)
+            for target in (path, destination):
+                authorize_path(policy, target, action="read")
+                authorize_path(policy, target, action="write")
+            request = self._transaction_request(
+                context,
+                idempotency_key=idempotency_key,
+                tool_name=f"memory_{action}",
+                expected_revision=expected_revision,
+                request_json=json.dumps(
+                    {"action": action, "path": path, "expected_revision": expected_revision},
+                    sort_keys=True,
+                ),
+                commit_message=f"memory: {action} {path}",
+            )
+
+            def mutate(root: Path) -> tuple[str, ...]:
+                entry = read_bundle_entry(root, path)
+                source = validate_repository_write_path(root, path).absolute_path
+                if action != "purge":
+                    target = validate_repository_write_path(root, destination).absolute_path
+                    if target.exists():
+                        raise ConflictError(
+                            "destination already exists; resolve the collision before moving"
+                        )
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    source.rename(target)
+                    # Leave inbound links unchanged: restore makes them resolve again.
+                    # Assets are ID-addressed and remain attached throughout the move.
+                    return (path, destination)
+                changed = [path]
+                concept_id = entry.document.frontmatter.id
+                for kind in list_asset_kinds(root, concept_id):
+                    for version in list_asset_versions(root, concept_id, kind):
+                        for asset_path in asset_version_paths(concept_id, kind, version):
+                            file = validate_repository_write_path(root, asset_path).absolute_path
+                            if file.exists():
+                                file.unlink()
+                                changed.append(asset_path)
+                source.unlink()
+                return tuple(changed)
+
+            result = self._deps.transaction_manager.apply(request, mutate)
+            self._record_changed_concepts(policy, result.changed_paths)
+            return self._success(
+                {
+                    "changed_paths": result.changed_paths,
+                    "path": path,
+                    "destination": None if action == "purge" else destination,
+                    "history_retained": True,
+                    "replayed": result.replayed,
+                },
+                repo_revision=result.result_revision,
+                index_revision=result.result_revision,
+                operation_id=result.operation.op_id,
+            )
+        except Exception as exc:
+            return self._failure(exc)
+
     def _commit_changes(
         self,
         context: ServiceContext,
@@ -3110,6 +3230,8 @@ class MemoryService:
                 if isinstance(change, RenameChange)
                 else (change.path,)
             )
+            if any(path.startswith("/trash/") for path in paths):
+                raise ServiceError("use trash, restore or purge for items in /trash/")
             if any(not path.endswith(".md") for path in paths):
                 raise ServiceError("concept paths must end with .md")
             actions = (action,) if action in {"read", "write"} else ("read", "write")
@@ -4522,6 +4644,8 @@ class MemoryService:
         }
 
     def _inventory_prefix_is_readable(self, policy: EffectivePolicy, path_prefix: str) -> bool:
+        if path_prefix.startswith("/trash/"):
+            path_prefix = path_prefix.removeprefix("/trash")
         for grant in policy.read_prefixes:
             if path_prefix.startswith(grant):
                 intersection = path_prefix

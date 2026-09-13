@@ -115,3 +115,20 @@ def test_scale_fixtures_are_bounded() -> None:
         assert len(layout.clusters) <= 500
         assert sum(cluster.member_count for cluster in layout.clusters) == size
         assert len(layout.edges) <= len(edges)
+
+
+def test_trash_is_named_and_reserved_when_clusters_overflow() -> None:
+    nodes = [node(i, f"/namespace-{i}/") for i in range(5)]
+    nodes.append(node(5, "/trash/"))
+    result = aggregate_layout(nodes, (), repository_revision="revision", cluster_limit=3)
+    trash = next(cluster for cluster in result.clusters if cluster.id == "cluster:trash")
+    assert trash.label == "Trash"
+    assert trash.member_count == 1
+
+
+def test_aggregate_semantic_edges_retain_similarity() -> None:
+    nodes = [node(1, "/a/"), node(2, "/b/")]
+    semantic = edge(1, 2).model_copy(update={"kind": "semantic_similarity", "similarity": 0.91})
+    result = aggregate_layout(nodes, (semantic,), repository_revision="revision", cluster_limit=10)
+    assert result.edges[0].similarity == 0.91
+    assert result.edges[0].canonical is False

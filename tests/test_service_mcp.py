@@ -1624,10 +1624,10 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         tuple[Literal["compact", "standard", "read_only", "curator", "admin"], int], ...
     ] = (
         ("compact", 9),
-        ("standard", 26),
+        ("standard", 29),
         ("read_only", 9),
-        ("curator", 18),
-        ("admin", 27),
+        ("curator", 21),
+        ("admin", 30),
     )
     for surface, count in expected_counts:
         server = _server_for(
@@ -1713,6 +1713,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "inspect",
         "propose",
         "curate",
+        "trash",
         "asset_pack",
     )
     assert help_payload["catalog"]["asset_publication"] == {
@@ -3627,3 +3628,246 @@ def test_worker_commit_reconciliation_and_shutdown(
         assert (service._deps.repo_paths.current_dir / "projects/worker.md").exists()
 
     asyncio.run(run())
+
+
+def test_trash_restore_purge_retains_history_and_original_permissions(
+    service: MemoryService, smith: ServiceContext, narrow: ServiceContext
+) -> None:
+    paths = service._deps.repo_paths
+    revision = get_main_revision(paths)
+    original = (paths.current_dir / "projects/piclaw.md").read_bytes()
+    first = success_data(
+        service.memory_trash(
+            smith,
+            path="/projects/piclaw.md",
+            expected_revision=revision,
+            idempotency_key="trash-piclaw",
+        )
+    )
+    assert first["destination"] == "/trash/projects/piclaw.md"
+    assert (paths.current_dir / "trash/projects/piclaw.md").read_bytes() == original
+    assert not (paths.current_dir / "projects/piclaw.md").exists()
+    assert success_data(
+        service.memory_trash(
+            smith,
+            path="/projects/piclaw.md",
+            expected_revision=revision,
+            idempotency_key="trash-piclaw",
+        )
+    )["replayed"]
+    assert service.memory_read(narrow, id_or_path="/trash/projects/piclaw.md").status == "error"
+    assert (
+        service.memory_restore(
+            narrow,
+            path="/trash/projects/piclaw.md",
+            expected_revision=get_main_revision(paths),
+            idempotency_key="denied",
+        ).status
+        == "error"
+    )
+    assert all(
+        item["path"] != "/trash/projects/piclaw.md"
+        for item in success_data(service.memory_search(smith, query="Piclaw"))["results"]
+    )
+    success_data(
+        service.memory_restore(
+            smith,
+            path="/trash/projects/piclaw.md",
+            expected_revision=get_main_revision(paths),
+            idempotency_key="restore-piclaw",
+        )
+    )
+    assert (paths.current_dir / "projects/piclaw.md").read_bytes() == original
+    success_data(
+        service.memory_trash(
+            smith,
+            path="/projects/piclaw.md",
+            expected_revision=get_main_revision(paths),
+            idempotency_key="trash-again",
+        )
+    )
+    assert (
+        service.memory_purge(
+            smith,
+            path="/trash/projects/piclaw.md",
+            expected_revision=get_main_revision(paths),
+            idempotency_key="purge",
+        ).status
+        == "error"
+    )
+    result = success_data(
+        service.memory_purge(
+            smith,
+            path="/trash/projects/piclaw.md",
+            confirm=True,
+            expected_revision=get_main_revision(paths),
+            idempotency_key="purge",
+        )
+    )
+    assert result["history_retained"]
+    assert not (paths.current_dir / "trash/projects/piclaw.md").exists()
+    import subprocess
+
+    assert (
+        subprocess.check_output(
+            ["git", "--git-dir", str(paths.bare_dir), "show", f"{revision}:projects/piclaw.md"]
+        )
+        == original
+    )
+
+
+def test_trash_graph_view_filters_original_acl(
+    service: MemoryService, smith: ServiceContext, narrow: ServiceContext
+) -> None:
+    success_data(
+        service.memory_trash(
+            smith,
+            path="/projects/piclaw.md",
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="graph-trash",
+        )
+    )
+    graph = service._deps.graph_snapshot_service
+    assert graph is not None
+    normal = graph.overview(policy=service._policy(smith))
+    trash = graph.overview(policy=service._policy(smith), include_trash=True)
+    assert trash.metrics.memory_count == normal.metrics.memory_count + 1
+    restricted = graph.overview(policy=service._policy(narrow), include_trash=True)
+    assert restricted.metrics.memory_count == 1
+    entries = success_data(service.memory_inventory(smith, path_prefix="/trash/"))["entries"]
+    assert entries[0]["path"] == "/trash/projects/piclaw.md"
+
+
+def test_purge_removes_accepted_assets_and_restore_collision_is_safe(
+    service: MemoryService, smith: ServiceContext
+) -> None:
+    body = "# Trash asset"
+    encoded, _ = _skill_zip(body)
+    proposal = success_data(
+        service.memory_propose(
+            smith,
+            intent="trash asset",
+            base_revision=get_main_revision(service._deps.repo_paths),
+            changes=[
+                {
+                    "kind": "create",
+                    "path": "/projects/trash-asset.md",
+                    "concept_type": "project",
+                    "title": "Asset",
+                    "tags": ["skill"],
+                    "body": body,
+                },
+                {
+                    "kind": "attach_asset_pack",
+                    "path": "/projects/trash-asset.md",
+                    "asset_kind": "skill",
+                    "version": "1.0.0",
+                    "zip_base64": encoded,
+                },
+            ],
+        )
+    )["proposal"]
+    success_data(
+        service.memory_proposal_review(
+            smith, proposal_id=proposal["proposal_id"], decision="approve"
+        )
+    )
+    success_data(
+        service.memory_proposal_apply(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="asset-apply",
+        )
+    )
+    root = service._deps.repo_paths.current_dir
+    before = tuple(root.glob(".assets/**/*.zip"))
+    assert before
+    success_data(
+        service.memory_trash(
+            smith,
+            path="/projects/trash-asset.md",
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="asset-trash",
+        )
+    )
+    assert all(path.exists() for path in before)
+    success_data(
+        service.memory_create(
+            smith,
+            path="/projects/trash-asset.md",
+            concept_type="project",
+            title="Replacement",
+            body="replacement",
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="collision",
+        )
+    )
+    revision = get_main_revision(service._deps.repo_paths)
+    assert (
+        service.memory_restore(
+            smith,
+            path="/trash/projects/trash-asset.md",
+            expected_revision=revision,
+            idempotency_key="collision-restore",
+        ).status
+        == "error"
+    )
+    assert get_main_revision(service._deps.repo_paths) == revision
+    result = success_data(
+        service.memory_execute(
+            smith,
+            plan={
+                "operations": [
+                    {
+                        "op": "purge",
+                        "args": {
+                            "path": "/trash/projects/trash-asset.md",
+                            "confirm": True,
+                            "expected_revision": revision,
+                            "idempotency_key": "asset-purge",
+                        },
+                    }
+                ]
+            },
+        )
+    )
+    assert result["trace"][0]["status"] == "success"
+    assert not any(path.exists() for path in before)
+    assert (root / "projects/trash-asset.md").exists()
+
+
+def test_trash_move_indexes_destination_before_lexically_later_source(
+    service: MemoryService, smith: ServiceContext
+) -> None:
+    success_data(
+        service.memory_create(
+            smith,
+            path="/projects/zz.md",
+            concept_type="project",
+            title="Lexical",
+            body="body",
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="lexical-create",
+        )
+    )
+    success_data(
+        service.memory_trash(
+            smith,
+            path="/projects/zz.md",
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="lexical-trash",
+        )
+    )
+    success_data(
+        service.memory_restore(
+            smith,
+            path="/trash/projects/zz.md",
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="lexical-restore",
+        )
+    )
+    assert (
+        success_data(service.memory_search(smith, query="Lexical"))["results"][0]["path"]
+        == "/projects/zz.md"
+    )

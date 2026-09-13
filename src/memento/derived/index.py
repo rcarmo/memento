@@ -24,7 +24,7 @@ from memento.authz import (
 from memento.config import SemanticSearchConfig
 from memento.repository.bundle import scan_bundle
 from memento.repository.frontmatter import parse_concept_file
-from memento.repository.links import extract_structural_links
+from memento.repository.links import extract_structural_links, is_external_link
 from memento.repository.paths import is_reserved_bundle_path
 from memento.repository.schema import ConceptDocument
 from memento.semantic import (
@@ -326,8 +326,12 @@ class DerivedIndex:
             changed_documents: list[tuple[str, object]] = []
             with connection:
                 self._set_state(connection, "repo_revision", repo_revision)
-                for bundle_path in sorted(dict.fromkeys(changed_paths)):
+                # A move keeps its concept ID. Delete all old locations before
+                # inserting destinations, regardless of lexical path ordering.
+                ordered_paths = sorted(dict.fromkeys(changed_paths))
+                for bundle_path in ordered_paths:
                     self._delete_path(connection, bundle_path)
+                for bundle_path in ordered_paths:
                     absolute = bundle_root / bundle_path.removeprefix("/")
                     if (
                         bundle_path.endswith(".md")
@@ -526,7 +530,7 @@ class DerivedIndex:
                     for row in connection.execute(
                         "SELECT DISTINCT raw_target, target_path "
                         "FROM links "
-                        "WHERE source_id = ? AND target_id IS NULL "
+                        "WHERE source_id = ? AND resolution_state = 'broken' "
                         "ORDER BY raw_target",
                         (concept_id,),
                     ).fetchall()
@@ -846,7 +850,13 @@ class DerivedIndex:
             for link in extract_structural_links(row["body"]):
                 target_path, anchor = _split_target(link.href)
                 target_id = path_to_id.get(target_path) if target_path.startswith("/") else None
-                resolution_state = "resolved" if target_id is not None else "broken"
+                resolution_state = (
+                    "external"
+                    if is_external_link(link.href)
+                    else "resolved"
+                    if target_id is not None
+                    else "broken"
+                )
                 connection.execute(
                     """
                     INSERT INTO links(
@@ -859,7 +869,9 @@ class DerivedIndex:
                         row["id"],
                         target_id,
                         link.href,
-                        target_path if target_path.startswith("/") else None,
+                        target_path
+                        if target_path.startswith("/") and not is_external_link(link.href)
+                        else None,
                         anchor,
                         resolution_state,
                         repo_revision,
@@ -882,7 +894,7 @@ class DerivedIndex:
                 (concept_id,),
             ).fetchone()[0]
             broken = connection.execute(
-                "SELECT COUNT(*) FROM links WHERE source_id = ? AND target_id IS NULL",
+                "SELECT COUNT(*) FROM links WHERE source_id = ? AND resolution_state = 'broken'",
                 (concept_id,),
             ).fetchone()[0]
             orphan = 1 if inbound == 0 and outbound == 0 else 0
@@ -1494,7 +1506,7 @@ class DerivedIndex:
             1
             for row in connection.execute(
                 "SELECT DISTINCT raw_target, target_path FROM links "
-                "WHERE source_id = ? AND target_id IS NULL",
+                "WHERE source_id = ? AND resolution_state = 'broken'",
                 (concept_id,),
             ).fetchall()
             if filter_authorized_paths(policy, [str(row[1] or row[0])], action="read")
@@ -1592,6 +1604,15 @@ class DerivedIndex:
             ):
                 if self._get_state_optional(connection, key) is None:
                     self._set_state(connection, key, value)
+            if self._get_state_optional(connection, "external_links_classified") != "1":
+                for row in connection.execute("SELECT rowid, raw_target FROM links").fetchall():
+                    if is_external_link(str(row["raw_target"])):
+                        connection.execute(
+                            "UPDATE links SET resolution_state='external', target_path=NULL, target_id=NULL WHERE rowid=?",
+                            (row["rowid"],),
+                        )
+                self._recompute_metrics(connection)
+                self._set_state(connection, "external_links_classified", "1")
 
     def _ensure_ready(self, connection: sqlite3.Connection) -> None:
         self._migrate(connection)
@@ -1734,7 +1755,7 @@ def _authorized_prefix_conditions(
 ) -> _PrefixConditions:
     column = f"{alias}.path"
     allowed = _prefix_conditions(policy.read_prefixes, column=column)
-    sql = allowed.sql
+    sql = allowed.sql + f" AND {column} NOT LIKE '/trash/%'"
     parameters = list(allowed.parameters)
     for protected, explicit_grants in protected_read_grants(policy):
         protected_condition = _prefix_conditions((protected,), column=column)

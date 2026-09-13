@@ -486,3 +486,31 @@ def policy_fixture() -> EffectivePolicy:
         read_prefixes=("/instances/", "/projects/"),
         write_prefixes=("/instances/", "/projects/"),
     )
+
+
+def test_external_links_are_not_broken_even_after_existing_index_migration(
+    derived_index: DerivedIndex, repo_paths: GitRepositoryPaths
+) -> None:
+    bundle_root = repo_paths.current_dir
+    path = bundle_root / "instances/smith.md"
+    path.write_text(
+        path.read_text()
+        + "\n[web](https://example.org/x) [mail](mailto:hi@example.org) [network](//example.org/x)\n"
+    )
+    derived_index.update_paths(
+        bundle_root, repo_revision="external", changed_paths=("/instances/smith.md",)
+    )
+    assert derived_index.metrics("smith-id").broken_link_count == 1
+    with sqlite3.connect(derived_index.db_path) as connection:
+        assert (
+            connection.execute(
+                "SELECT count(*) FROM links WHERE resolution_state='external'"
+            ).fetchone()[0]
+            == 3
+        )
+        connection.execute(
+            "UPDATE links SET resolution_state='broken' WHERE resolution_state='external'"
+        )
+        connection.execute("DELETE FROM index_state WHERE key='external_links_classified'")
+    migrated = DerivedIndex(derived_index.db_path)
+    assert migrated.metrics("smith-id").broken_link_count == 1

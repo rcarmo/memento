@@ -38,6 +38,7 @@ from memento.graph_debug.models import (
     GraphRevisions,
 )
 from memento.repository.frontmatter import parse_concept_file
+from memento.repository.links import is_external_link
 
 _PENDING_PROPOSALS = {"draft", "submitted", "approved"}
 _GRAPH_SEARCH_LIMIT = 20
@@ -210,6 +211,8 @@ def _prefix_scope_sql(column: str, prefixes: tuple[str, ...]) -> tuple[str, list
 def _path_scope_sql(column: str, policy: EffectivePolicy | None) -> tuple[str, list[str]]:
     if policy is None:
         return "", []
+    # Match trash against its original namespace, never a broader trash grant.
+    column = f"(CASE WHEN {column} LIKE '/trash/%' THEN substr({column}, 7) ELSE {column} END)"
     sql, parameters = _prefix_scope_sql(column, policy.read_prefixes)
     for protected, explicit_grants in protected_read_grants(policy):
         protected_sql, protected_parameters = _prefix_scope_sql(column, (protected,))
@@ -228,7 +231,7 @@ def _scoped_nodes(nodes: list[GraphNode], explicit_edges: Sequence[GraphEdge]) -
     outbound: Counter[str] = Counter()
     broken: Counter[str] = Counter()
     for edge in explicit_edges:
-        if edge.kind != "explicit":
+        if edge.kind != "explicit" or is_external_link(edge.raw_target or ""):
             continue
         if edge.target is None or edge.resolution != "resolved":
             broken[edge.source] += 1
@@ -291,7 +294,7 @@ class GraphSnapshotService:
     def search(self, query: str, *, policy: EffectivePolicy | None = None) -> dict[str, object]:
         expression = _plain_fts_query(query.strip())
         scope_sql, scope_parameters = _path_scope_sql("c.path", policy)
-        conditions = ["concept_fts MATCH ?"]
+        conditions = ["concept_fts MATCH ?", "c.path NOT LIKE '/trash/%'"]
         if scope_sql:
             conditions.append(scope_sql)
         with self._derived() as derived:
@@ -333,7 +336,9 @@ class GraphSnapshotService:
         by_id = {str(row["id"]): str(row["path"]) for row in rows}
         return tuple(by_id[concept_id] for concept_id in concept_ids if concept_id in by_id)
 
-    def overview(self, *, policy: EffectivePolicy | None = None) -> GraphOverview:
+    def overview(
+        self, *, policy: EffectivePolicy | None = None, include_trash: bool = False
+    ) -> GraphOverview:
         with self._derived() as derived, self._control() as control:
             revisions = self._revisions(derived)
             proposal_counts = self._proposal_counts(control, policy)
@@ -342,6 +347,7 @@ class GraphSnapshotService:
                 proposal_counts=proposal_counts,
                 limit=self._config.direct_node_limit + 1,
                 policy=policy,
+                include_trash=include_trash,
             )
             truncated = len(nodes) > self._config.direct_node_limit
             visible = nodes[: self._config.direct_node_limit]
@@ -382,6 +388,7 @@ class GraphSnapshotService:
                     proposal_counts=proposal_counts,
                     limit=self._config.refresh_max_paths,
                     policy=policy,
+                    include_trash=include_trash,
                 )
                 all_ids = {node.id for node in all_nodes}
                 all_explicit_edges = self._edges(
@@ -391,14 +398,20 @@ class GraphSnapshotService:
                     policy=policy,
                 )
                 all_nodes = _scoped_nodes(all_nodes, all_explicit_edges)
-                # Aggregate layout remains canonical/contextual. Semantic edges are
-                # revealed after expansion into a bounded direct view.
+                all_semantic_edges = _semantic_edges(
+                    derived,
+                    all_nodes,
+                    revisions,
+                    self._config,
+                    self._config.edge_limit - len(all_explicit_edges),
+                )
                 all_edges = [
                     *all_explicit_edges,
+                    *all_semantic_edges,
                     *_overlay_edges(
                         all_nodes,
                         revisions.repository,
-                        self._config.edge_limit - len(all_explicit_edges),
+                        self._config.edge_limit - len(all_explicit_edges) - len(all_semantic_edges),
                     ),
                 ]
                 diagnostics = diagnose_graph(
@@ -429,7 +442,8 @@ class GraphSnapshotService:
                     broken_edges=sum(
                         1
                         for edge in metric_edges
-                        if edge.target is None or edge.resolution != "resolved"
+                        if not is_external_link(edge.raw_target or "")
+                        and (edge.target is None or edge.resolution != "resolved")
                     ),
                     orphan_count=sum(1 for node in metric_nodes if node.orphan),
                 ),
@@ -472,6 +486,7 @@ class GraphSnapshotService:
                 proposal_counts=proposal_counts,
                 limit=self._config.refresh_max_paths,
                 policy=policy,
+                include_trash=True,
             )
             all_ids = {node.id for node in all_nodes}
             all_edges = self._edges(
@@ -652,9 +667,12 @@ class GraphSnapshotService:
         limit: int,
         concept_ids: tuple[str, ...] | None = None,
         policy: EffectivePolicy | None = None,
+        include_trash: bool = False,
     ) -> list[GraphNode]:
         clauses: list[str] = []
         parameters: list[object] = []
+        if not include_trash and concept_ids is None:
+            clauses.append("c.path NOT LIKE '/trash/%'")
         if concept_ids is not None:
             if not concept_ids:
                 return []

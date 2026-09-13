@@ -43,9 +43,11 @@ from memento.executor import (
     ProposePatchChange,
     ProposeRenameChange,
     ProposeUpdateArgs,
+    PurgeArgs,
     ReadArgs,
     RenameArgs,
     SearchArgs,
+    TrashArgs,
     execute_plan_schema,
 )
 from memento.graph_debug import GraphDebugHTTPHandler
@@ -153,6 +155,9 @@ _TOOL_ARG_MODELS: dict[str, type[BaseModel]] = {
     "memory_create": CreateArgs,
     "memory_patch": PatchArgs,
     "memory_rename": RenameArgs,
+    "memory_trash": TrashArgs,
+    "memory_restore": TrashArgs,
+    "memory_purge": PurgeArgs,
 }
 
 
@@ -247,6 +252,9 @@ EXECUTE_CAPABLE_OPERATIONS = frozenset(
         "create",
         "patch",
         "rename",
+        "trash",
+        "restore",
+        "purge",
     }
 )
 
@@ -1031,6 +1039,46 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             status=status,
             tags=tags,
             aliases=aliases,
+        )
+        await self._notify_for_envelope(envelope.model_dump(mode="json"))
+        return envelope.model_dump(mode="json")
+
+    async def tool_memory_trash(
+        self, path: str, expected_revision: str, idempotency_key: str
+    ) -> dict[str, Any]:
+        envelope = await self._memory_call(
+            "memory_trash",
+            self._context(),
+            path=path,
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+        )
+        await self._notify_for_envelope(envelope.model_dump(mode="json"))
+        return envelope.model_dump(mode="json")
+
+    async def tool_memory_restore(
+        self, path: str, expected_revision: str, idempotency_key: str
+    ) -> dict[str, Any]:
+        envelope = await self._memory_call(
+            "memory_restore",
+            self._context(),
+            path=path,
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+        )
+        await self._notify_for_envelope(envelope.model_dump(mode="json"))
+        return envelope.model_dump(mode="json")
+
+    async def tool_memory_purge(
+        self, path: str, expected_revision: str, idempotency_key: str, confirm: bool = False
+    ) -> dict[str, Any]:
+        envelope = await self._memory_call(
+            "memory_purge",
+            self._context(),
+            path=path,
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+            confirm=confirm,
         )
         await self._notify_for_envelope(envelope.model_dump(mode="json"))
         return envelope.model_dump(mode="json")
