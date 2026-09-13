@@ -97,7 +97,7 @@ def test_overlay_edges_connect_adjacent_members_with_shared_tags() -> None:
         node(3, tags=("other",)),
     ]
     edges = _overlay_edges(nodes, "rev", 10)
-    assert [(edge.kind, edge.raw_target) for edge in edges] == [
+    assert [(edge.kind, edge.raw_target) for edge in edges if edge.kind == "shared_tag"] == [
         ("shared_tag", "other"),
         ("shared_tag", "shared"),
         ("shared_tag", "shared"),
@@ -132,3 +132,23 @@ def test_aggregate_semantic_edges_retain_similarity() -> None:
     result = aggregate_layout(nodes, (semantic,), repository_revision="revision", cluster_limit=10)
     assert result.edges[0].similarity == 0.91
     assert result.edges[0].canonical is False
+
+
+def test_all_shared_forces_have_bounded_relationships_and_do_not_affect_canonical_layout() -> None:
+    nodes = [
+        node(i, tags=("same",)).model_copy(update={"provenance_keys": ("hashed-ref",)})
+        for i in range(4)
+    ]
+    edges = _overlay_edges(nodes, "rev", 100)
+    assert {item.kind for item in edges} == {
+        "shared_tag",
+        "shared_namespace",
+        "shared_type",
+        "shared_provenance",
+    }
+    assert len(edges) == 12
+    assert all(not item.canonical and item.resolution == "derived" for item in edges)
+    assert len(_overlay_edges(nodes, "rev", 4)) == 4
+    assert len({item.kind for item in _overlay_edges(nodes, "rev", 4)}) == 4
+    assert _overlay_edges(list(reversed(nodes)), "rev", 100) == edges
+    assert all(item.raw_target != "hashed-ref" for item in edges)

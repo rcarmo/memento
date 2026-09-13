@@ -10,8 +10,12 @@ self.onmessage = ({ data }) => {
   const velocity = positions.map(() => ({ x: 0, y: 0, z: 0 }));
   const links = edges.map((edge) => ({ ...edge, si: index.get(edge.source), ti: index.get(edge.target) }))
     .filter((edge) => edge.si != null && edge.ti != null && edge.si !== edge.ti);
-  const degree = positions.map(() => 0);
-  links.forEach((edge) => { degree[edge.si]++; degree[edge.ti]++; });
+  const degrees = new Map();
+  links.forEach(edge => {
+    const kind=edge.kind||"explicit";
+    if(!degrees.has(kind))degrees.set(kind,positions.map(()=>0));
+    if((forces[kind]??0.06)>0){degrees.get(kind)[edge.si]++;degrees.get(kind)[edge.ti]++;}
+  });
   let quietSteps = 0;
   let step = 0;
 
@@ -25,6 +29,7 @@ self.onmessage = ({ data }) => {
         const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
         const distance = Math.hypot(dx, dy, dz) || 0.001;
         const kind = edge.kind || "explicit";
+        const degree=degrees.get(kind);
         const strength = Math.max(0, forces[kind] ?? 0.06) / Math.sqrt(Math.max(degree[edge.si], degree[edge.ti], 1));
         const desired = (forces.distance ?? 3) * (kind === "semantic_similarity" ? 0.8 : kind === "explicit" ? 1 : 1.2);
         const pull = (distance - desired) * strength / distance;

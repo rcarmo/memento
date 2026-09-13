@@ -125,6 +125,7 @@ function App() {
   const [sizeMetric, setSizeMetric] = useState("combined_bytes");
   const [forces, setForces] = useState(forceDefaults);
   const [semanticEnabled, setSemanticEnabled] = useState(false);
+  const [semanticAlpha, setSemanticAlpha] = useState(0.6);
   const [semanticThreshold, setSemanticThreshold] = useState(0.85);
   const [semanticNeighbours, setSemanticNeighbours] = useState(5);
   const [perf, setPerf] = useState({});
@@ -193,7 +194,7 @@ function App() {
     scene.current?.setGraph(
       nodes,
       semanticDisplayEdges(edges, selected?.id, semanticEnabled, semanticThreshold, semanticNeighbours),
-      { sizeMetric: effectiveSizeMetric(payload, sizeMetric), forces, clusters: payload.clusters || [] },
+      { sizeMetric: effectiveSizeMetric(payload, sizeMetric), forces, semanticAlpha, clusters: payload.clusters || [] },
     );
   }
 
@@ -284,6 +285,12 @@ function App() {
   const matchesType = (node) => type === "all" || node.type === type || aggregateType(node) === type;
   const matchesQuery = (node) =>
     !query || `${node.title || ""} ${node.label || ""} ${node.path || ""} ${node.namespace || ""} ${(node.tags || []).join(" ")}`.toLowerCase().includes(query.toLowerCase());
+  const forceEdgeCounts = {};
+  const forceVisible = new Set(nodes.filter(node => matchesType(node) && matchesQuery(node)).map(node => node.id));
+  for (const edge of (graph?.mode === "aggregated" ? graph.cluster_edges : graph?.edges) || []) {
+    if (forceVisible.has(edge.source) && forceVisible.has(edge.target)) forceEdgeCounts[edge.kind || "explicit"] = (forceEdgeCounts[edge.kind || "explicit"] || 0) + 1;
+  }
+  const inactiveForce = key => !["repulsion", "distance"].includes(key) && (!forceEdgeCounts[key] || (key === "semantic_similarity" && !semanticEnabled));
   const filtered = useMemo(() => nodes.filter((node) => matchesType(node) && matchesQuery(node)), [nodes, type, query]);
 
   function redrawFiltered() {
@@ -302,9 +309,11 @@ function App() {
         semanticThreshold,
         semanticNeighbours,
       ),
-      { sizeMetric: effectiveSizeMetric(graph, sizeMetric), forces, clusters: graph.clusters || [] },
+      { sizeMetric: effectiveSizeMetric(graph, sizeMetric), forces, semanticAlpha, clusters: graph.clusters || [] },
     );
   }
+
+  useEffect(() => { scene.current?.setSemanticAlpha(semanticAlpha); }, [semanticAlpha]);
 
   useEffect(redrawFiltered, [filtered, sizeMetric, forces, semanticEnabled, semanticThreshold, semanticNeighbours]);
 
@@ -364,6 +373,7 @@ function App() {
         forces,
         include_preview: includePreview,
         semantic_enabled: semanticEnabled,
+        semantic_alpha: semanticAlpha,
         semantic_threshold: semanticThreshold,
         semantic_neighbours: semanticNeighbours,
       };
@@ -520,6 +530,11 @@ function App() {
           "Show semantic layer",
         ]),
         h("label", { class: "slider" }, [
+          `Semantic opacity ${Math.round(semanticAlpha * 100)}%`,
+          h("input", { type: "range", min: 0, max: 1, step: 0.05, value: semanticAlpha,
+            onInput: event => setSemanticAlpha(Number(event.currentTarget.value)) }),
+        ]),
+        h("label", { class: "slider" }, [
           `Minimum cosine ${semanticThreshold.toFixed(2)}`,
           h("input", {
             type: "range",
@@ -548,9 +563,11 @@ function App() {
         h("button", { onClick: () => setForces({ ...forceDefaults }) }, "Reset forces"),
         ...Object.entries(forces).map(([key, value]) =>
           h("label", { class: "slider" }, [
-            `${key.replaceAll("_", " ")} ${value.toFixed(key === "distance" ? 1 : 3)}`,
+            `${key.replaceAll("_", " ")} ${value.toFixed(key === "distance" ? 1 : 3)}${key.startsWith("shared_") ? ` (${forceEdgeCounts[key] || 0} links)` : ""}`,
             h("input", {
               type: "range",
+              disabled: inactiveForce(key),
+              title: inactiveForce(key) ? "No active relationships of this kind in the current view" : "Adjust layout attraction",
               min: key === "distance" ? 0.5 : 0,
               max: key === "distance" ? 12 : key === "repulsion" ? 1 : 0.5,
               step: key === "distance" ? 0.1 : 0.005,
