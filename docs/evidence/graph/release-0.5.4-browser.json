@@ -1,0 +1,45 @@
+{
+  "initial": {
+    "nodes": 184,
+    "alpha": 0.6,
+    "kinds": {
+      "explicit": 178,
+      "shared_tag": 368,
+      "shared_namespace": 174,
+      "shared_type": 178
+    },
+    "labels": [
+      "/skills/",
+      "/work/",
+      "/projects/",
+      "/systems/",
+      "/instances/",
+      "/services/",
+      "/infrastructure/",
+      "/people/",
+      "/public/",
+      "/personal/"
+    ]
+  },
+  "semanticOn": {
+    "count": 331,
+    "opacities": [
+      0.2,
+      0.288
+    ]
+  },
+  "alphaDoesNotRestart": true,
+  "provenanceDisabled": true,
+  "final": {
+    "nodes": 186,
+    "trashPaths": [
+      "/trash/systems/acceptance/acceptance-ordinary-8fa11c5266.md",
+      "/trash/systems/acceptance/acceptance-asset-8fa11c5266.md"
+    ],
+    "hasTrashLabel": true,
+    "namespaceStrength": 0.2,
+    "alpha": 0.4,
+    "semanticOff": 0
+  },
+  "pageErrors": []
+}
