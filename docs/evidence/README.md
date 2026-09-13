@@ -14,7 +14,7 @@ Graph evidence includes the 2,000-node fixture performance record and a DiskStat
 
 ## Release and deployment evidence
 
-[`release-0.4.2.md`](release-0.4.2.md) records the current immutable release identity, issues 14--19 acceptance, graph-audit checks and state-preserving DiskStation deployment.
+[`release-0.5.1.md`](release-0.5.1.md) records the current release, live graph and Trash checks, restored runtime-model archive and preserved DiskStation model volume. [`release-0.5.0.md`](release-0.5.0.md) records the preceding safety and recovery release. [`release-0.4.2.md`](release-0.4.2.md) records the earlier issues 14--19 and graph-audit checks.
 
 [`release-0.3.27.md`](release-0.3.27.md) records the previous issue 13 contract and diagnostic checks, pinned uMCP dependency and state-preserving deployment. [`release-0.3.26.md`](release-0.3.26.md) records the earlier persistent Streamable HTTP checks and state-preserving deployment. [`release-0.3.25.md`](release-0.3.25.md) records the earlier embedding-preserving deployment, live graph and semantic state, and execute-only asset metadata checks. [`release-0.3.24.md`](release-0.3.24.md) records the bounded inventory and manifest comparison deployment, including progressive embedding convergence. [`release-0.3.23.md`](release-0.3.23.md) remains the historical answer, redeployment and tagged-source corpus record. These reports distinguish release gates from checks that ran against the live service.
 

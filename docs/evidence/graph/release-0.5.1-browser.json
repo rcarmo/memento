@@ -1,0 +1,27 @@
+{
+  "initial": {
+    "nodes": 186,
+    "labels": [
+      "/skills/",
+      "/work/",
+      "/projects/",
+      "/systems/",
+      "/instances/",
+      "/services/",
+      "/infrastructure/",
+      "/people/",
+      "/public/",
+      "/personal/"
+    ],
+    "semantic": 0
+  },
+  "final": {
+    "nodes": 186,
+    "semantic": 0,
+    "forceDistance": 4,
+    "layoutId": 14,
+    "layoutSettled": false,
+    "visibleLabels": 6
+  },
+  "pageErrors": []
+}
