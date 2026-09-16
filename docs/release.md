@@ -33,6 +33,12 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Accepted-asset retrieval checks for 0.5.5
+
+Accepted assets now support manifest-only, bounded file and archive-range reads. Resumed requests pin the version and ZIP digest. Small default archives retain their full ZIP/manifest response; larger clients must follow `next_offset` and verify the assembled digest. `memory_status.limits.assets` advertises retrieval limits. See [accepted-assets.md](accepted-assets.md) for compatibility, integrity and response-budget details.
+
+Validation covers manifest inspection without ZIP reads, binary and UTF-8 chunks, EOF and final ranges, version changes, digest mismatch, namespace denial, filesystem/ZIP symlinks, undeclared files, Trash/purge and pruned versions. Proposal file reads reuse the same safety helpers. `asset_get` is registered through execute and manifests are not silently sliced by its generic record limit.
+
 ## Trash visibility check for 0.5.4
 
 Live verification with archived fixtures exposed a missing browser request header: Show Trash changed local state without requesting trashed nodes. The browser now sends `X-Memento-Include-Trash: true`, and a regression checks that toggling the view both adds and removes the returned Trash nodes. This patch includes the reviewed archival and graph-force changes below.
