@@ -19,6 +19,8 @@ memory_status
 
 Use `memory_help` or `memory://catalog` when you need operation names, schemas or workflow templates. Compact deployments expose common tools directly and route less common operations through `memory_execute`.
 
+Use the [documentation index](../../../docs/README.md) for task-based navigation, [agent workflow diagrams](../../../docs/agent-workflows.md) for common interactions and [proposal workflows](../../../docs/proposals.md) for review/rejection/refiling.
+
 Client setup is covered in:
 
 * Pi: `docs/setup-pi.md`
@@ -136,6 +138,10 @@ A proposal through `memory_execute` looks like:
 
 Review and apply are separate operations. An authenticated curator may review a proposal they authored when their policy grants write access to every affected path. Use the same curator profile for propose, review, apply and retrieval; do not swap credentials to manufacture a second identity. An apply operation is commit-capable, so keep at most one commit-capable operation in an execution plan.
 
+`propose` creates a new `submitted` record immediately. Inspect `proposal_list(status="submitted")` for the review queue; `pending` is not a status. `request_changes` sets `draft`, and `reject` sets `rejected`. Read `review_comment`, correct the local content and file a new proposal at the current revision, citing the old proposal ID in `rationale`. There is no edit/resubmit API for an existing draft. `propose_update` drafts a concept change from an instruction; it does not edit a stored proposal.
+
+For a stale proposal, an authorised curator can use execute-only `proposal_revise` to copy selected clean changes into a new submitted record. Keep concept/asset pairs together. Conflicting changes, expired records and stale archival require fresh preparation and submission. A corrected packaged skill needs revised asset bytes as well as Markdown; inspect its manifest and root `SKILL.md` parity before approval.
+
 Direct creates and patches require:
 
 * `expected_revision` from fresh status;
@@ -144,10 +150,12 @@ Direct creates and patches require:
 
 If a mutation times out or the connection drops, reconcile before retrying:
 
-1. read status and compare repository revision;
-2. read the target path;
-3. inspect the proposal or operation using the same idempotency key;
-4. retry only when the first attempt did not commit.
+1. call execute-only `operation_get` under the original principal using the original idempotency key;
+2. inspect `final_state`, `safe_to_retry`, `retry_guidance`, recorded revision and changed paths;
+3. use a committed result, wait for an in-progress result, and inspect an indeterminate result without changing keys;
+4. retry the identical request with the original key only when `safe_to_retry` permits it. A confirmed revision conflict requires current content, a fresh expected revision and a new key.
+
+Proposal submission has no idempotency-key argument. If its response is lost, inspect the proposal list before filing again.
 
 ## Namespaces
 

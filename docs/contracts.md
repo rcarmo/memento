@@ -417,7 +417,7 @@ Ordinary concepts can carry immutable, versioned ZIP assets. Proposal metadata r
 
 Asset kinds and versions use lowercase/hyphen names and stable `MAJOR.MINOR.PATCH`. ZIPs are bounded to 50 MiB encoded and uncompressed, with per-file, entry-count and compression-ratio limits. Traversal, absolute paths, backslashes, links, special files, encrypted entries, nested archives and native executables are rejected.
 
-`memory_propose` accepts an `attach_asset_pack` change containing `path`, `asset_kind`, `version` and exactly one of `zip_base64` or `staged_asset_id`. Stored proposal JSON replaces either transport reference with an asset ID, digest and generated manifest. `memory_proposal_get/list/review/apply` remain the only proposal lifecycle.
+`memory_propose` accepts an `attach_asset_pack` change containing `path`, `asset_kind`, `version` and exactly one of `zip_base64` or `staged_asset_id`. Stored proposal JSON replaces either transport reference with an asset ID, digest and generated manifest. Proposal inspection, review and apply use `memory_proposal_get/list/review/apply`; execute-only `proposal_revise` can copy selected clean changes from a stale source into a new proposal.
 
 MCP clients should use `zip_base64` when the complete request fits `mcp.max_request_bytes`. This keeps proposal creation inside the authenticated MCP exchange. A skill concept body and ZIP-root `SKILL.md` must both be canonical UTF-8 text with LF endings, no trailing whitespace, no leading or trailing blank lines and no final newline. Unicode code points are preserved without NFC/NFD conversion. Proposal validation rejects non-canonical or byte-mismatched skill text before generating the manifest. Clients verify that manifest before review and verify the manifest, SHA-256 and decoded ZIP after retrieval.
 
@@ -439,7 +439,7 @@ The Streamable HTTP request limit defaults to 72 MiB so the compatibility base64
 
 ## Proposal records and lifecycle
 
-Proposal records live in `control.sqlite`, but the tool contract exposes a stable payload.
+Proposal records live in `control.sqlite`. Use the [proposal guide](proposals.md) for review/refiling diagrams and examples; the fields and rules below define the interface.
 
 ### Proposal statuses
 
@@ -453,7 +453,7 @@ Proposal records live in `control.sqlite`, but the tool contract exposes a stabl
 
 ### Proposal payload fields
 
-`memory_propose`, `memory_proposal_get`, `memory_proposal_list`, `memory_proposal_review`, `memory_proposal_apply`, `memory_propose_freeform` and `memory_propose_update` all return a `proposal` object containing:
+Creation, detailed `memory_proposal_get`, review, apply and revision return a `proposal` object. `memory_proposal_list` returns bounded `proposals[]` summaries plus `next_cursor`. Detailed proposal fields include:
 
 * `proposal_id`
 * `author_principal`
@@ -478,11 +478,13 @@ Proposal records live in `control.sqlite`, but the tool contract exposes a stabl
 
 ### Proposal rules
 
-* `memory_propose` stores a deterministic proposal and does not mutate Git.
-* `memory_proposal_review` accepts `decision` values `approve`, `reject`, `request_changes`.
-* `request_changes` moves the proposal back to `draft`.
-* A curator may review an authorised proposal regardless of authorship. Review still requires curator role membership and write access to every affected path.
-* Applied or expired proposals cannot be reviewed again.
+* `memory_propose` creates a new `submitted` proposal without mutating Git. There is no separate submit step or idempotency-key argument.
+* `memory_proposal_review` accepts `decision` values `approve`, `reject`, `request_changes` and an optional `comment`.
+* `request_changes` sets `draft`; `reject` sets `rejected`. Review does not edit the stored patch. Corrected content requires a fresh `propose` call and a new proposal ID; there is no draft edit/resubmit API. Cite the source ID in the new rationale when refiling.
+* A curator can change a decision on an unchanged draft or rejected patch. Applied and expired records cannot be reviewed again.
+* `proposal_revise`, through execute, requires a stale source, non-empty clean `selected_change_indexes` and current `expected_revision`. It creates a new submitted proposal with `source_proposal_id` and `source_change_indexes`, retaining paired concept/asset changes and copying selected stored assets. It cannot edit content or revise trash changes; archival requires a fresh impact report and proposal.
+* Submitted/approved records with a different base revision become `stale` on status refresh. Any unapplied record can expire; the default TTL is 30 days. Fresh submission is required after expiry. A new review decision does not rebase an old proposal.
+* A curator may review an authorised proposal regardless of authorship. Review still requires curator role membership and read/write access to every affected path.
 * `memory_proposal_apply` requires proposal status `approved`.
 * Applies are revision-safe and idempotent.
 * If the same principal reuses an `idempotency_key` with a different request hash, the call fails with `idempotency_conflict`.
