@@ -47,7 +47,7 @@ Memento checks the caller's namespace, the expected repository revision and the 
 
 Administrators manage principals through the preset-driven [`/admin`](docs/access-management.md) UI or role-filtered `access_*` tools on the same `/mcp` endpoint. Ordinary principals cannot discover or invoke those tools. New and rotated credentials are shown once; only verifiers are retained.
 
-The complete tool contracts, roles, limits and response envelopes are in [`docs/contracts.md`](docs/contracts.md).
+Start with the [documentation index](docs/README.md), [agent workflow diagrams](docs/agent-workflows.md) or [proposal review and refiling guide](docs/proposals.md). The [tool contracts](docs/contracts.md) define roles, arguments, limits and response envelopes.
 
 ## Search, Links And Local Models
 
@@ -61,9 +61,9 @@ Model setup and measurements live in [`docs/semantic-search.md`](docs/semantic-s
 
 ## Assets And Skills
 
-A concept can carry an immutable versioned asset pack as an ordinary Git blob. The Markdown remains searchable while diagrams, templates, datasets or a complete agent skill travel in an attached ZIP. Packs that fit the configured MCP request ceiling use `attach_asset_pack.zip_base64`, keeping proposal creation inside MCP. Larger packs can use `memory_asset_stage_begin`/`memory_asset_stage_status`; the begin call returns a one-time raw-upload ticket so the upload command does not need the principal's bearer token.
+A concept can include an immutable versioned asset pack as an ordinary Git blob. The Markdown remains searchable while diagrams, templates, datasets or a complete agent skill travel in an attached ZIP. Packs that fit the configured MCP request ceiling use `attach_asset_pack.zip_base64`, keeping proposal creation inside MCP. Larger packs can use `memory_asset_stage_begin`/`memory_asset_stage_status`; the begin call returns a one-time raw-upload ticket so the upload command does not need the principal's bearer token.
 
-Skill concepts live under `/skills/`, carry the `skill` tag and match the ZIP-root `SKILL.md` byte-for-byte. Reviewers check the generated manifest and digest before approval; clients verify accepted bytes through [`memory_asset_get` manifest, file and archive-range views](docs/accepted-assets.md). Large ZIPs are downloaded in chunks pinned to their version and digest. `memento-skill-import` validates a recalled pack before placing it in a workspace. Memento does not install or execute recalled skills on behalf of a client.
+Skill concepts live under `/skills/`, have the `skill` tag and match the ZIP-root `SKILL.md` byte-for-byte. Reviewers check the generated manifest and digest before approval; clients verify accepted bytes through [`memory_asset_get` manifest, file and archive-range views](docs/accepted-assets.md). Large ZIPs are downloaded in chunks pinned to their version and digest. `memento-skill-import` validates a recalled pack before placing it in a workspace. Memento does not install or execute recalled skills on behalf of a client.
 
 The repository also ships an Agent Skills package at [`.agents/skills/memento/SKILL.md`](.agents/skills/memento/SKILL.md). It gives Pi, Piclaw and Codex agents a compact workflow for search, reads, inventory, manifest comparison, proposals, curation, namespaces, assets and retry reconciliation.
 
@@ -92,20 +92,12 @@ Client setup guides cover [Pi](docs/setup-pi.md), [Piclaw](docs/setup-piclaw.md)
 
 ## Documentation
 
-* [`docs/setup-pi.md`](docs/setup-pi.md) -- connect Pi through pi-mcp-adapter
-* [`docs/setup-piclaw.md`](docs/setup-piclaw.md) -- keychain-backed Piclaw MCP setup
-* [`docs/setup-codex.md`](docs/setup-codex.md) -- Codex MCP and Agent Skills setup
-* [`docs/access-management.md`](docs/access-management.md) -- dynamic principals, `/admin`, access tools and credential lifecycle
-* [`docs/contracts.md`](docs/contracts.md) -- MCP tools, schemas, roles and limits
-* [`docs/implementation.md`](docs/implementation.md) -- storage, transactions and runtime architecture
-* [`docs/diagrams.md`](docs/diagrams.md) -- request, write, recovery and model flows
-* [`docs/decisions/`](docs/decisions/README.md) -- architecture decisions
-* [`docs/threat-model.md`](docs/threat-model.md) -- trust boundaries and abuse cases
-* [`docs/operations.md`](docs/operations.md) -- deployment, health, backup and recovery
-* [`docs/release.md`](docs/release.md) -- packaging and release process
-* [`docs/load-testing.md`](docs/load-testing.md) -- load harness and thresholds
-* [`docs/evidence/`](docs/evidence/README.md) -- benchmark and operational reports
-* [`PLAN.md`](PLAN.md) -- delivery ledger and roadmap
+The [documentation index](docs/README.md) groups setup, agent tasks, contracts, operations and project records. Common starting points:
+
+* [Agent workflows](docs/agent-workflows.md) -- discovery, comparison, execute plans, asset recall and interrupted writes.
+* [Proposals](docs/proposals.md) -- submission, review decisions, rejection, refiling, stale proposals and skill updates.
+* [Operations](docs/operations.md) -- deployment, health, backup and recovery.
+* [System diagrams](docs/diagrams.md) -- transport, storage, publication and model flows.
 
 ## Credits
 

@@ -1,6 +1,8 @@
 # Memento transition diagrams
 
-These diagrams describe the implemented control flow and durable states. They use the same names as the Python models, SQLite rows, MCP tools and Git references.
+These system diagrams describe request handling, storage, publication, recovery and model processing. Start with the [documentation index](README.md) for task-based navigation.
+
+For client interactions, use [agent workflows](agent-workflows.md). For review decisions, corrected submissions, stale proposals and packaged skills, use [proposal workflows](proposals.md).
 
 ## Shared memory boundary
 
@@ -73,12 +75,12 @@ The compact MCP surface keeps detailed operation schemas out of initial model co
 ```mermaid
 stateDiagram-v2
     [*] --> Authenticate
-    Authenticate --> Forbidden: invalid token or principal
+    Authenticate --> AuthenticationRejected: invalid token or principal
     Authenticate --> Discover: valid principal
 
     Discover --> DirectRead: help, status, search or read
     Discover --> ExecutePlan: memory_execute
-    Discover --> CatalogRead: memory://catalog or workflow
+    Discover --> CatalogRead: catalog or workflow resource
     Discover --> OptionalAnswer: memory_answer enabled
 
     CatalogRead --> Discover: operation selected
@@ -92,7 +94,7 @@ stateDiagram-v2
     OptionalAnswer --> Envelope
     CommitPipeline --> Envelope
     Envelope --> [*]
-    Forbidden --> [*]
+    AuthenticationRejected --> [*]
     Rejected --> [*]
 ```
 
@@ -100,26 +102,20 @@ Every dispatched operation still enters the ordinary service method, so compact 
 
 ## Compact surfaces and execute-only operations
 
-Direct tool counts vary by surface; optional answers and routing add one tool each where enabled.
+Read the connected catalog for exact tool names. Surface selection, optional models and the authenticated roles determine which direct tools are exposed; execute operations retain their own role and namespace checks.
 
 ```mermaid
 flowchart TD
-    compact[compact surface]
-    readonly[read_only surface]
-    standard[standard surface]
-    curator[curator surface]
-    admin[admin surface]
-
-    compact --> ctools[9 direct tools<br/>11 with answer and route]
-    readonly --> rtools[10 direct tools]
-    standard --> stools[23 direct tools]
-    curator --> curtools[14 direct tools<br/>each optional tool adds one<br/>16 with both]
-    admin --> atools[24 direct tools<br/>25 with route]
-
-    curator --> execonly[create / patch / rename are execute-only here]
-    standard --> directmut[create / patch / rename are direct tools]
-    admin --> directmut2[create / patch / rename are direct tools]
+    client[Authenticated client] --> catalog[memory_help or memory catalog]
+    catalog --> direct[Exposed direct memory tools]
+    catalog --> execute[Catalogued operations through memory_execute]
+    direct --> policy[Role and namespace checks]
+    execute --> policy
+    catalog -->|Managed administrator| access[Direct access tools in separate admin profile]
+    access --> admin[Admin policy and control state]
 ```
+
+Administrative `access_*` tools are direct tools, outside execute plans. See [access management](access-management.md) for the profile split.
 
 ## Needle router lifecycle
 
@@ -190,7 +186,6 @@ sequenceDiagram
     participant Search as FTS / graph / vector index
     participant GTE as Rust GTE embedder
     participant Answer as Optional answer model
-    participant Store as Git and control state
 
     Client->>MCP: initialize and discover compact tools
     Client->>MCP: memory_route or direct memory_search/read
@@ -222,12 +217,6 @@ sequenceDiagram
         Service-->>MCP: success envelope
     end
 
-    opt proposal or mutation requested
-        Service->>Store: journal, validate, commit or store proposal
-        Store-->>Service: revision and operation result
-        Service-->>MCP: attributed result envelope
-    end
-
     MCP-->>Client: structured content and text compatibility content
 ```
 
@@ -235,33 +224,9 @@ An `UNKNOWN` router result stops before search or mutation. A model-produced pro
 
 ## Proposal lifecycle
 
-Models and ordinary clients may create proposals. Only authorised curators with write access to every affected path can review and apply them; curator authority is unchanged when author and reviewer are the same principal.
+[`proposals.md`](proposals.md#choose-a-review-decision) contains the proposal state diagram and client sequences. Creation starts at `submitted`. A changes-requested review sets `draft`; corrected content requires a new proposal ID. Curators can copy selected clean changes from a stale source through `proposal_revise`.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Draft
-    Draft --> Submitted: submit proposal
-    Submitted --> Approved: curator approves
-    Submitted --> Rejected: curator rejects
-    Submitted --> Draft: curator requests changes
-    Submitted --> Stale: base revision changes
-    Submitted --> Expired: TTL elapses
-
-    Approved --> Applied: memory_proposal_apply succeeds
-    Approved --> Draft: curator requests changes
-    Approved --> Rejected: curator rejects before apply
-    Approved --> Stale: expected revision no longer matches
-
-    Applied --> Applied: identical idempotent replay
-
-    Draft --> [*]
-    Rejected --> [*]
-    Stale --> [*]
-    Expired --> [*]
-    Applied --> [*]
-```
-
-Model-assisted proposal creation enters the same ordinary lifecycle. It does not gain review or apply powers.
+Model-assisted submission uses the same review/apply rules. Approval and apply are separate operations, with namespace checks at both boundaries.
 
 ## Canonical mutation publication
 
@@ -305,28 +270,22 @@ The worktree decision and measured overhead are recorded in [ADR 0001](decisions
 
 ## Operation recovery
 
-Interrupted journal rows are reconciled with canonical Git history before abandoned worktrees are removed.
+At startup, the transaction manager inspects interrupted operations and compares their detached worktrees with the current Git head before removing those worktrees.
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Queued
-    Queued --> Running: writer starts
-    Running --> Succeeded: ref, current and indexes advance
-    Running --> Conflict: main moved
-    Running --> Failed: validation or permanent error
-    Running --> Recovering: process stops mid-operation
-
-    Recovering --> Succeeded: worktree commit equals published main
-    Recovering --> Conflict: base revision is stale
-    Recovering --> Queued: safe retry remains possible
-    Recovering --> Failed: state cannot be reconciled
-
-    Succeeded --> [*]
-    Conflict --> [*]
-    Failed --> [*]
+flowchart TD
+    interrupted[Interrupted operation] --> published{Worktree revision equals head and differs from base?}
+    published -->|yes| success[Mark succeeded; classification published]
+    published -->|no| stale{Recorded base differs from head?}
+    stale -->|yes| conflict[Mark conflict; classification conflict]
+    stale -->|no| retryable[Classification retryable; retain journal state]
+    success --> cleanup[Remove abandoned operation worktree]
+    conflict --> cleanup
+    retryable --> cleanup
+    cleanup --> restore[Materialise current at head and refresh derived index]
 ```
 
-Idempotent callers observe the stored successful result rather than creating a second commit.
+A `retryable` startup classification does not set a queued journal state or grant the caller permission to repeat a write. Clients follow [`operation_get` reconciliation](agent-workflows.md#reconcile-an-interrupted-write), including `safe_to_retry` and `retry_guidance`. Successful identical replays return the recorded result.
 
 ## Search and semantic degradation
 
@@ -337,8 +296,8 @@ stateDiagram-v2
     [*] --> LexicalReady
     LexicalReady --> SemanticQueued: missing or stale persisted paths
     SemanticQueued --> SemanticPaused: startup, interactive activity, CPU busy, or pacing
-    SemanticPaused --> SemanticBuilding: gates clear; one low-priority path
-    SemanticQueued --> SemanticBuilding: gates clear; one low-priority path
+    SemanticPaused --> SemanticBuilding: gates clear for one low-priority path
+    SemanticQueued --> SemanticBuilding: gates clear for one low-priority path
     SemanticBuilding --> SemanticQueued: more persisted work remains
     SemanticBuilding --> SemanticReady: embedding revision equals repository revision
     SemanticBuilding --> SemanticDegraded: embedding failure

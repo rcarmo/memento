@@ -4,6 +4,8 @@ Deletion has two stages. `trash` moves `/projects/example.md` to `/trash/project
 
 Git history is retained in every case. Purge does not erase old commits, proposal records, staged submissions or backups, and is not a privacy-erasure operation.
 
+[Documentation index](README.md) · [Archive/restore diagram](agent-workflows.md#archive-and-restore-shared-knowledge) · [Review and refile proposals](proposals.md)
+
 ## Reviewed archival
 
 To inspect consequences before archiving, submit a proposal with `changes: [{"kind": "trash", "path": "/projects/example.md"}]` and the current `base_revision`. An archival proposal may contain 1--20 distinct trash targets and cannot mix in other mutations. Explicit creation, inspection, curator review and apply use the normal proposal workflow; model-generated archival is not allowed.

@@ -209,7 +209,7 @@ Proposal statuses:
 * `stale`
 * `expired`
 
-`request_changes` reviews return a proposal to `draft`.
+`propose` creates a new record directly in `submitted`. `request_changes` sets `draft` and `reject` sets `rejected`; neither changes the stored patch. There is no draft edit/resubmit API. Corrected content is filed through a new `propose` call. A curator can reconsider an unchanged patch, except when it is applied or expired. Execute-only `proposal_revise` copies selected clean changes from a stale proposal into a new submitted record, with source linkage and selected assets; it rejects archival changes. See [proposal review and refiling](proposals.md) for the workflow diagrams.
 
 Default proposal TTL remains 30 days.
 
