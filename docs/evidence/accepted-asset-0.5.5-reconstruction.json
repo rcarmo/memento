@@ -1,0 +1,16 @@
+{
+  "zip_bytes": 360,
+  "archive_chunks": [
+    200,
+    160
+  ],
+  "file_bytes": 31,
+  "file_chunks": [
+    16,
+    15
+  ],
+  "zip_sha256": "c74bb2b5a3692c5d1bb0db1ca9c8711b73125b8628c35cdd7cb667745f1f81ff",
+  "file_sha256": "167af2e4d46fe58b0d59be40abd639f5f9f4b06cf84c42a4db87ddccd4b63bf7",
+  "zip_crc_valid": true,
+  "file_matches_reconstructed_zip": true
+}
