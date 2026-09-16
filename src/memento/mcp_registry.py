@@ -270,7 +270,7 @@ OPERATION_SPECS: tuple[OperationSpec, ...] = (
         op_name="asset_get",
         tool_name="memory_asset_get",
         method_name="memory_asset_get",
-        description="Read one asset pack by concept path/id or asset-specific identifier and optional version.",
+        description="Read an accepted asset: view=manifest omits ZIP bytes; view=file requires file_path; view=archive supports bounded offset/limit. Small archives remain inline by default. Resume with the resolved version and expected_sha256. Limits: memory_status.limits.assets.",
         roles=("reader",),
         discovery_surfaces=frozenset(
             {COMPACT_SURFACE, READ_ONLY_SURFACE, STANDARD_SURFACE, CURATOR_SURFACE, ADMIN_SURFACE}

@@ -4131,3 +4131,610 @@ def test_reviewed_archival_rejects_collision_and_oversized_impact(
     assert result.status == "error"
     assert "100 inbound" in result.message
     assert len(list_proposals(service._deps.control_connection)) == before
+
+
+@pytest.fixture()
+def accepted_read_pack(
+    service: MemoryService, smith: ServiceContext
+) -> tuple[str, str, bytes, bytes]:
+    """Large, generic accepted pack with more entries than execute's max_records."""
+    import random
+
+    binary = random.Random(21).randbytes(80_003)
+    stream = io.BytesIO()
+    with zipfile.ZipFile(stream, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr("data.bin", binary)
+        archive.writestr("notes.txt", "a界b")
+        archive.writestr("empty.txt", b"")
+        for i in range(52):
+            archive.writestr(f"entries/{i:02}.txt", f"entry {i}")
+    raw = stream.getvalue()
+    path = "/projects/read-pack.md"
+    proposal = success_data(
+        service.memory_propose(
+            smith,
+            intent="read pack fixture",
+            base_revision=get_main_revision(service._deps.repo_paths),
+            changes=[
+                {
+                    "kind": "create",
+                    "path": path,
+                    "concept_type": "project",
+                    "title": "Read pack",
+                    "body": "Fixture",
+                },
+                {
+                    "kind": "attach_asset_pack",
+                    "path": path,
+                    "asset_kind": "document",
+                    "version": "1.0.0",
+                    "zip_base64": base64.b64encode(raw).decode(),
+                },
+            ],
+        )
+    )["proposal"]
+    success_data(
+        service.memory_proposal_review(
+            smith, proposal_id=proposal["proposal_id"], decision="approve"
+        )
+    )
+    success_data(
+        service.memory_proposal_apply(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="read-pack-apply",
+        )
+    )
+    return path, proposal["proposal_id"], raw, binary
+
+
+def test_accepted_manifest_does_not_read_zip_and_execute_preserves_entries(
+    service: MemoryService,
+    smith: ServiceContext,
+    accepted_read_pack: tuple[str, str, bytes, bytes],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    path, _, raw, _ = accepted_read_pack
+    original = Path.open
+
+    def guarded_open(file: Path, *args: Any, **kwargs: Any) -> Any:
+        assert file.suffix != ".zip", "manifest view must not open the ZIP"
+        return original(file, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", guarded_open)
+    manifest = success_data(
+        service.memory_asset_get(smith, id_or_path=path, asset_kind="document", view="manifest")
+    )
+    assert "zip_base64" not in manifest
+    assert manifest["zip_bytes"] == len(raw)
+    assert manifest["zip_sha256"] == hashlib.sha256(raw).hexdigest()
+    assert manifest["file_count"] == 55
+    assert len(manifest["manifest"]["entries"]) == 55
+    result = success_data(
+        service.memory_execute(
+            smith,
+            plan={
+                "operations": [
+                    {
+                        "op": "asset_get",
+                        "save_as": "pack",
+                        "args": {"id_or_path": path, "asset_kind": "document", "view": "manifest"},
+                    }
+                ],
+                "returns": [{"ref": "$pack.manifest.entries"}],
+            },
+        )
+    )
+    assert len(result["trace"][0]["data"]["manifest"]["entries"]) == 55
+    assert len(result["returns"]["pack_manifest_entries"]) == 55
+
+
+def test_accepted_archive_ranges_resume_and_verify_digest(
+    service: MemoryService, smith: ServiceContext, accepted_read_pack: tuple[str, str, bytes, bytes]
+) -> None:
+    path, _, raw, _ = accepted_read_pack
+    first = success_data(service.memory_asset_get(smith, id_or_path=path, asset_kind="document"))
+    assert first["returned_bytes"] == 65536
+    assert first["truncated"] is True
+    assert "manifest" not in first
+    result = success_data(
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            version=first["version"],
+            offset=first["next_offset"],
+            expected_sha256=first["zip_sha256"],
+        )
+    )
+    reconstructed = base64.b64decode(first["zip_base64"]) + base64.b64decode(result["zip_base64"])
+    assert reconstructed == raw
+    assert result["next_offset"] is None
+    assert result["returned_bytes"] == len(raw) - 65536
+    assert hashlib.sha256(reconstructed).hexdigest() == first["zip_sha256"]
+    eof = success_data(
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            version="1.0.0",
+            offset=len(raw),
+            limit=32,
+            expected_sha256=first["zip_sha256"],
+        )
+    )
+    assert eof["returned_bytes"] == 0 and eof["next_offset"] is None
+    assert (
+        service.memory_asset_get(smith, id_or_path=path, asset_kind="document", offset=65536).status
+        == "error"
+    )
+    assert (
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            version="1.0.0",
+            offset=65536,
+            expected_sha256="0" * 64,
+        ).status
+        == "error"
+    )
+
+
+@pytest.mark.parametrize(
+    "offset,limit,encoding", [(0, 5, "utf-8"), (1, 1, "base64"), (2, 2, "base64"), (5, 5, "utf-8")]
+)
+def test_accepted_file_chunks_match_proposal_reads(
+    service: MemoryService,
+    smith: ServiceContext,
+    accepted_read_pack: tuple[str, str, bytes, bytes],
+    offset: int,
+    limit: int,
+    encoding: str,
+) -> None:
+    from memento.control.proposals import list_proposal_assets
+
+    path, proposal, _, _ = accepted_read_pack
+    digest = hashlib.sha256(accepted_read_pack[2]).hexdigest()
+    actual = success_data(
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            version="1.0.0",
+            view="file",
+            file_path="notes.txt",
+            offset=offset,
+            limit=limit,
+            expected_sha256=digest,
+        )
+    )["file"]
+    asset_id = list_proposal_assets(service._deps.control_connection, proposal_id=proposal)[
+        0
+    ].asset_id
+    proposed = success_data(
+        service.memory_proposal_asset_get(
+            smith,
+            proposal_id=proposal,
+            asset_id=asset_id,
+            file_path="notes.txt",
+            offset=offset,
+            limit=limit,
+        )
+    )["file"]
+    assert actual == proposed
+    assert actual["encoding"] == encoding
+    chunk = "a界b".encode()[offset : offset + limit]
+    assert actual["content_sha256"] == hashlib.sha256(chunk).hexdigest()
+    decoded = (
+        actual["content"].encode() if encoding == "utf-8" else base64.b64decode(actual["content"])
+    )
+    assert decoded == chunk
+
+
+def test_accepted_views_enforce_authorisation_ranges_and_safe_paths(
+    service: MemoryService,
+    smith: ServiceContext,
+    narrow: ServiceContext,
+    accepted_read_pack: tuple[str, str, bytes, bytes],
+) -> None:
+    path = accepted_read_pack[0]
+    for view in ("manifest", "archive", "file"):
+        args: dict[str, Any] = {"id_or_path": path, "asset_kind": "document", "view": view}
+        if view == "file":
+            args["file_path"] = "notes.txt"
+        denied = service.memory_asset_get(narrow, **args)
+        assert denied.status == "error" and denied.error_class == "forbidden"
+    for override in (
+        {"offset": -1},
+        {"limit": 0},
+        {"limit": 262145},
+        {"view": "unknown"},
+        {"view": "file"},
+        {"view": "manifest", "limit": 1},
+        {"file_path": "notes.txt"},
+    ):
+        assert (
+            service.memory_asset_get(
+                smith, id_or_path=path, asset_kind="document", **override
+            ).status
+            == "error"
+        )
+    for name in (
+        "../notes.txt",
+        "/notes.txt",
+        "entries//00.txt",
+        "entries/./00.txt",
+        "missing.txt",
+    ):
+        assert (
+            service.memory_asset_get(
+                smith, id_or_path=path, asset_kind="document", view="file", file_path=name
+            ).status
+            == "error"
+        )
+    empty = success_data(
+        service.memory_asset_get(
+            smith, id_or_path=path, asset_kind="document", view="file", file_path="empty.txt"
+        )
+    )["file"]
+    assert empty["returned_bytes"] == 0 and empty["next_offset"] is None
+
+
+def test_accepted_version_pinning_trash_and_pruned_versions(
+    service: MemoryService, smith: ServiceContext, accepted_read_pack: tuple[str, str, bytes, bytes]
+) -> None:
+    from memento.repository.asset_packs import write_asset_version
+    from memento.skill_packs import validate_asset_pack
+
+    path, _, raw, _ = accepted_read_pack
+    old = success_data(
+        service.memory_asset_get(smith, id_or_path=path, asset_kind="document", view="manifest")
+    )
+    root = service._deps.repo_paths.current_dir
+    updated = io.BytesIO()
+    with zipfile.ZipFile(updated, "w") as archive:
+        archive.writestr("updated.txt", "replacement version")
+    new = updated.getvalue()
+    # Simulate a concurrent accepted version; source version remains immutable.
+    write_asset_version(
+        root,
+        concept_id=old["concept_id"],
+        concept_path=path,
+        asset_kind="document",
+        version="2.0.0",
+        zip_bytes=new,
+        manifest=validate_asset_pack(
+            asset_kind="document", version="2.0.0", zip_bytes=new
+        ).manifest,
+        accepted_by="smith",
+        source_proposal_id="fixture",
+    )
+    assert (
+        success_data(
+            service.memory_asset_get(smith, id_or_path=path, asset_kind="document", view="manifest")
+        )["version"]
+        == "2.0.0"
+    )
+    pinned = success_data(
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            version="1.0.0",
+            expected_sha256=old["zip_sha256"],
+            offset=65536,
+        )
+    )
+    assert base64.b64decode(pinned["zip_base64"]) == raw[65536:]
+    assert (
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            view="manifest",
+            expected_sha256=old["zip_sha256"],
+        ).status
+        == "error"
+    )
+    # Return disposable checkout to published state before a real Trash transaction.
+    for file in (root / ".assets" / old["concept_id"] / "document").glob("2.0.0.*"):
+        file.unlink()
+    success_data(
+        service.memory_trash(
+            smith,
+            path=path,
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="read-pack-trash",
+        )
+    )
+    trashed = "/trash" + path
+    assert service.memory_asset_get(smith, id_or_path=path, asset_kind="document").status == "error"
+    assert (
+        success_data(
+            service.memory_asset_get(
+                smith, id_or_path=trashed, asset_kind="document", view="manifest"
+            )
+        )["zip_sha256"]
+        == old["zip_sha256"]
+    )
+    success_data(
+        service.memory_purge(
+            smith,
+            path=trashed,
+            confirm=True,
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="read-pack-purge",
+        )
+    )
+    assert (
+        service.memory_asset_get(
+            smith, id_or_path=trashed, asset_kind="document", version="1.0.0", view="manifest"
+        ).status
+        == "error"
+    )
+
+
+def test_accepted_reads_detect_corruption_and_pruned_payloads(
+    service: MemoryService, smith: ServiceContext, accepted_read_pack: tuple[str, str, bytes, bytes]
+) -> None:
+    path, _, raw, _ = accepted_read_pack
+    manifest = success_data(
+        service.memory_asset_get(smith, id_or_path=path, asset_kind="document", view="manifest")
+    )
+    directory = (
+        service._deps.repo_paths.current_dir / ".assets" / manifest["concept_id"] / "document"
+    )
+    archive = directory / "1.0.0.zip"
+    archive.write_bytes(raw[:-1] + bytes([raw[-1] ^ 1]))
+    for args in ({"view": "archive", "limit": 32}, {"view": "file", "file_path": "notes.txt"}):
+        result = service.memory_asset_get(smith, id_or_path=path, asset_kind="document", **args)
+        assert result.status == "error" and "digest" in result.message
+    archive.unlink()
+    for view in ("manifest", "archive", "file"):
+        assert (
+            service.memory_asset_get(
+                smith,
+                id_or_path=path,
+                asset_kind="document",
+                view=view,
+                file_path="notes.txt" if view == "file" else None,
+            ).status
+            == "error"
+        )
+
+
+@pytest.mark.parametrize("level", ["zip", "metadata", "kind", "concept", "assets"])
+def test_accepted_asset_symlink_containment(
+    service: MemoryService,
+    smith: ServiceContext,
+    accepted_read_pack: tuple[str, str, bytes, bytes],
+    tmp_path: Path,
+    level: str,
+) -> None:
+    path = accepted_read_pack[0]
+    data = success_data(
+        service.memory_asset_get(smith, id_or_path=path, asset_kind="document", view="manifest")
+    )
+    root = service._deps.repo_paths.current_dir
+    paths = {
+        "zip": root / ".assets" / data["concept_id"] / "document/1.0.0.zip",
+        "metadata": root / ".assets" / data["concept_id"] / "document/1.0.0.json",
+        "kind": root / ".assets" / data["concept_id"] / "document",
+        "concept": root / ".assets" / data["concept_id"],
+        "assets": root / ".assets",
+    }
+    target = paths[level]
+    outside = tmp_path / f"outside-{level}"
+    target.rename(outside)
+    target.symlink_to(outside, target_is_directory=outside.is_dir())
+    for view in ("manifest", "archive", "file"):
+        result = service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            view=view,
+            file_path="notes.txt" if view == "file" else None,
+        )
+        assert result.status == "error"
+
+
+def test_asset_limits_are_discoverable(service: MemoryService, smith: ServiceContext) -> None:
+    limits = success_data(service.memory_status(smith))["limits"]["assets"]
+    assert limits["max_archive_bytes"] == limits["max_upload_zip_bytes"] == 50 * 1024 * 1024
+    assert limits["max_file_bytes"] == 16 * 1024 * 1024
+    assert limits["max_chunk_bytes"] == 262144
+    assert limits["max_file_count"] == 512
+
+
+def test_pruning_versions_removes_all_read_views(
+    service: MemoryService, smith: ServiceContext, accepted_read_pack: tuple[str, str, bytes, bytes]
+) -> None:
+    path = accepted_read_pack[0]
+    zip_data = io.BytesIO()
+    with zipfile.ZipFile(zip_data, "w") as archive:
+        archive.writestr("new.txt", "version two")
+    proposal = success_data(
+        service.memory_propose(
+            smith,
+            intent="new version",
+            base_revision=get_main_revision(service._deps.repo_paths),
+            changes=[
+                {
+                    "kind": "attach_asset_pack",
+                    "path": path,
+                    "asset_kind": "document",
+                    "version": "2.0.0",
+                    "zip_base64": base64.b64encode(zip_data.getvalue()).decode(),
+                },
+            ],
+        )
+    )["proposal"]
+    success_data(
+        service.memory_proposal_review(
+            smith, proposal_id=proposal["proposal_id"], decision="approve"
+        )
+    )
+    success_data(
+        service.memory_proposal_apply(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="version-2",
+        )
+    )
+    success_data(
+        service.memory_asset_prune(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            keep=1,
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="prune-1",
+        )
+    )
+    for view in ("manifest", "file", "archive"):
+        assert (
+            service.memory_asset_get(
+                smith,
+                id_or_path=path,
+                asset_kind="document",
+                version="1.0.0",
+                view=view,
+                file_path="notes.txt" if view == "file" else None,
+            ).status
+            == "error"
+        )
+    assert (
+        success_data(
+            service.memory_asset_get(smith, id_or_path=path, asset_kind="document", view="manifest")
+        )["version"]
+        == "2.0.0"
+    )
+
+
+def test_asset_get_direct_mcp_supports_manifest_view(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+    accepted_read_pack: tuple[str, str, bytes, bytes],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    server = _server_for(service, service_config)
+    monkeypatch.setattr(server, "_context", lambda: smith)
+    result = asyncio.run(
+        server.tool_memory_asset_get(accepted_read_pack[0], "document", view="manifest")
+    )
+    assert result["status"] == "success"
+    assert len(result["data"]["manifest"]["entries"]) == 55
+    assert "zip_base64" not in result["data"]
+    schema = next(
+        tool for tool in server.discover_tools()["tools"] if tool["name"] == "memory_asset_get"
+    )["inputSchema"]
+    assert {"view", "offset", "limit", "file_path", "expected_sha256"} <= schema[
+        "properties"
+    ].keys()
+
+
+def test_execute_default_asset_chunk_fits_default_budget(
+    service: MemoryService, smith: ServiceContext, accepted_read_pack: tuple[str, str, bytes, bytes]
+) -> None:
+    path, _, raw, binary = accepted_read_pack
+    data = success_data(
+        service.memory_execute(
+            smith,
+            plan={
+                "operations": [
+                    {"op": "asset_get", "args": {"id_or_path": path, "asset_kind": "document"}}
+                ]
+            },
+        )
+    )
+    chunk = data["returns"]["result"]
+    assert 0 < chunk["returned_bytes"] < len(raw)
+    assert base64.b64decode(chunk["zip_base64"]) == raw[: chunk["returned_bytes"]]
+    assert chunk["next_offset"] == chunk["returned_bytes"]
+    first = success_data(
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            view="file",
+            file_path="data.bin",
+            limit=65536,
+        )
+    )
+    last = success_data(
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            version="1.0.0",
+            expected_sha256=first["zip_sha256"],
+            view="file",
+            file_path="data.bin",
+            offset=first["file"]["next_offset"],
+            limit=65536,
+        )
+    )
+    assert first["file"]["encoding"] == last["file"]["encoding"] == "base64"
+    assert (
+        base64.b64decode(first["file"]["content"]) + base64.b64decode(last["file"]["content"])
+        == binary
+    )
+    assert last["file"]["next_offset"] is None
+    assert last["file"]["returned_bytes"] == len(binary) - 65536
+
+
+def test_accepted_metadata_digest_mismatch_and_invalid_file_range(
+    service: MemoryService, smith: ServiceContext, accepted_read_pack: tuple[str, str, bytes, bytes]
+) -> None:
+    path, _, raw, _ = accepted_read_pack
+    data = success_data(
+        service.memory_asset_get(smith, id_or_path=path, asset_kind="document", view="manifest")
+    )
+    digest = data["zip_sha256"]
+    assert (
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            version="1.0.0",
+            expected_sha256=digest,
+            view="file",
+            file_path="notes.txt",
+            offset=6,
+        ).status
+        == "error"
+    )
+    assert (
+        service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            version="1.0.0",
+            expected_sha256=digest,
+            offset=len(raw) + 1,
+        ).status
+        == "error"
+    )
+    metadata_path = (
+        service._deps.repo_paths.current_dir
+        / ".assets"
+        / data["concept_id"]
+        / "document/1.0.0.json"
+    )
+    metadata = json.loads(metadata_path.read_text())
+    metadata["manifest"]["sha256"] = "0" * 64
+    metadata_path.write_text(json.dumps(metadata))
+    for view in ("archive", "manifest", "file"):
+        response = service.memory_asset_get(
+            smith,
+            id_or_path=path,
+            asset_kind="document",
+            view=view,
+            file_path="notes.txt" if view == "file" else None,
+        )
+        assert response.status == "error"
+        assert "digest" in response.message

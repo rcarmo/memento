@@ -954,7 +954,15 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         ).model_dump(mode="json")
 
     async def tool_memory_asset_get(
-        self, id_or_path: str, asset_kind: str, version: str | None = None
+        self,
+        id_or_path: str,
+        asset_kind: str,
+        version: str | None = None,
+        view: Literal["archive", "manifest", "file"] = "archive",
+        file_path: str | None = None,
+        offset: int = 0,
+        limit: int | None = None,
+        expected_sha256: str | None = None,
     ) -> dict[str, Any]:
         return (
             await self._memory_call(
@@ -963,6 +971,11 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                 id_or_path=id_or_path,
                 asset_kind=asset_kind,
                 version=version,
+                view=view,
+                file_path=file_path,
+                offset=offset,
+                limit=limit,
+                expected_sha256=expected_sha256,
             )
         ).model_dump(mode="json")
 
