@@ -9,7 +9,6 @@ import json
 import math
 import re
 import sqlite3
-import zipfile
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
@@ -39,6 +38,7 @@ from memento.answers import (
     normalize_question,
     scope_fingerprint,
 )
+from memento.asset_retrieval import retrieval_limits
 from memento.authz import (
     AuthorizationError,
     EffectivePolicy,
@@ -134,7 +134,11 @@ from memento.repository.git import (
     get_path_commit_timestamp,
 )
 from memento.repository.links import extract_structural_links, rewrite_links_for_rename
-from memento.repository.paths import PathSafetyError, validate_repository_write_path
+from memento.repository.paths import (
+    PathSafetyError,
+    validate_repository_read_path,
+    validate_repository_write_path,
+)
 from memento.repository.schema import ConceptDocument, ConceptFrontmatter, ConceptStatus
 from memento.repository.transactions import (
     TransactionConflictError,
@@ -458,7 +462,10 @@ class MemoryService:
                     "principal": policy.principal,
                     "visible_concepts": visible_concepts,
                     "proposal_backlog": len(visible_proposals),
-                    "limits": self._deps.config.limits.model_dump(mode="python"),
+                    "limits": {
+                        **self._deps.config.limits.model_dump(mode="python"),
+                        "assets": retrieval_limits(),
+                    },
                     "roles": policy.roles,
                     "features": {
                         "resources": True,
@@ -1599,40 +1606,23 @@ class MemoryService:
             }
             if file_path is None:
                 return self._success(payload)
-            manifest_entries = {
-                str(item["path"]): item
-                for item in asset.manifest.get("entries", [])
-                if isinstance(item, dict) and isinstance(item.get("path"), str)
-            }
-            manifest_entry = manifest_entries.get(file_path)
-            if manifest_entry is None:
-                raise NotFoundError("proposal asset file not found")
-            with zipfile.ZipFile(io.BytesIO(asset.blob_bytes)) as archive:
-                info = archive.getinfo(file_path)
-                with archive.open(info) as stream:
-                    if offset:
-                        stream.seek(offset)
-                    content = stream.read(limit + 1)
-            truncated = len(content) > limit
-            content = content[:limit]
-            payload["file"] = {
-                "path": file_path,
-                "offset": offset,
-                "returned_bytes": len(content),
-                "total_bytes": info.file_size,
-                "truncated": truncated or offset + len(content) < info.file_size,
-                "next_offset": (
-                    offset + len(content) if offset + len(content) < info.file_size else None
-                ),
-                "sha256": manifest_entry.get("sha256"),
-                "content_sha256": hashlib.sha256(content).hexdigest(),
-            }
-            try:
-                payload["file"]["encoding"] = "utf-8"
-                payload["file"]["content"] = content.decode("utf-8")
-            except UnicodeDecodeError:
-                payload["file"]["encoding"] = "base64"
-                payload["file"]["content"] = base64.b64encode(content).decode("ascii")
+            from memento.asset_retrieval import (
+                checked_manifest,
+                read_pack_file,
+                validate_archive_size,
+                verified_slice,
+            )
+
+            manifest = checked_manifest(asset.manifest, asset.sha256)
+            validate_archive_size(len(asset.blob_bytes))
+            stream = io.BytesIO(asset.blob_bytes)
+            verified_slice(
+                stream, total=len(asset.blob_bytes), digest=asset.sha256, offset=0, limit=1
+            )
+            stream.seek(0)
+            payload["file"] = read_pack_file(
+                stream, manifest, file_path=file_path, offset=offset, limit=limit
+            )
             return self._success(payload)
         except Exception as exc:
             return self._failure(exc)
@@ -1877,51 +1867,106 @@ class MemoryService:
         id_or_path: str,
         asset_kind: str,
         version: str | None = None,
+        view: Literal["archive", "manifest", "file"] = "archive",
+        file_path: str | None = None,
+        offset: int = 0,
+        limit: int | None = None,
+        expected_sha256: str | None = None,
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        from memento.asset_retrieval import (
+            DEFAULT_CHUNK_BYTES,
+            MAX_INLINE_ARCHIVE_BYTES,
+            AssetReadError,
+            check_expected_digest,
+            checked_manifest,
+            manifest_digest,
+            range_payload,
+            read_pack_file,
+            validate_archive_size,
+            validate_range,
+            verified_slice,
+        )
+        from memento.repository.transactions import _transaction_lock
+
         try:
             policy = self._policy(context)
             require_role(policy, "reader")
-            path = self._resolve_path(id_or_path, policy=policy, action="read")
-            authorize_path(policy, path, action="read")
-            entry = read_bundle_entry(self._deps.repo_paths.current_dir, path)
-            resolved = resolve_asset_version(
-                self._deps.repo_paths.current_dir,
-                entry.document.frontmatter.id,
-                asset_kind,
-                version,
-            )
-            metadata = load_asset_metadata(
-                self._deps.repo_paths.current_dir,
-                entry.document.frontmatter.id,
-                asset_kind,
-                resolved,
-            )
-            _metadata_path, zip_path = asset_version_paths(
-                entry.document.frontmatter.id, asset_kind, resolved
-            )
-            zip_bytes = (
-                self._deps.repo_paths.current_dir / zip_path.removeprefix("/")
-            ).read_bytes()
-            return self._success(
-                {
-                    "concept_id": entry.document.frontmatter.id,
+            if view not in {"archive", "manifest", "file"}:
+                raise ServiceError("asset view must be archive, manifest or file")
+            validate_range(offset, limit if limit is not None else DEFAULT_CHUNK_BYTES)
+            if view == "file" and file_path is None:
+                raise ServiceError("file view requires file_path")
+            if view != "file" and file_path is not None:
+                raise ServiceError("file_path requires file view")
+            if view == "manifest" and (offset != 0 or limit is not None):
+                raise ServiceError("manifest view does not accept ranges")
+            if offset > 0 and (version is None or expected_sha256 is None):
+                raise ServiceError("resuming requires explicit version and expected_sha256")
+            # Materialized checkout replacement and pruning cannot race this read.
+            with _transaction_lock(self._deps.repo_paths):
+                root = self._deps.repo_paths.current_dir
+                path = self._resolve_path(id_or_path, policy=policy, action="read")
+                authorize_path(policy, path, action="read")
+                entry = read_bundle_entry(root, path)
+                concept_id = entry.document.frontmatter.id
+                resolved = resolve_asset_version(root, concept_id, asset_kind, version)
+                metadata = load_asset_metadata(root, concept_id, asset_kind, resolved)
+                if (
+                    metadata.get("concept_id") != concept_id
+                    or metadata.get("asset_kind") != asset_kind
+                    or metadata.get("version") != resolved
+                ):
+                    raise AssetReadError("asset metadata identity mismatch")
+                zip_sha256 = str(metadata.get("zip_sha256", ""))
+                manifest = checked_manifest(metadata.get("manifest"), zip_sha256)
+                check_expected_digest(expected_sha256, zip_sha256)
+                _, zip_path = asset_version_paths(concept_id, asset_kind, resolved)
+                archive = validate_repository_read_path(root, zip_path).absolute_path
+                total = archive.stat().st_size
+                validate_archive_size(total)
+                payload: dict[str, Any] = {
+                    "concept_id": concept_id,
                     "concept_path": path,
                     "asset_kind": asset_kind,
                     "version": resolved,
-                    "versions": list(
-                        reversed(
-                            list_asset_versions(
-                                self._deps.repo_paths.current_dir,
-                                entry.document.frontmatter.id,
-                                asset_kind,
-                            )
-                        )
-                    ),
-                    "zip_sha256": metadata["zip_sha256"],
-                    "manifest": metadata["manifest"],
-                    "zip_base64": base64.b64encode(zip_bytes).decode("ascii"),
+                    "view": view,
+                    "media_type": "application/zip",
+                    "versions": list(reversed(list_asset_versions(root, concept_id, asset_kind))),
+                    "zip_sha256": zip_sha256,
+                    "zip_bytes": total,
+                    "manifest_sha256": manifest_digest(manifest),
+                    "file_count": manifest.file_count,
+                    "total_uncompressed_bytes": manifest.total_uncompressed_bytes,
                 }
-            )
+                if view == "manifest":
+                    payload["manifest"] = manifest.model_dump(mode="json")
+                    return self._success(payload)
+                with archive.open("rb") as source:
+                    if view == "file":
+                        # Check the container before extracting a declared member.
+                        verified_slice(source, total=total, digest=zip_sha256, offset=0, limit=1)
+                        source.seek(0)
+                        payload["file"] = read_pack_file(
+                            source,
+                            manifest,
+                            file_path=str(file_path),
+                            offset=offset,
+                            limit=limit if limit is not None else DEFAULT_CHUNK_BYTES,
+                        )
+                    else:
+                        inline = limit is None and offset == 0 and total <= MAX_INLINE_ARCHIVE_BYTES
+                        size = (
+                            total if inline else limit if limit is not None else DEFAULT_CHUNK_BYTES
+                        )
+                        content = verified_slice(
+                            source, total=total, digest=zip_sha256, offset=offset, limit=size
+                        )
+                        payload.update(range_payload(content, offset=offset, total=total))
+                        payload["zip_base64"] = base64.b64encode(content).decode("ascii")
+                        payload["encoding"] = "base64"
+                        if inline:
+                            payload["manifest"] = manifest.model_dump(mode="json")
+                return self._success(payload)
         except FileNotFoundError as exc:
             return self._failure(NotFoundError(str(exc)))
         except Exception as exc:

@@ -430,10 +430,10 @@ Clients that already manage bearer authentication may alternatively use `POST /a
 | `memory_asset_stage_begin` | `proposer` | issue a one-time raw ZIP upload ticket and upload instructions |
 | `memory_asset_stage_status` | `proposer` | reconcile ticket/upload state and retrieve `staged_asset_id` |
 | `asset_metadata` through `memory_execute` | `reader` | inspect bounded generic sidecar, digest, size, timestamp and parity metadata without ZIP retrieval |
-| `memory_asset_get` | `reader` | retrieve latest or explicit version, manifest and ZIP as base64 |
+| `memory_asset_get` (also `asset_get` through execute) | `reader` | latest/explicit accepted version: manifest-only, bounded file or base64 ZIP range |
 | `memory_asset_prune` | `curator` | remove retained versions beyond the keep count |
 
-Skills are ordinary concepts tagged `skill`; their canonical body must byte-match ZIP-root `SKILL.md` as specified above. Search and read use `memory_search` and `memory_read`. Omitted asset versions resolve to the highest accepted stable version. The latest five are retained by default; active proposal references are protected. Recall never extracts files server-side.
+Skills are ordinary concepts tagged `skill`; their canonical body must byte-match ZIP-root `SKILL.md` as specified above. Search and read use `memory_search` and `memory_read`. Omitted asset versions resolve to the highest accepted stable version. The latest five are retained by default; active proposal references are protected. Recall never extracts files to server disk. `view="manifest"` returns metadata without opening ZIP contents; `view="file"` requires `file_path` and streams a bounded manifest-listed member; `view="archive"` supports `offset`/`limit`. Small archives up to 16 KiB retain the full ZIP/manifest default; larger defaults are chunked. Resume using `version`, `expected_sha256` and `next_offset`. All limits are discoverable under `memory_status.limits.assets`. See [accepted asset retrieval](accepted-assets.md) for encoding, integrity checks, compatibility and execute output budgets.
 
 The Streamable HTTP request limit defaults to 72 MiB so the compatibility base64 path can carry a 50 MiB decoded ZIP after JSON overhead. Raw binary staging avoids base64 expansion but retains the same decoded ZIP and archive-safety limits. Non-`initialize` requests require a supported `MCP-Protocol-Version` header. A missing or unsupported value returns `400 application/json` with an actionable error plus the preferred and supported versions.
 

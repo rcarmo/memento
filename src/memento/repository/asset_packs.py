@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import json
 import re
+import stat
 from datetime import UTC, datetime
 from pathlib import Path
 
+from memento.asset_retrieval import MAX_METADATA_BYTES
+from memento.repository.paths import validate_repository_read_path
 from memento.skill_packs import SkillPackManifest, SkillPackValidationError, parse_stable_semver
 
 ASSET_KIND_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -69,13 +72,32 @@ def write_asset_version(
     return tuple(sorted((metadata_path, zip_path)))
 
 
+def _asset_directory(root: Path, concept_id: str, asset_kind: str | None = None) -> Path:
+    asset_version_paths(concept_id, asset_kind or "asset", "0.0.0")
+    current = root
+    for part in (".assets", concept_id, *((asset_kind,) if asset_kind is not None else ())):
+        current = current / part
+        try:
+            mode = current.lstat().st_mode
+        except FileNotFoundError:
+            continue
+        if not stat.S_ISDIR(mode):
+            raise SkillPackValidationError("asset directory must not be a symlink or special file")
+    return current
+
+
 def list_asset_kinds(root: Path, concept_id: str) -> tuple[str, ...]:
     if not re.fullmatch(r"[0-9a-fA-F-]{8,64}", concept_id):
         return ()
-    directory = root / ".assets" / concept_id
+    directory = _asset_directory(root, concept_id)
     if not directory.exists():
         return ()
-    kinds = [path.name for path in directory.iterdir() if path.is_dir()]
+    kinds = []
+    for path in directory.iterdir():
+        if path.is_symlink():
+            raise SkillPackValidationError("asset kind directory must not be a symlink")
+        if path.is_dir():
+            kinds.append(path.name)
     for asset_kind in kinds:
         validate_asset_kind(asset_kind)
     return tuple(sorted(kinds))
@@ -83,7 +105,7 @@ def list_asset_kinds(root: Path, concept_id: str) -> tuple[str, ...]:
 
 def list_asset_versions(root: Path, concept_id: str, asset_kind: str) -> tuple[str, ...]:
     validate_asset_kind(asset_kind)
-    directory = root / ".assets" / concept_id / asset_kind
+    directory = _asset_directory(root, concept_id, asset_kind)
     if not directory.exists():
         return ()
     versions = [path.stem for path in directory.glob("*.json")]
@@ -108,10 +130,16 @@ def load_asset_metadata(
     root: Path, concept_id: str, asset_kind: str, version: str
 ) -> dict[str, object]:
     metadata_path, _zip_path = asset_version_paths(concept_id, asset_kind, version)
+    _asset_directory(root, concept_id, asset_kind)
     metadata_file = root / metadata_path.removeprefix("/")
     if metadata_file.is_symlink() or not metadata_file.is_file():
         raise SkillPackValidationError("asset metadata must be a regular file")
-    value = json.loads(metadata_file.read_text())
+    validate_repository_read_path(root, metadata_path)
+    with metadata_file.open("rb") as source:
+        raw = source.read(MAX_METADATA_BYTES + 1)
+    if len(raw) > MAX_METADATA_BYTES:
+        raise SkillPackValidationError("asset metadata exceeds size limit")
+    value = json.loads(raw)
     if not isinstance(value, dict) or value.get("kind") != "asset_pack_version":
         raise SkillPackValidationError("invalid asset metadata")
     return value

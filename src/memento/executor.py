@@ -358,10 +358,14 @@ class AssetStageStatusArgs(BaseModel):
 
 class AssetGetArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
-
     id_or_path: str
     asset_kind: str
     version: str | None = None
+    view: Literal["archive", "manifest", "file"] = "archive"
+    file_path: str | None = None
+    offset: int = Field(default=0, ge=0)
+    limit: int | None = Field(default=None, ge=1, le=262_144)
+    expected_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
 
 
 class AssetPruneArgs(BaseModel):
@@ -508,6 +512,11 @@ class ProposalListOperation(ExecuteOperationBase):
     args: ProposalListArgs = Field(default_factory=ProposalListArgs)
 
 
+class AssetGetOperation(ExecuteOperationBase):
+    op: Literal["asset_get"]
+    args: AssetGetArgs
+
+
 class ProposalAssetGetOperation(ExecuteOperationBase):
     op: Literal["proposal_asset_get"]
     args: ProposalAssetGetArgs
@@ -576,6 +585,7 @@ ExecuteOperation = (
     | ProposalGetOperation
     | ProposalListOperation
     | ProposalAssetGetOperation
+    | AssetGetOperation
     | ProposalReviseOperation
     | OperationGetOperation
     | ProposalReviewOperation
@@ -657,7 +667,7 @@ class MemoryExecutor:
                         raise ValueError("plan exceeds configured max_intermediates")
                 args = _resolve_references(item.args.model_dump(mode="python"), saved)
                 envelope = self._dispatch(context, item.op, args)
-                entry = {
+                entry: dict[str, Any] = {
                     "index": index,
                     "op": item.op,
                     "save_as": item.save_as,
@@ -667,7 +677,11 @@ class MemoryExecutor:
                     "operation_id": envelope.operation_id,
                 }
                 if envelope.status == "success":
-                    payload = _bound_value(envelope.data, self._limits.max_records)
+                    payload = (
+                        envelope.data
+                        if item.op in {"asset_get", "proposal_asset_get"}
+                        else _bound_value(envelope.data, self._limits.max_records)
+                    )
                     entry["data"] = payload
                     last_success = payload
                     if item.save_as is not None:
@@ -752,6 +766,14 @@ class MemoryExecutor:
         self, context: Any, op_name: str, args: dict[str, Any]
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         spec = OPERATION_SPEC_BY_OP[op_name]
+        if (
+            op_name == "asset_get"
+            and args.get("view", "archive") != "manifest"
+            and args.get("limit") is None
+        ):
+            # Leave room for base64 expansion, the trace and return projection.
+            # Explicit limits still obey the normal output-byte enforcement.
+            args = {**args, "limit": min(65_536, max(1, self._limits.max_output_bytes // 8))}
         method = getattr(self._service, spec.method_name)
         return cast(SuccessEnvelope[dict[str, Any]] | ErrorEnvelope, method(context, **args))
 
@@ -770,17 +792,25 @@ class MemoryExecutor:
             if item.ref.removeprefix("$").split(".", 1)[0] in failed_save_as:
                 continue
             value = _resolve_reference(item.ref, saved)
+            asset_ref = any(
+                operation.op in {"asset_get", "proposal_asset_get"}
+                and operation.save_as == item.ref.removeprefix("$").split(".", 1)[0]
+                for operation in plan.operations
+            )
             if item.fields:
                 if not isinstance(value, list):
                     value = [value]
                 extracted = []
-                for row in value[: item.limit or self._limits.max_records]:
+                projection_limit = item.limit or (
+                    len(value) if asset_ref else self._limits.max_records
+                )
+                for row in value[:projection_limit]:
                     extracted.append({field: _extract_field(row, field) for field in item.fields})
                 value = extracted
             elif item.limit is not None and isinstance(value, list):
                 value = value[: item.limit]
             name = item.name or item.ref.removeprefix("$").replace(".", "_")
-            projected[name] = _bound_value(value, self._limits.max_records)
+            projected[name] = value if asset_ref else _bound_value(value, self._limits.max_records)
         return projected
 
     def _time_exceeded(self, started: float) -> bool:
