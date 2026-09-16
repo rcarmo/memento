@@ -4,7 +4,7 @@ import json
 import re
 from datetime import UTC, datetime
 from time import monotonic
-from typing import Any, Literal, cast
+from typing import Any, Literal, cast, get_args
 
 from pydantic import (
     BaseModel,
@@ -599,6 +599,67 @@ ExecuteOperation = (
 
 EXECUTE_OPERATION_ADAPTER: TypeAdapter[ExecuteOperation] = TypeAdapter(ExecuteOperation)
 
+# Dispatch one operation model, never validate every branch of the operation union.
+_OPERATION_MODELS: dict[str, type[BaseModel]] = {
+    name: model
+    for model in get_args(ExecuteOperation)
+    for name in get_args(model.model_fields["op"].annotation)
+}
+_REFERENCE_PATTERN = r"^\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$"
+_REFERENCE_RE = re.compile(_REFERENCE_PATTERN)
+
+
+def _validation_message(exc: ValidationError, *, label: str) -> str:
+    errors = exc.errors(include_input=False, include_context=False, include_url=False)
+    details = []
+    for error in errors[:3]:
+        path = ".".join(str(item) for item in error["loc"])[:100]
+        message = " ".join(error["msg"].split())[:120]
+        details.append(f"{path}: {message}")
+    suffix = f" (+{len(errors) - 3} more)" if len(errors) > 3 else ""
+    return (f"{label}: " + "; ".join(details) + suffix)[:512]
+
+
+class _PlannedOperation(ExecuteOperationBase):
+    op: str
+    args: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("op")
+    @classmethod
+    def known_operation(cls, value: str) -> str:
+        if value not in _OPERATION_MODELS:
+            raise ValueError("unknown execute operation")
+        return value
+
+
+def _contains_references(value: Any) -> bool:
+    if isinstance(value, str):
+        if not value.startswith("$"):
+            return False
+        if len(value) > 256 or _REFERENCE_RE.fullmatch(value) is None:
+            raise ValueError("invalid saved reference (use $name.field or $name.0.field)")
+        return True
+    if isinstance(value, (list, tuple)):
+        return any([_contains_references(item) for item in value])
+    if isinstance(value, dict):
+        return any([_contains_references(item) for item in value.values()])
+    return False
+
+
+def _validated_operation(
+    item: _PlannedOperation, *, args: dict[str, Any], strict: bool = False
+) -> dict[str, Any]:
+    model = _OPERATION_MODELS[item.op]
+    raw = {"op": item.op, "args": args, "save_as": item.save_as}
+    # Strict JSON validation accepts JSON arrays/dates for typed tuples/datetimes,
+    # but cannot coerce a referenced string/boolean into a numeric value.
+    checked = (
+        model.model_validate_json(json.dumps(raw), strict=True)
+        if strict
+        else model.model_validate(raw)
+    )
+    return cast(dict[str, Any], checked.model_dump(mode="python")["args"])
+
 
 class ExecuteReturnProjection(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -617,6 +678,14 @@ class ExecutePlan(BaseModel):
     returns: tuple[ExecuteReturnProjection, ...] = ()
 
 
+class _InputPlan(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    operations: tuple[_PlannedOperation, ...]
+    stop_on_error: bool = True
+    returns: tuple[ExecuteReturnProjection, ...] = ()
+
+
 class ExecuteLimits(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -628,7 +697,49 @@ class ExecuteLimits(BaseModel):
 
 
 def execute_plan_schema() -> dict[str, Any]:
-    return ExecutePlan.model_json_schema()
+    schema = ExecutePlan.model_json_schema()
+    definitions = schema.get("$defs", {})
+    visited: set[str] = set()
+    reference = {
+        "type": "string",
+        "pattern": _REFERENCE_PATTERN,
+        "maxLength": 256,
+        "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+    }
+
+    def decorate(value: dict[str, Any]) -> dict[str, Any]:
+        if "$ref" in value:
+            name = value["$ref"].rsplit("/", 1)[-1]
+            if name in definitions and name not in visited:
+                visited.add(name)
+                visit(definitions[name])
+        if isinstance(value.get("items"), dict):
+            value["items"] = decorate(value["items"])
+        for alternatives in ("anyOf", "oneOf", "allOf"):
+            for branch in value.get(alternatives, []):
+                visit(branch)
+        return {"anyOf": [value, reference]}
+
+    def visit(value: dict[str, Any]) -> None:
+        if "$ref" in value:
+            name = value["$ref"].rsplit("/", 1)[-1]
+            if name in definitions and name not in visited:
+                visited.add(name)
+                visit(definitions[name])
+        for name, prop in value.get("properties", {}).items():
+            value["properties"][name] = decorate(prop)
+        if isinstance(value.get("items"), dict):
+            value["items"] = decorate(value["items"])
+        for alternatives in ("anyOf", "oneOf", "allOf"):
+            for branch in value.get(alternatives, []):
+                visit(branch)
+
+    for model in _OPERATION_MODELS.values():
+        name = cast(type[BaseModel], model.model_fields["args"].annotation).__name__
+        if name not in visited:
+            visited.add(name)
+            visit(definitions[name])
+    return schema
 
 
 class MemoryExecutor:
@@ -643,7 +754,7 @@ class MemoryExecutor:
         trace: list[dict[str, Any]] = []
         revisions: list[dict[str, Any]] = []
         try:
-            parsed = ExecutePlan.model_validate(plan)
+            parsed = _InputPlan.model_validate(plan)
             if len(parsed.operations) > self._limits.max_operations:
                 raise ValueError("plan exceeds configured max_operations")
             commit_ops = sum(
@@ -651,6 +762,29 @@ class MemoryExecutor:
             )
             if commit_ops > 1:
                 raise ValueError("plan may contain at most one commit-capable operation")
+            # Preflight static operations and envelope errors before any mutation.
+            for index, item in enumerate(parsed.operations, start=1):
+                try:
+                    if not _contains_references(item.args):
+                        _validated_operation(item, args=item.args)
+                    else:
+                        fields = cast(
+                            type[BaseModel],
+                            _OPERATION_MODELS[item.op].model_fields["args"].annotation,
+                        ).model_fields
+                        if set(item.args) - fields.keys():
+                            raise ValueError("unknown argument field")
+                        if any(
+                            field.is_required() and name not in item.args
+                            for name, field in fields.items()
+                        ):
+                            raise ValueError("missing required argument field")
+                except ValidationError as exc:
+                    raise ValueError(
+                        _validation_message(exc, label=f"operation {index} ({item.op})")
+                    ) from exc
+                except ValueError as exc:
+                    raise ValueError(f"operation {index} ({item.op}): {str(exc)[:300]}") from exc
             started = monotonic()
             saved: dict[str, Any] = {}
             last_success: dict[str, Any] | None = None
@@ -665,7 +799,16 @@ class MemoryExecutor:
                         raise ValueError(f"invalid save_as identifier: {item.save_as}")
                     if len(saved) >= self._limits.max_intermediates and item.save_as not in saved:
                         raise ValueError("plan exceeds configured max_intermediates")
-                args = _resolve_references(item.args.model_dump(mode="python"), saved)
+                try:
+                    referenced = _contains_references(item.args)
+                    resolved = _resolve_references(item.args, saved)
+                    args = _validated_operation(item, args=resolved, strict=referenced)
+                except ValidationError as exc:
+                    raise ValueError(
+                        _validation_message(exc, label=f"operation {index} ({item.op})")
+                    ) from exc
+                except (ValueError, IndexError, TypeError) as exc:
+                    raise ValueError(f"operation {index} ({item.op}): {str(exc)[:300]}") from exc
                 envelope = self._dispatch(context, item.op, args)
                 entry: dict[str, Any] = {
                     "index": index,
@@ -743,7 +886,7 @@ class MemoryExecutor:
                 self._service._success(payload, warnings=tuple(warnings)),
             )
         except ValidationError as exc:
-            return error_envelope("validation_error", str(exc))
+            return error_envelope("validation_error", _validation_message(exc, label="plan"))
         except (ValueError, IndexError, TypeError) as exc:
             if commit_succeeded:
                 payload = {
@@ -779,7 +922,7 @@ class MemoryExecutor:
 
     def _project_returns(
         self,
-        plan: ExecutePlan,
+        plan: _InputPlan,
         saved: dict[str, Any],
         last_success: dict[str, Any] | None,
         *,

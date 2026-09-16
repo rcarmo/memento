@@ -51,6 +51,8 @@ Offsets and lengths count bytes, not characters or base64 symbols. Negative offs
 
 `file_path` is required for file view and rejected for other views. Manifest view rejects ranges. `expected_sha256` is a lowercase 64-character hexadecimal ZIP digest, not a file or manifest digest.
 
+Inside `memory_execute`, argument placeholders can also reference typed saved values: `offset: "$first.file.next_offset"`, `version: "$first.version"` and `expected_sha256: "$first.zip_sha256"`. The executor resolves the saved value and validates the operation's original type and bounds before dispatch. A null EOF offset is an error, not a request to start again. References see only earlier successful results in the same plan; direct tool schemas still require concrete typed arguments.
+
 ## Bounds and integrity
 
 `memory_status.limits.assets` advertises the current upload/archive, total uncompressed, per-file, file-count, default chunk, maximum chunk, inline-archive and metadata limits. Current limits are 50 MiB ZIP/uncompressed, 16 MiB per file, 512 files, 64 KiB default chunks, 256 KiB maximum chunks, 16 KiB inline archives and 2 MiB metadata.
