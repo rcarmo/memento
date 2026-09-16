@@ -224,7 +224,7 @@ An `UNKNOWN` router result stops before search or mutation. A model-produced pro
 
 ## Proposal lifecycle
 
-[`proposals.md`](proposals.md#choose-a-review-decision) contains the proposal state diagram and client sequences. Creation starts at `submitted`. A changes-requested review sets `draft`; corrected content requires a new proposal ID. Curators can copy selected clean changes from a stale source through `proposal_revise`.
+[`proposals.md`](proposals.md#choose-a-review-decision) contains the proposal state diagram and client sequences. Creation starts at `submitted`. A changes-requested review sets `draft`; corrected content requires a new proposal ID. Repository advancement keeps old proposals visible as `needs_rebase` or `conflicted`. The original proposer or a scoped curator can rebase a clean proposal in place through `proposal_rebase`, retaining assets and requiring review again. Curators can also copy selected clean changes into a new proposal through `proposal_revise`.
 
 Model-assisted submission uses the same review/apply rules. Approval and apply are separate operations, with namespace checks at both boundaries.
 

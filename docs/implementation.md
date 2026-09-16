@@ -206,10 +206,13 @@ Proposal statuses:
 * `approved`
 * `rejected`
 * `applied`
-* `stale`
+* `needs_rebase`
+* `conflicted`
 * `expired`
 
-`propose` creates a new record directly in `submitted`. `request_changes` sets `draft` and `reject` sets `rejected`; neither changes the stored patch. There is no draft edit/resubmit API. Corrected content is filed through a new `propose` call. A curator can reconsider an unchanged patch, except when it is applied or expired. Execute-only `proposal_revise` copies selected clean changes from a stale proposal into a new submitted record, with source linkage and selected assets; it rejects archival changes. See [proposal review and refiling](proposals.md) for the workflow diagrams.
+Legacy `stale` rows are classified into needs-rebase/conflicted on refresh.
+
+`propose` creates a new record directly in `submitted`. `request_changes` sets `draft` and `reject` sets `rejected`; neither changes the stored patch. There is no draft edit/resubmit API. Corrected content is filed through a new `propose` call. A curator can reconsider an unchanged patch, except when it is applied or expired. Execute-only `proposal_rebase` lets the original proposer or a scoped curator move a clean proposal to the current base in place, retaining ID, author and assets. It clears approval, preserves reviews in append-only `proposal_events`, and journals the control change atomically under a durable key. Execute-only `proposal_revise` copies selected clean changes from needs-rebase/conflicted proposals into a new submitted record; it rejects archival changes. Unresolved records stay in backlog. Review, rebase and apply use the repository writer lock across worker connections, and approval/apply recheck conflicts inside the lock. See [proposal review and refiling](proposals.md) for the workflow diagrams.
 
 Default proposal TTL remains 30 days.
 
@@ -417,7 +420,7 @@ Proposal, assets and write:
 
 Every tool returns the standard envelope with `status`, `data`, `warnings`, `next_tools`, `repo_revision`, `index_revision`, `index_stale` and `operation_id`.
 
-Proposal lists contain cursor-paginated summaries rather than bodies or manifests. `memory_proposal_get` adds a bounded summary view with current-revision conflict checks and concept-body digest matches against every attached asset entry. Curators can copy a conflict-free, body/asset-complete subset from a stale proposal into a fresh proposal. `memory_proposal_asset_get` returns staged metadata or one bounded manifest-listed file, while `memory_operation_get` reconciles a timed-out commit by operation ID or the caller's idempotency key.
+Proposal lists contain cursor-paginated summaries rather than bodies or manifests. `memory_proposal_get` adds a bounded summary view with current-revision conflict checks and concept-body digest matches against every attached asset entry. Curators can copy a conflict-free, body/asset-complete subset from a needs-rebase or conflicted proposal into a fresh proposal. Original proposers can rebase an entirely clean proposal in place. `memory_proposal_asset_get` returns staged metadata or one bounded manifest-listed file, while `memory_operation_get` reconciles a timed-out commit by operation ID or the caller's idempotency key.
 
 `memory_audit` combines repository checks with graph diagnostics from the exact current index revision. It only includes paths the caller can both read and write, honours protected namespaces, caps each page at 200 diagnostics and carries revision and filter state in its cursor. Repair guidance is returned as a bounded proposal-first sequence; the audit itself does not mutate repository or control state.
 

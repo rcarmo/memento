@@ -326,12 +326,21 @@ class OperationGetArgs(BaseModel):
     operation_id: str | None = None
 
 
+class ProposalRebaseArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    proposal_id: str
+    expected_revision: str
+    idempotency_key: str = Field(min_length=1, max_length=256)
+
+
 class ProposalReviewArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     proposal_id: str
     decision: str
     comment: str | None = None
+    idempotency_key: str | None = Field(default=None, min_length=1, max_length=256)
 
 
 class ProposalApplyArgs(BaseModel):
@@ -522,6 +531,11 @@ class ProposalAssetGetOperation(ExecuteOperationBase):
     args: ProposalAssetGetArgs
 
 
+class ProposalRebaseOperation(ExecuteOperationBase):
+    op: Literal["proposal_rebase"]
+    args: ProposalRebaseArgs
+
+
 class ProposalReviseOperation(ExecuteOperationBase):
     op: Literal["proposal_revise"]
     args: ProposalReviseArgs
@@ -586,6 +600,7 @@ ExecuteOperation = (
     | ProposalListOperation
     | ProposalAssetGetOperation
     | AssetGetOperation
+    | ProposalRebaseOperation
     | ProposalReviseOperation
     | OperationGetOperation
     | ProposalReviewOperation
@@ -838,7 +853,10 @@ class MemoryExecutor:
                             "operation_id": envelope.operation_id,
                         }
                     )
-                    if OPERATION_SPEC_BY_OP[item.op].commit_capable:
+                    if OPERATION_SPEC_BY_OP[item.op].commit_capable or item.op in {
+                        "proposal_rebase",
+                        "proposal_review",
+                    }:
                         commit_succeeded = True
                 else:
                     entry["error_class"] = envelope.error_class

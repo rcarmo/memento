@@ -1224,7 +1224,7 @@ def test_proposal_lifecycle_self_approval_stale_apply_and_idempotency(
     stale_id = success_data(stale_proposal)["proposal"]["proposal_id"]
     stale_status = service.memory_proposal_get(flint, proposal_id=stale_id)
     assert stale_status.status == "success"
-    assert success_data(stale_status)["proposal"]["status"] == "stale"
+    assert success_data(stale_status)["proposal"]["status"] == "conflicted"
 
     mismatched = service.memory_create(
         smith,
@@ -1695,12 +1695,17 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "propose",
         "propose_freeform",
         "propose_update",
+        "proposal_list",
+        "proposal_get",
+        "proposal_rebase",
+        "operation_get",
     )
     assert help_payload["mcp"]["execute_only_operations"]["curate"] == (
         "proposal_list",
         "proposal_get",
         "proposal_asset_get",
         "proposal_revise",
+        "proposal_rebase",
         "operation_get",
         "proposal_review",
         "proposal_apply",
@@ -1737,6 +1742,10 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "propose",
         "propose_freeform",
         "propose_update",
+        "proposal_list",
+        "proposal_get",
+        "proposal_rebase",
+        "operation_get",
     ]
     curate_workflow = json.loads(asyncio.run(server.resource_template_workflow("curate"))["text"])
     assert [item["operation"] for item in curate_workflow["execute_only_operations"]] == [
@@ -1744,6 +1753,7 @@ def test_tool_discovery_surfaces_and_catalog_resources(
         "proposal_get",
         "proposal_asset_get",
         "proposal_revise",
+        "proposal_rebase",
         "operation_get",
         "proposal_review",
         "proposal_apply",
@@ -2327,7 +2337,7 @@ def test_stale_proposal_conflicts_and_safe_subset_revision(
     summary = success_data(
         service.memory_proposal_get(smith, proposal_id=source["proposal_id"], view="summary")
     )["proposal"]
-    assert summary["status"] == "stale"
+    assert summary["status"] == "conflicted"
     assert summary["current_revision"] == current_revision
     assert summary["conflicts"] == [
         {"index": 0, "status": "conflict", "conflicting_paths": ("/projects/piclaw.md",)},
@@ -5087,3 +5097,779 @@ def test_typed_references_pass_direct_mcp_plan_boundary(
     assert result["data"]["trace"][1]["status"] == "success"
     assert result["data"]["trace"][1]["data"]["file"]["offset"] == 2
     assert result["data"]["trace"][1]["data"]["file"]["next_offset"] is None
+
+
+def _continuity_proposal(
+    service: MemoryService, author: ServiceContext, *, path: str = "/projects/piclaw.md"
+) -> dict[str, Any]:
+    proposal = success_data(
+        service.memory_propose(
+            author,
+            intent="Continuity regression",
+            base_revision=get_main_revision(service._deps.repo_paths),
+            changes=[{"kind": "patch", "path": path, "title": "Proposed title"}],
+        )
+    )["proposal"]
+    assert isinstance(proposal, dict)
+    return proposal
+
+
+def _advance_unrelated(
+    service: MemoryService, curator: ServiceContext, *, key: str = "advance"
+) -> str:
+    result = service.memory_create(
+        curator,
+        path=f"/projects/{key}.md",
+        concept_type="project",
+        title=key,
+        body="Unrelated",
+        expected_revision=get_main_revision(service._deps.repo_paths),
+        idempotency_key=key,
+    )
+    assert result.status == "success"
+    return result.repo_revision
+
+
+@pytest.mark.parametrize(
+    "decision,status,backlog", [("reject", "rejected", 0), ("request_changes", "draft", 1)]
+)
+def test_unrelated_commit_keeps_proposal_reviewable_and_audited(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+    decision: str,
+    status: str,
+    backlog: int,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    revision = _advance_unrelated(service, smith)
+    state = success_data(service.memory_status(smith))
+    assert state["proposal_backlog"] == 1
+    queue = success_data(service.memory_proposal_list(smith, status="unresolved"))["proposals"]
+    assert [p["proposal_id"] for p in queue] == [proposal["proposal_id"]]
+    assert queue[0]["status"] == "needs_rebase"
+    view = success_data(service.memory_proposal_get(flint, proposal_id=proposal["proposal_id"]))[
+        "proposal"
+    ]
+    assert view["conflicts"][0]["status"] == "clean"
+    assert view["history"][0]["action"] == "repository_advanced"
+    assert view["history"][0]["repo_revision"] == revision
+    approval = service.memory_proposal_review(
+        smith, proposal_id=proposal["proposal_id"], decision="approve"
+    )
+    assert approval.status == "error" and approval.error_class == "needs_rebase"
+    review = service.memory_proposal_review(
+        smith,
+        proposal_id=proposal["proposal_id"],
+        decision=decision,
+        comment="Keep the author informed",
+        idempotency_key="review-continuity",
+    )
+    assert success_data(review)["proposal"]["status"] == status
+    assert success_data(review)["proposal"]["review_comment"] == "Keep the author informed"
+    assert success_data(service.memory_status(smith))["proposal_backlog"] == backlog
+    replay = service.memory_proposal_review(
+        smith,
+        proposal_id=proposal["proposal_id"],
+        decision=decision,
+        comment="Keep the author informed",
+        idempotency_key="review-continuity",
+    )
+    assert success_data(replay)["replayed"] is True
+    assert replay.operation_id == review.operation_id
+    assert (
+        success_data(service.memory_operation_get(smith, idempotency_key="review-continuity"))[
+            "final_state"
+        ]
+        == "committed"
+    )
+
+
+def test_original_proposer_rebase_preserves_identity_and_reconciles(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    success_data(
+        service.memory_proposal_review(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            decision="approve",
+            comment="Initial approval",
+        )
+    )
+    revision = _advance_unrelated(service, smith)
+    result = service.memory_proposal_rebase
+    rebased = result(
+        flint,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="rebase-own",
+    )
+    assert success_data(rebased)["status"] == "submitted"
+    view = success_data(service.memory_proposal_get(flint, proposal_id=proposal["proposal_id"]))[
+        "proposal"
+    ]
+    for key in ("proposal_id", "author_principal", "created_at", "expires_at", "changes"):
+        assert view[key] == proposal[key]
+    assert view["base_revision"] == revision and view["reviewed_by"] is None
+    assert {e["action"] for e in view["history"]} == {"review", "repository_advanced", "rebase"}
+    assert "Initial approval" in view["history"][0]["details_json"]
+    replay = result(
+        flint,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="rebase-own",
+    )
+    assert success_data(replay)["replayed"] and replay.operation_id == rebased.operation_id
+    assert (
+        success_data(service.memory_operation_get(flint, idempotency_key="rebase-own"))[
+            "final_state"
+        ]
+        == "committed"
+    )
+    conflict = result(
+        flint,
+        proposal_id=proposal["proposal_id"],
+        expected_revision="different",
+        idempotency_key="rebase-own",
+    )
+    assert conflict.status == "error" and conflict.error_class == "idempotency_conflict"
+    forbidden = service.memory_proposal_apply(
+        flint,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="not-curator",
+    )
+    assert forbidden.status == "error" and forbidden.error_class == "forbidden"
+    success_data(
+        service.memory_proposal_review(
+            smith, proposal_id=proposal["proposal_id"], decision="approve"
+        )
+    )
+    applied = service.memory_proposal_apply(
+        smith,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="apply-rebased",
+    )
+    assert success_data(applied)["proposal"]["status"] == "applied"
+    denied = service.memory_operation_get(flint, operation_id=applied.operation_id)
+    assert denied.status == "error" and denied.error_class == "forbidden"
+
+
+def test_conflicted_deleted_target_remains_reviewable(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    success_data(
+        service.memory_trash(
+            smith,
+            path="/projects/piclaw.md",
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="delete-target",
+        )
+    )
+    listed = success_data(service.memory_proposal_list(smith, status="conflicted"))["proposals"]
+    assert listed[0]["proposal_id"] == proposal["proposal_id"]
+    assert success_data(service.memory_status(smith))["proposal_backlog"] == 1
+    failed = service.memory_proposal_rebase(
+        flint,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=get_main_revision(service._deps.repo_paths),
+        idempotency_key="conflict-rebase",
+    )
+    assert failed.status == "error" and failed.error_class == "conflict"
+    review = service.memory_proposal_review(
+        smith,
+        proposal_id=proposal["proposal_id"],
+        decision="reject",
+        comment="Target retired",
+        idempotency_key="reject-conflict",
+    )
+    assert success_data(review)["proposal"]["review_comment"] == "Target retired"
+
+
+def test_rebase_keeps_asset_bytes_without_upload(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    _advance_unrelated(service, smith, key="asset-target")
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as pack:
+        pack.writestr("readme.txt", "unchanged asset")
+    archive = base64.b64encode(buffer.getvalue()).decode()
+    proposal = success_data(
+        service.memory_propose(
+            flint,
+            intent="Asset continuity",
+            base_revision=get_main_revision(service._deps.repo_paths),
+            changes=[
+                {
+                    "kind": "attach_asset_pack",
+                    "path": "/projects/asset-target.md",
+                    "asset_kind": "document",
+                    "version": "1.0.0",
+                    "zip_base64": archive,
+                }
+            ],
+        )
+    )["proposal"]
+    before = tuple(
+        service._deps.control_connection.execute(
+            "SELECT asset_id,sha256,blob_bytes,manifest_json,created_at FROM proposal_assets WHERE proposal_id=?",
+            (proposal["proposal_id"],),
+        ).fetchone()
+    )
+    revision = _advance_unrelated(service, smith)
+    success_data(
+        service.memory_proposal_rebase(
+            flint,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="asset-rebase",
+        )
+    )
+    after = tuple(
+        service._deps.control_connection.execute(
+            "SELECT asset_id,sha256,blob_bytes,manifest_json,created_at FROM proposal_assets WHERE proposal_id=?",
+            (proposal["proposal_id"],),
+        ).fetchone()
+    )
+    assert after == before
+    success_data(
+        service.memory_proposal_review(
+            smith, proposal_id=proposal["proposal_id"], decision="approve"
+        )
+    )
+    applied = service.memory_proposal_apply(
+        smith,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="asset-after-rebase",
+    )
+    assert applied.status == "success", applied
+
+
+def test_rebase_permissions_expiry_and_legacy_state(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+    narrow: ServiceContext,
+) -> None:
+    proposal = _continuity_proposal(service, smith)
+    revision = _advance_unrelated(service, smith)
+    result = service.memory_proposal_rebase(
+        flint,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="foreign",
+    )
+    assert result.status == "error" and result.error_class == "forbidden"
+    result = service.memory_proposal_rebase(
+        narrow,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="scope",
+    )
+    assert result.status == "error" and result.error_class == "forbidden"
+    service._deps.control_connection.execute(
+        "UPDATE proposals SET status='stale' WHERE proposal_id=?", (proposal["proposal_id"],)
+    )
+    service._deps.control_connection.commit()
+    assert success_data(service.memory_status(smith))["proposal_backlog"] == 1
+    assert (
+        success_data(service.memory_proposal_list(smith, status="needs_rebase"))["proposals"][0][
+            "status"
+        ]
+        == "needs_rebase"
+    )
+    service._deps.control_connection.execute(
+        "UPDATE proposals SET expires_at='2000-01-01T00:00:00Z' WHERE proposal_id=?",
+        (proposal["proposal_id"],),
+    )
+    service._deps.control_connection.commit()
+    assert success_data(service.memory_status(smith))["proposal_backlog"] == 0
+    expired = service.memory_proposal_rebase(
+        smith,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="expired",
+    )
+    assert expired.status == "error" and "expired" in expired.message
+
+
+def test_rebase_control_transaction_rolls_back_and_can_retry(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    revision = _advance_unrelated(service, smith)
+    original = service._journal_proposal_control
+
+    def fail(*args: Any, **kwargs: Any) -> str:
+        raise RuntimeError("before control commit")
+
+    monkeypatch.setattr(service, "_journal_proposal_control", fail)
+    with pytest.raises(RuntimeError, match="before control commit"):
+        service.memory_proposal_rebase(
+            flint,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="atomic",
+        )
+    row = service._deps.control_connection.execute(
+        "SELECT base_revision,status FROM proposals WHERE proposal_id=?", (proposal["proposal_id"],)
+    ).fetchone()
+    assert row["base_revision"] == proposal["base_revision"] and row["status"] == "needs_rebase"
+    assert success_data(service.memory_operation_get(flint, idempotency_key="atomic"))[
+        "safe_to_retry"
+    ]
+    monkeypatch.setattr(service, "_journal_proposal_control", original)
+    assert (
+        service.memory_proposal_rebase(
+            flint,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="atomic",
+        ).status
+        == "success"
+    )
+
+
+def test_worker_rebase_replay_and_concurrent_applies(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    from concurrent.futures import ThreadPoolExecutor
+
+    server = _server_for(service, service_config)
+    _advance_unrelated(service, smith, key="second-target")
+    a = _continuity_proposal(service, flint)
+    b = _continuity_proposal(service, flint, path="/projects/second-target.md")
+    for proposal in (a, b):
+        success_data(
+            service.memory_proposal_review(
+                smith, proposal_id=proposal["proposal_id"], decision="approve"
+            )
+        )
+    revision = get_main_revision(service._deps.repo_paths)
+
+    def apply(proposal: dict[str, Any]) -> Any:
+        return server._call_in_worker(
+            "memory_proposal_apply",
+            smith,
+            {
+                "proposal_id": proposal["proposal_id"],
+                "expected_revision": revision,
+                "idempotency_key": proposal["proposal_id"],
+            },
+        )
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(apply, (a, b)))
+    assert sorted(r.status for r in results) == ["error", "success"]
+    loser = (a, b)[next(i for i, r in enumerate(results) if r.status == "error")]
+    assert success_data(service.memory_status(smith))["proposal_backlog"] == 1
+    revision = get_main_revision(service._deps.repo_paths)
+
+    def rebase(_: int) -> Any:
+        return server._call_in_worker(
+            "memory_proposal_rebase",
+            flint,
+            {
+                "proposal_id": loser["proposal_id"],
+                "expected_revision": revision,
+                "idempotency_key": "concurrent-rebase",
+            },
+        )
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        rebases = list(pool.map(rebase, range(2)))
+    assert all(r.status == "success" for r in rebases)
+    assert rebases[0].operation_id == rebases[1].operation_id
+    assert sorted(success_data(r)["replayed"] for r in rebases) == [False, True]
+    assert (
+        success_data(service.memory_operation_get(flint, idempotency_key="concurrent-rebase"))[
+            "final_state"
+        ]
+        == "committed"
+    )
+
+
+def test_rebase_worker_timeout_reconciles_original_key_after_commit(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+    flint: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    revision = _advance_unrelated(service, smith)
+    server = _server_for(service, service_config)
+    entered, release = threading.Event(), threading.Event()
+    original = MemoryService._journal_proposal_control
+
+    def delayed(self: MemoryService, *args: Any, **kwargs: Any) -> str:
+        entered.set()
+        assert release.wait(5)
+        return original(self, *args, **kwargs)
+
+    monkeypatch.setattr(MemoryService, "_journal_proposal_control", delayed)
+    wait_for = asyncio.wait_for
+
+    async def shortened(awaitable: Any, timeout: float) -> Any:
+        return await wait_for(awaitable, timeout=0.1)
+
+    monkeypatch.setattr(asyncio, "wait_for", shortened)
+
+    async def scenario() -> None:
+        result = await server._memory_call(
+            "memory_proposal_rebase",
+            flint,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="timeout-rebase",
+        )
+        assert result.status == "error" and result.error_class == "indeterminate"
+        assert entered.is_set()
+        in_progress = await asyncio.to_thread(
+            server._call_in_worker,
+            "memory_operation_get",
+            flint,
+            {"idempotency_key": "timeout-rebase"},
+        )
+        assert success_data(in_progress)["final_state"] == "in_progress"
+        assert not success_data(in_progress)["safe_to_retry"]
+        release.set()
+        await server.drain_workers()
+        reconciled = await asyncio.to_thread(
+            server._call_in_worker,
+            "memory_operation_get",
+            flint,
+            {"idempotency_key": "timeout-rebase"},
+        )
+        assert success_data(reconciled)["final_state"] == "committed"
+        replay = await asyncio.to_thread(
+            server._call_in_worker,
+            "memory_proposal_rebase",
+            flint,
+            {
+                "proposal_id": proposal["proposal_id"],
+                "expected_revision": revision,
+                "idempotency_key": "timeout-rebase",
+            },
+        )
+        assert success_data(replay)["replayed"]
+        assert replay.operation_id == reconciled.operation_id
+
+    try:
+        asyncio.run(scenario())
+    finally:
+        release.set()
+
+
+def test_concurrent_rebase_and_reject_leave_proposal_rejected(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    from concurrent.futures import ThreadPoolExecutor
+
+    proposal = _continuity_proposal(service, flint)
+    revision = _advance_unrelated(service, smith)
+    server = _server_for(service, service_config)
+
+    def action(kind: str) -> Any:
+        if kind == "rebase":
+            return server._call_in_worker(
+                "memory_proposal_rebase",
+                flint,
+                {
+                    "proposal_id": proposal["proposal_id"],
+                    "expected_revision": revision,
+                    "idempotency_key": "race-rebase",
+                },
+            )
+        return server._call_in_worker(
+            "memory_proposal_review",
+            smith,
+            {
+                "proposal_id": proposal["proposal_id"],
+                "decision": "reject",
+                "comment": "Not wanted",
+                "idempotency_key": "race-reject",
+            },
+        )
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(action, ("rebase", "reject")))
+    assert results[1].status == "success"
+    current = success_data(service.memory_proposal_get(flint, proposal_id=proposal["proposal_id"]))[
+        "proposal"
+    ]
+    assert current["status"] == "rejected" and current["review_comment"] == "Not wanted"
+    assert success_data(service.memory_status(smith))["proposal_backlog"] == 0
+
+
+def test_execute_rebase_preserves_control_commit_on_later_reference_error(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    revision = _advance_unrelated(service, smith)
+    result = service.memory_execute(
+        flint,
+        plan={
+            "operations": [
+                {
+                    "op": "proposal_rebase",
+                    "save_as": "rebased",
+                    "args": {
+                        "proposal_id": proposal["proposal_id"],
+                        "expected_revision": revision,
+                        "idempotency_key": "execute-rebase",
+                    },
+                },
+                {"op": "read", "args": {"id_or_path": "$rebased.missing"}},
+            ]
+        },
+    )
+    assert result.status == "success"
+    assert success_data(result)["stopped"]
+    assert success_data(result)["trace"][0]["operation_id"]
+    assert result.warnings
+    assert (
+        success_data(service.memory_operation_get(flint, idempotency_key="execute-rebase"))[
+            "final_state"
+        ]
+        == "committed"
+    )
+
+
+def test_proposal_rebase_catalog_is_execute_only(
+    service: MemoryService, service_config: ServiceConfig
+) -> None:
+    server = _server_for(service, service_config)
+    catalog = server._catalog_operation("proposal_rebase", direct_tool_available=False)
+    assert catalog["available_via_execute"] and not catalog["direct_tool_available"]
+    assert catalog["input_schema"]["properties"]["idempotency_key"]["minLength"] == 1
+
+
+def test_conflicted_proposal_detailed_view_survives_deleted_target(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    success_data(
+        service.memory_trash(
+            smith,
+            path="/projects/piclaw.md",
+            expected_revision=get_main_revision(service._deps.repo_paths),
+            idempotency_key="trash-view",
+        )
+    )
+    view = success_data(service.memory_proposal_get(flint, proposal_id=proposal["proposal_id"]))[
+        "proposal"
+    ]
+    assert view["status"] == "conflicted"
+    assert view["changes"] == proposal["changes"]
+    assert view["conflicts"][0]["conflicting_paths"] == ("/projects/piclaw.md",)
+    assert "Preview unavailable" in view["diff"]
+
+
+def test_control_schema_upgrade_keeps_proposal_review_and_assets(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    success_data(
+        service.memory_proposal_review(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            decision="request_changes",
+            comment="Legacy review",
+        )
+    )
+    connection = service._deps.control_connection
+    before = tuple(
+        connection.execute(
+            "SELECT * FROM proposals WHERE proposal_id=?", (proposal["proposal_id"],)
+        ).fetchone()
+    )
+    connection.execute("DROP TABLE proposal_events")
+    connection.execute("UPDATE service_state SET value='9' WHERE key='schema_version'")
+    connection.commit()
+    migrate_control_db(connection)
+    assert (
+        tuple(
+            connection.execute(
+                "SELECT * FROM proposals WHERE proposal_id=?", (proposal["proposal_id"],)
+            ).fetchone()
+        )
+        == before
+    )
+    success_data(
+        service.memory_proposal_review(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            decision="reject",
+            comment="New review",
+            idempotency_key="migrated-review",
+        )
+    )
+    view = success_data(service.memory_proposal_get(flint, proposal_id=proposal["proposal_id"]))[
+        "proposal"
+    ]
+    assert "Legacy review" in view["history"][0]["details_json"]
+
+
+def test_legacy_stale_clean_rebase_does_not_renew_expiry(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    revision = _advance_unrelated(service, smith)
+    service._deps.control_connection.execute(
+        "UPDATE proposals SET status='stale' WHERE proposal_id=?", (proposal["proposal_id"],)
+    )
+    service._deps.control_connection.commit()
+    success_data(
+        service.memory_proposal_rebase(
+            flint,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="legacy-rebase",
+        )
+    )
+    view = success_data(service.memory_proposal_get(flint, proposal_id=proposal["proposal_id"]))[
+        "proposal"
+    ]
+    assert view["expires_at"] == proposal["expires_at"]
+    assert view["created_at"] == proposal["created_at"]
+    assert view["status"] == "submitted"
+
+
+def test_operation_lookup_rechecks_after_writer_finishes(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import memento.service as service_module
+
+    proposal = _continuity_proposal(service, flint)
+    revision = _advance_unrelated(service, smith)
+    result = service.memory_proposal_rebase(
+        flint,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=revision,
+        idempotency_key="lookup-race",
+    )
+    assert result.status == "success"
+    from memento.control.operations import get_operation_by_idempotency
+
+    original = get_operation_by_idempotency
+    calls = 0
+
+    def first_read_misses(connection: sqlite3.Connection, principal: str, key: str) -> Any:
+        nonlocal calls
+        calls += 1
+        return None if calls == 1 else original(connection, principal, key)
+
+    monkeypatch.setattr(service_module, "get_operation_by_idempotency", first_read_misses)
+    state = success_data(service.memory_operation_get(flint, idempotency_key="lookup-race"))
+    assert state["final_state"] == "committed" and not state["safe_to_retry"]
+    assert calls == 2
+
+
+def test_rebase_retains_skill_root_body_parity(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+) -> None:
+    body = "---\nname: continuity\ndescription: Test skill\n---\n\n# Continuity\n\nUse the original asset."
+    encoded, zip_bytes = _skill_zip(body)
+    proposal = success_data(
+        service.memory_propose(
+            flint,
+            intent="Skill continuity",
+            base_revision=get_main_revision(service._deps.repo_paths),
+            changes=[
+                {
+                    "kind": "create",
+                    "path": "/projects/continuity-skill.md",
+                    "concept_type": "concept",
+                    "title": "Continuity skill",
+                    "body": body,
+                    "tags": ["skill"],
+                },
+                {
+                    "kind": "attach_asset_pack",
+                    "path": "/projects/continuity-skill.md",
+                    "asset_kind": "skill",
+                    "version": "1.0.0",
+                    "zip_base64": encoded,
+                },
+            ],
+        )
+    )["proposal"]
+    asset_id = proposal["changes"][1]["asset_id"]
+    revision = _advance_unrelated(service, smith)
+    success_data(
+        service.memory_proposal_rebase(
+            flint,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="skill-rebase",
+        )
+    )
+    assert (
+        bytes(
+            service._deps.control_connection.execute(
+                "SELECT blob_bytes FROM proposal_assets WHERE proposal_id=? AND asset_id=?",
+                (proposal["proposal_id"], asset_id),
+            ).fetchone()[0]
+        )
+        == zip_bytes
+    )
+    summary = success_data(
+        service.memory_proposal_get(flint, proposal_id=proposal["proposal_id"], view="summary")
+    )["proposal"]
+    assert summary["assets"][0]["concept_body_matches_asset"] is True
+    success_data(
+        service.memory_proposal_review(
+            smith, proposal_id=proposal["proposal_id"], decision="approve"
+        )
+    )
+    success_data(
+        service.memory_proposal_apply(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            expected_revision=revision,
+            idempotency_key="skill-rebase-apply",
+        )
+    )
+    recalled = success_data(
+        service.memory_asset_get(
+            flint,
+            id_or_path="/projects/continuity-skill.md",
+            asset_kind="skill",
+            view="file",
+            file_path="SKILL.md",
+        )
+    )
+    assert recalled["file"]["content"] == body

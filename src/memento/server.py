@@ -16,7 +16,7 @@ from memento.access import AccessStore
 from memento.activity import ActivityClock
 from memento.admin import AdminHTTPHandler
 from memento.config import Principal
-from memento.envelopes import ErrorEnvelope, SuccessEnvelope
+from memento.envelopes import ErrorEnvelope, SuccessEnvelope, error_envelope
 from memento.executor import (
     AnswerArgs,
     AssetGetArgs,
@@ -36,6 +36,7 @@ from memento.executor import (
     ProposalApplyArgs,
     ProposalGetArgs,
     ProposalListArgs,
+    ProposalRebaseArgs,
     ProposalReviewArgs,
     ProposeAssetChange,
     ProposeCreateChange,
@@ -107,6 +108,9 @@ OperationName = Literal[
     "propose_update",
     "proposal_get",
     "proposal_list",
+    "proposal_rebase",
+    "proposal_revise",
+    "operation_get",
     "proposal_review",
     "proposal_apply",
     "asset_stage_begin",
@@ -147,6 +151,7 @@ _TOOL_ARG_MODELS: dict[str, type[BaseModel]] = {
     "memory_proposal_get": ProposalGetArgs,
     "memory_proposal_list": ProposalListArgs,
     "memory_proposal_review": ProposalReviewArgs,
+    "memory_proposal_rebase": ProposalRebaseArgs,
     "memory_proposal_apply": ProposalApplyArgs,
     "memory_asset_stage_begin": AssetStageBeginArgs,
     "memory_asset_stage_status": AssetStageStatusArgs,
@@ -247,6 +252,9 @@ EXECUTE_CAPABLE_OPERATIONS = frozenset(
         "propose_update",
         "proposal_get",
         "proposal_list",
+        "proposal_rebase",
+        "proposal_revise",
+        "operation_get",
         "proposal_review",
         "proposal_apply",
         "create",
@@ -807,6 +815,22 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
             )
         ).model_dump(mode="json")
 
+    async def tool_memory_proposal_rebase(
+        self,
+        proposal_id: str,
+        expected_revision: str,
+        idempotency_key: str,
+    ) -> dict[str, Any]:
+        return (
+            await self._memory_call(
+                "memory_proposal_rebase",
+                self._context(),
+                proposal_id=proposal_id,
+                expected_revision=expected_revision,
+                idempotency_key=idempotency_key,
+            )
+        ).model_dump(mode="json")
+
     async def tool_memory_proposal_revise(
         self,
         proposal_id: str,
@@ -842,7 +866,11 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
         ).model_dump(mode="json")
 
     async def tool_memory_proposal_review(
-        self, proposal_id: str, decision: str, comment: str | None = None
+        self,
+        proposal_id: str,
+        decision: str,
+        comment: str | None = None,
+        idempotency_key: str | None = None,
     ) -> dict[str, Any]:
         return (
             await self._memory_call(
@@ -851,6 +879,7 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                 proposal_id=proposal_id,
                 decision=decision,
                 comment=comment,
+                idempotency_key=idempotency_key,
             )
         ).model_dump(mode="json")
 
@@ -1113,9 +1142,15 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
     async def _memory_call(
         self, method: str, context: ServiceContext, **arguments: Any
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
-        if self._closing or self._execute_busy:
-            return self._service._failure(ValueError("service busy; reconcile before retrying"))
-        self._execute_busy = True
+        if (
+            self._closing
+            or len(self._worker_tasks) >= 2
+            or (self._execute_busy and method != "memory_operation_get")
+        ):
+            return error_envelope("busy", "service busy; reconcile before retrying")
+        owns_admission = method != "memory_operation_get"
+        if owns_admission:
+            self._execute_busy = True
         task = asyncio.create_task(
             asyncio.to_thread(self._call_in_worker, method, context, arguments)
         )
@@ -1123,7 +1158,8 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
 
         def completed(future: asyncio.Task[Any]) -> None:
             self._worker_tasks.discard(future)
-            self._execute_busy = False
+            if owns_admission:
+                self._execute_busy = False
             if not future.cancelled():
                 future.exception()
 
@@ -1134,10 +1170,9 @@ class MementoMCPServer(AsyncMCPServer):  # type: ignore[misc]
                 await asyncio.wait_for(asyncio.shield(task), timeout=30),
             )
         except TimeoutError:
-            return self._service._failure(
-                RuntimeError(
-                    "outcome indeterminate; reconcile original idempotency key before retrying"
-                )
+            return error_envelope(
+                "indeterminate",
+                "outcome indeterminate; reconcile original idempotency key before retrying",
             )
 
     async def drain_workers(self) -> None:

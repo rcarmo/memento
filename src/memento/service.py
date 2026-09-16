@@ -12,9 +12,10 @@ import sqlite3
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
+from functools import wraps
 from pathlib import Path
 from time import monotonic
-from typing import Any, Literal, Protocol
+from typing import Any, Literal, ParamSpec, Protocol, TypeVar, cast
 from uuid import uuid4
 
 from cryptography.fernet import Fernet, InvalidToken
@@ -56,6 +57,7 @@ from memento.control.operations import (
     get_operation_by_idempotency,
 )
 from memento.control.proposals import (
+    UNRESOLVED_PROPOSAL_STATUSES,
     ProposalAssetInput,
     ProposalRecord,
     ProposalStatus,
@@ -327,6 +329,28 @@ class ServiceDependencies:
     staged_asset_store: StagedAssetStore | None = None
 
 
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
+
+
+def _serialized(method: Callable[_P, _R]) -> Callable[_P, _R]:
+    """Share the repository writer lock across service/worker connections."""
+
+    @wraps(method)
+    def wrapped(*args: _P.args, **kwargs: _P.kwargs) -> _R:
+        from memento.repository.transactions import _transaction_lock
+
+        service = cast(MemoryService, args[0])
+        with _transaction_lock(service._deps.repo_paths):
+            return method(*args, **kwargs)
+
+    return wrapped
+
+
+class NeedsRebaseError(ServiceError):
+    error_class = "needs_rebase"
+
+
 class MemoryService:
     def __init__(self, deps: ServiceDependencies) -> None:
         self._deps = deps
@@ -424,6 +448,7 @@ class MemoryService:
             }
         )
 
+    @_serialized
     def memory_status(
         self, context: ServiceContext
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
@@ -444,11 +469,12 @@ class MemoryService:
                         ),
                     ).entries
                 )
+            self._refresh_proposal_queue()
             proposals = list_proposals(self._deps.control_connection)
             visible_proposals = [
                 item
                 for item in proposals
-                if item.status in {ProposalStatus.SUBMITTED, ProposalStatus.APPROVED}
+                if item.status in UNRESOLVED_PROPOSAL_STATUSES
                 and self._can_access_proposal(policy, item, require_write=False)
             ]
             semantic = self._deps.derived_index.semantic_status()
@@ -509,7 +535,8 @@ class MemoryService:
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
-            require_role(policy, "curator")
+            if not ({"proposer", "curator"} & set(policy.roles)):
+                require_role(policy, "curator")
             if (idempotency_key is None) == (operation_id is None):
                 raise ServiceError("provide exactly one of idempotency_key or operation_id")
             operation: OperationRecord | None
@@ -518,24 +545,71 @@ class MemoryService:
                     self._deps.control_connection, policy.principal, idempotency_key
                 )
                 if operation is None:
-                    return self._success(
-                        {
-                            "final_state": "not_committed",
-                            "operation": None,
-                            "changed_paths": (),
-                            "partial": False,
-                            "safe_to_retry": True,
-                            "retry_guidance": (
-                                "No operation exists for this principal and idempotency key; "
-                                "retry the original request with the same key."
-                            ),
-                        }
-                    )
+                    from memento.repository.transactions import _transaction_lock
+
+                    lock = _transaction_lock(self._deps.repo_paths)
+                    if not lock.acquire(blocking=False):
+                        return self._success(
+                            {
+                                "final_state": "in_progress",
+                                "operation": None,
+                                "changed_paths": (),
+                                "partial": False,
+                                "safe_to_retry": False,
+                                "retry_guidance": "Writer is active; reconcile the original key after it finishes.",
+                            }
+                        )
+                    try:
+                        # The writer may have committed between the first lookup and lock probe.
+                        operation = get_operation_by_idempotency(
+                            self._deps.control_connection, policy.principal, idempotency_key
+                        )
+                        if operation is None:
+                            return self._success(
+                                {
+                                    "final_state": "not_committed",
+                                    "operation": None,
+                                    "changed_paths": (),
+                                    "partial": False,
+                                    "safe_to_retry": True,
+                                    "retry_guidance": (
+                                        "No operation exists for this principal and idempotency key; "
+                                        "retry the original request with the same key."
+                                    ),
+                                }
+                            )
+                    finally:
+                        lock.release()
             else:
                 operation = get_operation(self._deps.control_connection, str(operation_id))
                 if operation.principal != policy.principal:
                     raise ForbiddenError("operation belongs to another principal")
+            if "curator" not in policy.roles and operation.tool_name != "memory_proposal_rebase":
+                raise ForbiddenError("proposers may reconcile only their own proposal rebases")
             replay = operation.replay_payload or {}
+            if operation.tool_name in {"memory_proposal_rebase", "memory_proposal_review"}:
+                proposal_id = str(replay.get("proposal_id", ""))
+                proposal = get_proposal(self._deps.control_connection, proposal_id)
+                self._require_proposal_access(policy, proposal, require_write=True)
+                return self._success(
+                    {
+                        "final_state": "committed",
+                        "operation": {
+                            "operation_id": operation.op_id,
+                            "tool_name": operation.tool_name,
+                            "state": operation.state.value,
+                            "idempotency_key": operation.idempotency_key,
+                            "result_revision": operation.result_revision,
+                        },
+                        "proposal_id": proposal_id,
+                        "result": replay,
+                        "changed_paths": (),
+                        "partial": False,
+                        "safe_to_retry": False,
+                        "retry_guidance": "Control-state change committed; use the recorded result, do not repeat.",
+                    },
+                    operation_id=operation.op_id,
+                )
             raw_paths = replay.get("changed_paths", [])
             changed_paths = (
                 tuple(
@@ -1354,6 +1428,7 @@ class MemoryService:
         except Exception as exc:
             return self._failure(exc)
 
+    @_serialized
     def memory_propose(
         self,
         context: ServiceContext,
@@ -1482,6 +1557,7 @@ class MemoryService:
         except Exception as exc:
             return self._failure(exc)
 
+    @_serialized
     def memory_proposal_get(
         self,
         context: ServiceContext,
@@ -1496,13 +1572,19 @@ class MemoryService:
             if view == "summary":
                 payload = self._proposal_summary_payload(record)
             else:
-                preview = self._preview_changes(self._normalize_changes(record.patch["changes"]))
+                try:
+                    preview = self._preview_changes(
+                        self._normalize_changes(record.patch["changes"])
+                    )
+                except (FileNotFoundError, PathSafetyError):
+                    preview = "Preview unavailable at current revision; inspect stored changes and conflicts."
                 payload = self._proposal_payload(record, preview)
             payload["archival_impact"] = self._visible_archival_impact(record, policy)
             return self._success({"proposal": payload})
         except Exception as exc:
             return self._failure(exc)
 
+    @_serialized
     def memory_proposal_list(
         self,
         context: ServiceContext,
@@ -1514,7 +1596,15 @@ class MemoryService:
         try:
             policy = self._policy(context)
             require_role(policy, "proposer")
-            requested_status = ProposalStatus(status) if status is not None else None
+            self._refresh_proposal_queue()
+            unresolved = status == "unresolved"
+            requested_status = (
+                ProposalStatus.NEEDS_REBASE
+                if status == "stale"
+                else ProposalStatus(status)
+                if status is not None and not unresolved
+                else None
+            )
             if limit < 1 or limit > 200:
                 raise ServiceError("proposal list limit must be between 1 and 200")
             revision = get_main_revision(self._deps.repo_paths)
@@ -1541,6 +1631,7 @@ class MemoryService:
             candidates = list_proposals(
                 self._deps.control_connection,
                 status=requested_status,
+                unresolved=unresolved,
                 author_principal=None if "curator" in policy.roles else policy.principal,
                 current_revision=revision,
                 now=self._now().isoformat().replace("+00:00", "Z"),
@@ -1627,6 +1718,7 @@ class MemoryService:
         except Exception as exc:
             return self._failure(exc)
 
+    @_serialized
     def memory_proposal_revise(
         self,
         context: ServiceContext,
@@ -1643,8 +1735,8 @@ class MemoryService:
             source = get_proposal(self._deps.control_connection, proposal_id)
             self._require_proposal_access(policy, source, require_write=True)
             source = self._refresh_proposal_status(source)
-            if source.status is not ProposalStatus.STALE:
-                raise ConflictError("only stale proposals can be revised")
+            if source.status not in {ProposalStatus.NEEDS_REBASE, ProposalStatus.CONFLICTED}:
+                raise ConflictError("only proposals needing rebase can be revised")
             current_revision = get_main_revision(self._deps.repo_paths)
             if expected_revision != current_revision:
                 raise ConflictError(
@@ -1716,6 +1808,150 @@ class MemoryService:
         except Exception as exc:
             return self._failure(exc)
 
+    def _proposal_control_replay(
+        self,
+        policy: EffectivePolicy,
+        *,
+        key: str,
+        method: str,
+        arguments: dict[str, Any],
+    ) -> tuple[str, OperationRecord | None]:
+        request_json = json.dumps({"method": method, **arguments}, sort_keys=True)
+        existing = get_operation_by_idempotency(
+            self._deps.control_connection, policy.principal, key
+        )
+        if existing is not None:
+            probe = OperationRequest(
+                op_id=existing.op_id,
+                principal=policy.principal,
+                idempotency_key=key,
+                tool_name=method,
+                request_json=request_json,
+            )
+            if probe.request_hash != existing.request_hash:
+                raise IdempotencyConflictError(
+                    "idempotency key already used for a different request"
+                )
+        return request_json, existing
+
+    def _journal_proposal_control(
+        self,
+        context: ServiceContext,
+        *,
+        key: str,
+        method: str,
+        request_json: str,
+        revision: str,
+        result: dict[str, Any],
+    ) -> str:
+        operation_id = str(uuid4())
+        digest = hashlib.sha256(request_json.encode()).hexdigest()
+        now = self._now().isoformat().replace("+00:00", "Z")
+        self._deps.control_connection.execute(
+            "INSERT INTO operations(op_id,idempotency_key,principal,client_instance_id,"
+            "tool_name,request_hash,base_revision,result_revision,state,request_json,result_json,"
+            "created_at,started_at,finished_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                operation_id,
+                key,
+                context.principal.name,
+                context.client_instance_id,
+                method,
+                digest,
+                revision,
+                revision,
+                "succeeded",
+                request_json,
+                json.dumps(result, sort_keys=True),
+                now,
+                now,
+                now,
+            ),
+        )
+        return operation_id
+
+    @_serialized
+    def memory_proposal_rebase(
+        self,
+        context: ServiceContext,
+        *,
+        proposal_id: str,
+        expected_revision: str,
+        idempotency_key: str,
+    ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
+        try:
+            policy = self._policy(context)
+            if not ({"proposer", "curator"} & set(policy.roles)):
+                require_role(policy, "proposer")
+            proposal = get_proposal(self._deps.control_connection, proposal_id)
+            self._require_proposal_access(policy, proposal, require_write=True)
+            request_json, replay = self._proposal_control_replay(
+                policy,
+                key=idempotency_key,
+                method="memory_proposal_rebase",
+                arguments={"proposal_id": proposal_id, "expected_revision": expected_revision},
+            )
+            if replay is not None:
+                return self._success(
+                    {**(replay.replay_payload or {}), "replayed": True}, operation_id=replay.op_id
+                )
+            proposal = self._refresh_proposal_status(proposal)
+            revision = get_main_revision(self._deps.repo_paths)
+            if expected_revision != revision:
+                raise NeedsRebaseError(
+                    "repository advanced; read current proposal and revision before rebasing"
+                )
+            if proposal.status not in {ProposalStatus.NEEDS_REBASE, ProposalStatus.CONFLICTED}:
+                raise ConflictError(
+                    f"proposal {proposal_id} is {proposal.status.value}; no rebase available"
+                )
+            conflicts = self._proposal_conflicts(proposal)
+            if any(item["status"] != "clean" for item in conflicts):
+                raise ConflictError(
+                    "proposal conflicts with current memory; inspect per-change conflicting_paths"
+                )
+            changes = self._normalize_changes(proposal.patch["changes"])
+            if any(isinstance(change, TrashChange) for change in changes):
+                raise NeedsRebaseError("submit fresh archival proposal with current impact report")
+            self._validate_change_auth(policy, changes, action="write")
+            self._validate_skill_asset_bindings(changes)
+            result = {
+                "proposal_id": proposal_id,
+                "previous_base_revision": proposal.base_revision,
+                "base_revision": revision,
+                "status": "submitted",
+                "replayed": False,
+            }
+            with self._deps.control_connection:
+                self._proposal_event(
+                    proposal,
+                    actor=policy.principal,
+                    action="rebase",
+                    status=ProposalStatus.SUBMITTED,
+                    revision=revision,
+                    details={
+                        "reviewed_by": proposal.reviewed_by,
+                        "review_comment": proposal.review_comment,
+                    },
+                )
+                self._deps.control_connection.execute(
+                    "UPDATE proposals SET base_revision=?,status='submitted',reviewed_by=NULL,"
+                    "review_comment=NULL,updated_at=? WHERE proposal_id=?",
+                    (revision, self._now().isoformat().replace("+00:00", "Z"), proposal_id),
+                )
+                op_id = self._journal_proposal_control(
+                    context,
+                    key=idempotency_key,
+                    method="memory_proposal_rebase",
+                    request_json=request_json,
+                    revision=revision,
+                    result=result,
+                )
+            return self._success(result, operation_id=op_id)
+        except Exception as exc:
+            return self._failure(exc)
+
+    @_serialized
     def memory_proposal_review(
         self,
         context: ServiceContext,
@@ -1723,17 +1959,38 @@ class MemoryService:
         proposal_id: str,
         decision: str,
         comment: str | None = None,
+        idempotency_key: str | None = None,
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
         try:
             policy = self._policy(context)
             require_role(policy, "curator")
             proposal = get_proposal(self._deps.control_connection, proposal_id)
             self._require_proposal_access(policy, proposal, require_write=True)
+            # Optional for existing clients; provide a key for durable review reconciliation.
+            key = idempotency_key or str(uuid4())
+            request_json, replay = self._proposal_control_replay(
+                policy,
+                key=key,
+                method="memory_proposal_review",
+                arguments={"proposal_id": proposal_id, "decision": decision, "comment": comment},
+            )
+            if replay is not None:
+                return self._success(
+                    {**(replay.replay_payload or {}), "replayed": True}, operation_id=replay.op_id
+                )
             proposal = self._refresh_proposal_status(proposal)
             if proposal.status in {ProposalStatus.APPLIED, ProposalStatus.EXPIRED}:
                 raise ConflictError(
                     f"proposal {proposal.proposal_id} is already {proposal.status.value}"
                 )
+            revision = get_main_revision(self._deps.repo_paths)
+            if decision == "approve":
+                if any(item["status"] != "clean" for item in self._proposal_conflicts(proposal)):
+                    raise ConflictError(
+                        "proposal has conflicting changes; inspect and resolve before approval"
+                    )
+                if proposal.base_revision != revision:
+                    raise NeedsRebaseError("proposal needs rebase before approval")
             if decision == "approve" and proposal.patch.get("archival_impact"):
                 self._archival_impact(
                     policy,
@@ -1747,18 +2004,48 @@ class MemoryService:
             }.get(decision)
             if new_status is None:
                 raise ServiceError(f"unsupported proposal decision: {decision}")
-            updated = update_proposal_status(
-                self._deps.control_connection,
-                proposal_id,
-                status=new_status,
-                reviewed_by=policy.principal,
-                review_comment=comment,
-            )
-            preview = self._preview_changes(self._normalize_changes(updated.patch["changes"]))
-            return self._success({"proposal": self._proposal_payload(updated, preview)})
+            with self._deps.control_connection:
+                self._proposal_event(
+                    proposal,
+                    actor=policy.principal,
+                    action="review",
+                    status=new_status,
+                    revision=revision,
+                    details={
+                        "decision": decision,
+                        "comment": comment,
+                        "previous_reviewed_by": proposal.reviewed_by,
+                        "previous_review_comment": proposal.review_comment,
+                    },
+                )
+                self._deps.control_connection.execute(
+                    "UPDATE proposals SET status=?,reviewed_by=?,review_comment=?,updated_at=? WHERE proposal_id=?",
+                    (
+                        new_status.value,
+                        policy.principal,
+                        comment,
+                        self._now().isoformat().replace("+00:00", "Z"),
+                        proposal_id,
+                    ),
+                )
+                # No preview is needed to reject a conflicting/deleted target.
+                updated = get_proposal(self._deps.control_connection, proposal_id)
+                payload = self._proposal_summary_payload(updated)
+                payload["review_comment"] = comment
+                result = {"proposal": payload, "proposal_id": proposal_id, "replayed": False}
+                op_id = self._journal_proposal_control(
+                    context,
+                    key=key,
+                    method="memory_proposal_review",
+                    request_json=request_json,
+                    revision=revision,
+                    result=result,
+                )
+            return self._success(result, operation_id=op_id)
         except Exception as exc:
             return self._failure(exc)
 
+    @_serialized
     def memory_proposal_apply(
         self,
         context: ServiceContext,
@@ -1813,6 +2100,12 @@ class MemoryService:
                         index_revision=existing.result_revision,
                         operation_id=existing.op_id,
                     )
+            if any(item["status"] != "clean" for item in self._proposal_conflicts(proposal)):
+                raise ConflictError(
+                    "proposal has conflicting changes; inspect and resolve before apply"
+                )
+            if proposal.base_revision != get_main_revision(self._deps.repo_paths):
+                raise NeedsRebaseError("proposal needs rebase and review before apply")
             if proposal.status is not ProposalStatus.APPROVED:
                 raise ConflictError(f"proposal {proposal.proposal_id} is {proposal.status.value}")
             changes = self._normalize_changes(proposal.patch["changes"])
@@ -1972,6 +2265,7 @@ class MemoryService:
         except Exception as exc:
             return self._failure(exc)
 
+    @_serialized
     def memory_asset_prune(
         self,
         context: ServiceContext,
@@ -2060,6 +2354,7 @@ class MemoryService:
         except Exception as exc:
             return self._failure(exc)
 
+    @_serialized
     def memory_create(
         self,
         context: ServiceContext,
@@ -2093,6 +2388,7 @@ class MemoryService:
             commit_message=f"memory: create {path}",
         )
 
+    @_serialized
     def memory_patch(
         self,
         context: ServiceContext,
@@ -2127,6 +2423,7 @@ class MemoryService:
             commit_message=f"memory: patch {path}",
         )
 
+    @_serialized
     def memory_rename(
         self,
         context: ServiceContext,
@@ -2214,6 +2511,7 @@ class MemoryService:
         )
         return executor.run(context, plan=plan)
 
+    @_serialized
     def memory_trash(
         self, context: ServiceContext, *, path: str, expected_revision: str, idempotency_key: str
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
@@ -2225,6 +2523,7 @@ class MemoryService:
             idempotency_key=idempotency_key,
         )
 
+    @_serialized
     def memory_restore(
         self, context: ServiceContext, *, path: str, expected_revision: str, idempotency_key: str
     ) -> SuccessEnvelope[dict[str, Any]] | ErrorEnvelope:
@@ -2236,6 +2535,7 @@ class MemoryService:
             idempotency_key=idempotency_key,
         )
 
+    @_serialized
     def memory_purge(
         self,
         context: ServiceContext,
@@ -2809,7 +3109,19 @@ class MemoryService:
             "applied_revision": record.applied_revision,
             "expires_at": record.expires_at,
             "current_revision": get_main_revision(self._deps.repo_paths),
+            "created_at": record.created_at,
+            "updated_at": record.updated_at,
             "changes": patch["changes"],
+            "history": [
+                dict(row)
+                for row in self._deps.control_connection.execute(
+                    "SELECT event_id,actor,action,from_status,to_status,base_revision,repo_revision,"
+                    "details_json,created_at FROM proposal_events WHERE proposal_id=? "
+                    "ORDER BY event_id DESC LIMIT 50",
+                    (record.proposal_id,),
+                ).fetchall()
+            ],
+            "history_limit": 50,
             "conflicts": self._proposal_conflicts(record),
             "consulted_concepts": patch.get("consulted_concepts", []),
             "contradictions": patch.get("contradictions", []),
@@ -2857,7 +3169,7 @@ class MemoryService:
                     )
                 )
                 body_entry_matches = bool(matching_body_entries)
-            except (BundleError, FrontmatterError, FileNotFoundError):
+            except (BundleError, FrontmatterError, FileNotFoundError, PathSafetyError):
                 body_entry_matches = None
             assets.append(
                 {
@@ -2901,20 +3213,29 @@ class MemoryService:
         }
 
     def _proposal_conflicts(
-        self, record: ProposalRecord, *, limit: int | None = None
+        self,
+        record: ProposalRecord,
+        *,
+        limit: int | None = None,
+        revision: str | None = None,
+        diffs: dict[str, set[str]] | None = None,
     ) -> list[dict[str, Any]]:
-        current_revision = get_main_revision(self._deps.repo_paths)
-        changed = (
-            set(
-                diff_main_paths(
-                    self._deps.repo_paths,
-                    base_revision=record.base_revision,
-                    end_revision=current_revision,
+        current_revision = revision or get_main_revision(self._deps.repo_paths)
+        changed = diffs.get(record.base_revision) if diffs is not None else None
+        if changed is None:
+            changed = (
+                set(
+                    diff_main_paths(
+                        self._deps.repo_paths,
+                        base_revision=record.base_revision,
+                        end_revision=current_revision,
+                    )
                 )
+                if record.base_revision != current_revision
+                else set()
             )
-            if record.base_revision != current_revision
-            else set()
-        )
+            if diffs is not None:
+                diffs[record.base_revision] = changed
         result: list[dict[str, Any]] = []
         changes = record.patch.get("changes", [])
         if limit is not None:
@@ -2925,7 +3246,16 @@ class MemoryService:
                 paths.append(str(raw.get("new_path", "")))
             if raw.get("kind") == "trash":
                 paths.append("/trash" + str(raw.get("path", "")))
-            conflicting = tuple(sorted(path for path in paths if path in changed))
+            if raw.get("kind") == "attach_asset_pack":
+                try:
+                    entry = read_bundle_entry(self._deps.repo_paths.current_dir, paths[0])
+                    prefix = "/.assets/" + entry.document.frontmatter.id + "/"
+                    if any(path.startswith(prefix) for path in changed):
+                        paths.append(paths[0])
+                        changed = changed | {paths[0]}
+                except (FileNotFoundError, BundleError, FrontmatterError, PathSafetyError):
+                    pass
+            conflicting = tuple(sorted({path for path in paths if path in changed}))
             result.append(
                 {
                     "index": index,
@@ -3179,23 +3509,102 @@ class MemoryService:
         length = len(value)
         return -sum((count / length) * math.log2(count / length) for count in counts.values())
 
-    def _refresh_proposal_status(self, proposal: ProposalRecord) -> ProposalRecord:
+    def _proposal_event(
+        self,
+        proposal: ProposalRecord,
+        *,
+        actor: str,
+        action: str,
+        status: ProposalStatus,
+        revision: str,
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        self._deps.control_connection.execute(
+            "INSERT INTO proposal_events(proposal_id,actor,action,from_status,to_status,"
+            "base_revision,repo_revision,details_json,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
+            (
+                proposal.proposal_id,
+                actor,
+                action,
+                proposal.status.value,
+                status.value,
+                proposal.base_revision,
+                revision,
+                json.dumps(details or {}, sort_keys=True),
+                self._now().isoformat().replace("+00:00", "Z"),
+            ),
+        )
+
+    def _refresh_proposal_queue(self) -> None:
+        # Bounded pages; share diff work for proposals submitted at the same base.
+        revision = get_main_revision(self._deps.repo_paths)
+        after = ""
+        diffs: dict[str, set[str]] = {}
+        while True:
+            rows = self._deps.control_connection.execute(
+                "SELECT proposal_id FROM proposals WHERE proposal_id > ? "
+                "AND status NOT IN ('applied','expired') ORDER BY proposal_id LIMIT 100",
+                (after,),
+            ).fetchall()
+            for row in rows:
+                proposal = get_proposal(self._deps.control_connection, row["proposal_id"])
+                self._refresh_proposal_status(proposal, revision=revision, diffs=diffs)
+            if len(rows) < 100:
+                return
+            after = str(rows[-1]["proposal_id"])
+
+    def _refresh_proposal_status(
+        self,
+        proposal: ProposalRecord,
+        *,
+        revision: str | None = None,
+        diffs: dict[str, set[str]] | None = None,
+    ) -> ProposalRecord:
+        revision = revision or get_main_revision(self._deps.repo_paths)
         now = self._now().isoformat().replace("+00:00", "Z")
+        status = proposal.status
+        action = "repository_advanced"
+        conflicts: list[dict[str, Any]] = []
         if (
             proposal.expires_at is not None
             and proposal.expires_at < now
-            and proposal.status is not ProposalStatus.APPLIED
+            and status is not ProposalStatus.APPLIED
         ):
-            return update_proposal_status(
-                self._deps.control_connection, proposal.proposal_id, status=ProposalStatus.EXPIRED
+            status = ProposalStatus.EXPIRED
+            action = "expired"
+        elif (
+            status
+            in {
+                ProposalStatus.SUBMITTED,
+                ProposalStatus.APPROVED,
+                ProposalStatus.STALE,
+                ProposalStatus.NEEDS_REBASE,
+                ProposalStatus.CONFLICTED,
+            }
+            and proposal.base_revision != revision
+        ):
+            conflicts = self._proposal_conflicts(proposal, revision=revision, diffs=diffs)
+            status = (
+                ProposalStatus.CONFLICTED
+                if any(c["status"] != "clean" for c in conflicts)
+                else ProposalStatus.NEEDS_REBASE
             )
-        if proposal.status in {
-            ProposalStatus.SUBMITTED,
-            ProposalStatus.APPROVED,
-        } and proposal.base_revision != get_main_revision(self._deps.repo_paths):
-            return update_proposal_status(
-                self._deps.control_connection, proposal.proposal_id, status=ProposalStatus.STALE
-            )
+        if status is not proposal.status:
+            with self._deps.control_connection:
+                self._proposal_event(
+                    proposal,
+                    actor="system",
+                    action=action,
+                    status=status,
+                    revision=revision,
+                    details={"conflicts": conflicts},
+                )
+                # Preserve author, patch, review fields, creation time and expiry.
+                self._deps.control_connection.execute(
+                    "UPDATE proposals SET status=?,updated_at=? WHERE proposal_id=?",
+                    (status.value, now, proposal.proposal_id),
+                )
+            return get_proposal(self._deps.control_connection, proposal.proposal_id)
         return proposal
 
     def _visible_proposal(self, policy: EffectivePolicy, proposal_id: str) -> ProposalRecord:
@@ -4122,6 +4531,7 @@ class MemoryService:
     def _record_changed_concepts(
         self, policy: EffectivePolicy, changed_paths: tuple[str, ...]
     ) -> None:
+        self._refresh_proposal_queue()
         hot_config = self._deps.config.intelligent_tiers.hot_working_memory
         if not hot_config.enabled:
             return

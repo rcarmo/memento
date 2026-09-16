@@ -16,8 +16,22 @@ class ProposalStatus(StrEnum):
     APPROVED = "approved"
     REJECTED = "rejected"
     APPLIED = "applied"
-    STALE = "stale"
+    STALE = "stale"  # Legacy on-disk value, refreshed without discarding the record.
+    NEEDS_REBASE = "needs_rebase"
+    CONFLICTED = "conflicted"
     EXPIRED = "expired"
+
+
+UNRESOLVED_PROPOSAL_STATUSES = frozenset(
+    {
+        ProposalStatus.DRAFT,
+        ProposalStatus.SUBMITTED,
+        ProposalStatus.APPROVED,
+        ProposalStatus.STALE,
+        ProposalStatus.NEEDS_REBASE,
+        ProposalStatus.CONFLICTED,
+    }
+)
 
 
 class ProposalTransitionError(RuntimeError):
@@ -177,6 +191,7 @@ def list_proposals(
     *,
     status: ProposalStatus | None = None,
     author_principal: str | None = None,
+    unresolved: bool = False,
     current_revision: str | None = None,
     now: str | None = None,
     limit: int | None = None,
@@ -188,12 +203,15 @@ def list_proposals(
         if current_revision is not None and now is not None:
             conditions.append("""(CASE
                 WHEN expires_at IS NOT NULL AND expires_at < ? AND status != 'applied' THEN 'expired'
-                WHEN status IN ('submitted','approved') AND base_revision != ? THEN 'stale'
                 ELSE status END) = ?""")
-            parameters.extend((now, current_revision, status.value))
+            parameters.extend((now, status.value))
         else:
             conditions.append("status = ?")
             parameters.append(status.value)
+    if unresolved:
+        values = sorted(item.value for item in UNRESOLVED_PROPOSAL_STATUSES)
+        conditions.append("status IN (" + ",".join("?" for _ in values) + ")")
+        parameters.extend(values)
     if cursor is not None:
         row = connection.execute(
             "SELECT created_at,proposal_id FROM proposals WHERE proposal_id=?", (cursor,)

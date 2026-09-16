@@ -103,7 +103,7 @@ Offsets count bytes. A null `next_offset` means EOF and must not be passed back 
 
 ## Reconcile an interrupted write
 
-Save the authenticated principal, exact mutation arguments and idempotency key before dispatch. If the response is lost, timed out or includes a post-commit warning, call execute-only `operation_get` using the original principal and key. A different credential identity cannot reconcile that principal's operation.
+Save the authenticated principal, exact mutation arguments and idempotency key before dispatch. If the response is lost, timed out or includes a post-commit warning, call execute-only `operation_get` using the original principal and key. A different credential identity cannot reconcile that principal's operation. Apply the same procedure to a lost proposal rebase or keyed review response.
 
 ```mermaid
 flowchart TD
@@ -129,7 +129,7 @@ flowchart TD
 }
 ```
 
-`operation_get` requires curator authority and accepts exactly one of `idempotency_key` or `operation_id`. Its `safe_to_retry` and `retry_guidance` fields determine the next action. An absent key can return `not_committed` with permission to retry the identical request. A recorded conflict also returns `not_committed`, but requires current state, a fresh expected revision and a new key. Do not infer safety from the state name alone.
+`operation_get` accepts exactly one of `idempotency_key` or `operation_id`. Curators reconcile their own mutations; original proposers can also reconcile their own proposal rebases. Review and rebase journal control-state changes atomically and return operation IDs. Its `safe_to_retry` and `retry_guidance` fields determine the next action. An absent key can return `not_committed` with permission to retry the identical request. A recorded conflict also returns `not_committed`, but requires current state, a fresh expected revision and a new key. Do not infer safety from the state name alone.
 
 Changing the payload under an existing key causes `idempotency_conflict`. Once committed, use the recorded result even if index refresh or later execute processing failed. [Operation contracts](contracts.md) and [system recovery diagrams](diagrams.md#operation-recovery) describe server-side reconciliation.
 

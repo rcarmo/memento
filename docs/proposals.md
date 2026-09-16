@@ -4,7 +4,7 @@ A proposal stores proposed changes for curator review. Git changes only when an 
 
 [Documentation index](README.md) · [Agent workflows](agent-workflows.md) · [Exact contracts](contracts.md#proposal-records-and-lifecycle)
 
-Operation names below are `memory_execute` operations. Use the corresponding direct `memory_*` tool only when the connected catalog exposes it. `memory_status`, `memory_help` and `memory://catalog` describe the deployment. Proposing requires the `proposer` role and write access to the affected paths. Proposal get/list and staged-asset inspection also require `proposer`. Review, revision and apply require `curator` plus read/write access to every affected path. Give a working curator profile `reader`, `proposer` and `curator` roles with the intended namespace grants.
+Operation names below are `memory_execute` operations. Use the corresponding direct `memory_*` tool only when the connected catalog exposes it. `memory_status`, `memory_help` and `memory://catalog` describe the deployment. Proposing requires the `proposer` role and write access to the affected paths. Proposal get/list and staged-asset inspection also require `proposer`. Review, subset revision and apply require `curator` plus read/write access to every affected path. The original proposer can also rebase their own clean proposal in place under the same namespace checks. Give a working curator profile `reader`, `proposer` and `curator` roles with the intended namespace grants.
 
 ## Submit and review
 
@@ -44,7 +44,7 @@ sequenceDiagram
 
 Memento stores the review result. Agents arrange hand-off through their approved messaging channel or inspect `proposal_list`; proposal creation does not send a peer message. An author can read their own accessible proposals. Curators can inspect other authors' proposals within their namespace grants. A curator can review their own proposal when policy permits it; keep the actual author and reviewer identities.
 
-`proposal_list(status="submitted")` selects the submitted queue. `pending` is not a valid status. Follow `next_cursor` until null when reviewing more than one page.
+Use `proposal_list(status="unresolved")` for the review queue: it includes draft, submitted, approved, needs-rebase and conflicted records. `memory_status.proposal_backlog` counts the same unresolved records visible to the caller. Use `status="submitted"` only when you need that exact state; `pending` is not a valid status. Follow `next_cursor` until null when reviewing more than one page.
 
 An explicit patch submission through `memory_execute`:
 
@@ -78,7 +78,7 @@ Replace example paths and angle-bracket values before calling. `patch.body` repl
 | `request_changes` | `draft` | Describe the corrections. The author files corrected content as a new proposal. |
 | `reject` | `rejected` | Record why these changes should not be applied. If a corrected replacement is appropriate, file a new proposal and cite the old ID. |
 
-Review changes status and review metadata; it does not edit the stored patch. Applied and expired proposals cannot be reviewed again. Other states, including draft and rejected, can receive a later curator decision on the *same unchanged patch*. Check freshness before approval: submitted/approved proposals with an old base become stale when status is refreshed. A new decision is not a rebase.
+Review changes status and review metadata; it does not edit the stored patch. Applied and expired proposals cannot be reviewed again. Curators can reject or request changes on an old-base or conflicted proposal. Approval and apply recheck per-change conflicts and the current revision under the same repository lock. Clean old-base proposals return `needs_rebase`; overlapping paths return a conflict result. Other states, including draft and rejected, can receive a later decision on unchanged content, subject to these freshness checks.
 
 These are the normal submission and recovery paths; later review decisions on unchanged patches are described in the table above.
 
@@ -91,13 +91,20 @@ stateDiagram-v2
     submitted --> rejected: reject
     approved --> draft: request_changes before apply
     approved --> rejected: reject before apply
-    submitted --> stale: base differs on status refresh
-    approved --> stale: base differs on status refresh
+    submitted --> needs_rebase: repository advances with clean paths
+    approved --> needs_rebase: repository advances with clean paths
+    submitted --> conflicted: affected paths change
+    approved --> conflicted: affected paths change
+    needs_rebase --> submitted: author or curator rebases same ID
+    needs_rebase --> rejected: curator rejects
+    needs_rebase --> draft: curator requests changes
+    conflicted --> rejected: curator rejects
+    conflicted --> draft: curator requests changes
     approved --> applied: apply at expected revision
     state "new submitted proposal" as replacement
     draft --> replacement: correct locally and propose
     rejected --> replacement: refile if appropriate
-    stale --> replacement: refile or curator revise clean changes
+    conflicted --> replacement: correct content or copy clean subset
     expired --> replacement: prepare fresh proposal
     note right of expired
         Any unapplied proposal can expire.
@@ -119,13 +126,14 @@ A changes-requested review call:
     "args": {
       "proposal_id": "<proposal_id>",
       "decision": "request_changes",
+      "idempotency_key": "<unique review key>",
       "comment": "Include the source for the ownership change and retain the existing recovery instructions. Refile the complete corrected body and cite this proposal ID."
     }
   }]
 }
 ```
 
-For approval, use `decision: "approve"` after inspection. Then issue a separate apply call with `proposal_id`, fresh `expected_revision` and a unique, durable `idempotency_key`. Preserve that exact request and key for [reconciliation](agent-workflows.md#reconcile-an-interrupted-write). Approval itself creates no Git commit.
+For approval, use `decision: "approve"` after inspection. Then issue a separate apply call with `proposal_id`, fresh `expected_revision` and a unique, durable `idempotency_key`. Preserve that exact request and key for [reconciliation](agent-workflows.md#reconcile-an-interrupted-write). Approval itself creates no Git commit. Supply `idempotency_key` on review for durable replay and reconciliation. Existing clients may omit it; the response still includes an operation ID. Review history is retained as append-only events.
 
 ## Refile corrected content
 
@@ -146,38 +154,43 @@ There is no `proposal_edit`, `proposal_resubmit` or operation that replaces a dr
 
 ## Handle a stale or expired proposal
 
-A changed repository revision can make a proposal stale even when its own paths did not change. Inspect `proposal_get` for current/base revisions and per-change conflict results. Approval does not make an old base current.
+From 0.5.7, repository advancement classifies unresolved older proposals as `needs_rebase` when their affected paths are clean or `conflicted` when paths overlap. Both stay visible and reviewable. Legacy `stale` records are classified on refresh; the legacy list filter `status="stale"` aliases `needs_rebase`. A status change caused by repository advancement records a system audit event. Inspect `proposal_get` for conflicts and its most recent 50 history events.
+
+Use execute-only `proposal_rebase` to advance a clean proposal's base in place. The original proposer or an authorised curator supplies its ID, a current `expected_revision` and a durable `idempotency_key`. The ID, author, content, patch hash, attached bytes, creation time and expiry remain unchanged. `updated_at` records the rebase time; previous reviews are retained in history, current approval is cleared, and the proposal becomes `submitted` for fresh review.
 
 ```mermaid
 flowchart TD
     state[Inspect proposal status and conflicts] --> expired{Expired?}
     expired -->|yes| fresh[Read current content and file a fresh proposal]
-    expired -->|no; stale| clean{Selected changes are clean?}
-    clean -->|no| fresh
-    clean -->|yes| archival{Any selected trash change?}
+    expired -->|no| clean{All changes are clean?}
+    clean -->|no| decision[Curator can reject or request changes; correct content or select clean subset]
+    decision --> fresh
+    clean -->|yes| archival{Any trash change?}
     archival -->|yes| impact[File fresh archival proposal with current impact]
-    archival -->|no| curator[Curator calls proposal_revise with indexes and expected_revision]
-    curator --> submitted[New submitted ID with source linkage and copied selected assets]
+    archival -->|no| rebase[Original author or curator calls proposal_rebase with revision and key]
+    rebase --> submitted[Same ID, author and assets; status submitted]
     fresh --> submittedFresh[New submitted ID]
     impact --> submittedFresh
     submitted --> review[Inspect, review and apply separately]
     submittedFresh --> review
 ```
 
-`proposal_revise` accepts only a stale source. It copies selected clean changes into a new submitted proposal authored by the curator, using the current revision. It records `source_proposal_id` and `source_change_indexes`, retains the source and requires paired concept/asset changes to stay together. It cannot edit selected content. Conflicting changes require a freshly prepared proposal. Expired proposals also require fresh submission.
+The separate `proposal_revise` operation accepts a needs-rebase or conflicted source. It copies selected clean changes into a new submitted proposal authored by the curator, using the current revision. It records `source_proposal_id` and `source_change_indexes`, retains the source and requires paired concept/asset changes to stay together. It cannot edit selected content. Conflicting changes require a freshly prepared proposal. Expired proposals also require fresh submission.
 
 ```json
 {
   "operations": [{
-    "op": "proposal_revise",
+    "op": "proposal_rebase",
     "args": {
-      "proposal_id": "<stale proposal_id>",
-      "selected_change_indexes": [0],
-      "expected_revision": "<fresh repo_revision>"
+      "proposal_id": "<needs_rebase proposal_id>",
+      "expected_revision": "<fresh repo_revision>",
+      "idempotency_key": "<unique rebase key>"
     }
   }]
 }
 ```
+
+Rebase commits the proposal, audit event and successful operation journal atomically. Repeating the identical request/key returns the recorded result. After a timeout or lost response, the original proposer can call `operation_get` with that key; wait on `in_progress` and use the result once `committed`. Review, rebase and apply share the repository writer lock across worker connections. Concurrent applies at the same revision allow at most one publication; the other proposal remains unresolved.
 
 For archival, obtain a fresh impact report through a new trash-only proposal. See [reviewed archival](trash.md#reviewed-archival). Do not confuse `proposal_revise` with Git history rewriting.
 
@@ -203,7 +216,7 @@ flowchart TD
     apply --> recall[Read accepted manifest and verify downloaded bytes]
 ```
 
-When refiling, package corrected bytes and use a version not already accepted for that concept/kind. An upload stage consumed by the old proposal cannot be reused; stage the replacement again or use inline ZIP bytes. The stale-proposal `proposal_revise` path can copy selected stored assets without uploading them again.
+When refiling, package corrected bytes and use a version not already accepted for that concept/kind. An upload stage consumed by the old proposal cannot be reused; stage the replacement again or use inline ZIP bytes. A clean `proposal_rebase` retains all stored assets in place; `proposal_revise` can copy a selected clean subset into a new proposal without uploading those assets again.
 
 Use `proposal_get` to obtain the generated asset ID and manifest, then `proposal_asset_get(view="file", file_path=...)` to inspect bounded content before approval. After apply, `asset_get` reads accepted versions. [Accepted-asset retrieval](accepted-assets.md) defines range, digest and EOF handling. Any client-side installation or script execution needs its own authorisation.
 

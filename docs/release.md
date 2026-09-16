@@ -33,6 +33,14 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Proposal continuity for 0.5.7
+
+Issue #28 keeps unresolved proposals visible after repository advancement. Clean older proposals become `needs_rebase`; overlapping paths become `conflicted`. Both remain in the unresolved queue/backlog and permit rejection or requested changes. Original proposers or scoped curators can use execute-only `proposal_rebase` to update a clean base in place without uploading assets again. Approval must be repeated.
+
+Control schema 10 adds append-only `proposal_events` without rewriting existing proposal or asset records. Rebase and keyed review commit state, audit and operation results atomically; `operation_get` reconciles owned rebase operations for proposers. A repository-scoped reentrant lock serialises review, rebase and apply with Git publication. Legacy stale rows are classified during normal refresh. The timeout handler returns `indeterminate` while the worker completes.
+
+Regression checks include disjoint concurrent applies, rebase/reject races, asset preservation, unchanged author/creation/expiry fields, deleted target conflicts, original-key replay, transaction rollback, worker timeout reconciliation, legacy schema migration and execute failures after a control commit. Deployment must preserve existing proposals and use read-only inspection for their live checks.
+
 ## Typed execute references for 0.5.6
 
 Issue #23 separates plan placeholders from concrete operation validation. Saved references now work in numeric, boolean and nested argument fields; resolved values must satisfy the original operation schema before any service call. Direct tools retain their existing schemas. Invalid plans report bounded operation/field errors rather than every branch of the operation union. Post-commit resolution/validation failures retain committed revisions and reconciliation IDs.
