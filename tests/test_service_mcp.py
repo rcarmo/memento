@@ -5875,3 +5875,45 @@ def test_rebase_retains_skill_root_body_parity(
         )
     )
     assert recalled["file"]["content"] == body
+
+
+@pytest.mark.parametrize("base", ["null", "", "f" * 40])
+def test_unavailable_historical_base_does_not_hide_queue(
+    service: MemoryService,
+    smith: ServiceContext,
+    flint: ServiceContext,
+    base: str,
+) -> None:
+    proposal = _continuity_proposal(service, flint)
+    connection = service._deps.control_connection
+    connection.execute(
+        "UPDATE proposals SET base_revision=?,status='stale' WHERE proposal_id=?",
+        (base, proposal["proposal_id"]),
+    )
+    connection.commit()
+    assert success_data(service.memory_status(smith))["proposal_backlog"] == 1
+    listed = success_data(service.memory_proposal_list(smith, status="unresolved"))["proposals"]
+    assert listed[0]["status"] == "conflicted"
+    view = success_data(service.memory_proposal_get(flint, proposal_id=proposal["proposal_id"]))[
+        "proposal"
+    ]
+    assert view["base_revision"] == base
+    assert view["changes"] == proposal["changes"]
+    assert view["conflicts"][0]["reason"].startswith("base_revision_unavailable")
+    result = service.memory_proposal_rebase(
+        flint,
+        proposal_id=proposal["proposal_id"],
+        expected_revision=get_main_revision(service._deps.repo_paths),
+        idempotency_key="invalid-base",
+    )
+    assert result.status == "error" and result.error_class == "conflict"
+    success_data(
+        service.memory_proposal_review(
+            smith,
+            proposal_id=proposal["proposal_id"],
+            decision="reject",
+            comment="Please refile against a valid revision",
+            idempotency_key="reject-invalid-base",
+        )
+    )
+    assert success_data(service.memory_status(smith))["proposal_backlog"] == 0

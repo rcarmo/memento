@@ -156,6 +156,8 @@ There is no `proposal_edit`, `proposal_resubmit` or operation that replaces a dr
 
 From 0.5.7, repository advancement classifies unresolved older proposals as `needs_rebase` when their affected paths are clean or `conflicted` when paths overlap. Both stay visible and reviewable. Legacy `stale` records are classified on refresh; the legacy list filter `status="stale"` aliases `needs_rebase`. A status change caused by repository advancement records a system audit event. Inspect `proposal_get` for conflicts and its most recent 50 history events.
 
+If a retained base revision is invalid or no longer available, its changes are marked conflicted with `base_revision_unavailable` guidance. The record stays visible and reviewable; inspect current content and file a fresh proposal rather than rebasing unverifiable changes.
+
 Use execute-only `proposal_rebase` to advance a clean proposal's base in place. The original proposer or an authorised curator supplies its ID, a current `expected_revision` and a durable `idempotency_key`. The ID, author, content, patch hash, attached bytes, creation time and expiry remain unchanged. `updated_at` records the rebase time; previous reviews are retained in history, current approval is cleared, and the proposal becomes `submitted` for fresh review.
 
 ```mermaid
