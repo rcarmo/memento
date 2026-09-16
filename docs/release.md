@@ -33,6 +33,12 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Typed execute references for 0.5.6
+
+Issue #23 separates plan placeholders from concrete operation validation. Saved references now work in numeric, boolean and nested argument fields; resolved values must satisfy the original operation schema before any service call. Direct tools retain their existing schemas. Invalid plans report bounded operation/field errors rather than every branch of the operation union. Post-commit resolution/validation failures retain committed revisions and reconciliation IDs.
+
+Regression tests cover chained file offsets and version/digest references, negative and oversized values, wrong numeric types, unknown/malformed/out-of-range references, null EOF offsets, nested values, unchanged authorisation and failures after a successful mutation.
+
 ## Accepted-asset retrieval checks for 0.5.5
 
 Accepted assets now support manifest-only, bounded file and archive-range reads. Resumed requests pin the version and ZIP digest. Small default archives retain their full ZIP/manifest response; larger clients must follow `next_offset` and verify the assembled digest. `memory_status.limits.assets` advertises retrieval limits. See [accepted-assets.md](accepted-assets.md) for compatibility, integrity and response-budget details.

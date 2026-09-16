@@ -4738,3 +4738,352 @@ def test_accepted_metadata_digest_mismatch_and_invalid_file_range(
         )
         assert response.status == "error"
         assert "digest" in response.message
+
+
+def test_execute_chains_typed_asset_offsets_and_digest_references(
+    service: MemoryService,
+    smith: ServiceContext,
+    accepted_read_pack: tuple[str, str, bytes, bytes],
+) -> None:
+    path = accepted_read_pack[0]
+    result = success_data(
+        service.memory_execute(
+            smith,
+            plan={
+                "operations": [
+                    {
+                        "op": "asset_get",
+                        "save_as": "first",
+                        "args": {
+                            "id_or_path": path,
+                            "asset_kind": "document",
+                            "view": "file",
+                            "file_path": "notes.txt",
+                            "limit": 2,
+                        },
+                    },
+                    {
+                        "op": "asset_get",
+                        "save_as": "last",
+                        "args": {
+                            "id_or_path": "$first.concept_path",
+                            "asset_kind": "$first.asset_kind",
+                            "version": "$first.version",
+                            "expected_sha256": "$first.zip_sha256",
+                            "view": "file",
+                            "file_path": "$first.file.path",
+                            "offset": "$first.file.next_offset",
+                            "limit": "$first.file.total_bytes",
+                        },
+                    },
+                ],
+                "returns": [{"ref": "$first.file"}, {"ref": "$last.file"}],
+            },
+        )
+    )
+    first, last = result["returns"]["first_file"], result["returns"]["last_file"]
+
+    def decode(item: dict[str, Any]) -> bytes:
+        return (
+            item["content"].encode()
+            if item["encoding"] == "utf-8"
+            else base64.b64decode(item["content"])
+        )
+
+    assert decode(first) + decode(last) == "a界b".encode()
+    assert last["offset"] == 2 and last["returned_bytes"] == 3 and last["next_offset"] is None
+
+
+@pytest.mark.parametrize("value", [-1, True, 1.5, "2", None, {}, [1]])
+def test_resolved_integer_types_and_bounds_fail_before_dispatch(
+    service: MemoryService,
+    smith: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+    value: Any,
+) -> None:
+    monkeypatch.setattr(service, "memory_status", lambda _: service._success({"offset": value}))
+    calls: list[Any] = []
+    monkeypatch.setattr(service, "memory_asset_get", lambda *args, **kwargs: calls.append(kwargs))
+    result = service.memory_execute(
+        smith,
+        plan={
+            "operations": [
+                {"op": "status", "save_as": "source"},
+                {
+                    "op": "asset_get",
+                    "args": {
+                        "id_or_path": "/projects/a.md",
+                        "asset_kind": "document",
+                        "offset": "$source.offset",
+                    },
+                },
+            ]
+        },
+    )
+    assert result.status == "error"
+    assert "operation 2 (asset_get)" in result.message and "args.offset" in result.message
+    assert len(result.message) < 512 and "Input should be 'help'" not in result.message
+    assert calls == []
+
+
+@pytest.mark.parametrize(
+    "args",
+    [
+        {"offset": "$unknown.next"},
+        {"offset": "$source.missing"},
+        {"offset": "$source.values.99"},
+        {"offset": "$source.values.bad"},
+        {"limit": "$source.excess"},
+        {"limit": "$source.zero"},
+    ],
+)
+def test_invalid_saved_references_and_limits_are_compact(
+    service: MemoryService,
+    smith: ServiceContext,
+    monkeypatch: pytest.MonkeyPatch,
+    args: dict[str, Any],
+) -> None:
+    monkeypatch.setattr(
+        service,
+        "memory_status",
+        lambda _: service._success({"values": [0], "excess": 262145, "zero": 0}),
+    )
+    calls: list[Any] = []
+    monkeypatch.setattr(service, "memory_asset_get", lambda *args, **kwargs: calls.append(kwargs))
+    result = service.memory_execute(
+        smith,
+        plan={
+            "operations": [
+                {"op": "status", "save_as": "source"},
+                {
+                    "op": "asset_get",
+                    "args": {"id_or_path": "/projects/a.md", "asset_kind": "document", **args},
+                },
+            ]
+        },
+    )
+    assert result.status == "error" and "operation 2 (asset_get)" in result.message
+    assert len(result.message) < 512 and calls == []
+
+
+@pytest.mark.parametrize(
+    "invalid",
+    [
+        {"op": "unknown", "args": {}},
+        {"op": "asset_get", "args": {"limit": "NO-SECRET-ECHO-" * 1000}},
+        {"op": "inventory", "args": {"limit": -1}},
+        {"op": "inventory", "args": {"limit": "$bad[-1]"}},
+    ],
+)
+def test_plan_errors_do_not_dump_union_or_arguments(
+    service: MemoryService, smith: ServiceContext, invalid: dict[str, Any]
+) -> None:
+    result = service.memory_execute(smith, plan={"operations": [invalid]})
+    assert result.status == "error"
+    assert len(result.message) <= 512
+    assert "NO-SECRET-ECHO" not in result.message
+    assert "For further information" not in result.message
+
+
+def test_typed_reference_failure_after_commit_preserves_operation(
+    service: MemoryService,
+    smith: ServiceContext,
+) -> None:
+    result = success_data(
+        service.memory_execute(
+            smith,
+            plan={
+                "operations": [
+                    {
+                        "op": "create",
+                        "save_as": "written",
+                        "args": {
+                            "path": "/projects/typed-ref.md",
+                            "concept_type": "project",
+                            "title": "Typed",
+                            "body": "body",
+                            "expected_revision": get_main_revision(service._deps.repo_paths),
+                            "idempotency_key": "typed-ref-commit",
+                        },
+                    },
+                    {
+                        "op": "asset_get",
+                        "args": {
+                            "id_or_path": "/projects/typed-ref.md",
+                            "asset_kind": "document",
+                            "offset": "$written.replayed",
+                        },
+                    },
+                ]
+            },
+        )
+    )
+    assert result["stopped"]
+    assert "operation 2 (asset_get)" in result["stop_reason"]
+    assert result["revisions"][0]["operation_id"]
+    assert result["revisions"][0]["repo_revision"] == get_main_revision(service._deps.repo_paths)
+    assert (
+        success_data(service.memory_operation_get(smith, idempotency_key="typed-ref-commit"))[
+            "final_state"
+        ]
+        == "committed"
+    )
+
+
+def test_execute_reference_schema_does_not_loosen_direct_asset_schema() -> None:
+    from memento.executor import AssetGetArgs, execute_plan_schema
+
+    direct = AssetGetArgs.model_json_schema()
+    assert direct["properties"]["offset"]["type"] == "integer"
+    schema = execute_plan_schema()
+    offset = schema["$defs"]["AssetGetArgs"]["properties"]["offset"]
+    assert offset["anyOf"][0]["minimum"] == 0
+    assert offset["anyOf"][1]["pattern"].startswith("^\\$")
+    assert schema["$defs"]["AssetGetOperation"]["properties"]["op"]["const"] == "asset_get"
+
+
+def test_typed_reference_from_eof_is_rejected_without_restarting_download(
+    service: MemoryService, smith: ServiceContext, accepted_read_pack: tuple[str, str, bytes, bytes]
+) -> None:
+    path = accepted_read_pack[0]
+    result = service.memory_execute(
+        smith,
+        plan={
+            "operations": [
+                {
+                    "op": "asset_get",
+                    "save_as": "end",
+                    "args": {
+                        "id_or_path": path,
+                        "asset_kind": "document",
+                        "view": "file",
+                        "file_path": "empty.txt",
+                    },
+                },
+                {
+                    "op": "asset_get",
+                    "args": {
+                        "id_or_path": path,
+                        "asset_kind": "document",
+                        "view": "file",
+                        "file_path": "empty.txt",
+                        "offset": "$end.file.next_offset",
+                        "version": "$end.version",
+                        "expected_sha256": "$end.zip_sha256",
+                    },
+                },
+            ]
+        },
+    )
+    assert result.status == "error"
+    assert "operation 2 (asset_get)" in result.message and "args.offset" in result.message
+
+
+def test_resolved_references_cannot_widen_authorisation(
+    service: MemoryService, narrow: ServiceContext, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        service, "memory_status", lambda _: service._success({"path": "/projects/piclaw.md"})
+    )
+    result = success_data(
+        service.memory_execute(
+            narrow,
+            plan={
+                "operations": [
+                    {"op": "status", "save_as": "source"},
+                    {"op": "read", "args": {"id_or_path": "$source.path"}},
+                ]
+            },
+        )
+    )
+    assert result["trace"][1]["error_class"] == "forbidden"
+
+
+def test_saved_values_revalidated_in_nested_arrays_and_booleans(
+    service: MemoryService, smith: ServiceContext, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        service,
+        "memory_status",
+        lambda _: service._success({"fields": ["path", "id"], "flag": False}),
+    )
+    result = success_data(
+        service.memory_execute(
+            smith,
+            plan={
+                "operations": [
+                    {"op": "status", "save_as": "source"},
+                    {
+                        "op": "inventory",
+                        "args": {
+                            "path_prefix": "/projects/",
+                            "fields": "$source.fields",
+                            "limit": 1,
+                        },
+                    },
+                    {
+                        "op": "purge",
+                        "args": {
+                            "path": "/trash/projects/nonexistent.md",
+                            "confirm": "$source.flag",
+                            "expected_revision": get_main_revision(service._deps.repo_paths),
+                            "idempotency_key": "false-reference",
+                        },
+                    },
+                ]
+            },
+        )
+    )
+    assert result["trace"][1]["status"] == "success"
+    assert result["trace"][1]["data"]["fields"] == ["path", "id"]
+    assert result["trace"][2]["status"] == "error"
+    assert "confirm=true" in result["trace"][2]["message"]
+
+
+def test_typed_references_pass_direct_mcp_plan_boundary(
+    service: MemoryService,
+    service_config: ServiceConfig,
+    smith: ServiceContext,
+    accepted_read_pack: tuple[str, str, bytes, bytes],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    server = _server_for(service, service_config)
+    monkeypatch.setattr(server, "_context", lambda: smith)
+    path = accepted_read_pack[0]
+    result = asyncio.run(
+        server.tool_memory_execute(
+            plan={
+                "operations": [
+                    {
+                        "op": "asset_get",
+                        "save_as": "first",
+                        "args": {
+                            "id_or_path": path,
+                            "asset_kind": "document",
+                            "view": "file",
+                            "file_path": "notes.txt",
+                            "limit": 2,
+                        },
+                    },
+                    {
+                        "op": "asset_get",
+                        "save_as": "second",
+                        "args": {
+                            "id_or_path": path,
+                            "asset_kind": "document",
+                            "view": "file",
+                            "file_path": "notes.txt",
+                            "version": "$first.version",
+                            "expected_sha256": "$first.zip_sha256",
+                            "offset": "$first.file.next_offset",
+                            "limit": 3,
+                        },
+                    },
+                ]
+            }
+        )
+    )
+    assert result["status"] == "success"
+    assert result["data"]["trace"][1]["status"] == "success"
+    assert result["data"]["trace"][1]["data"]["file"]["offset"] == 2
+    assert result["data"]["trace"][1]["data"]["file"]["next_offset"] is None

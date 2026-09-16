@@ -578,7 +578,7 @@ Operation names are stable literals:
 ### Saved references and projections
 
 * `save_as` identifiers are bounded and may only match `^[A-Za-z][A-Za-z0-9_]{0,31}$`.
-* Saved values may only be referenced as `$name` or safe dotted paths such as `$hits.results.0.path`.
+* Saved values may only be referenced as `$name` or safe dotted paths such as `$hits.results.0.path`, bounded to 256 characters. Execute arguments may use placeholders for numbers, booleans, arrays and nested values. They resolve only from earlier successful results in the current plan and are revalidated against the selected operation's original schema before dispatch. Numeric strings, booleans and null cannot satisfy an integer argument. Direct-tool schemas remain concrete; `op`, `save_as` and return-projection limits are not deferred.
 * `returns[]` entries may contain `name?`, `ref`, `fields=()`, `limit?`.
 
 ### Execute rules
@@ -587,7 +587,7 @@ Operation names are stable literals:
 * Auth, validation and write policy remain enforced by the underlying service methods.
 * At most one commit-capable operation -- `proposal_apply`, `create`, `patch`, `rename` -- is allowed per plan.
 * Output is bounded by configured limits for operation count, intermediates, records, bytes and total runtime.
-* Success returns a bounded operation trace, revision summary and requested projections.
+* Success returns a bounded operation trace, revision summary and requested projections. Validation errors identify the plan or operation/field, summarise at most three errors and omit input dumps and help URLs. Resolved-value failures after a commit retain its trace and operation ID with reconciliation guidance.
 * If the runtime deadline expires after a commit-capable operation succeeds, execution stops and returns success with the committed revisions, operation ID and warning `memory_execute_deadline_exceeded_after_commit`. A deadline reached before any commit remains a `validation_error`.
 * If `stop_on_error` is `true`, execution stops at the first operation-level error.
 * If `stop_on_error` is `false`, later steps may still run and successful projections may still be returned.
