@@ -139,8 +139,9 @@ def test_control_db_migrations_enable_wal_and_v1_tables(
         "dream_signals",
         "staged_assets",
         "asset_upload_tickets",
+        "proposal_events",
     } <= tables
-    assert schema_version == "9"
+    assert schema_version == "10"
 
 
 def test_idempotency_replays_per_principal_and_rejects_payload_conflicts(

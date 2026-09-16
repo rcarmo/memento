@@ -222,6 +222,7 @@ def diff_main_paths(
         "--git-dir",
         paths.bare_dir,
         "diff",
+        "--no-renames",
         "--name-only",
         base_revision,
         end_revision,

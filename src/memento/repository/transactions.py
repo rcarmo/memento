@@ -32,14 +32,14 @@ from memento.repository.git import (
     resolve_worktree_revision,
 )
 
-_TRANSACTION_LOCKS: dict[str, threading.Lock] = {}
+_TRANSACTION_LOCKS: dict[str, threading.RLock] = {}
 _TRANSACTION_LOCKS_GUARD = threading.Lock()
 
 
-def _transaction_lock(paths: GitRepositoryPaths) -> threading.Lock:
+def _transaction_lock(paths: GitRepositoryPaths) -> threading.RLock:
     key = str(paths.bare_dir.resolve())
     with _TRANSACTION_LOCKS_GUARD:
-        return _TRANSACTION_LOCKS.setdefault(key, threading.Lock())
+        return _TRANSACTION_LOCKS.setdefault(key, threading.RLock())
 
 
 class TransactionConflictError(RuntimeError):

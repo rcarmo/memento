@@ -22,7 +22,7 @@ Use the workflow guides for agent tasks, the contracts for exact arguments and t
 | Submit a change and inspect the result | [Proposal submission](proposals.md#submit-and-review) |
 | Approve, reject or request changes | [Review decisions](proposals.md#choose-a-review-decision) |
 | Correct and refile a proposal | [Refile-corrected-content](proposals.md#refile-corrected-content) |
-| Recover clean changes from a stale proposal | [Stale proposals](proposals.md#handle-a-stale-or-expired-proposal) |
+| Rebase a clean proposal or resolve conflicts without losing the queue | [Rebase and conflict handling](proposals.md#handle-a-stale-or-expired-proposal) |
 | Publish or update a packaged skill | [Skill review](proposals.md#review-a-skill-or-asset-update) |
 | Retrieve accepted asset files or ZIPs | [Asset recall](agent-workflows.md#retrieve-an-accepted-skill-or-asset) and [range contract](accepted-assets.md) |
 | Resolve a lost mutation response | [Reconciliation](agent-workflows.md#reconcile-an-interrupted-write) |
