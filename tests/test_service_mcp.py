@@ -5527,6 +5527,8 @@ def test_rebase_worker_timeout_reconciles_original_key_after_commit(
     wait_for = asyncio.wait_for
 
     async def shortened(awaitable: Any, timeout: float) -> Any:
+        # Start the simulated deadline only once the worker reaches the write checkpoint.
+        assert await asyncio.to_thread(entered.wait, 5)
         return await wait_for(awaitable, timeout=0.1)
 
     monkeypatch.setattr(asyncio, "wait_for", shortened)
