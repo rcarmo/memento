@@ -33,6 +33,10 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Historical proposal bases for 0.5.8
+
+Live 0.5.7 verification found a retained proposal whose base revision was the literal string `null`. Conflict refresh tried to diff it and returned `repo_unavailable` for status and queue reads. Version 0.5.8 treats an invalid or unavailable historical base as a conflict on that proposal, with `base_revision_unavailable` guidance. Its content/assets remain unchanged, it stays reviewable, and a curator can reject it or request fresh submission. Rebase fails closed. Tests cover `null`, an empty base and a missing commit hash.
+
 ## Proposal continuity for 0.5.7
 
 Issue #28 keeps unresolved proposals visible after repository advancement. Clean older proposals become `needs_rebase`; overlapping paths become `conflicted`. Both remain in the unresolved queue/backlog and permit rejection or requested changes. Original proposers or scoped curators can use execute-only `proposal_rebase` to update a clean base in place without uploading assets again. Approval must be repeated.

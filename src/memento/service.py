@@ -3223,17 +3223,23 @@ class MemoryService:
         current_revision = revision or get_main_revision(self._deps.repo_paths)
         changed = diffs.get(record.base_revision) if diffs is not None else None
         if changed is None:
-            changed = (
-                set(
-                    diff_main_paths(
-                        self._deps.repo_paths,
-                        base_revision=record.base_revision,
-                        end_revision=current_revision,
+            try:
+                changed = (
+                    set(
+                        diff_main_paths(
+                            self._deps.repo_paths,
+                            base_revision=record.base_revision,
+                            end_revision=current_revision,
+                        )
                     )
+                    if record.base_revision != current_revision
+                    else set()
                 )
-                if record.base_revision != current_revision
-                else set()
-            )
+            except GitError:
+                # Retained records may refer to an invalid or unavailable historical base.
+                # Confirm the live repository is readable, then fail this proposal closed.
+                get_main_revision(self._deps.repo_paths)
+                changed = {"\u0000base_revision_unavailable"}
             if diffs is not None:
                 diffs[record.base_revision] = changed
         result: list[dict[str, Any]] = []
@@ -3255,14 +3261,20 @@ class MemoryService:
                         changed = changed | {paths[0]}
                 except (FileNotFoundError, BundleError, FrontmatterError, PathSafetyError):
                     pass
-            conflicting = tuple(sorted({path for path in paths if path in changed}))
-            result.append(
-                {
-                    "index": index,
-                    "status": "conflict" if conflicting else "clean",
-                    "conflicting_paths": conflicting,
-                }
+            unavailable_base = "\u0000base_revision_unavailable" in changed
+            conflicting = tuple(
+                sorted({path for path in paths if unavailable_base or path in changed})
             )
+            item: dict[str, Any] = {
+                "index": index,
+                "status": "conflict" if conflicting else "clean",
+                "conflicting_paths": conflicting,
+            }
+            if unavailable_base:
+                item["reason"] = (
+                    "base_revision_unavailable; inspect current content and file a fresh proposal"
+                )
+            result.append(item)
         return result
 
     def _draft_model_proposal(
