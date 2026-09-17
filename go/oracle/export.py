@@ -58,7 +58,9 @@ def main() -> None:
             "umcp_deployed_commit": UMCP_PIN,
             "umcp_reference_commit": UMCP_TIP,
             "umcp_tip_delta": "documentation only; runtime unchanged from deployed pin",
-            "fixture_data": "synthetic only; no production content",
+            "fixture_data": "synthetic/public model fixtures only; no production content",
+            "gte_original_go_commit": "d2ffa3a5aaf7be72b178970f48c835c0d8fda5bf",
+            "gte_tokenizer_compatibility": "original Go algorithms with Memento Unicode character-boundary fix; no assembly/fast-math",
         },
     )
     cases: list[dict[str, Any]] = [

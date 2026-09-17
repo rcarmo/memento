@@ -27,6 +27,21 @@ jobs:
       - run: make -C go race
       - run: make -C go fuzz
       - run: make -C go cross
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: |
+            models/gte/gte-small.gtemodel
+            models/needle/memento-router.ndl
+            models/needle/needle.model
+          key: go-reference-models-${{ hashFiles('models/runtime-models.json') }}
+      - name: Verify/fetch pinned public reference models (test-only Python)
+        run: python tools/prepare_runtime_models.py --root .
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: make -C go model-test GTE_MODEL_PATH="${{ github.workspace }}/models/gte/gte-small.gtemodel"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,0 +1,326 @@
+[
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "batch_item_done"
+    ],
+    "layers": 0,
+    "outputs": [
+      [
+        0.6246950626373291,
+        0.7808688282966614
+      ]
+    ],
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "batch_item_done"
+    ],
+    "layers": 0,
+    "outputs": [
+      [
+        0.4856429696083069,
+        0.8741573691368103
+      ]
+    ],
+    "texts": [
+      "hello"
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "batch_item_done",
+      "batch_item_done",
+      "batch_item_done",
+      "batch_item_done"
+    ],
+    "layers": 0,
+    "outputs": [
+      [
+        0.38074982166290283,
+        0.9246780872344971
+      ],
+      [
+        0.7592566609382629,
+        0.650791347026825
+      ],
+      [
+        0.4190581738948822,
+        0.9079594016075134
+      ],
+      [
+        0.6246950626373291,
+        0.7808688282966614
+      ]
+    ],
+    "texts": [
+      "HELLO world!",
+      "界",
+      "☃☃",
+      ""
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "batch_item_done",
+      "batch_item_done"
+    ],
+    "layers": 0,
+    "outputs": [
+      [
+        0.4856429696083069,
+        0.8741573691368103
+      ],
+      [
+        0.4190581738948822,
+        0.9079594016075134
+      ]
+    ],
+    "texts": [
+      "hello world hello world",
+      "hellos"
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "layer_done",
+      "batch_item_done"
+    ],
+    "layers": 1,
+    "outputs": [
+      [
+        0.24253566563129425,
+        0.9701424837112427
+      ]
+    ],
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "layer_done",
+      "batch_item_done"
+    ],
+    "layers": 1,
+    "outputs": [
+      [
+        0.24253559112548828,
+        0.9701424837112427
+      ]
+    ],
+    "texts": [
+      "hello"
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "layer_done",
+      "batch_item_done",
+      "batch_item_done",
+      "batch_item_done",
+      "batch_item_done"
+    ],
+    "layers": 1,
+    "outputs": [
+      [
+        0.24253559112548828,
+        0.9701424837112427
+      ],
+      [
+        0.24253559112548828,
+        0.9701424837112427
+      ],
+      [
+        0.24253562092781067,
+        0.9701424837112427
+      ],
+      [
+        0.24253559112548828,
+        0.9701424837112427
+      ]
+    ],
+    "texts": [
+      "HELLO world!",
+      "界",
+      "☃☃",
+      ""
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "layer_done",
+      "batch_item_done",
+      "batch_item_done"
+    ],
+    "layers": 1,
+    "outputs": [
+      [
+        0.24253562092781067,
+        0.9701424837112427
+      ],
+      [
+        0.24253559112548828,
+        0.9701424837112427
+      ]
+    ],
+    "texts": [
+      "hello world hello world",
+      "hellos"
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "layer_done",
+      "layer_done",
+      "batch_item_done"
+    ],
+    "layers": 2,
+    "outputs": [
+      [
+        0.24253560602664948,
+        0.9701424837112427
+      ]
+    ],
+    "texts": [
+      ""
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "layer_done",
+      "layer_done",
+      "batch_item_done"
+    ],
+    "layers": 2,
+    "outputs": [
+      [
+        0.24253559112548828,
+        0.9701424837112427
+      ]
+    ],
+    "texts": [
+      "hello"
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "layer_done",
+      "layer_done",
+      "batch_item_done",
+      "batch_item_done",
+      "batch_item_done",
+      "batch_item_done"
+    ],
+    "layers": 2,
+    "outputs": [
+      [
+        0.24253560602664948,
+        0.9701424837112427
+      ],
+      [
+        0.24253559112548828,
+        0.9701424837112427
+      ],
+      [
+        0.24253560602664948,
+        0.9701424837112427
+      ],
+      [
+        0.24253560602664948,
+        0.9701424837112427
+      ]
+    ],
+    "texts": [
+      "HELLO world!",
+      "界",
+      "☃☃",
+      ""
+    ]
+  },
+  {
+    "checkpoints": [
+      "batch_item_start",
+      "tokenized",
+      "batch_item_start",
+      "tokenized",
+      "embeddings_ready",
+      "layer_done",
+      "layer_done",
+      "batch_item_done",
+      "batch_item_done"
+    ],
+    "layers": 2,
+    "outputs": [
+      [
+        0.24253559112548828,
+        0.9701424837112427
+      ],
+      [
+        0.24253560602664948,
+        0.9701424837112427
+      ]
+    ],
+    "texts": [
+      "hello world hello world",
+      "hellos"
+    ]
+  }
+]

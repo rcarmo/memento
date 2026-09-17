@@ -1,0 +1,11 @@
+[package]
+name = "memento-go-gte-oracle"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[dependencies]
+memento-gte = { path = "../../../rust/crates/memento-gte" }
+serde_json = "1"

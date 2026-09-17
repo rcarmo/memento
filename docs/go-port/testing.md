@@ -43,6 +43,19 @@ Current captures:
 * Progress fixtures emitted by both bases: absent token, message sanitisation/rune bounds, integer/float validation, large integer total/progress comparisons and errors. Concurrency tests cover request-ID/progress-group cancellation, duplicate-ID cleanup and isolated metadata.
 * Registry: 34 Memento operations, twenty tool-surface/model-option combinations, concrete argument schemas and the execute plan schema. These are forward references; they are not claimed as implemented discovery.
 * Rust vector helpers: finite/length errors, empty/dimension/zero-norm cases, scalar values and AXPY results.
+* GTE: Rust-generated tokenizer fixtures across limits/Unicode, synthetic zero/one/two-layer model outputs and checkpoint sequences. The original Go tokenizer's bytewise UNK behaviour differs from Memento's Unicode fix; default Go-port tokenisation preserves the latter.
+* `make -C go model-test GTE_MODEL_PATH=/path/to/gte-small.gtemodel` is a required native CI step, not an optional skipped release gate. It verifies the model SHA, exact token IDs and five real-model outputs against Rust. Current explicit exploratory numeric gates are max absolute error <=1e-5, cosine >=0.999999 and unit norm error <=1e-5; observed local max error is <=1.2e-7. These are not bit-identical arithmetic or a complete retrieval corpus and need review before production compatibility is signed off.
+
+Regenerate the real-model reference only deliberately with the digest-pinned file:
+
+```sh
+cd go
+CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --release \
+  --manifest-path oracle/rust-gte/Cargo.toml -- real /path/to/gte-small.gtemodel \
+  > testdata/parity/gte-real.json
+```
+
+The public model is fetched/verified by existing test tooling, never at Go runtime. Synthetic parser tests include every truncated offset, invalid dimensions/UTF-8 and oversize header guards. A complete malformed-error-text matrix and mmap/resource tests remain required.
 
 ## End-to-end gates still to build
 

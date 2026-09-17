@@ -1,5 +1,7 @@
 {
-  "fixture_data": "synthetic only; no production content",
+  "fixture_data": "synthetic/public model fixtures only; no production content",
+  "gte_original_go_commit": "d2ffa3a5aaf7be72b178970f48c835c0d8fda5bf",
+  "gte_tokenizer_compatibility": "original Go algorithms with Memento Unicode character-boundary fix; no assembly/fast-math",
   "memento_commit": "0b0b8f94dd8b0410a0e3c0fd547e995d2b739b41",
   "memento_release": "0.5.9",
   "umcp_deployed_commit": "9c89a708d14ae804e32aa65de10af7c02922617d",
