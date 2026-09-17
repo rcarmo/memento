@@ -1,0 +1,2220 @@
+{
+  "origins": [
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "",
+      "valid": false
+    },
+    {
+      "allowed": [
+        ""
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "HTTP://LOCALHOST",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "HTTP://LOCALHOST",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "HTTP://LOCALHOST",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "HTTP://LOCALHOST",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "HTTP://LOCALHOST"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "HTTP://LOCALHOST",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "https://localhost",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "https://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "https://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "https://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://localhost"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "https://localhost",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://127.0.0.1",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://127.0.0.1",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://127.0.0.1",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://127.0.0.1",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://127.0.0.1"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://127.0.0.1",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://[::1]",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[::1]"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://[::1]:123",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]:123",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]:123",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]:123",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[::1]:123"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]:123",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost/",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost/",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost/",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost/",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost/"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost/",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost?",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost?",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost?",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost?",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost?"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost?",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost#",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost#",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost#",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost#",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost#"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost#",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost?x",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost?x",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost?x",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost?x",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost?x"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost?x",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost#x",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost#x",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost#x",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost#x",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost#x"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost#x",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost:",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost:"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost:0",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:0",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:0",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:0",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost:0"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:0",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost:000",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:000",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:000",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:000",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost:000"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:000",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost:65535",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:65535",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:65535",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:65535",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost:65535"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:65535",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost:65536",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:65536",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:65536",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:65536",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost:65536"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:65536",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost:bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:bad",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:bad",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost:bad"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost:٠",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:٠",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:٠",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:٠",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost:٠"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:٠",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost:99999999999999999999999999",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:99999999999999999999999999",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:99999999999999999999999999",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:99999999999999999999999999",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost:99999999999999999999999999"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost:99999999999999999999999999",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://localhost\t",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost\t",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost\t",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://localhost\t",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost\t"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://localhost\t",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://user@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://user@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://user@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://user@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://user@localhost"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://user@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://:pass@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://:pass@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://:pass@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://:pass@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://:pass@localhost"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://:pass@localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://example.com",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://example.com",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://example.com",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://example.com",
+      "valid": true
+    },
+    {
+      "allowed": [
+        "http://example.com"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://example.com",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "https://ui.example",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "https://ui.example",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "https://ui.example",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "https://ui.example",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "https://ui.example",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "ftp://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "ftp://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "ftp://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "ftp://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "ftp://localhost"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "ftp://localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "//localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "//localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "//localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "//localhost",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "//localhost"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "//localhost",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'bad' does not appear to be an IPv4 or IPv6 address",
+      "local": true,
+      "origin": "http://[bad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'bad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[bad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "'bad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[bad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "'bad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[bad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[bad]"
+      ],
+      "authority": null,
+      "error": "'bad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[bad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "An IPv4 address cannot be in brackets",
+      "local": true,
+      "origin": "http://[127.0.0.1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "An IPv4 address cannot be in brackets",
+      "local": false,
+      "origin": "http://[127.0.0.1]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "An IPv4 address cannot be in brackets",
+      "local": false,
+      "origin": "http://[127.0.0.1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "An IPv4 address cannot be in brackets",
+      "local": false,
+      "origin": "http://[127.0.0.1]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[127.0.0.1]"
+      ],
+      "authority": null,
+      "error": "An IPv4 address cannot be in brackets",
+      "local": false,
+      "origin": "http://[127.0.0.1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://[v1.test]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[v1.test]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[v1.test]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://[v1.test]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[v1.test]"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[v1.test]",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "IPvFuture address is invalid",
+      "local": true,
+      "origin": "http://[vbad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "IPvFuture address is invalid",
+      "local": false,
+      "origin": "http://[vbad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "IPvFuture address is invalid",
+      "local": false,
+      "origin": "http://[vbad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "IPvFuture address is invalid",
+      "local": false,
+      "origin": "http://[vbad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[vbad]"
+      ],
+      "authority": null,
+      "error": "IPvFuture address is invalid",
+      "local": false,
+      "origin": "http://[vbad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": true,
+      "origin": "http://[::1",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://[::1",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://[::1",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://[::1",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[::1"
+      ],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://[::1",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": true,
+      "origin": "http://::1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://::1]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://::1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://::1]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://::1]"
+      ],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://::1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": true,
+      "origin": "http://x[::1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://x[::1]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://x[::1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://x[::1]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://x[::1]"
+      ],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://x[::1]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": true,
+      "origin": "http://[::1]x",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://[::1]x",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://[::1]x",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://[::1]x",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[::1]x"
+      ],
+      "authority": null,
+      "error": "Invalid IPv6 URL",
+      "local": false,
+      "origin": "http://[::1]x",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://[::1]:bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]:bad",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]:bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]:bad",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[::1]:bad"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]:bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "netloc 'localhost／bad' contains invalid characters under NFKC normalization",
+      "local": true,
+      "origin": "http://localhost／bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "netloc 'localhost／bad' contains invalid characters under NFKC normalization",
+      "local": false,
+      "origin": "http://localhost／bad",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "netloc 'localhost／bad' contains invalid characters under NFKC normalization",
+      "local": false,
+      "origin": "http://localhost／bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "netloc 'localhost／bad' contains invalid characters under NFKC normalization",
+      "local": false,
+      "origin": "http://localhost／bad",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost／bad"
+      ],
+      "authority": null,
+      "error": "netloc 'localhost／bad' contains invalid characters under NFKC normalization",
+      "local": false,
+      "origin": "http://localhost／bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "netloc 'localhost℀bad' contains invalid characters under NFKC normalization",
+      "local": true,
+      "origin": "http://localhost℀bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "netloc 'localhost℀bad' contains invalid characters under NFKC normalization",
+      "local": false,
+      "origin": "http://localhost℀bad",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "netloc 'localhost℀bad' contains invalid characters under NFKC normalization",
+      "local": false,
+      "origin": "http://localhost℀bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "netloc 'localhost℀bad' contains invalid characters under NFKC normalization",
+      "local": false,
+      "origin": "http://localhost℀bad",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://localhost℀bad"
+      ],
+      "authority": null,
+      "error": "netloc 'localhost℀bad' contains invalid characters under NFKC normalization",
+      "local": false,
+      "origin": "http://localhost℀bad",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://[fe80::1%zone]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[fe80::1%zone]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[fe80::1%zone]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://[fe80::1%zone]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[fe80::1%zone]"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[fe80::1%zone]",
+      "valid": true
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": true,
+      "origin": "http://[::1]::1",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]::1",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]::1",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]::1",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[::1]::1"
+      ],
+      "authority": null,
+      "error": null,
+      "local": false,
+      "origin": "http://[::1]::1",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "\"b'ad\" does not appear to be an IPv4 or IPv6 address",
+      "local": true,
+      "origin": "http://[b'ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "\"b'ad\" does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b'ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "\"b'ad\" does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b'ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "\"b'ad\" does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b'ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[b'ad]"
+      ],
+      "authority": null,
+      "error": "\"b'ad\" does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b'ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'b\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": true,
+      "origin": "http://[b\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'b\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "'b\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "'b\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[b\"ad]"
+      ],
+      "authority": null,
+      "error": "'b\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'b\\'\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": true,
+      "origin": "http://[b'\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'b\\'\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b'\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "'b\\'\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b'\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "'b\\'\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b'\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[b'\"ad]"
+      ],
+      "authority": null,
+      "error": "'b\\'\"ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b'\"ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'b\\\\ad' does not appear to be an IPv4 or IPv6 address",
+      "local": true,
+      "origin": "http://[b\\ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'b\\\\ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\\ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "'b\\\\ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\\ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "'b\\\\ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\\ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[b\\ad]"
+      ],
+      "authority": null,
+      "error": "'b\\\\ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\\ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'b\\x01ad' does not appear to be an IPv4 or IPv6 address",
+      "local": true,
+      "origin": "http://[b\u0001ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": null,
+      "error": "'b\\x01ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\u0001ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "https://ui.example"
+      ],
+      "authority": null,
+      "error": "'b\\x01ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\u0001ad]",
+      "valid": false
+    },
+    {
+      "allowed": [],
+      "authority": "example.com",
+      "error": "'b\\x01ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\u0001ad]",
+      "valid": false
+    },
+    {
+      "allowed": [
+        "http://[b\u0001ad]"
+      ],
+      "authority": null,
+      "error": "'b\\x01ad' does not appear to be an IPv4 or IPv6 address",
+      "local": false,
+      "origin": "http://[b\u0001ad]",
+      "valid": false
+    }
+  ],
+  "targets": [
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "",
+        "query": "",
+        "request_path": "/",
+        "scheme": ""
+      },
+      "input": ""
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "/",
+        "query": "",
+        "request_path": "/",
+        "scheme": ""
+      },
+      "input": "/"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "*",
+        "query": "",
+        "request_path": "*",
+        "scheme": ""
+      },
+      "input": "*"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "",
+        "query": "x=1",
+        "request_path": "/",
+        "scheme": ""
+      },
+      "input": "?x=1"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "x",
+        "netloc": "",
+        "path": "",
+        "query": "",
+        "request_path": "/",
+        "scheme": ""
+      },
+      "input": "#x"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "host",
+        "path": "/path",
+        "query": "",
+        "request_path": "/path",
+        "scheme": ""
+      },
+      "input": "//host/path"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "/bad%xx",
+        "query": "",
+        "request_path": "/bad%xx",
+        "scheme": ""
+      },
+      "input": "/bad%xx"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "/ok",
+        "query": "",
+        "request_path": "/ok",
+        "scheme": ""
+      },
+      "input": " /ok"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "/path",
+        "query": "",
+        "request_path": "/path",
+        "scheme": ""
+      },
+      "input": "\u0000/path"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "host",
+        "path": "",
+        "query": "",
+        "request_path": "/",
+        "scheme": "http"
+      },
+      "input": "http://host"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "frag",
+        "netloc": "host",
+        "path": "/a;b",
+        "query": "x",
+        "request_path": "/a;b",
+        "scheme": "http"
+      },
+      "input": "http://host/a;b?x#frag"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "abc",
+        "query": "",
+        "request_path": "abc",
+        "scheme": "mailto"
+      },
+      "input": "mailto:abc"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "1bad:foo",
+        "query": "",
+        "request_path": "1bad:foo",
+        "scheme": ""
+      },
+      "input": "1bad:foo"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "HOST",
+        "path": "/a%20b",
+        "query": "",
+        "request_path": "/a%20b",
+        "scheme": "http"
+      },
+      "input": "HTTP://HOST/a%20b"
+    },
+    {
+      "error": "'bad' does not appear to be an IPv4 or IPv6 address",
+      "expected": null,
+      "input": "http://[bad]/a"
+    },
+    {
+      "error": "netloc 'localhost／bad' contains invalid characters under NFKC normalization",
+      "expected": null,
+      "input": "http://localhost／bad/a"
+    },
+    {
+      "error": null,
+      "expected": {
+        "fragment": "",
+        "netloc": "",
+        "path": "abcd",
+        "query": "",
+        "request_path": "abcd",
+        "scheme": ""
+      },
+      "input": "a\tb\nc\rd"
+    }
+  ]
+}

@@ -21,6 +21,7 @@ fuzz:
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzDispatch -fuzztime=5s -parallel=2
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzPagination -fuzztime=5s -parallel=2
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzStdio -fuzztime=5s -parallel=2
+	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzURLRules -fuzztime=5s -parallel=2
 	CGO_ENABLED=0 $(GO) test ./internal/vector -run='^$$' -fuzz=FuzzF32LE -fuzztime=5s -parallel=2
 build:
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-go ./cmd/memento-go

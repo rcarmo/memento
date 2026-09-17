@@ -178,6 +178,8 @@ def main() -> None:
     save("umcp-pagination.json", pagination.fixtures(shared))
     stdio = importlib.import_module("umcp_stdio")
     save("umcp-stdio.json", stdio.fixtures(shared))
+    urls = importlib.import_module("umcp_urls")
+    save("umcp-urls.json", urls.fixtures(shared))
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 
