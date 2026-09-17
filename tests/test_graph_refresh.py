@@ -43,6 +43,7 @@ class _WorkerState:
     pause_reason: str | None = "interactive"
     current_path: str | None = None
     completed: int = 4
+    alive: bool = True
 
 
 class _Worker:
@@ -70,7 +71,7 @@ def test_selected_visible_and_confirmed_full_refresh(tmp_path: Path) -> None:
     worker = _Worker()
     refresh = coordinator(tmp_path, worker)
     selected = refresh.enqueue(scope="selected", concept_ids=("a",))
-    assert selected.available and selected.queued_paths == 1
+    assert selected.available and selected.alive and selected.queued_paths == 1
     assert selected.pause_reason == "interactive"
     assert selected.completed == 4
     assert worker.calls[-1] == (tmp_path, "rev", ("/projects/a.md",))
@@ -99,3 +100,21 @@ def test_refresh_rejects_unknown_bounds_and_unavailable_worker(tmp_path: Path) -
     assert unavailable.state().available is False
     with pytest.raises(GraphSnapshotError, match="unavailable"):
         unavailable.enqueue(scope="selected", concept_ids=("a",))
+
+
+def test_dead_worker_is_unavailable_and_enqueue_rejected(tmp_path: Path) -> None:
+    class DeadWorker(_Worker):
+        def state(self) -> _WorkerState:
+            return _WorkerState(alive=False, last_error="embedding worker stopped unexpectedly")
+
+        def enqueue(
+            self, root: Path, revision: str, *, paths: tuple[str, ...] | None = None
+        ) -> bool:
+            return False
+
+    refresh = coordinator(tmp_path, DeadWorker())
+    state = refresh.state_dict()
+    assert state["alive"] is False and state["available"] is False
+    assert state["last_error"] == "embedding worker stopped unexpectedly"
+    with pytest.raises(GraphSnapshotError, match="stopped"):
+        refresh.enqueue(scope="selected", concept_ids=("a",))

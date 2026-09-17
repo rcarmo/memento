@@ -279,3 +279,27 @@ test('Show Trash sends inclusion header and adds/removes trash nodes', async ({p
   await toggle.uncheck();
   await page.waitForFunction(()=>(window as any).__mementoGraphScene.nodes.every((n:any)=>n.id!=='trash-fixture'));
 });
+
+test("semantic controls explain a stopped embedding worker", async ({ page }) => {
+  await page.route("**/graph/api/v1/overview*", async route => {
+    const response = await route.fetch();
+    const data = await response.json();
+    data.edges = data.edges.filter((edge: { kind: string }) => edge.kind !== "semantic_similarity");
+    await route.fulfill({ response, json: data });
+  });
+  await page.route("**/graph/api/v1/embeddings/status", async route => {
+    await route.fulfill({ contentType: "application/json", body: JSON.stringify({
+      available: false, alive: false, running: false, pending: true,
+      completed: 44, last_error: "embedding worker stopped unexpectedly",
+    }) });
+  });
+  await page.goto("/graph?fixture=small");
+  await expect(page.getByTestId("embedding-worker-status")).toContainText("Embedding worker unavailable");
+  await expect(page.getByTestId("embedding-worker-status")).toContainText("stopped unexpectedly");
+  await page.getByLabel("Show semantic layer").check();
+  await page.locator("summary").filter({ hasText: /^Forces$/ }).click();
+  const slider = page.locator("label.slider").filter({ hasText: /^semantic similarity / }).locator("input");
+  // Reproduce the missing/stale embedding view with no semantic edges.
+  await expect(slider).toBeDisabled();
+  await expect(slider).toHaveAttribute("title", /worker stopped or unavailable/);
+});

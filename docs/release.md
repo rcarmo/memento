@@ -33,6 +33,12 @@ Workflow checkouts require only ordinary Git. A single model-preparation job der
 
 Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
 
+## Embedding worker recovery for 0.5.9
+
+Issue #33 fixes the semantic worker exiting on a SQLite lock during queue polling. Polling and pause checks now share the worker's error boundary. Transient busy/locked failures retain queued work and use an interruptible retry wait; status reads no longer access SQLite under the worker condition. Worker liveness is exposed in runtime/graph diagnostics, and stopped workers reject enqueue attempts. The graph sidebar shows worker state and explains missing semantic forces.
+
+Tests cover polling recovery, full/selected work retention, nonblocking status/enqueue while polling, close during retry, unexpected worker exit and truthful graph availability. Existing pacing, failure, revision-coalescing and shutdown tests remain required.
+
 ## Historical proposal bases for 0.5.8
 
 Live 0.5.7 verification found a retained proposal whose base revision was the literal string `null`. Conflict refresh tried to diff it and returned `repo_unavailable` for status and queue reads. Version 0.5.8 treats an invalid or unavailable historical base as a conflict on that proposal, with `base_revision_unavailable` guidance. Its content/assets remain unchanged, it stays reviewable, and a curator can reject it or request fresh submission. Rebase fails closed. Tests cover `null`, an empty base and a missing commit hash.

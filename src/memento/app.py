@@ -133,6 +133,7 @@ class MementoRuntime:
                 "warnings": list(semantic.warnings),
                 "worker": (
                     {
+                        "alive": worker_state.alive,
                         "running": worker_state.running,
                         "pending": worker_state.pending,
                         "pause_reason": worker_state.pause_reason,
