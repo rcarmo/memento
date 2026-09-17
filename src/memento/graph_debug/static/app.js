@@ -176,6 +176,16 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    let inFlight = false;
+    const timer = setInterval(async () => {
+      if (document.hidden || inFlight) return;
+      inFlight = true;
+      try { await loadRefreshStatus(); } finally { inFlight = false; }
+    }, 15000);
+    return () => clearInterval(timer);
+  }, []);
+
   async function loadRefreshStatus() {
     try {
       const { payload } = await graphApi.refreshStatus();
@@ -557,6 +567,10 @@ function App() {
           }),
         ]),
         h("small", {}, "Semantic edges participate in layout only while this layer is enabled."),
+        refresh && h("small", { class: "selection-detail", "data-testid": "embedding-worker-status" },
+          refresh.alive === false
+            ? `Embedding worker unavailable: ${refresh.last_error || "stopped or not configured"}`
+            : `Embedding worker: ${refresh.running ? "computing" : refresh.pause_reason || (refresh.pending ? "pending" : "idle")} · ${refresh.completed || 0} completed jobs since restart${refresh.last_error ? ` · ${refresh.last_error}` : ""}`),
       ]),
       h("details", {}, [
         h("summary", {}, "Forces"),
@@ -567,7 +581,12 @@ function App() {
             h("input", {
               type: "range",
               disabled: inactiveForce(key),
-              title: inactiveForce(key) ? "No active relationships of this kind in the current view" : "Adjust layout attraction",
+              title: key === "semantic_similarity" && inactiveForce(key)
+                ? !semanticEnabled ? "Enable Show semantic layer first"
+                  : refresh?.alive === false ? "Embedding worker stopped or unavailable; inspect its status above"
+                  : graph?.revisions?.embedding !== graph?.revisions?.repository ? "Embeddings are not current; wait for the worker and reload the graph"
+                  : "No semantic relationships in the current view"
+                : inactiveForce(key) ? "No active relationships of this kind in the current view" : "Adjust layout attraction",
               min: key === "distance" ? 0.5 : 0,
               max: key === "distance" ? 12 : key === "repulsion" ? 1 : 0.5,
               step: key === "distance" ? 0.1 : 0.005,

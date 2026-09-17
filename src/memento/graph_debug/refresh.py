@@ -20,6 +20,7 @@ class GraphEmbeddingRefreshState:
     pause_reason: str | None = None
     current_path: str | None = None
     completed: int = 0
+    alive: bool = False
 
 
 class GraphEmbeddingRefreshCoordinator:
@@ -73,7 +74,7 @@ class GraphEmbeddingRefreshCoordinator:
             revision,
             paths=paths,
         ):
-            raise GraphSnapshotError("embedding refresh worker is closed")
+            raise GraphSnapshotError("embedding refresh worker is closed or stopped")
         self._last_scope = scope
         self._queued_paths = queued
         self._repository_revision = revision
@@ -92,7 +93,8 @@ class GraphEmbeddingRefreshCoordinator:
             )
         state = self._worker.state()
         return GraphEmbeddingRefreshState(
-            available=True,
+            available=state.alive,
+            alive=state.alive,
             running=state.running,
             pending=state.pending,
             last_error=state.last_error,

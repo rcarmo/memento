@@ -580,3 +580,174 @@ def wait_for(predicate: Callable[[], bool], *, timeout_seconds: float) -> bool:
 def _release_gate(gate: threading.Event, delay_seconds: float) -> None:
     time.sleep(delay_seconds)
     gate.set()
+
+
+def _fast_policy() -> ProgressiveEmbeddingPolicy:
+    return ProgressiveEmbeddingPolicy(
+        enabled=True,
+        startup_delay_seconds=0,
+        interactive_idle_seconds=0,
+        delay_seconds=0,
+        cpu_busy_limit_percent=99,
+    )
+
+
+def test_polling_database_lock_recovers_and_status_never_queries_sqlite(tmp_path: Path) -> None:
+    class LockedIndex(FakeRefreshIndex):
+        def __init__(self) -> None:
+            super().__init__()
+            self.locked = True
+            self.polls = 0
+            self.pending_paths = ["/recover.md"]
+
+        def pending_embedding_paths(self, *, limit: int = 1) -> tuple[str, ...]:
+            self.polls += 1
+            if self.locked:
+                raise sqlite3.OperationalError("database is locked")
+            return super().pending_embedding_paths(limit=limit)
+
+    index = LockedIndex()
+    worker = SemanticEmbeddingRefreshWorker(
+        cast(DerivedIndex, index), policy=_fast_policy(), cpu_usage=lambda: 0
+    )
+    try:
+        worker.enqueue(tmp_path, "rev")
+        assert wait_for(lambda: worker.state().pause_reason == "database-busy", timeout_seconds=2)
+        assert worker.state().alive and worker.state().pending
+        assert "database is locked" in (worker.state().last_error or "")
+        # Property reads must not increase poll counts or raise from a busy DB.
+        with worker._condition:
+            polls = index.polls
+            for _ in range(20):
+                assert worker.pending and worker.state().alive
+            assert index.polls == polls
+        index.locked = False
+        worker.enqueue(tmp_path, "rev")
+        assert worker.wait_idle(timeout_seconds=3)
+        assert index.path_calls == [("/recover.md",)]
+        assert worker.state().completed == 1 and worker.state().last_error is None
+    finally:
+        worker.close()
+
+
+@pytest.mark.parametrize("full", [False, True])
+def test_transient_execution_lock_preserves_request(tmp_path: Path, full: bool) -> None:
+    class BusyIndex(FakeRefreshIndex):
+        def __init__(self) -> None:
+            super().__init__()
+            self.attempts = 0
+
+        def refresh_embeddings(self, root: Path, *, repo_revision: str) -> None:
+            self.attempts += 1
+            if self.attempts == 1:
+                raise sqlite3.OperationalError("database table is locked")
+            self.calls.append(repo_revision)
+
+        def refresh_embedding_paths(
+            self, root: Path, *, repo_revision: str, paths: tuple[str, ...]
+        ) -> None:
+            self.attempts += 1
+            if self.attempts == 1:
+                from memento.derived.index import DerivedIndexUnavailableError
+
+                raise DerivedIndexUnavailableError("database is busy")
+            self.path_calls.append(paths)
+
+    index = BusyIndex()
+    worker = SemanticEmbeddingRefreshWorker(cast(DerivedIndex, index))
+    try:
+        worker.enqueue(tmp_path, "rev", paths=None if full else ("/manual.md",))
+        assert wait_for(lambda: worker.state().pause_reason == "database-busy", timeout_seconds=2)
+        assert worker.state().pending and worker.state().completed == 0
+        assert worker.wait_idle(timeout_seconds=3)
+        assert index.attempts == 2 and worker.state().completed == 1
+        assert index.calls == (["rev"] if full else [])
+        assert index.path_calls == ([] if full else [("/manual.md",)])
+    finally:
+        worker.close()
+
+
+def test_status_and_enqueue_remain_responsive_while_polling_blocks(tmp_path: Path) -> None:
+    entered, release = threading.Event(), threading.Event()
+
+    class BlockingIndex(FakeRefreshIndex):
+        def pending_embedding_paths(self, *, limit: int = 1) -> tuple[str, ...]:
+            entered.set()
+            assert release.wait(5)
+            return ()
+
+    index = BlockingIndex()
+    worker = SemanticEmbeddingRefreshWorker(
+        cast(DerivedIndex, index), policy=_fast_policy(), cpu_usage=lambda: 0
+    )
+    try:
+        worker.enqueue(tmp_path, "rev")
+        assert entered.wait(1)
+        started = time.monotonic()
+        assert worker.state().alive and worker.pending
+        assert worker.enqueue(tmp_path, "new-rev", paths=("/manual.md",))
+        assert time.monotonic() - started < 0.5
+        release.set()
+        assert worker.wait_idle(timeout_seconds=3)
+        assert index.path_calls == [("/manual.md",)]
+    finally:
+        release.set()
+        worker.close()
+
+
+def test_close_interrupts_database_retry_wait(tmp_path: Path) -> None:
+    class LockedIndex(FakeRefreshIndex):
+        def pending_embedding_paths(self, *, limit: int = 1) -> tuple[str, ...]:
+            raise sqlite3.OperationalError("database is locked")
+
+    worker = SemanticEmbeddingRefreshWorker(
+        cast(DerivedIndex, LockedIndex()), policy=_fast_policy(), cpu_usage=lambda: 0
+    )
+    worker.enqueue(tmp_path, "rev")
+    assert wait_for(lambda: worker.state().pause_reason == "database-busy", timeout_seconds=2)
+    start = time.monotonic()
+    worker.close()
+    assert time.monotonic() - start < 0.5
+    assert not worker.state().alive
+    assert not worker.enqueue(tmp_path, "rev")
+
+
+def test_unexpected_loop_exit_exposes_dead_worker(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(SemanticEmbeddingRefreshWorker, "_run_loop", lambda self: None)
+    worker = SemanticEmbeddingRefreshWorker(cast(DerivedIndex, FakeRefreshIndex()))
+    try:
+        worker._thread.join(timeout=1)
+        state = worker.state()
+        assert not state.alive and not state.running
+        assert state.pause_reason == "worker-stopped"
+        assert state.last_error == "embedding worker stopped unexpectedly"
+        assert not worker.enqueue(tmp_path, "rev")
+    finally:
+        worker.close()
+
+
+def test_pause_check_failure_does_not_drop_selected_work(tmp_path: Path) -> None:
+    index = FakeRefreshIndex()
+    attempts = 0
+
+    def cpu_sample() -> float:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise OSError("temporary sampling failure")
+        return 0
+
+    worker = SemanticEmbeddingRefreshWorker(
+        cast(DerivedIndex, index), policy=_fast_policy(), cpu_usage=cpu_sample
+    )
+    try:
+        worker.enqueue(tmp_path, "rev", paths=("/manual.md",))
+        assert wait_for(lambda: worker.state().pause_reason == "error", timeout_seconds=2)
+        assert worker.pending and worker.state().completed == 0
+        assert worker.wait_idle(timeout_seconds=3)
+        assert index.path_calls == [("/manual.md",)]
+        assert worker.state().last_error is None
+    finally:
+        worker.close()
