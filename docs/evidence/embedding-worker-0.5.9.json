@@ -1,0 +1,41 @@
+{
+  "at": "2026-09-17T19:43:15.724329+00:00",
+  "checks": {
+    "repo_revision_preserved": true,
+    "proposal_count_preserved": true,
+    "proposal_content_metadata_preserved": true,
+    "proposal_assets_byte_identical": true,
+    "prior_ready_embeddings_preserved": true,
+    "mounts_preserved": true,
+    "env_preserved": true,
+    "host_config_preserved": true,
+    "stack_env_preserved": true,
+    "stack_image_only": true,
+    "correct_image": true,
+    "healthy": true,
+    "zero_restarts": true
+  },
+  "repository_revision": "7f2fb6d6b184dedd2e1a5d8d79f83a5e9ff25a71",
+  "proposals": 440,
+  "proposal_assets": 462,
+  "ready_before_recovery": 148,
+  "ready_before_deployment": 188,
+  "ready_after_startup": 189,
+  "container_id": "4c9dfd26a7af2575bdd8e89b4e24c5ca0637a2ef6a3ec501abd338ca16629742",
+  "image": "ghcr.io/rcarmo/memento@sha256:bebc0a3eaf935a5b4f07c3e060fd8e22a11dacff90cd55532ec04306c30e81bc",
+  "started_at": "2026-09-17T19:33:19.043721531Z",
+  "worker": {
+    "alive": true,
+    "available": true,
+    "completed": 2,
+    "current_path": null,
+    "last_error": null,
+    "last_scope": null,
+    "pause_reason": "cpu-sampling",
+    "pending": true,
+    "queued_paths": 0,
+    "repository_revision": null,
+    "running": false
+  },
+  "worker_observed_at": "2026-09-17T19:46:00Z"
+}
