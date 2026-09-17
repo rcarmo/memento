@@ -1,0 +1,296 @@
+[
+  {
+    "bytes": [],
+    "dimensions": 0,
+    "error": null,
+    "method": "validate"
+  },
+  {
+    "bytes": [
+      1
+    ],
+    "dimensions": null,
+    "error": "f32le blob length 1 is not a multiple of 4",
+    "method": "validate"
+  },
+  {
+    "bytes": [
+      0,
+      0,
+      128,
+      63
+    ],
+    "dimensions": 1,
+    "error": null,
+    "method": "validate"
+  },
+  {
+    "bytes": [
+      0,
+      0,
+      192,
+      127
+    ],
+    "dimensions": null,
+    "error": "vector contains non-finite value at index 0",
+    "method": "validate"
+  },
+  {
+    "bytes": [
+      0,
+      0,
+      128,
+      127
+    ],
+    "dimensions": null,
+    "error": "vector contains non-finite value at index 0",
+    "method": "validate"
+  },
+  {
+    "error": null,
+    "left": [],
+    "method": "dot",
+    "right": [],
+    "value": 0.0
+  },
+  {
+    "error": "zero-norm vector",
+    "left": [],
+    "method": "cosine",
+    "right": [],
+    "value": null
+  },
+  {
+    "alpha": 0.5,
+    "error": null,
+    "left": [],
+    "method": "axpy",
+    "output": [],
+    "right": []
+  },
+  {
+    "error": null,
+    "left": [
+      1.0,
+      2.0,
+      3.0
+    ],
+    "method": "dot",
+    "right": [
+      3.0,
+      2.0,
+      1.0
+    ],
+    "value": 10.0
+  },
+  {
+    "error": null,
+    "left": [
+      1.0,
+      2.0,
+      3.0
+    ],
+    "method": "cosine",
+    "right": [
+      3.0,
+      2.0,
+      1.0
+    ],
+    "value": 0.714285671710968
+  },
+  {
+    "alpha": 0.5,
+    "error": null,
+    "left": [
+      1.0,
+      2.0,
+      3.0
+    ],
+    "method": "axpy",
+    "output": [
+      3.5,
+      3.0,
+      2.5
+    ],
+    "right": [
+      3.0,
+      2.0,
+      1.0
+    ]
+  },
+  {
+    "error": null,
+    "left": [
+      1.0,
+      0.0
+    ],
+    "method": "dot",
+    "right": [
+      0.0,
+      1.0
+    ],
+    "value": 0.0
+  },
+  {
+    "error": null,
+    "left": [
+      1.0,
+      0.0
+    ],
+    "method": "cosine",
+    "right": [
+      0.0,
+      1.0
+    ],
+    "value": 0.0
+  },
+  {
+    "alpha": 0.5,
+    "error": null,
+    "left": [
+      1.0,
+      0.0
+    ],
+    "method": "axpy",
+    "output": [
+      0.5,
+      1.0
+    ],
+    "right": [
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "error": "vector dimension mismatch: 2 vs 1",
+    "left": [
+      1.0,
+      2.0
+    ],
+    "method": "dot",
+    "right": [
+      1.0
+    ],
+    "value": null
+  },
+  {
+    "error": "vector dimension mismatch: 2 vs 1",
+    "left": [
+      1.0,
+      2.0
+    ],
+    "method": "cosine",
+    "right": [
+      1.0
+    ],
+    "value": null
+  },
+  {
+    "alpha": 0.5,
+    "error": "vector dimension mismatch: 2 vs 1",
+    "left": [
+      1.0,
+      2.0
+    ],
+    "method": "axpy",
+    "output": [
+      1.0
+    ],
+    "right": [
+      1.0
+    ]
+  },
+  {
+    "error": null,
+    "left": [
+      0.0,
+      0.0
+    ],
+    "method": "dot",
+    "right": [
+      1.0,
+      1.0
+    ],
+    "value": 0.0
+  },
+  {
+    "error": "zero-norm vector",
+    "left": [
+      0.0,
+      0.0
+    ],
+    "method": "cosine",
+    "right": [
+      1.0,
+      1.0
+    ],
+    "value": null
+  },
+  {
+    "alpha": 0.5,
+    "error": null,
+    "left": [
+      0.0,
+      0.0
+    ],
+    "method": "axpy",
+    "output": [
+      1.0,
+      1.0
+    ],
+    "right": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "error": null,
+    "left": [
+      1.0,
+      -2.0,
+      0.5
+    ],
+    "method": "dot",
+    "right": [
+      -3.0,
+      0.5,
+      4.0
+    ],
+    "value": -2.0
+  },
+  {
+    "error": null,
+    "left": [
+      1.0,
+      -2.0,
+      0.5
+    ],
+    "method": "cosine",
+    "right": [
+      -3.0,
+      0.5,
+      4.0
+    ],
+    "value": -0.17370794713497162
+  },
+  {
+    "alpha": 0.5,
+    "error": null,
+    "left": [
+      1.0,
+      -2.0,
+      0.5
+    ],
+    "method": "axpy",
+    "output": [
+      -2.5,
+      -0.5,
+      4.25
+    ],
+    "right": [
+      -3.0,
+      0.5,
+      4.0
+    ]
+  }
+]

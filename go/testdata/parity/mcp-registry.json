@@ -1,0 +1,629 @@
+[
+  {
+    "commit_capable": false,
+    "description": "Discover Memento workflows, resources, and execution guidance.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator",
+      "read_only",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_help",
+    "op_name": "help",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_help"
+  },
+  {
+    "commit_capable": false,
+    "description": "Read service readiness, repository revision, and configured limits.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator",
+      "read_only",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_status",
+    "op_name": "status",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_status"
+  },
+  {
+    "commit_capable": false,
+    "description": "Search visible concepts by lexical or semantic query.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator",
+      "read_only",
+      "standard"
+    ],
+    "examples": [
+      {
+        "limit": 3,
+        "query": "Piclaw"
+      }
+    ],
+    "method_name": "memory_search",
+    "op_name": "search",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_search"
+  },
+  {
+    "commit_capable": false,
+    "description": "Read one visible concept by path or concept id.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator",
+      "read_only",
+      "standard"
+    ],
+    "examples": [
+      {
+        "id_or_path": "/projects/piclaw.md"
+      }
+    ],
+    "method_name": "memory_read",
+    "op_name": "read",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_read"
+  },
+  {
+    "commit_capable": false,
+    "description": "List visible concepts under a path prefix.",
+    "discovery_surfaces": [
+      "admin",
+      "read_only",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_list",
+    "op_name": "list",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_list"
+  },
+  {
+    "commit_capable": false,
+    "description": "Read a bounded namespace inventory with stable body digests and asset metadata, without concept bodies.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator",
+      "read_only",
+      "standard"
+    ],
+    "examples": [
+      {
+        "limit": 50,
+        "path_prefix": "/skills/"
+      }
+    ],
+    "method_name": "memory_inventory",
+    "op_name": "inventory",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_inventory"
+  },
+  {
+    "commit_capable": false,
+    "description": "Compare a bounded caller-provided manifest with an authorised namespace inventory.",
+    "discovery_surfaces": [],
+    "examples": [
+      {
+        "items": [
+          {
+            "local_body_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "local_bytes": 123,
+            "local_path": "/workspace/projects/piclaw.md",
+            "local_updated_at": "2026-08-25T12:00:00Z",
+            "memento_path": "/projects/piclaw.md",
+            "name": "piclaw"
+          }
+        ],
+        "path_prefix": "/projects/"
+      }
+    ],
+    "method_name": "memory_compare_manifest",
+    "op_name": "compare_manifest",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_compare_manifest"
+  },
+  {
+    "commit_capable": false,
+    "description": "Inspect bounded asset version metadata and concept-body parity without returning ZIPs or concept bodies.",
+    "discovery_surfaces": [],
+    "examples": [
+      {
+        "asset_kind": "skill",
+        "id_or_path": "/skills/memento.md",
+        "include_files": true
+      }
+    ],
+    "method_name": "memory_asset_metadata",
+    "op_name": "asset_metadata",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_asset_metadata"
+  },
+  {
+    "commit_capable": false,
+    "description": "Inspect graph neighbors and backlinks for a concept.",
+    "discovery_surfaces": [
+      "admin",
+      "read_only",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_graph",
+    "op_name": "graph",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_graph"
+  },
+  {
+    "commit_capable": false,
+    "description": "Audit authorised repository content and bounded graph diagnostics with deterministic repair guidance.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_audit",
+    "op_name": "audit",
+    "roles": [
+      "proposer"
+    ],
+    "tool_name": "memory_audit"
+  },
+  {
+    "commit_capable": false,
+    "description": "Produce a bounded answer with exact citations when enabled.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator",
+      "read_only",
+      "standard"
+    ],
+    "examples": [
+      {
+        "answer_mode": "summary",
+        "question": "What is Piclaw?"
+      }
+    ],
+    "method_name": "memory_answer",
+    "op_name": "answer",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_answer"
+  },
+  {
+    "commit_capable": false,
+    "description": "Classify one shallow read request through the optional Needle router and dispatch deterministically.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator"
+    ],
+    "examples": [
+      {
+        "execute": true,
+        "request": "find Piclaw"
+      }
+    ],
+    "method_name": "memory_route",
+    "op_name": "route",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_route"
+  },
+  {
+    "commit_capable": false,
+    "description": "Create a deterministic proposal from explicit changes.",
+    "discovery_surfaces": [
+      "admin",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_propose",
+    "op_name": "propose",
+    "roles": [
+      "proposer"
+    ],
+    "tool_name": "memory_propose"
+  },
+  {
+    "commit_capable": false,
+    "description": "Draft a proposal from freeform content when model proposals are enabled.",
+    "discovery_surfaces": [
+      "admin",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_propose_freeform",
+    "op_name": "propose_freeform",
+    "roles": [
+      "proposer"
+    ],
+    "tool_name": "memory_propose_freeform"
+  },
+  {
+    "commit_capable": false,
+    "description": "Draft a proposal update from an instruction when model proposals are enabled.",
+    "discovery_surfaces": [
+      "admin",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_propose_update",
+    "op_name": "propose_update",
+    "roles": [
+      "proposer"
+    ],
+    "tool_name": "memory_propose_update"
+  },
+  {
+    "commit_capable": false,
+    "description": "Read a bounded proposal summary or the detailed proposal record with per-change conflict metadata.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_proposal_get",
+    "op_name": "proposal_get",
+    "roles": [
+      "proposer"
+    ],
+    "tool_name": "memory_proposal_get"
+  },
+  {
+    "commit_capable": false,
+    "description": "List bounded, cursor-paginated summaries of visible proposal records.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_proposal_list",
+    "op_name": "proposal_list",
+    "roles": [
+      "proposer"
+    ],
+    "tool_name": "memory_proposal_list"
+  },
+  {
+    "commit_capable": false,
+    "description": "Inspect staged proposal asset metadata or one bounded manifest-listed file.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_proposal_asset_get",
+    "op_name": "proposal_asset_get",
+    "roles": [
+      "proposer"
+    ],
+    "tool_name": "memory_proposal_asset_get"
+  },
+  {
+    "commit_capable": false,
+    "description": "Rebase a clean proposal in place, retaining author and assets; original author or scoped curator, durable key required.",
+    "discovery_surfaces": [],
+    "examples": [],
+    "method_name": "memory_proposal_rebase",
+    "op_name": "proposal_rebase",
+    "roles": [
+      "proposer",
+      "curator"
+    ],
+    "tool_name": "memory_proposal_rebase"
+  },
+  {
+    "commit_capable": false,
+    "description": "Create a follow-up proposal from a conflict-free subset of a stale proposal.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_proposal_revise",
+    "op_name": "proposal_revise",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_proposal_revise"
+  },
+  {
+    "commit_capable": false,
+    "description": "Reconcile an owned operation; proposers may reconcile their own rebases, curators their own mutations.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_operation_get",
+    "op_name": "operation_get",
+    "roles": [
+      "proposer",
+      "curator"
+    ],
+    "tool_name": "memory_operation_get"
+  },
+  {
+    "commit_capable": false,
+    "description": "Review a proposal as curator.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_proposal_review",
+    "op_name": "proposal_review",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_proposal_review"
+  },
+  {
+    "commit_capable": true,
+    "description": "Apply an approved proposal through the Git transaction pipeline.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_proposal_apply",
+    "op_name": "proposal_apply",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_proposal_apply"
+  },
+  {
+    "commit_capable": false,
+    "description": "Create a one-time raw ZIP upload ticket for a staged asset pack.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator",
+      "standard"
+    ],
+    "examples": [
+      {
+        "asset_kind": "skill",
+        "idempotency_key": "upload-deploy-skill-1.0.0",
+        "version": "1.0.0"
+      }
+    ],
+    "method_name": "memory_asset_stage_begin",
+    "op_name": "asset_stage_begin",
+    "roles": [
+      "proposer"
+    ],
+    "tool_name": "memory_asset_stage_begin"
+  },
+  {
+    "commit_capable": false,
+    "description": "Reconcile a staged asset upload ticket and retrieve its staged_asset_id.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_asset_stage_status",
+    "op_name": "asset_stage_status",
+    "roles": [
+      "proposer"
+    ],
+    "tool_name": "memory_asset_stage_status"
+  },
+  {
+    "commit_capable": false,
+    "description": "Read an accepted asset: view=manifest omits ZIP bytes; view=file requires file_path; view=archive supports bounded offset/limit. Small archives remain inline by default. Resume with the resolved version and expected_sha256. Limits: memory_status.limits.assets.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator",
+      "read_only",
+      "standard"
+    ],
+    "examples": [
+      {
+        "asset_kind": "skill",
+        "id_or_path": "/skills/deploy.md",
+        "version": "1.2.0"
+      }
+    ],
+    "method_name": "memory_asset_get",
+    "op_name": "asset_get",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_asset_get"
+  },
+  {
+    "commit_capable": true,
+    "description": "Prune retained asset pack versions as curator.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_asset_prune",
+    "op_name": "asset_prune",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_asset_prune"
+  },
+  {
+    "commit_capable": true,
+    "description": "Create a concept directly as curator.",
+    "discovery_surfaces": [
+      "admin",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_create",
+    "op_name": "create",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_create"
+  },
+  {
+    "commit_capable": true,
+    "description": "Patch a concept directly as curator.",
+    "discovery_surfaces": [
+      "admin",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_patch",
+    "op_name": "patch",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_patch"
+  },
+  {
+    "commit_capable": true,
+    "description": "Move a concept to /trash/ retaining original permissions and assets.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_trash",
+    "op_name": "trash",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_trash"
+  },
+  {
+    "commit_capable": true,
+    "description": "Restore a trashed concept to its original path; reject collisions.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_restore",
+    "op_name": "restore",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_restore"
+  },
+  {
+    "commit_capable": true,
+    "description": "Permanently delete a trashed concept and accepted assets from current state; requires confirm=true and retains Git history.",
+    "discovery_surfaces": [
+      "admin",
+      "curator",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_purge",
+    "op_name": "purge",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_purge"
+  },
+  {
+    "commit_capable": true,
+    "description": "Rename a concept directly as curator.",
+    "discovery_surfaces": [
+      "admin",
+      "standard"
+    ],
+    "examples": [],
+    "method_name": "memory_rename",
+    "op_name": "rename",
+    "roles": [
+      "curator"
+    ],
+    "tool_name": "memory_rename"
+  },
+  {
+    "commit_capable": false,
+    "description": "Execute a bounded declarative multi-step memory plan.",
+    "discovery_surfaces": [
+      "admin",
+      "compact",
+      "curator"
+    ],
+    "examples": [
+      {
+        "plan": {
+          "operations": [
+            {
+              "args": {
+                "query": "Piclaw"
+              },
+              "op": "search",
+              "save_as": "hits"
+            },
+            {
+              "args": {
+                "id_or_path": "$hits.results.0.path"
+              },
+              "op": "read",
+              "save_as": "doc"
+            }
+          ],
+          "returns": [
+            {
+              "name": "title",
+              "ref": "$doc.frontmatter.title"
+            }
+          ]
+        }
+      }
+    ],
+    "method_name": "memory_execute",
+    "op_name": "execute",
+    "roles": [
+      "reader"
+    ],
+    "tool_name": "memory_execute"
+  }
+]

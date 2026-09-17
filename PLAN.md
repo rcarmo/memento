@@ -5,6 +5,10 @@
 
 Memento's repository, transaction, MCP, proposal, search, model, debugger and container foundations are in place. This file keeps the remaining engineering and operational gaps together; the architecture documents and Git history hold completed milestone detail.
 
+## Pure Go replacement branch
+
+The user authorised an end-to-end pure Go port on branch `go`, with 1:1 behaviour and full test coverage before SIMD optimisation. [Port index](docs/go-port/README.md), [parity matrix](docs/go-port/parity.md) and [test gates](docs/go-port/testing.md) track this independently of the production delivery ledger. Current Go foundations do not constitute a working MCP server or model runtime. Python/Rust remain pinned test oracles until the complete replacement is verified.
+
 ## Working Rules
 
 * Shared concepts are Markdown in Git. Operation and proposal records live in `control.sqlite`; search, graph and embedding data can be rebuilt.

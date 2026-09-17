@@ -1,0 +1,40 @@
+# Compatibility matrix
+
+`partial` means some code/tests exist. `reference captured` is not implementation. There are no complete end-to-end subsystems yet. Record tests and results per row rather than treating an aggregate coverage percentage as feature completion.
+
+| Surface | Reference | Required observable match | Status |
+| --- | --- | --- | --- |
+| Response envelopes | `src/memento/envelopes.py` | Status, fields, empty arrays versus null, revision/warning/reconciliation fields, validation failures | Partial: constructors and synthetic output tests |
+| uMCP shared validation | pinned `umcp_shared.py` | IDs without float rounding, booleans rejected as integers, version negotiation, errors, headers, media/origin validation | Partial: IDs/responses/versions only |
+| uMCP sync/async public behaviours | pinned `umcp.py`, `aioumcp.py`, upstream tests | Same observable client/server behaviours through idiomatic Go APIs; do not claim Python import/API identity | Not ported |
+| uMCP transports | upstream Streamable HTTP/stdio/TCP/SSE docs/tests | Initialise/notification ordering, persistent session binding, session deletion, authentication on every request, response/error/SSE framing, reconnection, cancellation and progress | Not ported |
+| Tool/resource/prompt discovery | registry/server + upstream tests | All tool surfaces, auth-sensitive discovery, optional route/answer, resource templates and dynamic prompts, bounded arguments and returns | Reference captured: 34 operations, 20 surface combinations, schemas |
+| Execute plans | `executor.py` | Type/reference rules, strict resolved values, limits, projections, single-commit rule, partial success and post-commit reconciliation | Schema captured only |
+| Principal/access administration | access/authz/config/admin modules | Trusted identity, role/namespace grants, deny-before-ranking, credentials, admin profile separation, access revision/audit, HTTP security | Not ported |
+| Runtime config/CLI | config/cli/app/server | Defaults, environment precedence, error messages, read-only startup validation, graceful drain, signal handling, command exit behaviour | Development status command only; CLI not ported |
+| Markdown concept repository | repository modules | Front matter/body preservation, IDs/paths, links, assets, symlink containment, Unicode, rename/restore collisions, trash ACLs | Not ported |
+| Git object/ref/recovery semantics | repository Git/transactions modules | Canonical revision, tree layout, atomic ref CAS, lock/recovery behaviour, commit attribution, replay and rollback across crashes | Not ported; pure-Go Git implementation decision required |
+| Control SQLite | control modules/schema 10 | Existing file/schema compatibility, migrations, proposals/history/assets, operations/idempotency, checkpoints and audit | Not ported; CGO-free driver decision required |
+| Proposal lifecycle | service/control tests | All statuses, visibility, conflict classification, reject/request_changes at old base, same-ID proposer rebase, stored asset/author preservation, concurrent apply/rebase/review | Not ported |
+| Asset transport/retrieval | staged assets/asset retrieval | Validation, one-time staging tickets, inline limits, ranges/digests, byte-identical pack access, authorisation | Not ported |
+| Derived SQLite/FTS/vector search | derived index/search tests | FTS5 literal/explicit syntax, stable ordering/ranking, vector SQL functions, model-space identity, namespace filtering, rebuild/checkpoint semantics | Not ported |
+| Scalar vector helpers | `memento-vector` | F32LE bytes, finite/shape errors, dot/cosine/AXPY, both matrix orientations, all tail/empty cases | Partial: encoding/dot/cosine/AXPY; Rust oracle fixtures |
+| GTE1 model/parser/tokenizer | `memento-gte`, converter, go-gte attribution | Same file format, dimensions, bounds, vocab/WordPiece/truncation, mmap/lifetime, bad-file rejection and cancellation | Not ported |
+| GTE scalar forward pass | Rust inference, GTE1 assets | Masked attention, layernorm/GELU, mean pooling/L2, single/batch equality, golden vectors and search ranking | Not ported |
+| Embedding worker protocol | `memento-embed`, Python subprocess client | Exact frame lengths, LE headers/payload, IDs/errors/bounds, short reads/EOF, cancellation/deadlines and output validation | Not ported |
+| Needle NDL1 and SentencePiece | `memento-needle`, tokenizer dependency, converter | Section hashes/bounds, BF16 decoding, model configuration, normaliser/segmentation/special tokens and vocab IDs | Not ported |
+| Needle scalar inference/routing | router/Needle tests and 360-case corpus | Encoder/decoder math, cancellation checkpoints, generated tokens, tool allowlist and field/projection expansion, UNKNOWN behaviour | Not ported |
+| Worker lifecycle/model transport | model transport/semantic deferred tests | Backpressure, request ownership, nonblocking health, DB contention retries, dead-worker status, shutdown, original-key reconciliation, memory release | Not ported |
+| Graph/admin/web UI | graph/admin modules and browser tests | Endpoint shape/security/visibility/layout, worker status, unchanged static UI behaviour and browser suite | Not ported; reuse current frontend assets |
+| Backups/import/export/repair | backup/CLI/skill import tests | Byte-preserving accepted state, retention, restoration safety, deterministic failure and crash recovery | Not ported |
+| Packaging/operations | release/container/model smoke tests | CGO-free binary, no Python/Rust/Git runtime dependency, non-root/read-only config, original mounts/models, architecture builds and signal/resource limits | Scaffold cross-build only |
+| Native C ABI compatibility | `memento-ffi`, `memento-needle-ffi`, SQLite extension | Inventory all consumers. C-shared compatibility conflicts with the final CGO-free runtime; resolve deliberately, never silently delete a used API | Open architecture gate |
+| In-flight Vulkan branch | separate `feat/gte-vulkan-pretest` | Track accepted upstream behaviour without mixing SIMD/GPU optimisation into scalar phase | Deferred; baseline does not include it |
+
+## Matching rules
+
+Wire semantics and persistence state transitions must match exactly. JSON member ordering is ignored where the protocol treats objects as unordered; no general normaliser may hide missing fields, null/empty differences, different errors or changed decisions. Time, UUID and commit-clock inputs need controllable fixture injection, not blanket removal from outputs.
+
+Float32 calculations can differ when the source uses hardware FMA/reduction ordering. Test scalar mathematical steps and committed golden outputs, then model-level error bounds and exact token/ranking outputs. Any numerical tolerance must be explicit, justified and separately accepted; passing a loose cosine threshold is not 1:1 correctness. The current tiny vector fixtures allow absolute error at most 1e-6 and do not establish model parity.
+
+Crash/timeout, concurrency and security cases are required for completion, even if ordinary unit tests already execute every statement. A port cannot declare success while the matrix contains missing or merely captured surfaces.

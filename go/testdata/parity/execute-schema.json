@@ -1,0 +1,4084 @@
+{
+  "$defs": {
+    "AnswerArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "answer_mode": {
+          "anyOf": [
+            {
+              "default": "summary",
+              "title": "Answer Mode",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "question": {
+          "anyOf": [
+            {
+              "title": "Question",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "question"
+      ],
+      "title": "AnswerArgs",
+      "type": "object"
+    },
+    "AnswerOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/AnswerArgs"
+        },
+        "op": {
+          "const": "answer",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "AnswerOperation",
+      "type": "object"
+    },
+    "AssetGetArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_kind": {
+          "anyOf": [
+            {
+              "title": "Asset Kind",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "expected_sha256": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Expected Sha256"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "file_path": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "File Path"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "id_or_path": {
+          "anyOf": [
+            {
+              "title": "Id Or Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "maximum": 262144,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Limit"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "version": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Version"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "view": {
+          "anyOf": [
+            {
+              "default": "archive",
+              "enum": [
+                "archive",
+                "manifest",
+                "file"
+              ],
+              "title": "View",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id_or_path",
+        "asset_kind"
+      ],
+      "title": "AssetGetArgs",
+      "type": "object"
+    },
+    "AssetGetOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/AssetGetArgs"
+        },
+        "op": {
+          "const": "asset_get",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "AssetGetOperation",
+      "type": "object"
+    },
+    "AssetMetadataArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_kind": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Asset Kind"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "maxLength": 1024,
+                  "minLength": 4,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Cursor"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "file_limit": {
+          "anyOf": [
+            {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "File Limit",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "id_or_path": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "maxLength": 1024,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Id Or Path"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "include_files": {
+          "anyOf": [
+            {
+              "default": false,
+              "title": "Include Files",
+              "type": "boolean"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "default": 20,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path_prefix": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "maxLength": 1024,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Path Prefix"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "version": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Version"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "version_limit": {
+          "anyOf": [
+            {
+              "default": 5,
+              "maximum": 5,
+              "minimum": 1,
+              "title": "Version Limit",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "title": "AssetMetadataArgs",
+      "type": "object"
+    },
+    "AssetMetadataOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/AssetMetadataArgs"
+        },
+        "op": {
+          "const": "asset_metadata",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "AssetMetadataOperation",
+      "type": "object"
+    },
+    "AuditArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Cursor"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Path"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "rule": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Rule"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "enum": [
+                    "info",
+                    "warning",
+                    "error"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Severity"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "title": "AuditArgs",
+      "type": "object"
+    },
+    "AuditOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/AuditArgs"
+        },
+        "op": {
+          "const": "audit",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "AuditOperation",
+      "type": "object"
+    },
+    "CompareManifestArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "include_asset_metadata": {
+          "anyOf": [
+            {
+              "default": false,
+              "title": "Include Asset Metadata",
+              "type": "boolean"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "items": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ManifestItemArgs"
+                  },
+                  {
+                    "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                    "maxLength": 256,
+                    "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "maxItems": 50,
+              "minItems": 1,
+              "title": "Items",
+              "type": "array"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "match": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ManifestMatchArgs"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path_prefix": {
+          "anyOf": [
+            {
+              "default": "/",
+              "maxLength": 1024,
+              "minLength": 1,
+              "title": "Path Prefix",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "CompareManifestArgs",
+      "type": "object"
+    },
+    "CompareManifestOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/CompareManifestArgs"
+        },
+        "op": {
+          "const": "compare_manifest",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "CompareManifestOperation",
+      "type": "object"
+    },
+    "CreateArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "anyOf": [
+            {
+              "default": [],
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                    "maxLength": 256,
+                    "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "title": "Aliases",
+              "type": "array"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "anyOf": [
+            {
+              "title": "Body",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "concept_type": {
+          "anyOf": [
+            {
+              "title": "Concept Type",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "description": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Description"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "expected_revision": {
+          "anyOf": [
+            {
+              "title": "Expected Revision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "title": "Idempotency Key",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "default": [],
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                    "maxLength": 256,
+                    "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "title": "Tags",
+              "type": "array"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "title": {
+          "anyOf": [
+            {
+              "title": "Title",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "concept_type",
+        "title",
+        "body",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "title": "CreateArgs",
+      "type": "object"
+    },
+    "CreateOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/CreateArgs"
+        },
+        "op": {
+          "const": "create",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "CreateOperation",
+      "type": "object"
+    },
+    "EmptyArgs": {
+      "additionalProperties": false,
+      "properties": {},
+      "title": "EmptyArgs",
+      "type": "object"
+    },
+    "ExecuteReturnProjection": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "ref": {
+          "title": "Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ref"
+      ],
+      "title": "ExecuteReturnProjection",
+      "type": "object"
+    },
+    "GraphArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "depth": {
+          "anyOf": [
+            {
+              "default": 1,
+              "title": "Depth",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "id_or_path": {
+          "anyOf": [
+            {
+              "title": "Id Or Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id_or_path"
+      ],
+      "title": "GraphArgs",
+      "type": "object"
+    },
+    "GraphOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/GraphArgs"
+        },
+        "op": {
+          "const": "graph",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "GraphOperation",
+      "type": "object"
+    },
+    "HelpOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/EmptyArgs"
+        },
+        "op": {
+          "const": "help",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "HelpOperation",
+      "type": "object"
+    },
+    "InventoryArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Cursor"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "default": [
+                "path",
+                "id",
+                "title",
+                "status",
+                "type",
+                "tags",
+                "created_at",
+                "updated_at",
+                "updated_by",
+                "body_sha256",
+                "body_bytes",
+                "assets"
+              ],
+              "items": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "path",
+                      "id",
+                      "title",
+                      "status",
+                      "type",
+                      "tags",
+                      "created_at",
+                      "updated_at",
+                      "updated_by",
+                      "body_sha256",
+                      "body_bytes",
+                      "assets"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                    "maxLength": 256,
+                    "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "minItems": 1,
+              "title": "Fields",
+              "type": "array"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path_prefix": {
+          "anyOf": [
+            {
+              "default": "/",
+              "title": "Path Prefix",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "title": "InventoryArgs",
+      "type": "object"
+    },
+    "InventoryOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/InventoryArgs"
+        },
+        "op": {
+          "const": "inventory",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "InventoryOperation",
+      "type": "object"
+    },
+    "ListArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "path_prefix": {
+          "anyOf": [
+            {
+              "default": "/",
+              "title": "Path Prefix",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "title": "ListArgs",
+      "type": "object"
+    },
+    "ListOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ListArgs"
+        },
+        "op": {
+          "const": "list",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "ListOperation",
+      "type": "object"
+    },
+    "ManifestItemArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "local_body_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{64}$",
+              "title": "Local Body Sha256",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "local_bytes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "title": "Local Bytes",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "local_path": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "title": "Local Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "local_updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "title": "Local Updated At",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "memento_path": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "maxLength": 1024,
+                  "minLength": 4,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Memento Path"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "title": "Name",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "local_path",
+        "local_updated_at",
+        "local_body_sha256",
+        "local_bytes"
+      ],
+      "title": "ManifestItemArgs",
+      "type": "object"
+    },
+    "ManifestMatchArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "title": "Aliases",
+              "type": "object"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path_template": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "maxLength": 1024,
+                  "minLength": 5,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Path Template"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "title": "ManifestMatchArgs",
+      "type": "object"
+    },
+    "OperationGetArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Idempotency Key"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "operation_id": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Operation Id"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "title": "OperationGetArgs",
+      "type": "object"
+    },
+    "OperationGetOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/OperationGetArgs"
+        },
+        "op": {
+          "const": "operation_get",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "OperationGetOperation",
+      "type": "object"
+    },
+    "PatchArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                        "maxLength": 256,
+                        "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Aliases"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Body"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "description": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Description"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "expected_revision": {
+          "anyOf": [
+            {
+              "title": "Expected Revision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "title": "Idempotency Key",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Status"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                        "maxLength": 256,
+                        "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Tags"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "title": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Title"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "title": "PatchArgs",
+      "type": "object"
+    },
+    "PatchOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/PatchArgs"
+        },
+        "op": {
+          "const": "patch",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "PatchOperation",
+      "type": "object"
+    },
+    "ProposalApplyArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision": {
+          "anyOf": [
+            {
+              "title": "Expected Revision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "title": "Idempotency Key",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "proposal_id": {
+          "anyOf": [
+            {
+              "title": "Proposal Id",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "proposal_id",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "title": "ProposalApplyArgs",
+      "type": "object"
+    },
+    "ProposalApplyOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposalApplyArgs"
+        },
+        "op": {
+          "const": "proposal_apply",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ProposalApplyOperation",
+      "type": "object"
+    },
+    "ProposalAssetGetArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "anyOf": [
+            {
+              "title": "Asset Id",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "file_path": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "File Path"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "default": 65536,
+              "maximum": 262144,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "proposal_id": {
+          "anyOf": [
+            {
+              "title": "Proposal Id",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "proposal_id",
+        "asset_id"
+      ],
+      "title": "ProposalAssetGetArgs",
+      "type": "object"
+    },
+    "ProposalAssetGetOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposalAssetGetArgs"
+        },
+        "op": {
+          "const": "proposal_asset_get",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ProposalAssetGetOperation",
+      "type": "object"
+    },
+    "ProposalGetArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "proposal_id": {
+          "anyOf": [
+            {
+              "title": "Proposal Id",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "view": {
+          "anyOf": [
+            {
+              "default": "detailed",
+              "enum": [
+                "summary",
+                "detailed"
+              ],
+              "title": "View",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "proposal_id"
+      ],
+      "title": "ProposalGetArgs",
+      "type": "object"
+    },
+    "ProposalGetOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposalGetArgs"
+        },
+        "op": {
+          "const": "proposal_get",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ProposalGetOperation",
+      "type": "object"
+    },
+    "ProposalListArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Cursor"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Status"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "title": "ProposalListArgs",
+      "type": "object"
+    },
+    "ProposalListOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposalListArgs"
+        },
+        "op": {
+          "const": "proposal_list",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "ProposalListOperation",
+      "type": "object"
+    },
+    "ProposalRebaseArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision": {
+          "anyOf": [
+            {
+              "title": "Expected Revision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "title": "Idempotency Key",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "proposal_id": {
+          "anyOf": [
+            {
+              "title": "Proposal Id",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "proposal_id",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "title": "ProposalRebaseArgs",
+      "type": "object"
+    },
+    "ProposalRebaseOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposalRebaseArgs"
+        },
+        "op": {
+          "const": "proposal_rebase",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ProposalRebaseOperation",
+      "type": "object"
+    },
+    "ProposalReviewArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Comment"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "decision": {
+          "anyOf": [
+            {
+              "title": "Decision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Idempotency Key"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "proposal_id": {
+          "anyOf": [
+            {
+              "title": "Proposal Id",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "proposal_id",
+        "decision"
+      ],
+      "title": "ProposalReviewArgs",
+      "type": "object"
+    },
+    "ProposalReviewOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposalReviewArgs"
+        },
+        "op": {
+          "const": "proposal_review",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ProposalReviewOperation",
+      "type": "object"
+    },
+    "ProposalReviseArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision": {
+          "anyOf": [
+            {
+              "title": "Expected Revision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "intent": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Intent"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "proposal_id": {
+          "anyOf": [
+            {
+              "title": "Proposal Id",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Rationale"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "selected_change_indexes": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                    "maxLength": 256,
+                    "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "title": "Selected Change Indexes",
+              "type": "array"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "proposal_id",
+        "selected_change_indexes",
+        "expected_revision"
+      ],
+      "title": "ProposalReviseArgs",
+      "type": "object"
+    },
+    "ProposalReviseOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposalReviseArgs"
+        },
+        "op": {
+          "const": "proposal_revise",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ProposalReviseOperation",
+      "type": "object"
+    },
+    "ProposeArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "base_revision": {
+          "anyOf": [
+            {
+              "title": "Base Revision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "changes": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/ProposeCreateChange"
+                      },
+                      {
+                        "$ref": "#/$defs/ProposePatchChange"
+                      },
+                      {
+                        "$ref": "#/$defs/ProposeRenameChange"
+                      },
+                      {
+                        "$ref": "#/$defs/ProposeAssetChange"
+                      },
+                      {
+                        "$ref": "#/$defs/ProposeTrashChange"
+                      }
+                    ]
+                  },
+                  {
+                    "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                    "maxLength": 256,
+                    "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "title": "Changes",
+              "type": "array"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "intent": {
+          "anyOf": [
+            {
+              "title": "Intent",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Rationale"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "intent",
+        "base_revision",
+        "changes"
+      ],
+      "title": "ProposeArgs",
+      "type": "object"
+    },
+    "ProposeAssetChange": {
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "not": {
+            "required": [
+              "staged_asset_id"
+            ]
+          },
+          "required": [
+            "zip_base64"
+          ]
+        },
+        {
+          "not": {
+            "required": [
+              "zip_base64"
+            ]
+          },
+          "required": [
+            "staged_asset_id"
+          ]
+        }
+      ],
+      "properties": {
+        "asset_kind": {
+          "anyOf": [
+            {
+              "title": "Asset Kind",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "const": "attach_asset_pack",
+              "title": "Kind",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "staged_asset_id": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Staged Asset Id"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "version": {
+          "anyOf": [
+            {
+              "title": "Version",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "zip_base64": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Zip Base64"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "path",
+        "asset_kind",
+        "version"
+      ],
+      "title": "ProposeAssetChange",
+      "type": "object"
+    },
+    "ProposeCreateChange": {
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "anyOf": [
+            {
+              "default": [],
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                    "maxLength": 256,
+                    "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "title": "Aliases",
+              "type": "array"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "anyOf": [
+            {
+              "title": "Body",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "concept_type": {
+          "anyOf": [
+            {
+              "title": "Concept Type",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "description": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Description"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "const": "create",
+              "title": "Kind",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "default": [],
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                    "maxLength": 256,
+                    "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                    "type": "string"
+                  }
+                ]
+              },
+              "title": "Tags",
+              "type": "array"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "title": {
+          "anyOf": [
+            {
+              "title": "Title",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "path",
+        "concept_type",
+        "title",
+        "body"
+      ],
+      "title": "ProposeCreateChange",
+      "type": "object"
+    },
+    "ProposeFreeformArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "anyOf": [
+            {
+              "title": "Content",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "intent": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Intent"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "suggested_path": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Suggested Path"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "ProposeFreeformArgs",
+      "type": "object"
+    },
+    "ProposeFreeformOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposeFreeformArgs"
+        },
+        "op": {
+          "const": "propose_freeform",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ProposeFreeformOperation",
+      "type": "object"
+    },
+    "ProposeOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposeArgs"
+        },
+        "op": {
+          "const": "propose",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ProposeOperation",
+      "type": "object"
+    },
+    "ProposePatchChange": {
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                        "maxLength": 256,
+                        "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Aliases"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Body"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "description": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Description"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "const": "patch",
+              "title": "Kind",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Status"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+                        "maxLength": 256,
+                        "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Tags"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "title": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Title"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "path"
+      ],
+      "title": "ProposePatchChange",
+      "type": "object"
+    },
+    "ProposeRenameChange": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "anyOf": [
+            {
+              "const": "rename",
+              "title": "Kind",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "new_path": {
+          "anyOf": [
+            {
+              "title": "New Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "path",
+        "new_path"
+      ],
+      "title": "ProposeRenameChange",
+      "type": "object"
+    },
+    "ProposeTrashChange": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "anyOf": [
+            {
+              "const": "trash",
+              "title": "Kind",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "path"
+      ],
+      "title": "ProposeTrashChange",
+      "type": "object"
+    },
+    "ProposeUpdateArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "instruction": {
+          "anyOf": [
+            {
+              "title": "Instruction",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "target_hint": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Target Hint"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "instruction"
+      ],
+      "title": "ProposeUpdateArgs",
+      "type": "object"
+    },
+    "ProposeUpdateOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ProposeUpdateArgs"
+        },
+        "op": {
+          "const": "propose_update",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ProposeUpdateOperation",
+      "type": "object"
+    },
+    "PurgeArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm": {
+          "anyOf": [
+            {
+              "default": false,
+              "title": "Confirm",
+              "type": "boolean"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "expected_revision": {
+          "anyOf": [
+            {
+              "title": "Expected Revision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "title": "Idempotency Key",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "title": "PurgeArgs",
+      "type": "object"
+    },
+    "PurgeOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/PurgeArgs"
+        },
+        "op": {
+          "const": "purge",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "PurgeOperation",
+      "type": "object"
+    },
+    "ReadArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "id_or_path": {
+          "anyOf": [
+            {
+              "title": "Id Or Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id_or_path"
+      ],
+      "title": "ReadArgs",
+      "type": "object"
+    },
+    "ReadOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/ReadArgs"
+        },
+        "op": {
+          "const": "read",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "ReadOperation",
+      "type": "object"
+    },
+    "RenameArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision": {
+          "anyOf": [
+            {
+              "title": "Expected Revision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "title": "Idempotency Key",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "new_path": {
+          "anyOf": [
+            {
+              "title": "New Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "new_path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "title": "RenameArgs",
+      "type": "object"
+    },
+    "RenameOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/RenameArgs"
+        },
+        "op": {
+          "const": "rename",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "RenameOperation",
+      "type": "object"
+    },
+    "SearchArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "concept_type": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Concept Type"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Cursor"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "default": 20,
+              "title": "Limit",
+              "type": "integer"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "query": {
+          "anyOf": [
+            {
+              "title": "Query",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "query_syntax": {
+          "anyOf": [
+            {
+              "default": "plain",
+              "enum": [
+                "plain",
+                "fts5"
+              ],
+              "title": "Query Syntax",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "search_mode": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Search Mode"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchArgs",
+      "type": "object"
+    },
+    "SearchOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/SearchArgs"
+        },
+        "op": {
+          "const": "search",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "SearchOperation",
+      "type": "object"
+    },
+    "StatusOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/EmptyArgs"
+        },
+        "op": {
+          "const": "status",
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "StatusOperation",
+      "type": "object"
+    },
+    "TrashArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_revision": {
+          "anyOf": [
+            {
+              "title": "Expected Revision",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "title": "Idempotency Key",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "title": "Path",
+              "type": "string"
+            },
+            {
+              "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
+              "maxLength": 256,
+              "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "title": "TrashArgs",
+      "type": "object"
+    },
+    "TrashOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/$defs/TrashArgs"
+        },
+        "op": {
+          "enum": [
+            "trash",
+            "restore"
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "save_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Save As"
+        }
+      },
+      "required": [
+        "op",
+        "args"
+      ],
+      "title": "TrashOperation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "operations": {
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HelpOperation"
+          },
+          {
+            "$ref": "#/$defs/StatusOperation"
+          },
+          {
+            "$ref": "#/$defs/SearchOperation"
+          },
+          {
+            "$ref": "#/$defs/ReadOperation"
+          },
+          {
+            "$ref": "#/$defs/ListOperation"
+          },
+          {
+            "$ref": "#/$defs/InventoryOperation"
+          },
+          {
+            "$ref": "#/$defs/CompareManifestOperation"
+          },
+          {
+            "$ref": "#/$defs/AssetMetadataOperation"
+          },
+          {
+            "$ref": "#/$defs/GraphOperation"
+          },
+          {
+            "$ref": "#/$defs/AuditOperation"
+          },
+          {
+            "$ref": "#/$defs/AnswerOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposeOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposeFreeformOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposeUpdateOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposalGetOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposalListOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposalAssetGetOperation"
+          },
+          {
+            "$ref": "#/$defs/AssetGetOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposalRebaseOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposalReviseOperation"
+          },
+          {
+            "$ref": "#/$defs/OperationGetOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposalReviewOperation"
+          },
+          {
+            "$ref": "#/$defs/ProposalApplyOperation"
+          },
+          {
+            "$ref": "#/$defs/CreateOperation"
+          },
+          {
+            "$ref": "#/$defs/PatchOperation"
+          },
+          {
+            "$ref": "#/$defs/RenameOperation"
+          },
+          {
+            "$ref": "#/$defs/TrashOperation"
+          },
+          {
+            "$ref": "#/$defs/PurgeOperation"
+          }
+        ]
+      },
+      "title": "Operations",
+      "type": "array"
+    },
+    "returns": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ExecuteReturnProjection"
+      },
+      "title": "Returns",
+      "type": "array"
+    },
+    "stop_on_error": {
+      "default": true,
+      "title": "Stop On Error",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "operations"
+  ],
+  "title": "ExecutePlan",
+  "type": "object"
+}

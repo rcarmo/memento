@@ -1,0 +1,1494 @@
+{
+  "memory_answer": {
+    "additionalProperties": false,
+    "properties": {
+      "answer_mode": {
+        "default": "summary",
+        "title": "Answer Mode",
+        "type": "string"
+      },
+      "question": {
+        "title": "Question",
+        "type": "string"
+      }
+    },
+    "required": [
+      "question"
+    ],
+    "title": "AnswerArgs",
+    "type": "object"
+  },
+  "memory_asset_get": {
+    "additionalProperties": false,
+    "properties": {
+      "asset_kind": {
+        "title": "Asset Kind",
+        "type": "string"
+      },
+      "expected_sha256": {
+        "anyOf": [
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Expected Sha256"
+      },
+      "file_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "File Path"
+      },
+      "id_or_path": {
+        "title": "Id Or Path",
+        "type": "string"
+      },
+      "limit": {
+        "anyOf": [
+          {
+            "maximum": 262144,
+            "minimum": 1,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Limit"
+      },
+      "offset": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Offset",
+        "type": "integer"
+      },
+      "version": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Version"
+      },
+      "view": {
+        "default": "archive",
+        "enum": [
+          "archive",
+          "manifest",
+          "file"
+        ],
+        "title": "View",
+        "type": "string"
+      }
+    },
+    "required": [
+      "id_or_path",
+      "asset_kind"
+    ],
+    "title": "AssetGetArgs",
+    "type": "object"
+  },
+  "memory_asset_metadata": {
+    "additionalProperties": false,
+    "properties": {
+      "asset_kind": {
+        "anyOf": [
+          {
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Asset Kind"
+      },
+      "cursor": {
+        "anyOf": [
+          {
+            "maxLength": 1024,
+            "minLength": 4,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Cursor"
+      },
+      "file_limit": {
+        "default": 50,
+        "maximum": 100,
+        "minimum": 1,
+        "title": "File Limit",
+        "type": "integer"
+      },
+      "id_or_path": {
+        "anyOf": [
+          {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Id Or Path"
+      },
+      "include_files": {
+        "default": false,
+        "title": "Include Files",
+        "type": "boolean"
+      },
+      "limit": {
+        "default": 20,
+        "maximum": 20,
+        "minimum": 1,
+        "title": "Limit",
+        "type": "integer"
+      },
+      "path_prefix": {
+        "anyOf": [
+          {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Path Prefix"
+      },
+      "version": {
+        "anyOf": [
+          {
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Version"
+      },
+      "version_limit": {
+        "default": 5,
+        "maximum": 5,
+        "minimum": 1,
+        "title": "Version Limit",
+        "type": "integer"
+      }
+    },
+    "title": "AssetMetadataArgs",
+    "type": "object"
+  },
+  "memory_asset_prune": {
+    "additionalProperties": false,
+    "properties": {
+      "asset_kind": {
+        "title": "Asset Kind",
+        "type": "string"
+      },
+      "expected_revision": {
+        "title": "Expected Revision",
+        "type": "string"
+      },
+      "id_or_path": {
+        "title": "Id Or Path",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "keep": {
+        "default": 5,
+        "title": "Keep",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "id_or_path",
+      "asset_kind",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "title": "AssetPruneArgs",
+    "type": "object"
+  },
+  "memory_asset_stage_begin": {
+    "additionalProperties": false,
+    "properties": {
+      "asset_kind": {
+        "title": "Asset Kind",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "version": {
+        "title": "Version",
+        "type": "string"
+      }
+    },
+    "required": [
+      "asset_kind",
+      "version",
+      "idempotency_key"
+    ],
+    "title": "AssetStageBeginArgs",
+    "type": "object"
+  },
+  "memory_asset_stage_status": {
+    "additionalProperties": false,
+    "properties": {
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      }
+    },
+    "required": [
+      "idempotency_key"
+    ],
+    "title": "AssetStageStatusArgs",
+    "type": "object"
+  },
+  "memory_audit": {
+    "additionalProperties": false,
+    "properties": {
+      "cursor": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Cursor"
+      },
+      "limit": {
+        "default": 50,
+        "maximum": 200,
+        "minimum": 1,
+        "title": "Limit",
+        "type": "integer"
+      },
+      "path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Path"
+      },
+      "rule": {
+        "anyOf": [
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Rule"
+      },
+      "severity": {
+        "anyOf": [
+          {
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Severity"
+      }
+    },
+    "title": "AuditArgs",
+    "type": "object"
+  },
+  "memory_compare_manifest": {
+    "$defs": {
+      "ManifestItemArgs": {
+        "additionalProperties": false,
+        "properties": {
+          "local_body_sha256": {
+            "pattern": "^[0-9a-fA-F]{64}$",
+            "title": "Local Body Sha256",
+            "type": "string"
+          },
+          "local_bytes": {
+            "minimum": 0,
+            "title": "Local Bytes",
+            "type": "integer"
+          },
+          "local_path": {
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "Local Path",
+            "type": "string"
+          },
+          "local_updated_at": {
+            "format": "date-time",
+            "title": "Local Updated At",
+            "type": "string"
+          },
+          "memento_path": {
+            "anyOf": [
+              {
+                "maxLength": 1024,
+                "minLength": 4,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Memento Path"
+          },
+          "name": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "local_path",
+          "local_updated_at",
+          "local_body_sha256",
+          "local_bytes"
+        ],
+        "title": "ManifestItemArgs",
+        "type": "object"
+      },
+      "ManifestMatchArgs": {
+        "additionalProperties": false,
+        "properties": {
+          "aliases": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Aliases",
+            "type": "object"
+          },
+          "path_template": {
+            "anyOf": [
+              {
+                "maxLength": 1024,
+                "minLength": 5,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Path Template"
+          }
+        },
+        "title": "ManifestMatchArgs",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "include_asset_metadata": {
+        "default": false,
+        "title": "Include Asset Metadata",
+        "type": "boolean"
+      },
+      "items": {
+        "items": {
+          "$ref": "#/$defs/ManifestItemArgs"
+        },
+        "maxItems": 50,
+        "minItems": 1,
+        "title": "Items",
+        "type": "array"
+      },
+      "match": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ManifestMatchArgs"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "path_prefix": {
+        "default": "/",
+        "maxLength": 1024,
+        "minLength": 1,
+        "title": "Path Prefix",
+        "type": "string"
+      }
+    },
+    "required": [
+      "items"
+    ],
+    "title": "CompareManifestArgs",
+    "type": "object"
+  },
+  "memory_create": {
+    "additionalProperties": false,
+    "properties": {
+      "aliases": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Aliases",
+        "type": "array"
+      },
+      "body": {
+        "title": "Body",
+        "type": "string"
+      },
+      "concept_type": {
+        "title": "Concept Type",
+        "type": "string"
+      },
+      "description": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Description"
+      },
+      "expected_revision": {
+        "title": "Expected Revision",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "path": {
+        "title": "Path",
+        "type": "string"
+      },
+      "tags": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Tags",
+        "type": "array"
+      },
+      "title": {
+        "title": "Title",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path",
+      "concept_type",
+      "title",
+      "body",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "title": "CreateArgs",
+    "type": "object"
+  },
+  "memory_graph": {
+    "additionalProperties": false,
+    "properties": {
+      "depth": {
+        "default": 1,
+        "title": "Depth",
+        "type": "integer"
+      },
+      "id_or_path": {
+        "title": "Id Or Path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "id_or_path"
+    ],
+    "title": "GraphArgs",
+    "type": "object"
+  },
+  "memory_help": {
+    "additionalProperties": false,
+    "properties": {},
+    "title": "EmptyArgs",
+    "type": "object"
+  },
+  "memory_inventory": {
+    "additionalProperties": false,
+    "properties": {
+      "cursor": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Cursor"
+      },
+      "fields": {
+        "default": [
+          "path",
+          "id",
+          "title",
+          "status",
+          "type",
+          "tags",
+          "created_at",
+          "updated_at",
+          "updated_by",
+          "body_sha256",
+          "body_bytes",
+          "assets"
+        ],
+        "items": {
+          "enum": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "type": "string"
+        },
+        "minItems": 1,
+        "title": "Fields",
+        "type": "array"
+      },
+      "limit": {
+        "default": 50,
+        "maximum": 100,
+        "minimum": 1,
+        "title": "Limit",
+        "type": "integer"
+      },
+      "path_prefix": {
+        "default": "/",
+        "title": "Path Prefix",
+        "type": "string"
+      }
+    },
+    "title": "InventoryArgs",
+    "type": "object"
+  },
+  "memory_list": {
+    "additionalProperties": false,
+    "properties": {
+      "path_prefix": {
+        "default": "/",
+        "title": "Path Prefix",
+        "type": "string"
+      }
+    },
+    "title": "ListArgs",
+    "type": "object"
+  },
+  "memory_patch": {
+    "additionalProperties": false,
+    "properties": {
+      "aliases": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Aliases"
+      },
+      "body": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Body"
+      },
+      "description": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Description"
+      },
+      "expected_revision": {
+        "title": "Expected Revision",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "path": {
+        "title": "Path",
+        "type": "string"
+      },
+      "status": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Status"
+      },
+      "tags": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Tags"
+      },
+      "title": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Title"
+      }
+    },
+    "required": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "title": "PatchArgs",
+    "type": "object"
+  },
+  "memory_proposal_apply": {
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "title": "Expected Revision",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "proposal_id": {
+        "title": "Proposal Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "proposal_id",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "title": "ProposalApplyArgs",
+    "type": "object"
+  },
+  "memory_proposal_get": {
+    "additionalProperties": false,
+    "properties": {
+      "proposal_id": {
+        "title": "Proposal Id",
+        "type": "string"
+      },
+      "view": {
+        "default": "detailed",
+        "enum": [
+          "summary",
+          "detailed"
+        ],
+        "title": "View",
+        "type": "string"
+      }
+    },
+    "required": [
+      "proposal_id"
+    ],
+    "title": "ProposalGetArgs",
+    "type": "object"
+  },
+  "memory_proposal_list": {
+    "additionalProperties": false,
+    "properties": {
+      "cursor": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Cursor"
+      },
+      "limit": {
+        "default": 50,
+        "maximum": 200,
+        "minimum": 1,
+        "title": "Limit",
+        "type": "integer"
+      },
+      "status": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Status"
+      }
+    },
+    "title": "ProposalListArgs",
+    "type": "object"
+  },
+  "memory_proposal_rebase": {
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "title": "Expected Revision",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "maxLength": 256,
+        "minLength": 1,
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "proposal_id": {
+        "title": "Proposal Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "proposal_id",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "title": "ProposalRebaseArgs",
+    "type": "object"
+  },
+  "memory_proposal_review": {
+    "additionalProperties": false,
+    "properties": {
+      "comment": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Comment"
+      },
+      "decision": {
+        "title": "Decision",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "anyOf": [
+          {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Idempotency Key"
+      },
+      "proposal_id": {
+        "title": "Proposal Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "proposal_id",
+      "decision"
+    ],
+    "title": "ProposalReviewArgs",
+    "type": "object"
+  },
+  "memory_propose": {
+    "$defs": {
+      "ProposeAssetChange": {
+        "additionalProperties": false,
+        "oneOf": [
+          {
+            "not": {
+              "required": [
+                "staged_asset_id"
+              ]
+            },
+            "required": [
+              "zip_base64"
+            ]
+          },
+          {
+            "not": {
+              "required": [
+                "zip_base64"
+              ]
+            },
+            "required": [
+              "staged_asset_id"
+            ]
+          }
+        ],
+        "properties": {
+          "asset_kind": {
+            "title": "Asset Kind",
+            "type": "string"
+          },
+          "kind": {
+            "const": "attach_asset_pack",
+            "title": "Kind",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "staged_asset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Staged Asset Id"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          },
+          "zip_base64": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Zip Base64"
+          }
+        },
+        "required": [
+          "kind",
+          "path",
+          "asset_kind",
+          "version"
+        ],
+        "title": "ProposeAssetChange",
+        "type": "object"
+      },
+      "ProposeCreateChange": {
+        "additionalProperties": false,
+        "properties": {
+          "aliases": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Aliases",
+            "type": "array"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "concept_type": {
+            "title": "Concept Type",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "kind": {
+            "const": "create",
+            "title": "Kind",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "path",
+          "concept_type",
+          "title",
+          "body"
+        ],
+        "title": "ProposeCreateChange",
+        "type": "object"
+      },
+      "ProposePatchChange": {
+        "additionalProperties": false,
+        "properties": {
+          "aliases": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Aliases"
+          },
+          "body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Body"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "kind": {
+            "const": "patch",
+            "title": "Kind",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tags"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Title"
+          }
+        },
+        "required": [
+          "kind",
+          "path"
+        ],
+        "title": "ProposePatchChange",
+        "type": "object"
+      },
+      "ProposeRenameChange": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "rename",
+            "title": "Kind",
+            "type": "string"
+          },
+          "new_path": {
+            "title": "New Path",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "path",
+          "new_path"
+        ],
+        "title": "ProposeRenameChange",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "base_revision": {
+        "title": "Base Revision",
+        "type": "string"
+      },
+      "changes": {
+        "items": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProposeCreateChange"
+            },
+            {
+              "$ref": "#/$defs/ProposePatchChange"
+            },
+            {
+              "$ref": "#/$defs/ProposeRenameChange"
+            },
+            {
+              "$ref": "#/$defs/ProposeAssetChange"
+            }
+          ]
+        },
+        "title": "Changes",
+        "type": "array"
+      },
+      "intent": {
+        "title": "Intent",
+        "type": "string"
+      },
+      "rationale": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Rationale"
+      }
+    },
+    "required": [
+      "intent",
+      "base_revision",
+      "changes"
+    ],
+    "title": "_ProposeArgsSchema",
+    "type": "object"
+  },
+  "memory_propose_freeform": {
+    "additionalProperties": false,
+    "properties": {
+      "content": {
+        "title": "Content",
+        "type": "string"
+      },
+      "intent": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Intent"
+      },
+      "suggested_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Suggested Path"
+      }
+    },
+    "required": [
+      "content"
+    ],
+    "title": "ProposeFreeformArgs",
+    "type": "object"
+  },
+  "memory_propose_update": {
+    "additionalProperties": false,
+    "properties": {
+      "instruction": {
+        "title": "Instruction",
+        "type": "string"
+      },
+      "target_hint": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Target Hint"
+      }
+    },
+    "required": [
+      "instruction"
+    ],
+    "title": "ProposeUpdateArgs",
+    "type": "object"
+  },
+  "memory_purge": {
+    "additionalProperties": false,
+    "properties": {
+      "confirm": {
+        "default": false,
+        "title": "Confirm",
+        "type": "boolean"
+      },
+      "expected_revision": {
+        "title": "Expected Revision",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "path": {
+        "title": "Path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "title": "PurgeArgs",
+    "type": "object"
+  },
+  "memory_read": {
+    "additionalProperties": false,
+    "properties": {
+      "id_or_path": {
+        "title": "Id Or Path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "id_or_path"
+    ],
+    "title": "ReadArgs",
+    "type": "object"
+  },
+  "memory_rename": {
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "title": "Expected Revision",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "new_path": {
+        "title": "New Path",
+        "type": "string"
+      },
+      "path": {
+        "title": "Path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path",
+      "new_path",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "title": "RenameArgs",
+    "type": "object"
+  },
+  "memory_restore": {
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "title": "Expected Revision",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "path": {
+        "title": "Path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "title": "TrashArgs",
+    "type": "object"
+  },
+  "memory_route": {
+    "additionalProperties": false,
+    "properties": {
+      "execute": {
+        "default": true,
+        "title": "Execute",
+        "type": "boolean"
+      },
+      "request": {
+        "title": "Request",
+        "type": "string"
+      }
+    },
+    "required": [
+      "request"
+    ],
+    "title": "RouteArgs",
+    "type": "object"
+  },
+  "memory_search": {
+    "additionalProperties": false,
+    "properties": {
+      "concept_type": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Concept Type"
+      },
+      "cursor": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Cursor"
+      },
+      "limit": {
+        "default": 20,
+        "title": "Limit",
+        "type": "integer"
+      },
+      "query": {
+        "title": "Query",
+        "type": "string"
+      },
+      "query_syntax": {
+        "default": "plain",
+        "enum": [
+          "plain",
+          "fts5"
+        ],
+        "title": "Query Syntax",
+        "type": "string"
+      },
+      "search_mode": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Search Mode"
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "title": "SearchArgs",
+    "type": "object"
+  },
+  "memory_status": {
+    "additionalProperties": false,
+    "properties": {},
+    "title": "EmptyArgs",
+    "type": "object"
+  },
+  "memory_trash": {
+    "additionalProperties": false,
+    "properties": {
+      "expected_revision": {
+        "title": "Expected Revision",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "path": {
+        "title": "Path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "title": "TrashArgs",
+    "type": "object"
+  }
+}

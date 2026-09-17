@@ -2,6 +2,10 @@
 
 Use the workflow guides for agent tasks, the contracts for exact arguments and the operations guide for service administration.
 
+## Development branch: pure Go port
+
+The [`go` branch port index](go-port/README.md) tracks end-to-end compatibility, the pinned uMCP reference, scalar GTE/Needle plans and strict coverage gates. This is not yet a deployable replacement.
+
 ## Connect a client
 
 | Client or task | Guide |

@@ -1,0 +1,101 @@
+[
+  {
+    "expected": {
+      "data": {
+        "ready": true
+      },
+      "index_revision": "r1",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "r1",
+      "status": "success",
+      "warnings": []
+    },
+    "input": {
+      "data": {
+        "ready": true
+      },
+      "index_revision": "r1",
+      "repo_revision": "r1"
+    },
+    "kind": "success",
+    "name": "success-default"
+  },
+  {
+    "expected": {
+      "data": null,
+      "index_revision": "r0",
+      "index_stale": true,
+      "next_tools": [
+        "memory_status"
+      ],
+      "operation_id": "op-1",
+      "repo_revision": "r1",
+      "status": "success",
+      "warnings": [
+        "index delayed"
+      ]
+    },
+    "input": {
+      "data": null,
+      "index_revision": "r0",
+      "index_stale": true,
+      "next_tools": [
+        "memory_status"
+      ],
+      "operation_id": "op-1",
+      "repo_revision": "r1",
+      "warnings": [
+        "index delayed"
+      ]
+    },
+    "kind": "success",
+    "name": "success-null-data"
+  },
+  {
+    "expected": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "denied",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "input": {
+      "error_class": "forbidden",
+      "message": "denied"
+    },
+    "kind": "error",
+    "name": "error-default"
+  },
+  {
+    "expected": {
+      "error_class": "conflict",
+      "index_revision": "r0",
+      "index_stale": true,
+      "message": "changed",
+      "operation_id": "op-2",
+      "repo_revision": "r1",
+      "status": "error",
+      "warnings": [
+        "reconcile"
+      ]
+    },
+    "input": {
+      "error_class": "conflict",
+      "index_revision": "r0",
+      "index_stale": true,
+      "message": "changed",
+      "operation_id": "op-2",
+      "repo_revision": "r1",
+      "warnings": [
+        "reconcile"
+      ]
+    },
+    "kind": "error",
+    "name": "error-revisions"
+  }
+]

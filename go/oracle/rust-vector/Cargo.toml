@@ -1,0 +1,11 @@
+[package]
+name = "memento-go-vector-oracle"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[dependencies]
+memento-vector = { path = "../../../rust/crates/memento-vector" }
+serde_json = "1"

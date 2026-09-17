@@ -1,0 +1,76 @@
+---
+id: pure-go-end-to-end
+title: End-to-end pure Go port with scalar correctness and full coverage
+status: doing
+priority: high
+created: 2026-09-17
+updated: 2026-09-17
+estimate: XL
+risk: high
+tags: [work-item, port, go, parity]
+owner: pi
+---
+
+# End-to-end pure Go port
+
+## Summary
+
+Port Memento's entire service and inference runtime to Go, including uMCP wire/transport behaviour, storage and recovery, GTE and Needle. Preserve one-to-one behaviour before introducing SIMD or other performance changes. The user explicitly requires full test coverage and permits uMCP Git tip as a reference.
+
+## Acceptance Criteria
+
+* Isolated `go` branch/worktree; no changes to the active Vulkan checkout or production.
+* Runtime builds with `CGO_ENABLED=0` and needs no Python/Rust/C inference, native SQLite extension or external Git executable for core operations.
+* All rows of [the parity matrix](../../docs/go-port/parity.md) complete with actual reference/Go comparison tests; no placeholder success handlers.
+* Zero uncovered statements in every implemented Go package, no exclusions, plus explicit edge/error/race/fuzz/crash tests and all upstream conformance cases.
+* Preserve model/file/wire formats, trusted identity and ACLs, atomic mutation/idempotency, proposal/rebase/history/assets, bounded memory and shutdown semantics.
+* Scalar numerical and tokenizer/output parity first; SIMD/GPU/quantisation deferred. Any floating tolerance or ABI exception is explicit and reviewed.
+
+## Implementation Paths
+
+A (chosen): side-by-side pure Go subtree with pinned oracles, slice-by-slice tests and full replacement gates. Keeps the existing runtime available for differential tests and rollback.
+
+B (rejected for this request): replace only the Rust workers and retain the Python service. Lower risk, but does not satisfy the user's end-to-end requirement. CGo/native-inference wrappers also do not satisfy the pure-Go runtime target.
+
+## Test Plan
+
+* `make -C go check`: format/vet, strict statement coverage, CGO-free tests/build.
+* `make -C go race`, `make -C go fuzz`, `make -C go cross`; native amd64 and ARM64 CI.
+* Independent pinned Python/uMCP/Rust oracle generation, checked-in synthetic expected outputs.
+* Full uMCP sessions/transports/auth conformance; service/security/storage/concurrency/crash suites; GTE/Needle model/tokenizer/routing goldens and browser tests as each subsystem lands.
+* No production fixture mutations. Migration and rollback on disposable state copies before any separately approved deployment.
+
+## Definition of Done
+
+* [x] Dedicated branch and reference revisions recorded.
+* [x] Scope/index, staged plan and test policy written.
+* [x] Initial dependency-free Go code with oracle-backed tests and strict coverage gate.
+* [ ] Native amd64/ARM64 CI passed for the initial slice.
+* [ ] All uMCP and service surfaces ported and tested.
+* [ ] Pure-Go persistence/Git/SentencePiece decisions proven by experiments.
+* [ ] Scalar GTE and Needle parity complete.
+* [ ] Full operational/resource/crash/migration/rollback gates passed.
+* [ ] External C ABI consumers resolved without silently weakening scope.
+* [ ] User-authorised deployment and complete validation before production replacement.
+
+## Updates
+
+### 2026-09-17
+
+* Created branch `go` at Memento `0b0b8f94dd8b0410a0e3c0fd547e995d2b739b41` in `/workspace/projects/memento-go`.
+* Pinned uMCP Git tip `30cce7dfe08c6ee63de235f7d81754ba286dafbb`; difference from deployed `9c89a70` is documentation-only.
+* Added scalar vector primitives, response envelopes, uMCP ID/response/version helpers, development-only CLI and oracle fixtures. Each current package reached 100% statement coverage locally; service/model subsystems remain unported.
+* User explicitly requested full coverage; added raw zero-uncovered-block enforcement rather than trusting the rounded display percentage.
+* Validation: all 17 current production Go functions at 100% statement coverage; race tests pass; uMCP fuzz ran about 134k executions and vector fuzz about 636k; baseline amd64/ARM64 binaries are statically linked. Oracle fixtures regenerate byte-identically. Original Python/Rust `make check` and `make typecheck` pass from this worktree.
+* Oracle Python script passes Ruff/format/mypy independently. New documentation file links resolve. Delegated scope audit timed out; no independent approval claimed.
+* Quality: ★★★★☆ 8/10 (problem 2, scope 2, test 2, dependencies 0, risk 2). Git/SQLite/SentencePiece/ABI decisions are explicit open gates, not blockers to the independent foundations.
+
+## Notes
+
+Refinement: full end-to-end service, scalar first, CGO-free runtime, current data/model/wire contracts, at least baseline Linux amd64 and ARM64. Keep frontend assets; do not mistake browser JavaScript for a backend dependency. Old implementations are test-only references until retirement. Full correctness is a compatibility objective, not a claim of a mathematical proof from test coverage. No release/deployment is requested in this preparation step.
+
+## Links
+
+* [Go port index](../../docs/go-port/README.md)
+* [Architecture and phases](../../docs/go-port/plan.md)
+* [Test gates](../../docs/go-port/testing.md)
