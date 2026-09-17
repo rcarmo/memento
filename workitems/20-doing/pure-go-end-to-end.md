@@ -45,7 +45,7 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 * [x] Dedicated branch and reference revisions recorded.
 * [x] Scope/index, staged plan and test policy written.
 * [x] Initial dependency-free Go code with oracle-backed tests and strict coverage gate.
-* [ ] Native amd64/ARM64 CI passed for the initial slice.
+* [x] Native amd64/ARM64 CI passed for the initial slice.
 * [ ] All uMCP and service surfaces ported and tested.
 * [ ] Pure-Go persistence/Git/SentencePiece decisions proven by experiments.
 * [ ] Scalar GTE and Needle parity complete.
@@ -57,6 +57,7 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 
 ### 2026-09-17
 
+* Initial scaffold committed/pushed as `b654c892c75f1aa436a988ff905ec9b60e5bea51`; native amd64 and ARM64 [Go port CI 35282374718](https://github.com/rcarmo/memento/actions/runs/35282374718) passed coverage, race, fuzz and static cross-build gates. This completes branch preparation, not the end-to-end port. Next: remaining uMCP shared rules and transport/session conformance.
 * Created branch `go` at Memento `0b0b8f94dd8b0410a0e3c0fd547e995d2b739b41` in `/workspace/projects/memento-go`.
 * Pinned uMCP Git tip `30cce7dfe08c6ee63de235f7d81754ba286dafbb`; difference from deployed `9c89a70` is documentation-only.
 * Added scalar vector primitives, response envelopes, uMCP ID/response/version helpers, development-only CLI and oracle fixtures. Each current package reached 100% statement coverage locally; service/model subsystems remain unported.
