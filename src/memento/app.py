@@ -131,6 +131,10 @@ class MementoRuntime:
                 "embedding_revision": semantic.embedding_revision,
                 "sqlite_vector_enabled": semantic.sqlite_vector_enabled,
                 "warnings": list(semantic.warnings),
+                "configured_backend": self.config.intelligent_tiers.semantic_search.backend,
+                "backend_diagnostics": getattr(
+                    self.derived_index._embedding_client, "last_backend", None
+                ),
                 "worker": (
                     {
                         "alive": worker_state.alive,
@@ -309,6 +313,8 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                     timeout_seconds=semantic.worker_timeout_seconds,
                     nice=semantic.progressive_nice if semantic.progressive_enabled else 0,
                     threads=1,
+                    backend=semantic.backend,
+                    vulkan_device=semantic.vulkan_device,
                 )
             else:
                 if not ffi_path:

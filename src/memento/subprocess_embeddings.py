@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import struct
 import subprocess
+import time
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any, Protocol
@@ -34,6 +36,8 @@ class SubprocessEmbeddingClient(EmbeddingClient):
         timeout_seconds: float = 300.0,
         nice: int = 0,
         threads: int = 1,
+        backend: str = "cpu",
+        vulkan_device: str | None = None,
         process_runner: ProcessRunner | None = None,
     ) -> None:
         self._worker_path = Path(worker_path)
@@ -45,7 +49,16 @@ class SubprocessEmbeddingClient(EmbeddingClient):
         self._nice = nice
         self._threads = threads
         self._process_runner: ProcessRunner = process_runner or _run_process
+        if backend not in {"cpu", "vulkan", "auto"}:
+            raise ValueError("backend must be cpu, vulkan or auto")
+        self._backend = backend
+        self._vulkan_device = vulkan_device
+        self.last_backend: dict[str, object] | None = None
+        self._gpu_disabled_reason: str | None = None
         self._revision = _sha256_file(self._model_path)
+        if backend != "cpu":
+            # Isolate experimental CPU/GPU vectors from the established CPU index.
+            self._revision += ":gte1-fp32-vulkan-v1"
 
     def model_info(self) -> EmbeddingModelInfo:
         return EmbeddingModelInfo(
@@ -79,8 +92,50 @@ class SubprocessEmbeddingClient(EmbeddingClient):
         }
         payload = json.dumps(request, separators=(",", ":")).encode("utf-8")
         wire = struct.pack("<I", len(payload)) + payload
+        selected = "cpu" if self._gpu_disabled_reason else self._backend
+        started = time.monotonic()
+        try:
+            header, raw = self._call_worker(wire, selected, self._timeout_seconds, len(texts))
+        except SemanticSearchError as exc:
+            if self._backend != "auto" or selected == "cpu":
+                raise
+            self._gpu_disabled_reason = str(exc)[:300]
+            remaining = self._timeout_seconds - (time.monotonic() - started)
+            if remaining <= 0 or (cancelled is not None and cancelled()):
+                raise
+            header, raw = self._call_worker(wire, "cpu", remaining, len(texts))
+        backend_info = header.get("backend")
+        if self._backend != "cpu" and not isinstance(backend_info, dict):
+            raise SemanticSearchError(
+                "Vulkan worker omitted backend diagnostics; use the matching binary"
+            )
+        if isinstance(backend_info, dict):
+            self.last_backend = backend_info
+            if self._backend == "vulkan" and backend_info.get("selected") != "vulkan":
+                raise SemanticSearchError("explicit Vulkan request did not use Vulkan")
+            if self._backend == "auto" and backend_info.get("fallback_reason"):
+                self._gpu_disabled_reason = str(backend_info["fallback_reason"])[:300]
+            if self._gpu_disabled_reason:
+                self.last_backend = {
+                    **backend_info,
+                    "requested": self._backend,
+                    "fallback_reason": self._gpu_disabled_reason,
+                }
+        values = struct.unpack(f"<{len(texts) * self._dimensions}f", raw)
+        return tuple(
+            tuple(values[i * self._dimensions : (i + 1) * self._dimensions])
+            for i in range(len(texts))
+        )
+
+    def _call_worker(
+        self, wire: bytes, backend: str, timeout: float, expected_count: int
+    ) -> tuple[dict[str, Any], bytes]:
         try:
             command = [str(self._worker_path), str(self._model_path)]
+            if backend != "cpu":
+                command.append(backend)
+                if self._vulkan_device is not None:
+                    command.append(self._vulkan_device)
             if self._nice > 0:
                 command = ["nice", "-n", str(self._nice), *command]
             environment = os.environ.copy()
@@ -95,7 +150,7 @@ class SubprocessEmbeddingClient(EmbeddingClient):
                 command,
                 input=wire,
                 capture_output=True,
-                timeout=self._timeout_seconds,
+                timeout=timeout,
                 check=False,
                 env=environment,
             )
@@ -107,22 +162,19 @@ class SubprocessEmbeddingClient(EmbeddingClient):
         header, raw = _decode_response(completed.stdout)
         if not header.get("ok"):
             raise SemanticSearchError(str(header.get("error") or "embedding worker error"))
-        dimensions = int(header.get("dimensions") or 0)
-        count = int(header.get("count") or 0)
-        if dimensions != self._dimensions or count != len(texts):
-            raise SemanticSearchError(
-                f"embedding worker shape mismatch: {count}x{dimensions}, "
-                f"expected {len(texts)}x{self._dimensions}"
-            )
-        expected_bytes = count * dimensions * 4
-        if len(raw) != expected_bytes:
-            raise SemanticSearchError(
-                f"embedding payload has {len(raw)} bytes; expected {expected_bytes}"
-            )
-        values = struct.unpack(f"<{count * dimensions}f", raw)
-        return tuple(
-            tuple(values[index * dimensions : (index + 1) * dimensions]) for index in range(count)
-        )
+        dimensions, count = header.get("dimensions"), header.get("count")
+        if (
+            type(dimensions) is not int
+            or type(count) is not int
+            or dimensions != self._dimensions
+            or count != expected_count
+        ):
+            raise SemanticSearchError("embedding worker shape mismatch")
+        if len(raw) != expected_count * self._dimensions * 4:
+            raise SemanticSearchError("embedding payload length mismatch")
+        if not all(math.isfinite(v) for v in struct.unpack(f"<{count * dimensions}f", raw)):
+            raise SemanticSearchError("nonfinite embedding worker output")
+        return header, raw
 
 
 def _decode_response(wire: bytes) -> tuple[dict[str, Any], bytes]:
@@ -140,7 +192,7 @@ def _decode_response(wire: bytes) -> tuple[dict[str, Any], bytes]:
     if not isinstance(header, dict):
         raise SemanticSearchError("embedding worker header must be an object")
     raw = wire[header_end:]
-    if int(header.get("payload_len") or 0) != len(raw):
+    if type(header.get("payload_len")) is not int or header["payload_len"] != len(raw):
         raise SemanticSearchError("embedding worker payload length mismatch")
     return header, raw
 

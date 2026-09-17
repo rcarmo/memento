@@ -505,6 +505,7 @@ class MemoryService:
                     "readiness": {
                         "semantic_search": {
                             "ready": semantic.ready,
+                            "configured_backend": self._deps.config.intelligent_tiers.semantic_search.backend,
                             "model_id": semantic.model_id,
                             "dimensions": semantic.dimensions,
                             "embedding_revision": semantic.embedding_revision,

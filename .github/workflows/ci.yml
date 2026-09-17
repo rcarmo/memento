@@ -50,6 +50,19 @@ jobs:
       - name: Diff check
         run: make diff-check
 
+  vulkan-compile:
+    name: Optional Vulkan compile and CPU-safe tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
+        with:
+          components: clippy,rustfmt
+      - name: Validate optional backend without requiring a GPU
+        run: make vulkan-check
+
   runtime-models:
     name: Prepare cached runtime models
     runs-on: ubuntu-latest

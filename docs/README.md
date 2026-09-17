@@ -43,6 +43,7 @@ Use the workflow guides for agent tasks, the contracts for exact arguments and t
 | Configure a DiskStation deployment | [DiskStation](diskstation.md) |
 | Manage namespaces, principals and credentials | [Access management](access-management.md) |
 | Configure embeddings and progressive refresh | [Semantic search](semantic-search.md) |
+| Pre-test the same GTE1 model on Vulkan hardware | [Vulkan embedding pre-test](vulkan-embeddings.md) |
 | Inspect links, assets, proposals and visibility in the trusted graph UI | [Graph debugger](graph-explorer-plan.md) |
 | Build, publish or deploy a release | [Release process](release.md) |
 | Run load tests | [Load testing](load-testing.md) |

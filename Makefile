@@ -51,6 +51,21 @@ rust-test:
 
 rust-check: rust-format-check rust-lint rust-test
 
+.PHONY: vulkan-build vulkan-check vulkan-pretest
+VULKAN_MODEL ?= models/gte/gte-small.gtemodel
+VULKAN_DEVICE ?=
+VULKAN_REPORT ?= build/vulkan-pretest.json
+
+vulkan-build:
+	cd rust && cargo build --locked --release -p memento-embed -p memento-gte --features memento-embed/vulkan --example vulkan-parity --bin memento-embed
+
+vulkan-check:
+	cd rust && cargo clippy --locked --workspace --all-targets --features memento-embed/vulkan -- -D warnings
+	cd rust && cargo test --locked --workspace --features memento-embed/vulkan
+
+vulkan-pretest: vulkan-build
+	$(BIN)/python tools/vulkan_pretest.py --model "$(VULKAN_MODEL)" --worker rust/target/release/memento-embed --device "$(VULKAN_DEVICE)" --output "$(VULKAN_REPORT)"
+
 check: lint format-check typecheck test graph-check rust-check
 
 build-wheel:

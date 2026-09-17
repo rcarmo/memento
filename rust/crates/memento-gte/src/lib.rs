@@ -11,6 +11,9 @@ use std::path::Path;
 use std::sync::Arc;
 use thiserror::Error;
 
+#[cfg(feature = "vulkan")]
+pub mod vulkan;
+
 const FILE_MAGIC: &[u8; 4] = b"GTE1";
 const LAYER_NORM_EPS: f32 = 1e-12;
 pub const TOKEN_PAD: u32 = 0;
@@ -21,6 +24,8 @@ pub const TOKEN_MASK: u32 = 103;
 
 #[derive(Debug, Error)]
 pub enum GteError {
+    #[error("embedding backend: {0}")]
+    Backend(String),
     #[error("io error: {0}")]
     Io(#[from] std::io::Error),
     #[error("invalid model magic")]
@@ -445,6 +450,33 @@ impl Model {
         Ok(outputs)
     }
 
+    #[cfg(feature = "vulkan")]
+    pub fn embed_batch_vulkan(
+        &self,
+        texts: &[String],
+        options: BatchOptions,
+        gpu: &vulkan::Vulkan,
+    ) -> Result<Vec<Vec<f32>>, GteError> {
+        if options.max_batch.is_some_and(|max| texts.len() > max) {
+            return Err(GteError::BatchTooLarge(texts.len()));
+        }
+        let mut batches = Vec::new();
+        let vocab = self.vocab_map();
+        for (index, text) in texts.iter().enumerate() {
+            if let Some(max) = options.max_chars_per_input {
+                if text.len() > max {
+                    return Err(GteError::InputTooLarge {
+                        index,
+                        len: text.len(),
+                        max,
+                    });
+                }
+            }
+            batches.push(tokenize_with(text, &vocab, self.config.max_seq_len));
+        }
+        self.embed_tokens_backend(&batches, None, Some(gpu))
+    }
+
     fn vocab_map(&self) -> std::collections::HashMap<&str, u32> {
         self.vocab
             .iter()
@@ -457,6 +489,20 @@ impl Model {
         &self,
         token_batches: &[Vec<u32>],
         checkpoint: Option<Checkpoint<'_>>,
+    ) -> Result<Vec<Vec<f32>>, GteError> {
+        self.embed_tokens_backend(
+            token_batches,
+            checkpoint,
+            #[cfg(feature = "vulkan")]
+            None,
+        )
+    }
+
+    fn embed_tokens_backend(
+        &self,
+        token_batches: &[Vec<u32>],
+        checkpoint: Option<Checkpoint<'_>>,
+        #[cfg(feature = "vulkan")] gpu: Option<&vulkan::Vulkan>,
     ) -> Result<Vec<Vec<f32>>, GteError> {
         if token_batches.is_empty() {
             return Ok(Vec::new());
@@ -478,7 +524,22 @@ impl Model {
             attn_mask[row_start..row_end].fill(true);
         }
 
-        let hidden_states = if let Some(cp) = checkpoint {
+        #[cfg(feature = "vulkan")]
+        let gpu_hidden = match gpu {
+            Some(gpu) => Some(gpu.forward(
+                self,
+                &self.initial_states(&token_ids, &attn_mask, batch_size, seq_len),
+                &attn_mask,
+                batch_size,
+                seq_len,
+            )?),
+            None => None,
+        };
+        #[cfg(not(feature = "vulkan"))]
+        let gpu_hidden: Option<Vec<f32>> = None;
+        let hidden_states = if let Some(states) = gpu_hidden {
+            states
+        } else if let Some(cp) = checkpoint {
             self.transformer_forward_batch(&token_ids, &attn_mask, batch_size, seq_len, Some(cp))?
         } else {
             self.transformer_forward_batch(&token_ids, &attn_mask, batch_size, seq_len, None)?
@@ -502,24 +563,15 @@ impl Model {
         Ok(outputs)
     }
 
-    #[allow(clippy::too_many_lines)]
-    fn transformer_forward_batch(
+    fn initial_states(
         &self,
         token_ids: &[u32],
         attn_mask: &[bool],
         batch_size: usize,
         seq_len: usize,
-        mut checkpoint: Option<Checkpoint<'_>>,
-    ) -> Result<Vec<f32>, GteError> {
-        let rows = batch_size
-            .checked_mul(seq_len)
-            .expect("internal batch rows do not overflow");
-        debug_assert_eq!(token_ids.len(), rows);
-        debug_assert_eq!(attn_mask.len(), rows);
-
+    ) -> Vec<f32> {
+        let rows = batch_size * seq_len;
         let hidden = self.config.hidden_size;
-        let head_dim = hidden / self.config.num_heads;
-        let scale = 1.0 / (head_dim as f32).sqrt();
         let mut hidden_states = vec![0.0; rows * hidden];
         for batch_index in 0..batch_size {
             let row_base = batch_index * seq_len;
@@ -539,6 +591,28 @@ impl Model {
                 }
             }
         }
+        hidden_states
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn transformer_forward_batch(
+        &self,
+        token_ids: &[u32],
+        attn_mask: &[bool],
+        batch_size: usize,
+        seq_len: usize,
+        mut checkpoint: Option<Checkpoint<'_>>,
+    ) -> Result<Vec<f32>, GteError> {
+        let rows = batch_size
+            .checked_mul(seq_len)
+            .expect("internal batch rows do not overflow");
+        debug_assert_eq!(token_ids.len(), rows);
+        debug_assert_eq!(attn_mask.len(), rows);
+
+        let hidden = self.config.hidden_size;
+        let head_dim = hidden / self.config.num_heads;
+        let scale = 1.0 / (head_dim as f32).sqrt();
+        let mut hidden_states = self.initial_states(token_ids, attn_mask, batch_size, seq_len);
         layer_norm(
             &mut hidden_states,
             &self.embed_ln_weight,

@@ -1,0 +1,230 @@
+{
+  "platform": "Linux-6.8.0-137-generic-x86_64-with-glibc2.39",
+  "model": "gte-small.gtemodel",
+  "model_sha256": "06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171",
+  "worker_sha256": "03c7feb68fd0e4dd93001fc7c1ddd5508f1d1635d10773478d2c8d4991b8ca75",
+  "requested_device": "NVIDIA",
+  "repeats": 3,
+  "cases": [
+    {
+      "name": "short",
+      "batch": 1,
+      "samples": [
+        {
+          "cpu_seconds": 0.1303053698502481,
+          "vulkan_seconds": 0.4204892418347299,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999999203,
+            "max_abs_error": 5.960464477539063e-08
+          },
+          "passed": true
+        },
+        {
+          "cpu_seconds": 0.11298219580203295,
+          "vulkan_seconds": 0.38567874301224947,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999999203,
+            "max_abs_error": 5.960464477539063e-08
+          },
+          "passed": true
+        },
+        {
+          "cpu_seconds": 0.11174214165657759,
+          "vulkan_seconds": 0.3810325819067657,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999999203,
+            "max_abs_error": 5.960464477539063e-08
+          },
+          "passed": true
+        }
+      ],
+      "median_cpu_seconds": 0.11298219580203295,
+      "median_vulkan_seconds": 0.38567874301224947
+    },
+    {
+      "name": "unicode-batch",
+      "batch": 3,
+      "samples": [
+        {
+          "cpu_seconds": 0.24129174510017037,
+          "vulkan_seconds": 0.39114180905744433,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999995899,
+            "max_abs_error": 1.5273690223693848e-07
+          },
+          "passed": true
+        },
+        {
+          "cpu_seconds": 0.2800419288687408,
+          "vulkan_seconds": 0.3955162689089775,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999995899,
+            "max_abs_error": 1.5273690223693848e-07
+          },
+          "passed": true
+        },
+        {
+          "cpu_seconds": 0.2857636781409383,
+          "vulkan_seconds": 0.3971449499949813,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999995899,
+            "max_abs_error": 1.5273690223693848e-07
+          },
+          "passed": true
+        }
+      ],
+      "median_cpu_seconds": 0.2800419288687408,
+      "median_vulkan_seconds": 0.3955162689089775
+    },
+    {
+      "name": "medium",
+      "batch": 1,
+      "samples": [
+        {
+          "cpu_seconds": 1.0104670892469585,
+          "vulkan_seconds": 0.41395791666582227,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999999287,
+            "max_abs_error": 1.1920928955078125e-07
+          },
+          "passed": true
+        },
+        {
+          "cpu_seconds": 0.8113819770514965,
+          "vulkan_seconds": 0.41716133477166295,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999999287,
+            "max_abs_error": 1.1920928955078125e-07
+          },
+          "passed": true
+        },
+        {
+          "cpu_seconds": 0.8436410599388182,
+          "vulkan_seconds": 0.4318764368072152,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999999287,
+            "max_abs_error": 1.1920928955078125e-07
+          },
+          "passed": true
+        }
+      ],
+      "median_cpu_seconds": 0.8436410599388182,
+      "median_vulkan_seconds": 0.41716133477166295
+    },
+    {
+      "name": "token-limit",
+      "batch": 1,
+      "samples": [
+        {
+          "cpu_seconds": 4.611447189003229,
+          "vulkan_seconds": 0.5163103700615466,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999997832,
+            "max_abs_error": 1.4901161193847656e-07
+          },
+          "passed": true
+        },
+        {
+          "cpu_seconds": 4.260135482996702,
+          "vulkan_seconds": 0.5615760958753526,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999997832,
+            "max_abs_error": 1.4901161193847656e-07
+          },
+          "passed": true
+        },
+        {
+          "cpu_seconds": 4.34125753864646,
+          "vulkan_seconds": 0.5156292747706175,
+          "backend": {
+            "requested": "vulkan",
+            "selected": "vulkan",
+            "device": "NVIDIA GeForce RTX 3060",
+            "fallback_reason": null
+          },
+          "parity": {
+            "minimum_cosine": 0.9999999999997832,
+            "max_abs_error": 1.4901161193847656e-07
+          },
+          "passed": true
+        }
+      ],
+      "median_cpu_seconds": 4.34125753864646,
+      "median_vulkan_seconds": 0.5163103700615466
+    }
+  ],
+  "passed": true,
+  "timing_scope": "cold subprocess including model load, adapter/pipelines and self-test",
+  "missing_device_fallback": {
+    "requested": "auto",
+    "selected": "cpu",
+    "device": null,
+    "fallback_reason": "embedding backend: no matching hardware Vulkan adapter; software adapters are excluded"
+  }
+}

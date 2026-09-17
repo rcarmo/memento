@@ -51,3 +51,61 @@ fn embed_response_contains_f32le_payload() {
     write_frame(&mut wire, &frame).expect("write frame");
     assert!(wire.len() > frame.payload.len());
 }
+
+#[test]
+fn rejects_oversized_input_frame() {
+    let frame = (4_u32 * 1024 * 1024 + 1).to_le_bytes();
+    assert!(matches!(
+        read_request(&frame[..]),
+        Err(memento_embed::ProtocolError::FrameTooLarge(_))
+    ));
+}
+
+#[test]
+fn validates_backend_names() {
+    use memento_embed::backend::Backend;
+    assert_eq!("cpu".parse::<Backend>().unwrap(), Backend::Cpu);
+    assert_eq!("auto".parse::<Backend>().unwrap(), Backend::Auto);
+    assert!("cuda".parse::<Backend>().is_err());
+}
+
+#[test]
+fn unavailable_backend_explicit_error_or_auto_cpu() {
+    use memento_embed::backend::{Backend, Engine};
+    let Some(model) = fixture_model() else {
+        return;
+    };
+    assert!(Engine::new(
+        model.clone(),
+        Backend::Vulkan,
+        Some("NONEXISTENT-GPU-MEMENTO")
+    )
+    .is_err());
+    let engine = Engine::new(model, Backend::Auto, Some("NONEXISTENT-GPU-MEMENTO")).unwrap();
+    assert_eq!(engine.info.selected, "cpu");
+    assert!(engine.info.fallback_reason.is_some());
+}
+
+#[cfg(feature = "vulkan")]
+#[test]
+#[ignore = "requires actual hardware Vulkan and the pinned GTE1 model"]
+fn hardware_same_model_parity_and_diagnostics() {
+    use memento_embed::backend::{Backend, Engine};
+    let model = fixture_model().expect("hardware test requires the real GTE1 model");
+    let texts = vec![
+        String::new(),
+        "Review the shared project memory.".to_string(),
+        "Olá 東京 café".to_string(),
+    ];
+    let reference = model
+        .embed_batch(&texts, memento_gte::BatchOptions::default(), None)
+        .unwrap();
+    let mut engine = Engine::new(model, Backend::Vulkan, None).unwrap();
+    assert_eq!(engine.info.selected, "vulkan");
+    for _ in 0..2 {
+        let got = engine.embed(&texts).unwrap();
+        for (a, b) in reference.iter().zip(got) {
+            assert!(a.iter().zip(b).all(|(x, y)| (x - y).abs() < 0.001));
+        }
+    }
+}

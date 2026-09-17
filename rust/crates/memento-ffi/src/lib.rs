@@ -189,7 +189,9 @@ fn map_gte_error(err: GteError) -> MementoFfiStatus {
             format!("input {index} too large: {len} chars > {max}"),
         ),
         GteError::InvalidMagic => fail(MementoFfiStatus::Model, "invalid model magic"),
-        GteError::InvalidModel(message) => fail(MementoFfiStatus::Model, message),
+        GteError::InvalidModel(message) | GteError::Backend(message) => {
+            fail(MementoFfiStatus::Model, message)
+        }
     }
 }
 
