@@ -10,3 +10,4 @@ publish = false
 memento-needle = { path = "../../../rust/crates/memento-needle" }
 serde_json = "1"
 sha2 = "0.10"
+sentencepiece-rust = "=0.1.1"

@@ -26,11 +26,13 @@ fuzz:
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzTokenizer -fuzztime=5s -parallel=2
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzModelParser -fuzztime=5s -parallel=2
 	CGO_ENABLED=0 $(GO) test ./needle -run='^$$' -fuzz=FuzzModel -fuzztime=5s -parallel=2
+	CGO_ENABLED=0 $(GO) test ./sentencepiece -run='^$$' -fuzz=FuzzProcessor -fuzztime=5s -parallel=2
 model-test:
 	@test -n "$(GTE_MODEL_PATH)" || (echo 'Set GTE_MODEL_PATH to the digest-pinned public GTE1 model'; exit 1)
 	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(GO) test ./gte -run TestRealGTEModel -count=1 -v
 	@test -n "$(NEEDLE_MODEL_PATH)" || (echo 'Set NEEDLE_MODEL_PATH to the digest-pinned NDL1 model'; exit 1)
-	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" $(GO) test ./needle -run TestRealNeedleModel -count=1 -v
+	@test -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Set NEEDLE_TOKENIZER_PATH to the pinned SentencePiece model'; exit 1)
+	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./needle -run 'TestRealNeedle(Model|Tokenizer)' -count=1 -v
 build:
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-go ./cmd/memento-go
 race:
@@ -45,3 +47,4 @@ oracle:
 	CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --quiet --manifest-path oracle/rust-vector/Cargo.toml > testdata/parity/vectors.json
 	CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --quiet --manifest-path oracle/rust-gte/Cargo.toml -- tokenizer > testdata/parity/gte-tokenizer.json
 	CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --quiet --manifest-path oracle/rust-gte/Cargo.toml -- inference > testdata/parity/gte-inference.json
+	CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --quiet --manifest-path oracle/rust-needle/Cargo.toml -- synthetic-tokenizers > testdata/parity/sentencepiece.json

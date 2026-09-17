@@ -27,7 +27,7 @@ The Go scaffold implements response-envelope constructors, scalar vector encodin
 
 `go/gte` now restores the original Go GTE1 layout, tokenizer and scalar transformer algorithms, retaining Memento's Unicode character-boundary fix and cancellation checkpoints. Synthetic Rust oracle cases pass, and a digest-pinned 384-dimensional model test compares five real inputs. The loader currently copies weights; mmap/resource parity, expanded corpora and worker integration remain unfinished. No assembly, native BLAS or fast-math path is enabled.
 
-The Needle NDL1 parser also loads the real model: all 31 tensors, all 8192 vocabulary entries, metadata and BF16-to-float32 hashes match Rust. SentencePiece encoding and Needle forward/generation are not yet implemented; parser error-text fidelity and broader corrupt-model comparisons remain gates.
+The Needle NDL1 parser also loads the real model: all 31 tensors, all 8192 vocabulary entries, metadata and BF16-to-float32 hashes match Rust. Pure-Go SentencePiece encoding/decoding (BPE/Unigram, normalisation and byte fallback) and Needle's special-token rules pass synthetic and real tokenizer comparisons. Needle forward/generation is not yet implemented; parser error-text fidelity, broader corpora and corrupt-model comparisons remain gates. The derived SentencePiece package retains its Apache-2.0 licence separately from Memento's MIT code.
 
 `memento-go version` reports that the port is incomplete. Other commands exit with an explicit error; there is no fake status server or placeholder inference.
 

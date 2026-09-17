@@ -79,6 +79,7 @@ name = "memento-go-needle-oracle"
 version = "0.0.0"
 dependencies = [
  "memento-needle",
+ "sentencepiece-rust",
  "serde_json",
  "sha2",
 ]

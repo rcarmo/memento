@@ -6,6 +6,12 @@ This Go port is part of Memento, MIT licensed; see the repository LICENSE.
 
 Scalar vector functions are ported from Memento's MIT-licensed Rust vector library, which attributes its original embedding/vector implementation to `rcarmo/go-gte`. See `docs/attribution.md` in the repository for the full model and code provenance. `gte/` restores model layout, tokenizer and scalar transformer algorithms from `rcarmo/go-gte` at `d2ffa3a5aaf7be72b178970f48c835c0d8fda5bf`, originally derived from antirez/gte-pure-C. It retains Memento's Unicode/bounds/cancellation behaviour and does not import upstream assembly, BLAS or fast-math. No model weights are committed in this subtree. Model provenance and redistribution terms remain in the repository attribution and runtime-model manifest.
 
+## SentencePiece port (Apache-2.0)
+
+`sentencepiece/` is a modified Go port of the inference algorithms in [sentencepiece-rust 0.1.1](https://github.com/VoiceLessQ/sentencepiece-rust), itself based on Google's SentencePiece and Darts-clone read-side algorithms. The original Apache-2.0 licence is retained at `sentencepiece/licenses/Apache-2.0.txt`; this derived package is distributed under those terms, not relicensed as MIT by the repository's general notice.
+
+Changes: Go protobuf/model reader, float32 BPE/Unigram and normaliser loops, explicit owned-return/context handling, and Go differential/fuzz tests. The reference's known user-defined normaliser-prefix limitation is preserved rather than silently replaced by a different tokenizer. No C++ wrapper, CGo or training runtime is imported.
+
 ## Original Go GTE licence
 
 MIT License
