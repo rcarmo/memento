@@ -1,6 +1,8 @@
 //! Persistent framed embedding protocol with f32le payloads.
 //! Adapted for Memento from the MIT-licensed `/tmp/go-gte` reference model format.
 
+pub mod backend;
+
 use memento_gte::{BatchOptions, GteError, Model};
 use memento_vector::encode_f32le;
 use serde::{Deserialize, Serialize};
@@ -46,6 +48,8 @@ pub struct ResponseHeader {
     pub count: Option<usize>,
     pub payload_len: usize,
     pub error: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub backend: Option<backend::BackendInfo>,
 }
 
 #[derive(Debug)]
@@ -72,6 +76,9 @@ pub fn read_request(mut reader: impl Read) -> Result<Request, ProtocolError> {
     let mut len_buf = [0_u8; 4];
     reader.read_exact(&mut len_buf)?;
     let len = u32::from_le_bytes(len_buf) as usize;
+    if len > 4 * 1024 * 1024 {
+        return Err(ProtocolError::FrameTooLarge(len));
+    }
     let mut data = vec![0_u8; len];
     reader.read_exact(&mut data)?;
     Ok(serde_json::from_slice(&data)?)
@@ -88,6 +95,7 @@ pub fn handle_request(model: &Model, request: Request) -> Result<ResponseFrame, 
                 count: Some(0),
                 payload_len: 0,
                 error: None,
+                backend: None,
             },
             payload: vec![],
         }),
@@ -103,6 +111,7 @@ pub fn handle_request(model: &Model, request: Request) -> Result<ResponseFrame, 
                     count: Some(1),
                     payload_len: payload.len(),
                     error: None,
+                    backend: None,
                 },
                 payload,
             })
@@ -122,9 +131,45 @@ pub fn handle_request(model: &Model, request: Request) -> Result<ResponseFrame, 
                     count: Some(texts.len()),
                     payload_len: payload.len(),
                     error: None,
+                    backend: None,
                 },
                 payload,
             })
         }
     }
+}
+
+/// Optional accelerated route, retaining the original CPU-only entry point for FFI/tests.
+pub fn handle_engine_request(
+    engine: &mut backend::Engine,
+    request: Request,
+) -> Result<ResponseFrame, ProtocolError> {
+    let (id, method, texts) = match request {
+        Request::Info { id } => {
+            let mut frame = handle_request(&engine.model, Request::Info { id })?;
+            frame.header.backend = Some(engine.info.clone());
+            return Ok(frame);
+        }
+        Request::Embed { id, text } => (id, "embed", vec![text]),
+        Request::EmbedBatch { id, texts } => (id, "embed_batch", texts),
+    };
+    let count = texts.len();
+    let vectors = engine.embed(&texts)?;
+    let mut payload = Vec::with_capacity(count * engine.model.dim() * 4);
+    for v in vectors {
+        payload.extend_from_slice(&encode_f32le(&v).map_err(|e| GteError::Backend(e.to_string()))?);
+    }
+    Ok(ResponseFrame {
+        header: ResponseHeader {
+            id,
+            ok: true,
+            method: method.into(),
+            dimensions: Some(engine.model.dim()),
+            count: Some(count),
+            payload_len: payload.len(),
+            error: None,
+            backend: Some(engine.info.clone()),
+        },
+        payload,
+    })
 }

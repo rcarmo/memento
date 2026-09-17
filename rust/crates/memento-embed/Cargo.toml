@@ -7,6 +7,10 @@ license = "MIT"
 authors = ["Rui Carmo <rui.carmo@gmail.com>"]
 description = "Framed embedding protocol for Memento"
 
+[features]
+default = []
+vulkan = ["memento-gte/vulkan"]
+
 [dependencies]
 memento-gte = { path = "../memento-gte" }
 memento-vector = { path = "../memento-vector" }

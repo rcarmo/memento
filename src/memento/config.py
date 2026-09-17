@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Literal
 from urllib.parse import urlparse
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class Principal(BaseModel):
@@ -319,6 +319,8 @@ class SemanticSearchConfig(BaseModel):
     worker_mode: Literal["subprocess", "in_process"] = "subprocess"
     worker_path: str = "/usr/local/bin/memento-embed"
     worker_timeout_seconds: float = Field(default=300.0, gt=0)
+    backend: Literal["cpu", "vulkan", "auto"] = "cpu"
+    vulkan_device: str | None = Field(default=None, min_length=1, max_length=128)
     ffi_library_path: str | None = None
     sqlite_extension_path: str | None = None
     model_path: str | None = None
@@ -337,6 +339,12 @@ class SemanticSearchConfig(BaseModel):
     progressive_cpu_busy_limit_percent: float = Field(default=75.0, gt=0, le=100)
     progressive_cpu_sample_seconds: float = Field(default=15.0, gt=0)
     progressive_nice: int = Field(default=15, ge=0, le=19)
+
+    @model_validator(mode="after")
+    def backend_requires_subprocess(self) -> SemanticSearchConfig:
+        if self.backend != "cpu" and self.worker_mode != "subprocess":
+            raise ValueError("Vulkan/auto embeddings require subprocess worker mode")
+        return self
 
     @field_validator("ffi_library_path", "sqlite_extension_path", "model_path")
     @classmethod

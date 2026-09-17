@@ -20,6 +20,12 @@ The Rust implementation under `rust/` includes code derived from and validated a
 
 `memento-ffi` exposes the same Rust embedding and vector functionality through a stable C ABI, and keeps the same attribution chain intact.
 
+## Optional Vulkan embedding dependencies
+
+The opt-in GTE1 Vulkan backend uses wgpu 24.0.5 and its Naga/WGSL toolchain (MIT or Apache-2.0), pollster (MIT or Apache-2.0), and bytemuck (MIT, Apache-2.0 or Zlib), pinned by `rust/Cargo.lock`. These libraries provide device access, shader translation and byte conversion; model weights and preprocessing are unchanged. Transitive dependencies retain their own licences. The Sigma pre-test bundle includes dependency notices and available licence files alongside Memento's licence and model attribution.
+
+The local llama.cpp Intel benchmark reports and Vulkan implementation informed the investigation. The GTE1 backend contains new shaders; it does not embed llama.cpp source or converted llama.cpp model weights.
+
 ## GTE-small model
 
 The repository vendors the FP32 `gte-small.gtemodel` generated from [`thenlper/gte-small`](https://huggingface.co/thenlper/gte-small) through the `rcarmo/go-gte` conversion tooling. The file is `models/gte/gte-small.gtemodel`, is about 128 MB, and has SHA-256 `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`.

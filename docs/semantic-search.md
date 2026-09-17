@@ -42,6 +42,10 @@ For an ETA, measure completion or ready-row changes over time. The configured 30
 * `memento-sqlite-vector`: loadable SQLite extension exposing `vector_cosine`, `vector_dimensions` and `vector_is_valid`.
 * `memento-embed`: framed subprocess fallback for process isolation.
 
+## Optional Vulkan pre-test
+
+An opt-in Vulkan worker runs the same GTE1 model with FP32 compute shaders, retaining tokenisation, masking and mean/L2 pooling. CPU remains the default. [Vulkan pre-testing](vulkan-embeddings.md) covers build features, explicit/auto selection, experimental embedding identity, local parity/timing results and the isolated Sigma procedure. Release containers and production GPU permissions are unchanged.
+
 ## Configuration
 
 ```json
