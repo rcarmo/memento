@@ -1,0 +1,56 @@
+{
+  "at": "2026-09-17T06:41:07.506704+00:00",
+  "checks": {
+    "mounts_preserved": true,
+    "environment_preserved": true,
+    "host_config_preserved": true,
+    "stack_environment_preserved": true,
+    "image_matches_manifest": true,
+    "stack_image_only": true,
+    "repo_revision_preserved": true,
+    "proposal_count_preserved": true,
+    "proposal_immutable_fields_preserved": true,
+    "proposal_assets_byte_identical": true,
+    "existing_ready_embeddings_preserved": true,
+    "affected_all_needs_rebase": true,
+    "healthy": true,
+    "zero_restarts": true
+  },
+  "repo_revision": "0ed441a481d2ec0aae74c97406ad36ab4f2e5560",
+  "proposals": 421,
+  "assets": 446,
+  "states": {
+    "applied": 299,
+    "rejected": 43,
+    "expired": 22,
+    "conflicted": 42,
+    "needs_rebase": 15
+  },
+  "ready_embeddings": 258,
+  "prior_ready_embeddings": 180,
+  "affected": [
+    {
+      "proposal_id": "99a9a029-5951-4a9f-9562-cd405a9c65ed",
+      "status": "needs_rebase"
+    },
+    {
+      "proposal_id": "986a753e-ce1c-43c4-8a71-96ece2f2c352",
+      "status": "needs_rebase"
+    },
+    {
+      "proposal_id": "233dead8-f9ac-40fa-a0ad-ef510e5de58e",
+      "status": "needs_rebase"
+    },
+    {
+      "proposal_id": "b536d533-1c50-47a4-ab0a-7731d010fda9",
+      "status": "needs_rebase"
+    },
+    {
+      "proposal_id": "83620a10-732c-4379-8361-1cb264411b9b",
+      "status": "needs_rebase"
+    }
+  ],
+  "container": "1768dad45eb51ead618b62137cd5204ecd42478b1e0288dd167878647a6f7fdc",
+  "image": "ghcr.io/rcarmo/memento@sha256:2f26efad9c4411f9bf03144814aa93c7f1ad88b8f88464cd78a4d9a9e078f8c9",
+  "started_at": "2026-09-16T23:57:55.883113337Z"
+}
