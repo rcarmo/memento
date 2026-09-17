@@ -176,6 +176,8 @@ def main() -> None:
     save("umcp-progress.json", extra.progress_fixtures(shared))
     pagination = importlib.import_module("umcp_pagination")
     save("umcp-pagination.json", pagination.fixtures(shared))
+    stdio = importlib.import_module("umcp_stdio")
+    save("umcp-stdio.json", stdio.fixtures(shared))
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

@@ -57,6 +57,7 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 
 ### 2026-09-17
 
+* Added sequential stdio framing with actual sync/async transport-loop fixtures, invalid UTF-8 handling, notification suppression and large-line tests. Local coverage/race/fuzz/cross gates pass at 100%; pagination commit `fc7a78e` also passed native CI [35284597442](https://github.com/rcarmo/memento/actions/runs/35284597442).
 * Discovery pagination now matches 51 pinned sync/async cases, including principal/list binding and exact opaque bytes. Local check/race/fuzz/cross gates pass at 100% statement coverage. Dispatch/progress slice `877738c` passed native CI [35283952029](https://github.com/rcarmo/memento/actions/runs/35283952029).
 * Continued uMCP port with HTTP helper rules, dispatcher validation/context, cooperative cancellation and progress; oracle runs both Python sync/async bases. Fixed exact large-integer progress comparisons and Python/Go status-phrase differences exposed by fixtures. Origin/URL rules, discovery and real transports remain incomplete.
 * Initial scaffold committed/pushed as `b654c892c75f1aa436a988ff905ec9b60e5bea51`; native amd64 and ARM64 [Go port CI 35282374718](https://github.com/rcarmo/memento/actions/runs/35282374718) passed coverage, race, fuzz and static cross-build gates. This completes branch preparation, not the end-to-end port. Next: remaining uMCP shared rules and transport/session conformance.
