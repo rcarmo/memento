@@ -174,6 +174,8 @@ def main() -> None:
     save("umcp-http-rules.json", extra.shared_fixtures(shared))
     save("umcp-dispatch.json", extra.dispatch_fixtures(shared))
     save("umcp-progress.json", extra.progress_fixtures(shared))
+    pagination = importlib.import_module("umcp_pagination")
+    save("umcp-pagination.json", pagination.fixtures(shared))
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 
