@@ -44,6 +44,7 @@ def main() -> None:
     sys.path.insert(0, str(ROOT / "src"))
     sys.path.insert(0, str(args.umcp))
     shared = importlib.import_module("umcp_shared")
+    extra = importlib.import_module("umcp_contracts")
     envelopes = importlib.import_module("memento.envelopes")
     registry = importlib.import_module("memento.mcp_registry")
     executor = importlib.import_module("memento.executor")
@@ -170,6 +171,9 @@ def main() -> None:
             for route in [False, True]
         ],
     )
+    save("umcp-http-rules.json", extra.shared_fixtures(shared))
+    save("umcp-dispatch.json", extra.dispatch_fixtures(shared))
+    save("umcp-progress.json", extra.progress_fixtures(shared))
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

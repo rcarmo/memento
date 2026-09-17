@@ -35,6 +35,9 @@ Current captures:
 
 * Python envelopes: defaults, null data, warnings, stale revisions, error fields.
 * uMCP JSON-RPC ID/response validation and protocol version/error helpers, including bool-versus-int and integers larger than float64 can preserve.
+* HTTP Accept quality/wildcard and content-type parsing, singleton headers, all status reason phrases from 99 through 600, and response bounds/injection checks. Runtime-typed Go responses deliberately exclude impossible Python dynamic type combinations; transport parsers must reject them at decoding.
+* Request-dispatch fixtures emitted independently by both sync and async uMCP bases with the same overridden test method: malformed input, validation ordering, metadata, integer IDs, notification and cancellation results. These isolate dispatch from method implementation and do not prove discovery/tool execution.
+* Progress fixtures emitted by both bases: absent token, message sanitisation/rune bounds, integer/float validation, large integer total/progress comparisons and errors. Concurrency tests cover request-ID/progress-group cancellation, duplicate-ID cleanup and isolated metadata.
 * Registry: 34 Memento operations, twenty tool-surface/model-option combinations, concrete argument schemas and the execute plan schema. These are forward references; they are not claimed as implemented discovery.
 * Rust vector helpers: finite/length errors, empty/dimension/zero-norm cases, scalar values and AXPY results.
 

@@ -5,8 +5,8 @@
 | Surface | Reference | Required observable match | Status |
 | --- | --- | --- | --- |
 | Response envelopes | `src/memento/envelopes.py` | Status, fields, empty arrays versus null, revision/warning/reconciliation fields, validation failures | Partial: constructors and synthetic output tests |
-| uMCP shared validation | pinned `umcp_shared.py` | IDs without float rounding, booleans rejected as integers, version negotiation, errors, headers, media/origin validation | Partial: IDs/responses/versions only |
-| uMCP sync/async public behaviours | pinned `umcp.py`, `aioumcp.py`, upstream tests | Same observable client/server behaviours through idiomatic Go APIs; do not claim Python import/API identity | Not ported |
+| uMCP shared validation | pinned `umcp_shared.py` | IDs without float rounding, booleans rejected as integers, version negotiation, errors, headers, media/origin validation | Partial: IDs/responses/versions, media/content type, singleton headers, response bounds and status phrases; origin/URL rules pending |
+| uMCP sync/async public behaviours | pinned `umcp.py`, `aioumcp.py`, upstream tests | Same observable client/server behaviours through idiomatic Go APIs; do not claim Python import/API identity | Partial: shared dispatcher validation/context, notifications, cooperative cancellation and progress match sync/async fixture outputs; discovery and method semantics pending |
 | uMCP transports | upstream Streamable HTTP/stdio/TCP/SSE docs/tests | Initialise/notification ordering, persistent session binding, session deletion, authentication on every request, response/error/SSE framing, reconnection, cancellation and progress | Not ported |
 | Tool/resource/prompt discovery | registry/server + upstream tests | All tool surfaces, auth-sensitive discovery, optional route/answer, resource templates and dynamic prompts, bounded arguments and returns | Reference captured: 34 operations, 20 surface combinations, schemas |
 | Execute plans | `executor.py` | Type/reference rules, strict resolved values, limits, projections, single-commit rule, partial success and post-commit reconciliation | Schema captured only |

@@ -57,6 +57,7 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 
 ### 2026-09-17
 
+* Continued uMCP port with HTTP helper rules, dispatcher validation/context, cooperative cancellation and progress; oracle runs both Python sync/async bases. Fixed exact large-integer progress comparisons and Python/Go status-phrase differences exposed by fixtures. Origin/URL rules, discovery and real transports remain incomplete.
 * Initial scaffold committed/pushed as `b654c892c75f1aa436a988ff905ec9b60e5bea51`; native amd64 and ARM64 [Go port CI 35282374718](https://github.com/rcarmo/memento/actions/runs/35282374718) passed coverage, race, fuzz and static cross-build gates. This completes branch preparation, not the end-to-end port. Next: remaining uMCP shared rules and transport/session conformance.
 * Created branch `go` at Memento `0b0b8f94dd8b0410a0e3c0fd547e995d2b739b41` in `/workspace/projects/memento-go`.
 * Pinned uMCP Git tip `30cce7dfe08c6ee63de235f7d81754ba286dafbb`; difference from deployed `9c89a70` is documentation-only.

@@ -17,6 +17,8 @@ coverage:
 	@awk 'NR>1 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' ../build/go/coverage.out
 fuzz:
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzJSONRPCValidation -fuzztime=5s -parallel=2
+	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzHTTPRules -fuzztime=5s -parallel=2
+	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzDispatch -fuzztime=5s -parallel=2
 	CGO_ENABLED=0 $(GO) test ./internal/vector -run='^$$' -fuzz=FuzzF32LE -fuzztime=5s -parallel=2
 build:
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-go ./cmd/memento-go
