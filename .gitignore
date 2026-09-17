@@ -38,3 +38,4 @@ rust/target/
 /playwright-report/
 /go/oracle/rust-vector/target/
 /go/oracle/rust-gte/target/
+/go/oracle/rust-needle/target/

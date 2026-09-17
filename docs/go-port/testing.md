@@ -63,6 +63,8 @@ Run an identical scenario against reference and Go daemons and compare HTTP/JSON
 
 Extend coverage to persistent HTTP sessions, auth-bound retries, notifications/cancellation/progress, malformed requests, byte limits and backpressure. Port all existing proposal/asset/rebase/recovery tests and source regression cases, not only successful routes. Crash testing must kill the process before/after publication and prove original-key reconciliation from disk on restart.
 
+`make -C go model-test` now requires both `GTE_MODEL_PATH` and `NEEDLE_MODEL_PATH`; the Needle fixture validates the 31 tensor shapes/raw bytes/expanded FP32 hashes and all 8192 vocabulary entries from the real NDL1 model. Regenerate with `cargo run --locked --release --manifest-path go/oracle/rust-needle/Cargo.toml -- /path/to/memento-router.ndl`. This proves model parsing, not SentencePiece encoding or inference. Source and port reject malformed files, but their JSON/UTF-8 diagnostic wording has not yet been made fully identical.
+
 GTE/Needle gates require exact token IDs, model-file validation, layer/intermediate golden tests, finite/shape checks, model outputs and full routing/retrieval corpora. Floating-point tolerances must be explicit and agreed; no hidden re-quantisation or embedding-space mixing. SIMD remains disabled in these baseline tests.
 
 The final gate is the entire parity matrix plus conformance, fuzz/race/fault tests, resource limits, browser behaviour and state-preserving migration/rollback in disposable copies. Only a separately authorised deployment can replace production.

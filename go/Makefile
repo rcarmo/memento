@@ -25,9 +25,12 @@ fuzz:
 	CGO_ENABLED=0 $(GO) test ./internal/vector -run='^$$' -fuzz=FuzzF32LE -fuzztime=5s -parallel=2
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzTokenizer -fuzztime=5s -parallel=2
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzModelParser -fuzztime=5s -parallel=2
+	CGO_ENABLED=0 $(GO) test ./needle -run='^$$' -fuzz=FuzzModel -fuzztime=5s -parallel=2
 model-test:
 	@test -n "$(GTE_MODEL_PATH)" || (echo 'Set GTE_MODEL_PATH to the digest-pinned public GTE1 model'; exit 1)
 	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(GO) test ./gte -run TestRealGTEModel -count=1 -v
+	@test -n "$(NEEDLE_MODEL_PATH)" || (echo 'Set NEEDLE_MODEL_PATH to the digest-pinned NDL1 model'; exit 1)
+	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" $(GO) test ./needle -run TestRealNeedleModel -count=1 -v
 build:
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-go ./cmd/memento-go
 race:

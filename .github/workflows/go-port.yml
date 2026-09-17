@@ -41,7 +41,7 @@ jobs:
         run: python tools/prepare_runtime_models.py --root .
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: make -C go model-test GTE_MODEL_PATH="${{ github.workspace }}/models/gte/gte-small.gtemodel"
+      - run: make -C go model-test GTE_MODEL_PATH="${{ github.workspace }}/models/gte/gte-small.gtemodel" NEEDLE_MODEL_PATH="${{ github.workspace }}/models/needle/memento-router.ndl"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
