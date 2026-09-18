@@ -3,7 +3,6 @@ package execute
 import (
 	"context"
 	"fmt"
-	"time"
 )
 
 type Dispatcher func(context.Context, string, map[string]any) (DispatchResult, error)
@@ -17,15 +16,11 @@ type Runner struct {
 }
 
 func NewRunner(limits Limits, dispatch Dispatcher) (*Runner, error) {
-	planner, err := NewPlanner()
+	factory, err := NewFactory(limits)
 	if err != nil {
 		return nil, err
 	}
-	arguments, err := NewArguments()
-	if err != nil {
-		return nil, err
-	}
-	return &Runner{Planner: planner, Arguments: arguments, Limits: limits, Dispatch: dispatch, Now: func() float64 { return float64(time.Now().UnixNano()) / 1e9 }}, nil
+	return factory.Runner(dispatch), nil
 }
 
 type runState struct {
