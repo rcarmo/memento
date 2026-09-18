@@ -179,6 +179,88 @@ func TestStreamableHTTPSettings(t *testing.T) {
 	}
 }
 
+type fixedResolver struct {
+	addresses []net.IPAddr
+	err       error
+}
+
+func (r fixedResolver) LookupIPAddr(context.Context, string) ([]net.IPAddr, error) {
+	return r.addresses, r.err
+}
+
+func TestTransportMultiBind(t *testing.T) {
+	ctx := context.Background()
+	one, err := listenTransport(ctx, fixedResolver{}, "127.0.0.1", "0", true)
+	if err != nil || len(one) != 1 {
+		t.Fatal(one, err)
+	}
+	for _, l := range one {
+		l.Close()
+	}
+	one, err = listenTransport(ctx, fixedResolver{}, "ignored", "0", false)
+	if err == nil {
+		for _, l := range one {
+			l.Close()
+		}
+		t.Fatal("single bind ignored host")
+	}
+	listeners, err := listenTransport(ctx, fixedResolver{addresses: []net.IPAddr{{IP: net.ParseIP("127.0.0.1")}, {IP: nil}, {IP: net.ParseIP("127.0.0.1")}, {IP: net.ParseIP("127.0.0.2")}}}, "host", "0", true)
+	if err != nil || len(listeners) != 2 {
+		t.Fatal(listeners, err)
+	}
+	serve := func(ctx context.Context, l net.Listener) error { <-ctx.Done(); return ctx.Err() }
+	cancelled, cancel := context.WithCancel(ctx)
+	cancel()
+	if err := serveTransportListeners(cancelled, listeners, serve); !errors.Is(err, context.Canceled) {
+		t.Fatal(err)
+	}
+	if _, err := listenTransport(ctx, fixedResolver{err: io.ErrClosedPipe}, "host", "0", true); !errors.Is(err, io.ErrClosedPipe) {
+		t.Fatal(err)
+	}
+	if _, err := listenTransport(ctx, fixedResolver{}, "host", "0", true); err == nil {
+		t.Fatal("empty resolution")
+	}
+	// A later bind failure closes every earlier listener.
+	block, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	port := strings.Split(block.Addr().String(), ":")[1]
+	opened, err := listenTransport(ctx, fixedResolver{addresses: []net.IPAddr{{IP: net.ParseIP("127.0.0.2")}, {IP: net.ParseIP("127.0.0.1")}}}, "host", port, true)
+	block.Close()
+	if err == nil {
+		for _, l := range opened {
+			l.Close()
+		}
+		t.Fatal("bind collision")
+	}
+	// The first listener error stops and drains every sibling.
+	a, b := net.Pipe()
+	a.Close()
+	fake := []net.Listener{badListener{io.ErrClosedPipe}, &oneConnListener{conn: b}}
+	if err := serveTransportListeners(ctx, fake, func(context.Context, net.Listener) error { return io.ErrClosedPipe }); !errors.Is(err, io.ErrClosedPipe) {
+		t.Fatal(err)
+	}
+}
+
+type oneConnListener struct{ conn net.Conn }
+
+func (l *oneConnListener) Accept() (net.Conn, error) {
+	if l.conn == nil {
+		return nil, net.ErrClosed
+	}
+	c := l.conn
+	l.conn = nil
+	return c, nil
+}
+func (l *oneConnListener) Close() error {
+	if l.conn != nil {
+		return l.conn.Close()
+	}
+	return nil
+}
+func (l *oneConnListener) Addr() net.Addr { return l.conn.LocalAddr() }
+
 func TestRunTransportNetwork(t *testing.T) {
 	for _, async := range []bool{false, true} {
 		for _, mode := range []string{"tcp", "sse", "streamable-http"} {

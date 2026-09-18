@@ -109,6 +109,66 @@ func ParseTransportArgs(args []string) (TransportConfig, error) {
 	return config, nil
 }
 
+type ipResolver interface {
+	LookupIPAddr(context.Context, string) ([]net.IPAddr, error)
+}
+
+func listenTransport(ctx context.Context, resolver ipResolver, host, port string, multiple bool) ([]net.Listener, error) {
+	if !multiple || net.ParseIP(host) != nil {
+		listener, err := net.Listen("tcp", net.JoinHostPort(host, port))
+		if err != nil {
+			return nil, err
+		}
+		return []net.Listener{listener}, nil
+	}
+	addresses, err := resolver.LookupIPAddr(ctx, host)
+	if err != nil {
+		return nil, err
+	}
+	listeners := []net.Listener{}
+	seen := map[string]bool{}
+	for _, address := range addresses {
+		text := address.IP.String()
+		if text == "<nil>" || seen[text] {
+			continue
+		}
+		seen[text] = true
+		listener, err := net.Listen("tcp", net.JoinHostPort(text, port))
+		if err != nil {
+			for _, opened := range listeners {
+				_ = opened.Close()
+			}
+			return nil, err
+		}
+		listeners = append(listeners, listener)
+	}
+	if len(listeners) == 0 {
+		return nil, errors.New("host resolved to no addresses")
+	}
+	return listeners, nil
+}
+
+func serveTransportListeners(ctx context.Context, listeners []net.Listener, serve func(context.Context, net.Listener) error) error {
+	children, cancel := context.WithCancel(ctx)
+	defer cancel()
+	results := make(chan error, len(listeners))
+	for _, listener := range listeners {
+		go func() { results <- serve(children, listener) }()
+	}
+	first := <-results
+	cancel()
+	for _, listener := range listeners {
+		_ = listener.Close()
+	}
+	for range len(listeners) - 1 {
+		<-results
+	}
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	return first
+}
+
 type transportOutput struct {
 	mu     sync.Mutex
 	output io.Writer
@@ -194,21 +254,27 @@ func (s *Server) RunTransport(ctx context.Context, args []string, input io.Reade
 		}
 		defer handler.Close()
 	}
-	listener, err := net.Listen("tcp", net.JoinHostPort(config.Host, config.Port.String()))
+	listeners, err := listenTransport(ctx, net.DefaultResolver, config.Host, config.Port.String(), asynchronous)
 	if err != nil {
 		return err
 	}
-	defer listener.Close()
-	host, port, _ := net.SplitHostPort(listener.Addr().String())
-	address := host + ":" + port
-	message := "Listening on " + address
-	if config.Mode == "streamable-http" {
-		message = "MCP Streamable HTTP Server listening on http://" + address + config.Endpoint
-	} else if config.Mode == "sse" {
-		message = "MCP SSE Server listening on http://" + address + "/sse"
-	}
-	if _, err = fmt.Fprintln(out, message); err != nil {
-		return err
+	defer func() {
+		for _, listener := range listeners {
+			_ = listener.Close()
+		}
+	}()
+	for _, listener := range listeners {
+		host, port, _ := net.SplitHostPort(listener.Addr().String())
+		address := host + ":" + port
+		message := "Listening on " + address
+		if config.Mode == "streamable-http" {
+			message = "MCP Streamable HTTP Server listening on http://" + address + config.Endpoint
+		} else if config.Mode == "sse" {
+			message = "MCP SSE Server listening on http://" + address + "/sse"
+		}
+		if _, err = fmt.Fprintln(out, message); err != nil {
+			return err
+		}
 	}
 	if err = out.Flush(); err != nil {
 		return err
@@ -218,10 +284,12 @@ func (s *Server) RunTransport(ctx context.Context, args []string, input io.Reade
 		if asynchronous {
 			mode = AsyncTCP
 		}
-		return s.ServeTCP(ctx, listener, DefaultTCPOptions(mode))
+		return serveTransportListeners(ctx, listeners, func(ctx context.Context, listener net.Listener) error {
+			return s.ServeTCP(ctx, listener, DefaultTCPOptions(mode))
+		})
 	}
 	if !asynchronous {
-		return ServeSyncHTTP(ctx, listener, handler, s.syncHTTPOptions(config.Mode))
+		return ServeSyncHTTP(ctx, listeners[0], handler, s.syncHTTPOptions(config.Mode))
 	}
 	mode := AsyncStreamableParser
 	if config.Mode == "sse" {
@@ -230,7 +298,9 @@ func (s *Server) RunTransport(ctx context.Context, args []string, input io.Reade
 	options := s.asyncHTTPOptions(mode, config.Mode, config.MaxRequestBytes.Int64())
 	options.Parser.LocalBind = local
 	options.Parser.AllowedOrigins = config.AllowedOrigins
-	return ServeAsyncHTTP(ctx, listener, handler, options)
+	return serveTransportListeners(ctx, listeners, func(ctx context.Context, listener net.Listener) error {
+		return ServeAsyncHTTP(ctx, listener, handler, options)
+	})
 }
 
 func (s *Server) streamableHTTPOptions(config TransportConfig, local, asynchronous bool) HTTPOptions {
