@@ -143,16 +143,13 @@ def fixtures() -> dict[str, Any]:
                     "memento.graph_debug.snapshot", fromlist=["_semantic_edges"]
                 )._semantic_edges(db, raw_nodes, fresh, semantic_config, 10)
             ]
-        fresh_overview = (
-            GraphSnapshotService(
-                semantic_config,
-                repository_root=root,
-                derived_db_path=derived,
-                control_db_path=control,
-            )
-            .overview(policy=policy)
-            .model_dump(mode="json")
+        fresh_service = GraphSnapshotService(
+            semantic_config, repository_root=root, derived_db_path=derived, control_db_path=control
         )
+        fresh_overview = fresh_service.overview(policy=policy).model_dump(mode="json")
+        neighbourhood = fresh_service.neighbourhood(
+            "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy=policy
+        ).model_dump(mode="json")
         export_nodes, export_edges, export_revisions = service.export_selection(
             (
                 "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
@@ -174,6 +171,7 @@ def fixtures() -> dict[str, Any]:
             "aggregated_overview": aggregated_overview,
             "semantic_edges": semantic_edges,
             "fresh_overview": fresh_overview,
+            "neighbourhood": neighbourhood,
             "revisions": revisions,
             "edges": edges,
             "nodes": nodes,
