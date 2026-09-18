@@ -1,0 +1,768 @@
+{
+  "cases": [
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "prompts": [
+            {
+              "categories": [
+                "original"
+              ],
+              "description": "Body prompt.\n\nCategories: original",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "body"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template cancelled",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "cancelled"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template count",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {
+                  "value": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "type": "object"
+              },
+              "name": "count"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template fail",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "fail"
+            },
+            {
+              "categories": [
+                "explicit"
+              ],
+              "description": "Discovery override",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "name": "hello"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template mapping",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "mapping"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template messages",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "messages"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template scalar",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "scalar"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/list\", \"params\": {}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "nextCursor": "eyJ2IjoxLCJsIjoicHJvbXB0cyIsIm8iOjIsImYiOiJjbVZoWkdWeUNuQnliMjF3ZEhNS1ltOWtlUXBqWVc1alpXeHNaV1FLWTI5MWJuUUtabUZwYkFwb1pXeHNid3B0WVhCd2FXNW5DbTFsYzNOaFoyVnpDbk5qWVd4aGNnIn0",
+          "prompts": [
+            {
+              "categories": [
+                "original"
+              ],
+              "description": "Body prompt.\n\nCategories: original",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "body"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template cancelled",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "cancelled"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/list\", \"params\": {\"pageSize\": 2}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing required parameter 'name'"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32601,
+          "message": "Prompt not found: missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"missing\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "categories": [
+            "work",
+            "work; ai / bad category | good_tag"
+          ],
+          "description": "Hello prompt.\n\nCategories: Work, work; AI / bad category | good_tag",
+          "messages": [
+            {
+              "content": {
+                "text": "Hello world",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"hello\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing required argument 'value' for prompt count"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"count\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "description": "Prompt template messages",
+          "messages": [
+            {
+              "content": {
+                "text": "message",
+                "type": "text"
+              },
+              "role": "assistant"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"messages\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "categories": [
+            "original"
+          ],
+          "custom": true,
+          "description": "override",
+          "messages": []
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"body\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "description": "Prompt template scalar",
+          "messages": [
+            {
+              "content": {
+                "text": "[1, null, true]",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"scalar\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "description": "Prompt template mapping",
+          "messages": [
+            {
+              "content": {
+                "text": "{\"z\": 1, \"a\": 2}",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"mapping\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Prompt execution error: private argument failure"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"fail\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32800,
+          "message": "Request cancelled"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"cancelled\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "categories": [
+            "work",
+            "work; ai / bad category | good_tag"
+          ],
+          "description": "Hello prompt.\n\nCategories: Work, work; AI / bad category | good_tag",
+          "messages": [
+            {
+              "content": {
+                "text": "Hello Rui",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"hello\", \"arguments\": {\"name\": \"Rui\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "categories": [
+            "work",
+            "work; ai / bad category | good_tag"
+          ],
+          "description": "Hello prompt.\n\nCategories: Work, work; AI / bad category | good_tag",
+          "messages": [
+            {
+              "content": {
+                "text": "Hello world",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"hello\", \"arguments\": null}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unrecognized parameter(s): a, z"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"hello\", \"arguments\": {\"z\": 1, \"a\": 2}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "description": "Prompt template count",
+          "messages": [
+            {
+              "content": {
+                "text": "12",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"count\", \"arguments\": {\"value\": \"12\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "prompts": [
+            {
+              "categories": [
+                "original"
+              ],
+              "description": "Body prompt.\n\nCategories: original",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "body"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template cancelled",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "cancelled"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template count",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {
+                  "value": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "type": "object"
+              },
+              "name": "count"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template fail",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "fail"
+            },
+            {
+              "categories": [
+                "explicit"
+              ],
+              "description": "Discovery override",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "name": "hello"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template mapping",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "mapping"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template messages",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "messages"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template scalar",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "scalar"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/list\", \"params\": {}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "nextCursor": "eyJ2IjoxLCJsIjoicHJvbXB0cyIsIm8iOjIsImYiOiJjbVZoWkdWeUNuQnliMjF3ZEhNS1ltOWtlUXBqWVc1alpXeHNaV1FLWTI5MWJuUUtabUZwYkFwb1pXeHNid3B0WVhCd2FXNW5DbTFsYzNOaFoyVnpDbk5qWVd4aGNnIn0",
+          "prompts": [
+            {
+              "categories": [
+                "original"
+              ],
+              "description": "Body prompt.\n\nCategories: original",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "body"
+            },
+            {
+              "categories": [],
+              "description": "Prompt template cancelled",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              },
+              "name": "cancelled"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/list\", \"params\": {\"pageSize\": 2}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing required parameter 'name'"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32601,
+          "message": "Prompt not found: missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"missing\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "categories": [
+            "work",
+            "work; ai / bad category | good_tag"
+          ],
+          "description": "Hello prompt.\n\nCategories: Work, work; AI / bad category | good_tag",
+          "messages": [
+            {
+              "content": {
+                "text": "Hello world",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"hello\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing required argument 'value' for prompt count"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"count\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "description": "Prompt template messages",
+          "messages": [
+            {
+              "content": {
+                "text": "message",
+                "type": "text"
+              },
+              "role": "assistant"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"messages\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "categories": [
+            "original"
+          ],
+          "custom": true,
+          "description": "override",
+          "messages": []
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"body\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "description": "Prompt template scalar",
+          "messages": [
+            {
+              "content": {
+                "text": "[1, null, true]",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"scalar\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "description": "Prompt template mapping",
+          "messages": [
+            {
+              "content": {
+                "text": "{\"z\": 1, \"a\": 2}",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"mapping\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Prompt execution failed"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"fail\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32800,
+          "message": "Request cancelled"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"cancelled\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "categories": [
+            "work",
+            "work; ai / bad category | good_tag"
+          ],
+          "description": "Hello prompt.\n\nCategories: Work, work; AI / bad category | good_tag",
+          "messages": [
+            {
+              "content": {
+                "text": "Hello Rui",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"hello\", \"arguments\": {\"name\": \"Rui\"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "categories": [
+            "work",
+            "work; ai / bad category | good_tag"
+          ],
+          "description": "Hello prompt.\n\nCategories: Work, work; AI / bad category | good_tag",
+          "messages": [
+            {
+              "content": {
+                "text": "Hello world",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"hello\", \"arguments\": null}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unrecognized parameter(s): a, z"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"hello\", \"arguments\": {\"z\": 1, \"a\": 2}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "description": "Prompt template count",
+          "messages": [
+            {
+              "content": {
+                "text": "12",
+                "type": "text"
+              },
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"prompts/get\", \"params\": {\"name\": \"count\", \"arguments\": {\"value\": \"12\"}}}",
+      "transport": "streamable-http"
+    }
+  ]
+}

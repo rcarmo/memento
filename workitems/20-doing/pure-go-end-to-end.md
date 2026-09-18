@@ -57,6 +57,7 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 
 ### 2026-09-18
 
+* Added dynamic resource/template and prompt methods with sync/async differential fixtures, metadata isolation, pagination, binary/nested content, subscription state and concurrency/error tests. All current Go statements covered. Completion, logging, server composition and network/session transports remain gaps.
 * Added dynamic uMCP tool registration/list/call, signature coercion, schema-subset validation and ordered Python-compatible result text. Oracle covers 380 formatting/schema and 40 call cases in both sync/async references. Focused review found missing panic containment; added remote-redacted recovery. Strict coercion suggestions deliberately not applied because they change source behaviour; service validators remain an open requirement.
 * Added the Go embedding-worker executable and framed protocol, with Rust response fixtures, short/partial I/O, bounds and nonfinite-output tests. Unchanged Python client accepts five real GTE vectors and model identity; local coverage/race/fuzz/cross gates pass. Malformed JSON/duplicate-key fidelity and host worker integration remain incomplete.
 * Inference commit `e730023` CI stopped during timed vector fuzz shutdown (`context deadline exceeded`, no failing corpus input); ARM job cancelled before corpus completion. Replaced the five-second fuzz budget with 10,000 executions plus a separate safety timeout. Local full 360-case Needle match remains valid; native full-corpus verification must be rerun.

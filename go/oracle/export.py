@@ -186,6 +186,10 @@ def main() -> None:
     save("umcp-tool-results.json", results.fixtures())
     tools = importlib.import_module("umcp_tools")
     save("umcp-tools.json", tools.fixtures(shared))
+    resources = importlib.import_module("umcp_resources")
+    save("umcp-resources.json", resources.fixtures(shared))
+    prompts = importlib.import_module("umcp_prompts")
+    save("umcp-prompts.json", prompts.fixtures(shared))
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 
