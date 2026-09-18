@@ -1,0 +1,342 @@
+[
+  {
+    "annotations": {
+      "operation": "principal_list",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "List managed principals.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "access_principal_list"
+  },
+  {
+    "annotations": {
+      "operation": "audit_list",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "List recent access changes.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "access_audit_list"
+  },
+  {
+    "annotations": {
+      "operation": "principal_create",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "Create a least-privilege principal and return its credential once for immediate secret-store capture. Required MCP params.arguments fields are `name`, `roles`, `read_prefixes`, `write_prefixes` and `idempotency_key`. Prefixes are namespace paths such as `/skills/`, never `memory://` resource URIs; every write prefix must be inside a read prefix.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Durable retry key for this operation.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+          "type": "string"
+        },
+        "read_prefixes": {
+          "description": "Namespace paths, not memory:// resource URIs.",
+          "items": {
+            "description": "Namespace path beginning and ending with '/', such as '/skills/'.",
+            "pattern": "^/(?:.*/)?$",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "roles": {
+          "description": "One or more managed roles.",
+          "items": {
+            "enum": [
+              "reader",
+              "proposer",
+              "curator",
+              "admin"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "write_prefixes": {
+          "description": "Namespace paths, not memory:// resource URIs.",
+          "items": {
+            "description": "Namespace path beginning and ending with '/', such as '/skills/'.",
+            "pattern": "^/(?:.*/)?$",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "name",
+        "roles",
+        "read_prefixes",
+        "write_prefixes",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "access_principal_create"
+  },
+  {
+    "annotations": {
+      "operation": "principal_update",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "Replace principal roles and namespaces; keep administration separate from routine curation. Required MCP params.arguments fields are `name`, `roles`, `read_prefixes` and `write_prefixes`. Prefixes are namespace paths such as `/skills/`, never `memory://` resource URIs; every write prefix must be inside a read prefix.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+          "type": "string"
+        },
+        "read_prefixes": {
+          "description": "Namespace paths, not memory:// resource URIs.",
+          "items": {
+            "description": "Namespace path beginning and ending with '/', such as '/skills/'.",
+            "pattern": "^/(?:.*/)?$",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "roles": {
+          "description": "One or more managed roles.",
+          "items": {
+            "enum": [
+              "reader",
+              "proposer",
+              "curator",
+              "admin"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "write_prefixes": {
+          "description": "Namespace paths, not memory:// resource URIs.",
+          "items": {
+            "description": "Namespace path beginning and ending with '/', such as '/skills/'.",
+            "pattern": "^/(?:.*/)?$",
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "name",
+        "roles",
+        "read_prefixes",
+        "write_prefixes"
+      ],
+      "type": "object"
+    },
+    "name": "access_principal_update"
+  },
+  {
+    "annotations": {
+      "operation": "principal_rename",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "Rename a principal.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+          "type": "string"
+        },
+        "new_name": {
+          "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "new_name"
+      ],
+      "type": "object"
+    },
+    "name": "access_principal_rename"
+  },
+  {
+    "annotations": {
+      "operation": "principal_disable",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "Disable a principal.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "access_principal_disable"
+  },
+  {
+    "annotations": {
+      "operation": "principal_enable",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "Enable a principal.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "access_principal_enable"
+  },
+  {
+    "annotations": {
+      "operation": "credential_rotate",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "Rotate a principal credential and return it once for immediate secret-store capture.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Durable retry key for this operation.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "idempotency_key"
+      ],
+      "type": "object"
+    },
+    "name": "access_credential_rotate"
+  },
+  {
+    "annotations": {
+      "operation": "principal_revoke",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "Revoke a principal credential.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "access_principal_revoke"
+  },
+  {
+    "annotations": {
+      "operation": "principal_delete",
+      "roles": [
+        "admin"
+      ]
+    },
+    "description": "Tombstone a disabled, revoked principal.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Lowercase letters, digits and hyphens; begin with a letter or digit.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "access_principal_delete"
+  }
+]

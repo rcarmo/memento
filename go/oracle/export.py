@@ -485,6 +485,11 @@ def main() -> None:
     save("execute-manifest.json", importlib.import_module("execute_manifest").fixtures())
     save("execute-propose.json", importlib.import_module("execute_propose").fixtures())
     save("execute-runner.json", importlib.import_module("execute_runner").fixtures())
+    access_tools = importlib.import_module("access_tools").fixtures()
+    save("access-tools.json", access_tools)
+    (ROOT / "go/service/access_tools.json").write_text(
+        json.dumps(access_tools["tools"], indent=2, sort_keys=True) + "\n"
+    )
     (ROOT / "go/execute/arguments.json").write_text(
         json.dumps(argument_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
     )
