@@ -1,0 +1,123 @@
+[
+  {
+    "active": 0,
+    "busy": false,
+    "closing": false,
+    "expected": {
+      "worked": true
+    },
+    "kind": "admission",
+    "method": "memory_propose"
+  },
+  {
+    "active": 0,
+    "busy": false,
+    "closing": true,
+    "expected": {
+      "error_class": "busy",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "service busy; reconcile before retrying",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "kind": "admission",
+    "method": "memory_propose"
+  },
+  {
+    "active": 2,
+    "busy": false,
+    "closing": false,
+    "expected": {
+      "error_class": "busy",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "service busy; reconcile before retrying",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "kind": "admission",
+    "method": "memory_propose"
+  },
+  {
+    "active": 0,
+    "busy": true,
+    "closing": false,
+    "expected": {
+      "error_class": "busy",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "service busy; reconcile before retrying",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "kind": "admission",
+    "method": "memory_propose"
+  },
+  {
+    "active": 0,
+    "busy": true,
+    "closing": false,
+    "expected": {
+      "worked": true
+    },
+    "kind": "admission",
+    "method": "memory_operation_get"
+  },
+  {
+    "active": 2,
+    "busy": true,
+    "closing": false,
+    "expected": {
+      "error_class": "busy",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "service busy; reconcile before retrying",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "kind": "admission",
+    "method": "memory_operation_get"
+  },
+  {
+    "active_after_drain": 0,
+    "active_before_release": 1,
+    "closing": true,
+    "expected": {
+      "error_class": "indeterminate",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "outcome indeterminate; reconcile original idempotency key before retrying",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "finished": true,
+    "kind": "timeout"
+  },
+  {
+    "active_after_drain": 0,
+    "active_before_release": 1,
+    "closing": true,
+    "error": "cancelled",
+    "finished": true,
+    "kind": "cancel"
+  },
+  {
+    "active_after_drain": 0,
+    "active_before_release": 0,
+    "closing": true,
+    "error": "synthetic",
+    "finished": true,
+    "kind": "error"
+  }
+]
