@@ -487,6 +487,10 @@ def main() -> None:
     save("execute-runner.json", importlib.import_module("execute_runner").fixtures())
     access_tools = importlib.import_module("access_tools").fixtures()
     save("access-tools.json", access_tools)
+    save(
+        "graph-snapshot-foundation.json",
+        importlib.import_module("graph_snapshot_foundation").fixtures(),
+    )
     (ROOT / "go/service/access_tools.json").write_text(
         json.dumps(access_tools["tools"], indent=2, sort_keys=True) + "\n"
     )

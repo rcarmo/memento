@@ -1,0 +1,27 @@
+{
+  "paths_cases": [
+    {
+      "ids": [],
+      "paths": []
+    },
+    {
+      "ids": [
+        "b",
+        "missing",
+        "a",
+        "b"
+      ],
+      "paths": [
+        "/b.md",
+        "/a.md",
+        "/b.md"
+      ]
+    }
+  ],
+  "revisions": {
+    "embedding": "embed",
+    "index": "old",
+    "repository": "main",
+    "stale": true
+  }
+}
