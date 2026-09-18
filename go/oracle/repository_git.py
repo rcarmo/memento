@@ -53,6 +53,20 @@ def fixtures() -> dict[str, Any]:
                 author_name="Synthetic Agent",
                 author_email="test@example.invalid",
             )
+
+            def git_bytes(*args: str) -> bytes:
+                return subprocess.run(
+                    ["git", "--git-dir", str(paths.bare_dir), *args],
+                    check=True,
+                    capture_output=True,
+                ).stdout
+
+            objects = {}
+            for revision in [bootstrap.revision, staged.revision]:
+                objects[revision] = {
+                    "commit": base64.b64encode(git_bytes("cat-file", "commit", revision)).decode(),
+                    "tree": git_bytes("rev-parse", f"{revision}^{{tree}}").decode().strip(),
+                }
             updated = module.publish_main_compare_and_swap(
                 paths, base_revision=bootstrap.revision, new_revision=staged.revision
             )
@@ -134,4 +148,5 @@ def fixtures() -> dict[str, Any]:
             "stale": stale,
             "timestamps": timestamps,
             "checkout": checkout,
+            "objects": objects,
         }
