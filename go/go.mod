@@ -4,4 +4,8 @@ go 1.26.0
 
 require golang.org/x/text v0.23.0
 
-require go.yaml.in/yaml/v3 v3.0.4
+require (
+	github.com/yuin/goldmark v1.7.16
+	go.yaml.in/yaml/v3 v3.0.4
+	golang.org/x/net v0.37.0
+)

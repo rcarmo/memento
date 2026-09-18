@@ -10,6 +10,10 @@ Scalar vector functions are ported from Memento's MIT-licensed Rust vector libra
 
 `repository/frontmatter.go` and `repository/serialize.go` adapt detection, resolver and scalar-emission rules from python-frontmatter 1.3.0, PyYAML 6.0.3 and ruamel.yaml 0.18.17. Their MIT notices are retained under `repository/licenses/`. Changes use the pure-Go `go.yaml.in/yaml/v3 v3.0.4` node parser with PyYAML-compatible resolution and a focused metadata emitter. Pydantic 2.13.5/core 2.46.5 remain differential-test references only; no Python library is used at runtime.
 
+## Markdown links (MIT)
+
+`repository/links.go` adapts link validation and URI normalisation rules from markdown-it-py 3.0.0, markdown-it and mdurl 0.1.2, using Goldmark v1.7.16 for pure-Go CommonMark parsing and `golang.org/x/net/idna` for hostname conversion. The Python/project MIT notices are retained under `repository/licenses/`. Source extraction and rename logic comes from Memento; the parser/URI edge compatibility limits are tracked in the parity matrix.
+
 ## SentencePiece port (Apache-2.0)
 
 `sentencepiece/` is a modified Go port of the inference algorithms in [sentencepiece-rust 0.1.1](https://github.com/VoiceLessQ/sentencepiece-rust), itself based on Google's SentencePiece and Darts-clone read-side algorithms. The original Apache-2.0 licence is retained at `sentencepiece/licenses/Apache-2.0.txt`; this derived package is distributed under those terms, not relicensed as MIT by the repository's general notice.

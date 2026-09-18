@@ -32,6 +32,7 @@ fuzz:
 	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzBundlePath -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzConceptMetadata -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzConceptFrontmatter -fuzztime=10000x -parallel=2 -timeout=120s
+	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzMarkdownLinks -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./internal/vector -run='^$$' -fuzz=FuzzF32LE -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzTokenizer -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzModelParser -fuzztime=10000x -parallel=2 -timeout=120s

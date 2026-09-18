@@ -1,0 +1,514 @@
+{
+  "files": {
+    "/Z.md": "---\nid: \"four\"\ntype: \"concept\"\ntitle: \"\\u00e9clair\"\nstatus: \"active\"\ncreated_at: \"2026-09-18T00:00:00Z\"\nupdated_at: \"2026-09-18T00:00:00Z\"\nupdated_by: \"test-agent\"\n---\n\n",
+    "/a.md": "---\nid: \"one\"\ntype: \"concept\"\ntitle: \"Alpha\"\nstatus: \"active\"\ncreated_at: \"2026-09-18T00:00:00Z\"\nupdated_at: \"2026-09-18T00:00:00Z\"\nupdated_by: \"test-agent\"\n---\n[good](/nested/b.md) [bad](/missing.md) [reserved](/index.md) [external](https://example.com) [network](//host/a)\n",
+    "/alpha.md": "---\nid: \"five\"\ntype: \"concept\"\ntitle: \"alpha\"\nstatus: \"active\"\ncreated_at: \"2026-09-18T00:00:00Z\"\nupdated_at: \"2026-09-18T00:00:00Z\"\nupdated_by: \"test-agent\"\n---\n\n",
+    "/lower.md": "---\nid: \"six\"\ntype: \"concept\"\ntitle: \"strasse\"\nstatus: \"active\"\ncreated_at: \"2026-09-18T00:00:00Z\"\nupdated_at: \"2026-09-18T00:00:00Z\"\nupdated_by: \"test-agent\"\n---\n[asset](/.assets/blob) [hidden](/hidden.md)\n",
+    "/nested/b.md": "---\nid: \"two\"\ntype: \"concept\"\ntitle: \"Link [trap](x)\"\nstatus: \"active\"\ncreated_at: \"2026-09-18T00:00:00Z\"\nupdated_at: \"2026-09-18T00:00:00.123456Z\"\nupdated_by: \"agent_*`demo`\"\n---\n[bad](/missing.md#anchor) ![ignored](/image.md)\n",
+    "/nested/deep/c.md": "---\nid: \"one\"\ntype: \"concept\"\ntitle: \"Stra\\u00dfe\"\nstatus: \"active\"\ncreated_at: \"2026-09-18T00:00:00Z\"\nupdated_at: \"2026-09-18T00:00:00Z\"\nupdated_by: \"test-agent\"\n---\n\n"
+  },
+  "generated": [
+    {
+      "entries": [],
+      "indexes": {
+        "/": "# Index\n\n_Empty directory._\n"
+      },
+      "log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n"
+    },
+    {
+      "entries": [
+        {
+          "body": "",
+          "metadata": {
+            "created_at": "2026-09-18T00:00:00Z",
+            "id": "one",
+            "status": "active",
+            "title": "Alpha",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00Z",
+            "updated_by": "test-agent"
+          },
+          "path": "/a.md"
+        }
+      ],
+      "indexes": {
+        "/": "# Index\n\n- [Alpha](/a.md)\n"
+      },
+      "log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n- 2026-09-18T00:00:00Z — [Alpha](/a.md) — test-agent\n"
+    },
+    {
+      "entries": [
+        {
+          "body": "[good](/nested/b.md) [bad](/missing.md) [reserved](/index.md) [external](https://example.com) [network](//host/a)",
+          "metadata": {
+            "created_at": "2026-09-18T00:00:00Z",
+            "id": "one",
+            "status": "active",
+            "title": "Alpha",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00Z",
+            "updated_by": "test-agent"
+          },
+          "path": "/a.md"
+        },
+        {
+          "body": "[bad](/missing.md#anchor) ![ignored](/image.md)",
+          "metadata": {
+            "created_at": "2026-09-18T00:00:00Z",
+            "id": "two",
+            "status": "active",
+            "title": "Link [trap](x)",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "agent_*`demo`"
+          },
+          "path": "/nested/b.md"
+        },
+        {
+          "body": "",
+          "metadata": {
+            "created_at": "2026-09-18T00:00:00Z",
+            "id": "one",
+            "status": "active",
+            "title": "Straße",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00Z",
+            "updated_by": "test-agent"
+          },
+          "path": "/nested/deep/c.md"
+        },
+        {
+          "body": "",
+          "metadata": {
+            "created_at": "2026-09-18T00:00:00Z",
+            "id": "four",
+            "status": "active",
+            "title": "éclair",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00Z",
+            "updated_by": "test-agent"
+          },
+          "path": "/Z.md"
+        },
+        {
+          "body": "",
+          "metadata": {
+            "created_at": "2026-09-18T00:00:00Z",
+            "id": "five",
+            "status": "active",
+            "title": "alpha",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00Z",
+            "updated_by": "test-agent"
+          },
+          "path": "/alpha.md"
+        },
+        {
+          "body": "[asset](/.assets/blob) [hidden](/hidden.md)",
+          "metadata": {
+            "created_at": "2026-09-18T00:00:00Z",
+            "id": "six",
+            "status": "active",
+            "title": "strasse",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00Z",
+            "updated_by": "test-agent"
+          },
+          "path": "/lower.md"
+        }
+      ],
+      "indexes": {
+        "/": "# Index\n\n- [Alpha](/a.md)\n- [alpha](/alpha.md)\n- [nested](/nested/index.md)\n- [strasse](/lower.md)\n- [éclair](/Z.md)\n",
+        "/nested/": "# Index\n\n- [deep](/nested/deep/index.md)\n- [Link \\[trap\\]\\(x\\)](/nested/b.md)\n",
+        "/nested/deep/": "# Index\n\n- [Straße](/nested/deep/c.md)\n"
+      },
+      "log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n- 2026-09-18T00:00:00.123456Z — [Link \\[trap\\]\\(x\\)](/nested/b.md) — agent\\_\\*\\`demo\\`\n- 2026-09-18T00:00:00Z — [éclair](/Z.md) — test-agent\n- 2026-09-18T00:00:00Z — [Straße](/nested/deep/c.md) — test-agent\n- 2026-09-18T00:00:00Z — [strasse](/lower.md) — test-agent\n- 2026-09-18T00:00:00Z — [alpha](/alpha.md) — test-agent\n- 2026-09-18T00:00:00Z — [Alpha](/a.md) — test-agent\n"
+    }
+  ],
+  "scans": [
+    {
+      "audit": {
+        "generated_indexes": {
+          "/": "# Index\n\n- [Alpha](/a.md)\n- [alpha](/alpha.md)\n- [nested](/nested/index.md)\n- [strasse](/lower.md)\n- [éclair](/Z.md)\n",
+          "/nested/": "# Index\n\n- [deep](/nested/deep/index.md)\n- [Link \\[trap\\]\\(x\\)](/nested/b.md)\n",
+          "/nested/deep/": "# Index\n\n- [Straße](/nested/deep/c.md)\n"
+        },
+        "generated_log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n- 2026-09-18T00:00:00.123456Z — [Link \\[trap\\]\\(x\\)](/nested/b.md) — agent\\_\\*\\`demo\\`\n- 2026-09-18T00:00:00Z — [éclair](/Z.md) — test-agent\n- 2026-09-18T00:00:00Z — [Straße](/nested/deep/c.md) — test-agent\n- 2026-09-18T00:00:00Z — [strasse](/lower.md) — test-agent\n- 2026-09-18T00:00:00Z — [alpha](/alpha.md) — test-agent\n- 2026-09-18T00:00:00Z — [Alpha](/a.md) — test-agent\n",
+        "issues": [
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to //host/a"
+          },
+          {
+            "bundle_path": "/lower.md",
+            "code": "broken_link",
+            "message": "broken link to /hidden.md"
+          },
+          {
+            "bundle_path": "/nested/b.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/nested/deep/c.md",
+            "code": "duplicate_id",
+            "message": "concept id one already used by /a.md"
+          }
+        ]
+      },
+      "filtered": false,
+      "ok": false,
+      "paths": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md",
+        "/nested/deep/c.md"
+      ],
+      "scan": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md",
+        "/nested/deep/c.md"
+      ],
+      "tree": "normal"
+    },
+    {
+      "audit": {
+        "generated_indexes": {
+          "/": "# Index\n\n- [Alpha](/a.md)\n- [alpha](/alpha.md)\n- [nested](/nested/index.md)\n- [strasse](/lower.md)\n- [éclair](/Z.md)\n",
+          "/nested/": "# Index\n\n- [deep](/nested/deep/index.md)\n- [Link \\[trap\\]\\(x\\)](/nested/b.md)\n",
+          "/nested/deep/": "# Index\n\n- [Straße](/nested/deep/c.md)\n"
+        },
+        "generated_log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n- 2026-09-18T00:00:00.123456Z — [Link \\[trap\\]\\(x\\)](/nested/b.md) — agent\\_\\*\\`demo\\`\n- 2026-09-18T00:00:00Z — [éclair](/Z.md) — test-agent\n- 2026-09-18T00:00:00Z — [Straße](/nested/deep/c.md) — test-agent\n- 2026-09-18T00:00:00Z — [strasse](/lower.md) — test-agent\n- 2026-09-18T00:00:00Z — [alpha](/alpha.md) — test-agent\n- 2026-09-18T00:00:00Z — [Alpha](/a.md) — test-agent\n",
+        "issues": [
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to //host/a"
+          },
+          {
+            "bundle_path": "/nested/b.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/nested/deep/c.md",
+            "code": "duplicate_id",
+            "message": "concept id one already used by /a.md"
+          }
+        ]
+      },
+      "filtered": true,
+      "ok": false,
+      "paths": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "scan": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "tree": "normal"
+    },
+    {
+      "audit_error": "symlink target is not allowed",
+      "error": "symlink target is not allowed",
+      "filtered": false,
+      "tree": "symlink-file"
+    },
+    {
+      "audit": {
+        "generated_indexes": {
+          "/": "# Index\n\n- [Alpha](/a.md)\n- [alpha](/alpha.md)\n- [nested](/nested/index.md)\n- [strasse](/lower.md)\n- [éclair](/Z.md)\n",
+          "/nested/": "# Index\n\n- [deep](/nested/deep/index.md)\n- [Link \\[trap\\]\\(x\\)](/nested/b.md)\n",
+          "/nested/deep/": "# Index\n\n- [Straße](/nested/deep/c.md)\n"
+        },
+        "generated_log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n- 2026-09-18T00:00:00.123456Z — [Link \\[trap\\]\\(x\\)](/nested/b.md) — agent\\_\\*\\`demo\\`\n- 2026-09-18T00:00:00Z — [éclair](/Z.md) — test-agent\n- 2026-09-18T00:00:00Z — [Straße](/nested/deep/c.md) — test-agent\n- 2026-09-18T00:00:00Z — [strasse](/lower.md) — test-agent\n- 2026-09-18T00:00:00Z — [alpha](/alpha.md) — test-agent\n- 2026-09-18T00:00:00Z — [Alpha](/a.md) — test-agent\n",
+        "issues": [
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to //host/a"
+          },
+          {
+            "bundle_path": "/nested/b.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/nested/deep/c.md",
+            "code": "duplicate_id",
+            "message": "concept id one already used by /a.md"
+          }
+        ]
+      },
+      "filtered": true,
+      "ok": false,
+      "paths": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "scan": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "tree": "symlink-file"
+    },
+    {
+      "audit": {
+        "generated_indexes": {
+          "/": "# Index\n\n- [Alpha](/a.md)\n- [alpha](/alpha.md)\n- [nested](/nested/index.md)\n- [strasse](/lower.md)\n- [éclair](/Z.md)\n",
+          "/nested/": "# Index\n\n- [deep](/nested/deep/index.md)\n- [Link \\[trap\\]\\(x\\)](/nested/b.md)\n",
+          "/nested/deep/": "# Index\n\n- [Straße](/nested/deep/c.md)\n"
+        },
+        "generated_log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n- 2026-09-18T00:00:00.123456Z — [Link \\[trap\\]\\(x\\)](/nested/b.md) — agent\\_\\*\\`demo\\`\n- 2026-09-18T00:00:00Z — [éclair](/Z.md) — test-agent\n- 2026-09-18T00:00:00Z — [Straße](/nested/deep/c.md) — test-agent\n- 2026-09-18T00:00:00Z — [strasse](/lower.md) — test-agent\n- 2026-09-18T00:00:00Z — [alpha](/alpha.md) — test-agent\n- 2026-09-18T00:00:00Z — [Alpha](/a.md) — test-agent\n",
+        "issues": [
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to //host/a"
+          },
+          {
+            "bundle_path": "/lower.md",
+            "code": "broken_link",
+            "message": "broken link to /hidden.md"
+          },
+          {
+            "bundle_path": "/nested/b.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/nested/deep/c.md",
+            "code": "duplicate_id",
+            "message": "concept id one already used by /a.md"
+          }
+        ]
+      },
+      "filtered": false,
+      "ok": false,
+      "paths": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md",
+        "/nested/deep/c.md"
+      ],
+      "scan": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md",
+        "/nested/deep/c.md"
+      ],
+      "tree": "symlink-dir"
+    },
+    {
+      "audit": {
+        "generated_indexes": {
+          "/": "# Index\n\n- [Alpha](/a.md)\n- [alpha](/alpha.md)\n- [nested](/nested/index.md)\n- [strasse](/lower.md)\n- [éclair](/Z.md)\n",
+          "/nested/": "# Index\n\n- [deep](/nested/deep/index.md)\n- [Link \\[trap\\]\\(x\\)](/nested/b.md)\n",
+          "/nested/deep/": "# Index\n\n- [Straße](/nested/deep/c.md)\n"
+        },
+        "generated_log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n- 2026-09-18T00:00:00.123456Z — [Link \\[trap\\]\\(x\\)](/nested/b.md) — agent\\_\\*\\`demo\\`\n- 2026-09-18T00:00:00Z — [éclair](/Z.md) — test-agent\n- 2026-09-18T00:00:00Z — [Straße](/nested/deep/c.md) — test-agent\n- 2026-09-18T00:00:00Z — [strasse](/lower.md) — test-agent\n- 2026-09-18T00:00:00Z — [alpha](/alpha.md) — test-agent\n- 2026-09-18T00:00:00Z — [Alpha](/a.md) — test-agent\n",
+        "issues": [
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to //host/a"
+          },
+          {
+            "bundle_path": "/nested/b.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/nested/deep/c.md",
+            "code": "duplicate_id",
+            "message": "concept id one already used by /a.md"
+          }
+        ]
+      },
+      "filtered": true,
+      "ok": false,
+      "paths": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "scan": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "tree": "symlink-dir"
+    },
+    {
+      "audit_error": "special file target is not allowed",
+      "error": "special file target is not allowed",
+      "filtered": false,
+      "tree": "directory-md"
+    },
+    {
+      "audit": {
+        "generated_indexes": {
+          "/": "# Index\n\n- [Alpha](/a.md)\n- [alpha](/alpha.md)\n- [nested](/nested/index.md)\n- [strasse](/lower.md)\n- [éclair](/Z.md)\n",
+          "/nested/": "# Index\n\n- [deep](/nested/deep/index.md)\n- [Link \\[trap\\]\\(x\\)](/nested/b.md)\n",
+          "/nested/deep/": "# Index\n\n- [Straße](/nested/deep/c.md)\n"
+        },
+        "generated_log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n- 2026-09-18T00:00:00.123456Z — [Link \\[trap\\]\\(x\\)](/nested/b.md) — agent\\_\\*\\`demo\\`\n- 2026-09-18T00:00:00Z — [éclair](/Z.md) — test-agent\n- 2026-09-18T00:00:00Z — [Straße](/nested/deep/c.md) — test-agent\n- 2026-09-18T00:00:00Z — [strasse](/lower.md) — test-agent\n- 2026-09-18T00:00:00Z — [alpha](/alpha.md) — test-agent\n- 2026-09-18T00:00:00Z — [Alpha](/a.md) — test-agent\n",
+        "issues": [
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to //host/a"
+          },
+          {
+            "bundle_path": "/nested/b.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/nested/deep/c.md",
+            "code": "duplicate_id",
+            "message": "concept id one already used by /a.md"
+          }
+        ]
+      },
+      "filtered": true,
+      "ok": false,
+      "paths": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "scan": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "tree": "directory-md"
+    },
+    {
+      "audit_error": "invalid concept at /bad.md",
+      "error": "invalid concept at /bad.md",
+      "filtered": false,
+      "paths": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/bad.md",
+        "/lower.md",
+        "/nested/b.md",
+        "/nested/deep/c.md"
+      ],
+      "tree": "invalid-concept"
+    },
+    {
+      "audit": {
+        "generated_indexes": {
+          "/": "# Index\n\n- [Alpha](/a.md)\n- [alpha](/alpha.md)\n- [nested](/nested/index.md)\n- [strasse](/lower.md)\n- [éclair](/Z.md)\n",
+          "/nested/": "# Index\n\n- [deep](/nested/deep/index.md)\n- [Link \\[trap\\]\\(x\\)](/nested/b.md)\n",
+          "/nested/deep/": "# Index\n\n- [Straße](/nested/deep/c.md)\n"
+        },
+        "generated_log": "# Mutation Log\n\nThis file is generated deterministically from concept metadata.\n\n- 2026-09-18T00:00:00.123456Z — [Link \\[trap\\]\\(x\\)](/nested/b.md) — agent\\_\\*\\`demo\\`\n- 2026-09-18T00:00:00Z — [éclair](/Z.md) — test-agent\n- 2026-09-18T00:00:00Z — [Straße](/nested/deep/c.md) — test-agent\n- 2026-09-18T00:00:00Z — [strasse](/lower.md) — test-agent\n- 2026-09-18T00:00:00Z — [alpha](/alpha.md) — test-agent\n- 2026-09-18T00:00:00Z — [Alpha](/a.md) — test-agent\n",
+        "issues": [
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/a.md",
+            "code": "broken_link",
+            "message": "broken link to //host/a"
+          },
+          {
+            "bundle_path": "/nested/b.md",
+            "code": "broken_link",
+            "message": "broken link to /missing.md"
+          },
+          {
+            "bundle_path": "/nested/deep/c.md",
+            "code": "duplicate_id",
+            "message": "concept id one already used by /a.md"
+          }
+        ]
+      },
+      "filtered": true,
+      "ok": false,
+      "paths": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "scan": [
+        "/Z.md",
+        "/a.md",
+        "/alpha.md",
+        "/lower.md",
+        "/nested/b.md"
+      ],
+      "tree": "invalid-concept"
+    }
+  ]
+}

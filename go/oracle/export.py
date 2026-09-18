@@ -216,6 +216,10 @@ def main() -> None:
     save("concept-schema.json", concept_schema.fixtures())
     concept_frontmatter = importlib.import_module("concept_frontmatter")
     save("concept-frontmatter.json", concept_frontmatter.fixtures())
+    repository_links = importlib.import_module("repository_links")
+    save("repository-links.json", repository_links.fixtures())
+    repository_bundle = importlib.import_module("repository_bundle")
+    save("repository-bundle.json", repository_bundle.fixtures())
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

@@ -1,0 +1,1765 @@
+{
+  "cases": [
+    {
+      "input": "",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": ""
+      }
+    },
+    {
+      "input": "[one](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "one"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[one](/new.md)"
+      }
+    },
+    {
+      "input": "# [one](/old.md)\n\n[second](/old.md#anchor)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "one"
+        },
+        {
+          "href": "/old.md#anchor",
+          "line": 3,
+          "text": "second"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "# [one](/new.md)\n\n[second](/new.md#anchor)"
+      }
+    },
+    {
+      "input": "prose /old.md and `[code](/old.md)`\n\n```md\n[x](/old.md)\n```\n",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "prose /old.md and `[code](/old.md)`\n\n```md\n[x](/old.md)\n```\n"
+      }
+    },
+    {
+      "input": "[a **bold** and *em* `code` ![alt](/image.png)](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "a bold and em  "
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a **bold** and *em* `code` ![alt](/image.png)](/new.md)"
+      }
+    },
+    {
+      "input": "[a\\*b &amp; &#65; &unknown;](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "a*b & A &unknown;"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a\\*b &amp; &#65; &unknown;](/new.md)"
+      }
+    },
+    {
+      "input": "[one\ntwo](/old.md)\n\n[one  \ntwo](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "onetwo"
+        },
+        {
+          "href": "/old.md",
+          "line": 4,
+          "text": "onetwo"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[one\ntwo](/new.md)\n\n[one  \ntwo](/new.md)"
+      }
+    },
+    {
+      "input": "> [quote](/old.md)\n>\n> next\n\n- [list](/old.md)\n  continued\n\n  [nested](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "quote"
+        },
+        {
+          "href": "/old.md",
+          "line": 5,
+          "text": "list"
+        },
+        {
+          "href": "/old.md",
+          "line": 8,
+          "text": "nested"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "> [quote](/new.md)\n>\n> next\n\n- [list](/new.md)\n  continued\n\n  [nested](/new.md)"
+      }
+    },
+    {
+      "input": "    [indented](/old.md)\n\n[normal](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 3,
+          "text": "normal"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "    [indented](/old.md)\n\n[normal](/new.md)"
+      }
+    },
+    {
+      "input": "![image](/old.md) [![nested](/old.md)](/other.md)",
+      "links": [
+        {
+          "href": "/other.md",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "![image](/new.md) [![nested](/new.md)](/other.md)"
+      }
+    },
+    {
+      "input": "[reference][key]\n\n[key]: /old.md \"Title\"\n",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "reference"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[reference][key]\n\n[key]: /new.md \"Title\"\n"
+      }
+    },
+    {
+      "input": "[key][] [key]\n\n[key]: /old.md\n",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "key"
+        },
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "key"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[key][] [key]\n\n[key]: /new.md\n"
+      }
+    },
+    {
+      "input": "[unused]: /old.md\n",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[unused]: /old.md\n"
+      }
+    },
+    {
+      "input": "[x](/old.md?q=1) [x](/old.md2) [x](relative/old.md)",
+      "links": [
+        {
+          "href": "/old.md?q=1",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "/old.md2",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "relative/old.md",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](/old.md?q=1) [x](/old.md2) [x](relative/old.md)"
+      }
+    },
+    {
+      "input": "[title](/other.md \"/old.md\")",
+      "links": [
+        {
+          "href": "/other.md",
+          "line": 1,
+          "text": "title"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[title](/other.md \"/old.md\")"
+      }
+    },
+    {
+      "input": "[x](</old.md>)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[x](</new.md>)"
+      }
+    },
+    {
+      "input": "[x](</old.md#space here>)",
+      "links": [
+        {
+          "href": "/old.md#space%20here",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[x](</new.md#space here>)"
+      }
+    },
+    {
+      "input": "[x](/old\\.md) [x](/old%2Emd)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "/old%2Emd",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](/old\\.md) [x](/old%2Emd)"
+      }
+    },
+    {
+      "input": "<https://example.com/old.md> <person@example.com>",
+      "links": [
+        {
+          "href": "https://example.com/old.md",
+          "line": 1,
+          "text": "https://example.com/old.md"
+        },
+        {
+          "href": "mailto:person@example.com",
+          "line": 1,
+          "text": "person@example.com"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "<https://example.com/old.md> <person@example.com>"
+      }
+    },
+    {
+      "input": "<https://éxample.com/old.md> <mailto:a@éxample.com>",
+      "links": [
+        {
+          "href": "https://xn--xample-9ua.com/old.md",
+          "line": 1,
+          "text": "https://éxample.com/old.md"
+        },
+        {
+          "href": "mailto:a@xn--xample-9ua.com",
+          "line": 1,
+          "text": "mailto:a@éxample.com"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "<https://éxample.com/old.md> <mailto:a@éxample.com>"
+      }
+    },
+    {
+      "input": "[x](https://éxample.com/old.md?q=one#two)",
+      "links": [
+        {
+          "href": "https://xn--xample-9ua.com/old.md?q=one#two",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](https://éxample.com/old.md?q=one#two)"
+      }
+    },
+    {
+      "input": "<a href=\"/old.md\">HTML</a> [x](/old.md)\n",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "<a href=\"/old.md\">HTML</a> [x](/new.md)\n"
+      }
+    },
+    {
+      "input": "[<b>bold</b> text](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "bold text"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[<b>bold</b> text](/new.md)"
+      }
+    },
+    {
+      "input": "[x](javascript:alert) ![x](file:///old.md)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[x](javascript:alert) ![x](file:///old.md)"
+      }
+    },
+    {
+      "input": "[x](data:text/plain,x) [x](data:image/png;base64,AA==)",
+      "links": [
+        {
+          "href": "data:image/png;base64,AA==",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](data:text/plain,x) [x](data:image/png;base64,AA==)"
+      }
+    },
+    {
+      "input": "[a [nested](/old.md)](/outer.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "nested"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a [nested](/new.md)](/outer.md)"
+      }
+    },
+    {
+      "input": "[x](/old.md \"title\") [y](/old.md 'title')",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "y"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[x](/new.md \"title\") [y](/new.md 'title')"
+      }
+    },
+    {
+      "input": "[x](//example.com/old.md) [x](HTTP://EXAMPLE.COM/old.md)",
+      "links": [
+        {
+          "href": "//example.com/old.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "HTTP://EXAMPLE.COM/old.md",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](//example.com/old.md) [x](HTTP://EXAMPLE.COM/old.md)"
+      }
+    },
+    {
+      "input": "[x](/café.md) [x](/space%20here.md) [x](/a?b=1&amp;c=2)",
+      "links": [
+        {
+          "href": "/caf%C3%A9.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "/space%20here.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "/a?b=1&c=2",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](/café.md) [x](/space%20here.md) [x](/a?b=1&amp;c=2)"
+      }
+    },
+    {
+      "input": "[x](</a b.md>) [x](</a%zz.md>) [x](/a\\(b\\).md)",
+      "links": [
+        {
+          "href": "/a%20b.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "/a%25zz.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "/a(b).md",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](</a b.md>) [x](</a%zz.md>) [x](/a\\(b\\).md)"
+      }
+    },
+    {
+      "input": "line\r\n[x](/old.md)\r\n\r\n## [h](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "/old.md",
+          "line": 4,
+          "text": "h"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "line\r\n[x](/new.md)\r\n\r\n## [h](/new.md)"
+      }
+    },
+    {
+      "input": "[x](vbscript:bad) [x](FILE:x) [x](custom:value)",
+      "links": [
+        {
+          "href": "custom:value",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](vbscript:bad) [x](FILE:x) [x](custom:value)"
+      }
+    },
+    {
+      "input": "[x](<javascript:alert>) [x](&#106;avascript:alert)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[x](<javascript:alert>) [x](&#106;avascript:alert)"
+      }
+    },
+    {
+      "input": "[text\\\nnext](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "textnext"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[text\\\nnext](/new.md)"
+      }
+    },
+    {
+      "input": "[<https://example.com>](/old.md)",
+      "links": [
+        {
+          "href": "https://example.com",
+          "line": 1,
+          "text": "https://example.com"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[<https://example.com>](/new.md)"
+      }
+    },
+    {
+      "input": "# heading\nparagraph\n[x](/old.md)\n\n---\n\n[x](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 2,
+          "text": "x"
+        },
+        {
+          "href": "/old.md",
+          "line": 7,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "# heading\nparagraph\n[x](/new.md)\n\n---\n\n[x](/new.md)"
+      }
+    },
+    {
+      "input": "a | [b](/old.md)\n--|--\nc | d",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "b"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "a | [b](/new.md)\n--|--\nc | d"
+      }
+    },
+    {
+      "input": "[x](/old.md) [x](/old.md#one#two)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "/old.md#one#two",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[x](/new.md) [x](/new.md#one#two)"
+      }
+    },
+    {
+      "input": "[a](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "a"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a](/new.md)"
+      }
+    },
+    {
+      "input": "[a](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": "a"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a](/new.md#a)"
+      }
+    },
+    {
+      "input": "[a](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": "a"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a](https://host/a)"
+      }
+    },
+    {
+      "input": "[a](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": "a"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a](//host/a)"
+      }
+    },
+    {
+      "input": "[a](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[a](javascript:x)"
+      }
+    },
+    {
+      "input": "[a](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": "a"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[a](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": "a"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a](/café)"
+      }
+    },
+    {
+      "input": "[*em*](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "em"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[*em*](/new.md)"
+      }
+    },
+    {
+      "input": "[*em*](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": "em"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[*em*](/new.md#a)"
+      }
+    },
+    {
+      "input": "[*em*](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": "em"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[*em*](https://host/a)"
+      }
+    },
+    {
+      "input": "[*em*](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": "em"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[*em*](//host/a)"
+      }
+    },
+    {
+      "input": "[*em*](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[*em*](javascript:x)"
+      }
+    },
+    {
+      "input": "[*em*](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": "em"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[*em*](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[*em*](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": "em"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[*em*](/café)"
+      }
+    },
+    {
+      "input": "[**bold**](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "bold"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[**bold**](/new.md)"
+      }
+    },
+    {
+      "input": "[**bold**](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": "bold"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[**bold**](/new.md#a)"
+      }
+    },
+    {
+      "input": "[**bold**](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": "bold"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[**bold**](https://host/a)"
+      }
+    },
+    {
+      "input": "[**bold**](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": "bold"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[**bold**](//host/a)"
+      }
+    },
+    {
+      "input": "[**bold**](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[**bold**](javascript:x)"
+      }
+    },
+    {
+      "input": "[**bold**](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": "bold"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[**bold**](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[**bold**](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": "bold"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[**bold**](/café)"
+      }
+    },
+    {
+      "input": "[`code`](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[`code`](/new.md)"
+      }
+    },
+    {
+      "input": "[`code`](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[`code`](/new.md#a)"
+      }
+    },
+    {
+      "input": "[`code`](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[`code`](https://host/a)"
+      }
+    },
+    {
+      "input": "[`code`](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[`code`](//host/a)"
+      }
+    },
+    {
+      "input": "[`code`](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[`code`](javascript:x)"
+      }
+    },
+    {
+      "input": "[`code`](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[`code`](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[`code`](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[`code`](/café)"
+      }
+    },
+    {
+      "input": "[a &amp; b](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "a & b"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a &amp; b](/new.md)"
+      }
+    },
+    {
+      "input": "[a &amp; b](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": "a & b"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a &amp; b](/new.md#a)"
+      }
+    },
+    {
+      "input": "[a &amp; b](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": "a & b"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a &amp; b](https://host/a)"
+      }
+    },
+    {
+      "input": "[a &amp; b](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": "a & b"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a &amp; b](//host/a)"
+      }
+    },
+    {
+      "input": "[a &amp; b](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[a &amp; b](javascript:x)"
+      }
+    },
+    {
+      "input": "[a &amp; b](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": "a & b"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a &amp; b](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[a &amp; b](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": "a & b"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a &amp; b](/café)"
+      }
+    },
+    {
+      "input": "[a\\[b](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "a[b"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a\\[b](/new.md)"
+      }
+    },
+    {
+      "input": "[a\\[b](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": "a[b"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a\\[b](/new.md#a)"
+      }
+    },
+    {
+      "input": "[a\\[b](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": "a[b"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a\\[b](https://host/a)"
+      }
+    },
+    {
+      "input": "[a\\[b](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": "a[b"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a\\[b](//host/a)"
+      }
+    },
+    {
+      "input": "[a\\[b](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[a\\[b](javascript:x)"
+      }
+    },
+    {
+      "input": "[a\\[b](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": "a[b"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a\\[b](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[a\\[b](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": "a[b"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a\\[b](/café)"
+      }
+    },
+    {
+      "input": "[![alt](/image)](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[![alt](/image)](/new.md)"
+      }
+    },
+    {
+      "input": "[![alt](/image)](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[![alt](/image)](/new.md#a)"
+      }
+    },
+    {
+      "input": "[![alt](/image)](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[![alt](/image)](https://host/a)"
+      }
+    },
+    {
+      "input": "[![alt](/image)](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[![alt](/image)](//host/a)"
+      }
+    },
+    {
+      "input": "[![alt](/image)](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[![alt](/image)](javascript:x)"
+      }
+    },
+    {
+      "input": "[![alt](/image)](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[![alt](/image)](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[![alt](/image)](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": ""
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[![alt](/image)](/café)"
+      }
+    },
+    {
+      "input": "[a\nb](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a\nb](/new.md)"
+      }
+    },
+    {
+      "input": "[a\nb](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a\nb](/new.md#a)"
+      }
+    },
+    {
+      "input": "[a\nb](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a\nb](https://host/a)"
+      }
+    },
+    {
+      "input": "[a\nb](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a\nb](//host/a)"
+      }
+    },
+    {
+      "input": "[a\nb](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[a\nb](javascript:x)"
+      }
+    },
+    {
+      "input": "[a\nb](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a\nb](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[a\nb](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a\nb](/café)"
+      }
+    },
+    {
+      "input": "[a  \nb](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a  \nb](/new.md)"
+      }
+    },
+    {
+      "input": "[a  \nb](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[a  \nb](/new.md#a)"
+      }
+    },
+    {
+      "input": "[a  \nb](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a  \nb](https://host/a)"
+      }
+    },
+    {
+      "input": "[a  \nb](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a  \nb](//host/a)"
+      }
+    },
+    {
+      "input": "[a  \nb](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[a  \nb](javascript:x)"
+      }
+    },
+    {
+      "input": "[a  \nb](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a  \nb](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[a  \nb](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": "ab"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[a  \nb](/café)"
+      }
+    },
+    {
+      "input": "[<i>html</i>](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "html"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[<i>html</i>](/new.md)"
+      }
+    },
+    {
+      "input": "[<i>html</i>](/old.md#a)",
+      "links": [
+        {
+          "href": "/old.md#a",
+          "line": 1,
+          "text": "html"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[<i>html</i>](/new.md#a)"
+      }
+    },
+    {
+      "input": "[<i>html</i>](https://host/a)",
+      "links": [
+        {
+          "href": "https://host/a",
+          "line": 1,
+          "text": "html"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[<i>html</i>](https://host/a)"
+      }
+    },
+    {
+      "input": "[<i>html</i>](//host/a)",
+      "links": [
+        {
+          "href": "//host/a",
+          "line": 1,
+          "text": "html"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[<i>html</i>](//host/a)"
+      }
+    },
+    {
+      "input": "[<i>html</i>](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[<i>html</i>](javascript:x)"
+      }
+    },
+    {
+      "input": "[<i>html</i>](data:image/png;x)",
+      "links": [
+        {
+          "href": "data:image/png;x",
+          "line": 1,
+          "text": "html"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[<i>html</i>](data:image/png;x)"
+      }
+    },
+    {
+      "input": "[<i>html</i>](/café)",
+      "links": [
+        {
+          "href": "/caf%C3%A9",
+          "line": 1,
+          "text": "html"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[<i>html</i>](/café)"
+      }
+    },
+    {
+      "input": "<https://host/a%20b%2fc%2Fd%3Fq%3dq%25%zz>",
+      "links": [
+        {
+          "href": "https://host/a%20b%2fc%2Fd%3Fq%3dq%25%25zz",
+          "line": 1,
+          "text": "https://host/a b%2Fc%2Fd%3Fq%3Dq%25%zz"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "<https://host/a%20b%2fc%2Fd%3Fq%3dq%25%zz>"
+      }
+    },
+    {
+      "input": "<https://[::1]:8080/old.md>",
+      "links": [
+        {
+          "href": "https://%5B::1%5D:8080/old.md",
+          "line": 1,
+          "text": "https://[::1]:8080/old.md"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "<https://[::1]:8080/old.md>"
+      }
+    },
+    {
+      "input": "[x](https://user:p@éxample.com:8080/old.md) [x](ftp://éxample.com/old.md)",
+      "links": [
+        {
+          "href": "https://user:p@xn--xample-9ua.com:8080/old.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "ftp://%C3%A9xample.com/old.md",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](https://user:p@éxample.com:8080/old.md) [x](ftp://éxample.com/old.md)"
+      }
+    },
+    {
+      "input": "[x](https://EXAMPLE.com/old.md) [x](https://a_b.com/old.md)",
+      "links": [
+        {
+          "href": "https://EXAMPLE.com/old.md",
+          "line": 1,
+          "text": "x"
+        },
+        {
+          "href": "https://a_b.com/old.md",
+          "line": 1,
+          "text": "x"
+        }
+      ],
+      "rename": {
+        "changed": false,
+        "content": "[x](https://EXAMPLE.com/old.md) [x](https://a_b.com/old.md)"
+      }
+    },
+    {
+      "input": "[one **nested *em*** ![alt](x)](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "one nested em "
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[one **nested *em*** ![alt](x)](/new.md)"
+      }
+    },
+    {
+      "input": "[x](<data:text/plain,foo>) [![alt](x)](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[x](<data:text/plain,foo>) [![alt](x)](javascript:x)"
+      }
+    },
+    {
+      "input": "![outer [link](/old.md)](/old.md)",
+      "links": [],
+      "rename": {
+        "changed": true,
+        "content": "![outer [link](/new.md)](/new.md)"
+      }
+    },
+    {
+      "input": "[bad [inner](/old.md)](javascript:x)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "inner"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[bad [inner](/new.md)](javascript:x)"
+      }
+    },
+    {
+      "input": "[label **em**](javascript:x)",
+      "links": [],
+      "rename": {
+        "changed": false,
+        "content": "[label **em**](javascript:x)"
+      }
+    },
+    {
+      "input": "[foo](/old.md)\\n[bar](/old.md)",
+      "links": [
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "foo"
+        },
+        {
+          "href": "/old.md",
+          "line": 1,
+          "text": "bar"
+        }
+      ],
+      "rename": {
+        "changed": true,
+        "content": "[foo](/new.md)\\n[bar](/new.md)"
+      }
+    }
+  ],
+  "external": [
+    {
+      "expected": false,
+      "input": ""
+    },
+    {
+      "expected": false,
+      "input": "/a"
+    },
+    {
+      "expected": true,
+      "input": "//a"
+    },
+    {
+      "expected": true,
+      "input": "///a"
+    },
+    {
+      "expected": true,
+      "input": "a:b"
+    },
+    {
+      "expected": true,
+      "input": "a+b.c-d:x"
+    },
+    {
+      "expected": false,
+      "input": "1a:x"
+    },
+    {
+      "expected": false,
+      "input": "ä:x"
+    },
+    {
+      "expected": false,
+      "input": " mailto:x"
+    },
+    {
+      "expected": true,
+      "input": "mailto:x"
+    },
+    {
+      "expected": false,
+      "input": "#x"
+    },
+    {
+      "expected": false,
+      "input": "a/b:c"
+    }
+  ],
+  "markdown-it-py": "3.0.0",
+  "rewrites": [
+    {
+      "expected": {
+        "changed": false,
+        "content": "[x](/old.md)"
+      },
+      "input": "[x](/old.md)",
+      "new": "[bad](/new.md)",
+      "old": "/old.md"
+    },
+    {
+      "expected": {
+        "changed": false,
+        "content": "[x](/old.md)"
+      },
+      "input": "[x](/old.md)",
+      "new": "/new path",
+      "old": "/old.md"
+    },
+    {
+      "expected": {
+        "changed": true,
+        "content": "[x](/new.md#x)"
+      },
+      "input": "[x](/old.md)",
+      "new": "/new.md#x",
+      "old": "/old.md"
+    },
+    {
+      "expected": {
+        "changed": false,
+        "content": "[x](relative.md)"
+      },
+      "input": "[x](relative.md)",
+      "new": "new.md",
+      "old": "relative.md"
+    },
+    {
+      "expected": {
+        "changed": false,
+        "content": "[x](/old.md)"
+      },
+      "input": "[x](/old.md)",
+      "new": "/café.md",
+      "old": "/old.md"
+    },
+    {
+      "expected": {
+        "changed": true,
+        "content": "[x](/a(b).md)"
+      },
+      "input": "[x](/old.md)",
+      "new": "/a(b).md",
+      "old": "/old.md"
+    }
+  ]
+}
