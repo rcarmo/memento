@@ -15,6 +15,7 @@ type snapshotFaultConn struct{}
 type snapshotFaultRows struct {
 	mode    string
 	emitted bool
+	count   int
 }
 
 var snapshotFaultMode atomic.Value
@@ -38,26 +39,44 @@ func (snapshotFaultConn) QueryContext(_ context.Context, query string, _ []drive
 	if len(query) >= 12 && query[:12] == "SELECT id,pa" {
 		return &snapshotFaultRows{mode: "paths-" + mode}, nil
 	}
+	if len(query) >= 12 && query[:12] == "SELECT rowid" {
+		return &snapshotFaultRows{mode: "edges-" + mode}, nil
+	}
 	return &snapshotFaultRows{mode: "revisions-" + mode}, nil
 }
 func (r *snapshotFaultRows) Columns() []string {
 	if len(r.mode) >= 6 && r.mode[:6] == "paths-" {
 		return []string{"id", "path"}
 	}
+	if len(r.mode) >= 6 && r.mode[:6] == "edges-" {
+		return []string{"rowid", "source_id", "target_id", "raw_target", "resolution_state", "anchor", "first_seen_revision", "last_checked_revision"}
+	}
 	return []string{"key", "value"}
 }
 func (*snapshotFaultRows) Close() error { return nil }
 func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	if r.emitted {
-		if r.mode == "revisions-rows" || r.mode == "paths-rows" {
+		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" {
 			return io.ErrClosedPipe
 		}
-		return io.EOF
+		if r.mode != "edges-multi" || r.count >= 2 {
+			return io.EOF
+		}
 	}
 	r.emitted = true
-	if r.mode == "revisions-scan" || r.mode == "paths-scan" {
+	r.count++
+	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" {
 		values[0] = nil
 		values[1] = "value"
+	} else if len(r.mode) >= 6 && r.mode[:6] == "edges-" {
+		values[0] = int64(1)
+		values[1] = "a"
+		values[2] = "b"
+		values[3] = "/b"
+		values[4] = "resolved"
+		values[5] = nil
+		values[6] = "r"
+		values[7] = "r"
 	} else if len(r.mode) >= 6 && r.mode[:6] == "paths-" {
 		values[0] = "a"
 		values[1] = "/a.md"
@@ -95,6 +114,20 @@ func TestSnapshotDatabaseFailureBranches(t *testing.T) {
 		if _, err := service.PathsForIDs(ctx, []string{"a"}); err == nil {
 			t.Fatal("paths", mode)
 		}
+		service.open = faultOpen(t, mode)
+		if _, err := service.ExplicitEdges(ctx, nil, nil, nil, 2, nil); err == nil {
+			t.Fatal("edges", mode)
+		}
+	}
+	service.open = faultOpen(t, "multi")
+	edges, err := service.ExplicitEdges(ctx, []string{"x"}, nil, nil, 1, nil)
+	if err != nil || len(edges) != 0 {
+		t.Fatal(edges, err)
+	}
+	service.open = faultOpen(t, "multi")
+	edges, err = service.ExplicitEdges(ctx, nil, nil, nil, 1, nil)
+	if err != nil || len(edges) != 1 {
+		t.Fatal(edges, err)
 	}
 }
 func TestOpenReadDBPingFailure(t *testing.T) {

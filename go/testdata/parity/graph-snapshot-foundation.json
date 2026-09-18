@@ -1,4 +1,36 @@
 {
+  "edges": [
+    {
+      "anchor": null,
+      "canonical": true,
+      "embedding_revision": null,
+      "first_seen_revision": "r1",
+      "id": "explicit:1",
+      "kind": "explicit",
+      "last_checked_revision": "r2",
+      "model_id": null,
+      "raw_target": "/public/b.md",
+      "resolution": "resolved",
+      "similarity": null,
+      "source": "a",
+      "target": "b"
+    },
+    {
+      "anchor": null,
+      "canonical": true,
+      "embedding_revision": null,
+      "first_seen_revision": "r1",
+      "id": "explicit:3",
+      "kind": "explicit",
+      "last_checked_revision": "r2",
+      "model_id": null,
+      "raw_target": "/public/missing.md",
+      "resolution": "broken",
+      "similarity": null,
+      "source": "b",
+      "target": null
+    }
+  ],
   "paths_cases": [
     {
       "ids": [],
