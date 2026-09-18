@@ -3,6 +3,7 @@ package pydatetime
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"os"
 	"strings"
 	"testing"
@@ -13,14 +14,29 @@ func TestDiagnosticBranches(t *testing.T) {
 		"2026-01":                 "Input should be a valid datetime, input is too short",
 		"2026-01x01T00:00Z":       "Input should be a valid datetime, invalid date separator, expected `-`",
 		"2026-01-01T0":            "Input should be a valid datetime, input is too short",
-		"2026-01-01T12:34":        "Input should be a valid datetime, invalid timezone sign",
 		"2026-01-01T12:34:5":      "Input should be a valid datetime, input is too short",
 		"2026-01-01T12:34Zx":      "Input should be a valid datetime, unexpected extra characters at the end of the input",
+		"2026-01-01T12:34:56.??":  "Input should be a valid datetime, invalid timezone sign",
 		"2026-01-01T12:34?":       "Input should be a valid datetime, invalid timezone sign",
 		"2026-01-01T12:34+x":      "Input should be a valid datetime, invalid timezone hour",
 		"2026-01-01T12:34+01:x":   "Input should be a valid datetime, invalid timezone minute",
 		"2026-01-01T12:34+01:x2":  "Input should be a valid datetime, invalid timezone minute",
 		"2026-01-01T12:34+01:02x": "Input should be a valid datetime, unexpected extra characters at the end of the input",
+	}
+	if got := pydanticDiagnostic("2026-01-01T12:34Z", false); got != "" {
+		t.Fatal(got)
+	}
+	if got := pydanticDiagnostic("2026-01-01T12:34", true); got != "" {
+		t.Fatal(got)
+	}
+	if got := pydanticDiagnostic("2026-01-01T12:34Z", true); got != "" {
+		t.Fatal(got)
+	}
+	if _, err := ParseJSON("2026-01-01T12:00:00", false); !errors.Is(err, ErrNaive) {
+		t.Fatal(err)
+	}
+	if _, err := ParseJSON("1e9999", false); !errors.Is(err, ErrInvalid) {
+		t.Fatal(err)
 	}
 	if !dayOutOfRange("2026-00-01") {
 		t.Fatal("month zero")

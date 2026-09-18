@@ -74,11 +74,20 @@ func validateArgumentContract(field argumentField) error {
 	}
 	return nil
 }
-func (a *Arguments) Supports(operation string) bool { _, ok := a.contracts[operation]; return ok }
+func (a *Arguments) Supports(operation string) bool {
+	if operation == "compare_manifest" {
+		return true
+	}
+	_, ok := a.contracts[operation]
+	return ok
+}
 
 // Validate is a real ArgumentValidator for the supported operation models. The
 // strict flag applies to the whole model, not only fields containing references.
 func (a *Arguments) Validate(operation string, args map[string]any, strict bool) (map[string]any, error) {
+	if operation == "compare_manifest" {
+		return a.validateManifest(args, strict)
+	}
 	fields, ok := a.contracts[operation]
 	if !ok {
 		return nil, fmt.Errorf("execute argument validation not implemented for %s", operation)

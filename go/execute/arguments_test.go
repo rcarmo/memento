@@ -72,7 +72,7 @@ func TestArgumentValidationIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if validator.Supports("propose") || validator.Supports("compare_manifest") || !validator.Supports("inventory") {
+	if validator.Supports("propose") || !validator.Supports("compare_manifest") || !validator.Supports("inventory") {
 		t.Fatal("support set")
 	}
 	if _, err := validator.Validate("propose", nil, false); err == nil {
@@ -108,7 +108,7 @@ func TestArgumentValidationIntegration(t *testing.T) {
 		t.Fatal("unsupported referenced model accepted")
 	}
 	if err := planner.Preflight(Plan{Operations: []PlannedOperation{{Op: "compare_manifest", Args: map[string]any{"items": []any{}}}}}, 12, validator.Validate); err == nil {
-		t.Fatal("unsupported static model accepted")
+		t.Fatal("invalid manifest accepted")
 	}
 	// Provided arrays must be copied as well as the default arrays.
 	input := []any{"path", "title"}

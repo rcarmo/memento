@@ -147,6 +147,9 @@ func ParseJSON(value any, strict bool) (time.Time, error) {
 		// pydantic-core's JSON grammar is deliberately narrower than
 		// datetime.fromisoformat: no basic/week dates, arbitrary separators,
 		// hour-only clocks or second/fractional timezone offsets.
+		if !strict && (len(text) == 10 || len(text) > 11 && !strings.ContainsAny(text[10:], "Zz+-")) {
+			return ParseAware(text)
+		}
 		if reason := pydanticDiagnostic(text, strict); reason != "" {
 			return time.Time{}, parseError(ErrInvalid, reason)
 		}
@@ -169,6 +172,9 @@ func ParseJSON(value any, strict bool) (time.Time, error) {
 	return unixNumber(parsed)
 }
 func pydanticDiagnostic(text string, strict bool) string {
+	if !strict && pydanticDiagnostic(text, true) == "" {
+		return ""
+	}
 	prefix := "Input should be a valid datetime"
 	if !strict {
 		prefix += " or date"
@@ -232,7 +238,7 @@ func pydanticDiagnostic(text string, strict bool) string {
 		}
 	}
 	if position >= len(text) {
-		return prefix + ", invalid timezone sign"
+		return ""
 	}
 	if text[position] == 'Z' || text[position] == 'z' {
 		if position+1 == len(text) {
