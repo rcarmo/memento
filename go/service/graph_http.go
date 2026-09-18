@@ -13,6 +13,7 @@ import (
 
 type GraphHTTPConfig struct {
 	Enabled                    bool
+	ExportNodeLimit            int
 	RoutePrefix                string
 	Overview                   graphdebug.OverviewOptions
 	Neighbourhood              graphdebug.NeighbourhoodOptions
@@ -20,6 +21,7 @@ type GraphHTTPConfig struct {
 	PreviewChars, SummaryLimit int
 }
 type GraphSnapshots interface {
+	ExportSelection(context.Context, []string, int, int, *access.EffectivePolicy) ([]graphdebug.Node, []graphdebug.Edge, graphdebug.Revisions, error)
 	Overview(context.Context, *access.EffectivePolicy, graphdebug.OverviewOptions) (graphdebug.Overview, error)
 	Search(context.Context, string, *access.EffectivePolicy) (graphdebug.SearchResults, error)
 	ExpandCluster(context.Context, string, *access.EffectivePolicy, graphdebug.ClusterOptions) (graphdebug.ClusterExpansion, error)
@@ -69,7 +71,7 @@ func (h GraphHTTP) Handle(ctx context.Context, method, path string, headers map[
 	if err != nil {
 		return graphError(err.Error(), 400)
 	}
-	postAllowed := path == prefix+"/api/v1/search" || path == prefix+"/api/v1/embeddings/refresh"
+	postAllowed := path == prefix+"/api/v1/search" || path == prefix+"/api/v1/embeddings/refresh" || path == prefix+"/api/v1/export/json" || path == prefix+"/api/v1/export/svg"
 	if method != "GET" && !(method == "POST" && postAllowed) {
 		response := graphNotFound()
 		response.Status = 405
@@ -111,6 +113,46 @@ func (h GraphHTTP) Handle(ctx context.Context, method, path string, headers map[
 			return graphError(callErr.Error(), 404)
 		}
 		return graphJSON(value, 200)
+	case method == "POST" && (path == prefix+"/api/v1/export/json" || path == prefix+"/api/v1/export/svg"):
+		if h.Snapshots == nil {
+			return graphError("graph snapshot unavailable", 503)
+		}
+		var payload any
+		if json.Unmarshal(body, &payload) != nil {
+			return graphError("invalid JSON", 400)
+		}
+		object, ok := payload.(map[string]any)
+		if !ok {
+			return graphError("export body must be an object", 400)
+		}
+		rawIDs, ok := object["concept_ids"].([]any)
+		if !ok {
+			return graphError("concept_ids must be an array of strings", 400)
+		}
+		ids := make([]string, 0, len(rawIDs))
+		for _, raw := range rawIDs {
+			id, ok := raw.(string)
+			if !ok {
+				return graphError("concept_ids must be an array of strings", 400)
+			}
+			ids = append(ids, id)
+		}
+		nodes, edges, revisions, callErr := h.Snapshots.ExportSelection(ctx, ids, h.Config.ExportNodeLimit, h.Config.Overview.EdgeLimit, policy)
+		if callErr != nil {
+			return graphError(callErr.Error(), 400)
+		}
+		if strings.HasSuffix(path, "/json") {
+			settings, _ := object["settings"].(map[string]any)
+			output, formatErr := graphdebug.ExportJSON(nodes, edges, revisions, settings)
+			if formatErr != nil {
+				return graphError(formatErr.Error(), 400)
+			}
+			mime := "application/json; charset=utf-8"
+			return &umcp.HTTPResponse{Status: 200, Body: output, ContentType: &mime, Headers: graphHeaders}, nil
+		}
+		output := graphdebug.ExportSVG(nodes, edges, 1600, 1000)
+		mime := "image/svg+xml"
+		return &umcp.HTTPResponse{Status: 200, Body: output, ContentType: &mime, Headers: graphHeaders}, nil
 	case method == "POST" && path == prefix+"/api/v1/embeddings/refresh":
 		if policy != nil {
 			return graphError("embedding refresh is disabled while simulating", 400)

@@ -26,6 +26,9 @@ type graphSnapshotsStub struct {
 	id     string
 }
 
+func (s *graphSnapshotsStub) ExportSelection(context.Context, []string, int, int, *access.EffectivePolicy) ([]graphdebug.Node, []graphdebug.Edge, graphdebug.Revisions, error) {
+	return []graphdebug.Node{}, []graphdebug.Edge{}, graphdebug.Revisions{}, s.err
+}
 func (s *graphSnapshotsStub) Overview(_ context.Context, p *access.EffectivePolicy, _ graphdebug.OverviewOptions) (graphdebug.Overview, error) {
 	s.policy = p
 	return graphdebug.Overview{SchemaVersion: 1}, s.err
@@ -47,7 +50,7 @@ func (s *graphSnapshotsStub) Neighbourhood(_ context.Context, id string, _ *acce
 	return graphdebug.Neighbourhood{SchemaVersion: 1, CenterID: id}, s.err
 }
 func graphHandler(snapshot GraphSnapshots) GraphHTTP {
-	return GraphHTTP{Config: GraphHTTPConfig{Enabled: true, RoutePrefix: "/graph", Overview: graphdebug.OverviewOptions{DirectNodeLimit: 10, EdgeLimit: 10}, Neighbourhood: graphdebug.NeighbourhoodOptions{Depth: 1}, Cluster: graphdebug.ClusterOptions{RefreshMaxPaths: 10, EdgeLimit: 10, ExpansionNodeLimit: 10, ClusterLimit: 10}, PreviewChars: 10, SummaryLimit: 10}, Snapshots: snapshot}
+	return GraphHTTP{Config: GraphHTTPConfig{Enabled: true, ExportNodeLimit: 10, RoutePrefix: "/graph", Overview: graphdebug.OverviewOptions{DirectNodeLimit: 10, EdgeLimit: 10}, Neighbourhood: graphdebug.NeighbourhoodOptions{Depth: 1}, Cluster: graphdebug.ClusterOptions{RefreshMaxPaths: 10, EdgeLimit: 10, ExpansionNodeLimit: 10, ClusterLimit: 10}, PreviewChars: 10, SummaryLimit: 10}, Snapshots: snapshot}
 }
 func TestGraphHTTPThroughUMCP(t *testing.T) {
 	server := umcp.NewServer("graph")
@@ -115,6 +118,42 @@ func TestGraphHTTPSnapshots(t *testing.T) {
 		t.Fatal(response, err)
 	}
 }
+func TestGraphHTTPExport(t *testing.T) {
+	h := graphHandler(&graphSnapshotsStub{})
+	for _, tc := range []struct{ path, mime string }{{"/graph/api/v1/export/json", "application/json; charset=utf-8"}, {"/graph/api/v1/export/svg", "image/svg+xml"}} {
+		response, err := h.Handle(context.Background(), "POST", tc.path, nil, []byte(`{"concept_ids":["a"],"settings":{"theme":"dark"}}`), "")
+		if err != nil || response.Status != 200 || response.ContentType == nil || *response.ContentType != tc.mime {
+			t.Fatal(tc, response, err)
+		}
+	}
+	for _, body := range [][]byte{[]byte("bad"), []byte(`[]`), []byte(`{}`), []byte(`{"concept_ids":1}`), []byte(`{"concept_ids":[1]}`)} {
+		response, _ := h.Handle(context.Background(), "POST", "/graph/api/v1/export/json", nil, body, "")
+		if response.Status != 400 {
+			t.Fatal(body, response)
+		}
+	}
+	var response *umcp.HTTPResponse
+	deep := any(nil)
+	for range 102 {
+		deep = []any{deep}
+	}
+	encoded, _ := json.Marshal(map[string]any{"concept_ids": []string{}, "settings": map[string]any{"deep": deep}})
+	response, _ = h.Handle(context.Background(), "POST", "/graph/api/v1/export/json", nil, encoded, "")
+	if response.Status != 400 {
+		t.Fatal(response)
+	}
+	h.Snapshots = &graphSnapshotsStub{err: errors.New("export")}
+	response, _ = h.Handle(context.Background(), "POST", "/graph/api/v1/export/json", nil, []byte(`{"concept_ids":[]}`), "")
+	if response.Status != 400 {
+		t.Fatal(response)
+	}
+	h.Snapshots = nil
+	response, _ = h.Handle(context.Background(), "POST", "/graph/api/v1/export/json", nil, []byte(`{}`), "")
+	if response.Status != 503 {
+		t.Fatal(response)
+	}
+}
+
 func TestGraphHTTPRefresh(t *testing.T) {
 	root, path := nodeDBAdapter(t)
 	coordinator := &graphdebug.RefreshCoordinator{Service: graphdebug.NewSnapshotService(root, path, controlDBAdapter(t)), Worker: graphRefreshWorker{accepted: true}, RepositoryRoot: root, RefreshMaxPaths: 10, DirectNodeLimit: 10, EdgeLimit: 10}

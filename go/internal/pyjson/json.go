@@ -29,9 +29,14 @@ func Parse(raw string) (any, error) {
 	}
 	return value, nil
 }
-func Dumps(value any) (string, error) {
+func Dumps(value any) (string, error) { return dumps(value, false) }
+
+// DumpsCompact matches json.dumps(sort_keys=True, separators=(",", ":")).
+func DumpsCompact(value any) (string, error) { return dumps(value, true) }
+
+func dumps(value any, compact bool) (string, error) {
 	var b bytes.Buffer
-	if err := encode(&b, value, 0); err != nil {
+	if err := encode(&b, value, 0, compact); err != nil {
 		return "", err
 	}
 	return b.String(), nil
@@ -50,7 +55,7 @@ func DumpsIndent(value any) (string, error) {
 	}
 	return out.String(), nil
 }
-func encode(b *bytes.Buffer, value any, depth int) error {
+func encode(b *bytes.Buffer, value any, depth int, compact bool) error {
 	if depth > 100 {
 		return fmt.Errorf("JSON nesting limit")
 	}
@@ -93,14 +98,18 @@ func encode(b *bytes.Buffer, value any, depth int) error {
 		for i, item := range v {
 			items[i] = item
 		}
-		return encode(b, items, depth)
+		return encode(b, items, depth, compact)
 	case []any:
 		b.WriteByte('[')
 		for i, item := range v {
 			if i > 0 {
-				b.WriteString(", ")
+				if compact {
+					b.WriteByte(',')
+				} else {
+					b.WriteString(", ")
+				}
 			}
-			if err := encode(b, item, depth+1); err != nil {
+			if err := encode(b, item, depth+1, compact); err != nil {
 				return err
 			}
 		}
@@ -114,14 +123,22 @@ func encode(b *bytes.Buffer, value any, depth int) error {
 		b.WriteByte('{')
 		for i, k := range keys {
 			if i > 0 {
-				b.WriteString(", ")
+				if compact {
+					b.WriteByte(',')
+				} else {
+					b.WriteString(", ")
+				}
 			}
 			if !utf8.ValidString(k) {
 				return fmt.Errorf("invalid UTF-8 JSON key")
 			}
 			quote(b, k)
-			b.WriteString(": ")
-			if err := encode(b, v[k], depth+1); err != nil {
+			if compact {
+				b.WriteByte(':')
+			} else {
+				b.WriteString(": ")
+			}
+			if err := encode(b, v[k], depth+1, compact); err != nil {
 				return err
 			}
 		}

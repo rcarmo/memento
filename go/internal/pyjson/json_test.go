@@ -7,6 +7,27 @@ import (
 	"testing"
 )
 
+func TestDumpsCompact(t *testing.T) {
+	value := map[string]any{"z": []any{1, 2}, "a": map[string]any{"x": true}}
+	got, err := DumpsCompact(value)
+	if err != nil || got != `{"a":{"x":true},"z":[1,2]}` {
+		t.Fatal(got, err)
+	}
+	deep := any(nil)
+	for range 102 {
+		deep = []any{deep}
+	}
+	if _, err = DumpsCompact(deep); err == nil {
+		t.Fatal("depth")
+	}
+	if _, err = DumpsCompact(string([]byte{255})); err == nil {
+		t.Fatal("string")
+	}
+	if _, err = DumpsCompact(map[string]any{string([]byte{255}): 1}); err == nil {
+		t.Fatal("key")
+	}
+}
+
 func TestPythonJSONEncoding(t *testing.T) {
 	cases := []struct {
 		Value any
