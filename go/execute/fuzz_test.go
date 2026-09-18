@@ -156,3 +156,64 @@ func FuzzExecutorPlan(f *testing.F) {
 		}
 	})
 }
+
+func FuzzExecutorArguments(f *testing.F) {
+	for _, raw := range []string{`{}`, `{"limit":"1_000"}`, `{"query":"x","limit":2.0}`, `{"fields":["path",null,true]}`, `{"path":"x","expected_revision":"r","idempotency_key":"k","tags":["a"]}`, `{"id_or_path":"x","cursor":"cccc"}`, `{"confirm":"yes"}`, `{"selected_change_indexes":[1,"2",true]}`} {
+		f.Add(raw, uint8(0), false)
+	}
+	validator, err := NewArguments()
+	if err != nil {
+		f.Fatal(err)
+	}
+	planner, err := NewPlanner()
+	if err != nil {
+		f.Fatal(err)
+	}
+	operations := []string{"inventory", "search", "asset_metadata", "patch", "purge", "proposal_revise", "asset_get", "proposal_review", "propose"}
+	f.Fuzz(func(t *testing.T, raw string, index uint8, strict bool) {
+		if len(raw) > 8192 {
+			return
+		}
+		value, err := pyjson.Parse(raw)
+		if err != nil {
+			return
+		}
+		args, ok := value.(map[string]any)
+		if !ok {
+			return
+		}
+		before, err := pyjson.Dumps(args)
+		if err != nil {
+			return
+		}
+		op := operations[int(index)%len(operations)]
+		result, err := validator.Validate(op, args, strict)
+		if err == nil {
+			// Successfully normalised wire values must pass strict validation,
+			// preserve every field and keep integers exact on a second pass.
+			again, err := validator.Validate(op, result, true)
+			if err != nil {
+				t.Fatal("normalisation was not strict-valid", err)
+			}
+			a, err := pyjson.Dumps(result)
+			if err != nil {
+				t.Fatal(err)
+			}
+			b, err := pyjson.Dumps(again)
+			if err != nil || a != b {
+				t.Fatal("non-idempotent argument model", err)
+			}
+		} else if v, ok := err.(*ValidationError); ok {
+			if len([]rune(v.Message("operation 1 ("+op+")"))) > 512 {
+				t.Fatal("unbounded diagnostic")
+			}
+		}
+		plan := Plan{Operations: []PlannedOperation{{Op: op, Args: args}}}
+		_ = planner.Preflight(plan, 12, validator.Validate)
+		_, _ = ResolveArguments(plan.Operations[0], 1, map[string]any{"saved": args}, validator.Validate)
+		after, err := pyjson.Dumps(args)
+		if err != nil || before != after {
+			t.Fatal("input mutated", err)
+		}
+	})
+}

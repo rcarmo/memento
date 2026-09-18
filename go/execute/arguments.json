@@ -1,0 +1,836 @@
+[
+  {
+    "fields": [],
+    "operation": "help"
+  },
+  {
+    "fields": [],
+    "operation": "status"
+  },
+  {
+    "fields": [
+      {
+        "name": "query",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "concept_type",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 20,
+        "name": "limit",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": null,
+        "name": "cursor",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "search_mode",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": "plain",
+        "enum": [
+          "plain",
+          "fts5"
+        ],
+        "name": "query_syntax",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "search"
+  },
+  {
+    "fields": [
+      {
+        "name": "id_or_path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "operation": "read"
+  },
+  {
+    "fields": [
+      {
+        "default": "/",
+        "name": "path_prefix",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "list"
+  },
+  {
+    "fields": [
+      {
+        "default": "/",
+        "name": "path_prefix",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": [
+          "path",
+          "id",
+          "title",
+          "status",
+          "type",
+          "tags",
+          "created_at",
+          "updated_at",
+          "updated_by",
+          "body_sha256",
+          "body_bytes",
+          "assets"
+        ],
+        "items": {
+          "enum": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "type": "string"
+        },
+        "minItems": 1,
+        "name": "fields",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "default": 50,
+        "maximum": 100,
+        "minimum": 1,
+        "name": "limit",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": null,
+        "name": "cursor",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "inventory"
+  },
+  {
+    "fields": [
+      {
+        "default": null,
+        "maxLength": 1024,
+        "minLength": 1,
+        "name": "id_or_path",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "maxLength": 1024,
+        "minLength": 1,
+        "name": "path_prefix",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "asset_kind",
+        "nullable": true,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "version",
+        "nullable": true,
+        "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 20,
+        "maximum": 20,
+        "minimum": 1,
+        "name": "limit",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": null,
+        "maxLength": 1024,
+        "minLength": 4,
+        "name": "cursor",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 5,
+        "maximum": 5,
+        "minimum": 1,
+        "name": "version_limit",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": false,
+        "name": "include_files",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": 50,
+        "maximum": 100,
+        "minimum": 1,
+        "name": "file_limit",
+        "required": false,
+        "type": "integer"
+      }
+    ],
+    "operation": "asset_metadata"
+  },
+  {
+    "fields": [
+      {
+        "name": "id_or_path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": 1,
+        "name": "depth",
+        "required": false,
+        "type": "integer"
+      }
+    ],
+    "operation": "graph"
+  },
+  {
+    "fields": [
+      {
+        "default": null,
+        "name": "path",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "maxLength": 100,
+        "minLength": 1,
+        "name": "rule",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "enum": [
+          "info",
+          "warning",
+          "error"
+        ],
+        "name": "severity",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 50,
+        "maximum": 200,
+        "minimum": 1,
+        "name": "limit",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": null,
+        "name": "cursor",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "audit"
+  },
+  {
+    "fields": [
+      {
+        "name": "question",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "summary",
+        "name": "answer_mode",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "answer"
+  },
+  {
+    "fields": [
+      {
+        "name": "content",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "suggested_path",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "intent",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "propose_freeform"
+  },
+  {
+    "fields": [
+      {
+        "name": "instruction",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "target_hint",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "propose_update"
+  },
+  {
+    "fields": [
+      {
+        "name": "proposal_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "detailed",
+        "enum": [
+          "summary",
+          "detailed"
+        ],
+        "name": "view",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "proposal_get"
+  },
+  {
+    "fields": [
+      {
+        "default": null,
+        "name": "status",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 50,
+        "maximum": 200,
+        "minimum": 1,
+        "name": "limit",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": null,
+        "name": "cursor",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "proposal_list"
+  },
+  {
+    "fields": [
+      {
+        "name": "proposal_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "asset_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "file_path",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 0,
+        "minimum": 0,
+        "name": "offset",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 65536,
+        "maximum": 262144,
+        "minimum": 1,
+        "name": "limit",
+        "required": false,
+        "type": "integer"
+      }
+    ],
+    "operation": "proposal_asset_get"
+  },
+  {
+    "fields": [
+      {
+        "name": "id_or_path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "asset_kind",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "version",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": "archive",
+        "enum": [
+          "archive",
+          "manifest",
+          "file"
+        ],
+        "name": "view",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "file_path",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 0,
+        "minimum": 0,
+        "name": "offset",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": null,
+        "maximum": 262144,
+        "minimum": 1,
+        "name": "limit",
+        "nullable": true,
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": null,
+        "name": "expected_sha256",
+        "nullable": true,
+        "pattern": "^[0-9a-f]{64}$",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "asset_get"
+  },
+  {
+    "fields": [
+      {
+        "name": "proposal_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "expected_revision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "maxLength": 256,
+        "minLength": 1,
+        "name": "idempotency_key",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "operation": "proposal_rebase"
+  },
+  {
+    "fields": [
+      {
+        "name": "proposal_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "items": {
+          "type": "integer"
+        },
+        "name": "selected_change_indexes",
+        "required": true,
+        "type": "array"
+      },
+      {
+        "name": "expected_revision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "intent",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "rationale",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "proposal_revise"
+  },
+  {
+    "fields": [
+      {
+        "default": null,
+        "name": "idempotency_key",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "operation_id",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "operation_get"
+  },
+  {
+    "fields": [
+      {
+        "name": "proposal_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "decision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "comment",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "maxLength": 256,
+        "minLength": 1,
+        "name": "idempotency_key",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "operation": "proposal_review"
+  },
+  {
+    "fields": [
+      {
+        "name": "proposal_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "expected_revision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "idempotency_key",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "operation": "proposal_apply"
+  },
+  {
+    "fields": [
+      {
+        "name": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "concept_type",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "title",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "body",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "expected_revision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "idempotency_key",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "description",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "name": "tags",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "name": "aliases",
+        "required": false,
+        "type": "array"
+      }
+    ],
+    "operation": "create"
+  },
+  {
+    "fields": [
+      {
+        "name": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "expected_revision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "idempotency_key",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "title",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "description",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "body",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "name": "status",
+        "nullable": true,
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": null,
+        "items": {
+          "type": "string"
+        },
+        "name": "tags",
+        "nullable": true,
+        "required": false,
+        "type": "array"
+      },
+      {
+        "default": null,
+        "items": {
+          "type": "string"
+        },
+        "name": "aliases",
+        "nullable": true,
+        "required": false,
+        "type": "array"
+      }
+    ],
+    "operation": "patch"
+  },
+  {
+    "fields": [
+      {
+        "name": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "new_path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "expected_revision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "idempotency_key",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "operation": "rename"
+  },
+  {
+    "fields": [
+      {
+        "name": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "expected_revision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "idempotency_key",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "operation": "trash"
+  },
+  {
+    "fields": [
+      {
+        "name": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "expected_revision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "idempotency_key",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "operation": "restore"
+  },
+  {
+    "fields": [
+      {
+        "name": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "expected_revision",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "idempotency_key",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": false,
+        "name": "confirm",
+        "required": false,
+        "type": "boolean"
+      }
+    ],
+    "operation": "purge"
+  }
+]
