@@ -1,0 +1,273 @@
+[
+  {
+    "files": [
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "r",
+      "repo_revision": "r",
+      "schema_version": "2",
+      "semantic_embedding_revision": "disabled",
+      "status": "ready"
+    },
+    "quarantine_files": [],
+    "scenario": "missing",
+    "statements": []
+  },
+  {
+    "files": [
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "r",
+      "repo_revision": "r",
+      "schema_version": "2",
+      "semantic_embedding_revision": "disabled",
+      "status": "ready"
+    },
+    "quarantine_files": [],
+    "scenario": "zero",
+    "statements": []
+  },
+  {
+    "error": "invalid sqlite header",
+    "error_type": "DatabaseError",
+    "files": [
+      "index.sqlite"
+    ],
+    "final_state": null,
+    "quarantine_files": [],
+    "scenario": "invalid-write",
+    "statements": []
+  },
+  {
+    "error": "file is not a database",
+    "error_type": "DerivedIndexCorruptionError",
+    "files": [
+      "index.quarantine-1789689600125.sqlite",
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "",
+      "quarantine_path": "index.quarantine-1789689600125.sqlite",
+      "repo_revision": "",
+      "schema_version": "2",
+      "semantic_embedding_revision": "",
+      "status": "quarantined"
+    },
+    "quarantine_files": [
+      "index.quarantine-1789689600125.sqlite"
+    ],
+    "scenario": "invalid-read",
+    "statements": []
+  },
+  {
+    "error": "unsupported derived schema version",
+    "error_type": "DerivedIndexCorruptionError",
+    "files": [
+      "index.quarantine-1789689600125.sqlite",
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "",
+      "quarantine_path": "index.quarantine-1789689600125.sqlite",
+      "repo_revision": "",
+      "schema_version": "2",
+      "semantic_embedding_revision": "",
+      "status": "quarantined"
+    },
+    "quarantine_files": [
+      "index.quarantine-1789689600125.sqlite"
+    ],
+    "scenario": "unsupported-write",
+    "statements": [
+      "UPDATE index_state SET value='99' WHERE key='schema_version'"
+    ]
+  },
+  {
+    "error": "unsupported derived schema version",
+    "error_type": "DerivedIndexCorruptionError",
+    "files": [
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "",
+      "repo_revision": "",
+      "schema_version": "99",
+      "semantic_embedding_revision": "",
+      "status": "ready"
+    },
+    "quarantine_files": [],
+    "scenario": "unsupported-read",
+    "statements": [
+      "UPDATE index_state SET value='99' WHERE key='schema_version'"
+    ]
+  },
+  {
+    "files": [
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "r",
+      "repo_revision": "r",
+      "schema_version": "99",
+      "semantic_embedding_revision": "disabled",
+      "status": "ready"
+    },
+    "quarantine_files": [],
+    "scenario": "cached-version",
+    "statements": [
+      "UPDATE index_state SET value='99' WHERE key='schema_version'"
+    ]
+  },
+  {
+    "files": [
+      "index.sqlite",
+      "old.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "r",
+      "repo_revision": "r",
+      "schema_version": "2",
+      "semantic_embedding_revision": "disabled",
+      "status": "ready"
+    },
+    "quarantine_files": [],
+    "scenario": "replaced-inode",
+    "statements": []
+  },
+  {
+    "error": "no such table: graph_metrics",
+    "error_type": "DerivedIndexCorruptionError",
+    "files": [
+      "index.quarantine-1789689600125.sqlite",
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "",
+      "quarantine_path": "index.quarantine-1789689600125.sqlite",
+      "repo_revision": "",
+      "schema_version": "2",
+      "semantic_embedding_revision": "",
+      "status": "quarantined"
+    },
+    "quarantine_files": [
+      "index.quarantine-1789689600125.sqlite"
+    ],
+    "scenario": "missing-table",
+    "statements": [
+      "DROP TABLE graph_metrics"
+    ]
+  },
+  {
+    "error": "invalid concept at /bad.md",
+    "error_type": "BundleError",
+    "files": [
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "",
+      "repo_revision": "",
+      "schema_version": "2",
+      "semantic_embedding_revision": "",
+      "status": "ready"
+    },
+    "quarantine_files": [],
+    "scenario": "bad-concept",
+    "statements": []
+  },
+  {
+    "error": "derived index is quarantined",
+    "error_type": "DerivedIndexCorruptionError",
+    "files": [
+      "index.quarantine-1789689600125.sqlite",
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "",
+      "quarantine_path": "index.quarantine-1789689600125.sqlite",
+      "repo_revision": "",
+      "schema_version": "2",
+      "semantic_embedding_revision": "",
+      "status": "quarantined"
+    },
+    "quarantine_files": [
+      "index.quarantine-1789689600125.sqlite"
+    ],
+    "scenario": "quarantined-write",
+    "statements": [
+      "UPDATE index_state SET value='quarantined' WHERE key='status'"
+    ]
+  },
+  {
+    "files": [
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "",
+      "repo_revision": "",
+      "schema_version": "2",
+      "semantic_embedding_revision": "",
+      "status": "quarantined"
+    },
+    "quarantine_files": [],
+    "scenario": "quarantined-read",
+    "state": {
+      "index_revision": "",
+      "quarantine_path": null,
+      "repo_revision": "",
+      "schema_version": "2",
+      "status": "quarantined"
+    },
+    "statements": [
+      "UPDATE index_state SET value='quarantined' WHERE key='status'"
+    ]
+  },
+  {
+    "error": "invalid FTS query",
+    "error_type": "DerivedSearchError",
+    "files": [
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "",
+      "repo_revision": "",
+      "schema_version": "2",
+      "semantic_embedding_revision": "",
+      "status": "ready"
+    },
+    "quarantine_files": [],
+    "scenario": "query-error",
+    "statements": []
+  },
+  {
+    "error": "database is locked",
+    "error_type": "DerivedIndexUnavailableError",
+    "files": [
+      "index.sqlite"
+    ],
+    "final_state": {
+      "external_links_classified": "1",
+      "index_revision": "",
+      "repo_revision": "",
+      "schema_version": "2",
+      "semantic_embedding_revision": "",
+      "status": "ready"
+    },
+    "quarantine_files": [],
+    "scenario": "busy",
+    "statements": []
+  }
+]

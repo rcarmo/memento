@@ -283,6 +283,8 @@ def main() -> None:
     save("derived-search.json", derived_search.fixtures())
     derived_graph = importlib.import_module("derived_graph")
     save("derived-graph.json", derived_graph.fixtures())
+    derived_lifecycle = importlib.import_module("derived_lifecycle")
+    save("derived-lifecycle.json", derived_lifecycle.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )

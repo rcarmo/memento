@@ -18,7 +18,7 @@ func TestModelsOffDerivedPublicationAndArchival(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	index := derived.ContentStore{DB: db}
+	index := &derived.Index{Path: indexPath}
 	if err = index.Rebuild(ctx, c.Queue.Paths.CurrentDir, base); err != nil {
 		t.Fatal(err)
 	}

@@ -31,7 +31,8 @@ func (e *CorruptionError) Error() string { return e.Message }
 type ContentStore struct {
 	DB              *sql.DB
 	DeferEmbeddings bool
-	MaxInputChars   int // zero selects the source default of 4096
+	MaxInputChars   int  // zero selects the source default of 4096
+	initialized     bool // lifecycle owner already migrated this file identity
 }
 
 func Connect(ctx context.Context, path string) (*sql.DB, error) {
@@ -58,6 +59,9 @@ type executor interface {
 // Migrate preserves source DDL-before-DML boundaries: creation of schema tables
 // precedes the state transaction. Existing unsupported schema is never reset.
 func (s ContentStore) Migrate(ctx context.Context) error {
+	if s.initialized {
+		return nil
+	}
 	conn, err := s.DB.Conn(ctx)
 	if err != nil {
 		return err

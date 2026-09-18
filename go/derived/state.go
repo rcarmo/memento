@@ -78,9 +78,12 @@ func sleepFreshness(ctx context.Context, delay time.Duration) error {
 	}
 }
 func (s ContentStore) waitForFreshness(ctx context.Context, timeout time.Duration, now func() time.Time, sleep func(context.Context, time.Duration) error) (IndexState, error) {
+	return waitForState(ctx, timeout, now, sleep, s.State)
+}
+func waitForState(ctx context.Context, timeout time.Duration, now func() time.Time, sleep func(context.Context, time.Duration) error, read func(context.Context) (IndexState, error)) (IndexState, error) {
 	deadline := now().Add(timeout)
 	for {
-		state, err := s.State(ctx)
+		state, err := read(ctx)
 		if err != nil {
 			return IndexState{}, err
 		}
