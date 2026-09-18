@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/rcarmo/memento/go/access"
+	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/repository"
 )
 
@@ -18,6 +19,7 @@ import (
 // Trash and rename also check permissions on affected reference/destination paths.
 type WorktreeMutator struct {
 	MaxConceptBytes int
+	Proposals       control.Proposals
 	Now             func() time.Time
 	Random          io.Reader
 }

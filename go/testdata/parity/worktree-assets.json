@@ -1,0 +1,693 @@
+[
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json",
+      "/.assets/12345678/docs/1.0.0.zip"
+    ],
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "files": {
+      "/.assets/12345678/docs/1.0.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL2EubWQiLAogICJjcmVhdGVkX2F0IjogIjIwMjYtMDktMThUMDA6MDA6MDBaIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogW10sCiAgICAiZmlsZV9jb3VudCI6IDAsCiAgICAic2hhMjU2IjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiLAogICAgInRvdGFsX3VuY29tcHJlc3NlZF9ieXRlcyI6IDAKICB9LAogICJzY2hlbWFfdmVyc2lvbiI6IDEsCiAgInNvdXJjZV9wcm9wb3NhbF9pZCI6ICJwcm9wb3NhbCIsCiAgInZlcnNpb24iOiAiMS4wLjAiLAogICJ6aXBfc2hhMjU2IjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiCn0K",
+      "/.assets/12345678/docs/1.0.0.zip": "bm90LWEtemlwAP8=",
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "valid"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json",
+      "/.assets/12345678/docs/1.0.0.zip"
+    ],
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "files": {
+      "/.assets/12345678/docs/1.0.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL2EubWQiLAogICJjcmVhdGVkX2F0IjogIjIwMjYtMDktMThUMDA6MDA6MDBaIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogW10sCiAgICAiZmlsZV9jb3VudCI6IDAsCiAgICAic2hhMjU2IjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiLAogICAgInRvdGFsX3VuY29tcHJlc3NlZF9ieXRlcyI6IDAKICB9LAogICJzY2hlbWFfdmVyc2lvbiI6IDEsCiAgInNvdXJjZV9wcm9wb3NhbF9pZCI6ICJwcm9wb3NhbCIsCiAgInZlcnNpb24iOiAiMS4wLjAiLAogICJ6aXBfc2hhMjU2IjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiCn0K",
+      "/.assets/12345678/docs/1.0.0.zip": "bm90LWEtemlwAP8=",
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "unchecked-bytes"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    ],
+    "error": "proposal asset digest does not match proposal metadata",
+    "error_type": "ConflictError",
+    "files": {
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "digest"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "error": "proposal asset manifest digest does not match stored bytes",
+    "error_type": "ConflictError",
+    "files": {
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "manifest-digest"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": -1,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": -1,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "error": "1 validation error for SkillPackManifest\nfile_count\n  Input should be greater than or equal to 0 [type=greater_than_equal, input_value=-1, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.13/v/greater_than_equal",
+    "error_type": "ValidationError",
+    "files": {
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "bad-manifest"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "missing",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changes": [
+      {
+        "asset_id": "missing",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "error": "('proposal', 'missing')",
+    "error_type": "KeyError",
+    "files": {
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "missing-asset"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "error": "path does not exist: /a.md",
+    "error_type": "PathSafetyError",
+    "files": {},
+    "initial": {},
+    "scenario": "missing-concept"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "error": "asset changes require a proposal",
+    "error_type": "ServiceError",
+    "files": {
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "no-proposal"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json",
+      "/.assets/12345678/docs/1.0.0.zip"
+    ],
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "error": "accepted asset version already exists: /a.md docs 1.0.0",
+    "error_type": "SkillPackValidationError",
+    "files": {
+      "/.assets/12345678/docs/1.0.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL2EubWQiLAogICJjcmVhdGVkX2F0IjogIjIwMjYtMDktMThUMDA6MDA6MDBaIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogW10sCiAgICAiZmlsZV9jb3VudCI6IDAsCiAgICAic2hhMjU2IjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiLAogICAgInRvdGFsX3VuY29tcHJlc3NlZF9ieXRlcyI6IDAKICB9LAogICJzY2hlbWFfdmVyc2lvbiI6IDEsCiAgInNvdXJjZV9wcm9wb3NhbF9pZCI6ICJwcm9wb3NhbCIsCiAgInZlcnNpb24iOiAiMS4wLjAiLAogICJ6aXBfc2hhMjU2IjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiCn0K",
+      "/.assets/12345678/docs/1.0.0.zip": "bm90LWEtemlwAP8=",
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "duplicate"
+  },
+  {
+    "adapted": [
+      {
+        "aliases": [],
+        "body": "new",
+        "description": null,
+        "kind": "patch",
+        "path": "/a.md",
+        "status": null,
+        "tags": [
+          "tag"
+        ],
+        "title": "Changed"
+      },
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json",
+      "/.assets/12345678/docs/1.0.0.zip",
+      "/a.md"
+    ],
+    "changes": [
+      {
+        "body": "new",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/a.md",
+        "tags": [
+          "tag"
+        ],
+        "title": "Changed"
+      },
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "files": {
+      "/.assets/12345678/docs/1.0.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL2EubWQiLAogICJjcmVhdGVkX2F0IjogIjIwMjYtMDktMThUMDA6MDA6MDBaIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogW10sCiAgICAiZmlsZV9jb3VudCI6IDAsCiAgICAic2hhMjU2IjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiLAogICAgInRvdGFsX3VuY29tcHJlc3NlZF9ieXRlcyI6IDAKICB9LAogICJzY2hlbWFfdmVyc2lvbiI6IDEsCiAgInNvdXJjZV9wcm9wb3NhbF9pZCI6ICJwcm9wb3NhbCIsCiAgInZlcnNpb24iOiAiMS4wLjAiLAogICJ6aXBfc2hhMjU2IjogImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiCn0K",
+      "/.assets/12345678/docs/1.0.0.zip": "bm90LWEtemlwAP8=",
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IENoYW5nZWQKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczoKICAtIHRhZwpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDktMThUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpuZXcK"
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "adapt"
+  },
+  {
+    "adapted": [
+      {
+        "aliases": [],
+        "body": "new",
+        "concept_type": "concept",
+        "description": null,
+        "kind": "create",
+        "path": "/other.md",
+        "tags": [
+          "tag"
+        ],
+        "title": "Changed"
+      },
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changed": [],
+    "changes": [
+      {
+        "body": "new",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/other.md",
+        "tags": [
+          "tag"
+        ],
+        "title": "Changed"
+      },
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "files": {
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "adapt-unrelated"
+  },
+  {
+    "adapted": [
+      {
+        "aliases": [],
+        "body": "new",
+        "concept_type": "concept",
+        "description": null,
+        "kind": "create",
+        "path": "/a.md",
+        "tags": [
+          "tag"
+        ],
+        "title": "Changed"
+      },
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changed": [],
+    "changes": [
+      {
+        "body": "new",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/a.md",
+        "tags": [
+          "tag"
+        ],
+        "title": "Changed"
+      },
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "files": {},
+    "initial": {},
+    "scenario": "adapt-missing"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "latest",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "latest",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "error": "version must be a stable semantic version",
+    "error_type": "SkillPackValidationError",
+    "files": {
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "invalid-version"
+  },
+  {
+    "adapted": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "../bad",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "blob_base64": "bm90LWEtemlwAP8=",
+    "changes": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "../bad",
+        "kind": "attach_asset_pack",
+        "manifest": {
+          "entries": [],
+          "file_count": 0,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "total_uncompressed_bytes": 0
+        },
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "error": "asset_kind must be lowercase alphanumeric words joined by hyphens",
+    "error_type": "SkillPackValidationError",
+    "files": {
+      "/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IFRpdGxlCnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogb3JpZ2luYWwKLS0tCm9yaWdpbmFsCg=="
+    },
+    "initial": {
+      "/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n"
+    },
+    "scenario": "invalid-kind"
+  }
+]

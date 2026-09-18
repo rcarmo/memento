@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
-	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -142,34 +141,19 @@ func TestWorktreeMutationsThroughGitTransaction(t *testing.T) {
 	}
 	manager := repository.TransactionManager{Paths: paths, Operations: control.Operations{DB: db}}
 	request := repository.TransactionRequest{Operation: control.OperationRequest{OpID: "mutation", Principal: "actor", IdempotencyKey: "key", ToolName: "synthetic", RequestJSON: "{}"}, ExpectedRevision: boot.Revision, CommitMessage: "synthetic mutations", AuthorName: "Synthetic Actor", AuthorEmail: "actor@example.invalid"}
-	mutator := WorktreeMutator{MaxConceptBytes: 65536}
+	mutator := WorktreeMutator{MaxConceptBytes: 65536, Proposals: control.Proposals{DB: db}}
 	create := normalizedMutation(t, map[string]any{"kind": "create", "path": "/public/new.md", "concept_type": "concept", "title": "New", "body": "new"})
 	patch := normalizedMutation(t, map[string]any{"kind": "patch", "path": "/public/new.md", "body": "changed"})
 	rename := normalizedMutation(t, map[string]any{"kind": "rename", "path": "/public/a.md", "new_path": "/public/moved.md"})
 	trash := normalizedMutation(t, map[string]any{"kind": "trash", "path": "/public/ref.md"})
-	mutate := func(_ context.Context, worktree string) ([]string, error) {
-		if err := mutator.Create(worktree, create, "actor"); err != nil {
-			return nil, err
-		}
-		if err := mutator.Patch(worktree, patch, "actor"); err != nil {
-			return nil, err
-		}
-		changed, err := mutator.Rename(worktree, rename, "actor", archivePolicy())
-		if err != nil {
-			return nil, err
-		}
-		moved, err := mutator.Trash(worktree, trash, archivePolicy())
-		// The source _apply_changes returns a sorted set, not repeated paths.
-		seen := map[string]bool{}
-		for _, path := range append(append(changed, moved...), "/public/new.md") {
-			seen[path] = true
-		}
-		unique := []string{}
-		for path := range seen {
-			unique = append(unique, path)
-		}
-		sort.Strings(unique)
-		return unique, err
+	manifest := map[string]any{"entries": []any{}, "sha256": strings.Repeat("a", 64), "total_uncompressed_bytes": json.Number("0"), "file_count": json.Number("0")}
+	if _, err = mutator.Proposals.Create(ctx, control.ProposalRequest{ProposalID: "proposal", AuthorPrincipal: "actor", BaseRevision: boot.Revision, Intent: "synthetic", Patch: map[string]any{}, Assets: []control.ProposalAssetInput{{AssetID: "asset", ConceptPath: "/public/new.md", AssetKind: "docs", Version: "1.0.0", MediaType: "application/zip", SHA256: strings.Repeat("a", 64), BlobBytes: []byte{0, 1, 255}, ManifestJSON: "{}"}}}); err != nil {
+		t.Fatal(err)
+	}
+	asset := normalizedMutation(t, map[string]any{"kind": "attach_asset_pack", "path": "/public/new.md", "asset_kind": "docs", "version": "1.0.0", "asset_id": "asset", "zip_sha256": strings.Repeat("a", 64), "manifest": manifest})
+	proposalID := "proposal"
+	mutate := func(ctx context.Context, worktree string) ([]string, error) {
+		return mutator.ApplyChanges(ctx, worktree, []ProposalChange{create, patch, asset, rename, trash}, "actor", archivePolicy(), &proposalID)
 	}
 	result, err := manager.Apply(ctx, request, mutate)
 	if err != nil || result.Replayed {
@@ -181,6 +165,10 @@ func TestWorktreeMutationsThroughGitTransaction(t *testing.T) {
 	entry, err := repository.ReadBundleEntry(paths.CurrentDir, "/public/new.md")
 	if err != nil || entry.Document.Body != "changed" {
 		t.Fatal(entry, err)
+	}
+	zip, err := os.ReadFile(filepath.Join(paths.CurrentDir, ".assets", entry.Document.Frontmatter.ID, "docs", "1.0.0.zip"))
+	if err != nil || !bytes.Equal(zip, []byte{0, 1, 255}) {
+		t.Fatal(zip, err)
 	}
 	ref, err := repository.ReadBundleEntry(paths.CurrentDir, "/trash/public/ref.md")
 	if err != nil || !strings.Contains(ref.Document.Body, "/public/moved.md") {

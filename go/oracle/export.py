@@ -260,6 +260,8 @@ def main() -> None:
     save("proposal-review.json", proposal_review.fixtures())
     worktree_mutations = importlib.import_module("worktree_mutations")
     save("worktree-mutations.json", worktree_mutations.fixtures())
+    worktree_assets = importlib.import_module("worktree_assets")
+    save("worktree-assets.json", worktree_assets.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )
