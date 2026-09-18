@@ -6,7 +6,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"io/fs"
 	"sort"
 	"strings"
 	"time"
@@ -146,13 +145,8 @@ func (q ProposalQueue) conflicts(ctx context.Context, record control.ProposalRec
 						break
 					}
 				}
-			} else {
-				var bundle *repository.BundleError
-				var frontmatter *repository.FrontmatterError
-				var safety *repository.PathSafetyError
-				if !errors.Is(readErr, fs.ErrNotExist) && !errors.As(readErr, &bundle) && !errors.As(readErr, &frontmatter) && !errors.As(readErr, &safety) {
-					return nil, readErr
-				}
+			} else if !ignorableBundleError(readErr) {
+				return nil, readErr
 			}
 		}
 		conflicts := map[string]bool{}
@@ -222,14 +216,7 @@ func (q ProposalQueue) refresh(ctx context.Context, record control.ProposalRecor
 	if status == record.Status {
 		return record, nil
 	}
-	details := []any{}
-	for _, c := range conflicts {
-		item := map[string]any{"index": c.Index, "status": c.Status, "conflicting_paths": c.ConflictingPaths}
-		if c.Reason != "" {
-			item["reason"] = c.Reason
-		}
-		details = append(details, item)
-	}
+	details := conflictDetails(conflicts)
 	err = control.WithTransaction(ctx, q.Proposals.DB, func(tx *sql.Tx) error {
 		if err := q.event(ctx, tx, record, "system", action, status, revision, map[string]any{"conflicts": details}); err != nil {
 			return err
