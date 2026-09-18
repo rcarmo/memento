@@ -92,13 +92,13 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 		_ = server.Tools.Register(tool)
 		metadata = append(metadata, umcp.DiscoveryItem{Identity: []string{name}, Value: map[string]any{"name": name, "description": definition.Description, "inputSchema": definition.Schema, "annotations": definition.Annotations}})
 	}
-	// Memento overrides discover_tools (not sorted alphabetically like generic
-	// uMCP registration), while retaining the generic pagination machinery.
-	server.SetHandler("tools/list", func(ctx context.Context, params map[string]any) (any, *umcp.RPCError, error) {
-		page, rpcErr := umcp.ListPage(ctx, "tools", "tools", metadata, params, 0)
-		return page, rpcErr, nil
-	})
-	return nil
+	// Keep hidden operations callable while publishing the exact Python source
+	// order. Later dynamic registrations append through the generic registry.
+	names := make([]string, len(metadata))
+	for index, item := range metadata {
+		names[index] = item.Identity[0]
+	}
+	return server.Tools.SetDiscoveryOrder(names)
 }
 func notifyAppliedEnvelope(ctx context.Context, server *umcp.Server, notify ProposalNotifier, value any) error {
 	object, ok := value.(umcp.OrderedObject)
