@@ -1,0 +1,92 @@
+[
+  {
+    "blocked": "writer lease already held by worker-one",
+    "bytes": [
+      119,
+      111,
+      114,
+      107,
+      101,
+      114,
+      45,
+      111,
+      110,
+      101,
+      10
+    ],
+    "owner": "worker-one"
+  },
+  {
+    "blocked": "writer lease already held by unknown writer",
+    "bytes": [
+      10
+    ],
+    "owner": ""
+  },
+  {
+    "blocked": "writer lease already held by unknown writer",
+    "bytes": [
+      32,
+      9,
+      10,
+      10
+    ],
+    "owner": " \t\n"
+  },
+  {
+    "blocked": "writer lease already held by café/日本",
+    "bytes": [
+      32,
+      99,
+      97,
+      102,
+      195,
+      169,
+      47,
+      230,
+      151,
+      165,
+      230,
+      156,
+      172,
+      32,
+      10
+    ],
+    "owner": " café/日本 "
+  },
+  {
+    "blocked": "writer lease already held by first\nsecond",
+    "bytes": [
+      102,
+      105,
+      114,
+      115,
+      116,
+      10,
+      115,
+      101,
+      99,
+      111,
+      110,
+      100,
+      10
+    ],
+    "owner": "first\nsecond"
+  },
+  {
+    "blocked": "writer lease already held by writer",
+    "bytes": [
+      28,
+      119,
+      114,
+      105,
+      116,
+      101,
+      114,
+      194,
+      133,
+      10
+    ],
+    "owner": "\u001cwriter"
+  }
+]
