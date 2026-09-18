@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -23,6 +24,15 @@ type Workers struct {
 type workerResult struct {
 	value any
 	err   error
+}
+
+// Execute admits one complete plan as an ordinary shielded job. Nested
+// operations must use raw service callbacks rather than re-entering Call.
+func (w *Workers) Execute(ctx context.Context, work func(context.Context) (any, error)) (any, error) {
+	if work == nil {
+		return nil, errors.New("execute work is required")
+	}
+	return w.Call(ctx, "memory_execute", work)
 }
 
 func (w *Workers) Call(ctx context.Context, method string, work func(context.Context) (any, error)) (any, error) {
