@@ -36,6 +36,7 @@ type OverviewOptions struct {
 	DirectNodeLimit int
 	EdgeLimit       int
 	IncludeTrash    bool
+	Semantic        SemanticConfig
 }
 
 func (s *SnapshotService) Overview(ctx context.Context, policy *access.EffectivePolicy, options OverviewOptions) (Overview, error) {
@@ -63,8 +64,15 @@ func (s *SnapshotService) Overview(ctx context.Context, policy *access.Effective
 	nodes = ScopedNodes(nodes, edges)
 	diagnostics := DiagnoseFoundation(nodes, edges, revisions)
 	nodes = ApplyDiagnosticIDs(nodes, diagnostics)
-	overlays := OverlayEdges(nodes, revisions.Repository, options.EdgeLimit-len(edges))
-	allEdges := append(append([]Edge{}, edges...), overlays...)
+	semantic := []Edge{}
+	if options.Semantic.NodeLimit > 0 {
+		semantic, err = s.SemanticEdges(ctx, nodes, revisions, options.Semantic, options.EdgeLimit-len(edges))
+		if err != nil {
+			return empty, err
+		}
+	}
+	overlays := OverlayEdges(nodes, revisions.Repository, options.EdgeLimit-len(edges)-len(semantic))
+	allEdges := append(append(append([]Edge{}, edges...), semantic...), overlays...)
 	metrics := Metrics{MemoryCount: len(nodes), ExplicitEdges: len(edges)}
 	for _, node := range nodes {
 		metrics.MarkdownBytes += node.MarkdownBytes

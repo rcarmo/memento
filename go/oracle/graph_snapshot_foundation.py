@@ -124,17 +124,27 @@ def fixtures() -> dict[str, Any]:
                 )
             db.commit()
             fresh = service._revisions(db)
+            semantic_config = GraphExplorerConfig(semantic_min_similarity=0.5)
             semantic_edges = [
                 item.model_dump(mode="json")
                 for item in __import__(
                     "memento.graph_debug.snapshot", fromlist=["_semantic_edges"]
-                )._semantic_edges(
-                    db, raw_nodes, fresh, GraphExplorerConfig(semantic_min_similarity=0.5), 10
-                )
+                )._semantic_edges(db, raw_nodes, fresh, semantic_config, 10)
             ]
+        fresh_overview = (
+            GraphSnapshotService(
+                semantic_config,
+                repository_root=root,
+                derived_db_path=derived,
+                control_db_path=control,
+            )
+            .overview(policy=policy)
+            .model_dump(mode="json")
+        )
         return {
             "overview": overview,
             "semantic_edges": semantic_edges,
+            "fresh_overview": fresh_overview,
             "revisions": revisions,
             "edges": edges,
             "nodes": nodes,

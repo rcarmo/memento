@@ -31,6 +31,224 @@
       "target": null
     }
   ],
+  "fresh_overview": {
+    "cluster_edges": [],
+    "clusters": [],
+    "diagnostics": [
+      {
+        "concept_ids": [
+          "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+        ],
+        "derived": false,
+        "id": "diagnostic:broken_links:333153619edfbcec",
+        "measured": {
+          "broken_link_count": 1
+        },
+        "message": "1 explicit link target(s) do not resolve.",
+        "rule": "broken_links",
+        "severity": "error",
+        "threshold": {
+          "maximum": 0
+        }
+      },
+      {
+        "concept_ids": [
+          "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+          "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+        ],
+        "derived": false,
+        "id": "diagnostic:index_stale:3974f881f42dea5b",
+        "measured": {
+          "index_revision": "old",
+          "repository_revision": "main"
+        },
+        "message": "Derived index revision does not match the repository revision.",
+        "rule": "index_stale",
+        "severity": "error",
+        "threshold": {}
+      },
+      {
+        "concept_ids": [
+          "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d"
+        ],
+        "derived": false,
+        "id": "diagnostic:pending_proposals:cb66d7dac191c803",
+        "measured": {
+          "pending_proposal_count": 1
+        },
+        "message": "Memory has pending proposal or review state.",
+        "rule": "pending_proposals",
+        "severity": "info",
+        "threshold": {
+          "maximum": 0
+        }
+      }
+    ],
+    "edges": [
+      {
+        "anchor": null,
+        "canonical": true,
+        "embedding_revision": null,
+        "first_seen_revision": "r1",
+        "id": "explicit:1",
+        "kind": "explicit",
+        "last_checked_revision": "r2",
+        "model_id": null,
+        "raw_target": "/public/b.md",
+        "resolution": "resolved",
+        "similarity": null,
+        "source": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+        "target": "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+      },
+      {
+        "anchor": null,
+        "canonical": true,
+        "embedding_revision": null,
+        "first_seen_revision": "r1",
+        "id": "explicit:3",
+        "kind": "explicit",
+        "last_checked_revision": "r2",
+        "model_id": null,
+        "raw_target": "/public/missing.md",
+        "resolution": "broken",
+        "similarity": null,
+        "source": "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+        "target": null
+      },
+      {
+        "anchor": null,
+        "canonical": false,
+        "embedding_revision": "main",
+        "first_seen_revision": "main",
+        "id": "semantic:5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d:6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+        "kind": "semantic_similarity",
+        "last_checked_revision": "main",
+        "model_id": "model",
+        "raw_target": "cosine:0.9939",
+        "resolution": "derived",
+        "similarity": 0.993884,
+        "source": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+        "target": "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+      },
+      {
+        "anchor": null,
+        "canonical": false,
+        "embedding_revision": null,
+        "first_seen_revision": "main",
+        "id": "shared_type:5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d:6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+        "kind": "shared_type",
+        "last_checked_revision": "main",
+        "model_id": null,
+        "raw_target": "concept",
+        "resolution": "derived",
+        "similarity": null,
+        "source": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+        "target": "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+      }
+    ],
+    "layout_seed": "main",
+    "layout_version": "v1",
+    "memberships": [],
+    "metrics": {
+      "asset_bytes": 0,
+      "broken_edges": 1,
+      "explicit_edges": 2,
+      "markdown_bytes": 397,
+      "memory_count": 2,
+      "orphan_count": 0
+    },
+    "mode": "direct",
+    "nodes": [
+      {
+        "anomaly_ids": [
+          "diagnostic:index_stale:3974f881f42dea5b",
+          "diagnostic:pending_proposals:cb66d7dac191c803"
+        ],
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": 0.4780775143073507,
+          "y": -0.37380943904192776,
+          "z": 0.8357155378907919
+        },
+        "combined_bytes": 200,
+        "embedding": {
+          "dimensions": 2,
+          "embedding_revision": "main",
+          "error": null,
+          "model_id": "model",
+          "model_revision": "v1",
+          "status": "ready",
+          "updated_at": "now"
+        },
+        "explicit_in_degree": 0,
+        "explicit_out_degree": 1,
+        "id": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+        "markdown_bytes": 200,
+        "namespace": "/a.md/",
+        "orphan": false,
+        "path": "/a.md",
+        "pending_proposal_count": 1,
+        "proposal_count": 2,
+        "provenance_keys": [],
+        "status": "active",
+        "tags": [
+          "one"
+        ],
+        "title": "Alpha",
+        "type": "concept",
+        "updated_at": "2026-01-02T00:00:00Z",
+        "updated_by": "alice"
+      },
+      {
+        "anomaly_ids": [
+          "diagnostic:broken_links:333153619edfbcec",
+          "diagnostic:index_stale:3974f881f42dea5b"
+        ],
+        "asset_bytes": 0,
+        "broken_link_count": 1,
+        "coarse_position": {
+          "x": -0.897471028917961,
+          "y": 0.11220380322405682,
+          "z": 0.25961876614019275
+        },
+        "combined_bytes": 197,
+        "embedding": {
+          "dimensions": 2,
+          "embedding_revision": "main",
+          "error": null,
+          "model_id": "model",
+          "model_revision": "v1",
+          "status": "ready",
+          "updated_at": "now"
+        },
+        "explicit_in_degree": 1,
+        "explicit_out_degree": 0,
+        "id": "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+        "markdown_bytes": 197,
+        "namespace": "/b.md/",
+        "orphan": false,
+        "path": "/b.md",
+        "pending_proposal_count": 0,
+        "proposal_count": 1,
+        "provenance_keys": [],
+        "status": "active",
+        "tags": [],
+        "title": "Beta",
+        "type": "concept",
+        "updated_at": "2026-01-03T00:00:00Z",
+        "updated_by": "bob"
+      }
+    ],
+    "revisions": {
+      "embedding": "main",
+      "index": "old",
+      "repository": "main",
+      "stale": true
+    },
+    "schema_version": 1,
+    "truncated": false
+  },
   "nodes": [
     {
       "anomaly_ids": [],
