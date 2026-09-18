@@ -1,0 +1,4997 @@
+[
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "same",
+    "status": "draft"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "clean",
+    "status": "draft"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/a.md",
+      "/c.md",
+      "/trash/d.md"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/c.md"
+        ],
+        "index": 1,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "conflict",
+    "status": "draft"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "asset",
+    "status": "draft"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/b.md",
+          "/c.md"
+        ],
+        "index": 1,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/d.md",
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "missing-base",
+    "status": "draft"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "expired",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": []}",
+        "event_id": 1,
+        "from_status": "draft",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "expired"
+      }
+    ],
+    "scenario": "expired",
+    "status": "draft"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "equal-expiry",
+    "status": "draft"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "same",
+    "status": "submitted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "submitted",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "scenario": "clean",
+    "status": "submitted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/a.md",
+      "/c.md",
+      "/trash/d.md"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/c.md"
+        ],
+        "index": 1,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/a.md\"], \"index\": 0, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/c.md\"], \"index\": 1, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/trash/d.md\"], \"index\": 2, \"status\": \"conflict\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "submitted",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "conflict",
+    "status": "submitted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "status": "conflict"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 3, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 4, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "submitted",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "asset",
+    "status": "submitted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/b.md",
+          "/c.md"
+        ],
+        "index": 1,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/d.md",
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/a.md\"], \"index\": 0, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/b.md\", \"/c.md\"], \"index\": 1, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/d.md\", \"/trash/d.md\"], \"index\": 2, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 3, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 4, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "submitted",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "missing-base",
+    "status": "submitted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "expired",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": []}",
+        "event_id": 1,
+        "from_status": "submitted",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "expired"
+      }
+    ],
+    "scenario": "expired",
+    "status": "submitted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "submitted",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "scenario": "equal-expiry",
+    "status": "submitted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "same",
+    "status": "approved"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "scenario": "clean",
+    "status": "approved"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/a.md",
+      "/c.md",
+      "/trash/d.md"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/c.md"
+        ],
+        "index": 1,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/a.md\"], \"index\": 0, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/c.md\"], \"index\": 1, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/trash/d.md\"], \"index\": 2, \"status\": \"conflict\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "conflict",
+    "status": "approved"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "status": "conflict"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 3, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 4, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "asset",
+    "status": "approved"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/b.md",
+          "/c.md"
+        ],
+        "index": 1,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/d.md",
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/a.md\"], \"index\": 0, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/b.md\", \"/c.md\"], \"index\": 1, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/d.md\", \"/trash/d.md\"], \"index\": 2, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 3, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 4, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "missing-base",
+    "status": "approved"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "expired",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": []}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "expired"
+      }
+    ],
+    "scenario": "expired",
+    "status": "approved"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "scenario": "equal-expiry",
+    "status": "approved"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "same",
+    "status": "rejected"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "clean",
+    "status": "rejected"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/a.md",
+      "/c.md",
+      "/trash/d.md"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/c.md"
+        ],
+        "index": 1,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "conflict",
+    "status": "rejected"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "asset",
+    "status": "rejected"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/b.md",
+          "/c.md"
+        ],
+        "index": 1,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/d.md",
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "missing-base",
+    "status": "rejected"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "expired",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": []}",
+        "event_id": 1,
+        "from_status": "rejected",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "expired"
+      }
+    ],
+    "scenario": "expired",
+    "status": "rejected"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "equal-expiry",
+    "status": "rejected"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "same",
+    "status": "applied"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "clean",
+    "status": "applied"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/a.md",
+      "/c.md",
+      "/trash/d.md"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/c.md"
+        ],
+        "index": 1,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "conflict",
+    "status": "applied"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "asset",
+    "status": "applied"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/b.md",
+          "/c.md"
+        ],
+        "index": 1,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/d.md",
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "missing-base",
+    "status": "applied"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "expired",
+    "status": "applied"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "equal-expiry",
+    "status": "applied"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "stale",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "stale",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "same",
+    "status": "stale"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "stale",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "stale",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "scenario": "clean",
+    "status": "stale"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "stale",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/a.md",
+      "/c.md",
+      "/trash/d.md"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/c.md"
+        ],
+        "index": 1,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/a.md\"], \"index\": 0, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/c.md\"], \"index\": 1, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/trash/d.md\"], \"index\": 2, \"status\": \"conflict\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "stale",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "conflict",
+    "status": "stale"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "stale",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "status": "conflict"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 3, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 4, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "stale",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "asset",
+    "status": "stale"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "stale",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/b.md",
+          "/c.md"
+        ],
+        "index": 1,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/d.md",
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/a.md\"], \"index\": 0, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/b.md\", \"/c.md\"], \"index\": 1, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/d.md\", \"/trash/d.md\"], \"index\": 2, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 3, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 4, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "stale",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "missing-base",
+    "status": "stale"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "stale",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "expired",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": []}",
+        "event_id": 1,
+        "from_status": "stale",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "expired"
+      }
+    ],
+    "scenario": "expired",
+    "status": "stale"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "stale",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "stale",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "scenario": "equal-expiry",
+    "status": "stale"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "same",
+    "status": "needs_rebase"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "clean",
+    "status": "needs_rebase"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/a.md",
+      "/c.md",
+      "/trash/d.md"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/c.md"
+        ],
+        "index": 1,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/a.md\"], \"index\": 0, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/c.md\"], \"index\": 1, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/trash/d.md\"], \"index\": 2, \"status\": \"conflict\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "needs_rebase",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "conflict",
+    "status": "needs_rebase"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "status": "conflict"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 3, \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 4, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "needs_rebase",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "asset",
+    "status": "needs_rebase"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/b.md",
+          "/c.md"
+        ],
+        "index": 1,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/d.md",
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/a.md\"], \"index\": 0, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/b.md\", \"/c.md\"], \"index\": 1, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/d.md\", \"/trash/d.md\"], \"index\": 2, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 3, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}, {\"conflicting_paths\": [\"/asset.md\"], \"index\": 4, \"reason\": \"base_revision_unavailable; inspect current content and file a fresh proposal\", \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "needs_rebase",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "scenario": "missing-base",
+    "status": "needs_rebase"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "expired",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": []}",
+        "event_id": 1,
+        "from_status": "needs_rebase",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "expired"
+      }
+    ],
+    "scenario": "expired",
+    "status": "needs_rebase"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "equal-expiry",
+    "status": "needs_rebase"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "same",
+    "status": "conflicted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "conflicted",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "scenario": "clean",
+    "status": "conflicted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/a.md",
+      "/c.md",
+      "/trash/d.md"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/c.md"
+        ],
+        "index": 1,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "conflict",
+    "status": "conflicted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "asset",
+    "status": "conflicted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/b.md",
+          "/c.md"
+        ],
+        "index": 1,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/d.md",
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "missing-base",
+    "status": "conflicted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "expired",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": []}",
+        "event_id": 1,
+        "from_status": "conflicted",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "expired"
+      }
+    ],
+    "scenario": "expired",
+    "status": "conflicted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 2, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 3, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 4, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "conflicted",
+        "proposal_id": "proposal",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "scenario": "equal-expiry",
+    "status": "conflicted"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "same",
+    "status": "expired"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "clean",
+    "status": "expired"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/a.md",
+      "/c.md",
+      "/trash/d.md"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/c.md"
+        ],
+        "index": 1,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "conflict",
+    "status": "expired"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/.assets/12345678/docs/1.0.0.json"
+    ],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "asset",
+    "status": "expired"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [
+          "/a.md"
+        ],
+        "index": 0,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/b.md",
+          "/c.md"
+        ],
+        "index": 1,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/d.md",
+          "/trash/d.md"
+        ],
+        "index": 2,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 3,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      },
+      {
+        "conflicting_paths": [
+          "/asset.md"
+        ],
+        "index": 4,
+        "reason": "base_revision_unavailable; inspect current content and file a fresh proposal",
+        "status": "conflict"
+      }
+    ],
+    "events": [],
+    "scenario": "missing-base",
+    "status": "expired"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-17T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "expired",
+    "status": "expired"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "proposer",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2026-09-18T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "be0c7ffe74e18919e36170b98184e7c0aea14bb05f3d558e404172cd4f4b9714",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\"}, {\"kind\": \"rename\", \"new_path\": \"/c.md\", \"path\": \"/b.md\"}, {\"kind\": \"trash\", \"path\": \"/d.md\"}, {\"kind\": \"attach_asset_pack\", \"path\": \"/asset.md\"}, {\"kind\": \"patch\", \"path\": \"/asset.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "retain",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "conflicts": [
+      {
+        "conflicting_paths": [],
+        "index": 0,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 1,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 2,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 3,
+        "status": "clean"
+      },
+      {
+        "conflicting_paths": [],
+        "index": 4,
+        "status": "clean"
+      }
+    ],
+    "events": [],
+    "scenario": "equal-expiry",
+    "status": "expired"
+  }
+]

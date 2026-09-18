@@ -245,6 +245,8 @@ def main() -> None:
     save("asset-retrieval.json", asset_retrieval.fixtures())
     accepted_assets = importlib.import_module("accepted_assets")
     save("accepted-assets.json", accepted_assets.fixtures())
+    proposal_refresh = importlib.import_module("proposal_refresh")
+    save("proposal-refresh.json", proposal_refresh.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )
