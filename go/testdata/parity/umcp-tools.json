@@ -1,0 +1,826 @@
+{
+  "annotations": [
+    {
+      "expected": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "name": "plain"
+    },
+    {
+      "expected": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "name": "get_notes"
+    },
+    {
+      "expected": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "name": "memory_read"
+    },
+    {
+      "expected": {
+        "destructiveHint": true,
+        "readOnlyHint": false
+      },
+      "name": "restart_service"
+    },
+    {
+      "expected": {
+        "destructiveHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": true
+      },
+      "name": "web_query"
+    },
+    {
+      "expected": {
+        "destructiveHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "name": "azure_delete"
+    },
+    {
+      "expected": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "name": "fetch_page"
+    },
+    {
+      "expected": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "name": "delete_read"
+    },
+    {
+      "expected": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "name": "office_read"
+    }
+  ],
+  "cases": [
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing 'name' parameter"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32601,
+          "message": "Tool not found: missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"missing\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "pong",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"ping\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "hello ☃",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"echo\", \"arguments\": {\"text\": \"hello \\u2603\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "5",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 5
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"add\", \"arguments\": {\"a\": \"4\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "7",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 7
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"add\", \"arguments\": {\"a\": 5, \"b\": 2}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Tool execution error for add: TypeError: can only concatenate str (not \"int\") to str"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"add\", \"arguments\": {\"a\": \"bad\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'text' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"echo\", \"arguments\": {}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unrecognized parameter(s): a, z"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"ping\", \"arguments\": {\"z\": 1, \"a\": 2}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "true",
+              "type": "text"
+            }
+          ],
+          "structuredContent": true
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"boolean\", \"arguments\": {\"flag\": \"YES\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "false",
+              "type": "text"
+            }
+          ],
+          "structuredContent": false
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"boolean\", \"arguments\": {\"flag\": \" true \"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "42",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"union\", \"arguments\": {\"value\": \"42\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "42",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"numeric\", \"arguments\": {\"value\": \"42\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "1.5",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"numeric\", \"arguments\": {\"value\": \"1.5\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "not numeric",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"numeric\", \"arguments\": {\"value\": \"not numeric\"}}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"z\": 1, \"a\": 2}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "a": 2,
+            "z": 1
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"structured\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Tool output validation failed for invalid: $.z must be an integer"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"invalid\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "bad argument"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"argument\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Tool execution error for failure: RuntimeError: private details"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"failure\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32800,
+          "message": "Request cancelled"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"cancelled\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing 'name' parameter"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32601,
+          "message": "Tool not found: missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"missing\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "pong",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"ping\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "hello ☃",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"echo\", \"arguments\": {\"text\": \"hello \\u2603\"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "5",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 5
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"add\", \"arguments\": {\"a\": \"4\"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "7",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 7
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"add\", \"arguments\": {\"a\": 5, \"b\": 2}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Tool execution failed"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"add\", \"arguments\": {\"a\": \"bad\"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'text' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"echo\", \"arguments\": {}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unrecognized parameter(s): a, z"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"ping\", \"arguments\": {\"z\": 1, \"a\": 2}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "true",
+              "type": "text"
+            }
+          ],
+          "structuredContent": true
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"boolean\", \"arguments\": {\"flag\": \"YES\"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "false",
+              "type": "text"
+            }
+          ],
+          "structuredContent": false
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"boolean\", \"arguments\": {\"flag\": \" true \"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "42",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"union\", \"arguments\": {\"value\": \"42\"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "42",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"numeric\", \"arguments\": {\"value\": \"42\"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "1.5",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"numeric\", \"arguments\": {\"value\": \"1.5\"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "not numeric",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"numeric\", \"arguments\": {\"value\": \"not numeric\"}}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"z\": 1, \"a\": 2}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "a": 2,
+            "z": 1
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"structured\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Tool output validation failed"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"invalid\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "bad argument"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"argument\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Tool execution failed"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"failure\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32800,
+          "message": "Request cancelled"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"cancelled\"}}",
+      "transport": "streamable-http"
+    }
+  ],
+  "tools": {
+    "tools": [
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute add tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "add",
+        "outputSchema": {
+          "type": "integer"
+        }
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute argument tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "argument"
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute boolean tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "boolean",
+        "outputSchema": {
+          "type": "boolean"
+        }
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute cancelled tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "cancelled"
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute echo tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "echo",
+        "outputSchema": {
+          "type": "string"
+        }
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute failure tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "failure"
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute invalid tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "invalid",
+        "outputSchema": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        }
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute numeric tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "numeric"
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute ping tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "ping",
+        "outputSchema": {
+          "type": "string"
+        }
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute structured tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "structured",
+        "outputSchema": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        }
+      },
+      {
+        "annotations": {
+          "destructiveHint": false,
+          "readOnlyHint": false
+        },
+        "description": "Execute union tool",
+        "inputSchema": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        },
+        "name": "union"
+      }
+    ]
+  }
+}

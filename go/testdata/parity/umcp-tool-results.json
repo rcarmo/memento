@@ -1,0 +1,4003 @@
+{
+  "cases": [
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "null",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "null",
+              "type": "text"
+            }
+          ],
+          "structuredContent": null
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "null",
+              "type": "text"
+            }
+          ],
+          "structuredContent": null
+        }
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "null",
+              "type": "text"
+            }
+          ],
+          "structuredContent": null
+        }
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "null",
+              "type": "text"
+            }
+          ],
+          "structuredContent": null
+        }
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "null",
+              "type": "text"
+            }
+          ],
+          "structuredContent": null
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "null"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "true",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "true",
+              "type": "text"
+            }
+          ],
+          "structuredContent": true
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "true",
+              "type": "text"
+            }
+          ],
+          "structuredContent": true
+        }
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "true",
+              "type": "text"
+            }
+          ],
+          "structuredContent": true
+        }
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "true",
+              "type": "text"
+            }
+          ],
+          "structuredContent": true
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "true"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "false",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "false",
+              "type": "text"
+            }
+          ],
+          "structuredContent": false
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "false",
+              "type": "text"
+            }
+          ],
+          "structuredContent": false
+        }
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "false",
+              "type": "text"
+            }
+          ],
+          "structuredContent": false
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "false"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0
+        }
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0
+        }
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1
+        }
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1
+        }
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1
+        }
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-1",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -1
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -1
+        }
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -1
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -1
+        }
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -1
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -1
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-1",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -1
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "-1"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.0",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.0
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.0
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.0
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.0
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.0
+        }
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.0
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "1.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.5",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.5",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.5
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.5",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.5
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.5",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.5
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.5",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.5
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1.5",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1.5
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "1.5"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e-05",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e-05",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e-05
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e-05",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e-05
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e-05",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e-05
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e-05",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e-05
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e-05",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e-05
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "1e-05"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0.0001",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0.0001",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0.0001
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0.0001",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0.0001
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0.0001",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0.0001
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0.0001",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0.0001
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "0.0001",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 0.0001
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "0.0001"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1000000000000000.0",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1000000000000000.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1000000000000000.0
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1000000000000000.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1000000000000000.0
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1000000000000000.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1000000000000000.0
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1000000000000000.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1000000000000000.0
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1000000000000000.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1000000000000000.0
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "1000000000000000.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e+16",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e+16",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e+16
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e+16",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e+16
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e+16",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e+16
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e+16",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e+16
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "1e+16",
+              "type": "text"
+            }
+          ],
+          "structuredContent": 1e+16
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "1e+16"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-0.0",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-0.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -0.0
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-0.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -0.0
+        }
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-0.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -0.0
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-0.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -0.0
+        }
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "-0.0",
+              "type": "text"
+            }
+          ],
+          "structuredContent": -0.0
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "-0.0"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "hello ☃ <>&",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "hello ☃ <>&",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "hello ☃ <>&",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "hello ☃ <>&",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "hello ☃ <>&",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "hello ☃ <>&",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "\"hello ☃ <>&\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "a b c",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "a b c",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "a b c",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "a b c",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "a b c",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "a b c",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "\"a b c\""
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[]",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[]",
+              "type": "text"
+            }
+          ],
+          "structuredContent": []
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[]",
+              "type": "text"
+            }
+          ],
+          "structuredContent": []
+        }
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[]",
+              "type": "text"
+            }
+          ],
+          "structuredContent": []
+        }
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[]",
+              "type": "text"
+            }
+          ],
+          "structuredContent": []
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "[]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[1, true, null, \"x\"]",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "schema_json": "null",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[1, true, null, \"x\"]",
+              "type": "text"
+            }
+          ],
+          "structuredContent": [
+            1,
+            true,
+            null,
+            "x"
+          ]
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[1, true, null, \"x\"]",
+              "type": "text"
+            }
+          ],
+          "structuredContent": [
+            1,
+            true,
+            null,
+            "x"
+          ]
+        }
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$[1] must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an object",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[1, true, null, \"x\"]",
+              "type": "text"
+            }
+          ],
+          "structuredContent": [
+            1,
+            true,
+            null,
+            "x"
+          ]
+        }
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "[1, true, null, \"x\"]",
+              "type": "text"
+            }
+          ],
+          "structuredContent": [
+            1,
+            true,
+            null,
+            "x"
+          ]
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "[1, true, null, \"x\"]"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"z\": 1, \"a\": 2}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "a": 2,
+            "z": 1
+          }
+        }
+      },
+      "schema_json": "null",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"z\": 1, \"a\": 2}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "a": 2,
+            "z": 1
+          }
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"z\": 1, \"a\": 2}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "a": 2,
+            "z": 1
+          }
+        }
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$.a is not allowed",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"z\": 1, \"a\": 2}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "a": 2,
+            "z": 1
+          }
+        }
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$.x is required",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"z\": 1, \"a\": 2}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "a": 2,
+            "z": 1
+          }
+        }
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"z\": 1, \"a\": 2}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "a": 2,
+            "z": 1
+          }
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "{\"z\": 1, \"a\": 2}"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "nested": [
+              {
+                "a": "界",
+                "b": 1
+              }
+            ]
+          }
+        }
+      },
+      "schema_json": "null",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "nested": [
+              {
+                "a": "界",
+                "b": 1
+              }
+            ]
+          }
+        }
+      },
+      "schema_json": "{}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be null",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"null\"}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\"}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"integer\"}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"number\"}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a boolean",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"boolean\"}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\"}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be an array",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"integer\"}}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "nested": [
+              {
+                "a": "界",
+                "b": 1
+              }
+            ]
+          }
+        }
+      },
+      "schema_json": "{\"type\": \"object\"}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$.z is required",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"properties\": {\"z\": {\"type\": \"integer\"}}, \"required\": [\"z\"], \"additionalProperties\": false}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$.nested must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"object\", \"additionalProperties\": {\"type\": \"integer\"}}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$.x is required",
+        "result": null
+      },
+      "schema_json": "{\"required\": [\"x\"]}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be an integer",
+        "result": null
+      },
+      "schema_json": "{\"type\": [\"integer\", \"null\"]}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"number\"}]}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a number",
+        "result": null
+      },
+      "schema_json": "{\"oneOf\": [{\"type\": \"number\"}, {\"type\": \"integer\"}]}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [1, True, 'one', None]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [1, true, \"one\", null]}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be one of [{'z': 1, 'a': 2}, [1, True, None, 'x']]",
+        "result": null
+      },
+      "schema_json": "{\"enum\": [{\"z\": 1, \"a\": 2}, [1, true, null, \"x\"]]}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "text": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "nested": [
+              {
+                "a": "界",
+                "b": 1
+              }
+            ]
+          }
+        }
+      },
+      "schema_json": "{\"type\": \"ignored\"}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    },
+    {
+      "expected": {
+        "error": "$ must be a string",
+        "result": null
+      },
+      "schema_json": "{\"type\": \"string\", \"minLength\": 99}",
+      "value_json": "{\"nested\": [{\"b\": 1, \"a\": \"界\"}]}"
+    }
+  ]
+}

@@ -55,9 +55,8 @@ var qualityNumber = regexp.MustCompile(`(?i)^[+-]?(?:inf(?:inity)?|nan|(?:(?:[0-
 
 // Python's float parser permits underscores between decimal digits; strconv
 // permits some nondecimal forms instead. Restrict the grammar before parsing.
-func pythonQuality(value string) float64 {
-	value = strings.TrimSpace(value)
-	value = strings.Map(func(r rune) rune {
+func normalizeDecimalDigits(value string) string {
+	return strings.Map(func(r rune) rune {
 		// Unicode decimal digits accepted by Python float, including Arabic/fullwidth.
 		for _, block := range unicode.Digit.R16 {
 			if uint32(r) >= uint32(block.Lo) && uint32(r) <= uint32(block.Hi) && (uint32(r)-uint32(block.Lo))%uint32(block.Stride) == 0 {
@@ -71,6 +70,10 @@ func pythonQuality(value string) float64 {
 		}
 		return r
 	}, value)
+}
+
+func pythonQuality(value string) float64 {
+	value = normalizeDecimalDigits(strings.TrimSpace(value))
 	if !qualityNumber.MatchString(value) {
 		return 0
 	}
