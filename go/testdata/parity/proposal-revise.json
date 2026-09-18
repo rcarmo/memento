@@ -1,0 +1,2805 @@
+[
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "curator",
+        "base_revision": "main",
+        "client_instance_id": "client",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-10-18T00:00:00Z",
+        "intent": "Revise proposal source",
+        "patch_hash": "fe5b8fa7c85bcf8398a72986f1c6fd5ca4c9e0a513f94e5dc2d9ccce707adf38",
+        "patch_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/a.md\", \"status\": null, \"tags\": null, \"title\": null}], \"source_change_indexes\": [0], \"source_proposal_id\": \"source\"}",
+        "proposal_id": "00000000-0000-4000-8000-000000000000",
+        "rationale": "Selected clean changes from stale proposal source.",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      },
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "curator",
+          "base_revision": "main",
+          "changes": [
+            {
+              "aliases": null,
+              "body": "new",
+              "description": null,
+              "kind": "patch",
+              "path": "/a.md",
+              "status": null,
+              "tags": null,
+              "title": null
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "--- a/a.md\n+++ b/a.md\n@@ -12,4 +12,4 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-body\n+new\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "Revise proposal source",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "Selected clean changes from stale proposal source.",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "selected_change_indexes": [
+          0
+        ],
+        "source_proposal_id": "source"
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "subset",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      0,
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "curator",
+        "base_revision": "main",
+        "client_instance_id": "client",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-10-18T00:00:00Z",
+        "intent": "Revise proposal source",
+        "patch_hash": "fe5b8fa7c85bcf8398a72986f1c6fd5ca4c9e0a513f94e5dc2d9ccce707adf38",
+        "patch_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/a.md\", \"status\": null, \"tags\": null, \"title\": null}], \"source_change_indexes\": [0], \"source_proposal_id\": \"source\"}",
+        "proposal_id": "00000000-0000-4000-8000-000000000000",
+        "rationale": "Selected clean changes from stale proposal source.",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      },
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "curator",
+          "base_revision": "main",
+          "changes": [
+            {
+              "aliases": null,
+              "body": "new",
+              "description": null,
+              "kind": "patch",
+              "path": "/a.md",
+              "status": null,
+              "tags": null,
+              "title": null
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "--- a/a.md\n+++ b/a.md\n@@ -12,4 +12,4 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-body\n+new\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "Revise proposal source",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "Selected clean changes from stale proposal source.",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "selected_change_indexes": [
+          0
+        ],
+        "source_proposal_id": "source"
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "duplicates",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "selected_change_indexes must not be empty",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "empty",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      -1
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "selected_change_indexes contains an invalid index",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "negative",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      2
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "selected_change_indexes contains an invalid index",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "range",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      1
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "conflict",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "selected changes conflict with current memory: 1",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "blocked",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "wrong",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "conflict",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "expected revision wrong does not match main",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "wrong-revision",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "main",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "approved",
+        "updated_at": "updated"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "conflict",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "only proposals needing rebase can be revised",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "current",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "rejected",
+        "updated_at": "updated"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "conflict",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "only proposals needing rebase can be revised",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "rejected",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "expired",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": []}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "expired"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "expired",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "conflict",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "only proposals needing rebase can be revised",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "expired",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2000-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "reader"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "approved",
+        "updated_at": "updated"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal curator lacks role: curator",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "reader",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": []
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "approved",
+        "updated_at": "updated"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal curator cannot review proposal source",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "denied",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "fc542ba4bc0ae0e4429127689d243297d7856c3cf69b74b5e0e84e7645f8aa7e",
+        "patch_json": "{\"changes\": [{\"kind\": \"trash\", \"path\": \"/a.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "needs_rebase",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "conflict",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "submit a fresh archival proposal with a current impact report",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "trash",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "fc542ba4bc0ae0e4429127689d243297d7856c3cf69b74b5e0e84e7645f8aa7e",
+      "patch_json": "{\"changes\": [{\"kind\": \"trash\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      1
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "needs_rebase",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "conflict",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "concept body and matching asset pack must be selected together: 0, 1",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "asset-only",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "needs_rebase",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "conflict",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "concept body and matching asset pack must be selected together: 0, 1",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "body-only",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "2026-09-18T00:00:00Z",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "00000000-0000-4000-8000-000000000000",
+        "sha256": "digest",
+        "version": "1.0.0"
+      },
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      1,
+      0,
+      1
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "curator",
+        "base_revision": "main",
+        "client_instance_id": "client",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-10-18T00:00:00Z",
+        "intent": "Revise proposal source",
+        "patch_hash": "7698b994487d6ad0bc56ae42842d476cc8fc520e4a67f11159ea958cf8bcbc44",
+        "patch_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/a.md\", \"status\": null, \"tags\": null, \"title\": null}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}], \"source_change_indexes\": [0, 1], \"source_proposal_id\": \"source\"}",
+        "proposal_id": "00000000-0000-4000-8000-000000000000",
+        "rationale": "Selected clean changes from stale proposal source.",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      },
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "needs_rebase",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "curator",
+          "base_revision": "main",
+          "changes": [
+            {
+              "aliases": null,
+              "body": "new",
+              "description": null,
+              "kind": "patch",
+              "path": "/a.md",
+              "status": null,
+              "tags": null,
+              "title": null
+            },
+            {
+              "asset_id": "asset",
+              "asset_kind": "docs",
+              "kind": "attach_asset_pack",
+              "manifest": {},
+              "path": "/a.md",
+              "version": "1.0.0",
+              "zip_sha256": "digest"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            },
+            {
+              "conflicting_paths": [],
+              "index": 1,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "--- a/a.md\n+++ b/a.md\n@@ -12,4 +12,4 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-body\n+new\nattach docs asset 1.0.0 (digest) to /a.md\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "Revise proposal source",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "Selected clean changes from stale proposal source.",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "selected_change_indexes": [
+          0,
+          1
+        ],
+        "source_proposal_id": "source"
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "asset-pair",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      1,
+      0,
+      1
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "needs_rebase",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "not_found",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "('source', 'asset')",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "asset-missing",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      1,
+      0,
+      1
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "cdea06a012138628513ad09991ee22c6558a9f8e3f6953459c92df21ef46fdca",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "needs_rebase",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "skill asset concepts must include the 'skill' tag",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "skill-tag",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "cdea06a012138628513ad09991ee22c6558a9f8e3f6953459c92df21ef46fdca",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": "custom",
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "curator",
+        "base_revision": "main",
+        "client_instance_id": "client",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-10-18T00:00:00Z",
+        "intent": "custom",
+        "patch_hash": "fe5b8fa7c85bcf8398a72986f1c6fd5ca4c9e0a513f94e5dc2d9ccce707adf38",
+        "patch_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/a.md\", \"status\": null, \"tags\": null, \"title\": null}], \"source_change_indexes\": [0], \"source_proposal_id\": \"source\"}",
+        "proposal_id": "00000000-0000-4000-8000-000000000000",
+        "rationale": "reason",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      },
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": "reason",
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "curator",
+          "base_revision": "main",
+          "changes": [
+            {
+              "aliases": null,
+              "body": "new",
+              "description": null,
+              "kind": "patch",
+              "path": "/a.md",
+              "status": null,
+              "tags": null,
+              "title": null
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "--- a/a.md\n+++ b/a.md\n@@ -12,4 +12,4 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-body\n+new\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "custom",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "reason",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "selected_change_indexes": [
+          0
+        ],
+        "source_proposal_id": "source"
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "overrides",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": "",
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "curator",
+        "base_revision": "main",
+        "client_instance_id": "client",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-10-18T00:00:00Z",
+        "intent": "Revise proposal source",
+        "patch_hash": "fe5b8fa7c85bcf8398a72986f1c6fd5ca4c9e0a513f94e5dc2d9ccce707adf38",
+        "patch_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/a.md\", \"status\": null, \"tags\": null, \"title\": null}], \"source_change_indexes\": [0], \"source_proposal_id\": \"source\"}",
+        "proposal_id": "00000000-0000-4000-8000-000000000000",
+        "rationale": "Selected clean changes from stale proposal source.",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      },
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": "",
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "curator",
+          "base_revision": "main",
+          "changes": [
+            {
+              "aliases": null,
+              "body": "new",
+              "description": null,
+              "kind": "patch",
+              "path": "/a.md",
+              "status": null,
+              "tags": null,
+              "title": null
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "--- a/a.md\n+++ b/a.md\n@@ -12,4 +12,4 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-body\n+new\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "Revise proposal source",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "Selected clean changes from stale proposal source.",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "selected_change_indexes": [
+          0
+        ],
+        "source_proposal_id": "source"
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "empty-overrides",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "exception": "IntegrityError",
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "scenario": "insert-failure",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": "CREATE TRIGGER blocked BEFORE INSERT ON proposals BEGIN SELECT RAISE(ABORT,'synthetic'); END"
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "exception": "IntegrityError",
+    "expected_revision": "main",
+    "indexes": [
+      1,
+      0,
+      1
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "needs_rebase",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "scenario": "asset-failure",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": "CREATE TRIGGER blocked BEFORE INSERT ON proposal_assets BEGIN SELECT RAISE(ABORT,'synthetic'); END"
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "needs_rebase"
+      }
+    ],
+    "exception": "IntegrityError",
+    "expected_revision": "main",
+    "indexes": [
+      1,
+      0,
+      1
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "needs_rebase",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "scenario": "commit-failure",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "4544b9845410a2fe6e211953e72456f69e63a3a2e5c91b1498788dd1accfe01e",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"asset_id\": \"asset\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": "CREATE TABLE parent(id INTEGER PRIMARY KEY);CREATE TABLE child(id INTEGER REFERENCES parent(id) DEFERRABLE INITIALLY DEFERRED);CREATE TRIGGER blocked AFTER INSERT ON proposals BEGIN INSERT INTO child VALUES(1);END;"
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "curator",
+        "base_revision": "main",
+        "client_instance_id": "client",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-10-18T00:00:00Z",
+        "intent": "Revise proposal source",
+        "patch_hash": "fdb1410f2206b966691b95a51fbffd7c2d8008fb3d591fea8486cd16b8057446",
+        "patch_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/missing.md\", \"status\": null, \"tags\": null, \"title\": null}], \"source_change_indexes\": [0], \"source_proposal_id\": \"source\"}",
+        "proposal_id": "00000000-0000-4000-8000-000000000000",
+        "rationale": "Selected clean changes from stale proposal source.",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      },
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "3b36b1e6b8684c60ea0ab29bb98e0ffffbf6a8700d01120f6804e6a1b42b3f79",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/missing.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "path does not exist: /missing.md",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "preview-failure",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "3b36b1e6b8684c60ea0ab29bb98e0ffffbf6a8700d01120f6804e6a1b42b3f79",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/missing.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": ""
+  },
+  {
+    "assets": [
+      {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "blob_bytes": "AP8=",
+        "concept_path": "/a.md",
+        "created_at": "created",
+        "manifest_json": "{}",
+        "media_type": "application/zip",
+        "proposal_id": "source",
+        "sha256": "digest",
+        "version": "1.0.0"
+      }
+    ],
+    "events": [
+      {
+        "action": "repository_advanced",
+        "actor": "system",
+        "base_revision": "base",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [\"/blocked.md\"], \"index\": 1, \"status\": \"conflict\"}]}",
+        "event_id": 1,
+        "from_status": "approved",
+        "proposal_id": "source",
+        "repo_revision": "main",
+        "to_status": "conflicted"
+      }
+    ],
+    "expected_revision": "main",
+    "indexes": [
+      0
+    ],
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "intent": null,
+    "policy": {
+      "principal": "curator",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "curator",
+        "base_revision": "main",
+        "client_instance_id": "client",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-10-18T00:00:00Z",
+        "intent": "Revise proposal source",
+        "patch_hash": "fe5b8fa7c85bcf8398a72986f1c6fd5ca4c9e0a513f94e5dc2d9ccce707adf38",
+        "patch_json": "{",
+        "proposal_id": "00000000-0000-4000-8000-000000000000",
+        "rationale": "Selected clean changes from stale proposal source.",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      },
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": "original-client",
+        "created_at": "created",
+        "expires_at": "2099-01-01T00:00:00Z",
+        "intent": "original",
+        "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+        "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+        "proposal_id": "source",
+        "rationale": "original",
+        "review_comment": "retain",
+        "reviewed_by": "reviewer",
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "rationale": null,
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "payload-failure",
+    "source": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "original",
+      "patch_hash": "756d3aae6b7836e66c41fe24fbff39499f4424a533f22b8ac3115b68f33c3614",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}, {\"body\": \"blocked\", \"kind\": \"patch\", \"path\": \"/blocked.md\"}]}",
+      "proposal_id": "source",
+      "rationale": "original",
+      "review_comment": "retain",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "trigger": "CREATE TRIGGER blocked AFTER INSERT ON proposals BEGIN UPDATE proposals SET patch_json='{' WHERE proposal_id=NEW.proposal_id;END"
+  }
+]
