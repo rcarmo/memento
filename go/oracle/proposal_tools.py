@@ -87,7 +87,12 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
 
         return echo
 
-    for name in ("memory_asset_stage_begin", "memory_asset_stage_status"):
+    for name in (
+        "memory_asset_stage_begin",
+        "memory_asset_stage_status",
+        "memory_help",
+        "memory_status",
+    ):
         if name in names:
             method = getattr(server, "tool_" + name)
             setattr(server, "tool_" + name, direct_echo(method, name))
@@ -390,6 +395,11 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
         },
         {"name": "memory_asset_metadata", "arguments": {"include_files": 1, "limit": True}},
         {"name": "memory_asset_metadata", "arguments": {"principal": "other"}},
+    ]
+    requests += [
+        {"name": "memory_help"},
+        {"name": "memory_status"},
+        {"name": "memory_status", "arguments": {"principal": "other"}},
     ]
     calls = []
     for params in requests:

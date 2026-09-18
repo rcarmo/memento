@@ -30,6 +30,7 @@ type ProposalControls struct {
 	MaxConceptBytes   int
 	Index             ReadIndex
 	DefaultSearchMode string
+	Metadata          *ModelsOffMetadata
 	// Worker-owned live policy resolver for nested inventory calls.
 	inventoryPolicy func(context.Context) (access.EffectivePolicy, error)
 	DerivedUpdate   repository.DerivedUpdateCallback

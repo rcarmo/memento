@@ -1,0 +1,9 @@
+{
+  "limits": {
+    "max_concept_bytes": 262144,
+    "max_search_results": 100
+  },
+  "needle_model_path": "/usr/local/share/memento/models/memento-router.ndl",
+  "schema_version": 2,
+  "service_version": "0.5.9"
+}
