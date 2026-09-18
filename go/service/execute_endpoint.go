@@ -59,13 +59,37 @@ func (e *ExecuteEndpoint) Call(ctx context.Context, args map[string]any) (any, e
 		return executeFailure(err), nil
 	}
 	dispatcher, _ := e.raw.Bind(principal, session)
-	return e.jobs.Workers.Execute(ctx, func(work context.Context) (any, error) {
+	reconciliation := IsReconciliationPlan(plan)
+	return e.jobs.Workers.ExecutePlan(ctx, reconciliation, func(work context.Context) (any, error) {
 		result := e.factory.Runner(dispatcher.Dispatch).Run(work, plan)
+		markPendingReconciliation(reconciliation, e.jobs.Workers.ExecuteBusy(), result.Data)
 		if result.Status == "error" {
 			return envelope.NewFailure(result.ErrorClass, result.Message)
 		}
 		return e.jobs.Controls.Queue.SuccessEnvelope(result.Data, SuccessOptions{Warnings: result.Warnings})
 	})
+}
+func markPendingReconciliation(reconciliation, busy bool, value any) {
+	if reconciliation && busy {
+		markExecutePending(value)
+	}
+}
+func markExecutePending(value any) {
+	switch item := value.(type) {
+	case map[string]any:
+		if item["operation"] == nil && item["safe_to_retry"] == true {
+			item["final_state"] = "in_progress"
+			item["safe_to_retry"] = false
+			item["retry_guidance"] = "A worker is active; reconcile again after it finishes."
+		}
+		for _, child := range item {
+			markExecutePending(child)
+		}
+	case []any:
+		for _, child := range item {
+			markExecutePending(child)
+		}
+	}
 }
 func executeFailure(err error) envelope.Failure {
 	failure, _ := envelope.NewFailure("validation_error", err.Error())

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"testing"
 	"time"
+
+	"github.com/rcarmo/memento/go/execute"
 )
 
 func TestExecuteAdmission(t *testing.T) {
@@ -37,11 +39,30 @@ func TestExecuteAdmission(t *testing.T) {
 		t.Fatal(value)
 	}
 }
+func TestExecuteReconciliationAdmission(t *testing.T) {
+	if IsReconciliationPlan(execute.Plan{}) || IsReconciliationPlan(execute.Plan{Operations: []execute.PlannedOperation{{Op: "read"}}}) || !IsReconciliationPlan(execute.Plan{Operations: []execute.PlannedOperation{{Op: "operation_get"}, {Op: "operation_get"}}}) {
+		t.Fatal("classification")
+	}
+	workers := Workers{}
+	workers.SetExecuteBusy(true)
+	value, err := workers.ExecutePlan(context.Background(), true, func(context.Context) (any, error) { return "ok", nil })
+	if err != nil || value != "ok" {
+		t.Fatal(value, err)
+	}
+	value, err = workers.ExecutePlan(context.Background(), false, func(context.Context) (any, error) { return nil, nil })
+	if err != nil || value.(map[string]any)["message"] != "An execute request is still running; reconcile before retrying." {
+		t.Fatal(value, err)
+	}
+	if !workers.ExecuteBusy() {
+		t.Fatal("busy state")
+	}
+	workers.SetExecuteBusy(false)
+}
 func TestExecuteAdmissionCancellationAndTimeout(t *testing.T) {
 	workers := Workers{timeout: 5 * time.Millisecond}
 	release := make(chan struct{})
-	value, err := workers.Execute(context.Background(), func(context.Context) (any, error) { <-release; return "late", nil })
-	if err != nil || value.(map[string]any)["error_class"] != "indeterminate" {
+	value, err := workers.ExecutePlan(context.Background(), false, func(context.Context) (any, error) { <-release; return "late", nil })
+	if err != nil || value.(map[string]any)["error_class"] != "indeterminate" || value.(map[string]any)["message"] != "Execution continues; use operation_get with the original idempotency key before retrying." {
 		t.Fatal(value, err)
 	}
 	close(release)

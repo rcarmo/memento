@@ -60,6 +60,17 @@ func TestExecuteEndpointGuards(t *testing.T) {
 		t.Fatal("definition")
 	}
 }
+func TestMarkExecutePending(t *testing.T) {
+	markPendingReconciliation(false, true, map[string]any{})
+	markPendingReconciliation(true, true, map[string]any{})
+
+	value := map[string]any{"rows": []any{map[string]any{"operation": nil, "safe_to_retry": true}, map[string]any{"operation": nil, "safe_to_retry": false}}}
+	markExecutePending(value)
+	rows := value["rows"].([]any)
+	if rows[0].(map[string]any)["final_state"] != "in_progress" || rows[1].(map[string]any)["final_state"] != nil {
+		t.Fatal(value)
+	}
+}
 func TestExecuteEndpointProtocol(t *testing.T) {
 	j, _ := jobsTest(t)
 	catalog, _ := NewCatalog(CatalogConfig{Surface: "standard"})
