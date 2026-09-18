@@ -367,6 +367,30 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
         {"name": "memory_compare_manifest", "arguments": {"items": []}},
         {"name": "memory_compare_manifest", "arguments": {"path_prefix": "/"}},
     ]
+    requests += [
+        {"name": "memory_asset_metadata"},
+        {
+            "name": "memory_asset_metadata",
+            "arguments": {
+                "id_or_path": "12345678",
+                "asset_kind": "docs",
+                "version": "1.0.0",
+                "include_files": "yes",
+                "file_limit": "2",
+            },
+        },
+        {
+            "name": "memory_asset_metadata",
+            "arguments": {
+                "path_prefix": "/public/",
+                "limit": 1,
+                "version_limit": "2",
+                "cursor": "/public/a.md",
+            },
+        },
+        {"name": "memory_asset_metadata", "arguments": {"include_files": 1, "limit": True}},
+        {"name": "memory_asset_metadata", "arguments": {"principal": "other"}},
+    ]
     calls = []
     for params in requests:
         if params["name"] not in names:

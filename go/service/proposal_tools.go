@@ -61,9 +61,9 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 		for _, parameter := range definition.Parameters {
 			kind := umcp.StringParam
 			switch parameter.Name {
-			case "confirm", "include_asset_metadata":
+			case "confirm", "include_asset_metadata", "include_files":
 				kind = umcp.BooleanParam
-			case "limit", "offset", "depth", "keep":
+			case "limit", "offset", "depth", "keep", "version_limit", "file_limit":
 				kind = umcp.IntegerParam
 			case "match":
 				kind = umcp.ObjectParam
@@ -275,6 +275,12 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 			return nil, options, a.err
 		}
 		data, err = c.Read(ctx, actor, id)
+	case "memory_asset_metadata":
+		o := AssetMetadataOptions{IDOrPath: a.optional("id_or_path"), PathPrefix: a.optional("path_prefix"), AssetKind: a.optional("asset_kind"), Version: a.optional("version"), Cursor: a.optional("cursor"), Limit: a.integer("limit"), VersionLimit: a.integer("version_limit"), FileLimit: a.integer("file_limit"), IncludeFiles: args["include_files"]}
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		data, options, err = c.AssetMetadata(ctx, actor, o)
 	case "memory_compare_manifest":
 		prefix, items := a.text("path_prefix"), a.array("items")
 		var match map[string]any

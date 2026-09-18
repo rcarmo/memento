@@ -411,6 +411,15 @@ def main() -> None:
     (ROOT / "go/service/manifest_tools.json").write_text(
         json.dumps(manifest_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
     )
+    asset_metadata = importlib.import_module("asset_metadata")
+    save("asset-metadata.json", asset_metadata.fixtures())
+    metadata_tool_fixtures = proposal_tools.fixtures(
+        names=[d["name"] for d in manifest_tool_fixtures["definitions"]] + ["memory_asset_metadata"]
+    )
+    save("metadata-tool-dispatch.json", metadata_tool_fixtures)
+    (ROOT / "go/service/metadata_tools.json").write_text(
+        json.dumps(metadata_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
+    )
     # Runtime embeds only definitions for implemented tools, not test outcomes.
     (ROOT / "go/service/proposal_tools.json").write_text(
         json.dumps(proposal_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"

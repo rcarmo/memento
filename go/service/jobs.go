@@ -89,7 +89,7 @@ func (j *Jobs) runWithPolicy(ctx context.Context, principal access.Principal, se
 	// Mirror the Python @_serialized scope, including policy resolution and
 	// success revision lookup. Accepted-asset reads acquire their own lock after
 	// role/range validation. Reconciliation and other reads are not serialized.
-	if method == "memory_compare_manifest" || method == "memory_inventory" || method == "memory_asset_get" || method == "memory_operation_get" || method == "memory_proposal_asset_get" || method == "memory_read" || method == "memory_list" || method == "memory_search" || method == "memory_graph" {
+	if method == "memory_asset_metadata" || method == "memory_compare_manifest" || method == "memory_inventory" || method == "memory_asset_get" || method == "memory_operation_get" || method == "memory_proposal_asset_get" || method == "memory_read" || method == "memory_list" || method == "memory_search" || method == "memory_graph" {
 		err = run()
 	} else {
 		err = repository.WithTransactionLock(ctx, q.Paths, run)
