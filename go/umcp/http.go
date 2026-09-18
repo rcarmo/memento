@@ -1,6 +1,7 @@
 package umcp
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -24,6 +25,9 @@ type HTTPHooks struct {
 // HTTPOptions configures the source Streamable HTTP defaults. The caller must
 // configure network read/write timeouts on its net/http.Server as well.
 type HTTPOptions struct {
+	// AsyncReference preserves aioumcp's auth and routing order. The default
+	// false preserves the synchronous MCPServer behaviour.
+	AsyncReference  bool
 	Endpoint        string
 	AllowedOrigins  []string
 	LocalBind       bool
@@ -157,7 +161,7 @@ func (h *StreamableHTTP) authenticate(r *http.Request) (*Principal, error) {
 		return &Principal{Name: "anonymous"}, nil
 	}
 	return hookCall(func() (*Principal, error) {
-		return h.hooks.Authenticate(r.Context(), r.Method, r.URL.RequestURI(), headersLower(r), peer(r))
+		return h.hooks.Authenticate(r.Context(), r.Method, requestTarget(r), headersLower(r), peer(r))
 	})
 }
 func (h *StreamableHTTP) authorize(r *http.Request, p *Principal, method, tool any) (bool, error) {
@@ -291,10 +295,22 @@ func (h *StreamableHTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		emptyHTTP(w, 403, "")
 		return
 	}
-	path, err := RequestTargetPath(r.URL.RequestURI())
+	path, err := RequestTargetPath(requestTarget(r))
 	if err != nil {
 		emptyHTTP(w, 400, origin)
 		return
+	}
+	if h.options.AsyncReference {
+		body, ok := h.body(w, r, origin)
+		if !ok {
+			return
+		}
+		r = r.Clone(r.Context())
+		r.Body = io.NopCloser(bytes.NewReader(body))
+		if path != h.options.Endpoint {
+			h.auxiliary(w, r, path, origin)
+			return
+		}
 	}
 	if r.Method == http.MethodOptions {
 		if path != h.options.Endpoint {
@@ -313,23 +329,36 @@ func (h *StreamableHTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method != http.MethodGet && r.Method != http.MethodPost && r.Method != http.MethodDelete {
-		emptyHTTP(w, 501, origin)
+		status := 501
+		if h.options.AsyncReference {
+			status = 405
+			w.Header().Set("Allow", "GET, POST, DELETE, OPTIONS")
+		}
+		emptyHTTP(w, status, origin)
 		return
 	}
 	if path != h.options.Endpoint {
 		h.auxiliary(w, r, path, origin)
 		return
 	}
+	var principal *Principal
+	if h.options.AsyncReference {
+		var ok bool
+		principal, ok = h.principal(w, r, origin)
+		if !ok {
+			return
+		}
+	}
 	switch r.Method {
 	case http.MethodGet:
-		h.get(w, r, origin)
+		h.get(w, r, origin, principal)
 	case http.MethodDelete:
-		h.delete(w, r, origin)
+		h.delete(w, r, origin, principal)
 	case http.MethodPost:
-		h.post(w, r, origin)
+		h.post(w, r, origin, principal)
 	}
 }
-func (h *StreamableHTTP) post(w http.ResponseWriter, r *http.Request, origin string) {
+func (h *StreamableHTTP) post(w http.ResponseWriter, r *http.Request, origin string, principal *Principal) {
 	body, ok := h.body(w, r, origin)
 	if !ok {
 		return
@@ -342,9 +371,11 @@ func (h *StreamableHTTP) post(w http.ResponseWriter, r *http.Request, origin str
 		emptyHTTP(w, 406, origin)
 		return
 	}
-	principal, ok := h.principal(w, r, origin)
-	if !ok {
-		return
+	if principal == nil {
+		principal, ok = h.principal(w, r, origin)
+		if !ok {
+			return
+		}
 	}
 	value, valid := decode(body)
 	if !valid || !utf8.Valid(body) {
@@ -422,16 +453,19 @@ func (h *StreamableHTTP) post(w http.ResponseWriter, r *http.Request, origin str
 	}
 	jsonHTTP(w, 200, response, origin)
 }
-func (h *StreamableHTTP) delete(w http.ResponseWriter, r *http.Request, origin string) {
+func (h *StreamableHTTP) delete(w http.ResponseWriter, r *http.Request, origin string, principal *Principal) {
 	if _, ok := h.body(w, r, origin); !ok {
 		return
 	}
 	if !h.version(w, r, origin) {
 		return
 	}
-	principal, ok := h.principal(w, r, origin)
-	if !ok {
-		return
+	if principal == nil {
+		var ok bool
+		principal, ok = h.principal(w, r, origin)
+		if !ok {
+			return
+		}
 	}
 	session, ok := h.validated(w, r, principal, true, origin)
 	if !ok {
@@ -439,7 +473,7 @@ func (h *StreamableHTTP) delete(w http.ResponseWriter, r *http.Request, origin s
 	}
 	emptyHTTP(w, h.sessions.remove(r.Header.Get("Mcp-Session-Id"), session), origin)
 }
-func (h *StreamableHTTP) get(w http.ResponseWriter, r *http.Request, origin string) {
+func (h *StreamableHTTP) get(w http.ResponseWriter, r *http.Request, origin string, principal *Principal) {
 	if !MediaAcceptsEventStream(r.Header.Get("Accept")) {
 		emptyHTTP(w, 406, origin)
 		return
@@ -447,9 +481,12 @@ func (h *StreamableHTTP) get(w http.ResponseWriter, r *http.Request, origin stri
 	if !h.version(w, r, origin) {
 		return
 	}
-	principal, ok := h.principal(w, r, origin)
-	if !ok {
-		return
+	if principal == nil {
+		var ok bool
+		principal, ok = h.principal(w, r, origin)
+		if !ok {
+			return
+		}
 	}
 	session, ok := h.validated(w, r, principal, true, origin)
 	if !ok {
@@ -475,7 +512,9 @@ func (h *StreamableHTTP) get(w http.ResponseWriter, r *http.Request, origin stri
 	if _, err := io.WriteString(w, ": connected\n\n"); err != nil {
 		return
 	}
-	flusher.Flush()
+	if err := flushHTTP(flusher); err != nil {
+		return
+	}
 	ticker := time.NewTicker(h.options.Keepalive)
 	defer ticker.Stop()
 	for {
@@ -504,6 +543,16 @@ func (h *StreamableHTTP) writeEvent(w io.Writer, flusher http.Flusher, disconnec
 	if _, err := w.Write(payload); err != nil {
 		return false
 	}
-	flusher.Flush()
+	if err := flushHTTP(flusher); err != nil {
+		return false
+	}
 	return h.sessions.touch(id, session)
+}
+
+func flushHTTP(flusher http.Flusher) error {
+	if f, ok := flusher.(interface{ FlushError() error }); ok {
+		return f.FlushError()
+	}
+	flusher.Flush()
+	return nil
 }

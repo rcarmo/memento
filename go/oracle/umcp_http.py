@@ -130,7 +130,33 @@ def scenarios() -> list[dict[str, Any]]:
     ]
 
 
-def capture(mode: str, reference: Path) -> list[dict[str, Any]]:
+def mode_scenarios() -> list[dict[str, Any]]:
+    base = {
+        "Host": "localhost",
+        "Content-Type": "application/json",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Authorization": "",
+    }
+    cases = []
+    for method, body, headers in [
+        ("POST", "{}", {"Content-Type": "text/plain"}),
+        ("POST", "{}", {"Accept": "text/event-stream"}),
+        ("GET", "", {"Accept": "application/json"}),
+        ("GET", "", {"MCP-Protocol-Version": "bad"}),
+        ("DELETE", "", {"MCP-Protocol-Version": "bad"}),
+        ("POST", "{", {}),
+        ("POST", "x" * 257, {}),
+        ("OPTIONS", "x" * 257, {"Origin": "http://localhost"}),
+    ]:
+        cases.append(
+            {"method": method, "path": "/mcp", "body": body, "headers": {**base, **headers}}
+        )
+    return cases
+
+
+def capture(
+    mode: str, reference: Path, cases: list[dict[str, Any]] | None = None
+) -> list[dict[str, Any]]:
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
@@ -158,7 +184,7 @@ def capture(mode: str, reference: Path) -> list[dict[str, Any]]:
                     raise AssertionError("oracle server startup timeout") from None
                 time.sleep(0.02)
         session = ""
-        for case in scenarios():
+        for case in scenarios() if cases is None else cases:
             headers = {k: v.replace("{{SESSION}}", session) for k, v in case["headers"].items()}
             connection = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
             connection.request(
@@ -211,3 +237,10 @@ def fixtures(reference: Path) -> list[dict[str, Any]]:
         if a != b:
             raise AssertionError(f"HTTP sync/async difference case {i}: {a!r} != {b!r}")
     return sync
+
+
+def mode_fixtures(reference: Path) -> list[dict[str, Any]]:
+    return [
+        {"mode": mode, "cases": capture(mode, reference, mode_scenarios())}
+        for mode in ["sync", "async"]
+    ]

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -41,7 +42,11 @@ func httpRequest(h http.Handler, method, path, body string, headers map[string]s
 		r.Header.Set("Content-Type", "application/json")
 	}
 	for key, value := range headers {
-		r.Header.Set(key, value)
+		if strings.EqualFold(key, "Host") {
+			r.Host = value
+		} else {
+			r.Header.Set(key, value)
+		}
 	}
 	w := httptest.NewRecorder()
 	h.ServeHTTP(w, r)
@@ -499,6 +504,16 @@ func TestEventDisconnectWinsBeforeWrite(t *testing.T) {
 }
 
 func TestPythonHTTPWireScenarios(t *testing.T) {
+	for _, rawAsync := range []bool{false, true} {
+		name := "net-http-sync"
+		if rawAsync {
+			name = "raw-async"
+		}
+		t.Run(name, func(t *testing.T) { pythonHTTPWireScenarios(t, rawAsync) })
+	}
+}
+
+func pythonHTTPWireScenarios(t *testing.T, rawAsync bool) {
 	data, err := os.ReadFile("../testdata/parity/umcp-http.json")
 	if err != nil {
 		t.Fatal(err)
@@ -519,6 +534,7 @@ func TestPythonHTTPWireScenarios(t *testing.T) {
 	}
 	s := NewServer("HTTPOracle")
 	options := DefaultHTTPOptions()
+	options.AsyncReference = rawAsync
 	options.MaxRequestBytes = 256
 	h, err := NewStreamableHTTP(s, options, HTTPHooks{Authenticate: func(_ context.Context, _, _ string, headers map[string]string, _ string) (*Principal, error) {
 		token := headers["authorization"]
@@ -543,11 +559,28 @@ func TestPythonHTTPWireScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer h.Close()
-	httpServer := httptest.NewServer(h)
-	defer httpServer.Close()
+	var baseURL string
+	client := &http.Client{Timeout: 3 * time.Second}
+	if rawAsync {
+		listener, err := net.Listen("tcp", "127.0.0.1:0")
+		if err != nil {
+			t.Fatal(err)
+		}
+		ctx, cancel := context.WithCancel(context.Background())
+		connectionOptions := DefaultAsyncHTTPConnectionOptions(AsyncStreamableParser)
+		connectionOptions.Parser.MaxRequestBytes = options.MaxRequestBytes
+		done := make(chan error, 1)
+		go func() { done <- ServeAsyncHTTP(ctx, listener, h, connectionOptions) }()
+		defer func() { client.CloseIdleConnections(); cancel(); <-done }()
+		baseURL = "http://" + listener.Addr().String()
+	} else {
+		httpServer := httptest.NewServer(h)
+		defer httpServer.Close()
+		baseURL = httpServer.URL
+	}
 	session := ""
 	for i, c := range cases {
-		request, err := http.NewRequest(c.Input.Method, httpServer.URL+c.Input.Path, strings.NewReader(c.Input.Body))
+		request, err := http.NewRequest(c.Input.Method, baseURL+c.Input.Path, strings.NewReader(c.Input.Body))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -559,7 +592,7 @@ func TestPythonHTTPWireScenarios(t *testing.T) {
 				request.Header.Set(key, value)
 			}
 		}
-		response, err := httpServer.Client().Do(request)
+		response, err := client.Do(request)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -611,4 +644,61 @@ func FuzzHTTPPost(f *testing.F) {
 		defer h.Close()
 		_ = httpRequest(h, "POST", "/mcp", body, nil)
 	})
+}
+
+func TestHTTPReferenceModeOrdering(t *testing.T) {
+	raw, err := os.ReadFile("../testdata/parity/umcp-http-modes.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var modes []struct {
+		Mode  string
+		Cases []struct {
+			Input struct {
+				Method, Path, Body string
+				Headers            map[string]string
+			}
+			Expected struct {
+				Status  int
+				Headers map[string]string
+			}
+		}
+	}
+	if err = json.Unmarshal(raw, &modes); err != nil {
+		t.Fatal(err)
+	}
+	for _, mode := range modes {
+		t.Run(mode.Mode, func(t *testing.T) {
+			_, h := testHTTP(t)
+			h.options.AsyncReference = mode.Mode == "async"
+			h.options.MaxRequestBytes = 256
+			for i, c := range mode.Cases {
+				w := httpRequest(h, c.Input.Method, c.Input.Path, c.Input.Body, c.Input.Headers)
+				if w.Code != c.Expected.Status {
+					t.Errorf("case %d: %d != %d", i, w.Code, c.Expected.Status)
+				}
+				for k, v := range c.Expected.Headers {
+					if w.Header().Get(k) != v {
+						t.Errorf("case %d %s: %q != %q", i, k, w.Header().Get(k), v)
+					}
+				}
+			}
+		})
+	}
+	// Async methods that reach the handler share authentication without calling
+	// it twice; unsupported auxiliary methods still go through Route first.
+	_, h := testHTTP(t)
+	h.options.AsyncReference = true
+	h.hooks.Authenticate = func(context.Context, string, string, map[string]string, string) (*Principal, error) {
+		return &Principal{Name: "reader"}, nil
+	}
+	for _, c := range []struct {
+		Method, Path, Body string
+		Status             int
+	}{{"GET", "/mcp", "", 400}, {"DELETE", "/mcp", "", 400}, {"POST", "/mcp", `{"jsonrpc":"2.0","id":1,"method":"tools/list"}`, 200}, {"PUT", "/mcp", "", 405}, {"PUT", "/missing", "", 405}} {
+		w := httpRequest(h, c.Method, c.Path, c.Body, nil)
+		if w.Code != c.Status {
+			t.Fatal(c, w.Code)
+		}
+	}
 }

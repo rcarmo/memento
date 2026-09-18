@@ -50,6 +50,8 @@ func lineText(line string, strict bool) (string, error) {
 	return strings.TrimFunc(replaceInvalidUTF8(line), func(r rune) bool { return unicode.IsSpace(r) || (r >= 0x1c && r <= 0x1f) }), nil
 }
 
+var errLineLimit = errors.New("request line exceeds reader limit")
+
 // readLine preserves Python readline's final unterminated line. Asyncio's limit
 // excludes the newline byte itself. Zero limit preserves the unbounded sync
 // behaviour; use a separately reviewed deployment cap for untrusted streams.
@@ -62,7 +64,7 @@ func readLine(reader *bufio.Reader, limit int) (string, error) {
 			length--
 		}
 		if limit > 0 && length > limit {
-			return "", errors.New("TCP request line exceeds reader limit")
+			return "", errLineLimit
 		}
 		out.Write(fragment)
 		if err == bufio.ErrBufferFull {
@@ -169,10 +171,15 @@ func tcpPeer(address net.Addr) string {
 // isolated as in the source; cancellation/deadlines inside handlers remain
 // cooperative. Application code must not ignore context indefinitely.
 func (s *Server) ServeTCP(ctx context.Context, listener net.Listener, options TCPOptions) error {
-	defer listener.Close()
 	if options.Mode != SyncTCP && options.Mode != AsyncTCP || options.IOTimeout < 0 || options.MaxLineBytes < 0 {
+		_ = listener.Close()
 		return errors.New("invalid TCP options")
 	}
+	return serveConnections(ctx, listener, func(ctx context.Context, conn net.Conn) { _ = s.ServeTCPConnection(ctx, conn, options) })
+}
+
+func serveConnections(ctx context.Context, listener net.Listener, serve func(context.Context, net.Conn)) error {
+	defer listener.Close()
 	children, cancel := context.WithCancel(ctx)
 	var workers sync.WaitGroup
 	defer func() { cancel(); workers.Wait() }()
@@ -187,7 +194,7 @@ func (s *Server) ServeTCP(ctx context.Context, listener net.Listener, options TC
 			return err
 		}
 		workers.Add(1)
-		go func() { defer workers.Done(); _ = s.ServeTCPConnection(children, conn, options) }()
+		go func() { defer workers.Done(); serve(children, conn) }()
 	}
 }
 

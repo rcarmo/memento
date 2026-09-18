@@ -102,7 +102,7 @@ func (h *LegacySSE) authorized(w http.ResponseWriter, r *http.Request, p *Princi
 	return true
 }
 func (h *LegacySSE) limits(w http.ResponseWriter, r *http.Request, origin string) bool {
-	if len(r.TransferEncoding) > 0 || r.Header.Get("Transfer-Encoding") != "" || r.ContentLength < 0 {
+	if r.ContentLength < 0 {
 		sseEmpty(w, 400, origin)
 		return false
 	}
@@ -158,7 +158,7 @@ func (h *LegacySSE) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		sseEmpty(w, 403, "")
 		return
 	}
-	path, err := RequestTargetPath(r.URL.RequestURI())
+	path, err := RequestTargetPath(requestTarget(r))
 	if err != nil {
 		sseEmpty(w, 400, origin)
 		return
@@ -322,7 +322,7 @@ func unquoteQuery(value string) string {
 	return out.String()
 }
 func (h *LegacySSE) post(w http.ResponseWriter, r *http.Request, origin string, body []byte) {
-	if h.options.Mode == SyncSSE && (len(r.TransferEncoding) > 0 || r.Header.Get("Transfer-Encoding") != "") {
+	if len(r.TransferEncoding) > 0 || r.Header.Get("Transfer-Encoding") != "" {
 		sseEmpty(w, 400, origin)
 		return
 	}

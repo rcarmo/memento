@@ -590,3 +590,12 @@ func TestLegacySSEFlushFailures(t *testing.T) {
 		t.Fatal("flush failure not acknowledged", err)
 	}
 }
+
+func TestAsyncSSETransferEncodingRouteOrder(t *testing.T) {
+	// _sse_read_http_request does not reject Transfer-Encoding itself. POST
+	// /message rejects it; unrelated paths still produce 404 after parsing.
+	_, h := testSSE(t, AsyncSSE)
+	if w := httpRequest(h, "GET", "/missing", "", map[string]string{"Transfer-Encoding": "chunked"}); w.Code != 404 {
+		t.Fatal(w.Code)
+	}
+}
