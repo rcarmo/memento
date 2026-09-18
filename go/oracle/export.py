@@ -471,6 +471,8 @@ def main() -> None:
     (ROOT / "go/service/audit_tools.json").write_text(
         json.dumps(audit_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
     )
+    execute_values = importlib.import_module("execute_values")
+    save("execute-values.json", execute_values.fixtures())
     # Runtime embeds only definitions for implemented tools, not test outcomes.
     (ROOT / "go/service/proposal_tools.json").write_text(
         json.dumps(proposal_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"

@@ -1,0 +1,5361 @@
+{
+  "bounds": [
+    {
+      "expected": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": []
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": []
+      },
+      "limit": 0,
+      "value": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            {
+              "path": "/b.md",
+              "tags": []
+            },
+            {
+              "path": "/c.md",
+              "tags": [
+                "q"
+              ]
+            }
+          ]
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          },
+          {
+            "x": 3
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x"
+              ]
+            }
+          ]
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": [
+          {
+            "x": 1
+          }
+        ]
+      },
+      "limit": 1,
+      "value": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            {
+              "path": "/b.md",
+              "tags": []
+            },
+            {
+              "path": "/c.md",
+              "tags": [
+                "q"
+              ]
+            }
+          ]
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          },
+          {
+            "x": 3
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x",
+                "y"
+              ]
+            },
+            {
+              "path": "/b.md",
+              "tags": []
+            }
+          ]
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          }
+        ]
+      },
+      "limit": 2,
+      "value": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            {
+              "path": "/b.md",
+              "tags": []
+            },
+            {
+              "path": "/c.md",
+              "tags": [
+                "q"
+              ]
+            }
+          ]
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          },
+          {
+            "x": 3
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            {
+              "path": "/b.md",
+              "tags": []
+            },
+            {
+              "path": "/c.md",
+              "tags": [
+                "q"
+              ]
+            }
+          ]
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          },
+          {
+            "x": 3
+          }
+        ]
+      },
+      "limit": 50,
+      "value": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            {
+              "path": "/b.md",
+              "tags": []
+            },
+            {
+              "path": "/c.md",
+              "tags": [
+                "q"
+              ]
+            }
+          ]
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          },
+          {
+            "x": 3
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x",
+                "y"
+              ]
+            },
+            {
+              "path": "/b.md",
+              "tags": []
+            }
+          ]
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          }
+        ]
+      },
+      "limit": -1,
+      "value": {
+        "empty": [],
+        "hits": {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            {
+              "path": "/b.md",
+              "tags": []
+            },
+            {
+              "path": "/c.md",
+              "tags": [
+                "q"
+              ]
+            }
+          ]
+        },
+        "nil": null,
+        "number": 7,
+        "odd\n": {
+          "a\n": "newline"
+        },
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          },
+          {
+            "x": 3
+          }
+        ]
+      }
+    },
+    {
+      "expected": [],
+      "limit": 0,
+      "value": []
+    },
+    {
+      "expected": [],
+      "limit": 1,
+      "value": []
+    },
+    {
+      "expected": [],
+      "limit": 2,
+      "value": []
+    },
+    {
+      "expected": [],
+      "limit": 50,
+      "value": []
+    },
+    {
+      "expected": [],
+      "limit": -1,
+      "value": []
+    },
+    {
+      "expected": [],
+      "limit": 0,
+      "value": [
+        1,
+        [
+          2,
+          3,
+          4
+        ],
+        {
+          "items": [
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "expected": [
+        1
+      ],
+      "limit": 1,
+      "value": [
+        1,
+        [
+          2,
+          3,
+          4
+        ],
+        {
+          "items": [
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "expected": [
+        1,
+        [
+          2,
+          3
+        ]
+      ],
+      "limit": 2,
+      "value": [
+        1,
+        [
+          2,
+          3,
+          4
+        ],
+        {
+          "items": [
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "expected": [
+        1,
+        [
+          2,
+          3,
+          4
+        ],
+        {
+          "items": [
+            5,
+            6,
+            7
+          ]
+        }
+      ],
+      "limit": 50,
+      "value": [
+        1,
+        [
+          2,
+          3,
+          4
+        ],
+        {
+          "items": [
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "expected": [
+        1,
+        [
+          2,
+          3
+        ]
+      ],
+      "limit": -1,
+      "value": [
+        1,
+        [
+          2,
+          3,
+          4
+        ],
+        {
+          "items": [
+            5,
+            6,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "expected": "x",
+      "limit": 0,
+      "value": "x"
+    },
+    {
+      "expected": "x",
+      "limit": 1,
+      "value": "x"
+    },
+    {
+      "expected": "x",
+      "limit": 2,
+      "value": "x"
+    },
+    {
+      "expected": "x",
+      "limit": 50,
+      "value": "x"
+    },
+    {
+      "expected": "x",
+      "limit": -1,
+      "value": "x"
+    },
+    {
+      "expected": null,
+      "limit": 0,
+      "value": null
+    },
+    {
+      "expected": null,
+      "limit": 1,
+      "value": null
+    },
+    {
+      "expected": null,
+      "limit": 2,
+      "value": null
+    },
+    {
+      "expected": null,
+      "limit": 50,
+      "value": null
+    },
+    {
+      "expected": null,
+      "limit": -1,
+      "value": null
+    }
+  ],
+  "contains": [
+    {
+      "expected": false,
+      "value": null
+    },
+    {
+      "expected": false,
+      "value": true
+    },
+    {
+      "expected": false,
+      "value": 7
+    },
+    {
+      "expected": false,
+      "value": "plain"
+    },
+    {
+      "expected": false,
+      "value": "prefix $hits"
+    },
+    {
+      "expected": true,
+      "value": "$hits"
+    },
+    {
+      "expected": true,
+      "value": "$hits.results.0.path"
+    },
+    {
+      "expected": true,
+      "value": [
+        "$hits",
+        "bad $x"
+      ]
+    },
+    {
+      "expected": true,
+      "value": {
+        "key": "$nil"
+      }
+    },
+    {
+      "expected": false,
+      "value": {
+        "$not-a-reference-key": 1
+      }
+    },
+    {
+      "error": "invalid saved reference (use $name.field or $name.0.field)",
+      "type": "ValueError",
+      "value": {
+        "nested": {
+          "bad": "$hits..bad"
+        }
+      }
+    },
+    {
+      "expected": true,
+      "value": {
+        "nested": [
+          "$absent"
+        ]
+      }
+    },
+    {
+      "error": "invalid saved reference (use $name.field or $name.0.field)",
+      "type": "ValueError",
+      "value": [
+        "$hits",
+        "$bad..path"
+      ]
+    },
+    {
+      "error": "invalid saved reference (use $name.field or $name.0.field)",
+      "type": "ValueError",
+      "value": "$"
+    },
+    {
+      "expected": true,
+      "value": "$unknown"
+    },
+    {
+      "expected": true,
+      "value": "$hits.results.00.path"
+    },
+    {
+      "error": "invalid saved reference (use $name.field or $name.0.field)",
+      "type": "ValueError",
+      "value": "$hits.results.-1"
+    },
+    {
+      "error": "invalid saved reference (use $name.field or $name.0.field)",
+      "type": "ValueError",
+      "value": "$hits.a\n"
+    },
+    {
+      "error": "invalid saved reference (use $name.field or $name.0.field)",
+      "type": "ValueError",
+      "value": "$odd\n"
+    },
+    {
+      "expected": true,
+      "value": "$hits.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "error": "invalid saved reference (use $name.field or $name.0.field)",
+      "type": "ValueError",
+      "value": "$abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ],
+  "extracts": [
+    {
+      "expected": "/a.md",
+      "path": "results.0.path",
+      "value": {
+        "0": "zero",
+        "results": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y",
+              "z"
+            ]
+          },
+          {
+            "path": "/b.md",
+            "tags": []
+          },
+          {
+            "path": "/c.md",
+            "tags": [
+              "q"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "error": "list index out of range",
+      "path": "results.4.path",
+      "type": "IndexError",
+      "value": {
+        "0": "zero",
+        "results": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y",
+              "z"
+            ]
+          },
+          {
+            "path": "/b.md",
+            "tags": []
+          },
+          {
+            "path": "/c.md",
+            "tags": [
+              "q"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "error": "invalid literal for int() with base 10: 'nope'",
+      "path": "results.nope",
+      "type": "ValueError",
+      "value": {
+        "0": "zero",
+        "results": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y",
+              "z"
+            ]
+          },
+          {
+            "path": "/b.md",
+            "tags": []
+          },
+          {
+            "path": "/c.md",
+            "tags": [
+              "q"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "error": "cannot fit 'int' into an index-sized integer",
+      "path": "results.99999999999999999999999999999999999999999999999999999999999999999999999999999999",
+      "type": "IndexError",
+      "value": {
+        "0": "zero",
+        "results": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y",
+              "z"
+            ]
+          },
+          {
+            "path": "/b.md",
+            "tags": []
+          },
+          {
+            "path": "/c.md",
+            "tags": [
+              "q"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "error": "list index out of range",
+      "path": "0",
+      "type": "IndexError",
+      "value": []
+    },
+    {
+      "error": "field not found: missing",
+      "path": "missing",
+      "type": "ValueError",
+      "value": {}
+    },
+    {
+      "error": "field not found: a",
+      "path": "a",
+      "type": "ValueError",
+      "value": 1
+    },
+    {
+      "error": "invalid field path: ",
+      "path": "",
+      "type": "ValueError",
+      "value": {}
+    },
+    {
+      "error": "invalid field path: results.-1",
+      "path": "results.-1",
+      "type": "ValueError",
+      "value": {
+        "0": "zero",
+        "results": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y",
+              "z"
+            ]
+          },
+          {
+            "path": "/b.md",
+            "tags": []
+          },
+          {
+            "path": "/c.md",
+            "tags": [
+              "q"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expected": "newline",
+      "path": "a\n",
+      "value": {
+        "a\n": "newline"
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "committed": false,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          "revisions": [
+            {
+              "index": 0,
+              "operation_id": "op0",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 1,
+              "operation_id": "op1",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 2,
+              "operation_id": "op2",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 3,
+              "operation_id": "op3",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 4,
+              "operation_id": "op4",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 5,
+              "operation_id": "op5",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 0,
+              "op": "read",
+              "operation_id": "op0"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 1,
+              "op": "read",
+              "operation_id": "op1"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 2,
+              "op": "read",
+              "operation_id": "op2"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 3,
+              "op": "read",
+              "operation_id": "op3"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 4,
+              "op": "read",
+              "operation_id": "op4"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 5,
+              "op": "read",
+              "operation_id": "op5"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 6,
+              "op": "read",
+              "operation_id": "op6"
+            }
+          ]
+        }
+      },
+      "max_bytes": 4096,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          "revisions": [
+            {
+              "index": 0,
+              "operation_id": "op0",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 1,
+              "operation_id": "op1",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 2,
+              "operation_id": "op2",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 3,
+              "operation_id": "op3",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 4,
+              "operation_id": "op4",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 5,
+              "operation_id": "op5",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 0,
+              "op": "read",
+              "operation_id": "op0"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 1,
+              "op": "read",
+              "operation_id": "op1"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 2,
+              "op": "read",
+              "operation_id": "op2"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 3,
+              "op": "read",
+              "operation_id": "op3"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 4,
+              "op": "read",
+              "operation_id": "op4"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 5,
+              "op": "read",
+              "operation_id": "op5"
+            },
+            {
+              "data": {
+                "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "unicode": "café\n"
+              },
+              "index": 6,
+              "op": "read",
+              "operation_id": "op6"
+            }
+          ]
+        }
+      },
+      "max_bytes": 4096,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 3000,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          "revisions": [
+            {
+              "index": 0,
+              "operation_id": "op0",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 1,
+              "operation_id": "op1",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 2,
+              "operation_id": "op2",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 3,
+              "operation_id": "op3",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 4,
+              "operation_id": "op4",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 5,
+              "operation_id": "op5",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 0,
+              "op": "read",
+              "operation_id": "op0"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 1,
+              "op": "read",
+              "operation_id": "op1"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 2,
+              "op": "read",
+              "operation_id": "op2"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 3,
+              "op": "read",
+              "operation_id": "op3"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 4,
+              "op": "read",
+              "operation_id": "op4"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 5,
+              "op": "read",
+              "operation_id": "op5"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 6,
+              "op": "read",
+              "operation_id": "op6"
+            }
+          ],
+          "truncated": true
+        }
+      },
+      "max_bytes": 3000,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 2400,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          "revisions": [
+            {
+              "index": 0,
+              "operation_id": "op0",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 1,
+              "operation_id": "op1",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 2,
+              "operation_id": "op2",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 3,
+              "operation_id": "op3",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 4,
+              "operation_id": "op4",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 5,
+              "operation_id": "op5",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 0,
+              "op": "read",
+              "operation_id": "op0"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 1,
+              "op": "read",
+              "operation_id": "op1"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 2,
+              "op": "read",
+              "operation_id": "op2"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 3,
+              "op": "read",
+              "operation_id": "op3"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 4,
+              "op": "read",
+              "operation_id": "op4"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 5,
+              "op": "read",
+              "operation_id": "op5"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 6,
+              "op": "read",
+              "operation_id": "op6"
+            }
+          ],
+          "truncated": true
+        }
+      },
+      "max_bytes": 2400,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 1800,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "truncated": true
+          },
+          "revisions": [
+            {
+              "index": 0,
+              "operation_id": "op0",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 1,
+              "operation_id": "op1",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 2,
+              "operation_id": "op2",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 3,
+              "operation_id": "op3",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 4,
+              "operation_id": "op4",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 5,
+              "operation_id": "op5",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 0,
+              "op": "read",
+              "operation_id": "op0"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 1,
+              "op": "read",
+              "operation_id": "op1"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 2,
+              "op": "read",
+              "operation_id": "op2"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 3,
+              "op": "read",
+              "operation_id": "op3"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 4,
+              "op": "read",
+              "operation_id": "op4"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 5,
+              "op": "read",
+              "operation_id": "op5"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 6,
+              "op": "read",
+              "operation_id": "op6"
+            }
+          ],
+          "truncated": true
+        }
+      },
+      "max_bytes": 1800,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 1400,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "truncated": true
+          },
+          "revisions": [
+            {
+              "index": 0,
+              "operation_id": "op0",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 1,
+              "operation_id": "op1",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 2,
+              "operation_id": "op2",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 3,
+              "operation_id": "op3",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 4,
+              "operation_id": "op4",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 5,
+              "operation_id": "op5",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 0,
+              "op": "read",
+              "operation_id": "op0"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 1,
+              "op": "read",
+              "operation_id": "op1"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 2,
+              "op": "read",
+              "operation_id": "op2"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 3,
+              "op": "read",
+              "operation_id": "op3"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 4,
+              "op": "read",
+              "operation_id": "op4"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 5,
+              "op": "read",
+              "operation_id": "op5"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 6,
+              "op": "read",
+              "operation_id": "op6"
+            }
+          ],
+          "truncated": true
+        }
+      },
+      "max_bytes": 1400,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 1000,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "truncated": true
+          },
+          "revisions": [
+            {
+              "index": 0,
+              "operation_id": "op0",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 1,
+              "operation_id": "op1",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 2,
+              "operation_id": "op2",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 3,
+              "operation_id": "op3",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 4,
+              "operation_id": "op4",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 5,
+              "operation_id": "op5",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            },
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 0,
+              "op": "read",
+              "operation_id": "op0"
+            },
+            {
+              "truncated": true
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 5,
+              "op": "read",
+              "operation_id": "op5"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 6,
+              "op": "read",
+              "operation_id": "op6"
+            }
+          ],
+          "truncated": true
+        }
+      },
+      "max_bytes": 1000,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 700,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "truncated": true
+          },
+          "revisions": [
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 0,
+              "op": "read",
+              "operation_id": "op0"
+            },
+            {
+              "truncated": true
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 5,
+              "op": "read",
+              "operation_id": "op5"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 6,
+              "op": "read",
+              "operation_id": "op6"
+            }
+          ],
+          "truncated": true
+        }
+      },
+      "max_bytes": 700,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 512,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "truncated": true
+          },
+          "revisions": [
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 0,
+              "op": "read",
+              "operation_id": "op0"
+            },
+            {
+              "truncated": true
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 5,
+              "op": "read",
+              "operation_id": "op5"
+            },
+            {
+              "data": {
+                "truncated": true
+              },
+              "index": 6,
+              "op": "read",
+              "operation_id": "op6"
+            }
+          ],
+          "truncated": true
+        }
+      },
+      "max_bytes": 512,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 350,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "truncated": true
+          },
+          "revisions": [
+            {
+              "index": 6,
+              "operation_id": "op6",
+              "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            }
+          ],
+          "stop_reason": null,
+          "stopped": false,
+          "trace": [
+            {
+              "truncated": true
+            }
+          ],
+          "truncated": true
+        }
+      },
+      "max_bytes": 350,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 200,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 200,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": false,
+      "ensure": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 80,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 80,
+      "payload": {
+        "returns": {
+          "result": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+        },
+        "revisions": [
+          {
+            "index": 0,
+            "operation_id": "op0",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 1,
+            "operation_id": "op1",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 2,
+            "operation_id": "op2",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 3,
+            "operation_id": "op3",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 4,
+            "operation_id": "op4",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 5,
+            "operation_id": "op5",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          },
+          {
+            "index": 6,
+            "operation_id": "op6",
+            "repo_revision": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+          }
+        ],
+        "stop_reason": null,
+        "stopped": false,
+        "trace": [
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 0,
+            "op": "read",
+            "operation_id": "op0"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 1,
+            "op": "read",
+            "operation_id": "op1"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 2,
+            "op": "read",
+            "operation_id": "op2"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 3,
+            "op": "read",
+            "operation_id": "op3"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 4,
+            "op": "read",
+            "operation_id": "op4"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 5,
+            "op": "read",
+            "operation_id": "op5"
+          },
+          {
+            "data": {
+              "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "unicode": "café\n"
+            },
+            "index": 6,
+            "op": "read",
+            "operation_id": "op6"
+          }
+        ]
+      },
+      "size": 3374
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "error": "plan exceeded configured max_output_bytes",
+        "type": "ValueError"
+      },
+      "max_bytes": 512,
+      "payload": {
+        "returns": {},
+        "revisions": [],
+        "stop_reason": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "trace": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "size": 571
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "truncated": true
+          },
+          "revisions": [],
+          "trace": [
+            1,
+            {},
+            "x"
+          ],
+          "truncated": true
+        }
+      },
+      "max_bytes": 512,
+      "payload": {
+        "returns": {
+          "a": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        },
+        "revisions": [],
+        "trace": [
+          1,
+          {},
+          "x"
+        ]
+      },
+      "size": 1053
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "integer": 10000000000000000000000000000000000000000,
+          "unicode": "🍀 café"
+        }
+      },
+      "max_bytes": 512,
+      "payload": {
+        "integer": 10000000000000000000000000000000000000000,
+        "unicode": "🍀 café"
+      },
+      "size": 88
+    },
+    {
+      "committed": true,
+      "ensure": {
+        "expected": null
+      },
+      "fit": {
+        "expected": {
+          "returns": {
+            "truncated": true
+          },
+          "revisions": null,
+          "trace": [],
+          "truncated": true
+        }
+      },
+      "max_bytes": 512,
+      "payload": {
+        "returns": {
+          "a": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        },
+        "revisions": null,
+        "trace": []
+      },
+      "size": 848
+    }
+  ],
+  "projections": [
+    {
+      "expected": {
+        "result": {
+          "last": [
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": []
+    },
+    {
+      "expected": {
+        "picked": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "path": "/b.md",
+            "tags": []
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "fields": [
+            "path",
+            "tags"
+          ],
+          "name": "picked",
+          "ref": "$hits.results"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "hits_results": [
+          {
+            "path": "/a.md"
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "fields": [
+            "path"
+          ],
+          "limit": 1,
+          "ref": "$hits.results"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "hits": [
+          {
+            "results.0.path": "/a.md"
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "fields": [
+            "results.0.path"
+          ],
+          "ref": "$hits"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "hits_results": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y"
+            ]
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "limit": 1,
+          "ref": "$hits.results"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "hits_results": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "path": "/b.md",
+            "tags": []
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "ref": "$hits.results"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          },
+          {
+            "x": 3
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "asset_get",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "fields": [
+            "x"
+          ],
+          "ref": "$rows"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          },
+          {
+            "x": 3
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "asset_get",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "ref": "$rows"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "rows": [
+          {
+            "x": 1
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "asset_get",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "fields": [
+            "x"
+          ],
+          "limit": 1,
+          "ref": "$rows"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "rows": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "asset_get",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "limit": 2,
+          "ref": "$rows"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "shadowed": [
+          {
+            "x": 1
+          },
+          {
+            "x": 2
+          },
+          {
+            "x": 3
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "asset_get",
+          "save_as": "rows"
+        },
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "fields": [
+            "x"
+          ],
+          "name": "shadowed",
+          "ref": "$rows"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "rows": [
+          {
+            "x": 1
+          }
+        ]
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 1,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "fields": [
+            "x",
+            "x"
+          ],
+          "ref": "$rows"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "null": null
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "name": "null",
+          "ref": "$nil"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "literal": "literal"
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "ref": "literal"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "number": 7
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "name": "",
+          "ref": "$number"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "same": null
+      },
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "name": "same",
+          "ref": "$number"
+        },
+        {
+          "name": "same",
+          "ref": "$nil"
+        }
+      ]
+    },
+    {
+      "error": "unknown reference: $missing",
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "ref": "$missing"
+        }
+      ],
+      "type": "ValueError"
+    },
+    {
+      "expected": {},
+      "failed": [
+        "missing"
+      ],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "ref": "$missing"
+        }
+      ]
+    },
+    {
+      "error": "field not found: missing",
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "fields": [
+            "missing"
+          ],
+          "ref": "$hits.results"
+        }
+      ],
+      "type": "ValueError"
+    },
+    {
+      "error": "list index out of range",
+      "failed": [],
+      "last": {
+        "last": [
+          1,
+          2,
+          3
+        ]
+      },
+      "max_records": 2,
+      "operations": [
+        {
+          "operation": "list",
+          "save_as": "rows"
+        }
+      ],
+      "returns": [
+        {
+          "fields": [
+            "results.9"
+          ],
+          "ref": "$hits"
+        }
+      ],
+      "type": "IndexError"
+    }
+  ],
+  "references": [
+    {
+      "expected": "literal",
+      "ref": "literal"
+    },
+    {
+      "expected": {
+        "0": "zero",
+        "results": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y",
+              "z"
+            ]
+          },
+          {
+            "path": "/b.md",
+            "tags": []
+          },
+          {
+            "path": "/c.md",
+            "tags": [
+              "q"
+            ]
+          }
+        ]
+      },
+      "ref": "$hits"
+    },
+    {
+      "expected": null,
+      "ref": "$nil"
+    },
+    {
+      "error": "unknown reference: $unknown",
+      "ref": "$unknown",
+      "type": "ValueError"
+    },
+    {
+      "error": "reference does not resolve to a container: $number.x",
+      "ref": "$number.x",
+      "type": "ValueError"
+    },
+    {
+      "error": "reference field not found: $hits.absent",
+      "ref": "$hits.absent",
+      "type": "ValueError"
+    },
+    {
+      "expected": "/a.md",
+      "ref": "$hits.results.0.path"
+    },
+    {
+      "error": "reference index out of range: $hits.results.9",
+      "ref": "$hits.results.9",
+      "type": "ValueError"
+    },
+    {
+      "error": "reference index out of range: $empty.0",
+      "ref": "$empty.0",
+      "type": "ValueError"
+    },
+    {
+      "error": "invalid literal for int() with base 10: 'path'",
+      "ref": "$hits.results.path",
+      "type": "ValueError"
+    },
+    {
+      "expected": "/b.md",
+      "ref": "$hits.results.0001.path"
+    },
+    {
+      "error": "reference index out of range: $hits.results.99999999999999999999999999999999999999999999999999999999999999999999999999999999",
+      "ref": "$hits.results.99999999999999999999999999999999999999999999999999999999999999999999999999999999",
+      "type": "ValueError"
+    },
+    {
+      "expected": "zero",
+      "ref": "$hits.0"
+    },
+    {
+      "error": "invalid reference segment: $hits..x",
+      "ref": "$hits..x",
+      "type": "ValueError"
+    },
+    {
+      "error": "invalid reference: $1bad",
+      "ref": "$1bad",
+      "type": "ValueError"
+    },
+    {
+      "expected": "newline",
+      "ref": "$odd\n.a\n"
+    },
+    {
+      "expected": "/a.md",
+      "ref": "$hits.results.0\n.path"
+    }
+  ],
+  "resolutions": [
+    {
+      "expected": null,
+      "value": null
+    },
+    {
+      "expected": true,
+      "value": true
+    },
+    {
+      "expected": 7,
+      "value": 7
+    },
+    {
+      "expected": "plain",
+      "value": "plain"
+    },
+    {
+      "expected": "prefix $hits",
+      "value": "prefix $hits"
+    },
+    {
+      "expected": {
+        "0": "zero",
+        "results": [
+          {
+            "path": "/a.md",
+            "tags": [
+              "x",
+              "y",
+              "z"
+            ]
+          },
+          {
+            "path": "/b.md",
+            "tags": []
+          },
+          {
+            "path": "/c.md",
+            "tags": [
+              "q"
+            ]
+          }
+        ]
+      },
+      "value": "$hits"
+    },
+    {
+      "expected": "/a.md",
+      "value": "$hits.results.0.path"
+    },
+    {
+      "expected": [
+        {
+          "0": "zero",
+          "results": [
+            {
+              "path": "/a.md",
+              "tags": [
+                "x",
+                "y",
+                "z"
+              ]
+            },
+            {
+              "path": "/b.md",
+              "tags": []
+            },
+            {
+              "path": "/c.md",
+              "tags": [
+                "q"
+              ]
+            }
+          ]
+        },
+        "bad $x"
+      ],
+      "value": [
+        "$hits",
+        "bad $x"
+      ]
+    },
+    {
+      "expected": {
+        "key": null
+      },
+      "value": {
+        "key": "$nil"
+      }
+    },
+    {
+      "expected": {
+        "$not-a-reference-key": 1
+      },
+      "value": {
+        "$not-a-reference-key": 1
+      }
+    },
+    {
+      "error": "invalid reference segment: $hits..bad",
+      "type": "ValueError",
+      "value": {
+        "nested": {
+          "bad": "$hits..bad"
+        }
+      }
+    },
+    {
+      "error": "unknown reference: $absent",
+      "type": "ValueError",
+      "value": {
+        "nested": [
+          "$absent"
+        ]
+      }
+    },
+    {
+      "error": "unknown reference: $bad..path",
+      "type": "ValueError",
+      "value": [
+        "$hits",
+        "$bad..path"
+      ]
+    },
+    {
+      "error": "invalid reference: $",
+      "type": "ValueError",
+      "value": "$"
+    },
+    {
+      "error": "unknown reference: $unknown",
+      "type": "ValueError",
+      "value": "$unknown"
+    },
+    {
+      "expected": "/a.md",
+      "value": "$hits.results.00.path"
+    },
+    {
+      "error": "invalid reference segment: $hits.results.-1",
+      "type": "ValueError",
+      "value": "$hits.results.-1"
+    },
+    {
+      "error": "reference field not found: $hits.a\n",
+      "type": "ValueError",
+      "value": "$hits.a\n"
+    },
+    {
+      "expected": {
+        "a\n": "newline"
+      },
+      "value": "$odd\n"
+    },
+    {
+      "error": "reference field not found: $hits.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "type": "ValueError",
+      "value": "$hits.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "error": "invalid reference: $abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "type": "ValueError",
+      "value": "$abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ],
+  "saved": {
+    "empty": [],
+    "hits": {
+      "0": "zero",
+      "results": [
+        {
+          "path": "/a.md",
+          "tags": [
+            "x",
+            "y",
+            "z"
+          ]
+        },
+        {
+          "path": "/b.md",
+          "tags": []
+        },
+        {
+          "path": "/c.md",
+          "tags": [
+            "q"
+          ]
+        }
+      ]
+    },
+    "nil": null,
+    "number": 7,
+    "odd\n": {
+      "a\n": "newline"
+    },
+    "rows": [
+      {
+        "x": 1
+      },
+      {
+        "x": 2
+      },
+      {
+        "x": 3
+      }
+    ]
+  }
+}
