@@ -39,6 +39,7 @@ fuzz:
 	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzProposalChanges -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzProposalCursor -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzManifestTimestamp -fuzztime=10000x -parallel=2 -timeout=120s
+	CGO_ENABLED=0 $(GO) test ./internal/pydatetime -run='^$$' -fuzz=FuzzParseAware -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzAuditCursor -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./execute -run='^$$' -fuzz=FuzzExecutorValues -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./execute -run='^$$' -fuzz=FuzzExecutorPlan -fuzztime=10000x -parallel=2 -timeout=120s
