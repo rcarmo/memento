@@ -1,0 +1,2488 @@
+{
+  "files": {
+    "/private/nested/n.md": "---\nschema_version: 1\nid: n\ntype: concept\ntitle: Nested\nstatus: active\naliases:\n  - alias\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: actor\n---\nalpha beta\n",
+    "/private/p.md": "---\nschema_version: 1\nid: p\ntype: concept\ntitle: Secret\nstatus: active\naliases:\n  - alias\ntags:\n  - x\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: actor\n---\nalpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha\n",
+    "/public/a.md": "---\nschema_version: 1\nid: a\ntype: concept\ntitle: Alpha\nstatus: active\naliases:\n  - alias\ntags:\n  - x\n  - y\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: actor\n---\nalpha beta alpha\n",
+    "/public/a_b%/u.md": "---\nschema_version: 1\nid: u\ntype: concept\ntitle: Unicode é\nstatus: active\naliases:\n  - alias\ntags:\n  - x\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: actor\n---\nalpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀\n",
+    "/public/b.md": "---\nschema_version: 1\nid: b\ntype: project\ntitle: Beta\nstatus: deprecated\naliases:\n  - alias\ntags:\n  - y\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: actor\n---\nalpha beta\n",
+    "/public/nested/c.md": "---\nschema_version: 1\nid: c\ntype: concept\ntitle: Third\nstatus: active\naliases:\n  - alias\ntags:\n  - x\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: actor\n---\nzero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail tail\n",
+    "/trash/public/t.md": "---\nschema_version: 1\nid: t\ntype: concept\ntitle: Trashed\nstatus: active\naliases:\n  - alias\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: actor\n---\nalpha beta\n"
+  },
+  "pages": [
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": "offset:1",
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 1,
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": "offset:3",
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:1",
+        "limit": 2,
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 4.0082815734989644e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 4.007252766194419e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "c",
+            "concept_type": "concept",
+            "path": "/public/nested/c.md",
+            "score": 2.6174895895300416e-06,
+            "snippet": "… zero zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Third"
+          },
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 200,
+        "query": "alpha beta",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": "offset:1",
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 0,
+        "query": "alpha",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.805168479430904,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "c",
+            "concept_type": "concept",
+            "path": "/public/nested/c.md",
+            "score": 1.3087447947650208e-06,
+            "snippet": "… zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail tail …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Third"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 20,
+        "query": "title:Alpha OR body:beta",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "concept_type": "project",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "query": "alpha",
+        "query_syntax": "plain",
+        "status": "deprecated"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "query": "alpha",
+        "query_syntax": "plain",
+        "tags": [
+          "x",
+          "y"
+        ]
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "path_prefix": "/public/a_b%/",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:999",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          },
+          {
+            "concept_id": "c",
+            "concept_type": "concept",
+            "path": "/public/nested/c.md",
+            "score": 1.3087447947650208e-06,
+            "snippet": "… zero zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Third"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:-1",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "invalid FTS query",
+      "options": {
+        "query": "unknowncolumn:alpha",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "invalid FTS query",
+      "options": {
+        "query": "\"unterminated",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "plain search query must contain at least one word",
+      "options": {
+        "query": "",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": "offset:1",
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 1,
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": "offset:3",
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "n",
+            "concept_type": "concept",
+            "path": "/private/nested/n.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "active",
+            "tags": [],
+            "title": "Nested"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:1",
+        "limit": 2,
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 4.0082815734989644e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 4.007252766194419e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "n",
+            "concept_type": "concept",
+            "path": "/private/nested/n.md",
+            "score": 3.886925795053004e-06,
+            "snippet": "alpha beta",
+            "status": "active",
+            "tags": [],
+            "title": "Nested"
+          },
+          {
+            "concept_id": "c",
+            "concept_type": "concept",
+            "path": "/public/nested/c.md",
+            "score": 2.6174895895300416e-06,
+            "snippet": "… zero zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Third"
+          },
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 200,
+        "query": "alpha beta",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": "offset:1",
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 0,
+        "query": "alpha",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.805168479430904,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "n",
+            "concept_type": "concept",
+            "path": "/private/nested/n.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "active",
+            "tags": [],
+            "title": "Nested"
+          },
+          {
+            "concept_id": "c",
+            "concept_type": "concept",
+            "path": "/public/nested/c.md",
+            "score": 1.3087447947650208e-06,
+            "snippet": "… zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail tail …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Third"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 20,
+        "query": "title:Alpha OR body:beta",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "concept_type": "project",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "query": "alpha",
+        "query_syntax": "plain",
+        "status": "deprecated"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "query": "alpha",
+        "query_syntax": "plain",
+        "tags": [
+          "x",
+          "y"
+        ]
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "path_prefix": "/public/a_b%/",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:999",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "n",
+            "concept_type": "concept",
+            "path": "/private/nested/n.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "active",
+            "tags": [],
+            "title": "Nested"
+          },
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          },
+          {
+            "concept_id": "c",
+            "concept_type": "concept",
+            "path": "/public/nested/c.md",
+            "score": 1.3087447947650208e-06,
+            "snippet": "… zero zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Third"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:-1",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "invalid FTS query",
+      "options": {
+        "query": "unknowncolumn:alpha",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "invalid FTS query",
+      "options": {
+        "query": "\"unterminated",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "plain search query must contain at least one word",
+      "options": {
+        "query": "",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/",
+          "/private/nested/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": "offset:1",
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "p",
+            "concept_type": "concept",
+            "path": "/private/p.md",
+            "score": 2.1681285108899186e-06,
+            "snippet": "alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Secret"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 1,
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": "offset:3",
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:1",
+        "limit": 2,
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 4.0082815734989644e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 4.007252766194419e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "n",
+            "concept_type": "concept",
+            "path": "/private/nested/n.md",
+            "score": 3.886925795053004e-06,
+            "snippet": "alpha beta",
+            "status": "active",
+            "tags": [],
+            "title": "Nested"
+          },
+          {
+            "concept_id": "c",
+            "concept_type": "concept",
+            "path": "/public/nested/c.md",
+            "score": 2.6174895895300416e-06,
+            "snippet": "… zero zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Third"
+          },
+          {
+            "concept_id": "p",
+            "concept_type": "concept",
+            "path": "/private/p.md",
+            "score": 2.1681285108899186e-06,
+            "snippet": "alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Secret"
+          },
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 200,
+        "query": "alpha beta",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": "offset:1",
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "p",
+            "concept_type": "concept",
+            "path": "/private/p.md",
+            "score": 2.1681285108899186e-06,
+            "snippet": "alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Secret"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 0,
+        "query": "alpha",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.805168479430904,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "n",
+            "concept_type": "concept",
+            "path": "/private/nested/n.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "active",
+            "tags": [],
+            "title": "Nested"
+          },
+          {
+            "concept_id": "c",
+            "concept_type": "concept",
+            "path": "/public/nested/c.md",
+            "score": 1.3087447947650208e-06,
+            "snippet": "… zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail tail …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Third"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 20,
+        "query": "title:Alpha OR body:beta",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "concept_type": "project",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "query": "alpha",
+        "query_syntax": "plain",
+        "status": "deprecated"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "query": "alpha",
+        "query_syntax": "plain",
+        "tags": [
+          "x",
+          "y"
+        ]
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "path_prefix": "/public/a_b%/",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:999",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "p",
+            "concept_type": "concept",
+            "path": "/private/p.md",
+            "score": 2.1681285108899186e-06,
+            "snippet": "alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha alpha …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Secret"
+          },
+          {
+            "concept_id": "a",
+            "concept_type": "concept",
+            "path": "/public/a.md",
+            "score": 2.095238095238095e-06,
+            "snippet": "alpha beta alpha",
+            "status": "active",
+            "tags": [
+              "x",
+              "y"
+            ],
+            "title": "Alpha"
+          },
+          {
+            "concept_id": "b",
+            "concept_type": "project",
+            "path": "/public/b.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "deprecated",
+            "tags": [
+              "y"
+            ],
+            "title": "Beta"
+          },
+          {
+            "concept_id": "n",
+            "concept_type": "concept",
+            "path": "/private/nested/n.md",
+            "score": 1.943462897526502e-06,
+            "snippet": "alpha beta",
+            "status": "active",
+            "tags": [],
+            "title": "Nested"
+          },
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          },
+          {
+            "concept_id": "c",
+            "concept_type": "concept",
+            "path": "/public/nested/c.md",
+            "score": 1.3087447947650208e-06,
+            "snippet": "… zero zero zero zero zero zero zero alpha beta tail tail tail tail tail tail tail …",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Third"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:-1",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "invalid FTS query",
+      "options": {
+        "query": "unknowncolumn:alpha",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "invalid FTS query",
+      "options": {
+        "query": "\"unterminated",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "plain search query must contain at least one word",
+      "options": {
+        "query": "",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 1,
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:1",
+        "limit": 2,
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 200,
+        "query": "alpha beta",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "limit": 0,
+        "query": "alpha",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [],
+        "warnings": []
+      },
+      "options": {
+        "limit": 20,
+        "query": "title:Alpha OR body:beta",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [],
+        "warnings": []
+      },
+      "options": {
+        "concept_type": "project",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [],
+        "warnings": []
+      },
+      "options": {
+        "query": "alpha",
+        "query_syntax": "plain",
+        "status": "deprecated"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [],
+        "warnings": []
+      },
+      "options": {
+        "query": "alpha",
+        "query_syntax": "plain",
+        "tags": [
+          "x",
+          "y"
+        ]
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "path_prefix": "/public/a_b%/",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:999",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "expected": {
+        "index_revision": "main",
+        "next_cursor": null,
+        "repo_revision": "main",
+        "results": [
+          {
+            "concept_id": "u",
+            "concept_type": "concept",
+            "path": "/public/a_b%/u.md",
+            "score": 1.898188093183779e-06,
+            "snippet": "alpha 中文 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀 😀",
+            "status": "active",
+            "tags": [
+              "x"
+            ],
+            "title": "Unicode é"
+          }
+        ],
+        "warnings": []
+      },
+      "options": {
+        "cursor": "offset:-1",
+        "query": "alpha",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "invalid FTS query",
+      "options": {
+        "query": "unknowncolumn:alpha",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "invalid FTS query",
+      "options": {
+        "query": "\"unterminated",
+        "query_syntax": "fts5"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "plain search query must contain at least one word",
+      "options": {
+        "query": "",
+        "query_syntax": "plain"
+      },
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/a_b%/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    }
+  ],
+  "queries": [
+    {
+      "error": "plain search query must contain at least one word",
+      "query": "",
+      "syntax": "plain"
+    },
+    {
+      "error": "search query must not be empty",
+      "query": "",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "",
+      "syntax": "invalid"
+    },
+    {
+      "error": "plain search query must contain at least one word",
+      "query": "!!!",
+      "syntax": "plain"
+    },
+    {
+      "expected": "!!!",
+      "query": "!!!",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "!!!",
+      "syntax": "invalid"
+    },
+    {
+      "expected": "\"alpha\"",
+      "query": "what is the alpha?",
+      "syntax": "plain"
+    },
+    {
+      "expected": "what is the alpha?",
+      "query": "what is the alpha?",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "what is the alpha?",
+      "syntax": "invalid"
+    },
+    {
+      "expected": "\"the\" OR \"and\" OR \"is\"",
+      "query": "the and is",
+      "syntax": "plain"
+    },
+    {
+      "expected": "the and is",
+      "query": "the and is",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "the and is",
+      "syntax": "invalid"
+    },
+    {
+      "expected": "\"ALPHA\" OR \"alpha\"",
+      "query": "ALPHA alpha ALPHA",
+      "syntax": "plain"
+    },
+    {
+      "expected": "ALPHA alpha ALPHA",
+      "query": "ALPHA alpha ALPHA",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "ALPHA alpha ALPHA",
+      "syntax": "invalid"
+    },
+    {
+      "expected": "\"é\" OR \"中文\" OR \"²\" OR \"Ⅵ\" OR \"_\"",
+      "query": "é á 中文 ² Ⅵ _",
+      "syntax": "plain"
+    },
+    {
+      "expected": "é á 中文 ² Ⅵ _",
+      "query": "é á 中文 ² Ⅵ _",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "é á 中文 ² Ⅵ _",
+      "syntax": "invalid"
+    },
+    {
+      "expected": "\"Straße\" OR \"STRASSE\"",
+      "query": "Straße STRASSE",
+      "syntax": "plain"
+    },
+    {
+      "expected": "Straße STRASSE",
+      "query": "Straße STRASSE",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "Straße STRASSE",
+      "syntax": "invalid"
+    },
+    {
+      "error": "plain search query must contain at least one word",
+      "query": "\u001c\t ",
+      "syntax": "plain"
+    },
+    {
+      "error": "search query must not be empty",
+      "query": "\u001c\t ",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "\u001c\t ",
+      "syntax": "invalid"
+    },
+    {
+      "expected": "\"OR\" OR \"b\"",
+      "query": "a OR b",
+      "syntax": "plain"
+    },
+    {
+      "expected": "a OR b",
+      "query": "a OR b",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "a OR b",
+      "syntax": "invalid"
+    },
+    {
+      "expected": "\"unterminated\"",
+      "query": "\"unterminated",
+      "syntax": "plain"
+    },
+    {
+      "expected": "\"unterminated",
+      "query": "\"unterminated",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "\"unterminated",
+      "syntax": "invalid"
+    },
+    {
+      "expected": "\"hello\" OR \"world\" OR \"path\"",
+      "query": "hello-world/path",
+      "syntax": "plain"
+    },
+    {
+      "expected": "hello-world/path",
+      "query": "hello-world/path",
+      "syntax": "fts5"
+    },
+    {
+      "error": "unsupported query_syntax: invalid",
+      "query": "hello-world/path",
+      "syntax": "invalid"
+    }
+  ]
+}

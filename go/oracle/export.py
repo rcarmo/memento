@@ -279,6 +279,8 @@ def main() -> None:
     save("proposal-fernet-decrypt.json", proposal_list.decrypt_fixtures())
     derived_content = importlib.import_module("derived_content")
     save("derived-content.json", derived_content.fixtures())
+    derived_search = importlib.import_module("derived_search")
+    save("derived-search.json", derived_search.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )

@@ -90,7 +90,7 @@ func faultStore(t *testing.T) (ContentStore, *faultState) {
 
 const testConcept = "---\nid: 'id'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: actor\n---\n[self](/a.md) [external](https://example.org)\n"
 
-func installConcept(t *testing.T, root string) {
+func installConcept(t testing.TB, root string) {
 	t.Helper()
 	if err := os.WriteFile(filepath.Join(root, "a.md"), []byte(testConcept), 0600); err != nil {
 		t.Fatal(err)

@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func testStore(t *testing.T) ContentStore {
+func testStore(t testing.TB) ContentStore {
 	t.Helper()
 	db, err := Connect(context.Background(), filepath.Join(t.TempDir(), "index.sqlite"))
 	if err != nil {
