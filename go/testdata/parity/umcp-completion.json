@@ -1,0 +1,435 @@
+{
+  "cases": [
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "capabilities": {
+            "completions": {},
+            "logging": {},
+            "prompts": {
+              "get": true,
+              "listChanged": true
+            },
+            "resources": {
+              "listChanged": true,
+              "subscribe": true
+            },
+            "tools": {
+              "listChanged": true
+            }
+          },
+          "instructions": "This server provides tool functionality via the Model Context Protocol.",
+          "protocolVersion": "2025-03-26",
+          "serverInfo": {
+            "name": "CompletionOracle",
+            "version": "0.2.2"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"initialize\", \"params\": {}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "capabilities": {
+            "completions": {},
+            "logging": {},
+            "prompts": {
+              "get": true,
+              "listChanged": true
+            },
+            "resources": {
+              "listChanged": true,
+              "subscribe": true
+            },
+            "tools": {
+              "listChanged": true
+            }
+          },
+          "instructions": "This server provides tool functionality via the Model Context Protocol.",
+          "protocolVersion": "2024-11-05",
+          "serverInfo": {
+            "name": "CompletionOracle",
+            "version": "0.2.2"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"initialize\", \"params\": {\"protocolVersion\": \"2024-11-05\"}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "capabilities": {
+            "completions": {},
+            "logging": {},
+            "prompts": {
+              "get": true,
+              "listChanged": true
+            },
+            "resources": {
+              "listChanged": true,
+              "subscribe": true
+            },
+            "tools": {
+              "listChanged": true
+            }
+          },
+          "instructions": "This server provides tool functionality via the Model Context Protocol.",
+          "protocolVersion": "2025-03-26",
+          "serverInfo": {
+            "name": "CompletionOracle",
+            "version": "0.2.2"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"initialize\", \"params\": {\"protocolVersion\": \"unsupported\"}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid params: 'ref' must be an object"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid params: 'argument' must be an object"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid params: 'context' must be an object"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}, \"context\": \"x\"}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid params: 'maxValues' must be a positive integer"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}, \"maxValues\": 0}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid params: 'maxValues' must be a positive integer"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}, \"maxValues\": true}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid params: 'maxValues' must be a positive integer"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}, \"maxValues\": \"2\"}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid params: 'argument.name' must be a non-empty string"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid params: 'context.arguments' must be an object"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}, \"context\": {\"arguments\": \"x\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid completion ref: unsupported ref type"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"bad\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid completion ref: prompt name is required"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unknown prompt ref: missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"missing\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid completion ref: resource template identifier is required"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/resource\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unknown resource template ref: missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/resource\", \"uri\": \"missing\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unknown completion argument: missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"missing\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "completion": {
+            "hasMore": true,
+            "total": 10,
+            "values": [
+              "alpha",
+              "alphabet",
+              "alpine"
+            ]
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "completion": {
+            "hasMore": true,
+            "total": 10,
+            "values": [
+              "alpha"
+            ]
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}, \"maxValues\": 1}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "completion": {
+            "hasMore": true,
+            "total": 10,
+            "values": [
+              "alpha",
+              "alphabet",
+              "alpine"
+            ]
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"al\"}, \"maxValues\": 10000000000000000000000000000000000000000}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "completion": {
+            "hasMore": true,
+            "total": 10,
+            "values": [
+              "alpha",
+              "beta",
+              "alphabet",
+              "alpine",
+              "1",
+              "True"
+            ]
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": null}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "completion": {
+            "hasMore": true,
+            "total": 10,
+            "values": [
+              "True"
+            ]
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": true}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Completion provider must return a list or {'values': [...]} result"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"invalid\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "provider bad argument"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"value-error\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Completion provider failed"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/prompt\", \"name\": \"choose\"}, \"argument\": {\"name\": \"value\", \"value\": \"failure\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "completion": {
+            "hasMore": false,
+            "values": []
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/resource\", \"name\": \"template\"}, \"argument\": {\"name\": \"path\", \"value\": \"\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "completion": {
+            "hasMore": false,
+            "values": []
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"completion/complete\", \"params\": {\"ref\": {\"type\": \"ref/resource\", \"uriTemplate\": \"test:///{path}\"}, \"argument\": {\"name\": \"path\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Invalid params: 'level' must be one of debug, info, notice, warning, error, critical, alert, emergency"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"logging/setLevel\", \"params\": {\"level\": \"invalid\"}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"logging/setLevel\", \"params\": {\"level\": \"debug\"}}"
+    }
+  ],
+  "log_input": {
+    "count": 1,
+    "nested": [
+      {
+        "Password": "secret",
+        "text": "Bearer abc.def then sk-ABC and api_key=123 token:xyz"
+      }
+    ],
+    "token": "private"
+  },
+  "log_sanitized": {
+    "count": 1,
+    "nested": [
+      {
+        "Password": "[redacted]",
+        "text": "[redacted] then [redacted] and [redacted] [redacted]"
+      }
+    ],
+    "token": "[redacted]"
+  }
+}

@@ -102,7 +102,11 @@ func (r *PromptRegistry) Register(prompt Prompt) error {
 		properties := map[string]any{}
 		required := []any{}
 		for _, p := range prompt.Parameters {
-			properties[p.Name] = parameterSchema(p.Types)
+			schema := parameterSchema(p.Types)
+			if p.Enum != nil {
+				schema["enum"] = cloneJSON(p.Enum)
+			}
+			properties[p.Name] = schema
 			if !p.HasDefault {
 				required = append(required, p.Name)
 			}

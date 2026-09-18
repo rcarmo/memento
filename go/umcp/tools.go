@@ -30,6 +30,7 @@ const (
 type Parameter struct {
 	Name       string
 	Types      []ParamType
+	Enum       []any
 	Default    any
 	HasDefault bool
 }
@@ -122,6 +123,9 @@ func cloneTool(tool Tool) Tool {
 	params := make([]Parameter, len(tool.Parameters))
 	for i, p := range tool.Parameters {
 		p.Types = append([]ParamType{}, p.Types...)
+		if p.Enum != nil {
+			p.Enum = cloneJSON(p.Enum).([]any)
+		}
 		p.Default = cloneJSON(p.Default)
 		params[i] = p
 	}

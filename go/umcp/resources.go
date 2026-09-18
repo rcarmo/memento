@@ -19,6 +19,8 @@ type Resource struct {
 	Annotations                         map[string]any
 	Template                            bool
 	Read                                func(context.Context, map[string]any) (any, error)
+	Parameters                          []Parameter
+	InputSchema                         map[string]any
 }
 type resourceEntry struct {
 	resource Resource
@@ -95,6 +97,8 @@ func (r *ResourceRegistry) Register(resource Resource) error {
 		resource.Name = resource.URI
 	}
 	resource.Annotations = cloneMap(resource.Annotations)
+	resource.InputSchema = cloneMap(resource.InputSchema)
+	resource.Parameters = cloneTool(Tool{Parameters: resource.Parameters}).Parameters
 	if resource.Size != nil {
 		size := *resource.Size
 		resource.Size = &size
