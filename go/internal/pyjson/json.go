@@ -36,6 +36,20 @@ func Dumps(value any) (string, error) {
 	}
 	return b.String(), nil
 }
+
+// DumpsIndent retains Python's ASCII escaping and sorted keys while using
+// two-space JSON layout. Empty objects/lists remain on one line.
+func DumpsIndent(value any) (string, error) {
+	raw, err := Dumps(value)
+	if err != nil {
+		return "", err
+	}
+	var out bytes.Buffer
+	if err = json.Indent(&out, []byte(raw), "", "  "); err != nil {
+		return "", err
+	}
+	return out.String(), nil
+}
 func encode(b *bytes.Buffer, value any, depth int) error {
 	if depth > 100 {
 		return fmt.Errorf("JSON nesting limit")

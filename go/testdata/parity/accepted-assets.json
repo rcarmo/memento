@@ -1,0 +1,185 @@
+{
+  "concept": "12345678-abcd",
+  "kinds": [
+    "docs"
+  ],
+  "manifest": {
+    "entries": [
+      {
+        "media_type": "text/markdown",
+        "path": "readme.md",
+        "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+        "size": 12
+      }
+    ],
+    "file_count": 1,
+    "sha256": "8857c9422743065f53d50ecbc01a778e43ed22509b153775abe1921c48540bb0",
+    "total_uncompressed_bytes": 12
+  },
+  "paths": [
+    {
+      "concept": "12345678-abcd",
+      "expected": [
+        "/.assets/12345678-abcd/docs/1.0.0.json",
+        "/.assets/12345678-abcd/docs/1.0.0.zip"
+      ],
+      "kind": "docs",
+      "version": "1.0.0"
+    },
+    {
+      "concept": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "expected": [
+        "/.assets/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/a1/0.0.0.json",
+        "/.assets/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/a1/0.0.0.zip"
+      ],
+      "kind": "a1",
+      "version": "0.0.0"
+    },
+    {
+      "concept": "--------",
+      "expected": [
+        "/.assets/--------/skill/1.0.0.json",
+        "/.assets/--------/skill/1.0.0.zip"
+      ],
+      "kind": "skill",
+      "version": "1.0.0"
+    },
+    {
+      "concept": "bad",
+      "error": "invalid concept id for asset storage",
+      "kind": "asset",
+      "version": "1.0.0"
+    },
+    {
+      "concept": "12345678-abcd",
+      "error": "asset_kind must be lowercase alphanumeric words joined by hyphens",
+      "kind": "INVALID",
+      "version": "1.0.0"
+    },
+    {
+      "concept": "12345678-abcd",
+      "error": "version must be a stable semantic version",
+      "kind": "asset",
+      "version": "bad"
+    },
+    {
+      "concept": "/../outside",
+      "error": "invalid concept id for asset storage",
+      "kind": "asset",
+      "version": "1.0.0"
+    }
+  ],
+  "resolved": [
+    {
+      "expected": "2.0.0",
+      "version": null
+    },
+    {
+      "expected": "1.9.0",
+      "version": "1.9.0"
+    },
+    {
+      "error": "unknown docs asset version: 3.0.0",
+      "version": "3.0.0"
+    },
+    {
+      "error": "version must be a stable semantic version",
+      "version": "bad"
+    }
+  ],
+  "retention": [
+    {
+      "expected": [
+        [],
+        []
+      ],
+      "keep": 5,
+      "versions": []
+    },
+    {
+      "expected": [
+        [
+          "2.0.0",
+          "1.10.0"
+        ],
+        [
+          "1.9.0"
+        ]
+      ],
+      "keep": 2,
+      "versions": [
+        "1.9.0",
+        "1.10.0",
+        "2.0.0",
+        "1.9.0"
+      ]
+    },
+    {
+      "error": "keep must be at least one",
+      "keep": 0,
+      "versions": [
+        "1.0.0"
+      ]
+    },
+    {
+      "error": "version must be a stable semantic version",
+      "keep": 1,
+      "versions": [
+        "bad"
+      ]
+    },
+    {
+      "expected": [
+        [
+          "12345678901234567890.0.0"
+        ],
+        [
+          "9.0.0"
+        ]
+      ],
+      "keep": 1,
+      "versions": [
+        "12345678901234567890.0.0",
+        "9.0.0"
+      ]
+    }
+  ],
+  "versions": [
+    "1.9.0",
+    "1.10.0",
+    "2.0.0"
+  ],
+  "writes": [
+    {
+      "created": null,
+      "metadata": "{\n  \"accepted_by\": \"synthetic-agent\",\n  \"asset_kind\": \"docs\",\n  \"concept_id\": \"12345678-abcd\",\n  \"concept_path\": \"/public/caf\\u00e9.md\",\n  \"kind\": \"asset_pack_version\",\n  \"manifest\": {\n    \"entries\": [\n      {\n        \"media_type\": \"text/markdown\",\n        \"path\": \"readme.md\",\n        \"sha256\": \"58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c\",\n        \"size\": 12\n      }\n    ],\n    \"file_count\": 1,\n    \"sha256\": \"8857c9422743065f53d50ecbc01a778e43ed22509b153775abe1921c48540bb0\",\n    \"total_uncompressed_bytes\": 12\n  },\n  \"schema_version\": 1,\n  \"source_proposal_id\": \"proposal\",\n  \"version\": \"1.9.0\",\n  \"zip_sha256\": \"8857c9422743065f53d50ecbc01a778e43ed22509b153775abe1921c48540bb0\"\n}\n",
+      "paths": [
+        "/.assets/12345678-abcd/docs/1.9.0.json",
+        "/.assets/12345678-abcd/docs/1.9.0.zip"
+      ],
+      "version": "1.9.0",
+      "zip": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAJAAAAcmVhZG1lLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAkAAAAAAAAAAAAAAKSBAAAAAHJlYWRtZS5tZFBLBQYAAAAAAQABADcAAAAzAAAAAAA="
+    },
+    {
+      "created": "2026-09-18T01:02:03.123456+01:00",
+      "metadata": "{\n  \"accepted_by\": \"synthetic-agent\",\n  \"asset_kind\": \"docs\",\n  \"concept_id\": \"12345678-abcd\",\n  \"concept_path\": \"/public/caf\\u00e9.md\",\n  \"created_at\": \"2026-09-18T00:02:03.123456Z\",\n  \"kind\": \"asset_pack_version\",\n  \"manifest\": {\n    \"entries\": [\n      {\n        \"media_type\": \"text/markdown\",\n        \"path\": \"readme.md\",\n        \"sha256\": \"58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c\",\n        \"size\": 12\n      }\n    ],\n    \"file_count\": 1,\n    \"sha256\": \"8857c9422743065f53d50ecbc01a778e43ed22509b153775abe1921c48540bb0\",\n    \"total_uncompressed_bytes\": 12\n  },\n  \"schema_version\": 1,\n  \"source_proposal_id\": \"proposal\",\n  \"version\": \"1.10.0\",\n  \"zip_sha256\": \"8857c9422743065f53d50ecbc01a778e43ed22509b153775abe1921c48540bb0\"\n}\n",
+      "paths": [
+        "/.assets/12345678-abcd/docs/1.10.0.json",
+        "/.assets/12345678-abcd/docs/1.10.0.zip"
+      ],
+      "version": "1.10.0",
+      "zip": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAJAAAAcmVhZG1lLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAkAAAAAAAAAAAAAAKSBAAAAAHJlYWRtZS5tZFBLBQYAAAAAAQABADcAAAAzAAAAAAA="
+    },
+    {
+      "created": "2026-09-18T00:00:00Z",
+      "metadata": "{\n  \"accepted_by\": \"synthetic-agent\",\n  \"asset_kind\": \"docs\",\n  \"concept_id\": \"12345678-abcd\",\n  \"concept_path\": \"/public/caf\\u00e9.md\",\n  \"created_at\": \"2026-09-18T00:00:00Z\",\n  \"kind\": \"asset_pack_version\",\n  \"manifest\": {\n    \"entries\": [\n      {\n        \"media_type\": \"text/markdown\",\n        \"path\": \"readme.md\",\n        \"sha256\": \"58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c\",\n        \"size\": 12\n      }\n    ],\n    \"file_count\": 1,\n    \"sha256\": \"8857c9422743065f53d50ecbc01a778e43ed22509b153775abe1921c48540bb0\",\n    \"total_uncompressed_bytes\": 12\n  },\n  \"schema_version\": 1,\n  \"source_proposal_id\": \"proposal\",\n  \"version\": \"2.0.0\",\n  \"zip_sha256\": \"8857c9422743065f53d50ecbc01a778e43ed22509b153775abe1921c48540bb0\"\n}\n",
+      "paths": [
+        "/.assets/12345678-abcd/docs/2.0.0.json",
+        "/.assets/12345678-abcd/docs/2.0.0.zip"
+      ],
+      "version": "2.0.0",
+      "zip": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAJAAAAcmVhZG1lLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAkAAAAAAAAAAAAAAKSBAAAAAHJlYWRtZS5tZFBLBQYAAAAAAQABADcAAAAzAAAAAAA="
+    }
+  ],
+  "zip": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAJAAAAcmVhZG1lLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAkAAAAAAAAAAAAAAKSBAAAAAHJlYWRtZS5tZFBLBQYAAAAAAQABADcAAAAzAAAAAAA="
+}

@@ -63,3 +63,17 @@ func FuzzPythonJSON(f *testing.F) {
 		}
 	})
 }
+
+func TestIndentedPythonJSON(t *testing.T) {
+	value := map[string]any{"z": "日本", "a": []any{1, []any{}, map[string]any{}}}
+	got, err := DumpsIndent(value)
+	if err != nil || got != "{\n  \"a\": [\n    1,\n    [],\n    {}\n  ],\n  \"z\": \"\\u65e5\\u672c\"\n}" {
+		t.Fatal(got, err)
+	}
+	if _, err = DumpsIndent(make(chan int)); err == nil {
+		t.Fatal("invalid JSON")
+	}
+	if _, err = DumpsIndent(math.NaN()); err == nil {
+		t.Fatal("nonstandard JSON")
+	}
+}
