@@ -31,6 +31,14 @@ func TestDiagnosticFoundationFixture(t *testing.T) {
 		t.Fatal(string(a), string(b))
 	}
 }
+func TestApplyDiagnosticIDs(t *testing.T) {
+	nodes := []Node{{ID: "a", AnomalyIDs: []string{"old"}}, {ID: "b"}}
+	diagnostics := []Diagnostic{{ID: "z", ConceptIDs: []string{"a"}}, {ID: "a", ConceptIDs: []string{"a", "missing"}}}
+	got := ApplyDiagnosticIDs(nodes, diagnostics)
+	if !reflect.DeepEqual(got[0].AnomalyIDs, []string{"a", "z"}) || len(got[1].AnomalyIDs) != 0 || nodes[0].AnomalyIDs[0] != "old" {
+		t.Fatal(got, nodes)
+	}
+}
 func TestDiagnosticFoundationBranches(t *testing.T) {
 	stale := "old"
 	failed := "boom"

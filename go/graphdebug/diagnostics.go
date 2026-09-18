@@ -39,6 +39,22 @@ func percentile(values []int, fraction float64) int {
 	sort.Ints(values)
 	return values[int(float64(len(values)-1)*fraction+.5)]
 }
+func ApplyDiagnosticIDs(nodes []Node, diagnostics []Diagnostic) []Node {
+	byID := map[string][]string{}
+	for _, diagnostic := range diagnostics {
+		for _, id := range diagnostic.ConceptIDs {
+			byID[id] = append(byID[id], diagnostic.ID)
+		}
+	}
+	result := make([]Node, len(nodes))
+	for i, node := range nodes {
+		node.AnomalyIDs = append([]string{}, byID[node.ID]...)
+		sort.Strings(node.AnomalyIDs)
+		result[i] = node
+	}
+	return result
+}
+
 func DiagnoseFoundation(nodes []Node, edges []Edge, revisions Revisions) []Diagnostic {
 	nodes = append([]Node{}, nodes...)
 	sort.Slice(nodes, func(i, j int) bool { return nodes[i].ID < nodes[j].ID })
