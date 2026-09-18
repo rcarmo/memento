@@ -169,6 +169,11 @@ func (e *ProposalNotFoundError) Error() string {
 func (p Proposals) Get(ctx context.Context, id string) (ProposalRecord, error) {
 	return proposalByID(ctx, p.DB, id)
 }
+
+// GetInTx reads the updated proposal before the caller commits its review.
+func (p Proposals) GetInTx(ctx context.Context, tx *sql.Tx, id string) (ProposalRecord, error) {
+	return proposalByID(ctx, tx, id)
+}
 func proposalByID(ctx context.Context, db sqlExecutor, id string) (ProposalRecord, error) {
 	record, err := scanProposal(db.QueryRowContext(ctx, "SELECT "+proposalColumns+" FROM proposals WHERE proposal_id=?", id))
 	if errors.Is(err, sql.ErrNoRows) {
@@ -282,6 +287,17 @@ func scanProposals(rows operationRows) ([]ProposalRecord, error) {
 type ProposalAssetQuery struct{ ProposalID, ConceptPath, AssetKind *string }
 
 func (p Proposals) ListAssets(ctx context.Context, q ProposalAssetQuery) ([]ProposalAssetRecord, error) {
+	return listProposalAssets(ctx, p.DB, q)
+}
+func (p Proposals) ListAssetsInTx(ctx context.Context, tx *sql.Tx, q ProposalAssetQuery) ([]ProposalAssetRecord, error) {
+	return listProposalAssets(ctx, tx, q)
+}
+
+type proposalAssetQuerier interface {
+	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
+}
+
+func listProposalAssets(ctx context.Context, db proposalAssetQuerier, q ProposalAssetQuery) ([]ProposalAssetRecord, error) {
 	conditions := []string{}
 	args := []any{}
 	for _, field := range []struct {
@@ -293,7 +309,7 @@ func (p Proposals) ListAssets(ctx context.Context, q ProposalAssetQuery) ([]Prop
 			args = append(args, *field.value)
 		}
 	}
-	rows, err := p.DB.QueryContext(ctx, "SELECT "+proposalAssetColumns+" FROM proposal_assets"+whereClause(conditions)+" ORDER BY created_at, proposal_id, asset_id", args...)
+	rows, err := db.QueryContext(ctx, "SELECT "+proposalAssetColumns+" FROM proposal_assets"+whereClause(conditions)+" ORDER BY created_at, proposal_id, asset_id", args...)
 	if err != nil {
 		return nil, err
 	}

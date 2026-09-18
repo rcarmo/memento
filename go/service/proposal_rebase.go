@@ -19,8 +19,9 @@ import (
 // lock with Apply/Recover; direct queue refresh must run under that same lock.
 // No MCP endpoints are registered by this helper.
 type ProposalControls struct {
-	Queue  ProposalQueue
-	Random io.Reader
+	Queue            ProposalQueue
+	Random           io.Reader
+	DerivedIndexPath string
 }
 
 // ProposalActor contains resolved authorisation plus trusted client metadata.
@@ -208,7 +209,7 @@ func (c *ProposalControls) controlReplay(ctx context.Context, policy access.Effe
 	}
 	return raw, existing, nil
 }
-func (c *ProposalControls) journalControl(ctx context.Context, tx *sql.Tx, actor ProposalActor, key, method, request, revision string, result map[string]any) (string, error) {
+func (c *ProposalControls) newOperationID() (string, error) {
 	random := c.Random
 	if random == nil {
 		random = rand.Reader
@@ -219,7 +220,13 @@ func (c *ProposalControls) journalControl(ctx context.Context, tx *sql.Tx, actor
 	}
 	bytes[6] = bytes[6]&15 | 64
 	bytes[8] = bytes[8]&63 | 128
-	id := fmt.Sprintf("%x-%x-%x-%x-%x", bytes[:4], bytes[4:6], bytes[6:8], bytes[8:10], bytes[10:])
+	return fmt.Sprintf("%x-%x-%x-%x-%x", bytes[:4], bytes[4:6], bytes[6:8], bytes[8:10], bytes[10:]), nil
+}
+func (c *ProposalControls) journalControl(ctx context.Context, tx *sql.Tx, actor ProposalActor, key, method, request, revision string, result map[string]any) (string, error) {
+	id, err := c.newOperationID()
+	if err != nil {
+		return "", err
+	}
 	payload, err := pyjson.Dumps(result)
 	if err != nil {
 		return "", err
