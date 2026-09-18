@@ -1,0 +1,509 @@
+{
+  "cases": [
+    {
+      "blob": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAGAAAAZG9jLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAYAAAAAAAAAAAAAAKSBAAAAAGRvYy5tZFBLBQYAAAAAAQABADQAAAAwAAAAAAA=",
+      "input": {
+        "action": "put",
+        "key": "asset",
+        "pack": "one"
+      },
+      "payload": {
+        "asset_kind": "asset",
+        "consumed_at": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/markdown",
+              "path": "doc.md",
+              "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+              "size": 12
+            }
+          ],
+          "file_count": 1,
+          "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+          "total_uncompressed_bytes": 12
+        },
+        "media_type": "application/zip",
+        "proposal_id": null,
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "00010203-0405-4607-8809-0a0b0c0d0e0f",
+        "state": "ready",
+        "version": "1.0.0"
+      },
+      "replayed": false
+    },
+    {
+      "blob": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAGAAAAZG9jLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAYAAAAAAAAAAAAAAKSBAAAAAGRvYy5tZFBLBQYAAAAAAQABADQAAAAwAAAAAAA=",
+      "input": {
+        "action": "put",
+        "key": "asset",
+        "pack": "one"
+      },
+      "payload": {
+        "asset_kind": "asset",
+        "consumed_at": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/markdown",
+              "path": "doc.md",
+              "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+              "size": 12
+            }
+          ],
+          "file_count": 1,
+          "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+          "total_uncompressed_bytes": 12
+        },
+        "media_type": "application/zip",
+        "proposal_id": null,
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "00010203-0405-4607-8809-0a0b0c0d0e0f",
+        "state": "ready",
+        "version": "1.0.0"
+      },
+      "replayed": true
+    },
+    {
+      "error": "idempotency key was already used for a different asset",
+      "input": {
+        "action": "put",
+        "key": "asset",
+        "pack": "two"
+      }
+    },
+    {
+      "error": "staged asset not found",
+      "input": {
+        "action": "get",
+        "principal": "other"
+      }
+    },
+    {
+      "error": "staged asset could not be consumed",
+      "input": {
+        "action": "consume",
+        "ids": [
+          "{{ASSET}}",
+          "missing"
+        ]
+      }
+    },
+    {
+      "blob": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAGAAAAZG9jLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAYAAAAAAAAAAAAAAKSBAAAAAGRvYy5tZFBLBQYAAAAAAQABADQAAAAwAAAAAAA=",
+      "input": {
+        "action": "get",
+        "ready": true
+      },
+      "payload": {
+        "asset_kind": "asset",
+        "consumed_at": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/markdown",
+              "path": "doc.md",
+              "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+              "size": 12
+            }
+          ],
+          "file_count": 1,
+          "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+          "total_uncompressed_bytes": 12
+        },
+        "media_type": "application/zip",
+        "proposal_id": null,
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "00010203-0405-4607-8809-0a0b0c0d0e0f",
+        "state": "ready",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "input": {
+        "action": "consume",
+        "ids": [
+          "{{ASSET}}"
+        ]
+      }
+    },
+    {
+      "error": "staged asset is not ready: consumed",
+      "input": {
+        "action": "get",
+        "ready": true
+      }
+    },
+    {
+      "blob": "",
+      "input": {
+        "action": "get"
+      },
+      "payload": {
+        "asset_kind": "asset",
+        "consumed_at": "2026-09-18T00:00:00Z",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/markdown",
+              "path": "doc.md",
+              "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+              "size": 12
+            }
+          ],
+          "file_count": 1,
+          "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+          "total_uncompressed_bytes": 12
+        },
+        "media_type": "application/zip",
+        "proposal_id": "proposal",
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "00010203-0405-4607-8809-0a0b0c0d0e0f",
+        "state": "consumed",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "blob": "",
+      "input": {
+        "action": "put",
+        "key": "asset",
+        "pack": "one"
+      },
+      "payload": {
+        "asset_kind": "asset",
+        "consumed_at": "2026-09-18T00:00:00Z",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/markdown",
+              "path": "doc.md",
+              "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+              "size": 12
+            }
+          ],
+          "file_count": 1,
+          "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+          "total_uncompressed_bytes": 12
+        },
+        "media_type": "application/zip",
+        "proposal_id": "proposal",
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "00010203-0405-4607-8809-0a0b0c0d0e0f",
+        "state": "consumed",
+        "version": "1.0.0"
+      },
+      "replayed": true
+    },
+    {
+      "input": {
+        "action": "begin",
+        "key": "ticket"
+      },
+      "state": "pending",
+      "token": "memento_upload_EBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8"
+    },
+    {
+      "error": "upload ticket already issued: pending",
+      "input": {
+        "action": "begin",
+        "key": "ticket"
+      }
+    },
+    {
+      "error": "idempotency key was already used for a different upload",
+      "input": {
+        "action": "begin",
+        "key": "ticket",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "error": "upload ticket not found",
+      "input": {
+        "action": "status",
+        "key": "ticket",
+        "principal": "other"
+      }
+    },
+    {
+      "blob": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAGAAAAZG9jLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAYAAAAAAAAAAAAAAKSBAAAAAGRvYy5tZFBLBQYAAAAAAQABADQAAAAwAAAAAAA=",
+      "input": {
+        "action": "upload",
+        "pack": "one"
+      },
+      "payload": {
+        "asset_kind": "asset",
+        "consumed_at": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/markdown",
+              "path": "doc.md",
+              "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+              "size": 12
+            }
+          ],
+          "file_count": 1,
+          "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+          "total_uncompressed_bytes": 12
+        },
+        "media_type": "application/zip",
+        "proposal_id": null,
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "30313233-3435-4637-b839-3a3b3c3d3e3f",
+        "state": "ready",
+        "version": "1.0.0"
+      },
+      "replayed": false
+    },
+    {
+      "blob": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAGAAAAZG9jLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAYAAAAAAAAAAAAAAKSBAAAAAGRvYy5tZFBLBQYAAAAAAQABADQAAAAwAAAAAAA=",
+      "input": {
+        "action": "upload",
+        "pack": "one"
+      },
+      "payload": {
+        "asset_kind": "asset",
+        "consumed_at": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/markdown",
+              "path": "doc.md",
+              "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+              "size": 12
+            }
+          ],
+          "file_count": 1,
+          "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+          "total_uncompressed_bytes": 12
+        },
+        "media_type": "application/zip",
+        "proposal_id": null,
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "30313233-3435-4637-b839-3a3b3c3d3e3f",
+        "state": "ready",
+        "version": "1.0.0"
+      },
+      "replayed": true
+    },
+    {
+      "error": "upload ticket was already used for a different asset",
+      "input": {
+        "action": "upload",
+        "pack": "two"
+      }
+    },
+    {
+      "asset_id": "30313233-3435-4637-b839-3a3b3c3d3e3f",
+      "input": {
+        "action": "status",
+        "key": "ticket"
+      },
+      "state": "uploaded"
+    },
+    {
+      "input": {
+        "action": "begin",
+        "key": "never-used"
+      },
+      "state": "pending",
+      "token": "memento_upload_QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl8"
+    },
+    {
+      "input": {
+        "action": "advance",
+        "hours": 25
+      }
+    },
+    {
+      "error": "upload ticket expired",
+      "input": {
+        "action": "upload",
+        "pack": "one"
+      }
+    },
+    {
+      "asset_id": null,
+      "input": {
+        "action": "status",
+        "key": "never-used"
+      },
+      "state": "expired"
+    },
+    {
+      "asset_id": "30313233-3435-4637-b839-3a3b3c3d3e3f",
+      "input": {
+        "action": "status",
+        "key": "ticket"
+      },
+      "state": "uploaded"
+    },
+    {
+      "blob": "",
+      "input": {
+        "action": "get"
+      },
+      "payload": {
+        "asset_kind": "asset",
+        "consumed_at": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/markdown",
+              "path": "doc.md",
+              "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+              "size": 12
+            }
+          ],
+          "file_count": 1,
+          "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+          "total_uncompressed_bytes": 12
+        },
+        "media_type": "application/zip",
+        "proposal_id": null,
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "30313233-3435-4637-b839-3a3b3c3d3e3f",
+        "state": "expired",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "blob": "",
+      "input": {
+        "action": "put",
+        "key": "ticket:ticket",
+        "pack": "one"
+      },
+      "payload": {
+        "asset_kind": "asset",
+        "consumed_at": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/markdown",
+              "path": "doc.md",
+              "sha256": "58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c",
+              "size": 12
+            }
+          ],
+          "file_count": 1,
+          "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+          "total_uncompressed_bytes": 12
+        },
+        "media_type": "application/zip",
+        "proposal_id": null,
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "30313233-3435-4637-b839-3a3b3c3d3e3f",
+        "state": "expired",
+        "version": "1.0.0"
+      },
+      "replayed": true
+    },
+    {
+      "error": "upload ticket already issued: expired",
+      "input": {
+        "action": "begin",
+        "key": "never-used"
+      }
+    },
+    {
+      "error": "Idempotency-Key header is required",
+      "input": {
+        "action": "put",
+        "key": " ",
+        "pack": "one"
+      }
+    },
+    {
+      "error": "idempotency_key is required",
+      "input": {
+        "action": "begin",
+        "key": " "
+      }
+    }
+  ],
+  "packs": {
+    "one": "UEsDBBQAAAAAAAAAMl3QLaj5DAAAAAwAAAAGAAAAZG9jLm1kIyBTeW50aGV0aWMKUEsBAhQDFAAAAAAAAAAyXdAtqPkMAAAADAAAAAYAAAAAAAAAAAAAAKSBAAAAAGRvYy5tZFBLBQYAAAAAAQABADQAAAAwAAAAAAA=",
+    "two": "UEsDBBQAAAAAAAAAMl3RsrgLCgAAAAoAAAAGAAAAZG9jLm1kZGlmZmVyZW50ClBLAQIUAxQAAAAAAAAAMl3RsrgLCgAAAAoAAAAGAAAAAAAAAAAAAACkgQAAAABkb2MubWRQSwUGAAAAAAEAAQA0AAAALgAAAAAA"
+  },
+  "rows": {
+    "asset_upload_tickets": [
+      {
+        "asset_kind": "asset",
+        "consumed_at": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-18T01:00:00Z",
+        "idempotency_key": "never-used",
+        "principal": "agent",
+        "staged_asset_id": null,
+        "token_digest": "87f433b24036d4bc1cee41ab647666263aad3512b8f5241da6a1e01fbc5ceb89",
+        "version": "1.0.0"
+      },
+      {
+        "asset_kind": "asset",
+        "consumed_at": "2026-09-18T00:00:00Z",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-18T01:00:00Z",
+        "idempotency_key": "ticket",
+        "principal": "agent",
+        "staged_asset_id": "30313233-3435-4637-b839-3a3b3c3d3e3f",
+        "token_digest": "a2995d69ff32fd67c3782229af5ee0505cf1a40645e24abe74d9f0f22d33eab5",
+        "version": "1.0.0"
+      }
+    ],
+    "staged_assets": [
+      {
+        "asset_kind": "asset",
+        "blob_bytes": "",
+        "consumed_at": "2026-09-18T00:00:00Z",
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "idempotency_key": "asset",
+        "manifest_json": "{\"entries\":[{\"path\":\"doc.md\",\"size\":12,\"media_type\":\"text/markdown\",\"sha256\":\"58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c\"}],\"sha256\":\"927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad\",\"total_uncompressed_bytes\":12,\"file_count\":1}",
+        "media_type": "application/zip",
+        "principal": "agent",
+        "proposal_id": "proposal",
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "00010203-0405-4607-8809-0a0b0c0d0e0f",
+        "state": "consumed",
+        "version": "1.0.0"
+      },
+      {
+        "asset_kind": "asset",
+        "blob_bytes": "",
+        "consumed_at": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2026-09-19T00:00:00Z",
+        "idempotency_key": "ticket:ticket",
+        "manifest_json": "{\"entries\":[{\"path\":\"doc.md\",\"size\":12,\"media_type\":\"text/markdown\",\"sha256\":\"58c281d546551dc7c62b6e8594ba750eff4687e688b0f891a4392a60d90d421c\"}],\"sha256\":\"927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad\",\"total_uncompressed_bytes\":12,\"file_count\":1}",
+        "media_type": "application/zip",
+        "principal": "agent",
+        "proposal_id": null,
+        "sha256": "927c817473a13cd80189f80490a49be9590e02ed112eb7f50658017d64e2e4ad",
+        "staged_asset_id": "30313233-3435-4637-b839-3a3b3c3d3e3f",
+        "state": "expired",
+        "version": "1.0.0"
+      }
+    ]
+  }
+}

@@ -26,6 +26,10 @@ Control databases use `modernc.org/sqlite v1.38.2` (BSD-3-Clause wrapper, genera
 
 Access-key wrapping uses Go's standard AES-GCM and HMAC/SHA-256 plus BSD-licensed `golang.org/x/crypto/scrypt v0.37.0`, matching the Python cryptography reference's persisted format. All crypto fixtures use explicitly synthetic keys/tokens. Runtime secrets remain caller-supplied and are never committed.
 
+## Asset MIME table
+
+`assets/mime.json` captures Python mimetypes' lookup data plus the oracle host's Debian `media-types` table (public domain). The fixture records interpreter and source-file hashes; the copied media-types notice is in `assets/licenses/media-types.txt`. ZIP parsing uses the Go standard library (including bzip2), with Memento's MIT-licensed validation rules ported directly.
+
 ## SentencePiece port (Apache-2.0)
 
 `sentencepiece/` is a modified Go port of the inference algorithms in [sentencepiece-rust 0.1.1](https://github.com/VoiceLessQ/sentencepiece-rust), itself based on Google's SentencePiece and Darts-clone read-side algorithms. The original Apache-2.0 licence is retained at `sentencepiece/licenses/Apache-2.0.txt`; this derived package is distributed under those terms, not relicensed as MIT by the repository's general notice.

@@ -36,6 +36,7 @@ fuzz:
 	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzGitObjectRoundTrip -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./internal/pyjson -run='^$$' -fuzz=FuzzPythonJSON -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./access -run='^$$' -fuzz=FuzzAuthorizationPath -fuzztime=10000x -parallel=2 -timeout=120s
+	CGO_ENABLED=0 $(GO) test ./assets -run='^$$' -fuzz=FuzzAssetPack -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./internal/vector -run='^$$' -fuzz=FuzzF32LE -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzTokenizer -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzModelParser -fuzztime=10000x -parallel=2 -timeout=120s

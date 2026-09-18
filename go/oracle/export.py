@@ -236,6 +236,14 @@ def main() -> None:
     save("access-store.json", access_store.fixtures())
     proposals = importlib.import_module("control_proposals")
     save("control-proposals.json", proposals.fixtures())
+    asset_pack = importlib.import_module("asset_pack")
+    pack_fixtures = asset_pack.fixtures()
+    save("asset-pack.json", pack_fixtures)
+    staged_assets = importlib.import_module("staged_assets")
+    save("staged-assets.json", staged_assets.fixtures())
+    (ROOT / "go/assets/mime.json").write_text(
+        json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
+    )
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 
