@@ -99,3 +99,60 @@ func TestReferenceLimitsAndHugeIndices(t *testing.T) {
 		t.Fatal(got, err)
 	}
 }
+
+func FuzzExecutorPlan(f *testing.F) {
+	for _, raw := range []string{`{"operations":[]}`, `{"operations":[{"op":"read","args":{"id_or_path":"$saved.path"}}]}`, `{"returns":[{"ref":"$x","limit":"1_000"}]}`, `{"operations":[{"op":"patch","save_as":"bad name"}],"stop_on_error":"yes"}`, `{"operations":null,"returns":[{}]}`, `{"max_time_seconds":"1e9999","max_output_bytes":99999999999999999999}`} {
+		f.Add(raw)
+	}
+	planner, err := NewPlanner()
+	if err != nil {
+		f.Fatal(err)
+	}
+	f.Fuzz(func(t *testing.T, raw string) {
+		if len(raw) > 8192 {
+			return
+		}
+		value, err := pyjson.Parse(raw)
+		if err != nil {
+			return
+		}
+		before, err := pyjson.Dumps(value)
+		if err != nil {
+			return
+		}
+		_, _ = ParseLimits(value)
+		if args, ok := value.(map[string]any); ok {
+			_, _ = NormalizeToolArguments(args)
+		}
+		plan, err := planner.ParsePlan(value)
+		if err != nil {
+			if len([]rune(err.Error())) > 512 {
+				t.Fatal("unbounded validation message")
+			}
+		} else {
+			// Round-trip structure only; no no-op argument validator is allowed to
+			// disguise the unimplemented per-operation validation boundary.
+			encoded, err := json.Marshal(plan)
+			if err != nil {
+				t.Fatal(err)
+			}
+			decoded, err := pyjson.Parse(string(encoded))
+			if err != nil {
+				t.Fatal(err)
+			}
+			again, err := planner.ParsePlan(decoded)
+			if err != nil {
+				t.Fatal(err)
+			}
+			b, _ := json.Marshal(again)
+			if string(encoded) != string(b) {
+				t.Fatal("non-idempotent plan")
+			}
+			_ = planner.Preflight(plan, 12, nil)
+		}
+		after, err := pyjson.Dumps(value)
+		if err != nil || after != before {
+			t.Fatal("input mutated", err)
+		}
+	})
+}

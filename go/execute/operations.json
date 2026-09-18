@@ -1,0 +1,382 @@
+[
+  {
+    "commit_capable": false,
+    "fields": [],
+    "name": "help",
+    "required": []
+  },
+  {
+    "commit_capable": false,
+    "fields": [],
+    "name": "status",
+    "required": []
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "query",
+      "concept_type",
+      "limit",
+      "cursor",
+      "search_mode",
+      "query_syntax"
+    ],
+    "name": "search",
+    "required": [
+      "query"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "id_or_path"
+    ],
+    "name": "read",
+    "required": [
+      "id_or_path"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "path_prefix"
+    ],
+    "name": "list",
+    "required": []
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "path_prefix",
+      "fields",
+      "limit",
+      "cursor"
+    ],
+    "name": "inventory",
+    "required": []
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "path_prefix",
+      "items",
+      "match",
+      "include_asset_metadata"
+    ],
+    "name": "compare_manifest",
+    "required": [
+      "items"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "id_or_path",
+      "path_prefix",
+      "asset_kind",
+      "version",
+      "limit",
+      "cursor",
+      "version_limit",
+      "include_files",
+      "file_limit"
+    ],
+    "name": "asset_metadata",
+    "required": []
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "id_or_path",
+      "depth"
+    ],
+    "name": "graph",
+    "required": [
+      "id_or_path"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "path",
+      "rule",
+      "severity",
+      "limit",
+      "cursor"
+    ],
+    "name": "audit",
+    "required": []
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "question",
+      "answer_mode"
+    ],
+    "name": "answer",
+    "required": [
+      "question"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "intent",
+      "base_revision",
+      "changes",
+      "rationale"
+    ],
+    "name": "propose",
+    "required": [
+      "intent",
+      "base_revision",
+      "changes"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "content",
+      "suggested_path",
+      "intent"
+    ],
+    "name": "propose_freeform",
+    "required": [
+      "content"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "instruction",
+      "target_hint"
+    ],
+    "name": "propose_update",
+    "required": [
+      "instruction"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "proposal_id",
+      "view"
+    ],
+    "name": "proposal_get",
+    "required": [
+      "proposal_id"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "status",
+      "limit",
+      "cursor"
+    ],
+    "name": "proposal_list",
+    "required": []
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "proposal_id",
+      "asset_id",
+      "file_path",
+      "offset",
+      "limit"
+    ],
+    "name": "proposal_asset_get",
+    "required": [
+      "proposal_id",
+      "asset_id"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "id_or_path",
+      "asset_kind",
+      "version",
+      "view",
+      "file_path",
+      "offset",
+      "limit",
+      "expected_sha256"
+    ],
+    "name": "asset_get",
+    "required": [
+      "id_or_path",
+      "asset_kind"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "proposal_id",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "name": "proposal_rebase",
+    "required": [
+      "proposal_id",
+      "expected_revision",
+      "idempotency_key"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "proposal_id",
+      "selected_change_indexes",
+      "expected_revision",
+      "intent",
+      "rationale"
+    ],
+    "name": "proposal_revise",
+    "required": [
+      "proposal_id",
+      "selected_change_indexes",
+      "expected_revision"
+    ]
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "idempotency_key",
+      "operation_id"
+    ],
+    "name": "operation_get",
+    "required": []
+  },
+  {
+    "commit_capable": false,
+    "fields": [
+      "proposal_id",
+      "decision",
+      "comment",
+      "idempotency_key"
+    ],
+    "name": "proposal_review",
+    "required": [
+      "proposal_id",
+      "decision"
+    ]
+  },
+  {
+    "commit_capable": true,
+    "fields": [
+      "proposal_id",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "name": "proposal_apply",
+    "required": [
+      "proposal_id",
+      "expected_revision",
+      "idempotency_key"
+    ]
+  },
+  {
+    "commit_capable": true,
+    "fields": [
+      "path",
+      "concept_type",
+      "title",
+      "body",
+      "expected_revision",
+      "idempotency_key",
+      "description",
+      "tags",
+      "aliases"
+    ],
+    "name": "create",
+    "required": [
+      "path",
+      "concept_type",
+      "title",
+      "body",
+      "expected_revision",
+      "idempotency_key"
+    ]
+  },
+  {
+    "commit_capable": true,
+    "fields": [
+      "path",
+      "expected_revision",
+      "idempotency_key",
+      "title",
+      "description",
+      "body",
+      "status",
+      "tags",
+      "aliases"
+    ],
+    "name": "patch",
+    "required": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ]
+  },
+  {
+    "commit_capable": true,
+    "fields": [
+      "path",
+      "new_path",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "name": "rename",
+    "required": [
+      "path",
+      "new_path",
+      "expected_revision",
+      "idempotency_key"
+    ]
+  },
+  {
+    "commit_capable": true,
+    "fields": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "name": "trash",
+    "required": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ]
+  },
+  {
+    "commit_capable": true,
+    "fields": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ],
+    "name": "restore",
+    "required": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ]
+  },
+  {
+    "commit_capable": true,
+    "fields": [
+      "path",
+      "expected_revision",
+      "idempotency_key",
+      "confirm"
+    ],
+    "name": "purge",
+    "required": [
+      "path",
+      "expected_revision",
+      "idempotency_key"
+    ]
+  }
+]

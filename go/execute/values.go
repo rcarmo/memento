@@ -1,5 +1,6 @@
-// Package execute ports the JSON-domain value kernel of MemoryExecutor. It is
-// not yet a plan validator, operation runner or registered memory_execute tool.
+// Package execute ports MemoryExecutor's JSON value and structural-plan
+// kernels. Per-operation typed validation, execution and memory_execute
+// registration remain unfinished; preflight requires an explicit validator.
 package execute
 
 import (

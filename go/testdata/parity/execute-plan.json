@@ -1,0 +1,2766 @@
+{
+  "contracts": [
+    {
+      "commit_capable": false,
+      "fields": [],
+      "name": "help",
+      "required": []
+    },
+    {
+      "commit_capable": false,
+      "fields": [],
+      "name": "status",
+      "required": []
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "query",
+        "concept_type",
+        "limit",
+        "cursor",
+        "search_mode",
+        "query_syntax"
+      ],
+      "name": "search",
+      "required": [
+        "query"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "id_or_path"
+      ],
+      "name": "read",
+      "required": [
+        "id_or_path"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "path_prefix"
+      ],
+      "name": "list",
+      "required": []
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "path_prefix",
+        "fields",
+        "limit",
+        "cursor"
+      ],
+      "name": "inventory",
+      "required": []
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "path_prefix",
+        "items",
+        "match",
+        "include_asset_metadata"
+      ],
+      "name": "compare_manifest",
+      "required": [
+        "items"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "id_or_path",
+        "path_prefix",
+        "asset_kind",
+        "version",
+        "limit",
+        "cursor",
+        "version_limit",
+        "include_files",
+        "file_limit"
+      ],
+      "name": "asset_metadata",
+      "required": []
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "id_or_path",
+        "depth"
+      ],
+      "name": "graph",
+      "required": [
+        "id_or_path"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "path",
+        "rule",
+        "severity",
+        "limit",
+        "cursor"
+      ],
+      "name": "audit",
+      "required": []
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "question",
+        "answer_mode"
+      ],
+      "name": "answer",
+      "required": [
+        "question"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "intent",
+        "base_revision",
+        "changes",
+        "rationale"
+      ],
+      "name": "propose",
+      "required": [
+        "intent",
+        "base_revision",
+        "changes"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "content",
+        "suggested_path",
+        "intent"
+      ],
+      "name": "propose_freeform",
+      "required": [
+        "content"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "instruction",
+        "target_hint"
+      ],
+      "name": "propose_update",
+      "required": [
+        "instruction"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "proposal_id",
+        "view"
+      ],
+      "name": "proposal_get",
+      "required": [
+        "proposal_id"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "status",
+        "limit",
+        "cursor"
+      ],
+      "name": "proposal_list",
+      "required": []
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "proposal_id",
+        "asset_id",
+        "file_path",
+        "offset",
+        "limit"
+      ],
+      "name": "proposal_asset_get",
+      "required": [
+        "proposal_id",
+        "asset_id"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "id_or_path",
+        "asset_kind",
+        "version",
+        "view",
+        "file_path",
+        "offset",
+        "limit",
+        "expected_sha256"
+      ],
+      "name": "asset_get",
+      "required": [
+        "id_or_path",
+        "asset_kind"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "proposal_id",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "name": "proposal_rebase",
+      "required": [
+        "proposal_id",
+        "expected_revision",
+        "idempotency_key"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "proposal_id",
+        "selected_change_indexes",
+        "expected_revision",
+        "intent",
+        "rationale"
+      ],
+      "name": "proposal_revise",
+      "required": [
+        "proposal_id",
+        "selected_change_indexes",
+        "expected_revision"
+      ]
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "idempotency_key",
+        "operation_id"
+      ],
+      "name": "operation_get",
+      "required": []
+    },
+    {
+      "commit_capable": false,
+      "fields": [
+        "proposal_id",
+        "decision",
+        "comment",
+        "idempotency_key"
+      ],
+      "name": "proposal_review",
+      "required": [
+        "proposal_id",
+        "decision"
+      ]
+    },
+    {
+      "commit_capable": true,
+      "fields": [
+        "proposal_id",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "name": "proposal_apply",
+      "required": [
+        "proposal_id",
+        "expected_revision",
+        "idempotency_key"
+      ]
+    },
+    {
+      "commit_capable": true,
+      "fields": [
+        "path",
+        "concept_type",
+        "title",
+        "body",
+        "expected_revision",
+        "idempotency_key",
+        "description",
+        "tags",
+        "aliases"
+      ],
+      "name": "create",
+      "required": [
+        "path",
+        "concept_type",
+        "title",
+        "body",
+        "expected_revision",
+        "idempotency_key"
+      ]
+    },
+    {
+      "commit_capable": true,
+      "fields": [
+        "path",
+        "expected_revision",
+        "idempotency_key",
+        "title",
+        "description",
+        "body",
+        "status",
+        "tags",
+        "aliases"
+      ],
+      "name": "patch",
+      "required": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ]
+    },
+    {
+      "commit_capable": true,
+      "fields": [
+        "path",
+        "new_path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "name": "rename",
+      "required": [
+        "path",
+        "new_path",
+        "expected_revision",
+        "idempotency_key"
+      ]
+    },
+    {
+      "commit_capable": true,
+      "fields": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "name": "trash",
+      "required": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ]
+    },
+    {
+      "commit_capable": true,
+      "fields": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "name": "restore",
+      "required": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ]
+    },
+    {
+      "commit_capable": true,
+      "fields": [
+        "path",
+        "expected_revision",
+        "idempotency_key",
+        "confirm"
+      ],
+      "name": "purge",
+      "required": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ]
+    }
+  ],
+  "limits": [
+    {
+      "error": "limits: : Input should be a valid dictionary or instance of ExecuteLimits",
+      "type": "ValidationError",
+      "value": null
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 65536,
+        "max_records": 50,
+        "max_time_seconds": 3.0
+      },
+      "value": {}
+    },
+    {
+      "error": "limits: max_operations: Input should be greater than or equal to 1",
+      "type": "ValidationError",
+      "value": {
+        "max_operations": 0
+      }
+    },
+    {
+      "error": "limits: max_operations: Input should be less than or equal to 32",
+      "type": "ValidationError",
+      "value": {
+        "max_operations": 33
+      }
+    },
+    {
+      "error": "limits: max_intermediates: Input should be greater than or equal to 1",
+      "type": "ValidationError",
+      "value": {
+        "max_intermediates": 0
+      }
+    },
+    {
+      "error": "limits: max_intermediates: Input should be less than or equal to 64",
+      "type": "ValidationError",
+      "value": {
+        "max_intermediates": 65
+      }
+    },
+    {
+      "error": "limits: max_records: Input should be less than or equal to 500",
+      "type": "ValidationError",
+      "value": {
+        "max_records": 501
+      }
+    },
+    {
+      "error": "limits: max_output_bytes: Input should be greater than or equal to 512",
+      "type": "ValidationError",
+      "value": {
+        "max_output_bytes": 511
+      }
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 100000000000000000000000000000000000000000000000000,
+        "max_records": 50,
+        "max_time_seconds": 3.0
+      },
+      "value": {
+        "max_output_bytes": 100000000000000000000000000000000000000000000000000
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be greater than 0",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": 0
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be less than or equal to 30",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": 31
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be a valid number, unable to parse string as a number",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": "bad"
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be a valid number",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": null
+      }
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 65536,
+        "max_records": 50,
+        "max_time_seconds": 1.0
+      },
+      "value": {
+        "max_time_seconds": true
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be greater than 0",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": false
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be a valid number, unable to parse string as a number",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": "0x1p2"
+      }
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 65536,
+        "max_records": 50,
+        "max_time_seconds": 10.0
+      },
+      "value": {
+        "max_time_seconds": "1_0"
+      }
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 65536,
+        "max_records": 50,
+        "max_time_seconds": 10.0
+      },
+      "value": {
+        "max_time_seconds": "1_0.0"
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be less than or equal to 30",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": "1e999999999"
+      }
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 65536,
+        "max_records": 50,
+        "max_time_seconds": 0.5
+      },
+      "value": {
+        "max_time_seconds": ".5"
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be greater than 0",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": " -infinity "
+      }
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 65536,
+        "max_records": 50,
+        "max_time_seconds": 1.0
+      },
+      "value": {
+        "max_time_seconds": " 1 "
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be a valid number",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": []
+      }
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 65536,
+        "max_records": 50,
+        "max_time_seconds": 1.5
+      },
+      "value": {
+        "max_time_seconds": 1.5
+      }
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 512,
+        "max_records": 50,
+        "max_time_seconds": 3.0
+      },
+      "value": {
+        "max_output_bytes": "512.0"
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be less than or equal to 30",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": "nan"
+      }
+    },
+    {
+      "error": "limits: max_time_seconds: Input should be less than or equal to 30",
+      "type": "ValidationError",
+      "value": {
+        "max_time_seconds": "inf"
+      }
+    },
+    {
+      "expected": {
+        "max_intermediates": 12,
+        "max_operations": 12,
+        "max_output_bytes": 65536,
+        "max_records": 10,
+        "max_time_seconds": 2.5
+      },
+      "value": {
+        "max_records": "10",
+        "max_time_seconds": "2.5"
+      }
+    },
+    {
+      "error": "limits: max_records: Input should be a valid integer, got a number with a fractional part",
+      "type": "ValidationError",
+      "value": {
+        "max_records": 1.5
+      }
+    },
+    {
+      "error": "limits: extra: Extra inputs are not permitted",
+      "type": "ValidationError",
+      "value": {
+        "extra": 1
+      }
+    },
+    {
+      "error": "limits: max_records: Input should be greater than or equal to 1",
+      "type": "ValidationError",
+      "value": {
+        "max_records": false
+      }
+    },
+    {
+      "error": "limits: max_operations: Input should be a valid integer; max_records: Input should be greater than or equal to 1; max_output_bytes: Input should be greater than or equal to 512 (+1 more)",
+      "type": "ValidationError",
+      "value": {
+        "extra": 1,
+        "max_operations": null,
+        "max_output_bytes": 0,
+        "max_records": 0
+      }
+    }
+  ],
+  "normalization": [
+    {
+      "arguments": {},
+      "error": "memory_execute requires plan or operations",
+      "type": "ValueError"
+    },
+    {
+      "arguments": {
+        "operations": []
+      },
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "plan": {}
+      },
+      "expected": {}
+    },
+    {
+      "arguments": {
+        "plan": {
+          "operations": []
+        }
+      },
+      "expected": {
+        "operations": []
+      }
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "plan": {}
+      },
+      "error": "memory_execute accepts either plan or top-level plan fields, not both",
+      "type": "ValueError"
+    },
+    {
+      "arguments": {
+        "plan": {},
+        "returns": []
+      },
+      "error": "memory_execute accepts either plan or top-level plan fields, not both",
+      "type": "ValueError"
+    },
+    {
+      "arguments": {
+        "plan": {},
+        "stop_on_error": false
+      },
+      "error": "memory_execute accepts either plan or top-level plan fields, not both",
+      "type": "ValueError"
+    },
+    {
+      "arguments": {
+        "plan": {},
+        "stop_on_error": 1
+      },
+      "error": "memory_execute accepts either plan or top-level plan fields, not both",
+      "type": "ValueError"
+    },
+    {
+      "arguments": {
+        "plan": {},
+        "stop_on_error": null
+      },
+      "error": "memory_execute accepts either plan or top-level plan fields, not both",
+      "type": "ValueError"
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": null
+      },
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": false
+      },
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": "text"
+      },
+      "expected": {
+        "operations": [],
+        "returns": "text",
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "operations": null
+      },
+      "error": "memory_execute requires plan or operations",
+      "type": "ValueError"
+    },
+    {
+      "arguments": {
+        "plan": false
+      },
+      "expected": false
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": 0
+      },
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": 1
+      },
+      "expected": {
+        "operations": [],
+        "returns": 1,
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": {}
+      },
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": {
+          "x": 1
+        }
+      },
+      "expected": {
+        "operations": [],
+        "returns": {
+          "x": 1
+        },
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": []
+      },
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": [
+          1
+        ]
+      },
+      "expected": {
+        "operations": [],
+        "returns": [
+          1
+        ],
+        "stop_on_error": true
+      }
+    },
+    {
+      "arguments": {
+        "operations": [],
+        "returns": ""
+      },
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      }
+    }
+  ],
+  "plans": [
+    {
+      "error": "plan: : Input should be a valid dictionary or instance of _InputPlan",
+      "type": "ValidationError",
+      "value": null
+    },
+    {
+      "error": "plan: : Input should be a valid dictionary or instance of _InputPlan",
+      "type": "ValidationError",
+      "value": 1
+    },
+    {
+      "error": "plan: : Input should be a valid dictionary or instance of _InputPlan",
+      "type": "ValidationError",
+      "value": []
+    },
+    {
+      "error": "plan: operations: Field required",
+      "type": "ValidationError",
+      "value": {}
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": []
+      }
+    },
+    {
+      "error": "plan: operations: Input should be a valid tuple",
+      "type": "ValidationError",
+      "value": {
+        "operations": null
+      }
+    },
+    {
+      "error": "plan: operations: Input should be a valid tuple",
+      "type": "ValidationError",
+      "value": {
+        "operations": {}
+      }
+    },
+    {
+      "error": "plan: operations.0: Input should be a valid dictionary or instance of _PlannedOperation",
+      "type": "ValidationError",
+      "value": {
+        "operations": [
+          null
+        ]
+      }
+    },
+    {
+      "error": "plan: operations.0.op: Field required",
+      "type": "ValidationError",
+      "value": {
+        "operations": [
+          {}
+        ]
+      }
+    },
+    {
+      "error": "plan: operations.0.op: Value error, unknown execute operation",
+      "type": "ValidationError",
+      "value": {
+        "operations": [
+          {
+            "op": "bad"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: operations.0.op: Input should be a valid string",
+      "type": "ValidationError",
+      "value": {
+        "operations": [
+          {
+            "op": 1
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "read",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "read"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: operations.0.args: Input should be a valid dictionary",
+      "type": "ValidationError",
+      "value": {
+        "operations": [
+          {
+            "args": null,
+            "op": "read"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: operations.0.args: Input should be a valid dictionary",
+      "type": "ValidationError",
+      "value": {
+        "operations": [
+          {
+            "args": [],
+            "op": "read"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {
+              "id_or_path": 7
+            },
+            "op": "read",
+            "save_as": "bad name"
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "args": {
+              "id_or_path": 7
+            },
+            "op": "read",
+            "save_as": "bad name"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: operations.0.save_as: Input should be a valid string; operations.0.extra: Extra inputs are not permitted",
+      "type": "ValidationError",
+      "value": {
+        "operations": [
+          {
+            "extra": 1,
+            "op": "read",
+            "save_as": 7
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: extra: Extra inputs are not permitted",
+      "type": "ValidationError",
+      "value": {
+        "extra": 1,
+        "operations": []
+      }
+    },
+    {
+      "error": "plan: stop_on_error: Input should be a valid boolean",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "stop_on_error": null
+      }
+    },
+    {
+      "error": "plan: returns: Input should be a valid tuple",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": null
+      }
+    },
+    {
+      "error": "plan: returns.0: Input should be a valid dictionary or instance of ExecuteReturnProjection",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          null
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.ref: Field required",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {}
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.name: Input should be a valid string; returns.0.ref: Input should be a valid string; returns.0.fields.0: Input should be a valid string (+2 more)",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "extra": 1,
+            "fields": [
+              1,
+              2
+            ],
+            "name": 8,
+            "ref": 7
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.fields: Input should be a valid tuple",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": null,
+            "ref": "literal"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be greater than or equal to 1",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": 0,
+            "ref": "$bad..ref"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 10000000000000000000000000000000000000000,
+            "name": "",
+            "ref": "literal"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": 10000000000000000000000000000000000000000,
+            "name": "",
+            "ref": "literal"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [
+              "path",
+              "tags",
+              "path"
+            ],
+            "limit": null,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [
+              "path",
+              "tags",
+              "path"
+            ],
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "help",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "help",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "status",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "status",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "search",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "search",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "read",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "read",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "list",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "list",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "inventory",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "inventory",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "compare_manifest",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "compare_manifest",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "asset_metadata",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "asset_metadata",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "graph",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "graph",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "audit",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "audit",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "answer",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "answer",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "propose",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "propose",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "propose_freeform",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "propose_freeform",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "propose_update",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "propose_update",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "proposal_get",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "proposal_get",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "proposal_list",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "proposal_list",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "proposal_asset_get",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "proposal_asset_get",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "asset_get",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "asset_get",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "proposal_rebase",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "proposal_rebase",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "proposal_revise",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "proposal_revise",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "operation_get",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "operation_get",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "proposal_review",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "proposal_review",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "proposal_apply",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "proposal_apply",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "create",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "create",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "patch",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "patch",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "rename",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "rename",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "trash",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "trash",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "restore",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "restore",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [
+          {
+            "args": {},
+            "op": "purge",
+            "save_as": null
+          }
+        ],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [
+          {
+            "op": "purge",
+            "save_as": null
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": true
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": false
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": false
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": false
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": 0
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": 1
+      }
+    },
+    {
+      "error": "plan: stop_on_error: Input should be a valid boolean, unable to interpret input",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "stop_on_error": 2
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": 1.0
+      }
+    },
+    {
+      "error": "plan: stop_on_error: Input should be a valid boolean",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "stop_on_error": 1.5
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": "yes"
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": false
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": "off"
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": "TRUE"
+      }
+    },
+    {
+      "error": "plan: stop_on_error: Input should be a valid boolean, unable to interpret input",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "stop_on_error": " false "
+      }
+    },
+    {
+      "error": "plan: stop_on_error: Input should be a valid boolean, unable to interpret input",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "stop_on_error": "bad"
+      }
+    },
+    {
+      "error": "plan: stop_on_error: Input should be a valid boolean",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "stop_on_error": []
+      }
+    },
+    {
+      "error": "plan: stop_on_error: Input should be a valid boolean",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "stop_on_error": {}
+      }
+    },
+    {
+      "error": "plan: stop_on_error: Input should be a valid boolean",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "stop_on_error": 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+      }
+    },
+    {
+      "error": "plan: stop_on_error: Input should be a valid boolean, unable to interpret input",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "stop_on_error": -1
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": "t"
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": false
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": "N"
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": "on"
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": false
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": "no"
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": "1"
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [],
+        "stop_on_error": false
+      },
+      "value": {
+        "operations": [],
+        "stop_on_error": "0"
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": true,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be greater than or equal to 1",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": false,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": null,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": null,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": 1,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": 1.0,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer, got a number with a fractional part",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": 1.5,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "1",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 2,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "+2",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 2,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": " 2 ",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 10,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "1_0",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "1.0",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "1.00",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer, unable to parse string as an integer",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "1e2",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer, unable to parse string as an integer",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "١",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer, unable to parse string as an integer",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "bad",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": [],
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": {},
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be greater than or equal to 1",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": -1,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Unable to parse input string as an integer, exceeded maximum size",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be greater than or equal to 1",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be greater than or equal to 1",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer, unable to parse string as an integer",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "1.000_0",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1000,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "  +001_000.00  ",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer, unable to parse string as an integer",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "１",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": " 1 ",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer, unable to parse string as an integer",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "\u001c1\u001c",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be a valid integer, unable to parse string as an integer",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "1.",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Input should be greater than or equal to 1",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "-0.0",
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Unable to parse input string as an integer, exceeded maximum size",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": 1e+100,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Unable to parse input string as an integer, exceeded maximum size",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": 9.223372036854776e+18,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "error": "plan: returns.0.limit: Unable to parse input string as an integer, exceeded maximum size",
+      "type": "ValidationError",
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": -9.223372036854776e+18,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1000000000000000000,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": 1e+18,
+            "ref": "$x"
+          }
+        ]
+      }
+    },
+    {
+      "expected": {
+        "operations": [],
+        "returns": [
+          {
+            "fields": [],
+            "limit": 1,
+            "name": null,
+            "ref": "$x"
+          }
+        ],
+        "stop_on_error": true
+      },
+      "value": {
+        "operations": [],
+        "returns": [
+          {
+            "limit": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
+            "ref": "$x"
+          }
+        ]
+      }
+    }
+  ],
+  "preflights": [
+    {
+      "calls": [],
+      "expected": null,
+      "max_operations": 12,
+      "plan": {
+        "operations": []
+      }
+    },
+    {
+      "calls": [],
+      "error": "plan exceeds configured max_operations",
+      "max_operations": 12,
+      "plan": {
+        "operations": [
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          },
+          {
+            "op": "list"
+          }
+        ]
+      },
+      "type": "ValueError"
+    },
+    {
+      "calls": [],
+      "error": "plan may contain at most one commit-capable operation",
+      "max_operations": 12,
+      "plan": {
+        "operations": [
+          {
+            "op": "create"
+          },
+          {
+            "op": "purge"
+          }
+        ]
+      },
+      "type": "ValueError"
+    },
+    {
+      "calls": [],
+      "expected": null,
+      "max_operations": 12,
+      "plan": {
+        "operations": [
+          {
+            "args": {
+              "id_or_path": "$x"
+            },
+            "op": "read"
+          }
+        ]
+      }
+    },
+    {
+      "calls": [],
+      "error": "operation 1 (read): unknown argument field",
+      "max_operations": 12,
+      "plan": {
+        "operations": [
+          {
+            "args": {
+              "extra": 1,
+              "id_or_path": "$x"
+            },
+            "op": "read"
+          }
+        ]
+      },
+      "type": "ValueError"
+    },
+    {
+      "calls": [],
+      "error": "operation 1 (read): unknown argument field",
+      "max_operations": 12,
+      "plan": {
+        "operations": [
+          {
+            "args": {
+              "unused": "$x"
+            },
+            "op": "read"
+          }
+        ]
+      },
+      "type": "ValueError"
+    },
+    {
+      "calls": [],
+      "error": "operation 1 (asset_get): missing required argument field",
+      "max_operations": 12,
+      "plan": {
+        "operations": [
+          {
+            "args": {
+              "id_or_path": "$x"
+            },
+            "op": "asset_get"
+          }
+        ]
+      },
+      "type": "ValueError"
+    },
+    {
+      "calls": [],
+      "error": "operation 1 (read): invalid saved reference (use $name.field or $name.0.field)",
+      "max_operations": 12,
+      "plan": {
+        "operations": [
+          {
+            "args": {
+              "id_or_path": "$x..bad"
+            },
+            "op": "read"
+          }
+        ]
+      },
+      "type": "ValueError"
+    },
+    {
+      "calls": [],
+      "expected": null,
+      "max_operations": 12,
+      "plan": {
+        "operations": [
+          {
+            "args": {
+              "limit": "not validated yet",
+              "query": "$x"
+            },
+            "op": "search",
+            "save_as": "invalid name"
+          }
+        ]
+      }
+    },
+    {
+      "calls": [
+        "help",
+        "status",
+        "list"
+      ],
+      "expected": null,
+      "max_operations": 12,
+      "plan": {
+        "operations": [
+          {
+            "op": "help"
+          },
+          {
+            "op": "status"
+          },
+          {
+            "op": "list"
+          }
+        ]
+      }
+    }
+  ]
+}
