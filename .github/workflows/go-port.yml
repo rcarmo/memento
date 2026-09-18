@@ -38,6 +38,27 @@ jobs:
           print(platform.python_version(), aioumcp.__file__, umcp.__file__, umcp_shared.__file__)
           PY
 
+  upstream-umcp:
+    name: Pinned upstream uMCP suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pinned uMCP reference
+        uses: actions/checkout@v4
+        with:
+          repository: rcarmo/umcp
+          ref: 30cce7dfe08c6ee63de235f7d81754ba286dafbb
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install upstream test tools
+        run: python -m pip install 'pytest<10' pytest-asyncio coverage ruff
+      - name: Lint runtime modules
+        run: ruff check umcp.py aioumcp.py umcp_shared.py
+      - name: Run the complete upstream suite with branch coverage
+        run: |
+          python -m coverage run --source=umcp,aioumcp -m pytest tests/ -q
+          python -m coverage report
+
   scalar-parity:
     strategy:
       matrix:
