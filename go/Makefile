@@ -25,6 +25,7 @@ fuzz:
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzToolResults -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzHTTPPost -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzStreamLine -fuzztime=10000x -parallel=2 -timeout=120s
+	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzLegacySSE -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./internal/vector -run='^$$' -fuzz=FuzzF32LE -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzTokenizer -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzModelParser -fuzztime=10000x -parallel=2 -timeout=120s

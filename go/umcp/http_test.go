@@ -33,7 +33,7 @@ func testHTTP(t *testing.T) (*Server, *StreamableHTTP) {
 	t.Cleanup(h.Close)
 	return s, h
 }
-func httpRequest(h *StreamableHTTP, method, path, body string, headers map[string]string) *httptest.ResponseRecorder {
+func httpRequest(h http.Handler, method, path, body string, headers map[string]string) *httptest.ResponseRecorder {
 	r := httptest.NewRequest(method, "http://localhost"+path, strings.NewReader(body))
 	r.Header.Set("Authorization", "Bearer reader")
 	r.Header.Set("Mcp-Protocol-Version", "2025-03-26")
