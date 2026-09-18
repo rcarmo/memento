@@ -492,6 +492,10 @@ def main() -> None:
         importlib.import_module("graph_snapshot_foundation").fixtures(),
     )
     save("graph-layout.json", importlib.import_module("graph_layout").fixtures())
+    save(
+        "graph-diagnostics-extended.json",
+        importlib.import_module("graph_diagnostics_extended").fixtures(),
+    )
     (ROOT / "go/service/access_tools.json").write_text(
         json.dumps(access_tools["tools"], indent=2, sort_keys=True) + "\n"
     )

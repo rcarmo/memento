@@ -58,6 +58,9 @@ func (snapshotFaultConn) QueryContext(_ context.Context, query string, _ []drive
 	if strings.HasPrefix(query, "SELECT c.id") {
 		return &snapshotFaultRows{mode: "nodes-" + mode}, nil
 	}
+	if strings.HasPrefix(query, "SELECT id,content_hash") {
+		return &snapshotFaultRows{mode: "hashes-" + mode}, nil
+	}
 	return &snapshotFaultRows{mode: "revisions-" + mode}, nil
 }
 func (r *snapshotFaultRows) Columns() []string {
@@ -82,12 +85,15 @@ func (r *snapshotFaultRows) Columns() []string {
 	if len(r.mode) >= 7 && r.mode[:7] == "search-" {
 		return []string{"id", "path", "title", "type", "tags_json", "snippet"}
 	}
+	if len(r.mode) >= 7 && r.mode[:7] == "hashes-" {
+		return []string{"id", "content_hash"}
+	}
 	return []string{"key", "value"}
 }
 func (*snapshotFaultRows) Close() error { return nil }
 func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	if r.emitted {
-		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" || r.mode == "nodes-rows" || r.mode == "proposals-rows" || r.mode == "semantic-rows" || r.mode == "search-rows" || r.mode == "summaries-rows" {
+		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" || r.mode == "nodes-rows" || r.mode == "proposals-rows" || r.mode == "semantic-rows" || r.mode == "search-rows" || r.mode == "summaries-rows" || r.mode == "hashes-rows" {
 			return io.ErrClosedPipe
 		}
 		if r.mode != "edges-multi" || r.count >= 2 {
@@ -96,9 +102,12 @@ func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	}
 	r.emitted = true
 	r.count++
-	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" || r.mode == "proposals-scan" || r.mode == "semantic-scan" || r.mode == "search-scan" || r.mode == "summaries-scan" {
+	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" || r.mode == "proposals-scan" || r.mode == "semantic-scan" || r.mode == "search-scan" || r.mode == "summaries-scan" || r.mode == "hashes-scan" {
 		values[0] = nil
 		values[1] = "value"
+	} else if len(r.mode) >= 7 && r.mode[:7] == "hashes-" {
+		values[0] = "a"
+		values[1] = "hash"
 	} else if len(r.mode) >= 10 && r.mode[:10] == "summaries-" {
 		values[0] = "id"
 		values[1] = "actor"

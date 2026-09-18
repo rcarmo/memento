@@ -85,7 +85,11 @@ func (s *SnapshotService) Overview(ctx context.Context, policy *access.Effective
 		return empty, err
 	}
 	nodes = ScopedNodes(nodes, edges)
-	diagnostics := DiagnoseFoundation(nodes, edges, revisions)
+	hashes, err := s.ContentHashes(ctx, ids)
+	if err != nil {
+		return empty, err
+	}
+	diagnostics := DiagnoseGraph(nodes, edges, revisions, hashes)
 	nodes = ApplyDiagnosticIDs(nodes, diagnostics)
 	semantic := []Edge{}
 	if options.Semantic.NodeLimit > 0 {
@@ -125,7 +129,11 @@ func (s *SnapshotService) Overview(ctx context.Context, policy *access.Effective
 		}
 		allEdges := append(append([]Edge{}, allExplicit...), allSemantic...)
 		allEdges = append(allEdges, OverlayEdges(allNodes, revisions.Repository, options.EdgeLimit-len(allEdges))...)
-		diagnostics = DiagnoseFoundation(allNodes, allExplicit, revisions)
+		allHashes, loadErr := s.ContentHashes(ctx, allIDs)
+		if loadErr != nil {
+			return empty, loadErr
+		}
+		diagnostics = DiagnoseGraph(allNodes, allExplicit, revisions, allHashes)
 		clusterLimit := options.ClusterLimit
 		if clusterLimit <= 0 {
 			clusterLimit = 500

@@ -1,0 +1,600 @@
+{
+  "content_hashes": {
+    "n1": "same",
+    "n2": "same",
+    "n3": "other"
+  },
+  "diagnostics": [
+    {
+      "concept_ids": [
+        "n1"
+      ],
+      "derived": true,
+      "id": "diagnostic:embedding_missing:291ce2b29443c6ee",
+      "measured": {
+        "status": "missing"
+      },
+      "message": "No current ready embedding is available; explicit relationships are unaffected.",
+      "rule": "embedding_missing",
+      "severity": "info",
+      "threshold": {}
+    },
+    {
+      "concept_ids": [
+        "n4"
+      ],
+      "derived": true,
+      "id": "diagnostic:embedding_missing:43a30681a34f9333",
+      "measured": {
+        "status": "missing"
+      },
+      "message": "No current ready embedding is available; explicit relationships are unaffected.",
+      "rule": "embedding_missing",
+      "severity": "info",
+      "threshold": {}
+    },
+    {
+      "concept_ids": [
+        "n3"
+      ],
+      "derived": true,
+      "id": "diagnostic:embedding_missing:8bd3fa1917f402ff",
+      "measured": {
+        "status": "missing"
+      },
+      "message": "No current ready embedding is available; explicit relationships are unaffected.",
+      "rule": "embedding_missing",
+      "severity": "info",
+      "threshold": {}
+    },
+    {
+      "concept_ids": [
+        "n2"
+      ],
+      "derived": true,
+      "id": "diagnostic:embedding_missing:aa9faf70b48457b1",
+      "measured": {
+        "status": "missing"
+      },
+      "message": "No current ready embedding is available; explicit relationships are unaffected.",
+      "rule": "embedding_missing",
+      "severity": "info",
+      "threshold": {}
+    },
+    {
+      "concept_ids": [
+        "n0"
+      ],
+      "derived": true,
+      "id": "diagnostic:embedding_missing:d31b4118dafcb57e",
+      "measured": {
+        "status": "missing"
+      },
+      "message": "No current ready embedding is available; explicit relationships are unaffected.",
+      "rule": "embedding_missing",
+      "severity": "info",
+      "threshold": {}
+    },
+    {
+      "concept_ids": [
+        "n5"
+      ],
+      "derived": true,
+      "id": "diagnostic:embedding_missing:e6bab4600b790b80",
+      "measured": {
+        "status": "missing"
+      },
+      "message": "No current ready embedding is available; explicit relationships are unaffected.",
+      "rule": "embedding_missing",
+      "severity": "info",
+      "threshold": {}
+    },
+    {
+      "concept_ids": [
+        "n6"
+      ],
+      "derived": true,
+      "id": "diagnostic:embedding_missing:ebc104a455ef1c13",
+      "measured": {
+        "status": "missing"
+      },
+      "message": "No current ready embedding is available; explicit relationships are unaffected.",
+      "rule": "embedding_missing",
+      "severity": "info",
+      "threshold": {}
+    },
+    {
+      "concept_ids": [
+        "n0"
+      ],
+      "derived": false,
+      "id": "diagnostic:namespace_outlier:be5c2b050a35dfd9",
+      "measured": {
+        "explicit_neighbours": 3,
+        "external_neighbour_fraction": 1.0
+      },
+      "message": "Most explicit neighbours are outside the memory namespace.",
+      "rule": "namespace_outlier",
+      "severity": "info",
+      "threshold": {
+        "threshold": 0.8
+      }
+    },
+    {
+      "concept_ids": [
+        "n0"
+      ],
+      "derived": false,
+      "id": "diagnostic:tag_drift:dcc251c33c45ffa9",
+      "measured": {
+        "missing_tags": "common",
+        "namespace": "/same/"
+      },
+      "message": "Memory lacks common namespace tag(s): common.",
+      "rule": "tag_drift",
+      "severity": "info",
+      "threshold": {
+        "common_tag_fraction": 0.75
+      }
+    },
+    {
+      "concept_ids": [
+        "n1",
+        "n2"
+      ],
+      "derived": false,
+      "id": "diagnostic:exact_duplicate:0f60f459fec25e9a",
+      "measured": {
+        "content_hash": "same",
+        "count": 2
+      },
+      "message": "Memories have identical canonical content hashes.",
+      "rule": "exact_duplicate",
+      "severity": "warning",
+      "threshold": {}
+    },
+    {
+      "concept_ids": [
+        "n3"
+      ],
+      "derived": false,
+      "id": "diagnostic:orphan:4068551d1834c160",
+      "measured": {
+        "explicit_degree": 0
+      },
+      "message": "No explicit inbound or outbound links.",
+      "rule": "orphan",
+      "severity": "warning",
+      "threshold": {
+        "maximum_orphan_degree": 0
+      }
+    },
+    {
+      "concept_ids": [
+        "n2"
+      ],
+      "derived": false,
+      "id": "diagnostic:orphan:4c6b1e0e3d6d2b27",
+      "measured": {
+        "explicit_degree": 0
+      },
+      "message": "No explicit inbound or outbound links.",
+      "rule": "orphan",
+      "severity": "warning",
+      "threshold": {
+        "maximum_orphan_degree": 0
+      }
+    },
+    {
+      "concept_ids": [
+        "n0"
+      ],
+      "derived": false,
+      "id": "diagnostic:orphan:ae88a403df3acbd3",
+      "measured": {
+        "explicit_degree": 0
+      },
+      "message": "No explicit inbound or outbound links.",
+      "rule": "orphan",
+      "severity": "warning",
+      "threshold": {
+        "maximum_orphan_degree": 0
+      }
+    },
+    {
+      "concept_ids": [
+        "n6"
+      ],
+      "derived": false,
+      "id": "diagnostic:orphan:b70c099e5a9aa7db",
+      "measured": {
+        "explicit_degree": 0
+      },
+      "message": "No explicit inbound or outbound links.",
+      "rule": "orphan",
+      "severity": "warning",
+      "threshold": {
+        "maximum_orphan_degree": 0
+      }
+    },
+    {
+      "concept_ids": [
+        "n1"
+      ],
+      "derived": false,
+      "id": "diagnostic:orphan:ba9a63e6809c58ca",
+      "measured": {
+        "explicit_degree": 0
+      },
+      "message": "No explicit inbound or outbound links.",
+      "rule": "orphan",
+      "severity": "warning",
+      "threshold": {
+        "maximum_orphan_degree": 0
+      }
+    },
+    {
+      "concept_ids": [
+        "n4"
+      ],
+      "derived": false,
+      "id": "diagnostic:orphan:cc12556647d5313c",
+      "measured": {
+        "explicit_degree": 0
+      },
+      "message": "No explicit inbound or outbound links.",
+      "rule": "orphan",
+      "severity": "warning",
+      "threshold": {
+        "maximum_orphan_degree": 0
+      }
+    },
+    {
+      "concept_ids": [
+        "n5"
+      ],
+      "derived": false,
+      "id": "diagnostic:orphan:ddd92c4efec446b7",
+      "measured": {
+        "explicit_degree": 0
+      },
+      "message": "No explicit inbound or outbound links.",
+      "rule": "orphan",
+      "severity": "warning",
+      "threshold": {
+        "maximum_orphan_degree": 0
+      }
+    },
+    {
+      "concept_ids": [
+        "n0"
+      ],
+      "derived": false,
+      "id": "diagnostic:size_outlier:86ded65b446b7460",
+      "measured": {
+        "combined_bytes": 5000,
+        "namespace_median": 100.0
+      },
+      "message": "Combined size is an outlier in namespace /same/.",
+      "rule": "size_outlier",
+      "severity": "warning",
+      "threshold": {
+        "mad": 0.0,
+        "threshold_bytes": 1124.0
+      }
+    }
+  ],
+  "edges": [
+    {
+      "anchor": null,
+      "canonical": true,
+      "embedding_revision": null,
+      "first_seen_revision": "r",
+      "id": "e0-4",
+      "kind": "explicit",
+      "last_checked_revision": "r",
+      "model_id": null,
+      "raw_target": "/n4",
+      "resolution": "resolved",
+      "similarity": null,
+      "source": "n0",
+      "target": "n4"
+    },
+    {
+      "anchor": null,
+      "canonical": true,
+      "embedding_revision": null,
+      "first_seen_revision": "r",
+      "id": "e0-5",
+      "kind": "explicit",
+      "last_checked_revision": "r",
+      "model_id": null,
+      "raw_target": "/n5",
+      "resolution": "resolved",
+      "similarity": null,
+      "source": "n0",
+      "target": "n5"
+    },
+    {
+      "anchor": null,
+      "canonical": true,
+      "embedding_revision": null,
+      "first_seen_revision": "r",
+      "id": "e0-6",
+      "kind": "explicit",
+      "last_checked_revision": "r",
+      "model_id": null,
+      "raw_target": "/n6",
+      "resolution": "resolved",
+      "similarity": null,
+      "source": "n0",
+      "target": "n6"
+    }
+  ],
+  "nodes": [
+    {
+      "anomaly_ids": [],
+      "asset_bytes": 0,
+      "broken_link_count": 0,
+      "coarse_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "combined_bytes": 5000,
+      "embedding": {
+        "dimensions": null,
+        "embedding_revision": null,
+        "error": null,
+        "model_id": null,
+        "model_revision": null,
+        "status": "missing",
+        "updated_at": null
+      },
+      "explicit_in_degree": 0,
+      "explicit_out_degree": 0,
+      "id": "n0",
+      "markdown_bytes": 5000,
+      "namespace": "/same/",
+      "orphan": false,
+      "path": "/same/n0.md",
+      "pending_proposal_count": 0,
+      "proposal_count": 0,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [],
+      "title": "N0",
+      "type": "concept",
+      "updated_at": "now",
+      "updated_by": null
+    },
+    {
+      "anomaly_ids": [],
+      "asset_bytes": 0,
+      "broken_link_count": 0,
+      "coarse_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "combined_bytes": 100,
+      "embedding": {
+        "dimensions": null,
+        "embedding_revision": null,
+        "error": null,
+        "model_id": null,
+        "model_revision": null,
+        "status": "missing",
+        "updated_at": null
+      },
+      "explicit_in_degree": 0,
+      "explicit_out_degree": 0,
+      "id": "n1",
+      "markdown_bytes": 100,
+      "namespace": "/same/",
+      "orphan": false,
+      "path": "/same/n1.md",
+      "pending_proposal_count": 0,
+      "proposal_count": 0,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [
+        "common"
+      ],
+      "title": "N1",
+      "type": "concept",
+      "updated_at": "now",
+      "updated_by": null
+    },
+    {
+      "anomaly_ids": [],
+      "asset_bytes": 0,
+      "broken_link_count": 0,
+      "coarse_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "combined_bytes": 100,
+      "embedding": {
+        "dimensions": null,
+        "embedding_revision": null,
+        "error": null,
+        "model_id": null,
+        "model_revision": null,
+        "status": "missing",
+        "updated_at": null
+      },
+      "explicit_in_degree": 0,
+      "explicit_out_degree": 0,
+      "id": "n2",
+      "markdown_bytes": 100,
+      "namespace": "/same/",
+      "orphan": false,
+      "path": "/same/n2.md",
+      "pending_proposal_count": 0,
+      "proposal_count": 0,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [
+        "common"
+      ],
+      "title": "N2",
+      "type": "concept",
+      "updated_at": "now",
+      "updated_by": null
+    },
+    {
+      "anomaly_ids": [],
+      "asset_bytes": 0,
+      "broken_link_count": 0,
+      "coarse_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "combined_bytes": 100,
+      "embedding": {
+        "dimensions": null,
+        "embedding_revision": null,
+        "error": null,
+        "model_id": null,
+        "model_revision": null,
+        "status": "missing",
+        "updated_at": null
+      },
+      "explicit_in_degree": 0,
+      "explicit_out_degree": 0,
+      "id": "n3",
+      "markdown_bytes": 100,
+      "namespace": "/same/",
+      "orphan": false,
+      "path": "/same/n3.md",
+      "pending_proposal_count": 0,
+      "proposal_count": 0,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [
+        "common"
+      ],
+      "title": "N3",
+      "type": "concept",
+      "updated_at": "now",
+      "updated_by": null
+    },
+    {
+      "anomaly_ids": [],
+      "asset_bytes": 0,
+      "broken_link_count": 0,
+      "coarse_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "combined_bytes": 100,
+      "embedding": {
+        "dimensions": null,
+        "embedding_revision": null,
+        "error": null,
+        "model_id": null,
+        "model_revision": null,
+        "status": "missing",
+        "updated_at": null
+      },
+      "explicit_in_degree": 0,
+      "explicit_out_degree": 0,
+      "id": "n4",
+      "markdown_bytes": 100,
+      "namespace": "/other/",
+      "orphan": false,
+      "path": "/other/n4.md",
+      "pending_proposal_count": 0,
+      "proposal_count": 0,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [
+        "common"
+      ],
+      "title": "N4",
+      "type": "concept",
+      "updated_at": "now",
+      "updated_by": null
+    },
+    {
+      "anomaly_ids": [],
+      "asset_bytes": 0,
+      "broken_link_count": 0,
+      "coarse_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "combined_bytes": 100,
+      "embedding": {
+        "dimensions": null,
+        "embedding_revision": null,
+        "error": null,
+        "model_id": null,
+        "model_revision": null,
+        "status": "missing",
+        "updated_at": null
+      },
+      "explicit_in_degree": 0,
+      "explicit_out_degree": 0,
+      "id": "n5",
+      "markdown_bytes": 100,
+      "namespace": "/third/",
+      "orphan": false,
+      "path": "/third/n5.md",
+      "pending_proposal_count": 0,
+      "proposal_count": 0,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [
+        "common"
+      ],
+      "title": "N5",
+      "type": "concept",
+      "updated_at": "now",
+      "updated_by": null
+    },
+    {
+      "anomaly_ids": [],
+      "asset_bytes": 0,
+      "broken_link_count": 0,
+      "coarse_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "combined_bytes": 100,
+      "embedding": {
+        "dimensions": null,
+        "embedding_revision": null,
+        "error": null,
+        "model_id": null,
+        "model_revision": null,
+        "status": "missing",
+        "updated_at": null
+      },
+      "explicit_in_degree": 0,
+      "explicit_out_degree": 0,
+      "id": "n6",
+      "markdown_bytes": 100,
+      "namespace": "/fourth/",
+      "orphan": false,
+      "path": "/fourth/n6.md",
+      "pending_proposal_count": 0,
+      "proposal_count": 0,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [
+        "common"
+      ],
+      "title": "N6",
+      "type": "concept",
+      "updated_at": "now",
+      "updated_by": null
+    }
+  ]
+}
