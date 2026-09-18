@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/rcarmo/memento/go/access"
@@ -25,6 +26,8 @@ type SearchOptions struct {
 	Tags                            []string
 	Limit                           int
 	Cursor                          *string
+	Strict                          bool
+	Timeout                         time.Duration
 }
 type SearchResult struct {
 	ConceptID   string   `json:"concept_id"`
@@ -49,6 +52,11 @@ type SearchPage struct {
 // semantic fallback and corruption quarantine are separate lifecycle work.
 func (s ContentStore) SearchLexical(ctx context.Context, policy access.EffectivePolicy, options SearchOptions) (SearchPage, error) {
 	empty := SearchPage{}
+	if options.Strict {
+		if _, err := s.WaitForFreshness(ctx, options.Timeout); err != nil {
+			return empty, err
+		}
+	}
 	offset, err := decodeOffset(options.Cursor)
 	if err != nil {
 		return empty, err

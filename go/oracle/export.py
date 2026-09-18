@@ -281,6 +281,8 @@ def main() -> None:
     save("derived-content.json", derived_content.fixtures())
     derived_search = importlib.import_module("derived_search")
     save("derived-search.json", derived_search.fixtures())
+    derived_graph = importlib.import_module("derived_graph")
+    save("derived-graph.json", derived_graph.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )
