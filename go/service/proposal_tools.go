@@ -61,7 +61,7 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 		for _, parameter := range definition.Parameters {
 			kind := umcp.StringParam
 			switch parameter.Name {
-			case "limit", "offset", "depth":
+			case "limit", "offset", "depth", "keep":
 				kind = umcp.IntegerParam
 			case "changes", "selected_change_indexes":
 				kind = umcp.ArrayParam
@@ -77,7 +77,7 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 			if err != nil {
 				return nil, err
 			}
-			if name == "memory_proposal_apply" && notify != nil {
+			if (name == "memory_proposal_apply" || name == "memory_asset_prune") && notify != nil {
 				if err = notifyAppliedEnvelope(ctx, server, notify, value); err != nil {
 					return nil, err
 				}
@@ -207,6 +207,17 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 		data, err = result.Data, failure
 		options.RepoRevision = result.Revision
 		options.OperationID = result.OperationID
+	case "memory_asset_prune":
+		id, kind, keep, expected, key := a.text("id_or_path"), a.text("asset_kind"), a.integer("keep"), a.text("expected_revision"), a.text("idempotency_key")
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		manager := repository.TransactionManager{Paths: c.Queue.Paths, Operations: control.Operations{DB: c.Queue.Proposals.DB, Now: c.Queue.Now}, Now: c.Queue.Now, DerivedUpdate: c.DerivedUpdate}
+		var retention any = keep
+		if value, ok := a.values["keep"].(bool); ok {
+			retention = value
+		}
+		data, options, err = c.assetPrune(ctx, actor, id, kind, retention, expected, key, manager.ApplyUnderLock, defaultMutationIO())
 	case "memory_asset_get":
 		o := AssetGetOptions{IDOrPath: a.text("id_or_path"), AssetKind: a.text("asset_kind"), Version: a.optional("version"), View: a.text("view"), FilePath: a.optional("file_path"), Offset: int64(a.integer("offset")), ExpectedSHA256: a.optional("expected_sha256")}
 		if a.values["limit"] != nil {

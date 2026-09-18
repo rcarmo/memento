@@ -25,10 +25,13 @@ func (c *ProposalControls) readBundle(policy access.EffectivePolicy) (repository
 	return repository.ScanBundle(c.Queue.Paths.CurrentDir, repository.BundleFilter{IncludePath: func(path string) bool { return readable(policy, path) }})
 }
 func (c *ProposalControls) resolveReadPath(policy access.EffectivePolicy, id string) (string, error) {
+	return c.resolvePath(policy, id, "read")
+}
+func (c *ProposalControls) resolvePath(policy access.EffectivePolicy, id, action string) (string, error) {
 	if strings.HasPrefix(id, "/") {
 		return id, nil
 	}
-	bundle, err := c.readBundle(policy)
+	bundle, err := repository.ScanBundle(c.Queue.Paths.CurrentDir, repository.BundleFilter{IncludePath: func(path string) bool { _, err := access.AuthorizePath(policy, path, action); return err == nil }})
 	if err != nil {
 		return "", err
 	}

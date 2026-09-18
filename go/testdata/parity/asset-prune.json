@@ -1,0 +1,2466 @@
+[
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "prune",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "old",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 5
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "no-op",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.9.0",
+              "1.10.0"
+            ],
+            "pruned_versions": []
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": null,
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 0
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "invalid-keep",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "keep must be at least one",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "reader"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "reader",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal actor lacks role: curator",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": []
+    },
+    "proposals": [],
+    "scenario": "denied-path",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal actor cannot write /public/a.md",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "12345678",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": []
+    },
+    "proposals": [],
+    "scenario": "denied-id",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "error_class": "not_found",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "12345678",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "12345678",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "id-write-only",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "missing",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "missing",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "error_class": "not_found",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "missing",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "INVALID",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "invalid-kind",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "asset_kind must be lowercase alphanumeric words joined by hyphens",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/empty.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "empty",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/empty.md",
+            "kept_versions": [],
+            "pruned_versions": []
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": null,
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "submitted",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.9.0",
+              "1.10.0"
+            ],
+            "pruned_versions": []
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": null,
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "approved",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "approved",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.9.0",
+              "1.10.0"
+            ],
+            "pruned_versions": []
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": null,
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "draft",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "draft",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "rejected",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "rejected",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "expired",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "expired",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "stale",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "stale",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "needs_rebase",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "needs_rebase",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "applied",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "applied",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "conflicted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "conflicted",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "old",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "protected-no-op",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.9.0",
+              "1.10.0"
+            ],
+            "pruned_versions": []
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": null,
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "transaction-error",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "synthetic transaction failure",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "old",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "expected-error",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "synthetic expected revision mismatch",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "old",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"old\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "repeat",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      },
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": []
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": null,
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": "/.assets/12345678/docs/1.9.0.zip",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "missing-zip",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "unlink-failure",
+    "steps": [
+      {
+        "changed": [],
+        "exception": "IsADirectoryError",
+        "expected": null,
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/2.0.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjIuMC4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/2.0.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "other",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T00:00:00Z",
+        "expires_at": "2000-01-01T00:00:00Z",
+        "intent": "synthetic",
+        "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+        "patch_json": "{\"changes\": []}",
+        "proposal_id": "active",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T00:00:00Z"
+      }
+    ],
+    "scenario": "protect-old",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.9.0",
+              "2.0.0"
+            ],
+            "pruned_versions": [
+              "1.10.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/.assets/12345678/docs/2.0.0.json",
+          "/.assets/12345678/docs/2.0.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": 1
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "replay",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": true
+          },
+          "index_revision": "previous",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "original",
+          "repo_revision": "previous",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": 1}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": true
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "keep-true",
+    "steps": [
+      {
+        "changed": [
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip"
+        ],
+        "exception": null,
+        "expected": {
+          "data": {
+            "asset_kind": "docs",
+            "concept_path": "/public/a.md",
+            "kept_versions": [
+              "1.10.0"
+            ],
+            "pruned_versions": [
+              "1.9.0"
+            ],
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: prune docs assets for /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"asset_kind\": \"docs\", \"concept_path\": \"/public/a.md\", \"expected_revision\": \"main\", \"keep\": true}",
+              "source_chat": "chat",
+              "tool_name": "memory_asset_prune"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "asset_kind": "docs",
+      "expected_revision": "main",
+      "id_or_path": "/public/a.md",
+      "idempotency_key": "key",
+      "keep": false
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "missing_zip": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "proposals": [],
+    "scenario": "keep-false",
+    "steps": [
+      {
+        "changed": [],
+        "exception": null,
+        "expected": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "keep must be at least one",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "remaining": [
+          "/.assets/12345678/docs/1.10.0.json",
+          "/.assets/12345678/docs/1.10.0.zip",
+          "/.assets/12345678/docs/1.9.0.json",
+          "/.assets/12345678/docs/1.9.0.zip",
+          "/private/p.md",
+          "/public/a.md",
+          "/public/empty.md"
+        ],
+        "requests": []
+      }
+    ]
+  }
+]

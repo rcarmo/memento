@@ -320,10 +320,17 @@ def main() -> None:
     )
     asset_get = importlib.import_module("asset_get")
     save("asset-get.json", asset_get.fixtures())
+    asset_prune = importlib.import_module("asset_prune")
+    save("asset-prune.json", asset_prune.fixtures())
     asset_tool_fixtures = proposal_tools.fixtures(
         names=proposal_tools.NAMES
         + proposal_tools.READ_NAMES
-        + ["memory_asset_stage_begin", "memory_asset_stage_status", "memory_asset_get"]
+        + [
+            "memory_asset_stage_begin",
+            "memory_asset_stage_status",
+            "memory_asset_get",
+            "memory_asset_prune",
+        ]
     )
     save("asset-tool-dispatch.json", asset_tool_fixtures)
     (ROOT / "go/service/asset_tools.json").write_text(

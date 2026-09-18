@@ -683,6 +683,95 @@
         "jsonrpc": "2.0"
       },
       "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_get\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"/a.md\", \"asset_kind\": \"docs\", \"keep\": 5, \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "expected_revision": "r",
+              "id_or_path": "/a.md",
+              "idempotency_key": "k",
+              "keep": 5
+            },
+            "context": "trusted",
+            "method": "memory_asset_prune"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"/a.md\", \"asset_kind\": \"docs\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"keep\": 2, \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "expected_revision": "r",
+              "id_or_path": "12345678",
+              "idempotency_key": "k",
+              "keep": 2
+            },
+            "context": "trusted",
+            "method": "memory_asset_prune"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"keep\": \"2\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"keep\": true, \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "expected_revision": "r",
+              "id_or_path": "12345678",
+              "idempotency_key": "k",
+              "keep": true
+            },
+            "context": "trusted",
+            "method": "memory_asset_prune"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"keep\": true, \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'id_or_path' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_prune\", \"arguments\": {}}}"
     }
   ],
   "definitions": [
@@ -1884,6 +1973,73 @@
           "default": null,
           "name": "expected_sha256",
           "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "asset_prune",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Prune retained asset pack versions as curator.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_kind": {
+            "title": "Asset Kind",
+            "type": "string"
+          },
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "id_or_path": {
+            "title": "Id Or Path",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "keep": {
+            "default": 5,
+            "title": "Keep",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id_or_path",
+          "asset_kind",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "AssetPruneArgs",
+        "type": "object"
+      },
+      "name": "memory_asset_prune",
+      "parameters": [
+        {
+          "name": "id_or_path",
+          "required": true
+        },
+        {
+          "name": "asset_kind",
+          "required": true
+        },
+        {
+          "default": 5,
+          "name": "keep",
+          "required": false
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
         }
       ]
     }
