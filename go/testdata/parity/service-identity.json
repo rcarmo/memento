@@ -1,0 +1,555 @@
+{
+  "authorization": {
+    "principals": {
+      "admin": {
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "token_env": "SYNTHETIC_ADMIN",
+        "write_prefixes": []
+      },
+      "author": {
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "proposer",
+          "reader"
+        ],
+        "token_env": "SYNTHETIC",
+        "write_prefixes": [
+          "/public/"
+        ]
+      }
+    },
+    "protected_read_prefixes": [
+      "/private/"
+    ]
+  },
+  "authorize": [
+    {
+      "expected": false,
+      "principal": null,
+      "tool": null
+    },
+    {
+      "expected": false,
+      "principal": null,
+      "tool": "memory_proposal_apply"
+    },
+    {
+      "expected": false,
+      "principal": null,
+      "tool": "access_principal_list"
+    },
+    {
+      "expected": false,
+      "principal": null,
+      "tool": "access_"
+    },
+    {
+      "expected": false,
+      "principal": null,
+      "tool": "Access_principal_list"
+    },
+    {
+      "expected": true,
+      "principal": {
+        "metadata": {
+          "synthetic": "static"
+        },
+        "name": "author",
+        "roles": [
+          "proposer",
+          "reader"
+        ]
+      },
+      "tool": null
+    },
+    {
+      "expected": true,
+      "principal": {
+        "metadata": {
+          "synthetic": "static"
+        },
+        "name": "author",
+        "roles": [
+          "proposer",
+          "reader"
+        ]
+      },
+      "tool": "memory_proposal_apply"
+    },
+    {
+      "expected": false,
+      "principal": {
+        "metadata": {
+          "synthetic": "static"
+        },
+        "name": "author",
+        "roles": [
+          "proposer",
+          "reader"
+        ]
+      },
+      "tool": "access_principal_list"
+    },
+    {
+      "expected": false,
+      "principal": {
+        "metadata": {
+          "synthetic": "static"
+        },
+        "name": "author",
+        "roles": [
+          "proposer",
+          "reader"
+        ]
+      },
+      "tool": "access_"
+    },
+    {
+      "expected": true,
+      "principal": {
+        "metadata": {
+          "synthetic": "static"
+        },
+        "name": "author",
+        "roles": [
+          "proposer",
+          "reader"
+        ]
+      },
+      "tool": "Access_principal_list"
+    },
+    {
+      "expected": true,
+      "principal": {
+        "metadata": {},
+        "name": "admin",
+        "roles": [
+          "admin"
+        ]
+      },
+      "tool": null
+    },
+    {
+      "expected": true,
+      "principal": {
+        "metadata": {},
+        "name": "admin",
+        "roles": [
+          "admin"
+        ]
+      },
+      "tool": "memory_proposal_apply"
+    },
+    {
+      "expected": true,
+      "principal": {
+        "metadata": {},
+        "name": "admin",
+        "roles": [
+          "admin"
+        ]
+      },
+      "tool": "access_principal_list"
+    },
+    {
+      "expected": true,
+      "principal": {
+        "metadata": {},
+        "name": "admin",
+        "roles": [
+          "admin"
+        ]
+      },
+      "tool": "access_"
+    },
+    {
+      "expected": true,
+      "principal": {
+        "metadata": {},
+        "name": "admin",
+        "roles": [
+          "admin"
+        ]
+      },
+      "tool": "Access_principal_list"
+    }
+  ],
+  "cases": [
+    {
+      "expected": null,
+      "headers": {},
+      "kind": "authenticate",
+      "managed": false
+    },
+    {
+      "expected": null,
+      "headers": {
+        "Authorization": "Bearer token"
+      },
+      "kind": "authenticate",
+      "managed": false
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "bearer token"
+      },
+      "kind": "authenticate",
+      "managed": false
+    },
+    {
+      "expected": {
+        "metadata": {
+          "synthetic": "static"
+        },
+        "name": "author",
+        "roles": [
+          "proposer",
+          "reader"
+        ]
+      },
+      "headers": {
+        "authorization": "Bearer token"
+      },
+      "kind": "authenticate",
+      "managed": false
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "Bearer token "
+      },
+      "kind": "authenticate",
+      "managed": false
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "Bearer  token"
+      },
+      "kind": "authenticate",
+      "managed": false
+    },
+    {
+      "expected": {
+        "metadata": {
+          "synthetic": "static"
+        },
+        "name": "author",
+        "roles": [
+          "proposer",
+          "reader"
+        ]
+      },
+      "headers": {
+        "authorization": "Bearer "
+      },
+      "kind": "authenticate",
+      "managed": false
+    },
+    {
+      "expected": {
+        "metadata": {},
+        "name": "admin",
+        "roles": [
+          "admin"
+        ]
+      },
+      "headers": {
+        "authorization": "Bearer admin-token"
+      },
+      "kind": "authenticate",
+      "managed": false
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "Bearer managed-token"
+      },
+      "kind": "authenticate",
+      "managed": false
+    },
+    {
+      "error": "missing authenticated principal",
+      "kind": "context",
+      "managed": false,
+      "name": null
+    },
+    {
+      "context": {
+        "client_instance_id": null,
+        "mcp_session_id": "session",
+        "principal": {
+          "metadata": {
+            "synthetic": "static"
+          },
+          "name": "author",
+          "roles": [
+            "proposer",
+            "reader"
+          ]
+        },
+        "source_chat": null
+      },
+      "kind": "context",
+      "managed": false,
+      "name": "author",
+      "policy": {
+        "principal": "author",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "proposer",
+          "reader"
+        ],
+        "write_prefixes": [
+          "/public/"
+        ]
+      }
+    },
+    {
+      "context": {
+        "client_instance_id": null,
+        "mcp_session_id": "session",
+        "principal": {
+          "metadata": {},
+          "name": "admin",
+          "roles": [
+            "admin"
+          ]
+        },
+        "source_chat": null
+      },
+      "kind": "context",
+      "managed": false,
+      "name": "admin",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "unknown request principal: dynamic",
+      "kind": "context",
+      "managed": false,
+      "name": "dynamic"
+    },
+    {
+      "error": "unknown request principal: missing",
+      "kind": "context",
+      "managed": false,
+      "name": "missing"
+    },
+    {
+      "expected": null,
+      "headers": {},
+      "kind": "authenticate",
+      "managed": true
+    },
+    {
+      "expected": null,
+      "headers": {
+        "Authorization": "Bearer token"
+      },
+      "kind": "authenticate",
+      "managed": true
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "bearer token"
+      },
+      "kind": "authenticate",
+      "managed": true
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "Bearer token"
+      },
+      "kind": "authenticate",
+      "managed": true
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "Bearer token "
+      },
+      "kind": "authenticate",
+      "managed": true
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "Bearer  token"
+      },
+      "kind": "authenticate",
+      "managed": true
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "Bearer "
+      },
+      "kind": "authenticate",
+      "managed": true
+    },
+    {
+      "expected": null,
+      "headers": {
+        "authorization": "Bearer admin-token"
+      },
+      "kind": "authenticate",
+      "managed": true
+    },
+    {
+      "expected": {
+        "metadata": {},
+        "name": "dynamic",
+        "roles": [
+          "reader"
+        ]
+      },
+      "headers": {
+        "authorization": "Bearer managed-token"
+      },
+      "kind": "authenticate",
+      "managed": true
+    },
+    {
+      "error": "missing authenticated principal",
+      "kind": "context",
+      "managed": true,
+      "name": null
+    },
+    {
+      "context": {
+        "client_instance_id": null,
+        "mcp_session_id": "session",
+        "principal": {
+          "metadata": {
+            "synthetic": "static"
+          },
+          "name": "author",
+          "roles": [
+            "proposer",
+            "reader"
+          ]
+        },
+        "source_chat": null
+      },
+      "kind": "context",
+      "managed": true,
+      "name": "author",
+      "policy": {
+        "principal": "author",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/managed/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "context": {
+        "client_instance_id": null,
+        "mcp_session_id": "session",
+        "principal": {
+          "metadata": {},
+          "name": "admin",
+          "roles": [
+            "admin"
+          ]
+        },
+        "source_chat": null
+      },
+      "kind": "context",
+      "managed": true,
+      "name": "admin",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "context": {
+        "client_instance_id": null,
+        "mcp_session_id": "session",
+        "principal": {
+          "metadata": {},
+          "name": "dynamic",
+          "roles": [
+            "reader"
+          ]
+        },
+        "source_chat": null
+      },
+      "kind": "context",
+      "managed": true,
+      "name": "dynamic",
+      "policy": {
+        "principal": "dynamic",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/managed/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "unknown request principal: missing",
+      "kind": "context",
+      "managed": true,
+      "name": "missing"
+    }
+  ],
+  "managed_policy": {
+    "read_prefixes": [
+      "/managed/"
+    ],
+    "roles": [
+      "reader"
+    ],
+    "token_env": "MANAGED_ACCESS",
+    "write_prefixes": []
+  }
+}
