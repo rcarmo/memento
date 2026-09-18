@@ -66,7 +66,10 @@ type ToolRegistry struct {
 	DefaultPageSize int
 	// Visible optionally filters discovery using trusted request context. It
 	// never authorises calls; handlers and transport hooks retain that boundary.
-	Visible func(context.Context, Tool) bool
+	Visible        func(context.Context, Tool) bool
+	discoverySet   bool
+	discoveryOrder []string
+	discoverable   map[string]bool
 }
 
 // InferToolAnnotations mirrors name-based source hints, including read precedence.
@@ -157,16 +160,50 @@ func (r *ToolRegistry) Register(tool Tool) error {
 	if r.tools == nil {
 		r.tools = make(map[string]Tool)
 	}
+	_, existed := r.tools[tool.Name]
 	r.tools[tool.Name] = tool
+	if r.discoverySet && (!existed || !r.discoverable[tool.Name]) {
+		r.discoverable[tool.Name] = true
+		r.discoveryOrder = append(r.discoveryOrder, tool.Name)
+	}
 	return nil
 }
 
-// Unregister removes only a dynamic registration, reporting whether it existed.
+// SetDiscoveryOrder publishes exactly the named currently registered tools in
+// caller order. Hidden tools remain callable; later registrations append to the
+// published order. This mirrors source overrides without replacing tools/list.
+func (r *ToolRegistry) SetDiscoveryOrder(names []string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	seen := map[string]bool{}
+	for _, name := range names {
+		if seen[name] {
+			return fmt.Errorf("duplicate discovery tool: %s", name)
+		}
+		if _, ok := r.tools[name]; !ok {
+			return fmt.Errorf("discovery tool is not registered: %s", name)
+		}
+		seen[name] = true
+	}
+	r.discoverySet = true
+	r.discoveryOrder = append([]string{}, names...)
+	r.discoverable = seen
+	return nil
+}
+
+// Unregister removes call and discovery registration, reporting whether it existed.
 func (r *ToolRegistry) Unregister(name string) bool {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	_, exists := r.tools[name]
 	delete(r.tools, name)
+	delete(r.discoverable, name)
+	for index, item := range r.discoveryOrder {
+		if item == name {
+			r.discoveryOrder = append(r.discoveryOrder[:index], r.discoveryOrder[index+1:]...)
+			break
+		}
+	}
 	return exists
 }
 
@@ -194,11 +231,20 @@ func (r *ToolRegistry) UnregisterAndNotify(name string) (bool, error) {
 func (r *ToolRegistry) List(ctx context.Context, params map[string]any) (any, *RPCError, error) {
 	r.mu.RLock()
 	tools := make([]Tool, 0, len(r.tools))
-	for _, tool := range r.tools {
-		tools = append(tools, cloneTool(tool))
+	if r.discoverySet {
+		for _, name := range r.discoveryOrder {
+			if tool, ok := r.tools[name]; ok && r.discoverable[name] {
+				tools = append(tools, cloneTool(tool))
+			}
+		}
+	} else {
+		for _, tool := range r.tools {
+			tools = append(tools, cloneTool(tool))
+		}
 	}
 	pageSize := r.DefaultPageSize
 	visible := r.Visible
+	ordered := r.discoverySet
 	r.mu.RUnlock()
 	if visible != nil {
 		filtered := tools[:0]
@@ -209,7 +255,9 @@ func (r *ToolRegistry) List(ctx context.Context, params map[string]any) (any, *R
 		}
 		tools = filtered
 	}
-	sort.Slice(tools, func(i, j int) bool { return tools[i].Name < tools[j].Name })
+	if !ordered {
+		sort.Slice(tools, func(i, j int) bool { return tools[i].Name < tools[j].Name })
+	}
 	items := make([]DiscoveryItem, 0, len(tools))
 	for _, tool := range tools {
 		meta := map[string]any{"name": tool.Name, "description": tool.Description, "inputSchema": tool.InputSchema}
