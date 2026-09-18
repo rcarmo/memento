@@ -228,6 +228,8 @@ def main() -> None:
     save("control-db.json", control_db.fixtures())
     control_operations = importlib.import_module("control_operations")
     save("control-operations.json", control_operations.fixtures())
+    transactions = importlib.import_module("repository_transactions")
+    save("repository-transactions.json", transactions.fixtures())
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

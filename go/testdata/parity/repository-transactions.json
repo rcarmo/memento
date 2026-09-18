@@ -1,0 +1,456 @@
+[
+  {
+    "after": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": "{\"changed_paths\": [\"/one.md\"]}",
+      "result_revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+      "state": "succeeded",
+      "tool_name": "memory_write"
+    },
+    "base": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "before": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": "{\"changed_paths\": [\"/one.md\"]}",
+      "result_revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+      "state": "succeeded",
+      "tool_name": "memory_write"
+    },
+    "checkpoint": "",
+    "error": "",
+    "files": [
+      "one.md"
+    ],
+    "main": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+    "recovery": [],
+    "seen": [
+      "operation_inserted",
+      "worktree_created",
+      "mutation_applied",
+      "commit_created",
+      "publication_complete",
+      "current_materialized",
+      "derived_updated",
+      "operation_completed"
+    ],
+    "worktree": null
+  },
+  {
+    "after": {
+      "base_revision": null,
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "queued",
+      "tool_name": "memory_write"
+    },
+    "base": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "before": {
+      "base_revision": null,
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "queued",
+      "tool_name": "memory_write"
+    },
+    "checkpoint": "operation_inserted",
+    "error": "CheckpointError",
+    "files": [],
+    "main": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "recovery": [
+      {
+        "classification": "retryable",
+        "op_id": "transaction-one",
+        "revision": null,
+        "state": "queued"
+      }
+    ],
+    "seen": [
+      "operation_inserted"
+    ],
+    "worktree": null
+  },
+  {
+    "after": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "running",
+      "tool_name": "memory_write"
+    },
+    "base": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "before": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "running",
+      "tool_name": "memory_write"
+    },
+    "checkpoint": "worktree_created",
+    "error": "CheckpointError",
+    "files": [],
+    "main": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "recovery": [
+      {
+        "classification": "retryable",
+        "op_id": "transaction-one",
+        "revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+        "state": "running"
+      }
+    ],
+    "seen": [
+      "operation_inserted",
+      "worktree_created"
+    ],
+    "worktree": "26cae2e60077bf902e09826cb48e07bd87fcd947"
+  },
+  {
+    "after": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "running",
+      "tool_name": "memory_write"
+    },
+    "base": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "before": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "running",
+      "tool_name": "memory_write"
+    },
+    "checkpoint": "mutation_applied",
+    "error": "CheckpointError",
+    "files": [],
+    "main": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "recovery": [
+      {
+        "classification": "retryable",
+        "op_id": "transaction-one",
+        "revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+        "state": "running"
+      }
+    ],
+    "seen": [
+      "operation_inserted",
+      "worktree_created",
+      "mutation_applied"
+    ],
+    "worktree": "26cae2e60077bf902e09826cb48e07bd87fcd947"
+  },
+  {
+    "after": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "running",
+      "tool_name": "memory_write"
+    },
+    "base": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "before": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "running",
+      "tool_name": "memory_write"
+    },
+    "checkpoint": "commit_created",
+    "error": "CheckpointError",
+    "files": [],
+    "main": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "recovery": [
+      {
+        "classification": "retryable",
+        "op_id": "transaction-one",
+        "revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+        "state": "running"
+      }
+    ],
+    "seen": [
+      "operation_inserted",
+      "worktree_created",
+      "mutation_applied",
+      "commit_created"
+    ],
+    "worktree": "c8de546bcd1450853c057b9da473fd50cd62a7d7"
+  },
+  {
+    "after": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": "{\"changed_paths\": [\"/one.md\"]}",
+      "result_revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+      "state": "succeeded",
+      "tool_name": "memory_write"
+    },
+    "base": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "before": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "running",
+      "tool_name": "memory_write"
+    },
+    "checkpoint": "publication_complete",
+    "error": "CheckpointError",
+    "files": [
+      "one.md"
+    ],
+    "main": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+    "recovery": [
+      {
+        "classification": "published",
+        "op_id": "transaction-one",
+        "revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+        "state": "succeeded"
+      }
+    ],
+    "seen": [
+      "operation_inserted",
+      "worktree_created",
+      "mutation_applied",
+      "commit_created",
+      "publication_complete"
+    ],
+    "worktree": "c8de546bcd1450853c057b9da473fd50cd62a7d7"
+  },
+  {
+    "after": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": "{\"changed_paths\": [\"/one.md\"]}",
+      "result_revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+      "state": "succeeded",
+      "tool_name": "memory_write"
+    },
+    "base": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "before": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "running",
+      "tool_name": "memory_write"
+    },
+    "checkpoint": "current_materialized",
+    "error": "CheckpointError",
+    "files": [
+      "one.md"
+    ],
+    "main": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+    "recovery": [
+      {
+        "classification": "published",
+        "op_id": "transaction-one",
+        "revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+        "state": "succeeded"
+      }
+    ],
+    "seen": [
+      "operation_inserted",
+      "worktree_created",
+      "mutation_applied",
+      "commit_created",
+      "publication_complete",
+      "current_materialized"
+    ],
+    "worktree": "c8de546bcd1450853c057b9da473fd50cd62a7d7"
+  },
+  {
+    "after": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": "{\"changed_paths\": [\"/one.md\"]}",
+      "result_revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+      "state": "succeeded",
+      "tool_name": "memory_write"
+    },
+    "base": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "before": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": null,
+      "result_revision": null,
+      "state": "running",
+      "tool_name": "memory_write"
+    },
+    "checkpoint": "derived_updated",
+    "error": "CheckpointError",
+    "files": [
+      "one.md"
+    ],
+    "main": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+    "recovery": [
+      {
+        "classification": "published",
+        "op_id": "transaction-one",
+        "revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+        "state": "succeeded"
+      }
+    ],
+    "seen": [
+      "operation_inserted",
+      "worktree_created",
+      "mutation_applied",
+      "commit_created",
+      "publication_complete",
+      "current_materialized",
+      "derived_updated"
+    ],
+    "worktree": "c8de546bcd1450853c057b9da473fd50cd62a7d7"
+  },
+  {
+    "after": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": "{\"changed_paths\": [\"/one.md\"]}",
+      "result_revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+      "state": "succeeded",
+      "tool_name": "memory_write"
+    },
+    "base": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+    "before": {
+      "base_revision": "26cae2e60077bf902e09826cb48e07bd87fcd947",
+      "error_class": null,
+      "error_message": null,
+      "idempotency_key": "key",
+      "op_id": "transaction-one",
+      "principal": "agent",
+      "request_hash": "a8198524f58e72b56283ab71ebddada22840f108b46ef7165bb3fca9919c5558",
+      "request_json": "{\"synthetic\":true}",
+      "result_json": "{\"changed_paths\": [\"/one.md\"]}",
+      "result_revision": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+      "state": "succeeded",
+      "tool_name": "memory_write"
+    },
+    "checkpoint": "operation_completed",
+    "error": "CheckpointError",
+    "files": [
+      "one.md"
+    ],
+    "main": "c8de546bcd1450853c057b9da473fd50cd62a7d7",
+    "recovery": [],
+    "seen": [
+      "operation_inserted",
+      "worktree_created",
+      "mutation_applied",
+      "commit_created",
+      "publication_complete",
+      "current_materialized",
+      "derived_updated",
+      "operation_completed"
+    ],
+    "worktree": "c8de546bcd1450853c057b9da473fd50cd62a7d7"
+  }
+]
