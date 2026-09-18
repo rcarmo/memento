@@ -64,7 +64,14 @@ type migrationDB interface {
 	BeginTx(context.Context, *sql.TxOptions) (*sql.Tx, error)
 }
 
-func Migrate(ctx context.Context, db *sql.DB) error { return migrate(ctx, db) }
+func Migrate(ctx context.Context, db *sql.DB) error {
+	conn, err := db.Conn(ctx)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	return migrate(ctx, conn)
+}
 func migrate(ctx context.Context, db migrationDB) error {
 	// Python sqlite's context does not start a transaction for DDL: on fresh
 	// or unsupported versions, preceding CREATE statements persist. Use explicit
@@ -182,7 +189,11 @@ func migrateV5Rows(ctx context.Context, db migrationDB, rows rowReader) error {
 		return err
 	}
 	if tx != nil {
-		return tx.Commit()
+		if err := tx.Commit(); err != nil {
+			_, _ = db.ExecContext(context.WithoutCancel(ctx), "ROLLBACK")
+			return err
+		}
+		return nil
 	}
 	return nil
 }

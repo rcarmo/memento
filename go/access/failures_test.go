@@ -285,3 +285,23 @@ func TestAccessDoesNotReturnCredentialOnPostWriteFailure(t *testing.T) {
 		t.Fatal("invalid principal authenticated")
 	}
 }
+
+func TestAccessDeferredCommitFailure(t *testing.T) {
+	s, _ := syntheticStore(t)
+	ctx := context.Background()
+	_, err := s.db.Exec(`CREATE TABLE access_deferred(name TEXT REFERENCES access_principals(name) DEFERRABLE INITIALLY DEFERRED); CREATE TRIGGER fail_access_commit AFTER INSERT ON access_principals BEGIN INSERT INTO access_deferred VALUES('missing'); END`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, token, err := s.Create(ctx, "admin", "one", []string{"reader"}, []string{"/"}, nil, nil)
+	if err == nil || token != "" {
+		t.Fatal("failed commit returned credential")
+	}
+	list, err := s.List(ctx)
+	if err != nil || len(list) != 0 {
+		t.Fatal("failed access commit leaked principal", list, err)
+	}
+	if _, err = s.db.Exec("BEGIN; ROLLBACK"); err != nil {
+		t.Fatal("open transaction leaked", err)
+	}
+}

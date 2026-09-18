@@ -234,6 +234,8 @@ def main() -> None:
     save("access-policy.json", access_policy.fixtures())
     access_store = importlib.import_module("access_store")
     save("access-store.json", access_store.fixtures())
+    proposals = importlib.import_module("control_proposals")
+    save("control-proposals.json", proposals.fixtures())
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

@@ -302,3 +302,48 @@ func TestLegacyRowFailure(t *testing.T) {
 		t.Fatal("row failure")
 	}
 }
+
+func TestV5DeferredCommitFailureCleansConnection(t *testing.T) {
+	db, _ := fixtureDB(t, findMigration(t, "5"))
+	ctx := context.Background()
+	_, err := db.Exec(`CREATE TABLE migration_deferred(proposal_id TEXT REFERENCES proposals(proposal_id) DEFERRABLE INITIALLY DEFERRED); CREATE TRIGGER fail_migration_commit AFTER INSERT ON proposals BEGIN INSERT INTO migration_deferred VALUES('missing'); END`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = Migrate(ctx, db); err == nil {
+		t.Fatal("deferred constraint ignored")
+	}
+	var count int
+	if err = db.QueryRow("SELECT COUNT(*) FROM proposals").Scan(&count); err != nil || count != 0 {
+		t.Fatal("failed commit leaked rows", count, err)
+	}
+	if _, err = db.Exec("BEGIN; ROLLBACK"); err != nil {
+		t.Fatal("connection retained failed transaction", err)
+	}
+}
+
+type initialDDLFailure struct{ *sql.DB }
+
+func (d initialDDLFailure) ExecContext(context.Context, string, ...any) (sql.Result, error) {
+	return nil, io.ErrClosedPipe
+}
+func TestInitialMigrationDDLFailure(t *testing.T) {
+	db, _ := fixtureDB(t, findMigration(t, "fresh"))
+	if err := migrate(context.Background(), initialDDLFailure{db}); err == nil {
+		t.Fatal("initial DDL")
+	}
+}
+
+func TestPinnedTransactionBeginFailure(t *testing.T) {
+	db, _ := fixtureDB(t, findMigration(t, "fresh"))
+	ctx := context.Background()
+	if _, err := db.Exec("BEGIN"); err != nil {
+		t.Fatal(err)
+	}
+	if err := WithTransaction(ctx, db, func(*sql.Tx) error { return nil }); err == nil {
+		t.Fatal("nested begin")
+	}
+	if _, err := db.Exec("ROLLBACK"); err != nil {
+		t.Fatal(err)
+	}
+}

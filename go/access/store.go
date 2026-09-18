@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/internal/pyjson"
 	"modernc.org/sqlite"
 )
@@ -80,15 +81,7 @@ func (s *Store) token() (string, error) {
 func integrity(err error) bool           { var e *sqlite.Error; return errors.As(err, &e) && e.Code()&255 == 19 }
 func stringsJSON(values []string) string { encoded, _ := pyjson.Dumps(values); return encoded }
 func (s *Store) transaction(ctx context.Context, action func(*sql.Tx) error) error {
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-	if err = action(tx); err != nil {
-		return err
-	}
-	return tx.Commit()
+	return control.WithTransaction(ctx, s.db, action)
 }
 
 // Bootstrap preserves input order, including the piclaw-workspace -> sandbox
