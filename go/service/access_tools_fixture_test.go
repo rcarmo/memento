@@ -2,15 +2,11 @@ package service
 
 import (
 	"bytes"
-	_ "embed"
 	"encoding/json"
 	"os"
 	"reflect"
 	"testing"
 )
-
-//go:embed access_tools.json
-var accessToolDefinitions []byte
 
 func TestAccessToolDefinitions(t *testing.T) {
 	raw, err := os.ReadFile("../testdata/parity/access-tools.json")
