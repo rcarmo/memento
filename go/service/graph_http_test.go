@@ -88,7 +88,7 @@ func TestGraphHTTPBoundary(t *testing.T) {
 		method, path string
 		body         []byte
 		status       int
-	}{{"GET", "/graph", nil, 404}, {"GET", "/graph/api/v1/status", nil, 200}, {"GET", "/graph/api/v1/embeddings/status", nil, 200}, {"POST", "/graph/api/v1/status", nil, 405}, {"GET", "/graph/api/v1/status", []byte("x"), 400}, {"GET", "/graph/missing", nil, 404}} {
+	}{{"GET", "/graph", nil, 200}, {"GET", "/graph/api/v1/status", nil, 200}, {"GET", "/graph/api/v1/embeddings/status", nil, 200}, {"POST", "/graph/api/v1/status", nil, 405}, {"GET", "/graph/api/v1/status", []byte("x"), 400}, {"GET", "/graph/missing", nil, 404}} {
 		response, err := h.Handle(context.Background(), tc.method, tc.path, nil, tc.body, "")
 		if err != nil || response.Status != tc.status || response.Headers[0][1] != "no-store" {
 			t.Fatal(tc, response, err)

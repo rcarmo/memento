@@ -94,7 +94,7 @@ func (h GraphHTTP) Handle(ctx context.Context, method, path string, headers map[
 		}
 		return graphJSON(map[string]any{"schema_version": 1, "protected_read_prefixes": protected, "principals": principals}, 200)
 	case method == "GET" && (path == prefix || path == prefix+"/"):
-		return graphNotFound(), nil
+		return graphStaticResponse("index.html", prefix), nil
 	case method == "GET" && path == prefix+"/api/v1/status":
 		return graphJSON(map[string]any{"schema_version": 1, "enabled": true, "warning": "Unauthenticated visual debugger; trusted networks only.", "route_prefix": prefix}, 200)
 	case method == "GET" && path == prefix+"/api/v1/embeddings/status":
@@ -226,6 +226,9 @@ func (h GraphHTTP) Handle(ctx context.Context, method, path string, headers map[
 			}
 			return graphJSON(value, 200)
 		}
+	}
+	if method == "GET" && strings.HasPrefix(path, prefix+"/assets/") {
+		return graphStaticResponse(strings.TrimPrefix(path, prefix+"/assets/"), prefix), nil
 	}
 	return graphNotFound(), nil
 }
