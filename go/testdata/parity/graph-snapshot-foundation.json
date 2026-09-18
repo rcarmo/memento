@@ -131,5 +131,81 @@
     "index": "old",
     "repository": "main",
     "stale": true
-  }
+  },
+  "scoped_nodes": [
+    {
+      "anomaly_ids": [],
+      "asset_bytes": 0,
+      "broken_link_count": 0,
+      "coarse_position": {
+        "x": 0.4780775143073507,
+        "y": -0.37380943904192776,
+        "z": 0.8357155378907919
+      },
+      "combined_bytes": 200,
+      "embedding": {
+        "dimensions": 3,
+        "embedding_revision": "main",
+        "error": null,
+        "model_id": "model",
+        "model_revision": "v1",
+        "status": "ready",
+        "updated_at": "2026-01-04T00:00:00Z"
+      },
+      "explicit_in_degree": 0,
+      "explicit_out_degree": 1,
+      "id": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+      "markdown_bytes": 200,
+      "namespace": "/a.md/",
+      "orphan": false,
+      "path": "/a.md",
+      "pending_proposal_count": 1,
+      "proposal_count": 2,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [
+        "one"
+      ],
+      "title": "Alpha",
+      "type": "concept",
+      "updated_at": "2026-01-02T00:00:00Z",
+      "updated_by": "alice"
+    },
+    {
+      "anomaly_ids": [],
+      "asset_bytes": 0,
+      "broken_link_count": 1,
+      "coarse_position": {
+        "x": -0.897471028917961,
+        "y": 0.11220380322405682,
+        "z": 0.25961876614019275
+      },
+      "combined_bytes": 197,
+      "embedding": {
+        "dimensions": null,
+        "embedding_revision": null,
+        "error": null,
+        "model_id": null,
+        "model_revision": null,
+        "status": "missing",
+        "updated_at": null
+      },
+      "explicit_in_degree": 1,
+      "explicit_out_degree": 0,
+      "id": "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+      "markdown_bytes": 197,
+      "namespace": "/b.md/",
+      "orphan": false,
+      "path": "/b.md",
+      "pending_proposal_count": 0,
+      "proposal_count": 1,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [],
+      "title": "Beta",
+      "type": "concept",
+      "updated_at": "2026-01-03T00:00:00Z",
+      "updated_by": "bob"
+    }
+  ]
 }

@@ -9,7 +9,10 @@ from typing import Any
 
 from memento.authz import EffectivePolicy  # type: ignore[import-untyped]
 from memento.config import GraphExplorerConfig  # type: ignore[import-untyped]
-from memento.graph_debug.snapshot import GraphSnapshotService  # type: ignore[import-untyped]
+from memento.graph_debug.snapshot import (  # type: ignore[import-untyped]
+    GraphSnapshotService,
+    _scoped_nodes,
+)
 
 
 def fixtures() -> dict[str, Any]:
@@ -78,14 +81,23 @@ def fixtures() -> dict[str, Any]:
             with sqlite3.connect(control) as control_db:
                 control_db.row_factory = sqlite3.Row
                 proposal_counts = service._proposal_counts(control_db, policy)
-            nodes = [
+            raw_nodes = service._nodes(db, proposal_counts=proposal_counts, limit=10)
+            nodes = [item.model_dump(mode="json") for item in raw_nodes]
+            scoped_nodes = [
                 item.model_dump(mode="json")
-                for item in service._nodes(db, proposal_counts=proposal_counts, limit=10)
+                for item in _scoped_nodes(
+                    raw_nodes,
+                    service._edges(
+                        db, ids={item.id for item in raw_nodes}, limit=10, policy=policy
+                    ),
+                )
             ]
+
         return {
             "revisions": revisions,
             "edges": edges,
             "nodes": nodes,
+            "scoped_nodes": scoped_nodes,
             "paths_cases": [
                 {"ids": [], "paths": list(service.paths_for_ids(()))},
                 {
