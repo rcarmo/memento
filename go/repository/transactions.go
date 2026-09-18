@@ -80,6 +80,26 @@ func transactionLockAt(paths GitRepositoryPaths, abs func(string) (string, error
 	}
 	return lock, nil
 }
+
+// WithTransactionLock serialises service control mutations with Apply/Recover
+// for this repository. The caller must hold WriterLease across processes. Like
+// Apply, the callback must not recursively acquire this non-reentrant lock.
+func WithTransactionLock(ctx context.Context, paths GitRepositoryPaths, fn func() error) error {
+	return withTransactionLock(ctx, paths, fn, transactionLock)
+}
+func withTransactionLock(ctx context.Context, paths GitRepositoryPaths, fn func() error, getLock func(GitRepositoryPaths) (*sync.Mutex, error)) error {
+	lock, err := getLock(paths)
+	if err != nil {
+		return err
+	}
+	lock.Lock()
+	defer lock.Unlock()
+	if err = ctx.Err(); err != nil {
+		return err
+	}
+	return fn()
+}
+
 func (m *TransactionManager) hit(name string) error {
 	if m.Checkpoint != nil {
 		return m.Checkpoint(name)

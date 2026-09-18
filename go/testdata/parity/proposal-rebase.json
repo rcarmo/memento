@@ -1,0 +1,3493 @@
+[
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "clean",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      },
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": true,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "wrong-revision",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "needs_rebase",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          }
+        ],
+        "expected_revision": "wrong",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "needs_rebase",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "repository advanced; read current proposal and revision before rebasing",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [
+      "/public/a.md"
+    ],
+    "scenario": "conflict",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "conflicted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/public/a.md\"], \"index\": 0, \"status\": \"conflict\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "conflicted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal conflicts with current memory; inspect per-change conflicting_paths",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "same",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "approved",
+          "updated_at": "updated"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is approved; no rebase available",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "draft",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "draft",
+          "updated_at": "updated"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is draft; no rebase available",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "status-submitted",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "submitted",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "stale",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "status-stale",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "stale",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "needs_rebase",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "status-needs_rebase",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 1,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "conflicted",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "status-conflicted",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "conflicted",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "status-rejected",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "rejected",
+          "updated_at": "updated"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is rejected; no rebase available",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "status-applied",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "updated"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is applied; no rebase available",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "expired",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "status-expired",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "expired",
+          "updated_at": "updated"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is expired; no rebase available",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2000-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "expired",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2000-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "expired",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "expired",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": []}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "expired"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is expired; no rebase available",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "b5b3e7e90c9a48f7ef19fd9c85f841f531bfa7aca3494a8ac5d1f4988fc3657d",
+      "patch_json": "{\"changes\": [{\"kind\": \"trash\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "trash",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "b5b3e7e90c9a48f7ef19fd9c85f841f531bfa7aca3494a8ac5d1f4988fc3657d",
+          "patch_json": "{\"changes\": [{\"kind\": \"trash\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "needs_rebase",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "needs_rebase",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "submit fresh archival proposal with current impact report",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "reader",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "approved",
+          "updated_at": "updated"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "reader"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal author lacks role: proposer",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "other",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "approved",
+          "updated_at": "updated"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "other",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal other cannot review proposal proposal",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "curator",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "other",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "other",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "other",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "8e71b8090f21ab56f5338f47bddfba9cf1ef8cbe052f28a3bd977f74abd819e9",
+      "patch_json": "{\"changes\": [{\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/public/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "skill-disk",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "8e71b8090f21ab56f5338f47bddfba9cf1ef8cbe052f28a3bd977f74abd819e9",
+          "patch_json": "{\"changes\": [{\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/public/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "8e71b8090f21ab56f5338f47bddfba9cf1ef8cbe052f28a3bd977f74abd819e9",
+      "patch_json": "{\"changes\": [{\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/public/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "skill-missing-tag",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "8e71b8090f21ab56f5338f47bddfba9cf1ef8cbe052f28a3bd977f74abd819e9",
+          "patch_json": "{\"changes\": [{\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/public/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "needs_rebase",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "skill asset concepts must include the 'skill' tag",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "6c1ea115524658170e2dd745c403e739252dd1f257d487a1df179e788305843f",
+      "patch_json": "{\"changes\": [{\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/public/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}, {\"kind\": \"patch\", \"path\": \"/public/a.md\", \"tags\": [\"skill\"]}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "skill-patch",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "6c1ea115524658170e2dd745c403e739252dd1f257d487a1df179e788305843f",
+          "patch_json": "{\"changes\": [{\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/public/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}, {\"kind\": \"patch\", \"path\": \"/public/a.md\", \"tags\": [\"skill\"]}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "935919315ec0b2c6cbd14324fa24ac8f9e3ec685184e4762729db31e1a940225",
+      "patch_json": "{\"changes\": [{\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/public/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}, {\"kind\": \"patch\", \"path\": \"/public/a.md\", \"tags\": []}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "skill-clear",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "935919315ec0b2c6cbd14324fa24ac8f9e3ec685184e4762729db31e1a940225",
+          "patch_json": "{\"changes\": [{\"asset_id\": \"asset\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {}, \"path\": \"/public/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"digest\"}, {\"kind\": \"patch\", \"path\": \"/public/a.md\", \"tags\": []}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "needs_rebase",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}, {\"conflicting_paths\": [], \"index\": 1, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "skill asset concepts must include the 'skill' tag",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "replay-after-advance",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      },
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": true,
+            "status": "submitted"
+          },
+          "index_revision": "next",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "next",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "next"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "replay-key-conflict",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      },
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "different",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "error_class": "idempotency_conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "idempotency key already used for a different request",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "replay-denied",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "response": {
+          "data": {
+            "base_revision": "main",
+            "previous_base_revision": "base",
+            "proposal_id": "proposal",
+            "replayed": false,
+            "status": "submitted"
+          },
+          "index_revision": "main",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "main",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "main"
+      },
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          },
+          {
+            "action": "rebase",
+            "actor": "author",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"review_comment\": \"keep\", \"reviewed_by\": \"reviewer\"}",
+            "event_id": 2,
+            "from_status": "needs_rebase",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "submitted"
+          }
+        ],
+        "expected_revision": "main",
+        "operations": [
+          {
+            "base_revision": "main",
+            "client_instance_id": "client",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "error_class": null,
+            "error_message": null,
+            "finished_at": "2026-09-18T00:00:00.123456Z",
+            "idempotency_key": "key",
+            "mcp_session_id": null,
+            "op_id": "00000000-0000-4000-8000-000000000000",
+            "principal": "author",
+            "request_hash": "ae223645bd574817615cd5287620ee531daf8fa95efd78653a1e3fa02ea77626",
+            "request_json": "{\"expected_revision\": \"main\", \"method\": \"memory_proposal_rebase\", \"proposal_id\": \"proposal\"}",
+            "result_json": "{\"base_revision\": \"main\", \"previous_base_revision\": \"base\", \"proposal_id\": \"proposal\", \"replayed\": false, \"status\": \"submitted\"}",
+            "result_revision": "main",
+            "source_chat": null,
+            "started_at": "2026-09-18T00:00:00.123456Z",
+            "state": "succeeded",
+            "tool_name": "memory_proposal_rebase"
+          }
+        ],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": []
+        },
+        "response": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal author cannot review proposal proposal",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "event-failure",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "needs_rebase",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          }
+        ],
+        "exception": "IntegrityError",
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": "CREATE TRIGGER blocked BEFORE INSERT ON proposal_events WHEN NEW.action='rebase' BEGIN SELECT RAISE(ABORT,'synthetic'); END"
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "update-failure",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "needs_rebase",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          }
+        ],
+        "exception": "IntegrityError",
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": "CREATE TRIGGER blocked BEFORE UPDATE ON proposals WHEN NEW.status='submitted' BEGIN SELECT RAISE(ABORT,'synthetic'); END"
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "original-client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "keep",
+      "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+      "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "changed": [],
+    "scenario": "journal-failure",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "original-client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "keep",
+          "patch_hash": "c5d16ec6da289991205f66138b085c203181e57f409e49288a22545ee92d2913",
+          "patch_json": "{\"changes\": [{\"body\": \"proposed\", \"kind\": \"patch\", \"path\": \"/public/a.md\"}], \"context\": \"retained\"}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "needs_rebase",
+          "updated_at": "2026-09-18T00:00:00.123456Z"
+        },
+        "assets": [
+          {
+            "asset_id": "asset",
+            "asset_kind": "docs",
+            "bytes_hex": "0001FF",
+            "concept_path": "/public/a.md",
+            "created_at": "created",
+            "manifest_json": "{}",
+            "media_type": "application/zip",
+            "proposal_id": "proposal",
+            "sha256": "digest",
+            "version": "1.0.0"
+          }
+        ],
+        "events": [
+          {
+            "action": "repository_advanced",
+            "actor": "system",
+            "base_revision": "base",
+            "created_at": "2026-09-18T00:00:00.123456Z",
+            "details_json": "{\"conflicts\": [{\"conflicting_paths\": [], \"index\": 0, \"status\": \"clean\"}]}",
+            "event_id": 1,
+            "from_status": "approved",
+            "proposal_id": "proposal",
+            "repo_revision": "main",
+            "to_status": "needs_rebase"
+          }
+        ],
+        "exception": "IntegrityError",
+        "expected_revision": "main",
+        "operations": [],
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/public/"
+          ],
+          "roles": [
+            "proposer"
+          ],
+          "write_prefixes": [
+            "/public/"
+          ]
+        },
+        "revision": "main"
+      }
+    ],
+    "tags": [
+      "skill"
+    ],
+    "trigger": "CREATE TRIGGER blocked BEFORE INSERT ON operations BEGIN SELECT RAISE(ABORT,'synthetic'); END"
+  }
+]

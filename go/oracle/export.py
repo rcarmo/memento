@@ -249,6 +249,8 @@ def main() -> None:
     save("proposal-refresh.json", proposal_refresh.fixtures())
     proposal_access = importlib.import_module("proposal_access")
     save("proposal-access.json", proposal_access.fixtures())
+    proposal_rebase = importlib.import_module("proposal_rebase")
+    save("proposal-rebase.json", proposal_rebase.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )

@@ -554,3 +554,43 @@ func TestTransactionProcessDeathRecovery(t *testing.T) {
 		})
 	}
 }
+
+func TestControlTransactionLock(t *testing.T) {
+	ctx := context.Background()
+	paths := GitRepositoryPaths{BareDir: filepath.Join(t.TempDir(), "repo.git")}
+	injected := errors.New("lock lookup failed")
+	if err := withTransactionLock(ctx, paths, func() error { t.Fatal("callback"); return nil }, func(GitRepositoryPaths) (*sync.Mutex, error) { return nil, injected }); !errors.Is(err, injected) {
+		t.Fatal(err)
+	}
+	canceled, cancel := context.WithCancel(ctx)
+	cancel()
+	if err := WithTransactionLock(canceled, paths, func() error { t.Fatal("cancelled callback"); return nil }); !errors.Is(err, context.Canceled) {
+		t.Fatal(err)
+	}
+	if err := WithTransactionLock(ctx, paths, func() error { return injected }); !errors.Is(err, injected) {
+		t.Fatal(err)
+	}
+	lock, err := transactionLock(paths)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lock.Lock()
+	started := make(chan struct{})
+	called := make(chan struct{})
+	go func() {
+		close(started)
+		_ = WithTransactionLock(ctx, paths, func() error { close(called); return nil })
+	}()
+	<-started
+	select {
+	case <-called:
+		t.Fatal("control lock does not share Apply lock")
+	case <-time.After(10 * time.Millisecond):
+	}
+	lock.Unlock()
+	select {
+	case <-called:
+	case <-time.After(time.Second):
+		t.Fatal("control lock stuck")
+	}
+}

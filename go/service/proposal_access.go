@@ -188,15 +188,7 @@ func CanAccessProposal(policy access.EffectivePolicy, proposal control.ProposalR
 	if proposal.AuthorPrincipal != policy.Principal && !curator {
 		return false, nil
 	}
-	patch, err := proposal.Patch()
-	if err != nil {
-		return false, err
-	}
-	raw, ok := patch["changes"].([]any)
-	if !ok {
-		return false, &ChangeValidationError{"proposal changes must be a list"}
-	}
-	changes, err := NormalizeProposalChanges(raw)
+	changes, err := proposalChanges(proposal)
 	if err == nil {
 		err = ValidateChangeAuthorization(policy, changes, "read")
 	}
