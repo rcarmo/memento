@@ -55,6 +55,27 @@ func TestManifestTimestampCorpus(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+func TestParseJSON(t *testing.T) {
+	cases := []struct {
+		value  any
+		strict bool
+		want   string
+	}{{json.Number("0"), false, "1970-01-01T00:00:00Z"}, {json.Number("-1"), false, "1969-12-31T23:59:59Z"}, {json.Number("1.0000005"), false, "1970-01-01T00:00:01.000001Z"}, {json.Number("20000000000"), false, "2603-10-11T11:33:20Z"}, {json.Number("20000000001"), false, "1970-08-20T11:33:20.001Z"}, {"20000000000.5", true, "1970-08-20T11:33:20.0005Z"}}
+	for _, tc := range cases {
+		got, err := ParseJSON(tc.value, tc.strict)
+		if err != nil || got.Format(time.RFC3339Nano) != tc.want {
+			t.Fatal(tc, got, err)
+		}
+	}
+	for _, tc := range []struct {
+		value  any
+		strict bool
+	}{{json.Number("0"), true}, {true, false}, {json.Number("bad"), false}, {json.Number("1e9999"), false}, {"bad", false}, {json.Number("999999999999999999999999999999"), false}} {
+		if _, err := ParseJSON(tc.value, tc.strict); err == nil {
+			t.Fatal(tc)
+		}
+	}
+}
 func FuzzParseAware(f *testing.F) {
 	for _, text := range []string{"", "2026-01-01T00:00:00Z", "2026W011🍀12:34:56.1234567+0130", "0001-01-01T00:00+01", "bad"} {
 		f.Add(text)

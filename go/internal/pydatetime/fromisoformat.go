@@ -3,7 +3,9 @@
 package pydatetime
 
 import (
+	"encoding/json"
 	"errors"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -114,6 +116,42 @@ func ParseAware(value any) (time.Time, error) {
 		return time.Time{}, ErrOverflow
 	}
 	return result, nil
+}
+
+// ParseJSON applies pydantic-core's JSON datetime input rule. Strict mode
+// accepts strings only; lax mode also accepts finite JSON numbers, interpreting
+// magnitudes beyond 20 billion as milliseconds rather than seconds.
+func ParseJSON(value any, strict bool) (time.Time, error) {
+	if text, ok := value.(string); ok {
+		if number, err := strconv.ParseFloat(text, 64); err == nil && !math.IsInf(number, 0) && !math.IsNaN(number) {
+			return unixNumber(number)
+		}
+		return ParseAware(text)
+	}
+	if strict {
+		return time.Time{}, ErrInvalid
+	}
+	number, ok := value.(json.Number)
+	if !ok {
+		return time.Time{}, ErrInvalid
+	}
+	parsed, err := number.Float64()
+	if err != nil || math.IsInf(parsed, 0) || math.IsNaN(parsed) {
+		return time.Time{}, ErrInvalid
+	}
+	return unixNumber(parsed)
+}
+func unixNumber(number float64) (time.Time, error) {
+	if math.Abs(number) > 2e10 {
+		number /= 1000
+	}
+	seconds, fraction := math.Modf(number)
+	micro := math.Round(fraction * 1e6)
+	stamp := time.Unix(int64(seconds), int64(micro)*1000).UTC()
+	if stamp.Year() < 1 || stamp.Year() > 9999 {
+		return time.Time{}, ErrOverflow
+	}
+	return stamp, nil
 }
 
 func clockShape(text string) bool {
