@@ -13,6 +13,7 @@ import (
 // shielded requests before closing background components, SQLite, and finally
 // the process-wide writer lease.
 type Runtime struct {
+	Paths   RuntimePaths
 	Jobs    *Jobs
 	DB      *sql.DB
 	Lease   *repository.WriterLease

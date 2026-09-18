@@ -37,7 +37,7 @@ func buildRuntimeStorage(ctx context.Context, config RuntimeConfig, bootstrapSee
 	if err != nil {
 		return nil, err
 	}
-	runtime = &Runtime{Lease: lease}
+	runtime = &Runtime{Paths: paths, Lease: lease}
 	owner := runtime
 	defer func() {
 		if err != nil {
