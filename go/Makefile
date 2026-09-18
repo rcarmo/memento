@@ -29,6 +29,7 @@ fuzz:
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzAsyncHTTPParser -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzSyncHTTPParser -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzTransportArgs -fuzztime=10000x -parallel=2 -timeout=120s
+	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzBundlePath -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./internal/vector -run='^$$' -fuzz=FuzzF32LE -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzTokenizer -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzModelParser -fuzztime=10000x -parallel=2 -timeout=120s

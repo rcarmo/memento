@@ -1,0 +1,249 @@
+[
+  {
+    "canonical_error": "bundle paths must be canonical absolute paths",
+    "path": "",
+    "read_error": "bundle paths must be canonical absolute paths",
+    "reserved": false,
+    "write_error": "bundle paths must be canonical absolute paths"
+  },
+  {
+    "canonical_error": "",
+    "path": "/",
+    "read_error": "special file target is not allowed",
+    "reserved": false,
+    "write_error": "special file target is not allowed"
+  },
+  {
+    "canonical_error": "bundle paths must be canonical absolute paths",
+    "path": "x",
+    "read_error": "bundle paths must be canonical absolute paths",
+    "reserved": false,
+    "write_error": "bundle paths must be canonical absolute paths"
+  },
+  {
+    "canonical_error": "bundle paths must not contain empty or dot components",
+    "path": "//x",
+    "read_error": "bundle paths must not contain empty or dot components",
+    "reserved": false,
+    "write_error": "bundle paths must not contain empty or dot components"
+  },
+  {
+    "canonical_error": "bundle paths must not contain empty or dot components",
+    "path": "/x/",
+    "read_error": "bundle paths must not contain empty or dot components",
+    "reserved": false,
+    "write_error": "bundle paths must not contain empty or dot components"
+  },
+  {
+    "canonical_error": "bundle paths must not contain empty or dot components",
+    "path": "/./x",
+    "read_error": "bundle paths must not contain empty or dot components",
+    "reserved": false,
+    "write_error": "bundle paths must not contain empty or dot components"
+  },
+  {
+    "canonical_error": "bundle paths must not contain empty or dot components",
+    "path": "/../x",
+    "read_error": "bundle paths must not contain empty or dot components",
+    "reserved": false,
+    "write_error": "bundle paths must not contain empty or dot components"
+  },
+  {
+    "canonical_error": "bundle paths must not contain empty or dot components",
+    "path": "/a/../x",
+    "read_error": "bundle paths must not contain empty or dot components",
+    "reserved": false,
+    "write_error": "bundle paths must not contain empty or dot components"
+  },
+  {
+    "canonical_error": "bundle paths must be canonical absolute paths",
+    "path": "/x\\y",
+    "read_error": "bundle paths must be canonical absolute paths",
+    "reserved": false,
+    "write_error": "bundle paths must be canonical absolute paths"
+  },
+  {
+    "canonical_error": "bundle paths must not contain control characters",
+    "path": "/x\u0000",
+    "read_error": "bundle paths must not contain control characters",
+    "reserved": false,
+    "write_error": "bundle paths must not contain control characters"
+  },
+  {
+    "canonical_error": "bundle paths must not contain control characters",
+    "path": "/x\u001f",
+    "read_error": "bundle paths must not contain control characters",
+    "reserved": false,
+    "write_error": "bundle paths must not contain control characters"
+  },
+  {
+    "canonical_error": "bundle paths must not contain control characters",
+    "path": "/x",
+    "read_error": "bundle paths must not contain control characters",
+    "reserved": false,
+    "write_error": "bundle paths must not contain control characters"
+  },
+  {
+    "canonical_error": "",
+    "path": "/x",
+    "read_error": "path does not exist: /x",
+    "reserved": false,
+    "write_error": ""
+  },
+  {
+    "canonical_error": "",
+    "path": "/a/%2e%2e/x",
+    "read_error": "path does not exist: /a/%2e%2e/x",
+    "reserved": false,
+    "write_error": ""
+  },
+  {
+    "canonical_error": "",
+    "path": "/café/日本.md",
+    "read_error": "path does not exist: /café/日本.md",
+    "reserved": false,
+    "write_error": ""
+  },
+  {
+    "canonical_error": "",
+    "path": "/index.md",
+    "read_error": "reserved file cannot be written: index.md",
+    "reserved": true,
+    "write_error": "reserved file cannot be written: index.md"
+  },
+  {
+    "canonical_error": "",
+    "path": "/.memory-schema.json",
+    "read_error": "reserved file cannot be written: .memory-schema.json",
+    "reserved": true,
+    "write_error": "reserved file cannot be written: .memory-schema.json"
+  },
+  {
+    "canonical_error": "",
+    "path": "/log.md",
+    "read_error": "reserved root file cannot be written: log.md",
+    "reserved": true,
+    "write_error": "reserved root file cannot be written: log.md"
+  },
+  {
+    "canonical_error": "",
+    "path": "/nested/log.md",
+    "read_error": "path does not exist: /nested/log.md",
+    "reserved": false,
+    "write_error": ""
+  },
+  {
+    "canonical_error": "",
+    "path": "/nested/index.md",
+    "read_error": "reserved file cannot be written: index.md",
+    "reserved": true,
+    "write_error": "reserved file cannot be written: index.md"
+  },
+  {
+    "canonical_error": "",
+    "path": "/.assets",
+    "read_error": "path does not exist: /.assets",
+    "reserved": true,
+    "write_error": ""
+  },
+  {
+    "canonical_error": "",
+    "path": "/.assets/file",
+    "read_error": "path does not exist: /.assets/file",
+    "reserved": true,
+    "write_error": ""
+  },
+  {
+    "canonical_error": "",
+    "path": "/.assets-other",
+    "read_error": "path does not exist: /.assets-other",
+    "reserved": false,
+    "write_error": ""
+  },
+  {
+    "canonical_error": "",
+    "path": "/new/deep/file.md",
+    "read_error": "path does not exist: /new/deep/file.md",
+    "reserved": false,
+    "write_error": ""
+  },
+  {
+    "canonical_error": "",
+    "path": "/regular",
+    "read_error": "",
+    "reserved": false,
+    "write_error": ""
+  },
+  {
+    "canonical_error": "",
+    "path": "/directory",
+    "read_error": "special file target is not allowed",
+    "reserved": false,
+    "write_error": "special file target is not allowed"
+  },
+  {
+    "canonical_error": "",
+    "path": "/linked/file",
+    "read_error": "symlink path components are not allowed",
+    "reserved": false,
+    "write_error": "symlink path components are not allowed"
+  },
+  {
+    "canonical_error": "",
+    "path": "/link-target",
+    "read_error": "symlink target is not allowed",
+    "reserved": false,
+    "write_error": "symlink target is not allowed"
+  },
+  {
+    "canonical_error": "",
+    "path": "/fifo",
+    "read_error": "special file target is not allowed",
+    "reserved": false,
+    "write_error": "special file target is not allowed"
+  },
+  {
+    "canonical_error": "",
+    "path": "/regular/child",
+    "read_error": "non-directory parent path component",
+    "reserved": false,
+    "write_error": "non-directory parent path component"
+  },
+  {
+    "canonical_error": "",
+    "path": "/dangling",
+    "read_error": "symlink target is not allowed",
+    "reserved": false,
+    "write_error": "symlink target is not allowed"
+  },
+  {
+    "classification_only": true,
+    "path": "log.md",
+    "reserved": true
+  },
+  {
+    "classification_only": true,
+    "path": "./log.md",
+    "reserved": true
+  },
+  {
+    "classification_only": true,
+    "path": "/./log.md",
+    "reserved": true
+  },
+  {
+    "classification_only": true,
+    "path": "//log.md",
+    "reserved": false
+  },
+  {
+    "classification_only": true,
+    "path": "/nested/../log.md",
+    "reserved": false
+  },
+  {
+    "classification_only": true,
+    "path": "/nested//index.md",
+    "reserved": true
+  }
+]

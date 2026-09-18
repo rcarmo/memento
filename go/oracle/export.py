@@ -210,6 +210,8 @@ def main() -> None:
     save("umcp-sync-wire.json", sync_http.wire_fixtures(shared))
     cli = importlib.import_module("umcp_cli")
     save("umcp-cli.json", cli.fixtures(shared))
+    repository_paths = importlib.import_module("repository_paths")
+    save("repository-paths.json", repository_paths.fixtures())
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 
