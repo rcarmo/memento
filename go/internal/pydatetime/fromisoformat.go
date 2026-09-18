@@ -39,6 +39,7 @@ func Reason(err error) string {
 var week = regexp.MustCompile(`^([0-9]{4})(-?)W([0-9]{2})(?:-?([0-9]))?`)
 var dateTime = regexp.MustCompile(`(?s)^([0-9]{4})-?([0-9]{2})-?([0-9]{2})(?:.(.*))?$`)
 var clockParts = regexp.MustCompile(`^([0-9]{2})(?::?([0-9]{2}))?(?::?([0-9]{2}))?(?:[.,]([0-9]+))?$`)
+var pydanticDateTime = regexp.MustCompile(`^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt _][0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:[.,][0-9]+)?)?(?:[Zz]|[+-][0-9]{2}:[0-9]{2})$`)
 
 // ParseAware normalises an aware Python ISO datetime to UTC and microseconds.
 // time.Time is accepted for internal callers; JSON callers pass strings.
@@ -143,6 +144,15 @@ func ParseJSON(value any, strict bool) (time.Time, error) {
 	if text, ok := value.(string); ok {
 		if number, err := strconv.ParseFloat(text, 64); err == nil && !math.IsInf(number, 0) && !math.IsNaN(number) {
 			return unixNumber(number)
+		}
+		// pydantic-core's JSON grammar is deliberately narrower than
+		// datetime.fromisoformat: no basic/week dates, arbitrary separators,
+		// hour-only clocks or second/fractional timezone offsets.
+		if !pydanticDateTime.MatchString(text) {
+			return time.Time{}, parseError(ErrInvalid, "Input should be a valid datetime")
+		}
+		if strings.HasSuffix(text, "z") {
+			text = text[:len(text)-1] + "Z"
 		}
 		return ParseAware(text)
 	}

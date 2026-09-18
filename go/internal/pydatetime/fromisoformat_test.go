@@ -73,6 +73,16 @@ func TestParseJSON(t *testing.T) {
 			t.Fatal(tc, got, err)
 		}
 	}
+	for _, accepted := range []string{"2026-01-01t12:34z", "2026-01-01_12:34:56,123+01:30"} {
+		if _, err := ParseJSON(accepted, true); err != nil {
+			t.Fatal(accepted, err)
+		}
+	}
+	for _, rejected := range []string{"20260101T123456+0130", "2026-W01-1T00:00:00Z", "2026-01-01🍀12:34:56Z", "2026-01-01T12Z", "2026-01-01T00:00:00+00:00:30"} {
+		if _, err := ParseJSON(rejected, true); !errors.Is(err, ErrInvalid) {
+			t.Fatal(rejected, err)
+		}
+	}
 	for _, tc := range []struct {
 		value  any
 		strict bool
