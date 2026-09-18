@@ -75,7 +75,7 @@ func validateArgumentContract(field argumentField) error {
 	return nil
 }
 func (a *Arguments) Supports(operation string) bool {
-	if operation == "compare_manifest" {
+	if operation == "compare_manifest" || operation == "propose" {
 		return true
 	}
 	_, ok := a.contracts[operation]
@@ -87,6 +87,9 @@ func (a *Arguments) Supports(operation string) bool {
 func (a *Arguments) Validate(operation string, args map[string]any, strict bool) (map[string]any, error) {
 	if operation == "compare_manifest" {
 		return a.validateManifest(args, strict)
+	}
+	if operation == "propose" {
+		return a.validatePropose(args, strict)
 	}
 	fields, ok := a.contracts[operation]
 	if !ok {

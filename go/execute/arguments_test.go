@@ -72,11 +72,11 @@ func TestArgumentValidationIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if validator.Supports("propose") || !validator.Supports("compare_manifest") || !validator.Supports("inventory") {
+	if !validator.Supports("propose") || !validator.Supports("compare_manifest") || !validator.Supports("inventory") {
 		t.Fatal("support set")
 	}
-	if _, err := validator.Validate("propose", nil, false); err == nil {
-		t.Fatal("unported operation")
+	if _, err := validator.Validate("not_an_operation", nil, false); err == nil {
+		t.Fatal("unknown operation")
 	}
 	for _, raw := range []string{"{", `[{"operation":"x","fields":[{"type":"object"}]}]`, `[{"operation":"x","fields":[{"type":"array"}]}]`, `[{"operation":"x","fields":[{"type":"string","pattern":"bad"}]}]`, `[{"operation":"x","fields":[{"type":"array","items":{"type":"string"},"maxItems":2}]}]`} {
 		if _, err := newArguments([]byte(raw)); err == nil {
@@ -102,10 +102,9 @@ func TestArgumentValidationIntegration(t *testing.T) {
 	if got, err := ResolveArguments(referenced, 1, map[string]any{"saved": "query"}, validator.Validate); err != nil || got["query"] != "query" {
 		t.Fatal(got, err)
 	}
-	// Unsupported models also fail closed after referenced values resolve.
-	unsupported := PlannedOperation{Op: "propose", Args: map[string]any{"intent": "i", "base_revision": "r", "changes": "$saved"}}
-	if _, err := ResolveArguments(unsupported, 1, map[string]any{"saved": []any{}}, validator.Validate); err == nil {
-		t.Fatal("unsupported referenced model accepted")
+	propose := PlannedOperation{Op: "propose", Args: map[string]any{"intent": "i", "base_revision": "r", "changes": "$saved"}}
+	if got, err := ResolveArguments(propose, 1, map[string]any{"saved": []any{}}, validator.Validate); err != nil || len(got["changes"].([]any)) != 0 {
+		t.Fatal(got, err)
 	}
 	if err := planner.Preflight(Plan{Operations: []PlannedOperation{{Op: "compare_manifest", Args: map[string]any{"items": []any{}}}}}, 12, validator.Validate); err == nil {
 		t.Fatal("invalid manifest accepted")
