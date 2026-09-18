@@ -7,6 +7,7 @@ import importlib
 import inspect
 import json
 import logging
+from functools import wraps
 from typing import Any
 
 NAMES = [
@@ -76,6 +77,20 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
                 "parameters": parameters,
             }
         )
+
+    # These wrappers bypass _memory_call. Echo only their argument dispatch here
+    # using the real signature; staging_tools.py exercises their actual bodies.
+    def direct_echo(method: Any, name: str) -> Any:
+        @wraps(method)
+        async def echo(**arguments: Any) -> dict[str, Any]:
+            return {"method": name, "arguments": arguments, "context": "trusted"}
+
+        return echo
+
+    for name in ("memory_asset_stage_begin", "memory_asset_stage_status"):
+        if name in names:
+            method = getattr(server, "tool_" + name)
+            setattr(server, "tool_" + name, direct_echo(method, name))
     requests: list[dict[str, Any]] = [
         {
             "name": "memory_propose",
@@ -132,6 +147,29 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
             "arguments": {"query": "alpha", "limit": "2", "search_mode": "hybrid"},
         },
         {"name": "memory_graph", "arguments": {"id_or_path": "id", "depth": "２"}},
+    ]
+    requests += [
+        {"name": "memory_asset_stage_begin", "arguments": {}},
+        {
+            "name": "memory_asset_stage_begin",
+            "arguments": {"asset_kind": "docs", "version": "1.0.0", "idempotency_key": "ticket"},
+        },
+        {
+            "name": "memory_asset_stage_begin",
+            "arguments": {"asset_kind": "docs", "version": 1, "idempotency_key": "ticket"},
+        },
+        {
+            "name": "memory_asset_stage_begin",
+            "arguments": {
+                "asset_kind": "docs",
+                "version": "1.0.0",
+                "idempotency_key": "ticket",
+                "principal": "other",
+            },
+        },
+        {"name": "memory_asset_stage_status", "arguments": {}},
+        {"name": "memory_asset_stage_status", "arguments": {"idempotency_key": "ticket"}},
+        {"name": "memory_asset_stage_status", "arguments": {"idempotency_key": None}},
     ]
     calls = []
     for params in requests:

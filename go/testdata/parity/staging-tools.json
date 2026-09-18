@@ -1,0 +1,512 @@
+{
+  "cases": [
+    {
+      "action": "begin",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "proposer role is required",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "reader",
+      "roles": [
+        "reader"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "status",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "proposer role is required",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "reader",
+      "roles": [
+        "reader"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "unavailable",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset staging is unavailable",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "unavailable_status",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset staging is unavailable",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "status",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "upload ticket not found",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "missing",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "begin",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "idempotency_key is required",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "begin",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "version must be a stable semantic version",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "bad",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "latest"
+    },
+    {
+      "action": "begin",
+      "asset_kind": "docs",
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "expires_at": "2026-09-18T01:00:00Z",
+          "idempotency_key": "one",
+          "proposal_contract": "memory://catalog/propose",
+          "state": "pending",
+          "upload_content_type": "application/zip",
+          "upload_method": "POST",
+          "upload_path": "/assets/staging/upload",
+          "upload_ticket": "memento_upload_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "upload_ticket_header": "X-Memento-Upload-Ticket",
+          "version": "1.0.0",
+          "workflow": "memory://workflow/asset_pack"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [
+          "memory_asset_stage_status",
+          "memory://workflow/asset_pack",
+          "memory://catalog/propose",
+          "memory_execute"
+        ],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "status",
+      "asset_kind": "docs",
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "consumed_at": null,
+          "expires_at": "2026-09-18T01:00:00Z",
+          "idempotency_key": "one",
+          "staged_asset_id": null,
+          "state": "pending",
+          "version": "1.0.0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [
+          "memory_asset_stage_status",
+          "memory://workflow/asset_pack",
+          "memory://catalog/propose",
+          "memory_execute"
+        ],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "begin",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "upload ticket already issued: pending",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "begin",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "idempotency key was already used for a different upload",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "2.0.0"
+    },
+    {
+      "action": "upload"
+    },
+    {
+      "action": "status",
+      "asset_kind": "docs",
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "consumed_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-18T01:00:00Z",
+          "idempotency_key": "one",
+          "staged_asset": {
+            "asset_kind": "docs",
+            "consumed_at": null,
+            "created_at": "2026-09-18T00:00:00Z",
+            "expires_at": "2026-09-19T00:00:00Z",
+            "manifest": {
+              "entries": [
+                {
+                  "media_type": "text/plain",
+                  "path": "file.txt",
+                  "sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+                  "size": 9
+                }
+              ],
+              "file_count": 1,
+              "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+              "total_uncompressed_bytes": 9
+            },
+            "media_type": "application/zip",
+            "proposal_id": null,
+            "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+            "staged_asset_id": "00000000-0000-4000-8000-000000000000",
+            "state": "ready",
+            "version": "1.0.0"
+          },
+          "staged_asset_id": "00000000-0000-4000-8000-000000000000",
+          "state": "uploaded",
+          "version": "1.0.0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [
+          "memory_asset_stage_status",
+          "memory://workflow/asset_pack",
+          "memory://catalog/propose",
+          "memory_execute"
+        ],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "status",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "upload ticket not found",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "other",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "expire"
+    },
+    {
+      "action": "status",
+      "asset_kind": "docs",
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "consumed_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-18T01:00:00Z",
+          "idempotency_key": "one",
+          "staged_asset": {
+            "asset_kind": "docs",
+            "consumed_at": null,
+            "created_at": "2026-09-18T00:00:00Z",
+            "expires_at": "2026-09-19T00:00:00Z",
+            "manifest": {
+              "entries": [
+                {
+                  "media_type": "text/plain",
+                  "path": "file.txt",
+                  "sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+                  "size": 9
+                }
+              ],
+              "file_count": 1,
+              "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+              "total_uncompressed_bytes": 9
+            },
+            "media_type": "application/zip",
+            "proposal_id": null,
+            "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+            "staged_asset_id": "00000000-0000-4000-8000-000000000000",
+            "state": "expired",
+            "version": "1.0.0"
+          },
+          "staged_asset_id": "00000000-0000-4000-8000-000000000000",
+          "state": "uploaded",
+          "version": "1.0.0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [
+          "memory_asset_stage_status",
+          "memory://workflow/asset_pack",
+          "memory://catalog/propose",
+          "memory_execute"
+        ],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "begin",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "upload ticket already issued: uploaded",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "one",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "begin",
+      "asset_kind": "docs",
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "expires_at": "2026-09-19T02:00:00Z",
+          "idempotency_key": "two",
+          "proposal_contract": "memory://catalog/propose",
+          "state": "pending",
+          "upload_content_type": "application/zip",
+          "upload_method": "POST",
+          "upload_path": "/assets/staging/upload",
+          "upload_ticket": "memento_upload_AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE",
+          "upload_ticket_header": "X-Memento-Upload-Ticket",
+          "version": "1.0.0",
+          "workflow": "memory://workflow/asset_pack"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [
+          "memory_asset_stage_status",
+          "memory://workflow/asset_pack",
+          "memory://catalog/propose",
+          "memory_execute"
+        ],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "key": "two",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "expire"
+    },
+    {
+      "action": "status",
+      "asset_kind": "docs",
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "consumed_at": null,
+          "expires_at": "2026-09-19T02:00:00Z",
+          "idempotency_key": "two",
+          "staged_asset_id": null,
+          "state": "expired",
+          "version": "1.0.0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [
+          "memory_asset_stage_status",
+          "memory://workflow/asset_pack",
+          "memory://catalog/propose",
+          "memory_execute"
+        ],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "key": "two",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "action": "begin",
+      "asset_kind": "docs",
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "upload ticket already issued: expired",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "two",
+      "principal": "actor",
+      "roles": [
+        "proposer"
+      ],
+      "version": "1.0.0"
+    }
+  ],
+  "zip": "UEsDBBQAAAAAAAAAIVxXAsRBCQAAAAkAAAAIAAAAZmlsZS50eHRzeW50aGV0aWNQSwECFAMUAAAAAAAAACFcVwLEQQkAAAAJAAAACAAAAAAAAAAAAAAAgAEAAAAAZmlsZS50eHRQSwUGAAAAAAEAAQA2AAAALwAAAAAA"
+}

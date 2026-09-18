@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"sync"
 
 	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/assets"
@@ -19,6 +20,9 @@ type Jobs struct {
 	Identity *Identity
 	DBPath   string
 	Workers  Workers
+	// Python's direct staging wrappers do synchronous DB work on the event
+	// loop. Preserve their request ordering without taking the repository lock.
+	stagingMu sync.Mutex
 }
 type JobCall func(context.Context, *ProposalControls, ProposalActor) (map[string]any, SuccessOptions, error)
 

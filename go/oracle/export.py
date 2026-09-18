@@ -291,6 +291,8 @@ def main() -> None:
     save("service-reads.json", service_reads.fixtures())
     staging_http = importlib.import_module("staging_http")
     save("staging-http.json", staging_http.fixtures())
+    staging_tools = importlib.import_module("staging_tools")
+    save("staging-tools.json", staging_tools.fixtures())
     service_envelopes = importlib.import_module("service_envelopes")
     save("service-envelopes.json", service_envelopes.fixtures())
     service_workers = importlib.import_module("service_workers")
@@ -306,6 +308,15 @@ def main() -> None:
     save("read-tools.json", read_tool_fixtures)
     (ROOT / "go/service/read_tools.json").write_text(
         json.dumps(read_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
+    )
+    staging_tool_fixtures = proposal_tools.fixtures(
+        names=proposal_tools.NAMES
+        + proposal_tools.READ_NAMES
+        + ["memory_asset_stage_begin", "memory_asset_stage_status"]
+    )
+    save("staging-tool-dispatch.json", staging_tool_fixtures)
+    (ROOT / "go/service/staging_tools.json").write_text(
+        json.dumps(staging_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
     )
     # Runtime embeds only definitions for implemented tools, not test outcomes.
     (ROOT / "go/service/proposal_tools.json").write_text(
