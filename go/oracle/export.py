@@ -482,6 +482,7 @@ def main() -> None:
     execute_arguments = importlib.import_module("execute_arguments")
     argument_fixtures = execute_arguments.fixtures()
     save("execute-arguments.json", argument_fixtures)
+    save("execute-manifest.json", importlib.import_module("execute_manifest").fixtures())
     (ROOT / "go/execute/arguments.json").write_text(
         json.dumps(argument_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
     )
