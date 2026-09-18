@@ -63,7 +63,7 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 			switch parameter.Name {
 			case "limit", "offset", "depth", "keep":
 				kind = umcp.IntegerParam
-			case "changes", "selected_change_indexes":
+			case "changes", "selected_change_indexes", "tags", "aliases":
 				kind = umcp.ArrayParam
 			}
 			parameters = append(parameters, umcp.Parameter{Name: parameter.Name, Types: []umcp.ParamType{kind}, HasDefault: !parameter.Required, Default: parameter.Default})
@@ -77,7 +77,7 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 			if err != nil {
 				return nil, err
 			}
-			if (name == "memory_proposal_apply" || name == "memory_asset_prune") && notify != nil {
+			if (name == "memory_proposal_apply" || name == "memory_asset_prune" || name == "memory_create" || name == "memory_patch" || name == "memory_rename") && notify != nil {
 				if err = notifyAppliedEnvelope(ctx, server, notify, value); err != nil {
 					return nil, err
 				}
@@ -207,6 +207,23 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 		data, err = result.Data, failure
 		options.RepoRevision = result.Revision
 		options.OperationID = result.OperationID
+	case "memory_create", "memory_patch", "memory_rename":
+		expected, key := a.text("expected_revision"), a.text("idempotency_key")
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		raw := map[string]any{"kind": name[len("memory_"):]}
+		for key, value := range args {
+			if key != "expected_revision" && key != "idempotency_key" {
+				raw[key] = value
+			}
+		}
+		change, failure := directChange(raw)
+		if failure != nil {
+			return nil, options, failure
+		}
+		manager := repository.TransactionManager{Paths: c.Queue.Paths, Operations: control.Operations{DB: c.Queue.Proposals.DB, Now: c.Queue.Now}, Now: c.Queue.Now, DerivedUpdate: c.DerivedUpdate}
+		data, options, err = c.commitConceptChange(ctx, actor, change, expected, key, defaultProposalRepository(), manager.ApplyUnderLock, defaultMutationIO())
 	case "memory_asset_prune":
 		id, kind, keep, expected, key := a.text("id_or_path"), a.text("asset_kind"), a.integer("keep"), a.text("expected_revision"), a.text("idempotency_key")
 		if a.err != nil {

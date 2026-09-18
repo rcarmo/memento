@@ -231,6 +231,59 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
         },
         {"name": "memory_asset_prune", "arguments": {}},
     ]
+    requests += [
+        {
+            "name": "memory_create",
+            "arguments": {
+                "path": "/new.md",
+                "concept_type": "concept",
+                "title": "New",
+                "body": "body",
+                "expected_revision": "base",
+                "idempotency_key": "key",
+            },
+        },
+        {
+            "name": "memory_create",
+            "arguments": {
+                "path": "/new.md",
+                "concept_type": "concept",
+                "title": "New",
+                "body": "body",
+                "expected_revision": "base",
+                "idempotency_key": "key",
+                "tags": ["z", "a", "z"],
+                "aliases": ["name"],
+            },
+        },
+        {
+            "name": "memory_patch",
+            "arguments": {"path": "/a.md", "expected_revision": "r", "idempotency_key": "key"},
+        },
+        {
+            "name": "memory_patch",
+            "arguments": {
+                "path": "/a.md",
+                "expected_revision": "r",
+                "idempotency_key": "key",
+                "tags": [],
+                "status": "tombstone",
+                "description": "d",
+            },
+        },
+        {
+            "name": "memory_rename",
+            "arguments": {
+                "path": "/a.md",
+                "new_path": "/b.md",
+                "expected_revision": "r",
+                "idempotency_key": "key",
+            },
+        },
+        {"name": "memory_create", "arguments": {}},
+        {"name": "memory_patch", "arguments": {}},
+        {"name": "memory_rename", "arguments": {}},
+    ]
     calls = []
     for params in requests:
         if params["name"] not in names:

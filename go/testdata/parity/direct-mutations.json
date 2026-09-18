@@ -1,0 +1,1636 @@
+[
+  {
+    "arguments": {
+      "aliases": [
+        "alias"
+      ],
+      "body": "new",
+      "concept_type": "concept",
+      "description": "desc",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/new.md",
+      "tags": [
+        "z",
+        "a",
+        "z"
+      ],
+      "title": "New"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "create",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "create",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "data": {
+            "changed_paths": [
+              "/public/new.md"
+            ],
+            "diff": "--- a/public/new.md\n+++ b/public/new.md\n@@ -0,0 +1,19 @@\n+---\n+schema_version: 1\n+id: <generated>\n+type: concept\n+title: New\n+status: active\n+description: desc\n+aliases:\n+  - alias\n+tags:\n+  - a\n+  - z\n+source_refs: []\n+supersedes: []\n+created_at: '2026-01-01T00:00:00Z'\n+updated_at: '2026-01-01T00:00:00Z'\n+updated_by: <proposal>\n+---\n+new\n",
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": [
+            "direct_mutation_bypasses_proposal_review; prefer memory_propose, memory_proposal_review and memory_proposal_apply"
+          ]
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/new.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAwMDAwMDAwMC0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAKdHlwZTogY29uY2VwdAp0aXRsZTogTmV3CnN0YXR1czogYWN0aXZlCmRlc2NyaXB0aW9uOiBkZXNjCmFsaWFzZXM6CiAgLSBhbGlhcwp0YWdzOgogIC0gYQogIC0gegpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDktMThUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpuZXcK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "8e8c69bd83298e645df6bd87b31462250798c572c288608c8b72b9dfbac1c3d4",
+          "request_json": "{\"changes\": [{\"aliases\": [\"alias\"], \"body\": \"new\", \"concept_type\": \"concept\", \"description\": \"desc\", \"kind\": \"create\", \"path\": \"/public/new.md\", \"tags\": [\"z\", \"a\", \"z\"], \"title\": \"New\"}]}",
+          "result_json": "{\"changed_paths\": [\"/public/new.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_create"
+        },
+        "recorded": [
+          [
+            "/public/new.md"
+          ]
+        ],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: create /public/new.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": [\"alias\"], \"body\": \"new\", \"concept_type\": \"concept\", \"description\": \"desc\", \"kind\": \"create\", \"path\": \"/public/new.md\", \"tags\": [\"z\", \"a\", \"z\"], \"title\": \"New\"}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_create"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "concept_type": "concept",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/new.md",
+      "title": "New"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "create",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "create-defaults",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "data": {
+            "changed_paths": [
+              "/public/new.md"
+            ],
+            "diff": "--- a/public/new.md\n+++ b/public/new.md\n@@ -0,0 +1,15 @@\n+---\n+schema_version: 1\n+id: <generated>\n+type: concept\n+title: New\n+status: active\n+aliases: []\n+tags: []\n+source_refs: []\n+supersedes: []\n+created_at: '2026-01-01T00:00:00Z'\n+updated_at: '2026-01-01T00:00:00Z'\n+updated_by: <proposal>\n+---\n+new\n",
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": [
+            "direct_mutation_bypasses_proposal_review; prefer memory_propose, memory_proposal_review and memory_proposal_apply"
+          ]
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/new.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAwMDAwMDAwMC0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAKdHlwZTogY29uY2VwdAp0aXRsZTogTmV3CnN0YXR1czogYWN0aXZlCmFsaWFzZXM6IFtdCnRhZ3M6IFtdCnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wOS0xOFQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogYWN0b3IKLS0tCm5ldwo="
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "053a42cda88e414213adb8671583611104310895125f6272b4e06a26a8a3683c",
+          "request_json": "{\"changes\": [{\"aliases\": [], \"body\": \"new\", \"concept_type\": \"concept\", \"description\": null, \"kind\": \"create\", \"path\": \"/public/new.md\", \"tags\": [], \"title\": \"New\"}]}",
+          "result_json": "{\"changed_paths\": [\"/public/new.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_create"
+        },
+        "recorded": [
+          [
+            "/public/new.md"
+          ]
+        ],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: create /public/new.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": [], \"body\": \"new\", \"concept_type\": \"concept\", \"description\": null, \"kind\": \"create\", \"path\": \"/public/new.md\", \"tags\": [], \"title\": \"New\"}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_create"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "aliases": [],
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md",
+      "status": "deprecated",
+      "tags": [
+        "z",
+        "a",
+        "z"
+      ]
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "patch",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "data": {
+            "changed_paths": [
+              "/public/a.md"
+            ],
+            "diff": "--- a/public/a.md\n+++ b/public/a.md\n@@ -6,6 +6,7 @@\n status: deprecated\n aliases: []\n tags:\n+  - z\n   - a\n   - z\n source_refs: []\n",
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": [
+            "direct_mutation_bypasses_proposal_review; prefer memory_propose, memory_proposal_review and memory_proposal_apply"
+          ]
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBkZXByZWNhdGVkCmFsaWFzZXM6IFtdCnRhZ3M6CiAgLSB6CiAgLSBhCiAgLSB6CnNvdXJjZV9yZWZzOiBbXQpzdXBlcnNlZGVzOiBbXQpjcmVhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYXQ6ICcyMDI2LTA5LTE4VDAwOjAwOjAwWicKdXBkYXRlZF9ieTogYWN0b3IKLS0tCm5ldwo=",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "331acbc6307779dfb516b5fa63d40a8832abcdb29b3cdda0cf6fa2b9e9654f95",
+          "request_json": "{\"changes\": [{\"aliases\": [], \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": \"deprecated\", \"tags\": [\"z\", \"a\", \"z\"], \"title\": null}]}",
+          "result_json": "{\"changed_paths\": [\"/public/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [
+          [
+            "/public/a.md"
+          ]
+        ],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": [], \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": \"deprecated\", \"tags\": [\"z\", \"a\", \"z\"], \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "patch-noop",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "data": {
+            "changed_paths": [
+              "/public/a.md"
+            ],
+            "diff": "",
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": [
+            "direct_mutation_bypasses_proposal_review; prefer memory_propose, memory_proposal_review and memory_proposal_apply"
+          ]
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDktMThUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "b7159897dec9444468239eaf5d197254e8883e54bdc9a4585544969fbe4d8a03",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": null, \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "result_json": "{\"changed_paths\": [\"/public/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [
+          [
+            "/public/a.md"
+          ]
+        ],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": null, \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "new_path": "/public/renamed.md",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "rename",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "rename",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "data": {
+            "changed_paths": [
+              "/public/a.md",
+              "/public/renamed.md"
+            ],
+            "diff": "rename /public/a.md -> /public/renamed.md\n",
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": [
+            "direct_mutation_bypasses_proposal_review; prefer memory_propose, memory_proposal_review and memory_proposal_apply"
+          ]
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/renamed.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDktMThUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg=="
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "a490a471131d2e42b074f5bcc8fb388c23646510414b32c58d1467275ecf60d0",
+          "request_json": "{\"changes\": [{\"kind\": \"rename\", \"new_path\": \"/public/renamed.md\", \"path\": \"/public/a.md\"}]}",
+          "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/public/renamed.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_rename"
+        },
+        "recorded": [
+          [
+            "/public/a.md",
+            "/public/renamed.md"
+          ]
+        ],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: rename /public/a.md -> /public/renamed.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"kind\": \"rename\", \"new_path\": \"/public/renamed.md\", \"path\": \"/public/a.md\"}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_rename"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "reader"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "reader",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal actor lacks role: curator",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": null,
+        "recorded": [],
+        "refreshes": 0,
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": []
+    },
+    "scenario": "denied",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal actor cannot write /public/a.md",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": null,
+        "recorded": [],
+        "refreshes": 0,
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/a.txt"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "invalid-path",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "concept paths must end with .md",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": null,
+        "recorded": [],
+        "refreshes": 0,
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/trash/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "trash-path",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "use trash, restore or purge for items in /trash/",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": null,
+        "recorded": [],
+        "refreshes": 0,
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "asset-body",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "direct concept body patch would bypass asset parity review; submit a proposal that updates the concept body together with all corresponding asset packs",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+          "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+          "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+          "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": null,
+        "recorded": [],
+        "refreshes": 0,
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md",
+      "title": "Changed"
+    },
+    "files": {
+      "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+      "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+      "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "asset-title",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "data": {
+            "changed_paths": [
+              "/public/a.md"
+            ],
+            "diff": "",
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": [
+            "direct_mutation_bypasses_proposal_review; prefer memory_propose, memory_proposal_review and memory_proposal_apply"
+          ]
+        },
+        "files": {
+          "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+          "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+          "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+          "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6IENoYW5nZWQKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDktMThUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "48b795997fe1d734e8561a9ac06234574cc2d68a47a11a00836efba9eb7f51e0",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": null, \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": \"Changed\"}]}",
+          "result_json": "{\"changed_paths\": [\"/public/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [
+          [
+            "/public/a.md"
+          ]
+        ],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": null, \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": \"Changed\"}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/missing.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "missing",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "path does not exist: /missing.md",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": null,
+        "recorded": [],
+        "refreshes": 0,
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "bm90IGEgY29uY2VwdA==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "invalid-frontmatter",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "frontmatter validation failed",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "bm90IGEgY29uY2VwdA==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "7004a7fa573f204c734424d69dd5a5015726a9b7afcec4e0c462fc2ace034c71",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "result_json": null,
+          "result_revision": null,
+          "state": "queued",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [],
+        "refreshes": 0,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md",
+      "status": "bad"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "invalid-status",
+    "steps": [
+      {
+        "exception": "ValueError",
+        "expected": null,
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": null,
+        "recorded": [],
+        "refreshes": 0,
+        "requests": []
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "transaction-failure",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "synthetic transaction failure",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "7004a7fa573f204c734424d69dd5a5015726a9b7afcec4e0c462fc2ace034c71",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "result_json": null,
+          "result_revision": null,
+          "state": "queued",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [],
+        "refreshes": 0,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "old",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "expected-revision",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "synthetic expected revision mismatch",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "7004a7fa573f204c734424d69dd5a5015726a9b7afcec4e0c462fc2ace034c71",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "result_json": null,
+          "result_revision": null,
+          "state": "queued",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [],
+        "refreshes": 0,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "old",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "replay",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "data": {
+            "changed_paths": [
+              "/public/a.md"
+            ],
+            "diff": "",
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": [
+            "direct_mutation_bypasses_proposal_review; prefer memory_propose, memory_proposal_review and memory_proposal_apply"
+          ]
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDktMThUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0KbmV3Cg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "7004a7fa573f204c734424d69dd5a5015726a9b7afcec4e0c462fc2ace034c71",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "result_json": "{\"changed_paths\": [\"/public/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [
+          [
+            "/public/a.md"
+          ]
+        ],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      },
+      {
+        "exception": null,
+        "expected": {
+          "data": {
+            "changed_paths": [
+              "/public/a.md"
+            ],
+            "diff": "",
+            "replayed": true
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": [
+            "direct_mutation_bypasses_proposal_review; prefer memory_propose, memory_proposal_review and memory_proposal_apply"
+          ]
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDktMThUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0KbmV3Cg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "7004a7fa573f204c734424d69dd5a5015726a9b7afcec4e0c462fc2ace034c71",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "result_json": "{\"changed_paths\": [\"/public/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [
+          [
+            "/public/a.md"
+          ],
+          [
+            "/public/a.md"
+          ]
+        ],
+        "refreshes": 2,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          },
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "tracking-failure",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "synthetic tracking failure",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDktMThUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0KbmV3Cg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "7004a7fa573f204c734424d69dd5a5015726a9b7afcec4e0c462fc2ace034c71",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "result_json": "{\"changed_paths\": [\"/public/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [
+          [
+            "/public/a.md"
+          ]
+        ],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "preview-failure",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "frontmatter validation failed",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "bm90IGEgY29uY2VwdA==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "7004a7fa573f204c734424d69dd5a5015726a9b7afcec4e0c462fc2ace034c71",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "result_json": "{\"changed_paths\": [\"/public/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [
+          [
+            "/public/a.md"
+          ]
+        ],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arguments": {
+      "body": "new",
+      "expected_revision": "main",
+      "idempotency_key": "key",
+      "path": "/public/a.md"
+    },
+    "files": {
+      "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+      "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+      "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+    },
+    "method": "patch",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "refresh-failure",
+    "steps": [
+      {
+        "exception": null,
+        "expected": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "synthetic refresh failure",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "files": {
+          "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+          "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDktMThUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0KbmV3Cg==",
+          "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+        },
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "actor",
+          "request_hash": "7004a7fa573f204c734424d69dd5a5015726a9b7afcec4e0c462fc2ace034c71",
+          "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "result_json": "{\"changed_paths\": [\"/public/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "recorded": [],
+        "refreshes": 1,
+        "requests": [
+          {
+            "author_email": "rui.carmo@gmail.com",
+            "author_name": "Rui Carmo",
+            "commit_message": "memory: patch /public/a.md",
+            "expected_revision": "main",
+            "operation": {
+              "client_instance_id": "client",
+              "idempotency_key": "key",
+              "mcp_session_id": "session",
+              "op_id": "00000000-0000-4000-8000-000000000000",
+              "principal": "actor",
+              "request_json": "{\"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/public/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+              "source_chat": "chat",
+              "tool_name": "memory_patch"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
