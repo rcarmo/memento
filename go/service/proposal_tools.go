@@ -61,6 +61,8 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 		for _, parameter := range definition.Parameters {
 			kind := umcp.StringParam
 			switch parameter.Name {
+			case "confirm":
+				kind = umcp.BooleanParam
 			case "limit", "offset", "depth", "keep":
 				kind = umcp.IntegerParam
 			case "changes", "selected_change_indexes", "tags", "aliases":
@@ -77,7 +79,7 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 			if err != nil {
 				return nil, err
 			}
-			if (name == "memory_proposal_apply" || name == "memory_asset_prune" || name == "memory_create" || name == "memory_patch" || name == "memory_rename") && notify != nil {
+			if (name == "memory_proposal_apply" || name == "memory_asset_prune" || name == "memory_create" || name == "memory_patch" || name == "memory_rename" || name == "memory_trash" || name == "memory_restore" || name == "memory_purge") && notify != nil {
 				if err = notifyAppliedEnvelope(ctx, server, notify, value); err != nil {
 					return nil, err
 				}
@@ -126,7 +128,10 @@ func toolMember(object umcp.OrderedObject, key string) any {
 	return nil
 }
 func (j *Jobs) callProposalTool(ctx context.Context, name string, args map[string]any) (any, error) {
-	return j.Call(ctx, name, func(ctx context.Context, c *ProposalControls, actor ProposalActor) (map[string]any, SuccessOptions, error) {
+	// Python rejects unconfirmed purge before consulting namespace policy, but
+	// still runs it through worker admission and the serialised service lock.
+	resolve := name != "memory_purge" || args["confirm"] == true
+	return j.callWithPolicy(ctx, name, resolve, func(ctx context.Context, c *ProposalControls, actor ProposalActor) (map[string]any, SuccessOptions, error) {
 		return runProposalTool(ctx, c, actor, name, args)
 	})
 }
@@ -207,6 +212,13 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 		data, err = result.Data, failure
 		options.RepoRevision = result.Revision
 		options.OperationID = result.OperationID
+	case "memory_trash", "memory_restore", "memory_purge":
+		path, expected, key := a.text("path"), a.text("expected_revision"), a.text("idempotency_key")
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		manager := repository.TransactionManager{Paths: c.Queue.Paths, Operations: control.Operations{DB: c.Queue.Proposals.DB, Now: c.Queue.Now}, Now: c.Queue.Now, DerivedUpdate: c.DerivedUpdate}
+		data, options, err = c.trashMutation(ctx, actor, name[len("memory_"):], path, expected, key, args["confirm"], defaultProposalRepository(), manager.ApplyUnderLock, defaultMutationIO())
 	case "memory_create", "memory_patch", "memory_rename":
 		expected, key := a.text("expected_revision"), a.text("idempotency_key")
 		if a.err != nil {

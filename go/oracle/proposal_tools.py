@@ -284,6 +284,50 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
         {"name": "memory_patch", "arguments": {}},
         {"name": "memory_rename", "arguments": {}},
     ]
+    requests += [
+        {
+            "name": "memory_trash",
+            "arguments": {"path": "/a.md", "expected_revision": "r", "idempotency_key": "k"},
+        },
+        {
+            "name": "memory_restore",
+            "arguments": {"path": "/trash/a.md", "expected_revision": "r", "idempotency_key": "k"},
+        },
+        {
+            "name": "memory_purge",
+            "arguments": {"path": "/trash/a.md", "expected_revision": "r", "idempotency_key": "k"},
+        },
+        {
+            "name": "memory_purge",
+            "arguments": {
+                "path": "/trash/a.md",
+                "expected_revision": "r",
+                "idempotency_key": "k",
+                "confirm": "yes",
+            },
+        },
+        {
+            "name": "memory_purge",
+            "arguments": {
+                "path": "/trash/a.md",
+                "expected_revision": "r",
+                "idempotency_key": "k",
+                "confirm": 1,
+            },
+        },
+        {
+            "name": "memory_purge",
+            "arguments": {
+                "path": "/trash/a.md",
+                "expected_revision": "r",
+                "idempotency_key": "k",
+                "confirm": None,
+            },
+        },
+        {"name": "memory_trash", "arguments": {}},
+        {"name": "memory_restore", "arguments": {}},
+        {"name": "memory_purge", "arguments": {}},
+    ]
     calls = []
     for params in requests:
         if params["name"] not in names:

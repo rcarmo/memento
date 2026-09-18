@@ -355,6 +355,28 @@ def main() -> None:
     (ROOT / "go/service/mutation_tools.json").write_text(
         json.dumps(mutation_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
     )
+    trash_mutations = importlib.import_module("trash_mutations")
+    save("trash-mutations.json", trash_mutations.fixtures())
+    trash_tool_fixtures = proposal_tools.fixtures(
+        names=proposal_tools.NAMES
+        + proposal_tools.READ_NAMES
+        + [
+            "memory_asset_stage_begin",
+            "memory_asset_stage_status",
+            "memory_asset_get",
+            "memory_asset_prune",
+            "memory_create",
+            "memory_patch",
+            "memory_rename",
+            "memory_trash",
+            "memory_restore",
+            "memory_purge",
+        ]
+    )
+    save("trash-tool-dispatch.json", trash_tool_fixtures)
+    (ROOT / "go/service/trash_tools.json").write_text(
+        json.dumps(trash_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
+    )
     # Runtime embeds only definitions for implemented tools, not test outcomes.
     (ROOT / "go/service/proposal_tools.json").write_text(
         json.dumps(proposal_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"

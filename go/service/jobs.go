@@ -27,6 +27,9 @@ type Jobs struct {
 type JobCall func(context.Context, *ProposalControls, ProposalActor) (map[string]any, SuccessOptions, error)
 
 func (j *Jobs) Call(ctx context.Context, method string, call JobCall) (any, error) {
+	return j.callWithPolicy(ctx, method, true, call)
+}
+func (j *Jobs) callWithPolicy(ctx context.Context, method string, resolve bool, call JobCall) (any, error) {
 	// Capture only authenticated identity/session before admission. Policy is
 	// resolved again on the worker handle, as MemoryService._policy does in Python.
 	principal, session, err := j.Identity.requestPrincipal(ctx)
@@ -34,10 +37,13 @@ func (j *Jobs) Call(ctx context.Context, method string, call JobCall) (any, erro
 		return nil, err
 	}
 	return j.Workers.Call(ctx, method, func(ctx context.Context) (any, error) {
-		return j.run(ctx, principal, session, method, call, control.Connect)
+		return j.runWithPolicy(ctx, principal, session, method, resolve, call, control.Connect)
 	})
 }
 func (j *Jobs) run(ctx context.Context, principal access.Principal, session *string, method string, call JobCall, open func(context.Context, string) (*sql.DB, error)) (any, error) {
+	return j.runWithPolicy(ctx, principal, session, method, true, call, open)
+}
+func (j *Jobs) runWithPolicy(ctx context.Context, principal access.Principal, session *string, method string, resolve bool, call JobCall, open func(context.Context, string) (*sql.DB, error)) (any, error) {
 	db, err := open(ctx, j.DBPath)
 	if err != nil {
 		return nil, err
@@ -62,9 +68,13 @@ func (j *Jobs) run(ctx context.Context, principal access.Principal, session *str
 	}
 	var result any
 	run := func() error {
-		policy, err := identity.ResolvePolicy(ctx, principal)
-		if err != nil {
-			return err
+		var policy access.EffectivePolicy
+		if resolve {
+			var err error
+			policy, err = identity.ResolvePolicy(ctx, principal)
+			if err != nil {
+				return err
+			}
 		}
 		data, options, err := call(ctx, controls, ProposalActor{Policy: policy, MCPSessionID: session})
 		if err != nil {
