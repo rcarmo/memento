@@ -275,6 +275,12 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 			return nil, options, a.err
 		}
 		data, err = c.Read(ctx, actor, id)
+	case "memory_audit":
+		o := AuditOptions{Path: a.optional("path"), Rule: a.optional("rule"), Severity: a.optional("severity"), Cursor: a.optional("cursor"), Limit: a.integer("limit")}
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		data, options, err = c.Audit(ctx, actor, o)
 	case "memory_asset_metadata":
 		o := AssetMetadataOptions{IDOrPath: a.optional("id_or_path"), PathPrefix: a.optional("path_prefix"), AssetKind: a.optional("asset_kind"), Version: a.optional("version"), Cursor: a.optional("cursor"), Limit: a.integer("limit"), VersionLimit: a.integer("version_limit"), FileLimit: a.integer("file_limit"), IncludeFiles: args["include_files"]}
 		if a.err != nil {

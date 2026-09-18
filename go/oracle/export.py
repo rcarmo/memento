@@ -462,6 +462,15 @@ def main() -> None:
     (ROOT / "go/service/status_tools.json").write_text(
         json.dumps(status_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
     )
+    audit = importlib.import_module("audit")
+    save("service-audit.json", audit.fixtures())
+    audit_tool_fixtures = proposal_tools.fixtures(
+        names=[d["name"] for d in status_tool_fixtures["definitions"]] + ["memory_audit"]
+    )
+    save("audit-tool-dispatch.json", audit_tool_fixtures)
+    (ROOT / "go/service/audit_tools.json").write_text(
+        json.dumps(audit_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
+    )
     # Runtime embeds only definitions for implemented tools, not test outcomes.
     (ROOT / "go/service/proposal_tools.json").write_text(
         json.dumps(proposal_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"

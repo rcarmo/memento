@@ -401,6 +401,21 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
         {"name": "memory_status"},
         {"name": "memory_status", "arguments": {"principal": "other"}},
     ]
+    requests += [
+        {"name": "memory_audit"},
+        {
+            "name": "memory_audit",
+            "arguments": {
+                "path": "/public/a.md",
+                "rule": "broken_links",
+                "severity": "warning",
+                "limit": "2",
+                "cursor": "cursor",
+            },
+        },
+        {"name": "memory_audit", "arguments": {"limit": True, "severity": "bad"}},
+        {"name": "memory_audit", "arguments": {"principal": "other"}},
+    ]
     calls = []
     for params in requests:
         if params["name"] not in names:

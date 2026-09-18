@@ -39,6 +39,7 @@ fuzz:
 	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzProposalChanges -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzProposalCursor -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzManifestTimestamp -fuzztime=10000x -parallel=2 -timeout=120s
+	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzAuditCursor -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./derived -run='^$$' -fuzz=FuzzLexicalQuery -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./derived -run='^$$' -fuzz=FuzzLexicalFTS -fuzztime=10000x -parallel=2 -timeout=120s
 	CGO_ENABLED=0 $(GO) test ./assets -run='^$$' -fuzz=FuzzAssetPack -fuzztime=10000x -parallel=2 -timeout=120s

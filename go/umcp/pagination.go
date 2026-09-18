@@ -157,7 +157,11 @@ func decodeCursor(cursor, label, fingerprint string) (*big.Int, bool) {
 // decodePythonBase64 reproduces binascii's non-strict padding behaviour: extra
 // trailing padding and leading/incomplete padding are ignored, but incomplete
 // data quanta at EOF still fail. Input has already been alphabet-filtered.
-func decodePythonBase64(value string) ([]byte, bool) {
+func decodePythonBase64(value string) ([]byte, bool) { return DecodePythonBase64(value) }
+
+// DecodePythonBase64 decodes an already ASCII/alphabet-filtered value with the
+// source's permissive padding. Callers must reject/filter non-alphabet input.
+func DecodePythonBase64(value string) ([]byte, bool) {
 	const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 	out := make([]byte, 0, len(value)*3/4)
 	position, padding := 0, 0
