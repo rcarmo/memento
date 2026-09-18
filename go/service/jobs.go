@@ -74,8 +74,9 @@ func (j *Jobs) run(ctx context.Context, principal access.Principal, session *str
 		return err
 	}
 	// Mirror the Python @_serialized scope, including policy resolution and
-	// success revision lookup. Reconciliation and asset reads are not serialized.
-	if method == "memory_operation_get" || method == "memory_proposal_asset_get" || method == "memory_read" || method == "memory_list" || method == "memory_search" || method == "memory_graph" {
+	// success revision lookup. Accepted-asset reads acquire their own lock after
+	// role/range validation. Reconciliation and other reads are not serialized.
+	if method == "memory_asset_get" || method == "memory_operation_get" || method == "memory_proposal_asset_get" || method == "memory_read" || method == "memory_list" || method == "memory_search" || method == "memory_graph" {
 		err = run()
 	} else {
 		err = repository.WithTransactionLock(ctx, q.Paths, run)

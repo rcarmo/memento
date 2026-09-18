@@ -207,6 +207,26 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 		data, err = result.Data, failure
 		options.RepoRevision = result.Revision
 		options.OperationID = result.OperationID
+	case "memory_asset_get":
+		o := AssetGetOptions{IDOrPath: a.text("id_or_path"), AssetKind: a.text("asset_kind"), Version: a.optional("version"), View: a.text("view"), FilePath: a.optional("file_path"), Offset: int64(a.integer("offset")), ExpectedSHA256: a.optional("expected_sha256")}
+		if a.values["limit"] != nil {
+			value := int64(a.integer("limit"))
+			o.Limit = &value
+		}
+		// Unlike most integer inputs, Python's asset range validator rejects
+		// bool despite isinstance(bool, int). Map to invalid typed ranges so
+		// the service preserves role/view/offset/limit validation order.
+		if _, ok := a.values["offset"].(bool); ok {
+			o.Offset = -1
+		}
+		if _, ok := a.values["limit"].(bool); ok {
+			value := int64(0)
+			o.Limit = &value
+		}
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		data, options, err = c.AssetGet(ctx, actor, o)
 	case "memory_read":
 		id := a.text("id_or_path")
 		if a.err != nil {

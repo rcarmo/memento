@@ -1,0 +1,2868 @@
+{
+  "cases": [
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "content_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+          "encoding": "base64",
+          "file_count": 2,
+          "manifest": {
+            "entries": [
+              {
+                "media_type": "text/plain",
+                "path": "file.txt",
+                "sha256": "6c0a2ebe681b64d578382532490c8341c5566da6c9745124c9727105e90a7e77",
+                "size": 16
+              },
+              {
+                "media_type": "application/octet-stream",
+                "path": "binary.bin",
+                "sha256": "47ffa3ea45a70b8a41c2c0825df323c00a8b7a01c1ea06083cc41dddcc001123",
+                "size": 3
+              }
+            ],
+            "file_count": 2,
+            "sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+            "total_uncompressed_bytes": 19
+          },
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "next_offset": null,
+          "offset": 0,
+          "returned_bytes": 229,
+          "total_bytes": 229,
+          "total_uncompressed_bytes": 19,
+          "truncated": false,
+          "version": "1.10.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "archive",
+          "zip_base64": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+          "zip_bytes": 229,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "12345678"
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "content_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+          "encoding": "base64",
+          "file_count": 2,
+          "manifest": {
+            "entries": [
+              {
+                "media_type": "text/plain",
+                "path": "file.txt",
+                "sha256": "6c0a2ebe681b64d578382532490c8341c5566da6c9745124c9727105e90a7e77",
+                "size": 16
+              },
+              {
+                "media_type": "application/octet-stream",
+                "path": "binary.bin",
+                "sha256": "47ffa3ea45a70b8a41c2c0825df323c00a8b7a01c1ea06083cc41dddcc001123",
+                "size": 3
+              }
+            ],
+            "file_count": 2,
+            "sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+            "total_uncompressed_bytes": 19
+          },
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "next_offset": null,
+          "offset": 0,
+          "returned_bytes": 229,
+          "total_bytes": 229,
+          "total_uncompressed_bytes": 19,
+          "truncated": false,
+          "version": "1.10.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "archive",
+          "zip_base64": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+          "zip_bytes": 229,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "manifest"
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "file_count": 2,
+          "manifest": {
+            "entries": [
+              {
+                "media_type": "text/plain",
+                "path": "file.txt",
+                "sha256": "6c0a2ebe681b64d578382532490c8341c5566da6c9745124c9727105e90a7e77",
+                "size": 16
+              },
+              {
+                "media_type": "application/octet-stream",
+                "path": "binary.bin",
+                "sha256": "47ffa3ea45a70b8a41c2c0825df323c00a8b7a01c1ea06083cc41dddcc001123",
+                "size": 3
+              }
+            ],
+            "file_count": 2,
+            "sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+            "total_uncompressed_bytes": 19
+          },
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "total_uncompressed_bytes": 19,
+          "version": "1.10.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "manifest",
+          "zip_bytes": 229,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "file.txt",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "file": {
+            "content": "synthetic café\n",
+            "content_sha256": "6c0a2ebe681b64d578382532490c8341c5566da6c9745124c9727105e90a7e77",
+            "encoding": "utf-8",
+            "media_type": "text/plain",
+            "next_offset": null,
+            "offset": 0,
+            "path": "file.txt",
+            "returned_bytes": 16,
+            "sha256": "6c0a2ebe681b64d578382532490c8341c5566da6c9745124c9727105e90a7e77",
+            "total_bytes": 16,
+            "truncated": false
+          },
+          "file_count": 2,
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "total_uncompressed_bytes": 19,
+          "version": "1.10.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "file",
+          "zip_bytes": 229,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "binary.bin",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "file": {
+            "content": "AP8B",
+            "content_sha256": "47ffa3ea45a70b8a41c2c0825df323c00a8b7a01c1ea06083cc41dddcc001123",
+            "encoding": "base64",
+            "media_type": "application/octet-stream",
+            "next_offset": null,
+            "offset": 0,
+            "path": "binary.bin",
+            "returned_bytes": 3,
+            "sha256": "47ffa3ea45a70b8a41c2c0825df323c00a8b7a01c1ea06083cc41dddcc001123",
+            "total_bytes": 3,
+            "truncated": false
+          },
+          "file_count": 2,
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "total_uncompressed_bytes": 19,
+          "version": "1.10.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "file",
+          "zip_bytes": 229,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": true
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset offset must be a nonnegative integer",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": false
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset limit must be between 1 and 262144",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": true,
+        "offset": -1
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset offset must be a nonnegative integer",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": true,
+        "view": "invalid"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset view must be archive, manifest or file",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": 7
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "content_sha256": "1f918d864593ef756aa4d729dfed7058ee71bf42fb087d934e99aabceb48d35a",
+          "encoding": "base64",
+          "file_count": 2,
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "next_offset": 7,
+          "offset": 0,
+          "returned_bytes": 7,
+          "total_bytes": 229,
+          "total_uncompressed_bytes": 19,
+          "truncated": true,
+          "version": "1.10.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "archive",
+          "zip_base64": "UEsDBBQAAA==",
+          "zip_bytes": 229,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "id_or_path": "/public/a.md",
+        "limit": 9,
+        "offset": 5,
+        "version": "1.9.0"
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "content_sha256": "b25b63a5a0f70d682aae62071f298a54ffead6afa84f1bb31c0ae71d48688209",
+          "encoding": "base64",
+          "file_count": 2,
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "next_offset": 14,
+          "offset": 5,
+          "returned_bytes": 9,
+          "total_bytes": 229,
+          "total_uncompressed_bytes": 19,
+          "truncated": true,
+          "version": "1.9.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "archive",
+          "zip_base64": "AAAAAAAAADJd",
+          "zip_bytes": 229,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "id_or_path": "/public/a.md",
+        "offset": 229,
+        "version": "1.9.0"
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "encoding": "base64",
+          "file_count": 2,
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "next_offset": null,
+          "offset": 229,
+          "returned_bytes": 0,
+          "total_bytes": 229,
+          "total_uncompressed_bytes": 19,
+          "truncated": true,
+          "version": "1.9.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "archive",
+          "zip_base64": "",
+          "zip_bytes": 229,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "file_path": "file.txt",
+        "id_or_path": "/public/a.md",
+        "limit": 1,
+        "offset": 10,
+        "version": "1.9.0",
+        "view": "file"
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "file": {
+            "content": "c",
+            "content_sha256": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+            "encoding": "utf-8",
+            "media_type": "text/plain",
+            "next_offset": 11,
+            "offset": 10,
+            "path": "file.txt",
+            "returned_bytes": 1,
+            "sha256": "6c0a2ebe681b64d578382532490c8341c5566da6c9745124c9727105e90a7e77",
+            "total_bytes": 16,
+            "truncated": true
+          },
+          "file_count": 2,
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "total_uncompressed_bytes": 19,
+          "version": "1.9.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "file",
+          "zip_bytes": 229,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/private/p.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read /private/p.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "abcdef12"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "abcdef12",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/missing.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "path does not exist: /missing.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/empty.md"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "no docs asset pack for concept",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "version": "3.0.0"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unknown docs asset version: 3.0.0",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "version": "bad"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "version must be a stable semantic version",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "INVALID",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset_kind must be lowercase alphanumeric words joined by hyphens",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "invalid"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset view must be archive, manifest or file",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": -1
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset offset must be a nonnegative integer",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": 0
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset limit must be between 1 and 262144",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": 262145
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset limit must be between 1 and 262144",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "file view requires file_path",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "file.txt",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "file_path requires file view",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": 5,
+        "view": "manifest"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest view does not accept ranges",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": 1
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "resuming requires explicit version and expected_sha256",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": 1,
+        "version": "1.9.0"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "resuming requires explicit version and expected_sha256",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "id_or_path": "/public/a.md",
+        "offset": 1
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "resuming requires explicit version and expected_sha256",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset digest mismatch; pin the resolved version and ZIP SHA-256",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "missing",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'asset file is not declared in the manifest'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "../file.txt",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset file_path must be a canonical manifest-relative path",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "id_or_path": "/public/a.md",
+        "offset": 230,
+        "version": "1.9.0"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset offset exceeds total bytes",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "12345678"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "manifest"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "file.txt",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "binary.bin",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": true
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": false
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": true,
+        "offset": -1
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": true,
+        "view": "invalid"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": 7
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "id_or_path": "/public/a.md",
+        "limit": 9,
+        "offset": 5,
+        "version": "1.9.0"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "id_or_path": "/public/a.md",
+        "offset": 229,
+        "version": "1.9.0"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "file_path": "file.txt",
+        "id_or_path": "/public/a.md",
+        "limit": 1,
+        "offset": 10,
+        "version": "1.9.0",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/private/p.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "abcdef12"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/missing.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/empty.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "version": "3.0.0"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "version": "bad"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "INVALID",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "invalid"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": -1
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": 0
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": 262145
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "file.txt",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "limit": 5,
+        "view": "manifest"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": 1
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "offset": 1,
+        "version": "1.9.0"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "id_or_path": "/public/a.md",
+        "offset": 1
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "missing",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "../file.txt",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "expected_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+        "id_or_path": "/public/a.md",
+        "offset": 230,
+        "version": "1.9.0"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset metadata identity mismatch",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICJhYmNkZWYxMiIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIn0=",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset metadata identity mismatch",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogIm90aGVyIiwgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLCAiY29uY2VwdF9wYXRoIjogIi9wdWJsaWMvYS5tZCIsICJraW5kIjogImFzc2V0X3BhY2tfdmVyc2lvbiIsICJtYW5pZmVzdCI6IHsiZW50cmllcyI6IFt7Im1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsICJwYXRoIjogImZpbGUudHh0IiwgInNoYTI1NiI6ICI2YzBhMmViZTY4MWI2NGQ1NzgzODI1MzI0OTBjODM0MWM1NTY2ZGE2Yzk3NDUxMjRjOTcyNzEwNWU5MGE3ZTc3IiwgInNpemUiOiAxNn0sIHsibWVkaWFfdHlwZSI6ICJhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0iLCAicGF0aCI6ICJiaW5hcnkuYmluIiwgInNoYTI1NiI6ICI0N2ZmYTNlYTQ1YTcwYjhhNDFjMmMwODI1ZGYzMjNjMDBhOGI3YTAxYzFlYTA2MDgzY2M0MWRkZGNjMDAxMTIzIiwgInNpemUiOiAzfV0sICJmaWxlX2NvdW50IjogMiwgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwgInRvdGFsX3VuY29tcHJlc3NlZF9ieXRlcyI6IDE5fSwgInNjaGVtYV92ZXJzaW9uIjogMSwgInNvdXJjZV9wcm9wb3NhbF9pZCI6ICJwIiwgInZlcnNpb24iOiAiMS4xMC4wIiwgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCJ9",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset metadata identity mismatch",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjAuMCIsICJ6aXBfc2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAifQ==",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid ZIP digest in asset metadata",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6ICJpbnZhbGlkIn0=",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset manifest/ZIP digest mismatch",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6ICIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0=",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid asset manifest file count",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAzLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIn0=",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "archive"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid asset ZIP size",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "",
+        "path": "/.assets/12345678/docs/1.10.0.zip"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "manifest"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid asset ZIP size",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "",
+        "path": "/.assets/12345678/docs/1.10.0.zip"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "file.txt",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid asset ZIP size",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "",
+        "path": "/.assets/12345678/docs/1.10.0.zip"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "archive"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset digest/size mismatch",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "Y29ycnVwdCBhcmNoaXZl",
+        "path": "/.assets/12345678/docs/1.10.0.zip"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "id_or_path": "/public/a.md",
+        "view": "manifest"
+      },
+      "expected": {
+        "data": {
+          "asset_kind": "docs",
+          "concept_id": "12345678",
+          "concept_path": "/public/a.md",
+          "file_count": 2,
+          "manifest": {
+            "entries": [
+              {
+                "media_type": "text/plain",
+                "path": "file.txt",
+                "sha256": "6c0a2ebe681b64d578382532490c8341c5566da6c9745124c9727105e90a7e77",
+                "size": 16
+              },
+              {
+                "media_type": "application/octet-stream",
+                "path": "binary.bin",
+                "sha256": "47ffa3ea45a70b8a41c2c0825df323c00a8b7a01c1ea06083cc41dddcc001123",
+                "size": 3
+              }
+            ],
+            "file_count": 2,
+            "sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+            "total_uncompressed_bytes": 19
+          },
+          "manifest_sha256": "b65f35c6aec5e32374faddfb11caaf9f9298831719c4a2e6d888c3e1eaa11dec",
+          "media_type": "application/zip",
+          "total_uncompressed_bytes": 19,
+          "version": "1.10.0",
+          "versions": [
+            "1.10.0",
+            "1.9.0"
+          ],
+          "view": "manifest",
+          "zip_bytes": 15,
+          "zip_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "Y29ycnVwdCBhcmNoaXZl",
+        "path": "/.assets/12345678/docs/1.10.0.zip"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "asset_kind": "docs",
+        "file_path": "file.txt",
+        "id_or_path": "/public/a.md",
+        "view": "file"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset digest/size mismatch",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "Y29ycnVwdCBhcmNoaXZl",
+        "path": "/.assets/12345678/docs/1.10.0.zip"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    }
+  ],
+  "files": {
+    "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+    "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+    "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+    "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+    "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+    "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+    "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+  }
+}

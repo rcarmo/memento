@@ -171,6 +171,34 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
         {"name": "memory_asset_stage_status", "arguments": {"idempotency_key": "ticket"}},
         {"name": "memory_asset_stage_status", "arguments": {"idempotency_key": None}},
     ]
+    requests += [
+        {
+            "name": "memory_asset_get",
+            "arguments": {"id_or_path": "/public/a.md", "asset_kind": "docs"},
+        },
+        {
+            "name": "memory_asset_get",
+            "arguments": {
+                "id_or_path": "12345678",
+                "asset_kind": "docs",
+                "offset": "2",
+                "limit": "4",
+                "version": "1.0.0",
+                "expected_sha256": "abc",
+            },
+        },
+        {
+            "name": "memory_asset_get",
+            "arguments": {
+                "id_or_path": "12345678",
+                "asset_kind": "docs",
+                "limit": None,
+                "view": "file",
+                "file_path": "file.txt",
+            },
+        },
+        {"name": "memory_asset_get", "arguments": {}},
+    ]
     calls = []
     for params in requests:
         if params["name"] not in names:

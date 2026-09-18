@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -19,10 +20,11 @@ import (
 func TestMCPStagingUploadProposalFlow(t *testing.T) {
 	ctx := context.Background()
 	j, base := jobsTest(t)
+	j.Identity, _ = NewIdentity([]BearerPrincipal{{"token", access.Principal{Name: "actor", Roles: []string{"reader", "proposer", "curator"}}}}, access.AuthorizationConfig{Principals: map[string]access.NamespacePolicy{"actor": {Roles: []string{"reader", "proposer", "curator"}, ReadPrefixes: []string{"/"}, WritePrefixes: []string{"/"}}}}, nil, nil)
 	j.Controls.Staging = &assets.StagingStore{DB: j.Controls.Queue.Proposals.DB, Now: j.Controls.Queue.Now}
 	server := umcp.NewServer("staging-subset")
 	server.SetNotificationOutput(nil)
-	if err := j.RegisterStagingReadProposalTools(server, nil); err != nil {
+	if err := j.RegisterAssetReadProposalTools(server, nil); err != nil {
 		t.Fatal(err)
 	}
 	hooks := j.Identity.HTTPHooks()
@@ -117,6 +119,23 @@ func TestMCPStagingUploadProposalFlow(t *testing.T) {
 	repeated := call("memory_asset_stage_begin", map[string]any{"asset_kind": "docs", "version": "1.0.0", "idempotency_key": "ticket"})
 	if repeated["error_class"] != "validation_error" {
 		t.Fatal(repeated)
+	}
+	id := proposed["data"].(map[string]any)["proposal"].(map[string]any)["proposal_id"]
+	approved := call("memory_proposal_review", map[string]any{"proposal_id": id, "decision": "approve"})
+	if approved["status"] != "success" {
+		t.Fatal(approved)
+	}
+	applied := call("memory_proposal_apply", map[string]any{"proposal_id": id, "expected_revision": base, "idempotency_key": "apply-ticket"})
+	if applied["status"] != "success" {
+		t.Fatal(applied)
+	}
+	accepted := call("memory_asset_get", map[string]any{"id_or_path": "/a.md", "asset_kind": "docs"})
+	if accepted["status"] != "success" || accepted["repo_revision"] != applied["repo_revision"] {
+		t.Fatal(accepted)
+	}
+	zip, err := base64.StdEncoding.DecodeString(accepted["data"].(map[string]any)["zip_base64"].(string))
+	if err != nil || !bytes.Equal(zip, submitZIP(t)) {
+		t.Fatal("accepted bytes", err)
 	}
 }
 func TestStagingDirectMissingContext(t *testing.T) {
