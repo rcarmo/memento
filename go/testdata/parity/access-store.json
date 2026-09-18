@@ -1,0 +1,827 @@
+{
+  "audit": [
+    {
+      "action": "principal.update",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      },
+      "target": "sandbox"
+    },
+    {
+      "action": "credential.revoke",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {},
+      "target": "sandbox"
+    },
+    {
+      "action": "principal.disable",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {},
+      "target": "sandbox"
+    },
+    {
+      "action": "principal.create",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin",
+          "reader"
+        ],
+        "write_prefixes": [
+          "/"
+        ]
+      },
+      "target": "second"
+    },
+    {
+      "action": "principal.delete",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {},
+      "target": "renamed"
+    },
+    {
+      "action": "credential.revoke",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {},
+      "target": "renamed"
+    },
+    {
+      "action": "principal.enable",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {},
+      "target": "renamed"
+    },
+    {
+      "action": "credential.rotate",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {},
+      "target": "renamed"
+    },
+    {
+      "action": "credential.revoke",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {},
+      "target": "renamed"
+    },
+    {
+      "action": "principal.disable",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {},
+      "target": "renamed"
+    },
+    {
+      "action": "principal.rename",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {
+        "previous_name": "reader"
+      },
+      "target": "renamed"
+    },
+    {
+      "action": "principal.create",
+      "actor": "admin",
+      "created_at": "2026-09-18T00:00:00Z",
+      "details": {
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      },
+      "target": "reader"
+    }
+  ],
+  "cases": [
+    {
+      "input": {
+        "action": "authenticate",
+        "token": "wrong"
+      },
+      "result": null
+    },
+    {
+      "input": {
+        "action": "authenticate",
+        "token": "synthetic-admin"
+      },
+      "result": {
+        "metadata": {},
+        "name": "sandbox",
+        "roles": [
+          "admin",
+          "reader"
+        ]
+      }
+    },
+    {
+      "error": "the final enabled admin cannot remove its own access",
+      "input": {
+        "action": "disable",
+        "name": "sandbox"
+      }
+    },
+    {
+      "error": "the final enabled admin cannot remove its own access",
+      "input": {
+        "action": "revoke",
+        "name": "sandbox"
+      }
+    },
+    {
+      "error": "the final enabled admin cannot remove its own access",
+      "input": {
+        "action": "update",
+        "name": "sandbox",
+        "reads": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "writes": []
+      }
+    },
+    {
+      "input": {
+        "action": "create",
+        "key": "create-reader",
+        "name": "reader",
+        "reads": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "writes": []
+      },
+      "result": {
+        "deleted": false,
+        "enabled": true,
+        "name": "reader",
+        "read_prefixes": [
+          "/public/"
+        ],
+        "revoked": false,
+        "roles": [
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": []
+      },
+      "token": "memento_LC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSks"
+    },
+    {
+      "error": "access mutation already completed; one-time credential cannot be replayed",
+      "input": {
+        "action": "create",
+        "key": "create-reader",
+        "name": "reader",
+        "reads": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "writes": []
+      }
+    },
+    {
+      "input": {
+        "action": "authenticate",
+        "token": "{{LAST}}"
+      },
+      "result": {
+        "metadata": {},
+        "name": "reader",
+        "roles": [
+          "reader"
+        ]
+      }
+    },
+    {
+      "input": {
+        "action": "policy",
+        "name": "reader"
+      },
+      "result": {
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "token_env": "MANAGED_ACCESS",
+        "write_prefixes": []
+      }
+    },
+    {
+      "input": {
+        "action": "rename",
+        "name": "reader",
+        "new_name": "renamed"
+      },
+      "result": {
+        "deleted": false,
+        "enabled": true,
+        "name": "renamed",
+        "read_prefixes": [
+          "/public/"
+        ],
+        "revoked": false,
+        "roles": [
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": []
+      }
+    },
+    {
+      "input": {
+        "action": "authenticate",
+        "token": "{{LAST}}"
+      },
+      "result": {
+        "metadata": {},
+        "name": "renamed",
+        "roles": [
+          "reader"
+        ]
+      }
+    },
+    {
+      "input": {
+        "action": "disable",
+        "name": "renamed"
+      },
+      "result": {
+        "deleted": false,
+        "enabled": false,
+        "name": "renamed",
+        "read_prefixes": [
+          "/public/"
+        ],
+        "revoked": false,
+        "roles": [
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": []
+      }
+    },
+    {
+      "input": {
+        "action": "authenticate",
+        "token": "{{LAST}}"
+      },
+      "result": null
+    },
+    {
+      "error": "principal must be disabled and revoked before deletion",
+      "input": {
+        "action": "delete",
+        "name": "renamed"
+      }
+    },
+    {
+      "input": {
+        "action": "revoke",
+        "name": "renamed"
+      },
+      "result": {
+        "deleted": false,
+        "enabled": false,
+        "name": "renamed",
+        "read_prefixes": [
+          "/public/"
+        ],
+        "revoked": true,
+        "roles": [
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": []
+      }
+    },
+    {
+      "input": {
+        "action": "rotate",
+        "key": "rotate-one",
+        "name": "renamed"
+      },
+      "token": "memento_TE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpams"
+    },
+    {
+      "input": {
+        "action": "authenticate",
+        "token": "{{LAST}}"
+      },
+      "result": null
+    },
+    {
+      "input": {
+        "action": "enable",
+        "name": "renamed"
+      },
+      "result": {
+        "deleted": false,
+        "enabled": true,
+        "name": "renamed",
+        "read_prefixes": [
+          "/public/"
+        ],
+        "revoked": false,
+        "roles": [
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": []
+      }
+    },
+    {
+      "input": {
+        "action": "authenticate",
+        "token": "{{LAST}}"
+      },
+      "result": {
+        "metadata": {},
+        "name": "renamed",
+        "roles": [
+          "reader"
+        ]
+      }
+    },
+    {
+      "error": "access mutation already completed; one-time credential cannot be replayed",
+      "input": {
+        "action": "rotate",
+        "key": "rotate-one",
+        "name": "renamed"
+      }
+    },
+    {
+      "input": {
+        "action": "revoke",
+        "name": "renamed"
+      },
+      "result": {
+        "deleted": false,
+        "enabled": false,
+        "name": "renamed",
+        "read_prefixes": [
+          "/public/"
+        ],
+        "revoked": true,
+        "roles": [
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": []
+      }
+    },
+    {
+      "input": {
+        "action": "delete",
+        "name": "renamed"
+      },
+      "result": {
+        "deleted": true,
+        "enabled": false,
+        "name": "renamed",
+        "read_prefixes": [
+          "/public/"
+        ],
+        "revoked": true,
+        "roles": [
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": []
+      }
+    },
+    {
+      "input": {
+        "action": "policy",
+        "name": "renamed"
+      },
+      "result": null
+    },
+    {
+      "input": {
+        "action": "create",
+        "name": "second",
+        "reads": [
+          "/"
+        ],
+        "roles": [
+          "admin",
+          "reader"
+        ],
+        "writes": [
+          "/"
+        ]
+      },
+      "result": {
+        "deleted": false,
+        "enabled": true,
+        "name": "second",
+        "read_prefixes": [
+          "/"
+        ],
+        "revoked": false,
+        "roles": [
+          "admin",
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": [
+          "/"
+        ]
+      },
+      "token": "memento_bG1ub3BxcnN0dXZ3eHl6e3x9fn-AgYKDhIWGh4iJios"
+    },
+    {
+      "input": {
+        "action": "disable",
+        "name": "sandbox"
+      },
+      "result": {
+        "deleted": false,
+        "enabled": false,
+        "name": "sandbox",
+        "read_prefixes": [
+          "/"
+        ],
+        "revoked": false,
+        "roles": [
+          "admin",
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": [
+          "/"
+        ]
+      }
+    },
+    {
+      "input": {
+        "action": "revoke",
+        "name": "sandbox"
+      },
+      "result": {
+        "deleted": false,
+        "enabled": false,
+        "name": "sandbox",
+        "read_prefixes": [
+          "/"
+        ],
+        "revoked": true,
+        "roles": [
+          "admin",
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": [
+          "/"
+        ]
+      }
+    },
+    {
+      "input": {
+        "action": "update",
+        "name": "sandbox",
+        "reads": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "writes": []
+      },
+      "result": {
+        "deleted": false,
+        "enabled": false,
+        "name": "sandbox",
+        "read_prefixes": [
+          "/"
+        ],
+        "revoked": true,
+        "roles": [
+          "reader"
+        ],
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes": []
+      }
+    },
+    {
+      "error": "principal already exists",
+      "input": {
+        "action": "rename",
+        "name": "second",
+        "new_name": "renamed"
+      }
+    },
+    {
+      "error": "principal already exists",
+      "input": {
+        "action": "create",
+        "key": "burned",
+        "name": "second",
+        "reads": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "writes": []
+      }
+    },
+    {
+      "error": "access mutation already completed; one-time credential cannot be replayed",
+      "input": {
+        "action": "create",
+        "key": "burned",
+        "name": "different",
+        "reads": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "writes": []
+      }
+    },
+    {
+      "error": "principal not found",
+      "input": {
+        "action": "rotate",
+        "key": "missing",
+        "name": "missing"
+      }
+    },
+    {
+      "error": "idempotency key must not be empty",
+      "input": {
+        "action": "create",
+        "key": "  ",
+        "name": "empty-key",
+        "reads": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "writes": []
+      }
+    }
+  ],
+  "final_wrap": "rK2ur7CxsrO0tba3XnWFZRQZZdxa6wvPr8fk5W4DajF0p8XnLXkKltqxYQVdqL-MjKY8O9sykiVE7xSJ",
+  "initial_wrap": "ICEiIyQlJicoKSorfGFiCP6wu4z9xOwh-F92i6GTEaQQGGnvAx5SAs5GoE99KOxkIlfbZ-kOPMCSoiRp",
+  "principals": [
+    {
+      "deleted": true,
+      "enabled": false,
+      "name": "renamed",
+      "read_prefixes": [
+        "/public/"
+      ],
+      "revoked": true,
+      "roles": [
+        "reader"
+      ],
+      "updated_at": "2026-09-18T00:00:00Z",
+      "write_prefixes": []
+    },
+    {
+      "deleted": false,
+      "enabled": false,
+      "name": "sandbox",
+      "read_prefixes": [
+        "/"
+      ],
+      "revoked": true,
+      "roles": [
+        "reader"
+      ],
+      "updated_at": "2026-09-18T00:00:00Z",
+      "write_prefixes": []
+    },
+    {
+      "deleted": false,
+      "enabled": true,
+      "name": "second",
+      "read_prefixes": [
+        "/"
+      ],
+      "revoked": false,
+      "roles": [
+        "admin",
+        "reader"
+      ],
+      "updated_at": "2026-09-18T00:00:00Z",
+      "write_prefixes": [
+        "/"
+      ]
+    }
+  ],
+  "rows": {
+    "access_audit": [
+      {
+        "action": "principal.create",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"read_prefixes\": [\"/public/\"], \"roles\": [\"reader\"], \"write_prefixes\": []}",
+        "id": 1,
+        "target": "reader"
+      },
+      {
+        "action": "principal.rename",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"previous_name\": \"reader\"}",
+        "id": 2,
+        "target": "renamed"
+      },
+      {
+        "action": "principal.disable",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{}",
+        "id": 3,
+        "target": "renamed"
+      },
+      {
+        "action": "credential.revoke",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{}",
+        "id": 4,
+        "target": "renamed"
+      },
+      {
+        "action": "credential.rotate",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{}",
+        "id": 5,
+        "target": "renamed"
+      },
+      {
+        "action": "principal.enable",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{}",
+        "id": 6,
+        "target": "renamed"
+      },
+      {
+        "action": "credential.revoke",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{}",
+        "id": 7,
+        "target": "renamed"
+      },
+      {
+        "action": "principal.delete",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{}",
+        "id": 8,
+        "target": "renamed"
+      },
+      {
+        "action": "principal.create",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"read_prefixes\": [\"/\"], \"roles\": [\"admin\", \"reader\"], \"write_prefixes\": [\"/\"]}",
+        "id": 9,
+        "target": "second"
+      },
+      {
+        "action": "principal.disable",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{}",
+        "id": 10,
+        "target": "sandbox"
+      },
+      {
+        "action": "credential.revoke",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{}",
+        "id": 11,
+        "target": "sandbox"
+      },
+      {
+        "action": "principal.update",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "details_json": "{\"read_prefixes\": [\"/\"], \"roles\": [\"reader\"], \"write_prefixes\": []}",
+        "id": 12,
+        "target": "sandbox"
+      }
+    ],
+    "access_credentials": [
+      {
+        "created_at": "2026-09-18T00:00:00Z",
+        "principal_name": "renamed",
+        "revoked_at": "2026-09-18T00:00:00Z",
+        "token_digest": "80964a5ab9689b3b78406898021c674de52bb1b087a6cdc0d8c952f8f22e105e"
+      },
+      {
+        "created_at": "2026-09-18T00:00:00Z",
+        "principal_name": "sandbox",
+        "revoked_at": "2026-09-18T00:00:00Z",
+        "token_digest": "9dee222150db29a9fa3b112e19eaebfae8b769be60aff892e4698b4bddbf4687"
+      },
+      {
+        "created_at": "2026-09-18T00:00:00Z",
+        "principal_name": "second",
+        "revoked_at": null,
+        "token_digest": "9d030864d40390a9c3bbef2252aea3e609fc3dde9ae2c5bf3ccabd6791e6f443"
+      }
+    ],
+    "access_idempotency": [
+      {
+        "action": "principal.create",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "idempotency_key": "burned",
+        "target": "second"
+      },
+      {
+        "action": "principal.create",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "idempotency_key": "create-reader",
+        "target": "reader"
+      },
+      {
+        "action": "credential.rotate",
+        "actor": "admin",
+        "created_at": "2026-09-18T00:00:00Z",
+        "idempotency_key": "rotate-one",
+        "target": "renamed"
+      }
+    ],
+    "access_principals": [
+      {
+        "created_at": "2026-09-18T00:00:00Z",
+        "deleted": 1,
+        "enabled": 0,
+        "name": "renamed",
+        "read_prefixes_json": "[\"/public/\"]",
+        "revoked": 1,
+        "roles_json": "[\"reader\"]",
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes_json": "[]"
+      },
+      {
+        "created_at": "2026-09-18T00:00:00Z",
+        "deleted": 0,
+        "enabled": 0,
+        "name": "sandbox",
+        "read_prefixes_json": "[\"/\"]",
+        "revoked": 1,
+        "roles_json": "[\"reader\"]",
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes_json": "[]"
+      },
+      {
+        "created_at": "2026-09-18T00:00:00Z",
+        "deleted": 0,
+        "enabled": 1,
+        "name": "second",
+        "read_prefixes_json": "[\"/\"]",
+        "revoked": 0,
+        "roles_json": "[\"admin\", \"reader\"]",
+        "updated_at": "2026-09-18T00:00:00Z",
+        "write_prefixes_json": "[\"/\"]"
+      }
+    ]
+  }
+}

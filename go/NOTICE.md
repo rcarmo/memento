@@ -22,6 +22,10 @@ Packed/loose Git object and reference decoding uses MIT-licensed go-git v5.16.3 
 
 Control databases use `modernc.org/sqlite v1.38.2` (BSD-3-Clause wrapper, generated Go SQLite implementation; upstream SQLite is public domain) without CGo or native extensions. Transitive dependencies are pinned in `go.mod`/`go.sum`; final distribution licence bundling remains a packaging gate. Memento's migration SQL and compatibility routines retain the repository MIT licence.
 
+## Managed access cryptography
+
+Access-key wrapping uses Go's standard AES-GCM and HMAC/SHA-256 plus BSD-licensed `golang.org/x/crypto/scrypt v0.37.0`, matching the Python cryptography reference's persisted format. All crypto fixtures use explicitly synthetic keys/tokens. Runtime secrets remain caller-supplied and are never committed.
+
 ## SentencePiece port (Apache-2.0)
 
 `sentencepiece/` is a modified Go port of the inference algorithms in [sentencepiece-rust 0.1.1](https://github.com/VoiceLessQ/sentencepiece-rust), itself based on Google's SentencePiece and Darts-clone read-side algorithms. The original Apache-2.0 licence is retained at `sentencepiece/licenses/Apache-2.0.txt`; this derived package is distributed under those terms, not relicensed as MIT by the repository's general notice.
