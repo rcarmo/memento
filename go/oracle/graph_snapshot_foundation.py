@@ -93,7 +93,9 @@ def fixtures() -> dict[str, Any]:
                 )
             ]
 
+        overview = service.overview(policy=policy).model_dump(mode="json")
         return {
+            "overview": overview,
             "revisions": revisions,
             "edges": edges,
             "nodes": nodes,

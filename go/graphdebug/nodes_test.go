@@ -161,6 +161,9 @@ func TestNodesFixture(t *testing.T) {
 	var fixture struct {
 		Nodes       []Node `json:"nodes"`
 		ScopedNodes []Node `json:"scoped_nodes"`
+		Overview    struct {
+			Edges []Edge `json:"edges"`
+		} `json:"overview"`
 	}
 	raw, err := os.ReadFile("../testdata/parity/graph-snapshot-foundation.json")
 	if err != nil {
@@ -183,5 +186,9 @@ func TestNodesFixture(t *testing.T) {
 		a, _ := json.Marshal(scoped)
 		b, _ := json.Marshal(fixture.ScopedNodes)
 		t.Fatal(string(a), string(b))
+	}
+	overlays := OverlayEdges(scoped, "main", 10)
+	if len(overlays) != 1 || !reflect.DeepEqual(overlays[0], fixture.Overview.Edges[2]) {
+		t.Fatal(overlays, fixture.Overview.Edges)
 	}
 }
