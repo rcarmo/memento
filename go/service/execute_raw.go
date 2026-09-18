@@ -9,8 +9,14 @@ import (
 	"github.com/rcarmo/memento/go/execute"
 )
 
+// RawExecuteTemplate validates immutable composition once; Bind adds only the
+// trusted request identity/session for one admitted plan.
+type RawExecuteTemplate struct {
+	jobs    *Jobs
+	allowed map[string]bool
+}
+
 // RawExecuteDispatcher invokes only executor operations after outer admission.
-// The caller captures trusted identity/session before constructing it.
 type RawExecuteDispatcher struct {
 	jobs      *Jobs
 	principal access.Principal
@@ -18,9 +24,9 @@ type RawExecuteDispatcher struct {
 	allowed   map[string]bool
 }
 
-func NewRawExecuteDispatcher(jobs *Jobs, principal access.Principal, session *string, operations []string) (*RawExecuteDispatcher, error) {
-	if jobs == nil || jobs.Identity == nil || jobs.Controls == nil || principal.Name == "" {
-		return nil, errors.New("raw execute dispatcher requires composed jobs and principal")
+func NewRawExecuteTemplate(jobs *Jobs, operations []string) (*RawExecuteTemplate, error) {
+	if jobs == nil || jobs.Identity == nil || jobs.Controls == nil {
+		return nil, errors.New("raw execute template requires composed jobs")
 	}
 	allowed := map[string]bool{}
 	for _, operation := range operations {
@@ -32,7 +38,20 @@ func NewRawExecuteDispatcher(jobs *Jobs, principal access.Principal, session *st
 	if len(allowed) == 0 {
 		return nil, errors.New("raw execute dispatcher requires operations")
 	}
-	return &RawExecuteDispatcher{jobs: jobs, principal: principal, session: session, allowed: allowed}, nil
+	return &RawExecuteTemplate{jobs: jobs, allowed: allowed}, nil
+}
+func (t *RawExecuteTemplate) Bind(principal access.Principal, session *string) (*RawExecuteDispatcher, error) {
+	if principal.Name == "" {
+		return nil, errors.New("raw execute dispatcher requires principal")
+	}
+	return &RawExecuteDispatcher{jobs: t.jobs, principal: principal, session: session, allowed: t.allowed}, nil
+}
+func NewRawExecuteDispatcher(jobs *Jobs, principal access.Principal, session *string, operations []string) (*RawExecuteDispatcher, error) {
+	template, err := NewRawExecuteTemplate(jobs, operations)
+	if err != nil {
+		return nil, err
+	}
+	return template.Bind(principal, session)
 }
 
 func (d *RawExecuteDispatcher) Dispatch(ctx context.Context, operation string, args map[string]any) (execute.DispatchResult, error) {

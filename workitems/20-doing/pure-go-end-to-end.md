@@ -57,6 +57,7 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 
 ### 2026-09-18
 
+* RawExecuteTemplate now validates/snapshots the operation allowlist once and binds only principal/session per admitted request, avoiding endpoint map rebuilding. Duplicate/empty/missing operations, invalid composition/identity, sixteen binds and twenty race repetitions pass with zero uncovered service statements.
 * Added immutable execute.Factory: embedded planner/argument contracts construct once and are shared read-only by per-request runners; dispatch and clock remain request-local and injectable. Constructor failures, thirty races and 10,000 fuzz cases pass with zero uncovered statements. This clears the endpoint composition API mismatch.
 * Raw nested execute dispatch now accepts captured principal/session values and an exact operation allowlist, uses fresh per-operation DB/policy/locking state without worker re-entry, and converts through the ordered envelope adapter. Constructor/unknown/duplicate guards, real read, purge policy branches and twenty races pass; service has zero uncovered statements. Endpoint composition/registration remains next.
 * `Workers.Execute` now owns outer plan admission. One shielded plan blocks ordinary calls, permits memory_operation_get reconciliation, returns indeterminate on timeout while detached work continues and clears admission only after completion. Cancellation/nil-work and thirty focused race repetitions pass; service retains zero uncovered statements. Raw nested callbacks and registration remain next.

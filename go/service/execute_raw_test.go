@@ -18,7 +18,20 @@ func TestRawExecuteDispatcherGuards(t *testing.T) {
 			t.Fatal(tc)
 		}
 	}
-	dispatcher, err := NewRawExecuteDispatcher(j, principal, nil, []string{"read", "read", "purge"})
+	template, err := NewRawExecuteTemplate(j, []string{"read", "read", "purge"})
+	if err != nil || len(template.allowed) != 2 {
+		t.Fatal(template, err)
+	}
+	if _, err = template.Bind(access.Principal{}, nil); err == nil {
+		t.Fatal("principal")
+	}
+	for range 16 {
+		bound, err := template.Bind(principal, nil)
+		if err != nil || bound.allowed["read"] != true {
+			t.Fatal(bound, err)
+		}
+	}
+	dispatcher, err := template.Bind(principal, nil)
 	if err != nil || len(dispatcher.allowed) != 2 {
 		t.Fatal(dispatcher, err)
 	}
