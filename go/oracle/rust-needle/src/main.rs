@@ -19,6 +19,41 @@ fn main() {
         return;
     }
     let model=memento_needle::Model::from_bytes(&bytes).unwrap();
+    if std::env::args().nth(2).as_deref() == Some("corpus") {
+        let tokenizer_path=std::env::args().nth(3).expect("tokenizer required");
+        let corpus_path=std::env::args().nth(4).expect("corpus required");
+        let corpus=std::fs::read(corpus_path).unwrap();
+        assert_eq!(hex(&Sha256::digest(&corpus)),"9ffeb303574fa6bd24718adc42c7a3d8c4632e3cf78685d14886c7b24b2ddca9");
+        let tokenizer=memento_needle::NeedleTokenizer::from_model_path(tokenizer_path).unwrap();
+        let router=memento_needle::RouterModel::from_ndl(&model).unwrap();
+        let mut cases=Vec::new();
+        let mut tools=String::new();
+        for line in String::from_utf8(corpus).unwrap().lines() {
+            let row:serde_json::Value=serde_json::from_str(line).unwrap();
+            let query=row["query"].as_str().unwrap();let contract=row["tools"].as_str().unwrap();
+            if tools.is_empty(){tools=contract.to_string();}assert_eq!(tools,contract);
+            let result=router.generate(&tokenizer,query,contract,memento_needle::GenerationOptions{max_gen_len:128,max_enc_len:1024,constrained:true},None);
+            cases.push(match result {Ok(output)=>json!({"query":query,"output":output,"error":null}),Err(error)=>json!({"query":query,"output":null,"error":error.to_string()})});
+            if cases.len()%30==0{eprintln!("oracle completed {} cases",cases.len());}
+        }
+        println!("{}",serde_json::to_string_pretty(&json!({"model_sha256":hex(&Sha256::digest(&bytes)),"corpus_sha256":"9ffeb303574fa6bd24718adc42c7a3d8c4632e3cf78685d14886c7b24b2ddca9","tools_json":tools,"cases":cases})).unwrap());
+        return;
+    }
+    if std::env::args().nth(2).as_deref() == Some("generate") {
+        let tokenizer_path=std::env::args().nth(3).expect("tokenizer required");
+        let tools_path=std::env::args().nth(4).expect("tool contract required");
+        let tools=std::fs::read_to_string(tools_path).unwrap();
+        let tokenizer=memento_needle::NeedleTokenizer::from_model_path(tokenizer_path).unwrap();
+        let router=memento_needle::RouterModel::from_ndl(&model).unwrap();
+        let mut cases=Vec::new();
+        for query in ["find Piclaw", "What is the current repository revision?", "show search paths for deployment", "read the title of /projects/piclaw.md", "What is the weather tomorrow?"] {
+            let mut checkpoints=Vec::new();let mut cp=|label: &'static str| {checkpoints.push(label);Ok(())};
+            let output=router.generate(&tokenizer,query,&tools,memento_needle::GenerationOptions::default(),Some(&mut cp)).unwrap();
+            cases.push(json!({"query":query,"output":output,"checkpoints":checkpoints}));
+        }
+        println!("{}",serde_json::to_string_pretty(&json!({"model_sha256":hex(&Sha256::digest(&bytes)),"tools_json":tools,"cases":cases})).unwrap());
+        return;
+    }
     let mut tensors=Vec::new();
     for name in model.tensor_names() {
         let t=model.tensor(name).unwrap();

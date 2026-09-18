@@ -4,7 +4,7 @@ title: End-to-end pure Go port with scalar correctness and full coverage
 status: doing
 priority: high
 created: 2026-09-17
-updated: 2026-09-17
+updated: 2026-09-18
 estimate: XL
 risk: high
 tags: [work-item, port, go, parity]
@@ -54,6 +54,11 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 * [ ] User-authorised deployment and complete validation before production replacement.
 
 ## Updates
+
+### 2026-09-18
+
+* Scalar Needle encoder/decoder, RoPE, grouped attention, KV caches, norms/gates and constrained decoding implemented. Local full corpus comparison matches 360/360 complete Rust output strings (1408.79 seconds), with synthetic branch/error/cancellation tests reaching 100% coverage. Native corpus CI added as a required gate; service routing expansion remains unported.
+* SentencePiece commit `727fe9f` passed native CI [35288453919](https://github.com/rcarmo/memento/actions/runs/35288453919). No SIMD/native runtime or production change.
 
 ### 2026-09-17
 

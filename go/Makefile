@@ -2,7 +2,7 @@ GO ?= go
 ORACLE_PYTHON ?= python3
 UMCP_REFERENCE ?=
 
-.PHONY: check test vet format-check build race cross oracle coverage fuzz model-test
+.PHONY: check test vet format-check build race cross oracle coverage fuzz model-test corpus-test
 check: format-check vet coverage build
 format-check:
 	@test -z "$$(gofmt -l $$(find . -name '*.go'))" || (echo 'Run gofmt before checking'; exit 1)
@@ -32,7 +32,10 @@ model-test:
 	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(GO) test ./gte -run TestRealGTEModel -count=1 -v
 	@test -n "$(NEEDLE_MODEL_PATH)" || (echo 'Set NEEDLE_MODEL_PATH to the digest-pinned NDL1 model'; exit 1)
 	@test -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Set NEEDLE_TOKENIZER_PATH to the pinned SentencePiece model'; exit 1)
-	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./needle -run 'TestRealNeedle(Model|Tokenizer)' -count=1 -v
+	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./needle -run 'TestRealNeedle(Model|Tokenizer|Generation)' -count=1 -v -timeout=10m
+corpus-test:
+	@test -n "$(NEEDLE_MODEL_PATH)" -a -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Corpus gate requires pinned Needle model and tokenizer paths'; exit 1)
+	CGO_ENABLED=0 NEEDLE_FULL_CORPUS=1 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./needle -run TestRealNeedleCorpus -count=1 -v -timeout=80m
 build:
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-go ./cmd/memento-go
 race:
