@@ -8,6 +8,7 @@ import (
 	"io"
 
 	"github.com/rcarmo/memento/go/access"
+	"github.com/rcarmo/memento/go/assets"
 	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/internal/pyjson"
 	"github.com/rcarmo/memento/go/repository"
@@ -22,6 +23,7 @@ type ProposalControls struct {
 	Queue            ProposalQueue
 	Random           io.Reader
 	DerivedIndexPath string
+	Staging          *assets.StagingStore
 	MaxConceptBytes  int
 	DerivedUpdate    repository.DerivedUpdateCallback
 	// ChangedConcepts is optional hot-working-memory tracking. Core queue refresh

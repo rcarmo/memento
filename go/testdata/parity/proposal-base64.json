@@ -1,0 +1,398 @@
+[
+  {
+    "expected": "",
+    "input": ""
+  },
+  {
+    "error": true,
+    "input": "="
+  },
+  {
+    "error": true,
+    "input": "=="
+  },
+  {
+    "error": true,
+    "input": "==="
+  },
+  {
+    "error": true,
+    "input": "===="
+  },
+  {
+    "error": true,
+    "input": "a"
+  },
+  {
+    "error": true,
+    "input": "\n"
+  },
+  {
+    "error": true,
+    "input": "\r"
+  },
+  {
+    "error": true,
+    "input": " "
+  },
+  {
+    "error": true,
+    "input": "\t"
+  },
+  {
+    "error": true,
+    "input": "=a"
+  },
+  {
+    "error": true,
+    "input": "Z"
+  },
+  {
+    "error": true,
+    "input": "Z="
+  },
+  {
+    "error": true,
+    "input": "Z=="
+  },
+  {
+    "error": true,
+    "input": "Z==="
+  },
+  {
+    "error": true,
+    "input": "Z===="
+  },
+  {
+    "error": true,
+    "input": "Za"
+  },
+  {
+    "error": true,
+    "input": "Z\n"
+  },
+  {
+    "error": true,
+    "input": "Z\r"
+  },
+  {
+    "error": true,
+    "input": "Z "
+  },
+  {
+    "error": true,
+    "input": "Z\t"
+  },
+  {
+    "error": true,
+    "input": "Z=a"
+  },
+  {
+    "error": true,
+    "input": "Zg"
+  },
+  {
+    "error": true,
+    "input": "Zg="
+  },
+  {
+    "expected": "Zg==",
+    "input": "Zg=="
+  },
+  {
+    "error": true,
+    "input": "Zg==="
+  },
+  {
+    "error": true,
+    "input": "Zg===="
+  },
+  {
+    "error": true,
+    "input": "Zga"
+  },
+  {
+    "error": true,
+    "input": "Zg\n"
+  },
+  {
+    "error": true,
+    "input": "Zg\r"
+  },
+  {
+    "error": true,
+    "input": "Zg "
+  },
+  {
+    "error": true,
+    "input": "Zg\t"
+  },
+  {
+    "error": true,
+    "input": "Zg=a"
+  },
+  {
+    "error": true,
+    "input": "Zg="
+  },
+  {
+    "expected": "Zg==",
+    "input": "Zg=="
+  },
+  {
+    "error": true,
+    "input": "Zg==="
+  },
+  {
+    "error": true,
+    "input": "Zg===="
+  },
+  {
+    "error": true,
+    "input": "Zg====="
+  },
+  {
+    "error": true,
+    "input": "Zg=a"
+  },
+  {
+    "error": true,
+    "input": "Zg=\n"
+  },
+  {
+    "error": true,
+    "input": "Zg=\r"
+  },
+  {
+    "error": true,
+    "input": "Zg= "
+  },
+  {
+    "error": true,
+    "input": "Zg=\t"
+  },
+  {
+    "error": true,
+    "input": "Zg==a"
+  },
+  {
+    "expected": "Zg==",
+    "input": "Zg=="
+  },
+  {
+    "error": true,
+    "input": "Zg==="
+  },
+  {
+    "error": true,
+    "input": "Zg===="
+  },
+  {
+    "error": true,
+    "input": "Zg====="
+  },
+  {
+    "error": true,
+    "input": "Zg======"
+  },
+  {
+    "error": true,
+    "input": "Zg==a"
+  },
+  {
+    "error": true,
+    "input": "Zg==\n"
+  },
+  {
+    "error": true,
+    "input": "Zg==\r"
+  },
+  {
+    "error": true,
+    "input": "Zg== "
+  },
+  {
+    "error": true,
+    "input": "Zg==\t"
+  },
+  {
+    "error": true,
+    "input": "Zg===a"
+  },
+  {
+    "expected": "Zm8=",
+    "input": "Zm8="
+  },
+  {
+    "error": true,
+    "input": "Zm8=="
+  },
+  {
+    "error": true,
+    "input": "Zm8==="
+  },
+  {
+    "error": true,
+    "input": "Zm8===="
+  },
+  {
+    "error": true,
+    "input": "Zm8====="
+  },
+  {
+    "error": true,
+    "input": "Zm8=a"
+  },
+  {
+    "error": true,
+    "input": "Zm8=\n"
+  },
+  {
+    "error": true,
+    "input": "Zm8=\r"
+  },
+  {
+    "error": true,
+    "input": "Zm8= "
+  },
+  {
+    "error": true,
+    "input": "Zm8=\t"
+  },
+  {
+    "error": true,
+    "input": "Zm8==a"
+  },
+  {
+    "expected": "Zm9v",
+    "input": "Zm9v"
+  },
+  {
+    "error": true,
+    "input": "Zm9v="
+  },
+  {
+    "error": true,
+    "input": "Zm9v=="
+  },
+  {
+    "error": true,
+    "input": "Zm9v==="
+  },
+  {
+    "error": true,
+    "input": "Zm9v===="
+  },
+  {
+    "error": true,
+    "input": "Zm9va"
+  },
+  {
+    "error": true,
+    "input": "Zm9v\n"
+  },
+  {
+    "error": true,
+    "input": "Zm9v\r"
+  },
+  {
+    "error": true,
+    "input": "Zm9v "
+  },
+  {
+    "error": true,
+    "input": "Zm9v\t"
+  },
+  {
+    "error": true,
+    "input": "Zm9v=a"
+  },
+  {
+    "expected": "Zg==",
+    "input": "Zh=="
+  },
+  {
+    "error": true,
+    "input": "Zh==="
+  },
+  {
+    "error": true,
+    "input": "Zh===="
+  },
+  {
+    "error": true,
+    "input": "Zh====="
+  },
+  {
+    "error": true,
+    "input": "Zh======"
+  },
+  {
+    "error": true,
+    "input": "Zh==a"
+  },
+  {
+    "error": true,
+    "input": "Zh==\n"
+  },
+  {
+    "error": true,
+    "input": "Zh==\r"
+  },
+  {
+    "error": true,
+    "input": "Zh== "
+  },
+  {
+    "error": true,
+    "input": "Zh==\t"
+  },
+  {
+    "error": true,
+    "input": "Zh===a"
+  },
+  {
+    "error": true,
+    "input": "💀"
+  },
+  {
+    "error": true,
+    "input": "💀="
+  },
+  {
+    "error": true,
+    "input": "💀=="
+  },
+  {
+    "error": true,
+    "input": "💀==="
+  },
+  {
+    "error": true,
+    "input": "💀===="
+  },
+  {
+    "error": true,
+    "input": "💀a"
+  },
+  {
+    "error": true,
+    "input": "💀\n"
+  },
+  {
+    "error": true,
+    "input": "💀\r"
+  },
+  {
+    "error": true,
+    "input": "💀 "
+  },
+  {
+    "error": true,
+    "input": "💀\t"
+  },
+  {
+    "error": true,
+    "input": "💀=a"
+  }
+]

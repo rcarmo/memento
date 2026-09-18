@@ -1,0 +1,2864 @@
+[
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "67a672811791227ba7c18251bce8cf6ca913dccc32fcff3b1e9bab159911d0f9",
+          "patch_json": "{\"archival_impact\": [], \"changes\": []}",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [],
+          "conflicts": [],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "empty",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "21b028776d40c69b93ee2244971217738c39f0f918471927e2512321db470bf0",
+          "patch_json": "{\"archival_impact\": [], \"changes\": [{\"aliases\": [], \"body\": \"body\", \"concept_type\": \"concept\", \"description\": null, \"kind\": \"create\", \"path\": \"/new.md\", \"tags\": [], \"title\": \"New\"}]}",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "body": "body",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/new.md",
+        "title": "New"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "aliases": [],
+              "body": "body",
+              "concept_type": "concept",
+              "description": null,
+              "kind": "create",
+              "path": "/new.md",
+              "tags": [],
+              "title": "New"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "--- a/new.md\n+++ b/new.md\n@@ -0,0 +1,15 @@\n+---\n+schema_version: 1\n+id: <generated>\n+type: concept\n+title: New\n+status: active\n+aliases: []\n+tags: []\n+source_refs: []\n+supersedes: []\n+created_at: '2026-01-01T00:00:00Z'\n+updated_at: '2026-01-01T00:00:00Z'\n+updated_by: <proposal>\n+---\n+body\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "create",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "d72cc8ed46030be2456c5fa9fd45d9476ad962033cf3fc28c8c62a9f5d89c4df",
+          "patch_json": "{\"archival_impact\": [], \"changes\": [{\"aliases\": null, \"body\": \"new\", \"description\": null, \"kind\": \"patch\", \"path\": \"/a.md\", \"status\": null, \"tags\": null, \"title\": null}]}",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "body": "new",
+        "kind": "patch",
+        "path": "/a.md"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "aliases": null,
+              "body": "new",
+              "description": null,
+              "kind": "patch",
+              "path": "/a.md",
+              "status": null,
+              "tags": null,
+              "title": null
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "--- a/a.md\n+++ b/a.md\n@@ -13,4 +13,4 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-body\n+new\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "patch",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "old",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "21b028776d40c69b93ee2244971217738c39f0f918471927e2512321db470bf0",
+          "patch_json": "{\"archival_impact\": [], \"changes\": [{\"aliases\": [], \"body\": \"body\", \"concept_type\": \"concept\", \"description\": null, \"kind\": \"create\", \"path\": \"/new.md\", \"tags\": [], \"title\": \"New\"}]}",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "old",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "body": "body",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/new.md",
+        "title": "New"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "old",
+          "changes": [
+            {
+              "aliases": [],
+              "body": "body",
+              "concept_type": "concept",
+              "description": null,
+              "kind": "create",
+              "path": "/new.md",
+              "tags": [],
+              "title": "New"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "--- a/new.md\n+++ b/new.md\n@@ -0,0 +1,15 @@\n+---\n+schema_version: 1\n+id: <generated>\n+type: concept\n+title: New\n+status: active\n+aliases: []\n+tags: []\n+source_refs: []\n+supersedes: []\n+created_at: '2026-01-01T00:00:00Z'\n+updated_at: '2026-01-01T00:00:00Z'\n+updated_by: <proposal>\n+---\n+body\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "stale",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "body": "body",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/new.md",
+        "title": "New"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "reader"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal author lacks role: proposer",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "reader",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "body": "body",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/new.md",
+        "title": "New"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "response": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal author cannot write /new.md",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "denied",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "body": "body",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/new.md",
+        "title": "New"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "serialised concept exceeds max_concept_bytes",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "size",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "kind": "unknown"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "unsupported change kind: unknown",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "invalid",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [
+        {
+          "asset_id": "00000000-0000-4000-8000-000000000001",
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T00:00:00Z",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "version": "1.0.0"
+        }
+      ],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "790c6dd945122bba0bcdbeb05c6cd7cee53662d6daea95588dc53a1f470b075a",
+          "patch_json": "{\"archival_impact\": [], \"changes\": [{\"asset_id\": \"00000000-0000-4000-8000-000000000001\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {\"entries\": [{\"media_type\": \"text/markdown\", \"path\": \"SKILL.md\", \"sha256\": \"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\", \"size\": 4}], \"file_count\": 1, \"sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\", \"total_uncompressed_bytes\": 4}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\"}]}",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "asset_id": "00000000-0000-4000-8000-000000000001",
+              "asset_kind": "docs",
+              "kind": "attach_asset_pack",
+              "manifest": {
+                "entries": [
+                  {
+                    "media_type": "text/markdown",
+                    "path": "SKILL.md",
+                    "sha256": "230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5",
+                    "size": 4
+                  }
+                ],
+                "file_count": 1,
+                "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+                "total_uncompressed_bytes": 4
+              },
+              "path": "/a.md",
+              "version": "1.0.0",
+              "zip_sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "attach docs asset 1.0.0 (1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5) to /a.md\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "inline",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "zip_base64 must be valid base64",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "padding",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "Zm9v\n"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "zip_base64 must be valid base64",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "bad-base64",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "attach_asset_pack requires exactly one of zip_base64 or staged_asset_id",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "two-inputs",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "attach_asset_pack requires exactly one of zip_base64 or staged_asset_id",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "no-input",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      },
+      {
+        "kind": "rename",
+        "new_path": "/a.md",
+        "path": "/other.md"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "rename and asset attachment must use separate proposals",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "rename",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/missing.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "path does not exist: /missing.md",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "missing-body",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [
+        {
+          "asset_id": "00000000-0000-4000-8000-000000000001",
+          "asset_kind": "skill",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T00:00:00Z",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "version": "1.0.0"
+        }
+      ],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "3f1338230f5a1ae45c3fc3c1b63c41b00ac6aa0545675848b2afb0cbdd434ee1",
+          "patch_json": "{\"archival_impact\": [], \"changes\": [{\"asset_id\": \"00000000-0000-4000-8000-000000000001\", \"asset_kind\": \"skill\", \"kind\": \"attach_asset_pack\", \"manifest\": {\"entries\": [{\"media_type\": \"text/markdown\", \"path\": \"SKILL.md\", \"sha256\": \"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\", \"size\": 4}], \"file_count\": 1, \"sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\", \"total_uncompressed_bytes\": 4}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\"}]}",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "skill",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "asset_id": "00000000-0000-4000-8000-000000000001",
+              "asset_kind": "skill",
+              "kind": "attach_asset_pack",
+              "manifest": {
+                "entries": [
+                  {
+                    "media_type": "text/markdown",
+                    "path": "SKILL.md",
+                    "sha256": "230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5",
+                    "size": 4
+                  }
+                ],
+                "file_count": 1,
+                "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+                "total_uncompressed_bytes": 4
+              },
+              "path": "/a.md",
+              "version": "1.0.0",
+              "zip_sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "attach skill asset 1.0.0 (1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5) to /a.md\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "skill",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "body": "body\n",
+        "kind": "patch",
+        "path": "/a.md"
+      },
+      {
+        "asset_kind": "skill",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "skill concept body must be canonical UTF-8 text with LF endings, no trailing whitespace and no final newline",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "skill-noncanonical",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "kind": "patch",
+        "path": "/a.md",
+        "tags": []
+      },
+      {
+        "asset_kind": "skill",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "skill asset concepts must include the 'skill' tag",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "skill-tag",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "skill",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVwancUnBQAAAAUAAAAIAAAAU0tJTEwubWR3cm9uZ1BLAQIUAxQAAAAAAAAAIVwancUnBQAAAAUAAAAIAAAAAAAAAAAAAACAAQAAAABTS0lMTC5tZFBLBQYAAAAAAQABADYAAAArAAAAAAA="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "root SKILL.md contents must exactly match supplied skill_md UTF-8 bytes",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "skill-body",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [
+        {
+          "asset_id": "00000000-0000-4000-8000-000000000001",
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T00:00:00Z",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "version": "1.0.0"
+        }
+      ],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "790c6dd945122bba0bcdbeb05c6cd7cee53662d6daea95588dc53a1f470b075a",
+          "patch_json": "{\"archival_impact\": [], \"changes\": [{\"asset_id\": \"00000000-0000-4000-8000-000000000001\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {\"entries\": [{\"media_type\": \"text/markdown\", \"path\": \"SKILL.md\", \"sha256\": \"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\", \"size\": 4}], \"file_count\": 1, \"sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\", \"total_uncompressed_bytes\": 4}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\"}]}",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "",
+          "consumed_at": "2026-09-18T00:00:00Z",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "consumed",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0"
+      }
+    ],
+    "has_staging": true,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "asset_id": "00000000-0000-4000-8000-000000000001",
+              "asset_kind": "docs",
+              "kind": "attach_asset_pack",
+              "manifest": {
+                "entries": [
+                  {
+                    "media_type": "text/markdown",
+                    "path": "SKILL.md",
+                    "sha256": "230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5",
+                    "size": 4
+                  }
+                ],
+                "file_count": 1,
+                "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+                "total_uncompressed_bytes": 4
+              },
+              "path": "/a.md",
+              "version": "1.0.0",
+              "zip_sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "attach docs asset 1.0.0 (1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5) to /a.md\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "staged",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "other",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "other",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0"
+      }
+    ],
+    "has_staging": true,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "staged asset not found",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "staged-denied",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "2.0.0"
+      }
+    ],
+    "has_staging": true,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "staged asset kind/version does not match proposal",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "staged-version",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2000-01-01T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "expired",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2000-01-01T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0"
+      }
+    ],
+    "has_staging": true,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "staged asset is not ready: expired",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "staged-expired",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "asset staging is unavailable",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "staged-unavailable",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0"
+      },
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0"
+      }
+    ],
+    "has_staging": true,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "staged asset could not be consumed",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "staged-twice",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [
+        {
+          "asset_id": "old-asset",
+          "asset_kind": "docs",
+          "blob_bytes": "b2xk",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T06:44:19Z",
+          "manifest_json": "{}",
+          "media_type": "application/zip",
+          "proposal_id": "existing",
+          "sha256": "digest",
+          "version": "1.0.0"
+        }
+      ],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": null,
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "old",
+          "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+          "patch_json": "{\"changes\": []}",
+          "proposal_id": "existing",
+          "rationale": null,
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "updated"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [
+        {
+          "asset_id": "old-asset",
+          "asset_kind": "docs",
+          "blob_bytes": "b2xk",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T06:44:19Z",
+          "manifest_json": "{}",
+          "media_type": "application/zip",
+          "proposal_id": "existing",
+          "sha256": "digest",
+          "version": "1.0.0"
+        }
+      ],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": null,
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "old",
+          "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+          "patch_json": "{\"changes\": []}",
+          "proposal_id": "existing",
+          "rationale": null,
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "updated"
+        }
+      ],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "conflict",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "active asset proposal already exists: /a.md docs 1.0.0",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "existing",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [
+        {
+          "asset_id": "old-asset",
+          "asset_kind": "docs",
+          "blob_bytes": "b2xk",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T06:44:19Z",
+          "manifest_json": "{}",
+          "media_type": "application/zip",
+          "proposal_id": "existing",
+          "sha256": "digest",
+          "version": "1.0.0"
+        },
+        {
+          "asset_id": "00000000-0000-4000-8000-000000000001",
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T00:00:00Z",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "version": "1.0.0"
+        }
+      ],
+      "proposal_events": [
+        {
+          "action": "repository_advanced",
+          "actor": "system",
+          "base_revision": "old",
+          "created_at": "2026-09-18T00:00:00Z",
+          "details_json": "{\"conflicts\": []}",
+          "event_id": 1,
+          "from_status": "submitted",
+          "proposal_id": "existing",
+          "repo_revision": "main",
+          "to_status": "needs_rebase"
+        }
+      ],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "old",
+          "client_instance_id": null,
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "old",
+          "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+          "patch_json": "{\"changes\": []}",
+          "proposal_id": "existing",
+          "rationale": null,
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "needs_rebase",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "790c6dd945122bba0bcdbeb05c6cd7cee53662d6daea95588dc53a1f470b075a",
+          "patch_json": "{\"archival_impact\": [], \"changes\": [{\"asset_id\": \"00000000-0000-4000-8000-000000000001\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {\"entries\": [{\"media_type\": \"text/markdown\", \"path\": \"SKILL.md\", \"sha256\": \"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\", \"size\": 4}], \"file_count\": 1, \"sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\", \"total_uncompressed_bytes\": 4}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\"}]}",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [
+        {
+          "asset_id": "old-asset",
+          "asset_kind": "docs",
+          "blob_bytes": "b2xk",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T06:44:19Z",
+          "manifest_json": "{}",
+          "media_type": "application/zip",
+          "proposal_id": "existing",
+          "sha256": "digest",
+          "version": "1.0.0"
+        }
+      ],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "old",
+          "client_instance_id": null,
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "old",
+          "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+          "patch_json": "{\"changes\": []}",
+          "proposal_id": "existing",
+          "rationale": null,
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "updated"
+        }
+      ],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "asset_id": "00000000-0000-4000-8000-000000000001",
+              "asset_kind": "docs",
+              "kind": "attach_asset_pack",
+              "manifest": {
+                "entries": [
+                  {
+                    "media_type": "text/markdown",
+                    "path": "SKILL.md",
+                    "sha256": "230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5",
+                    "size": 4
+                  }
+                ],
+                "file_count": 1,
+                "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+                "total_uncompressed_bytes": 4
+              },
+              "path": "/a.md",
+              "version": "1.0.0",
+              "zip_sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "attach docs asset 1.0.0 (1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5) to /a.md\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "existing-stale",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [
+        {
+          "asset_id": "old-asset",
+          "asset_kind": "docs",
+          "blob_bytes": "b2xk",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T06:44:19Z",
+          "manifest_json": "{}",
+          "media_type": "application/zip",
+          "proposal_id": "existing",
+          "sha256": "digest",
+          "version": "1.0.0"
+        },
+        {
+          "asset_id": "00000000-0000-4000-8000-000000000001",
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T00:00:00Z",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "version": "1.0.0"
+        }
+      ],
+      "proposal_events": [
+        {
+          "action": "expired",
+          "actor": "system",
+          "base_revision": "main",
+          "created_at": "2026-09-18T00:00:00Z",
+          "details_json": "{\"conflicts\": []}",
+          "event_id": 1,
+          "from_status": "submitted",
+          "proposal_id": "existing",
+          "repo_revision": "main",
+          "to_status": "expired"
+        }
+      ],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": null,
+          "created_at": "created",
+          "expires_at": "2000-01-01T00:00:00Z",
+          "intent": "old",
+          "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+          "patch_json": "{\"changes\": []}",
+          "proposal_id": "existing",
+          "rationale": null,
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "expired",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "790c6dd945122bba0bcdbeb05c6cd7cee53662d6daea95588dc53a1f470b075a",
+          "patch_json": "{\"archival_impact\": [], \"changes\": [{\"asset_id\": \"00000000-0000-4000-8000-000000000001\", \"asset_kind\": \"docs\", \"kind\": \"attach_asset_pack\", \"manifest\": {\"entries\": [{\"media_type\": \"text/markdown\", \"path\": \"SKILL.md\", \"sha256\": \"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\", \"size\": 4}], \"file_count\": 1, \"sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\", \"total_uncompressed_bytes\": 4}, \"path\": \"/a.md\", \"version\": \"1.0.0\", \"zip_sha256\": \"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\"}]}",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [
+        {
+          "asset_id": "old-asset",
+          "asset_kind": "docs",
+          "blob_bytes": "b2xk",
+          "concept_path": "/a.md",
+          "created_at": "2026-09-18T06:44:19Z",
+          "manifest_json": "{}",
+          "media_type": "application/zip",
+          "proposal_id": "existing",
+          "sha256": "digest",
+          "version": "1.0.0"
+        }
+      ],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": null,
+          "created_at": "created",
+          "expires_at": "2000-01-01T00:00:00Z",
+          "intent": "old",
+          "patch_hash": "c5965b4b973d3a7d9a0db8178b0d4a724b08bc5299f46630ad9f9a95e33c2752",
+          "patch_json": "{\"changes\": []}",
+          "proposal_id": "existing",
+          "rationale": null,
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "updated"
+        }
+      ],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "version": "1.0.0",
+        "zip_base64": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA=="
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "asset_id": "00000000-0000-4000-8000-000000000001",
+              "asset_kind": "docs",
+              "kind": "attach_asset_pack",
+              "manifest": {
+                "entries": [
+                  {
+                    "media_type": "text/markdown",
+                    "path": "SKILL.md",
+                    "sha256": "230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5",
+                    "size": 4
+                  }
+                ],
+                "file_count": 1,
+                "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+                "total_uncompressed_bytes": 4
+              },
+              "path": "/a.md",
+              "version": "1.0.0",
+              "zip_sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "2026-09-18T00:00:00Z",
+          "current_revision": "main",
+          "diff": "attach docs asset 1.0.0 (1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5) to /a.md\n",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "existing-expired",
+    "trigger": ""
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "body": "body",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/new.md",
+        "title": "New"
+      }
+    ],
+    "exception": "IntegrityError",
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "insert-failure",
+    "trigger": "CREATE TRIGGER blocked BEFORE INSERT ON proposals BEGIN SELECT RAISE(ABORT,'synthetic'); END"
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0"
+      }
+    ],
+    "exception": "IntegrityError",
+    "has_staging": true,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "asset-failure",
+    "trigger": "CREATE TRIGGER blocked BEFORE INSERT ON proposal_assets BEGIN SELECT RAISE(ABORT,'synthetic'); END"
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0"
+      }
+    ],
+    "exception": "IntegrityError",
+    "has_staging": true,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "consume-failure",
+    "trigger": "CREATE TRIGGER blocked BEFORE UPDATE ON staged_assets WHEN NEW.state='consumed' BEGIN SELECT RAISE(ABORT,'synthetic'); END"
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": [
+        {
+          "asset_kind": "docs",
+          "blob_bytes": "UEsDBBQAAAAAAAAAIVyyC6jbBAAAAAQAAAAIAAAAU0tJTEwubWRib2R5UEsBAhQDFAAAAAAAAAAhXLILqNsEAAAABAAAAAgAAAAAAAAAAAAAAIABAAAAAFNLSUxMLm1kUEsFBgAAAAABAAEANgAAACoAAAAAAA==",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "idempotency_key": "upload",
+          "manifest_json": "{\"entries\":[{\"path\":\"SKILL.md\",\"size\":4,\"media_type\":\"text/markdown\",\"sha256\":\"230d8358dc8e8890b4c58deeb62912ee2f20357ae92a5cc861b98e68fe31acb5\"}],\"sha256\":\"1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5\",\"total_uncompressed_bytes\":4,\"file_count\":1}",
+          "media_type": "application/zip",
+          "principal": "author",
+          "proposal_id": null,
+          "sha256": "1431e72e098723ef7f7de38ed926572388efbbb5c0ba7d7b4381cd53051755f5",
+          "staged_asset_id": "staged",
+          "state": "ready",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "changes": [
+      {
+        "asset_kind": "docs",
+        "kind": "attach_asset_pack",
+        "path": "/a.md",
+        "staged_asset_id": "staged",
+        "version": "1.0.0"
+      }
+    ],
+    "exception": "IntegrityError",
+    "has_staging": true,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "scenario": "commit-failure",
+    "trigger": "CREATE TABLE parent(id INTEGER PRIMARY KEY);CREATE TABLE child(id INTEGER REFERENCES parent(id) DEFERRABLE INITIALLY DEFERRED);CREATE TRIGGER blocked AFTER INSERT ON proposals BEGIN INSERT INTO child VALUES(1);END;"
+  },
+  {
+    "after": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [
+        {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-10-18T00:00:00Z",
+          "intent": "intent",
+          "patch_hash": "21b028776d40c69b93ee2244971217738c39f0f918471927e2512321db470bf0",
+          "patch_json": "{",
+          "proposal_id": "00000000-0000-4000-8000-000000000000",
+          "rationale": "why",
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      ],
+      "staged_assets": []
+    },
+    "base": "main",
+    "before": {
+      "proposal_assets": [],
+      "proposal_events": [],
+      "proposals": [],
+      "staged_assets": []
+    },
+    "changes": [
+      {
+        "body": "body",
+        "concept_type": "concept",
+        "kind": "create",
+        "path": "/new.md",
+        "title": "New"
+      }
+    ],
+    "has_staging": false,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ntags: [skill]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/"
+      ]
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "payload-failure",
+    "trigger": "CREATE TRIGGER blocked AFTER INSERT ON proposals BEGIN UPDATE proposals SET patch_json='{' WHERE proposal_id=NEW.proposal_id; END"
+  }
+]
