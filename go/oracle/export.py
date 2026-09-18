@@ -496,6 +496,7 @@ def main() -> None:
         "graph-diagnostics-extended.json",
         importlib.import_module("graph_diagnostics_extended").fixtures(),
     )
+    save("graph-refresh.json", importlib.import_module("graph_refresh").fixtures())
     (ROOT / "go/service/access_tools.json").write_text(
         json.dumps(access_tools["tools"], indent=2, sort_keys=True) + "\n"
     )

@@ -1,0 +1,63 @@
+{
+  "calls": [
+    [
+      "/repo",
+      "main",
+      [
+        "/a.md",
+        "/b.md"
+      ]
+    ],
+    [
+      "/repo",
+      "main",
+      null
+    ]
+  ],
+  "errors": {
+    "full_confirmation": "full embedding refresh requires confirmation",
+    "limit": "embedding refresh exceeds configured path limit",
+    "scope": "unsupported embedding refresh scope",
+    "selected_ids": "selected embedding refresh requires concept ids",
+    "unknown": "embedding refresh includes unknown memories"
+  },
+  "full": {
+    "alive": true,
+    "available": true,
+    "completed": 2,
+    "current_path": "/a.md",
+    "last_error": "boom",
+    "last_scope": "full",
+    "pause_reason": "pause",
+    "pending": false,
+    "queued_paths": 3,
+    "repository_revision": "main",
+    "running": true
+  },
+  "none": {
+    "alive": false,
+    "available": false,
+    "completed": 0,
+    "current_path": null,
+    "last_error": null,
+    "last_scope": null,
+    "pause_reason": null,
+    "pending": false,
+    "queued_paths": 0,
+    "repository_revision": null,
+    "running": false
+  },
+  "selected": {
+    "alive": true,
+    "available": true,
+    "completed": 2,
+    "current_path": "/a.md",
+    "last_error": "boom",
+    "last_scope": "selected",
+    "pause_reason": "pause",
+    "pending": false,
+    "queued_paths": 2,
+    "repository_revision": "main",
+    "running": true
+  }
+}
