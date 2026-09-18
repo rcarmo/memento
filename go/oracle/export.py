@@ -269,6 +269,8 @@ def main() -> None:
     proposal_submit = importlib.import_module("proposal_submit")
     save("proposal-submit.json", proposal_submit.fixtures())
     save("proposal-base64.json", proposal_submit.base64_fixtures())
+    proposal_get = importlib.import_module("proposal_get")
+    save("proposal-get.json", proposal_get.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )

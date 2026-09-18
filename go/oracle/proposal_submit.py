@@ -198,6 +198,8 @@ def fixtures() -> list[dict[str, Any]]:
                     ),
                 )
                 connection.commit()
+            connection.execute("UPDATE proposal_assets SET created_at='created'")
+            connection.commit()
             policy = authz.EffectivePolicy(
                 "author",
                 ("reader",) if scenario == "reader" else ("proposer",),

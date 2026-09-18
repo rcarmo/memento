@@ -1,0 +1,1946 @@
+[
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": false,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "body": "new",
+              "kind": "patch",
+              "path": "/a.md"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "created",
+          "current_revision": "main",
+          "diff": "--- a/a.md\n+++ b/a.md\n@@ -12,4 +12,4 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-body\n+new\n",
+          "expires_at": null,
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "proposal",
+          "rationale": null,
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "updated"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "detailed"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": false,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "asset_count": 1,
+          "assets": [
+            {
+              "asset_id": "asset",
+              "asset_kind": "docs",
+              "concept_body_matches_asset": false,
+              "concept_body_matching_entries": [],
+              "concept_path": "/a.md",
+              "file_count": 1,
+              "total_uncompressed_bytes": 11,
+              "version": "1.0.0",
+              "zip_sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9"
+            }
+          ],
+          "assets_truncated": false,
+          "author_principal": "author",
+          "base_revision": "main",
+          "change_count": 1,
+          "changes": [
+            {
+              "index": 0,
+              "kind": "patch",
+              "path": "/a.md"
+            }
+          ],
+          "changes_truncated": false,
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "conflicts_included": true,
+          "created_at": "created",
+          "current_revision": "main",
+          "expires_at": null,
+          "intent": "intent",
+          "intent_truncated": false,
+          "proposal_id": "proposal",
+          "reviewed_by": null,
+          "status": "submitted",
+          "updated_at": "updated"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "summary"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": false,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "body": "new",
+              "kind": "patch",
+              "path": "/a.md"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "created",
+          "current_revision": "main",
+          "diff": "--- a/a.md\n+++ b/a.md\n@@ -12,4 +12,4 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-body\n+new\n",
+          "expires_at": null,
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "proposal",
+          "rationale": null,
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "updated"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "unknown-view"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": false,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "main",
+          "changes": [
+            {
+              "body": "new",
+              "kind": "patch",
+              "path": "/a.md"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [],
+              "index": 0,
+              "status": "clean"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "created",
+          "current_revision": "main",
+          "diff": "Preview unavailable at current revision; inspect stored changes and conflicts.",
+          "expires_at": null,
+          "history": [],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "proposal",
+          "rationale": null,
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "submitted",
+          "target_hint": null,
+          "updated_at": "updated"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "missing-target"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": false,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "frontmatter validation failed",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "invalid-target"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "conflicted",
+      "updated_at": "2026-09-18T00:00:00Z"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": false,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "data": {
+        "proposal": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "archival_impact": [],
+          "author_principal": "author",
+          "base_revision": "base",
+          "changes": [
+            {
+              "body": "new",
+              "kind": "patch",
+              "path": "/a.md"
+            }
+          ],
+          "conflicts": [
+            {
+              "conflicting_paths": [
+                "/a.md"
+              ],
+              "index": 0,
+              "status": "conflict"
+            }
+          ],
+          "consulted_concepts": [],
+          "contradictions": [],
+          "created_at": "created",
+          "current_revision": "main",
+          "diff": "--- a/a.md\n+++ b/a.md\n@@ -12,4 +12,4 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-body\n+new\n",
+          "expires_at": null,
+          "history": [
+            {
+              "action": "repository_advanced",
+              "actor": "system",
+              "base_revision": "base",
+              "created_at": "2026-09-18T00:00:00Z",
+              "details_json": "{\"conflicts\": [{\"conflicting_paths\": [\"/a.md\"], \"index\": 0, \"status\": \"conflict\"}]}",
+              "event_id": 1,
+              "from_status": "submitted",
+              "repo_revision": "main",
+              "to_status": "conflicted"
+            }
+          ],
+          "history_limit": 50,
+          "intent": "intent",
+          "proposal_id": "proposal",
+          "rationale": null,
+          "reciprocal_links": [],
+          "review_comment": null,
+          "reviewed_by": null,
+          "status": "conflicted",
+          "target_hint": null,
+          "updated_at": "2026-09-18T00:00:00Z"
+        }
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "stale"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": false,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "reader"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal author lacks role: proposer",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "reader"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": false,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal author lacks role: proposer",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "curator-only"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": false,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal author cannot read proposal proposal",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "denied"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": null,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "data": {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "concept_path": "/a.md",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/plain",
+              "path": "file.txt",
+              "sha256": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+              "size": 11
+            }
+          ],
+          "file_count": 1,
+          "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+          "total_uncompressed_bytes": 11
+        },
+        "media_type": "application/zip",
+        "proposal_id": "proposal",
+        "version": "1.0.0",
+        "zip_sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9"
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "metadata"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "data": {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "concept_path": "/a.md",
+        "file": {
+          "content": "hello",
+          "content_sha256": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+          "encoding": "utf-8",
+          "media_type": "text/plain",
+          "next_offset": 5,
+          "offset": 0,
+          "path": "file.txt",
+          "returned_bytes": 5,
+          "sha256": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+          "total_bytes": 11,
+          "truncated": true
+        },
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/plain",
+              "path": "file.txt",
+              "sha256": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+              "size": 11
+            }
+          ],
+          "file_count": 1,
+          "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+          "total_uncompressed_bytes": 11
+        },
+        "media_type": "application/zip",
+        "proposal_id": "proposal",
+        "version": "1.0.0",
+        "zip_sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9"
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "file"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyzNu37BgAAAAYAAAAIAAAAZmlsZS50eHRoZWxsb/9QSwECFAMUAAAAAAAAACFcszbt+wYAAAAGAAAACAAAAAAAAAAAAAAAgAEAAAAAZmlsZS50eHRQSwUGAAAAAAEAAQA2AAAALAAAAAAA",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":6,\"media_type\":\"text/plain\",\"sha256\":\"fcfe450961c66dc3321ab3417acb10afde0bf07b2042bd0eab11fd0a6facfded\"}],\"sha256\":\"0b52e743443bac7b96fdc5529b61325e47d96da14c9053944e115f789bfec694\",\"total_uncompressed_bytes\":6,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "0b52e743443bac7b96fdc5529b61325e47d96da14c9053944e115f789bfec694",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "data": {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "concept_path": "/a.md",
+        "file": {
+          "content": "hello",
+          "content_sha256": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+          "encoding": "utf-8",
+          "media_type": "text/plain",
+          "next_offset": 5,
+          "offset": 0,
+          "path": "file.txt",
+          "returned_bytes": 5,
+          "sha256": "fcfe450961c66dc3321ab3417acb10afde0bf07b2042bd0eab11fd0a6facfded",
+          "total_bytes": 6,
+          "truncated": true
+        },
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/plain",
+              "path": "file.txt",
+              "sha256": "fcfe450961c66dc3321ab3417acb10afde0bf07b2042bd0eab11fd0a6facfded",
+              "size": 6
+            }
+          ],
+          "file_count": 1,
+          "sha256": "0b52e743443bac7b96fdc5529b61325e47d96da14c9053944e115f789bfec694",
+          "total_uncompressed_bytes": 6
+        },
+        "media_type": "application/zip",
+        "proposal_id": "proposal",
+        "version": "1.0.0",
+        "zip_sha256": "0b52e743443bac7b96fdc5529b61325e47d96da14c9053944e115f789bfec694"
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "binary"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": -1,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "asset file offset must not be negative",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "offset"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 0,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "asset file limit must be between 1 and 262144",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "limit"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "missing",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "not_found",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "'asset file is not declared in the manifest'",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "missing-file"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "not_found",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "('proposal', 'missing')",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "missing-asset"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/private/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal author cannot read /private/a.md",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "stored-denied"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "bad-manifest"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAA=",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "asset manifest/ZIP digest mismatch",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "bad-sha"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAB0YW1wZXJlZA==",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": "file.txt",
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "asset digest/size mismatch",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "scenario": "bad-bytes"
+  },
+  {
+    "after": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "asset": {
+      "asset_id": "asset",
+      "asset_kind": "docs",
+      "blob_bytes": "UEsDBBQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAZmlsZS50eHRoZWxsbyB3b3JsZFBLAQIUAxQAAAAAAAAAIVyFEUoNCwAAAAsAAAAIAAAAAAAAAAAAAACAAQAAAABmaWxlLnR4dFBLBQYAAAAAAQABADYAAAAxAAAAAAB0YW1wZXJlZA==",
+      "concept_path": "/a.md",
+      "manifest_json": "{\"entries\":[{\"path\":\"file.txt\",\"size\":11,\"media_type\":\"text/plain\",\"sha256\":\"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9\"}],\"sha256\":\"6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9\",\"total_uncompressed_bytes\":11,\"file_count\":1}",
+      "media_type": "application/zip",
+      "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+      "version": "1.0.0"
+    },
+    "file": null,
+    "initial": "---\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n",
+    "is_asset": true,
+    "limit": 5,
+    "offset": 0,
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": []
+    },
+    "record": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": null,
+      "created_at": "created",
+      "expires_at": null,
+      "intent": "intent",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": null,
+      "review_comment": null,
+      "reviewed_by": null,
+      "status": "submitted",
+      "updated_at": "updated"
+    },
+    "response": {
+      "data": {
+        "asset_id": "asset",
+        "asset_kind": "docs",
+        "concept_path": "/a.md",
+        "manifest": {
+          "entries": [
+            {
+              "media_type": "text/plain",
+              "path": "file.txt",
+              "sha256": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+              "size": 11
+            }
+          ],
+          "file_count": 1,
+          "sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9",
+          "total_uncompressed_bytes": 11
+        },
+        "media_type": "application/zip",
+        "proposal_id": "proposal",
+        "version": "1.0.0",
+        "zip_sha256": "6fb4561e8b48ba2dbadeafb1183f109509af45056cd3420165ed0a7c7be30eb9"
+      },
+      "index_revision": "main",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "main",
+      "status": "success",
+      "warnings": []
+    },
+    "scenario": "metadata-bad-bytes"
+  }
+]
