@@ -15,7 +15,7 @@ func run(args []string, out, stderr io.Writer) int {
 		fmt.Fprintln(out, "memento-go development (compatibility baseline: 0.5.9; server not implemented)")
 		return 0
 	}
-	fmt.Fprintln(stderr, "memento-go: end-to-end port in progress; server and inference are not implemented; see docs/go-port/README.md")
+	fmt.Fprintln(stderr, "memento-go: end-to-end port in progress; MCP service is not implemented; inference is available only through memento-embed-go and library tests; see docs/go-port/README.md")
 	return 2
 }
 

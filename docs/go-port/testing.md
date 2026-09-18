@@ -15,7 +15,7 @@ make -C go fuzz
 make -C go cross
 ```
 
-The race detector's build needs cgo on the test runner; distributed binaries and normal test builds use `CGO_ENABLED=0`. Check runtime dependencies in packaging tests. Fuzzing starts with small bounded runs for CI and needs longer scheduled corpus runs as parsers/transports are ported. No untrusted fixture can trigger unbounded allocation or leak the daemon's resources.
+The race detector's build needs cgo on the test runner; distributed binaries and normal test builds use `CGO_ENABLED=0`. Check runtime dependencies in packaging tests. Fuzzing uses a fixed 10,000 generated executions per target with a separate 120-second safety timeout; this avoids a wall-clock shutdown race observed on a loaded native CI runner. Longer scheduled corpus runs are still required. Fuzzing starts with small bounded runs for CI and needs longer scheduled corpus runs as parsers/transports are ported. No untrusted fixture can trigger unbounded allocation or leak the daemon's resources.
 
 ## Reference generation
 
@@ -43,6 +43,7 @@ Current captures:
 * Progress fixtures emitted by both bases: absent token, message sanitisation/rune bounds, integer/float validation, large integer total/progress comparisons and errors. Concurrency tests cover request-ID/progress-group cancellation, duplicate-ID cleanup and isolated metadata.
 * Registry: 34 Memento operations, twenty tool-surface/model-option combinations, concrete argument schemas and the execute plan schema. These are forward references; they are not claimed as implemented discovery.
 * Rust vector helpers: finite/length errors, empty/dimension/zero-norm cases, scalar values and AXPY results.
+* Embedding framing: Rust-produced successful request/response headers and scalar payloads, short reads, invalid arguments, EOF, write/flush failures, oversized headers and nonfinite output. Test-only `go/oracle/check_worker.py` exercises the unchanged Python client against the Go executable and real public model. Malformed serde diagnostics and duplicate known fields remain explicitly incomplete, as do service worker/deadline/resource integration.
 * GTE: Rust-generated tokenizer fixtures across limits/Unicode, synthetic zero/one/two-layer model outputs and checkpoint sequences. The original Go tokenizer's bytewise UNK behaviour differs from Memento's Unicode fix; default Go-port tokenisation preserves the latter.
 * `make -C go model-test GTE_MODEL_PATH=/path/to/gte-small.gtemodel` is a required native CI step, not an optional skipped release gate. It verifies the model SHA, exact token IDs and five real-model outputs against Rust. Current explicit exploratory numeric gates are max absolute error <=1e-5, cosine >=0.999999 and unit norm error <=1e-5; observed local max error is <=1.2e-7. These are not bit-identical arithmetic or a complete retrieval corpus and need review before production compatibility is signed off.
 

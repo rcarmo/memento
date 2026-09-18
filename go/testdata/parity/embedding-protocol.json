@@ -1,0 +1,75 @@
+[
+  {
+    "header": {
+      "count": 0,
+      "dimensions": 2,
+      "error": null,
+      "id": null,
+      "method": "info",
+      "ok": true,
+      "payload_len": 0
+    },
+    "request": "{\"method\":\"info\"}",
+    "values": []
+  },
+  {
+    "header": {
+      "count": 0,
+      "dimensions": 2,
+      "error": null,
+      "id": "x",
+      "method": "info",
+      "ok": true,
+      "payload_len": 0
+    },
+    "request": "{\"method\":\"info\",\"id\":\"x\",\"ignored\":1}",
+    "values": []
+  },
+  {
+    "header": {
+      "count": 1,
+      "dimensions": 2,
+      "error": null,
+      "id": null,
+      "method": "embed",
+      "ok": true,
+      "payload_len": 8
+    },
+    "request": "{\"method\":\"embed\",\"text\":\"hello\",\"id\":null}",
+    "values": [
+      0.9701424837112427,
+      0.24253566563129425
+    ]
+  },
+  {
+    "header": {
+      "count": 2,
+      "dimensions": 2,
+      "error": null,
+      "id": "batch",
+      "method": "embed_batch",
+      "ok": true,
+      "payload_len": 16
+    },
+    "request": "{\"method\":\"embed_batch\",\"texts\":[\"a\",\"界\"],\"id\":\"batch\"}",
+    "values": [
+      0.9701424837112427,
+      0.24253560602664948,
+      0.9701424837112427,
+      0.24253560602664948
+    ]
+  },
+  {
+    "header": {
+      "count": 0,
+      "dimensions": 2,
+      "error": null,
+      "id": null,
+      "method": "embed_batch",
+      "ok": true,
+      "payload_len": 0
+    },
+    "request": "{\"method\":\"embed_batch\",\"texts\":[]}",
+    "values": []
+  }
+]

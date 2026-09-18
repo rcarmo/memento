@@ -57,6 +57,8 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 
 ### 2026-09-18
 
+* Added the Go embedding-worker executable and framed protocol, with Rust response fixtures, short/partial I/O, bounds and nonfinite-output tests. Unchanged Python client accepts five real GTE vectors and model identity; local coverage/race/fuzz/cross gates pass. Malformed JSON/duplicate-key fidelity and host worker integration remain incomplete.
+* Inference commit `e730023` CI stopped during timed vector fuzz shutdown (`context deadline exceeded`, no failing corpus input); ARM job cancelled before corpus completion. Replaced the five-second fuzz budget with 10,000 executions plus a separate safety timeout. Local full 360-case Needle match remains valid; native full-corpus verification must be rerun.
 * Scalar Needle encoder/decoder, RoPE, grouped attention, KV caches, norms/gates and constrained decoding implemented. Local full corpus comparison matches 360/360 complete Rust output strings (1408.79 seconds), with synthetic branch/error/cancellation tests reaching 100% coverage. Native corpus CI added as a required gate; service routing expansion remains unported.
 * SentencePiece commit `727fe9f` passed native CI [35288453919](https://github.com/rcarmo/memento/actions/runs/35288453919). No SIMD/native runtime or production change.
 

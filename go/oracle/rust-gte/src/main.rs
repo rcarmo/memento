@@ -45,6 +45,17 @@ fn main() {
                 cases.push(json!({"layers":layers,"texts":texts,"outputs":outputs,"checkpoints":checkpoints}));
             }
         }
+    } else if mode == "protocol" {
+        let mut bytes=b"GTE1".to_vec();for n in [104u32,2,0,1,2,4]{bytes.extend(n.to_le_bytes());}
+        for i in 0..104{let word=format!("t{i}");bytes.extend((word.len() as u16).to_le_bytes());bytes.extend(word.as_bytes());}
+        for i in 0..(104*2+4*2+2*2+2+2+2*2+2){bytes.extend(((i%7) as f32/10.0).to_le_bytes());}
+        let model=memento_gte::Model::from_bytes(&bytes).unwrap();
+        for text in [r#"{"method":"info"}"#,r#"{"method":"info","id":"x","ignored":1}"#,r#"{"method":"embed","text":"hello","id":null}"#,r#"{"method":"embed_batch","texts":["a","界"],"id":"batch"}"#,r#"{"method":"embed_batch","texts":[]}"#] {
+            let mut wire=(text.len() as u32).to_le_bytes().to_vec();wire.extend(text.as_bytes());
+            let request=memento_embed::read_request(&wire[..]).unwrap();let frame=memento_embed::handle_request(&model,request).unwrap();
+            let values:Vec<f32>=frame.payload.chunks_exact(4).map(|b|f32::from_le_bytes(b.try_into().unwrap())).collect();
+            cases.push(json!({"request":text,"header":frame.header,"values":values}));
+        }
     } else if mode == "real" {
         let path = std::env::args().nth(2).expect("real mode requires model path");
         let model = memento_gte::Model::from_path(path).unwrap();

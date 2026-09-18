@@ -29,7 +29,7 @@ The Go scaffold implements response-envelope constructors, scalar vector encodin
 
 The Needle NDL1 parser also loads the real model: all 31 tensors, all 8192 vocabulary entries, metadata and BF16-to-float32 hashes match Rust. Pure-Go SentencePiece encoding/decoding (BPE/Unigram, normalisation and byte fallback) and Needle's special-token rules pass synthetic and real tokenizer comparisons. Scalar Needle encoder/decoder, RoPE, grouped attention, KV caches, gated norms and constrained generation are now implemented. Five real generation cases match output/checkpoint sequences, and all 360 held-out queries match complete Rust output strings locally. Native corpus CI is a required gate; parser error-text fidelity, broader malformed/configuration cases and service integration remain open. The derived SentencePiece package retains its Apache-2.0 licence separately from Memento's MIT code.
 
-`memento-go version` reports that the port is incomplete. Other commands exit with an explicit error; there is no fake status server or placeholder inference.
+`memento-go version` reports that the service port is incomplete. Its server commands exit explicitly; there is no fake MCP status server. `build/go/memento-embed-go MODEL.gtemodel` is a working scalar framed embedding executable; the unchanged Python subprocess client accepts its output. It caps requests at 4 MiB (a deliberate safe difference from the old unbounded Rust reader), rejects nonfinite outputs rather than panicking, and does not yet match every malformed JSON diagnostic or duplicate-field behaviour.
 
 ```sh
 make -C go check  # format, vet, zero-uncovered-statement gate, CGO-free build

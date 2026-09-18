@@ -8,4 +8,5 @@ publish = false
 
 [dependencies]
 memento-gte = { path = "../../../rust/crates/memento-gte" }
+memento-embed = { path = "../../../rust/crates/memento-embed" }
 serde_json = "1"
