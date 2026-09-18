@@ -420,6 +420,35 @@ def main() -> None:
     (ROOT / "go/service/metadata_tools.json").write_text(
         json.dumps(metadata_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
     )
+    catalog = importlib.import_module("catalog")
+    catalog_fixtures = catalog.fixtures()
+    save("catalog.json", catalog_fixtures)
+    catalog_tool_fixtures = proposal_tools.fixtures(
+        names=[spec.tool_name for spec in registry.OPERATION_SPECS]
+    )
+    (ROOT / "go/service/catalog_tools.json").write_text(
+        json.dumps(catalog_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
+    )
+    (ROOT / "go/service/catalog_data.json").write_text(
+        json.dumps(
+            {
+                "operations": ops,
+                "contracts": catalog_fixtures["contracts"],
+                "operation_values": catalog_fixtures["operation_values"],
+                "workflow_values": catalog_fixtures["workflow_values"],
+                "workflows": catalog_fixtures["workflows"],
+                "execute_capable": catalog_fixtures["execute_capable"],
+                "limits": catalog_fixtures["limits"],
+                "resources": catalog_fixtures["resources"],
+                "templates": catalog_fixtures["templates"],
+                "prompts": catalog_fixtures["prompts"],
+                "prompt_description": catalog_fixtures["prompt_description"],
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
     # Runtime embeds only definitions for implemented tools, not test outcomes.
     (ROOT / "go/service/proposal_tools.json").write_text(
         json.dumps(proposal_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"

@@ -61,13 +61,13 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 		for _, parameter := range definition.Parameters {
 			kind := umcp.StringParam
 			switch parameter.Name {
-			case "confirm", "include_asset_metadata", "include_files":
+			case "confirm", "include_asset_metadata", "include_files", "execute", "stop_on_error":
 				kind = umcp.BooleanParam
 			case "limit", "offset", "depth", "keep", "version_limit", "file_limit":
 				kind = umcp.IntegerParam
-			case "match":
+			case "match", "plan":
 				kind = umcp.ObjectParam
-			case "changes", "selected_change_indexes", "tags", "aliases", "fields", "items":
+			case "changes", "selected_change_indexes", "tags", "aliases", "fields", "items", "operations", "returns":
 				kind = umcp.ArrayParam
 			}
 			parameters = append(parameters, umcp.Parameter{Name: parameter.Name, Types: []umcp.ParamType{kind}, HasDefault: !parameter.Required, Default: parameter.Default})
