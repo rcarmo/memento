@@ -59,6 +59,17 @@ def fixtures() -> dict[str, Any]:
             stale = module.publish_main_compare_and_swap(
                 paths, base_revision=bootstrap.revision, new_revision=bootstrap.revision
             )
+            materialized = module.materialize_current_checkout(paths, revision=staged.revision)
+            checkout = {}
+            for item in sorted(materialized.path.rglob("*")):
+                relative = item.relative_to(materialized.path).as_posix()
+                if item.is_symlink():
+                    checkout[relative] = {"link": os.readlink(item)}
+                elif item.is_file():
+                    checkout[relative] = {
+                        "content": base64.b64encode(item.read_bytes()).decode(),
+                        "executable": bool(item.stat().st_mode & 0o111),
+                    }
             diff = module.diff_main_paths(
                 paths, base_revision=bootstrap.revision, end_revision=staged.revision
             )
@@ -122,4 +133,5 @@ def fixtures() -> dict[str, Any]:
             "published": updated,
             "stale": stale,
             "timestamps": timestamps,
+            "checkout": checkout,
         }
