@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"strings"
 
 	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/graphdebug"
@@ -27,10 +26,10 @@ func (a GraphSnapshotAdapter) Overview(ctx context.Context, policy access.Effect
 	}
 	overview, err := a.Service.Overview(ctx, &policy, graphdebug.OverviewOptions{DirectNodeLimit: limit, EdgeLimit: edges})
 	if err != nil {
-		if strings.Contains(err.Error(), "aggregation is required") {
-			return AuditOverview{}, &GraphSnapshotError{err.Error()}
-		}
 		return AuditOverview{}, err
+	}
+	if overview.Mode != "direct" {
+		return AuditOverview{}, &GraphSnapshotError{"graph audit requires a direct snapshot"}
 	}
 	nodes := make([]AuditGraphNode, len(overview.Nodes))
 	for i, node := range overview.Nodes {

@@ -18,6 +18,32 @@ func TestOverviewSemanticFailure(t *testing.T) {
 		t.Fatal("semantic")
 	}
 }
+func TestOverviewAggregateFailures(t *testing.T) {
+	for _, failure := range []int{6, 7, 8} {
+		root, path := nodeDB(t)
+		control := emptyControlDB(t)
+		s := NewSnapshotService(root, path, control)
+		base := s.open
+		calls := 0
+		s.open = func(ctx context.Context, path string) (*sql.DB, error) {
+			calls++
+			if calls == failure {
+				return nil, context.Canceled
+			}
+			return base(ctx, path)
+		}
+		semantic := SemanticConfig{}
+		if failure == 8 {
+			db, _ := sql.Open("sqlite", path)
+			_, _ = db.Exec("UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision'")
+			db.Close()
+			semantic = SemanticConfig{NodeLimit: 10, EdgeLimit: 10, Neighbours: 1}
+		}
+		if _, err := s.Overview(context.Background(), nil, OverviewOptions{DirectNodeLimit: 1, EdgeLimit: 10, Semantic: semantic}); err == nil {
+			t.Fatal(failure, calls)
+		}
+	}
+}
 func TestOverviewFailures(t *testing.T) {
 	ctx := context.Background()
 	root, path := nodeDB(t)

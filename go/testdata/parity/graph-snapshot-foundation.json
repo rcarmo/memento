@@ -1,4 +1,183 @@
 {
+  "aggregated_overview": {
+    "cluster_edges": [
+      {
+        "canonical": true,
+        "explicit_edge_count": 1,
+        "id": "cluster-explicit:cluster:a.md:0:4dc867a17bfd:cluster:b.md:0:b204e0df77e7",
+        "kind": "explicit",
+        "similarity": null,
+        "source": "cluster:a.md:0:4dc867a17bfd",
+        "target": "cluster:b.md:0:b204e0df77e7"
+      },
+      {
+        "canonical": false,
+        "explicit_edge_count": 0,
+        "id": "cluster-shared_type:cluster:a.md:0:4dc867a17bfd:cluster:b.md:0:b204e0df77e7",
+        "kind": "shared_type",
+        "similarity": null,
+        "source": "cluster:a.md:0:4dc867a17bfd",
+        "target": "cluster:b.md:0:b204e0df77e7"
+      }
+    ],
+    "clusters": [
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": -1.17375520060363,
+          "y": 3.6651695122598458,
+          "z": 0.7985101975500584
+        },
+        "combined_bytes": 200,
+        "explicit_in_degree": 0,
+        "explicit_out_degree": 1,
+        "id": "cluster:a.md:0:4dc867a17bfd",
+        "label": "Alpha",
+        "markdown_bytes": 200,
+        "member_count": 1,
+        "namespace": "/a.md/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            1
+          ]
+        ],
+        "type_counts": [
+          [
+            "concept",
+            1
+          ]
+        ]
+      },
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 1,
+        "coarse_position": {
+          "x": -0.4437379041305888,
+          "y": -3.8228609047388757,
+          "z": 0.11905443901196122
+        },
+        "combined_bytes": 197,
+        "explicit_in_degree": 1,
+        "explicit_out_degree": 0,
+        "id": "cluster:b.md:0:b204e0df77e7",
+        "label": "Beta",
+        "markdown_bytes": 197,
+        "member_count": 1,
+        "namespace": "/b.md/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            1
+          ]
+        ],
+        "type_counts": [
+          [
+            "concept",
+            1
+          ]
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "concept_ids": [
+          "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+        ],
+        "derived": false,
+        "id": "diagnostic:broken_links:333153619edfbcec",
+        "measured": {
+          "broken_link_count": 1
+        },
+        "message": "1 explicit link target(s) do not resolve.",
+        "rule": "broken_links",
+        "severity": "error",
+        "threshold": {
+          "maximum": 0
+        }
+      },
+      {
+        "concept_ids": [
+          "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+          "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+        ],
+        "derived": false,
+        "id": "diagnostic:index_stale:3974f881f42dea5b",
+        "measured": {
+          "index_revision": "old",
+          "repository_revision": "main"
+        },
+        "message": "Derived index revision does not match the repository revision.",
+        "rule": "index_stale",
+        "severity": "error",
+        "threshold": {}
+      },
+      {
+        "concept_ids": [
+          "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+        ],
+        "derived": true,
+        "id": "diagnostic:embedding_missing:fe3c3537dc5eb7a5",
+        "measured": {
+          "status": "missing"
+        },
+        "message": "No current ready embedding is available; explicit relationships are unaffected.",
+        "rule": "embedding_missing",
+        "severity": "info",
+        "threshold": {}
+      },
+      {
+        "concept_ids": [
+          "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d"
+        ],
+        "derived": false,
+        "id": "diagnostic:pending_proposals:cb66d7dac191c803",
+        "measured": {
+          "pending_proposal_count": 1
+        },
+        "message": "Memory has pending proposal or review state.",
+        "rule": "pending_proposals",
+        "severity": "info",
+        "threshold": {
+          "maximum": 0
+        }
+      }
+    ],
+    "edges": [],
+    "layout_seed": "main",
+    "layout_version": "v1",
+    "memberships": [
+      [
+        "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+        "cluster:a.md:0:4dc867a17bfd"
+      ],
+      [
+        "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+        "cluster:b.md:0:b204e0df77e7"
+      ]
+    ],
+    "metrics": {
+      "asset_bytes": 0,
+      "broken_edges": 1,
+      "explicit_edges": 2,
+      "markdown_bytes": 397,
+      "memory_count": 2,
+      "orphan_count": 0
+    },
+    "mode": "aggregated",
+    "nodes": [],
+    "revisions": {
+      "embedding": "embed",
+      "index": "old",
+      "repository": "main",
+      "stale": true
+    },
+    "schema_version": 1,
+    "truncated": true
+  },
   "edges": [
     {
       "anchor": null,

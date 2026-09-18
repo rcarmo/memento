@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"github.com/rcarmo/memento/go/access"
+	"math"
 	"os"
 	"testing"
+
+	"github.com/rcarmo/memento/go/access"
 )
 
 func TestOverviewFixture(t *testing.T) {
@@ -69,11 +71,57 @@ func TestOverviewOrphanMetric(t *testing.T) {
 		t.Fatal(got, err)
 	}
 }
+func TestSparseOverview(t *testing.T) {
+	few := make([]Node, 4)
+	if sparseOverview(few, nil) {
+		t.Fatal("few")
+	}
+	many := make([]Node, 20)
+	for i := range many {
+		many[i].Orphan = true
+	}
+	if !sparseOverview(many, nil) {
+		t.Fatal("sparse")
+	}
+	target := "b"
+	edges := []Edge{}
+	for i := 0; i < 5; i++ {
+		edges = append(edges, Edge{Kind: "explicit", Target: &target})
+	}
+	if sparseOverview(many, edges) {
+		t.Fatal("connected")
+	}
+}
 func TestOverviewTruncated(t *testing.T) {
 	root, path := nodeDB(t)
-	service := NewSnapshotService(root, path, emptyControlDB(t))
-	got, err := service.Overview(context.Background(), nil, OverviewOptions{DirectNodeLimit: 1, EdgeLimit: 10, IncludeTrash: true})
-	if err == nil || got.SchemaVersion != 0 {
-		t.Fatal(got, err)
+	service := NewSnapshotService(root, path, fixtureControlDB(t))
+	policy := access.EffectivePolicy{Principal: "reader", Roles: []string{"reader"}, ReadPrefixes: []string{"/"}, ProtectedReadPrefixes: []string{"/private/"}}
+	got, err := service.Overview(context.Background(), &policy, OverviewOptions{DirectNodeLimit: 1, EdgeLimit: 12000, RefreshMaxPaths: 2000})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var fixture struct {
+		Overview Overview `json:"aggregated_overview"`
+	}
+	raw, _ := os.ReadFile("../testdata/parity/graph-snapshot-foundation.json")
+	if err = json.Unmarshal(raw, &fixture); err != nil {
+		t.Fatal(err)
+	}
+	want := fixture.Overview
+	if len(got.Clusters) != len(want.Clusters) {
+		t.Fatal(got, want)
+	}
+	for i := range got.Clusters {
+		a, b := got.Clusters[i].CoarsePosition, want.Clusters[i].CoarsePosition
+		if math.Abs(a.X-b.X) > 1e-14 || math.Abs(a.Y-b.Y) > 1e-14 || math.Abs(a.Z-b.Z) > 1e-14 {
+			t.Fatal(a, b)
+		}
+		got.Clusters[i].CoarsePosition = Position{}
+		want.Clusters[i].CoarsePosition = Position{}
+	}
+	a, _ := json.Marshal(got)
+	b, _ := json.Marshal(want)
+	if string(a) != string(b) {
+		t.Fatal(string(a), string(b))
 	}
 }

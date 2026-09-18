@@ -95,6 +95,16 @@ def fixtures() -> dict[str, Any]:
             ]
 
         overview = service.overview(policy=policy).model_dump(mode="json")
+        aggregated_overview = (
+            GraphSnapshotService(
+                GraphExplorerConfig(direct_node_limit=1),
+                repository_root=root,
+                derived_db_path=derived,
+                control_db_path=control,
+            )
+            .overview(policy=policy)
+            .model_dump(mode="json")
+        )
         with sqlite3.connect(derived) as db:
             db.row_factory = sqlite3.Row
             db.execute(
@@ -143,6 +153,7 @@ def fixtures() -> dict[str, Any]:
         )
         return {
             "overview": overview,
+            "aggregated_overview": aggregated_overview,
             "semantic_edges": semantic_edges,
             "fresh_overview": fresh_overview,
             "revisions": revisions,

@@ -1,0 +1,386 @@
+{
+  "connected": {
+    "clusters": [
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": -0.7890897623449593,
+          "y": 3.7667633548585875,
+          "z": -0.18909961730241776
+        },
+        "combined_bytes": 201,
+        "explicit_in_degree": 2,
+        "explicit_out_degree": 2,
+        "id": "cluster:projects:0:6723e80facc3",
+        "label": "/projects/",
+        "markdown_bytes": 201,
+        "member_count": 2,
+        "namespace": "/projects/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            2
+          ]
+        ],
+        "type_counts": [
+          [
+            "project",
+            2
+          ]
+        ]
+      },
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": -0.34553511429267253,
+          "y": -3.832985039017749,
+          "z": 0.3430717629380524
+        },
+        "combined_bytes": 205,
+        "explicit_in_degree": 2,
+        "explicit_out_degree": 2,
+        "id": "cluster:systems:0:d319eba91f3b",
+        "label": "/systems/",
+        "markdown_bytes": 205,
+        "member_count": 2,
+        "namespace": "/systems/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            2
+          ]
+        ],
+        "type_counts": [
+          [
+            "project",
+            2
+          ]
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "canonical": true,
+        "explicit_edge_count": 1,
+        "id": "cluster-explicit:cluster:projects:0:6723e80facc3:cluster:systems:0:d319eba91f3b",
+        "kind": "explicit",
+        "similarity": null,
+        "source": "cluster:projects:0:6723e80facc3",
+        "target": "cluster:systems:0:d319eba91f3b"
+      }
+    ],
+    "memberships": [
+      [
+        "node-00000",
+        "cluster:projects:0:6723e80facc3"
+      ],
+      [
+        "node-00001",
+        "cluster:projects:0:6723e80facc3"
+      ],
+      [
+        "node-00002",
+        "cluster:systems:0:d319eba91f3b"
+      ],
+      [
+        "node-00003",
+        "cluster:systems:0:d319eba91f3b"
+      ]
+    ],
+    "seed": "rev",
+    "version": "v1"
+  },
+  "overflow": {
+    "clusters": [
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": 2.3829901741633535,
+          "y": 3.2614016522177804,
+          "z": 0.7984913042746484
+        },
+        "combined_bytes": 105,
+        "explicit_in_degree": 1,
+        "explicit_out_degree": 1,
+        "id": "cluster:trash",
+        "label": "Trash",
+        "markdown_bytes": 105,
+        "member_count": 1,
+        "namespace": "/trash/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            1
+          ]
+        ],
+        "type_counts": [
+          [
+            "project",
+            1
+          ]
+        ]
+      },
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": -4.035346246442322,
+          "y": 0.1770976526434474,
+          "z": 0.21073827054351568
+        },
+        "combined_bytes": 100,
+        "explicit_in_degree": 1,
+        "explicit_out_degree": 1,
+        "id": "cluster:namespace-0:0:3d50195516a1",
+        "label": "Node 0",
+        "markdown_bytes": 100,
+        "member_count": 1,
+        "namespace": "/namespace-0/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            1
+          ]
+        ],
+        "type_counts": [
+          [
+            "project",
+            1
+          ]
+        ]
+      },
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": 1.358864307016165,
+          "y": -3.803796879746004,
+          "z": -0.015689420513808727
+        },
+        "combined_bytes": 410,
+        "explicit_in_degree": 4,
+        "explicit_out_degree": 4,
+        "id": "cluster:overflow",
+        "label": "/namespace-1/",
+        "markdown_bytes": 410,
+        "member_count": 4,
+        "namespace": "/namespace-1/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            4
+          ]
+        ],
+        "type_counts": [
+          [
+            "project",
+            4
+          ]
+        ]
+      }
+    ],
+    "edges": [],
+    "memberships": [
+      [
+        "node-00000",
+        "cluster:namespace-0:0:3d50195516a1"
+      ],
+      [
+        "node-00001",
+        "cluster:overflow"
+      ],
+      [
+        "node-00002",
+        "cluster:overflow"
+      ],
+      [
+        "node-00003",
+        "cluster:overflow"
+      ],
+      [
+        "node-00004",
+        "cluster:overflow"
+      ],
+      [
+        "node-00005",
+        "cluster:trash"
+      ]
+    ],
+    "seed": "revision",
+    "version": "v1"
+  },
+  "semantic": {
+    "clusters": [
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": -1.1310608537568156,
+          "y": 3.6785690383139538,
+          "z": -0.02457980252802372
+        },
+        "combined_bytes": 101,
+        "explicit_in_degree": 1,
+        "explicit_out_degree": 1,
+        "id": "cluster:a:0:c4848779fc26",
+        "label": "Node 1",
+        "markdown_bytes": 101,
+        "member_count": 1,
+        "namespace": "/a/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            1
+          ]
+        ],
+        "type_counts": [
+          [
+            "project",
+            1
+          ]
+        ]
+      },
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": -0.2668554569626026,
+          "y": -3.8392651627143994,
+          "z": -0.17775358213111758
+        },
+        "combined_bytes": 102,
+        "explicit_in_degree": 1,
+        "explicit_out_degree": 1,
+        "id": "cluster:b:0:b97cd3e2a63b",
+        "label": "Node 2",
+        "markdown_bytes": 102,
+        "member_count": 1,
+        "namespace": "/b/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            1
+          ]
+        ],
+        "type_counts": [
+          [
+            "project",
+            1
+          ]
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "canonical": false,
+        "explicit_edge_count": 0,
+        "id": "cluster-semantic_similarity:cluster:a:0:c4848779fc26:cluster:b:0:b97cd3e2a63b",
+        "kind": "semantic_similarity",
+        "similarity": 0.91,
+        "source": "cluster:a:0:c4848779fc26",
+        "target": "cluster:b:0:b97cd3e2a63b"
+      }
+    ],
+    "memberships": [
+      [
+        "node-00001",
+        "cluster:a:0:c4848779fc26"
+      ],
+      [
+        "node-00002",
+        "cluster:b:0:b97cd3e2a63b"
+      ]
+    ],
+    "seed": "revision",
+    "version": "v1"
+  },
+  "sparse": {
+    "clusters": [
+      {
+        "asset_bytes": 0,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": -3.5793846498485546,
+          "y": -0.3847148663991832,
+          "z": 0.27222465025261045
+        },
+        "combined_bytes": 1045,
+        "explicit_in_degree": 10,
+        "explicit_out_degree": 10,
+        "id": "cluster:skills:0:c00c259732d9",
+        "label": "/skills/",
+        "markdown_bytes": 1045,
+        "member_count": 10,
+        "namespace": "/skills/",
+        "orphan_count": 0,
+        "status_counts": [
+          [
+            "active",
+            10
+          ]
+        ],
+        "type_counts": [
+          [
+            "project",
+            10
+          ]
+        ]
+      }
+    ],
+    "edges": [],
+    "memberships": [
+      [
+        "node-00000",
+        "cluster:skills:0:c00c259732d9"
+      ],
+      [
+        "node-00001",
+        "cluster:skills:0:c00c259732d9"
+      ],
+      [
+        "node-00002",
+        "cluster:skills:0:c00c259732d9"
+      ],
+      [
+        "node-00003",
+        "cluster:skills:0:c00c259732d9"
+      ],
+      [
+        "node-00004",
+        "cluster:skills:0:c00c259732d9"
+      ],
+      [
+        "node-00005",
+        "cluster:skills:0:c00c259732d9"
+      ],
+      [
+        "node-00006",
+        "cluster:skills:0:c00c259732d9"
+      ],
+      [
+        "node-00007",
+        "cluster:skills:0:c00c259732d9"
+      ],
+      [
+        "node-00008",
+        "cluster:skills:0:c00c259732d9"
+      ],
+      [
+        "node-00009",
+        "cluster:skills:0:c00c259732d9"
+      ]
+    ],
+    "seed": "rev",
+    "version": "v1"
+  }
+}

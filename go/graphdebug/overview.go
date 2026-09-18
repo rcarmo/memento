@@ -2,7 +2,6 @@ package graphdebug
 
 import (
 	"context"
-	"errors"
 
 	"github.com/rcarmo/memento/go/access"
 )
@@ -17,19 +16,41 @@ type Metrics struct {
 }
 
 type Overview struct {
-	SchemaVersion int          `json:"schema_version"`
-	Mode          string       `json:"mode"`
-	Revisions     Revisions    `json:"revisions"`
-	Metrics       Metrics      `json:"metrics"`
-	Nodes         []Node       `json:"nodes"`
-	Edges         []Edge       `json:"edges"`
-	Clusters      []any        `json:"clusters"`
-	ClusterEdges  []any        `json:"cluster_edges"`
-	Memberships   []any        `json:"memberships"`
-	LayoutSeed    string       `json:"layout_seed"`
-	LayoutVersion string       `json:"layout_version"`
-	Diagnostics   []Diagnostic `json:"diagnostics"`
-	Truncated     bool         `json:"truncated"`
+	SchemaVersion int             `json:"schema_version"`
+	Mode          string          `json:"mode"`
+	Revisions     Revisions       `json:"revisions"`
+	Metrics       Metrics         `json:"metrics"`
+	Nodes         []Node          `json:"nodes"`
+	Edges         []Edge          `json:"edges"`
+	Clusters      []AggregateNode `json:"clusters"`
+	ClusterEdges  []AggregateEdge `json:"cluster_edges"`
+	Memberships   []CountPair     `json:"memberships"`
+	LayoutSeed    string          `json:"layout_seed"`
+	LayoutVersion string          `json:"layout_version"`
+	Diagnostics   []Diagnostic    `json:"diagnostics"`
+	Truncated     bool            `json:"truncated"`
+}
+
+func sparseOverview(nodes []Node, edges []Edge) bool {
+	if len(nodes) < 12 {
+		return false
+	}
+	resolved := 0
+	for _, edge := range edges {
+		if edge.Kind == "explicit" && edge.Target != nil {
+			resolved++
+		}
+	}
+	if resolved >= max(1, len(nodes)/4) {
+		return false
+	}
+	orphans := 0
+	for _, node := range nodes {
+		if node.Orphan {
+			orphans++
+		}
+	}
+	return float64(orphans)/float64(len(nodes)) >= .5
 }
 
 type OverviewOptions struct {
@@ -37,6 +58,8 @@ type OverviewOptions struct {
 	EdgeLimit       int
 	IncludeTrash    bool
 	Semantic        SemanticConfig
+	RefreshMaxPaths int
+	ClusterLimit    int
 }
 
 func (s *SnapshotService) Overview(ctx context.Context, policy *access.EffectivePolicy, options OverviewOptions) (Overview, error) {
@@ -51,7 +74,7 @@ func (s *SnapshotService) Overview(ctx context.Context, policy *access.Effective
 	}
 	truncated := len(nodes) > options.DirectNodeLimit
 	if truncated {
-		return empty, errors.New("graph overview aggregation is required")
+		nodes = nodes[:options.DirectNodeLimit]
 	}
 	ids := make([]string, len(nodes))
 	for i, node := range nodes {
@@ -73,18 +96,66 @@ func (s *SnapshotService) Overview(ctx context.Context, policy *access.Effective
 	}
 	overlays := OverlayEdges(nodes, revisions.Repository, options.EdgeLimit-len(edges)-len(semantic))
 	allEdges := append(append(append([]Edge{}, edges...), semantic...), overlays...)
-	metrics := Metrics{MemoryCount: len(nodes), ExplicitEdges: len(edges)}
-	for _, node := range nodes {
+	metricNodes, metricEdges := nodes, edges
+	var layout *Layout
+	if truncated || sparseOverview(nodes, edges) {
+		maximum := options.RefreshMaxPaths
+		if maximum <= 0 {
+			maximum = 2000
+		}
+		allNodes, loadErr := s.Nodes(ctx, nil, maximum, policy, options.IncludeTrash)
+		if loadErr != nil {
+			return empty, loadErr
+		}
+		allIDs := make([]string, len(allNodes))
+		for i, node := range allNodes {
+			allIDs[i] = node.ID
+		}
+		allExplicit, loadErr := s.ExplicitEdges(ctx, allIDs, nil, nil, options.EdgeLimit, policy)
+		if loadErr != nil {
+			return empty, loadErr
+		}
+		allNodes = ScopedNodes(allNodes, allExplicit)
+		allSemantic := []Edge{}
+		if options.Semantic.NodeLimit > 0 {
+			allSemantic, loadErr = s.SemanticEdges(ctx, allNodes, revisions, options.Semantic, options.EdgeLimit-len(allExplicit))
+			if loadErr != nil {
+				return empty, loadErr
+			}
+		}
+		allEdges := append(append([]Edge{}, allExplicit...), allSemantic...)
+		allEdges = append(allEdges, OverlayEdges(allNodes, revisions.Repository, options.EdgeLimit-len(allEdges))...)
+		diagnostics = DiagnoseFoundation(allNodes, allExplicit, revisions)
+		clusterLimit := options.ClusterLimit
+		if clusterLimit <= 0 {
+			clusterLimit = 500
+		}
+		value := AggregateLayout(allNodes, allEdges, revisions.Repository, clusterLimit)
+		layout = &value
+		metricNodes, metricEdges = allNodes, allExplicit
+	}
+	metrics := Metrics{MemoryCount: len(metricNodes), ExplicitEdges: len(metricEdges)}
+	for _, node := range metricNodes {
 		metrics.MarkdownBytes += node.MarkdownBytes
 		metrics.AssetBytes += node.AssetBytes
 		if node.Orphan {
 			metrics.OrphanCount++
 		}
 	}
-	for _, edge := range edges {
+	for _, edge := range metricEdges {
 		if !externalLink(edge.RawTarget) && (edge.Target == nil || edge.Resolution != "resolved") {
 			metrics.BrokenEdges++
 		}
 	}
-	return Overview{SchemaVersion: 1, Mode: "direct", Revisions: revisions, Metrics: metrics, Nodes: nodes, Edges: allEdges, Clusters: []any{}, ClusterEdges: []any{}, Memberships: []any{}, LayoutSeed: revisions.Repository, LayoutVersion: "v1", Diagnostics: diagnostics, Truncated: truncated}, nil
+	result := Overview{SchemaVersion: 1, Mode: "direct", Revisions: revisions, Metrics: metrics, Nodes: nodes, Edges: allEdges, Clusters: []AggregateNode{}, ClusterEdges: []AggregateEdge{}, Memberships: []CountPair{}, LayoutSeed: revisions.Repository, LayoutVersion: "v1", Diagnostics: diagnostics, Truncated: truncated}
+	if layout != nil {
+		result.Mode = "aggregated"
+		result.Nodes = []Node{}
+		result.Edges = []Edge{}
+		result.Clusters = layout.Clusters
+		result.ClusterEdges = layout.Edges
+		result.Memberships = layout.Memberships
+		result.LayoutVersion = layout.Version
+	}
+	return result, nil
 }
