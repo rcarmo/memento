@@ -231,6 +231,7 @@ def fixtures() -> list[dict[str, Any]]:
                 "name": scenario.name,
                 "plan": scenario.plan,
                 "replies": [reply_json(reply) for reply in scenario.replies],
+                "limits": scenario.limits,
                 "result": result.model_dump(mode="json"),
                 "calls": service.calls,
             }

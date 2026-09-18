@@ -1,6 +1,7 @@
 [
   {
     "calls": [],
+    "limits": null,
     "name": "empty",
     "plan": {
       "operations": []
@@ -40,6 +41,7 @@
         "method": "memory_read"
       }
     ],
+    "limits": null,
     "name": "saved_reference",
     "plan": {
       "operations": [
@@ -192,6 +194,7 @@
         "method": "memory_search"
       }
     ],
+    "limits": null,
     "name": "stop_on_error",
     "plan": {
       "operations": [
@@ -290,6 +293,7 @@
         "method": "memory_read"
       }
     ],
+    "limits": null,
     "name": "continue_on_error",
     "plan": {
       "operations": [
@@ -407,6 +411,7 @@
   },
   {
     "calls": [],
+    "limits": null,
     "name": "deadline_before_commit",
     "plan": {
       "operations": [
@@ -466,6 +471,7 @@
         "method": "memory_create"
       }
     ],
+    "limits": null,
     "name": "deadline_after_commit",
     "plan": {
       "operations": [
@@ -577,6 +583,7 @@
         "method": "memory_create"
       }
     ],
+    "limits": null,
     "name": "post_commit_projection_error",
     "plan": {
       "operations": [
@@ -679,6 +686,7 @@
         "method": "memory_search"
       }
     ],
+    "limits": null,
     "name": "failed_save_return_skipped",
     "plan": {
       "operations": [
@@ -745,6 +753,9 @@
         "method": "memory_read"
       }
     ],
+    "limits": {
+      "max_output_bytes": 512
+    },
     "name": "output_limit_before_commit",
     "plan": {
       "operations": [
@@ -849,6 +860,9 @@
         "method": "memory_create"
       }
     ],
+    "limits": {
+      "max_output_bytes": 512
+    },
     "name": "output_limit_after_commit",
     "plan": {
       "operations": [
@@ -938,6 +952,7 @@
         "method": "memory_create"
       }
     ],
+    "limits": null,
     "name": "commit",
     "plan": {
       "operations": [
