@@ -194,6 +194,10 @@ def main() -> None:
     save("umcp-completion.json", completion.fixtures(shared))
     http = importlib.import_module("umcp_http")
     save("umcp-http.json", http.fixtures(args.umcp))
+    file_transport = importlib.import_module("umcp_file")
+    save("umcp-file.json", file_transport.fixtures(shared))
+    tcp_transport = importlib.import_module("umcp_tcp")
+    save("umcp-tcp.json", tcp_transport.fixtures(args.umcp))
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

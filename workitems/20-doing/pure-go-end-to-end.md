@@ -57,6 +57,7 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 
 ### 2026-09-18
 
+* File mode and TCP implemented with seven file cases and 34 live TCP reference cases. Sync/async UTF-8 and line-limit differences are explicit; sync timeout applies per blocking I/O call, excluding handler time. Repeated race tests cover concurrent peer contexts and cancellation; all implemented statements are covered. Legacy SSE, raw HTTP parsing and CLI integration are the next transport gates. Independent TCP review timed out.
 * Native amd64 and ARM64 [CI 35291886039](https://github.com/rcarmo/memento/actions/runs/35291886039) both passed the full 360-case Needle gate for `3b240b0`. No SIMD optimisation enabled.
 * Streamable HTTP implemented with UUID sessions, 100-message queues, principal/version binding, TTL/caps, event streams and deletion. Forty-one actual Python sync/async HTTP scenarios match; local statement/race tests cover disconnect and I/O failures. Corrected source-specific auxiliary route auth ordering and session-version JSON errors. Raw parser/connection-limit and legacy transport parity remain pending; delegate review timed out.
 * Added uMCP completion/provider resolution, config/initialise composition, logging and redaction with sync/async fixtures and full statement tests. Native ARM64 job for worker/inference commit `3b240b0` completed successfully, including the 360-case corpus; amd64 still running at this checkpoint.
