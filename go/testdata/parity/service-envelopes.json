@@ -1,0 +1,475 @@
+{
+  "failures": [
+    {
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "denied",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "auth"
+    },
+    {
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "denied",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "forbidden"
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "missing",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "not-found"
+    },
+    {
+      "expected": {
+        "error_class": "conflict",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "conflict",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "conflict"
+    },
+    {
+      "expected": {
+        "error_class": "needs_rebase",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "stale",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "needs-rebase"
+    },
+    {
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "bad request",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "service"
+    },
+    {
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "bundle",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "bundle"
+    },
+    {
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "frontmatter",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "frontmatter"
+    },
+    {
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "path",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "path"
+    },
+    {
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "asset"
+    },
+    {
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "staged",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "staged"
+    },
+    {
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "pack",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "pack"
+    },
+    {
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "query",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "search"
+    },
+    {
+      "expected": {
+        "error_class": "idempotency_conflict",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "idempotency key already used for a different request",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "idempotency"
+    },
+    {
+      "expected": {
+        "error_class": "conflict",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "transaction",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "transaction"
+    },
+    {
+      "expected": {
+        "error_class": "repo_unavailable",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "git",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "git"
+    },
+    {
+      "expected": {
+        "error_class": "derived_index_unavailable",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "busy",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "unavailable"
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'asset file is not declared in the manifest'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "file"
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "('proposal', 'asset')",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "name": "asset-id"
+    },
+    {
+      "name": "os",
+      "propagated": "OSError"
+    },
+    {
+      "name": "runtime",
+      "propagated": "RuntimeError"
+    },
+    {
+      "name": "corruption",
+      "propagated": "DerivedIndexCorruptionError"
+    },
+    {
+      "name": "timeout",
+      "propagated": "TimeoutError"
+    }
+  ],
+  "keys": [
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'simple'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "simple"
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "\"quote'\"",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "quote'"
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'both\\'\"'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "both'\""
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'slash\\\\'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "slash\\"
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'\\n\\r\\t\\x00\\x1f\\x7f'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "\n\r\t\u0000\u001f"
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'é 中文 😀'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "é 中文 😀"
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'\\u200b\\U000e0001'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": "​󠀁"
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'\\xa0'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": " "
+    },
+    {
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "''",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "key": ""
+    }
+  ],
+  "successes": [
+    {
+      "expected": {
+        "data": {
+          "items": [],
+          "large": 9007199254740993,
+          "nothing": null
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "options": {}
+    },
+    {
+      "expected": {
+        "data": {
+          "items": [],
+          "large": 9007199254740993,
+          "nothing": null
+        },
+        "index_revision": "",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "",
+        "status": "success",
+        "warnings": []
+      },
+      "options": {
+        "repo_revision": ""
+      }
+    },
+    {
+      "expected": {
+        "data": {
+          "items": [],
+          "large": 9007199254740993,
+          "nothing": null
+        },
+        "index_revision": "old",
+        "index_stale": true,
+        "next_tools": [
+          "memory_read"
+        ],
+        "operation_id": "op",
+        "repo_revision": "published",
+        "status": "success",
+        "warnings": [
+          "warning"
+        ]
+      },
+      "options": {
+        "index_revision": "old",
+        "index_stale": true,
+        "next_tools": [
+          "memory_read"
+        ],
+        "operation_id": "op",
+        "repo_revision": "published",
+        "warnings": [
+          "warning"
+        ]
+      }
+    },
+    {
+      "expected": {
+        "data": {
+          "items": [],
+          "large": 9007199254740993,
+          "nothing": null
+        },
+        "index_revision": "",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "options": {
+        "index_revision": ""
+      }
+    }
+  ]
+}

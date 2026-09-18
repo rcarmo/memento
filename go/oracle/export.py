@@ -287,6 +287,8 @@ def main() -> None:
     save("derived-lifecycle.json", derived_lifecycle.fixtures())
     service_identity = importlib.import_module("service_identity")
     save("service-identity.json", service_identity.fixtures())
+    service_envelopes = importlib.import_module("service_envelopes")
+    save("service-envelopes.json", service_envelopes.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )
