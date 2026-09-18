@@ -13,6 +13,30 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+func fixtureControlDB(t *testing.T) string {
+	path := emptyControlDB(t)
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	if _, err = db.Exec(`INSERT INTO proposals VALUES('one','draft','{"path":"/a.md"}','reader'),('two','applied','{"changes":[{"concept_path":"/a.md"},{"new_path":"/b.md"}]}','reader')`); err != nil {
+		t.Fatal(err)
+	}
+	return path
+}
+func emptyControlDB(t *testing.T) string {
+	path := filepath.Join(t.TempDir(), "control.sqlite")
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	if _, err = db.Exec("CREATE TABLE proposals(proposal_id TEXT,status TEXT,patch_json TEXT,author_principal TEXT)"); err != nil {
+		t.Fatal(err)
+	}
+	return path
+}
 func nodeDB(t *testing.T) (string, string) {
 	t.Helper()
 	root := t.TempDir()
@@ -82,7 +106,7 @@ func TestNodeQueryVariants(t *testing.T) {
 	db, _ := sql.Open("sqlite", path)
 	_, _ = db.Exec("INSERT INTO concepts VALUES('trash','/trash/a.md','concept','Trash','active','[]','now','main','Body','h'),('root','','concept','Root','active','[]','now','main','Body','h')")
 	db.Close()
-	s := NewSnapshotService(root, path, "")
+	s := NewSnapshotService(root, path, emptyControlDB(t))
 	nodes, err := s.Nodes(context.Background(), nil, 10, nil, false)
 	if err != nil || len(nodes) != 3 || nodes[2].Namespace != "/" {
 		t.Fatal(nodes, err)
@@ -108,10 +132,32 @@ func TestNodeQueryVariants(t *testing.T) {
 	}
 }
 
+func TestNodesDerivedOpenFailure(t *testing.T) {
+	s := NewSnapshotService("", "derived", emptyControlDB(t))
+	base := s.open
+	s.open = func(ctx context.Context, path string) (*sql.DB, error) {
+		if path == "derived" {
+			return nil, context.Canceled
+		}
+		return base(ctx, path)
+	}
+	if _, err := s.Nodes(context.Background(), nil, 1, nil, false); err == nil {
+		t.Fatal("derived")
+	}
+}
+func TestNodesControlFailure(t *testing.T) {
+	root, path := nodeDB(t)
+	s := NewSnapshotService(root, path, filepath.Join(t.TempDir(), "missing.sqlite"))
+	if _, err := s.Nodes(context.Background(), nil, 1, nil, false); err == nil {
+		t.Fatal("control")
+	}
+}
+
 func TestNodesFixture(t *testing.T) {
 	root, path := nodeDB(t)
-	service := NewSnapshotService(root, path, "")
-	nodes, e := service.Nodes(context.Background(), nil, 10, nil, false)
+	service := NewSnapshotService(root, path, fixtureControlDB(t))
+	policy := access.EffectivePolicy{Principal: "reader", Roles: []string{"reader"}, ReadPrefixes: []string{"/"}, ProtectedReadPrefixes: []string{"/private/"}}
+	nodes, e := service.Nodes(context.Background(), nil, 10, &policy, false)
 	var fixture struct {
 		Nodes []Node `json:"nodes"`
 	}

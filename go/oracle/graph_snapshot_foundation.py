@@ -30,7 +30,11 @@ def fixtures() -> dict[str, Any]:
                 "INSERT INTO concept_embeddings VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','ready','model',3,'main','v1','2026-01-04T00:00:00Z',NULL);"
                 "INSERT INTO links VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e','/public/b.md','/public/b.md',NULL,'internal','resolved','r1','r2'),('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d',NULL,'/private/missing.md','/private/missing.md','x','internal','broken','r1','r2'),('6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e',NULL,'/public/missing.md','/public/missing.md',NULL,'internal','broken','r1','r2');"
             )
-        control.touch()
+        with sqlite3.connect(control) as db:
+            db.executescript(
+                "CREATE TABLE proposals(proposal_id TEXT,status TEXT,patch_json TEXT,author_principal TEXT);"
+                "INSERT INTO proposals VALUES('one','draft','{\"path\":\"/a.md\"}','reader'),('two','applied','{\"changes\":[{\"concept_path\":\"/a.md\"},{\"new_path\":\"/b.md\"}]}','reader');"
+            )
         (root / "a.md").write_text(
             "---\nschema_version: 1\nid: '5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d'\ntype: concept\ntitle: Alpha\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-02T00:00:00Z\nupdated_by: alice\n---\nBody\n",
             encoding="utf-8",
@@ -71,9 +75,12 @@ def fixtures() -> dict[str, Any]:
             ]
         with sqlite3.connect(derived) as db:
             db.row_factory = sqlite3.Row
+            with sqlite3.connect(control) as control_db:
+                control_db.row_factory = sqlite3.Row
+                proposal_counts = service._proposal_counts(control_db, policy)
             nodes = [
                 item.model_dump(mode="json")
-                for item in service._nodes(db, proposal_counts={}, limit=10)
+                for item in service._nodes(db, proposal_counts=proposal_counts, limit=10)
             ]
         return {
             "revisions": revisions,

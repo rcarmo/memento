@@ -6,6 +6,7 @@ import (
 	"database/sql/driver"
 	"errors"
 	"io"
+	"strings"
 	"sync/atomic"
 	"testing"
 )
@@ -45,6 +46,9 @@ func (snapshotFaultConn) QueryContext(_ context.Context, query string, _ []drive
 	if len(query) >= 11 && query[:11] == "SELECT c.id" {
 		return &snapshotFaultRows{mode: "nodes-" + mode}, nil
 	}
+	if strings.HasPrefix(query, "SELECT status,") {
+		return &snapshotFaultRows{mode: "proposals-" + mode}, nil
+	}
 	return &snapshotFaultRows{mode: "revisions-" + mode}, nil
 }
 func (r *snapshotFaultRows) Columns() []string {
@@ -57,12 +61,15 @@ func (r *snapshotFaultRows) Columns() []string {
 	if len(r.mode) >= 6 && r.mode[:6] == "nodes-" {
 		return make([]string, 18)
 	}
+	if len(r.mode) >= 10 && r.mode[:10] == "proposals-" {
+		return []string{"status", "patch_json", "author_principal"}
+	}
 	return []string{"key", "value"}
 }
 func (*snapshotFaultRows) Close() error { return nil }
 func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	if r.emitted {
-		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" || r.mode == "nodes-rows" {
+		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" || r.mode == "nodes-rows" || r.mode == "proposals-rows" {
 			return io.ErrClosedPipe
 		}
 		if r.mode != "edges-multi" || r.count >= 2 {
@@ -71,9 +78,13 @@ func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	}
 	r.emitted = true
 	r.count++
-	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" {
+	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" || r.mode == "proposals-scan" {
 		values[0] = nil
 		values[1] = "value"
+	} else if len(r.mode) >= 10 && r.mode[:10] == "proposals-" {
+		values[0] = "draft"
+		values[1] = `{"path":"/a"}`
+		values[2] = "actor"
 	} else if len(r.mode) >= 6 && r.mode[:6] == "nodes-" {
 		values[0] = "id"
 		values[1] = "/a.md"
@@ -142,7 +153,15 @@ func TestSnapshotDatabaseFailureBranches(t *testing.T) {
 		if _, err := service.ExplicitEdges(ctx, nil, nil, nil, 2, nil); err == nil {
 			t.Fatal("edges", mode)
 		}
-		service.open = faultOpen(t, mode)
+		fault := faultOpen(t, mode)
+		control := emptyControlDB(t)
+		service.ControlDBPath = control
+		service.open = func(ctx context.Context, path string) (*sql.DB, error) {
+			if path == control {
+				return openReadDB(ctx, path)
+			}
+			return fault(ctx, path)
+		}
 		if _, err := service.Nodes(ctx, nil, 2, nil, false); err == nil {
 			t.Fatal("nodes", mode)
 		}

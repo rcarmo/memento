@@ -135,6 +135,10 @@ func nullableInt(value sql.NullInt64) *int {
 	return &v
 }
 func (s *SnapshotService) Nodes(ctx context.Context, ids []string, limit int, policy *access.EffectivePolicy, includeTrash bool) ([]Node, error) {
+	counts, err := s.ProposalCounts(ctx, policy)
+	if err != nil {
+		return nil, err
+	}
 	db, err := s.open(ctx, s.DerivedDBPath)
 	if err != nil {
 		return nil, err
@@ -188,6 +192,8 @@ func (s *SnapshotService) Nodes(ctx context.Context, ids []string, limit int, po
 		n.Namespace = namespace(n.Path)
 		n.MarkdownBytes, n.UpdatedBy, n.ProvenanceKeys, n.AssetBytes = s.filesystemFields(n.Path, n.ID)
 		n.CombinedBytes = n.MarkdownBytes + n.AssetBytes
+		count := counts[n.Path]
+		n.ProposalCount, n.PendingProposalCount = count.Total, count.Pending
 		n.AnomalyIDs = []string{}
 		n.Embedding = EmbeddingState{Status: "missing", ModelID: nullableString(model), Dimensions: nullableInt(dimensions), EmbeddingRevision: nullableString(revision), ModelRevision: nullableString(modelRevision), UpdatedAt: nullableString(updated), Error: nullableString(errorMessage)}
 		if status.Valid {
