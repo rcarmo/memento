@@ -63,6 +63,9 @@ func (j *Jobs) runWithPolicy(ctx context.Context, principal access.Principal, se
 	// Never copy locks. Source worker instances share only the cursor key and
 	// callbacks/configuration; every worker owns its SQLite/staging handle.
 	controls := &ProposalControls{Queue: q, cursor: &codec, DerivedIndexPath: template.DerivedIndexPath, MaxConceptBytes: template.MaxConceptBytes, DerivedUpdate: template.DerivedUpdate, ChangedConcepts: template.ChangedConcepts, Index: template.Index, DefaultSearchMode: template.DefaultSearchMode}
+	controls.inventoryPolicy = func(ctx context.Context) (access.EffectivePolicy, error) {
+		return identity.ResolvePolicy(ctx, principal)
+	}
 	if template.Staging != nil {
 		controls.Staging = &assets.StagingStore{DB: db, Now: template.Staging.Now}
 	}
@@ -86,7 +89,7 @@ func (j *Jobs) runWithPolicy(ctx context.Context, principal access.Principal, se
 	// Mirror the Python @_serialized scope, including policy resolution and
 	// success revision lookup. Accepted-asset reads acquire their own lock after
 	// role/range validation. Reconciliation and other reads are not serialized.
-	if method == "memory_inventory" || method == "memory_asset_get" || method == "memory_operation_get" || method == "memory_proposal_asset_get" || method == "memory_read" || method == "memory_list" || method == "memory_search" || method == "memory_graph" {
+	if method == "memory_compare_manifest" || method == "memory_inventory" || method == "memory_asset_get" || method == "memory_operation_get" || method == "memory_proposal_asset_get" || method == "memory_read" || method == "memory_list" || method == "memory_search" || method == "memory_graph" {
 		err = run()
 	} else {
 		err = repository.WithTransactionLock(ctx, q.Paths, run)

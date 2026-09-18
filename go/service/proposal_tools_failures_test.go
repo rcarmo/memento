@@ -17,7 +17,7 @@ func TestProposalToolTypeAndCallbackFailures(t *testing.T) {
 	ctx := context.Background()
 	// uMCP already rejects unknown/missing parameters; the final Go boundary
 	// rejects malformed dynamic types instead of allowing unsafe assertions.
-	for _, name := range []string{"memory_propose", "memory_proposal_get", "memory_proposal_list", "memory_proposal_asset_get", "memory_proposal_rebase", "memory_proposal_revise", "memory_proposal_review", "memory_proposal_apply", "memory_operation_get", "memory_read", "memory_list", "memory_search", "memory_graph", "memory_asset_prune", "memory_create", "memory_patch", "memory_rename", "memory_trash", "memory_restore", "memory_purge", "memory_inventory", "unknown"} {
+	for _, name := range []string{"memory_propose", "memory_proposal_get", "memory_proposal_list", "memory_proposal_asset_get", "memory_proposal_rebase", "memory_proposal_revise", "memory_proposal_review", "memory_proposal_apply", "memory_operation_get", "memory_read", "memory_list", "memory_search", "memory_graph", "memory_asset_prune", "memory_create", "memory_patch", "memory_rename", "memory_trash", "memory_restore", "memory_purge", "memory_inventory", "memory_compare_manifest", "unknown"} {
 		args := map[string]any{"proposal_id": 1, "idempotency_key": 1, "status": 1}
 		if _, _, err := runProposalTool(ctx, nil, ProposalActor{}, name, args); err == nil {
 			t.Fatal(name)

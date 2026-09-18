@@ -1,0 +1,3396 @@
+{
+  "calls": [
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_propose\", \"arguments\": {\"intent\": \"new\", \"base_revision\": \"base\", \"changes\": [], \"rationale\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "base_revision": "base",
+              "changes": [],
+              "intent": "new",
+              "rationale": null
+            },
+            "context": "trusted",
+            "method": "memory_propose"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_propose\", \"arguments\": {\"intent\": \"new\", \"base_revision\": \"base\", \"changes\": []}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_get\", \"arguments\": {\"proposal_id\": \"p\", \"view\": \"detailed\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "proposal_id": "p",
+              "view": "detailed"
+            },
+            "context": "trusted",
+            "method": "memory_proposal_get"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_get\", \"arguments\": {\"proposal_id\": \"p\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_get\", \"arguments\": {\"proposal_id\": \"p\", \"view\": \"nonsense\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "proposal_id": "p",
+              "view": "nonsense"
+            },
+            "context": "trusted",
+            "method": "memory_proposal_get"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_get\", \"arguments\": {\"proposal_id\": \"p\", \"view\": \"nonsense\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_list\", \"arguments\": {\"status\": null, \"limit\": 50, \"cursor\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "cursor": null,
+              "limit": 50,
+              "status": null
+            },
+            "context": "trusted",
+            "method": "memory_proposal_list"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_list\"}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_list\", \"arguments\": {\"status\": null, \"limit\": 2, \"cursor\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "cursor": null,
+              "limit": 2,
+              "status": null
+            },
+            "context": "trusted",
+            "method": "memory_proposal_list"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_list\", \"arguments\": {\"limit\": \"2\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_list\", \"arguments\": {\"status\": null, \"limit\": true, \"cursor\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "cursor": null,
+              "limit": true,
+              "status": null
+            },
+            "context": "trusted",
+            "method": "memory_proposal_list"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_list\", \"arguments\": {\"limit\": true}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_asset_get\", \"arguments\": {\"proposal_id\": \"p\", \"asset_id\": \"a\", \"file_path\": null, \"offset\": 10, \"limit\": 5}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_id": "a",
+              "file_path": null,
+              "limit": 5,
+              "offset": 10,
+              "proposal_id": "p"
+            },
+            "context": "trusted",
+            "method": "memory_proposal_asset_get"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_asset_get\", \"arguments\": {\"proposal_id\": \"p\", \"asset_id\": \"a\", \"offset\": \"1_0\", \"limit\": \"\\uff15\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_rebase\", \"arguments\": {\"proposal_id\": \"p\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "expected_revision": "r",
+              "idempotency_key": "key",
+              "proposal_id": "p"
+            },
+            "context": "trusted",
+            "method": "memory_proposal_rebase"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_rebase\", \"arguments\": {\"proposal_id\": \"p\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_revise\", \"arguments\": {\"proposal_id\": \"p\", \"selected_change_indexes\": [1, 0, 1], \"expected_revision\": \"r\", \"intent\": null, \"rationale\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "expected_revision": "r",
+              "intent": null,
+              "proposal_id": "p",
+              "rationale": null,
+              "selected_change_indexes": [
+                1,
+                0,
+                1
+              ]
+            },
+            "context": "trusted",
+            "method": "memory_proposal_revise"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_revise\", \"arguments\": {\"proposal_id\": \"p\", \"selected_change_indexes\": [1, 0, 1], \"expected_revision\": \"r\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_review\", \"arguments\": {\"proposal_id\": \"p\", \"decision\": \"approve\", \"comment\": null, \"idempotency_key\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "comment": null,
+              "decision": "approve",
+              "idempotency_key": null,
+              "proposal_id": "p"
+            },
+            "context": "trusted",
+            "method": "memory_proposal_review"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_review\", \"arguments\": {\"proposal_id\": \"p\", \"decision\": \"approve\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_proposal_apply\", \"arguments\": {\"proposal_id\": \"p\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "expected_revision": "r",
+              "idempotency_key": "key",
+              "proposal_id": "p"
+            },
+            "context": "trusted",
+            "method": "memory_proposal_apply"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_apply\", \"arguments\": {\"proposal_id\": \"p\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_operation_get\", \"arguments\": {\"idempotency_key\": \"key\", \"operation_id\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "idempotency_key": "key",
+              "operation_id": null
+            },
+            "context": "trusted",
+            "method": "memory_operation_get"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_operation_get\", \"arguments\": {\"idempotency_key\": \"key\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_operation_get\", \"arguments\": {\"idempotency_key\": null, \"operation_id\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "idempotency_key": null,
+              "operation_id": null
+            },
+            "context": "trusted",
+            "method": "memory_operation_get"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_operation_get\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'proposal_id' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_proposal_get\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unrecognized parameter(s): principal"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_propose\", \"arguments\": {\"intent\": \"new\", \"base_revision\": \"r\", \"changes\": [], \"principal\": \"admin\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_read\", \"arguments\": {\"id_or_path\": \"/public/a.md\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "id_or_path": "/public/a.md"
+            },
+            "context": "trusted",
+            "method": "memory_read"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_read\", \"arguments\": {\"id_or_path\": \"/public/a.md\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_list\", \"arguments\": {\"path_prefix\": \"/\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "path_prefix": "/"
+            },
+            "context": "trusted",
+            "method": "memory_list"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_list\"}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_search\", \"arguments\": {\"query\": \"alpha\", \"concept_type\": null, \"limit\": 20, \"cursor\": null, \"search_mode\": null, \"query_syntax\": \"plain\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "concept_type": null,
+              "cursor": null,
+              "limit": 20,
+              "query": "alpha",
+              "query_syntax": "plain",
+              "search_mode": null
+            },
+            "context": "trusted",
+            "method": "memory_search"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_search\", \"arguments\": {\"query\": \"alpha\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_search\", \"arguments\": {\"query\": \"alpha\", \"concept_type\": null, \"limit\": 2, \"cursor\": null, \"search_mode\": \"hybrid\", \"query_syntax\": \"plain\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "concept_type": null,
+              "cursor": null,
+              "limit": 2,
+              "query": "alpha",
+              "query_syntax": "plain",
+              "search_mode": "hybrid"
+            },
+            "context": "trusted",
+            "method": "memory_search"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_search\", \"arguments\": {\"query\": \"alpha\", \"limit\": \"2\", \"search_mode\": \"hybrid\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_graph\", \"arguments\": {\"id_or_path\": \"id\", \"depth\": 2}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "depth": 2,
+              "id_or_path": "id"
+            },
+            "context": "trusted",
+            "method": "memory_graph"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_graph\", \"arguments\": {\"id_or_path\": \"id\", \"depth\": \"\\uff12\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'asset_kind' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_stage_begin\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_stage_begin\", \"arguments\": {\"asset_kind\": \"docs\", \"version\": \"1.0.0\", \"idempotency_key\": \"ticket\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "idempotency_key": "ticket",
+              "version": "1.0.0"
+            },
+            "context": "trusted",
+            "method": "memory_asset_stage_begin"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_stage_begin\", \"arguments\": {\"asset_kind\": \"docs\", \"version\": \"1.0.0\", \"idempotency_key\": \"ticket\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_stage_begin\", \"arguments\": {\"asset_kind\": \"docs\", \"version\": 1, \"idempotency_key\": \"ticket\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "idempotency_key": "ticket",
+              "version": 1
+            },
+            "context": "trusted",
+            "method": "memory_asset_stage_begin"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_stage_begin\", \"arguments\": {\"asset_kind\": \"docs\", \"version\": 1, \"idempotency_key\": \"ticket\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unrecognized parameter(s): principal"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_stage_begin\", \"arguments\": {\"asset_kind\": \"docs\", \"version\": \"1.0.0\", \"idempotency_key\": \"ticket\", \"principal\": \"other\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'idempotency_key' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_stage_status\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_stage_status\", \"arguments\": {\"idempotency_key\": \"ticket\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "idempotency_key": "ticket"
+            },
+            "context": "trusted",
+            "method": "memory_asset_stage_status"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_stage_status\", \"arguments\": {\"idempotency_key\": \"ticket\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_stage_status\", \"arguments\": {\"idempotency_key\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "idempotency_key": null
+            },
+            "context": "trusted",
+            "method": "memory_asset_stage_status"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_stage_status\", \"arguments\": {\"idempotency_key\": null}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_get\", \"arguments\": {\"id_or_path\": \"/public/a.md\", \"asset_kind\": \"docs\", \"version\": null, \"view\": \"archive\", \"file_path\": null, \"offset\": 0, \"limit\": null, \"expected_sha256\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "expected_sha256": null,
+              "file_path": null,
+              "id_or_path": "/public/a.md",
+              "limit": null,
+              "offset": 0,
+              "version": null,
+              "view": "archive"
+            },
+            "context": "trusted",
+            "method": "memory_asset_get"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_get\", \"arguments\": {\"id_or_path\": \"/public/a.md\", \"asset_kind\": \"docs\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_get\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"version\": \"1.0.0\", \"view\": \"archive\", \"file_path\": null, \"offset\": 2, \"limit\": 4, \"expected_sha256\": \"abc\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "expected_sha256": "abc",
+              "file_path": null,
+              "id_or_path": "12345678",
+              "limit": 4,
+              "offset": 2,
+              "version": "1.0.0",
+              "view": "archive"
+            },
+            "context": "trusted",
+            "method": "memory_asset_get"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_get\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"offset\": \"2\", \"limit\": \"4\", \"version\": \"1.0.0\", \"expected_sha256\": \"abc\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_get\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"version\": null, \"view\": \"file\", \"file_path\": \"file.txt\", \"offset\": 0, \"limit\": null, \"expected_sha256\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "expected_sha256": null,
+              "file_path": "file.txt",
+              "id_or_path": "12345678",
+              "limit": null,
+              "offset": 0,
+              "version": null,
+              "view": "file"
+            },
+            "context": "trusted",
+            "method": "memory_asset_get"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_get\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"limit\": null, \"view\": \"file\", \"file_path\": \"file.txt\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'id_or_path' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_get\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"/a.md\", \"asset_kind\": \"docs\", \"keep\": 5, \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "expected_revision": "r",
+              "id_or_path": "/a.md",
+              "idempotency_key": "k",
+              "keep": 5
+            },
+            "context": "trusted",
+            "method": "memory_asset_prune"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"/a.md\", \"asset_kind\": \"docs\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"keep\": 2, \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "expected_revision": "r",
+              "id_or_path": "12345678",
+              "idempotency_key": "k",
+              "keep": 2
+            },
+            "context": "trusted",
+            "method": "memory_asset_prune"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"keep\": \"2\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"keep\": true, \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "asset_kind": "docs",
+              "expected_revision": "r",
+              "id_or_path": "12345678",
+              "idempotency_key": "k",
+              "keep": true
+            },
+            "context": "trusted",
+            "method": "memory_asset_prune"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_prune\", \"arguments\": {\"id_or_path\": \"12345678\", \"asset_kind\": \"docs\", \"keep\": true, \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'id_or_path' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_asset_prune\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_create\", \"arguments\": {\"path\": \"/new.md\", \"concept_type\": \"concept\", \"title\": \"New\", \"body\": \"body\", \"expected_revision\": \"base\", \"idempotency_key\": \"key\", \"description\": null, \"tags\": [], \"aliases\": []}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "aliases": [],
+              "body": "body",
+              "concept_type": "concept",
+              "description": null,
+              "expected_revision": "base",
+              "idempotency_key": "key",
+              "path": "/new.md",
+              "tags": [],
+              "title": "New"
+            },
+            "context": "trusted",
+            "method": "memory_create"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_create\", \"arguments\": {\"path\": \"/new.md\", \"concept_type\": \"concept\", \"title\": \"New\", \"body\": \"body\", \"expected_revision\": \"base\", \"idempotency_key\": \"key\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_create\", \"arguments\": {\"path\": \"/new.md\", \"concept_type\": \"concept\", \"title\": \"New\", \"body\": \"body\", \"expected_revision\": \"base\", \"idempotency_key\": \"key\", \"description\": null, \"tags\": [\"z\", \"a\", \"z\"], \"aliases\": [\"name\"]}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "aliases": [
+                "name"
+              ],
+              "body": "body",
+              "concept_type": "concept",
+              "description": null,
+              "expected_revision": "base",
+              "idempotency_key": "key",
+              "path": "/new.md",
+              "tags": [
+                "z",
+                "a",
+                "z"
+              ],
+              "title": "New"
+            },
+            "context": "trusted",
+            "method": "memory_create"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_create\", \"arguments\": {\"path\": \"/new.md\", \"concept_type\": \"concept\", \"title\": \"New\", \"body\": \"body\", \"expected_revision\": \"base\", \"idempotency_key\": \"key\", \"tags\": [\"z\", \"a\", \"z\"], \"aliases\": [\"name\"]}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_patch\", \"arguments\": {\"path\": \"/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\", \"title\": null, \"description\": null, \"body\": null, \"status\": null, \"tags\": null, \"aliases\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "aliases": null,
+              "body": null,
+              "description": null,
+              "expected_revision": "r",
+              "idempotency_key": "key",
+              "path": "/a.md",
+              "status": null,
+              "tags": null,
+              "title": null
+            },
+            "context": "trusted",
+            "method": "memory_patch"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_patch\", \"arguments\": {\"path\": \"/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_patch\", \"arguments\": {\"path\": \"/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\", \"title\": null, \"description\": \"d\", \"body\": null, \"status\": \"tombstone\", \"tags\": [], \"aliases\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "aliases": null,
+              "body": null,
+              "description": "d",
+              "expected_revision": "r",
+              "idempotency_key": "key",
+              "path": "/a.md",
+              "status": "tombstone",
+              "tags": [],
+              "title": null
+            },
+            "context": "trusted",
+            "method": "memory_patch"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_patch\", \"arguments\": {\"path\": \"/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\", \"tags\": [], \"status\": \"tombstone\", \"description\": \"d\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_rename\", \"arguments\": {\"path\": \"/a.md\", \"new_path\": \"/b.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "expected_revision": "r",
+              "idempotency_key": "key",
+              "new_path": "/b.md",
+              "path": "/a.md"
+            },
+            "context": "trusted",
+            "method": "memory_rename"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_rename\", \"arguments\": {\"path\": \"/a.md\", \"new_path\": \"/b.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"key\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'path' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_create\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'path' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_patch\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'path' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_rename\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_trash\", \"arguments\": {\"path\": \"/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "expected_revision": "r",
+              "idempotency_key": "k",
+              "path": "/a.md"
+            },
+            "context": "trusted",
+            "method": "memory_trash"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_trash\", \"arguments\": {\"path\": \"/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_restore\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "expected_revision": "r",
+              "idempotency_key": "k",
+              "path": "/trash/a.md"
+            },
+            "context": "trusted",
+            "method": "memory_restore"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_restore\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_purge\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\", \"confirm\": false}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "confirm": false,
+              "expected_revision": "r",
+              "idempotency_key": "k",
+              "path": "/trash/a.md"
+            },
+            "context": "trusted",
+            "method": "memory_purge"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_purge\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_purge\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\", \"confirm\": true}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "confirm": true,
+              "expected_revision": "r",
+              "idempotency_key": "k",
+              "path": "/trash/a.md"
+            },
+            "context": "trusted",
+            "method": "memory_purge"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_purge\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\", \"confirm\": \"yes\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_purge\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\", \"confirm\": 1}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "confirm": 1,
+              "expected_revision": "r",
+              "idempotency_key": "k",
+              "path": "/trash/a.md"
+            },
+            "context": "trusted",
+            "method": "memory_purge"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_purge\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\", \"confirm\": 1}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_purge\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\", \"confirm\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "confirm": null,
+              "expected_revision": "r",
+              "idempotency_key": "k",
+              "path": "/trash/a.md"
+            },
+            "context": "trusted",
+            "method": "memory_purge"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_purge\", \"arguments\": {\"path\": \"/trash/a.md\", \"expected_revision\": \"r\", \"idempotency_key\": \"k\", \"confirm\": null}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'path' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_trash\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'path' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_restore\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'path' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_purge\", \"arguments\": {}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_inventory\", \"arguments\": {\"path_prefix\": \"/\", \"fields\": null, \"limit\": 50, \"cursor\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "cursor": null,
+              "fields": null,
+              "limit": 50,
+              "path_prefix": "/"
+            },
+            "context": "trusted",
+            "method": "memory_inventory"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_inventory\"}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_inventory\", \"arguments\": {\"path_prefix\": \"/public/\", \"fields\": [\"title\", \"path\", \"title\"], \"limit\": 2, \"cursor\": \"/public/a.md\"}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "cursor": "/public/a.md",
+              "fields": [
+                "title",
+                "path",
+                "title"
+              ],
+              "limit": 2,
+              "path_prefix": "/public/"
+            },
+            "context": "trusted",
+            "method": "memory_inventory"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_inventory\", \"arguments\": {\"path_prefix\": \"/public/\", \"fields\": [\"title\", \"path\", \"title\"], \"limit\": \"2\", \"cursor\": \"/public/a.md\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_inventory\", \"arguments\": {\"path_prefix\": \"/\", \"fields\": [], \"limit\": true, \"cursor\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "cursor": null,
+              "fields": [],
+              "limit": true,
+              "path_prefix": "/"
+            },
+            "context": "trusted",
+            "method": "memory_inventory"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_inventory\", \"arguments\": {\"fields\": [], \"limit\": true}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_inventory\", \"arguments\": {\"path_prefix\": \"/\", \"fields\": null, \"limit\": 50, \"cursor\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "cursor": null,
+              "fields": null,
+              "limit": 50,
+              "path_prefix": "/"
+            },
+            "context": "trusted",
+            "method": "memory_inventory"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_inventory\", \"arguments\": {\"fields\": null}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_inventory\", \"arguments\": {\"path_prefix\": \"/\", \"fields\": \"path\", \"limit\": 50, \"cursor\": null}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "cursor": null,
+              "fields": "path",
+              "limit": 50,
+              "path_prefix": "/"
+            },
+            "context": "trusted",
+            "method": "memory_inventory"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_inventory\", \"arguments\": {\"fields\": \"path\"}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Unrecognized parameter(s): principal"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_inventory\", \"arguments\": {\"principal\": \"other\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_compare_manifest\", \"arguments\": {\"path_prefix\": \"/public/\", \"items\": [], \"match\": null, \"include_asset_metadata\": false}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "include_asset_metadata": false,
+              "items": [],
+              "match": null,
+              "path_prefix": "/public/"
+            },
+            "context": "trusted",
+            "method": "memory_compare_manifest"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_compare_manifest\", \"arguments\": {\"path_prefix\": \"/public/\", \"items\": []}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_compare_manifest\", \"arguments\": {\"path_prefix\": \"/\", \"items\": [{\"name\": \"a\"}], \"match\": {\"path_template\": \"/{name}.md\"}, \"include_asset_metadata\": true}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "include_asset_metadata": true,
+              "items": [
+                {
+                  "name": "a"
+                }
+              ],
+              "match": {
+                "path_template": "/{name}.md"
+              },
+              "path_prefix": "/"
+            },
+            "context": "trusted",
+            "method": "memory_compare_manifest"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_compare_manifest\", \"arguments\": {\"path_prefix\": \"/\", \"items\": [{\"name\": \"a\"}], \"match\": {\"path_template\": \"/{name}.md\"}, \"include_asset_metadata\": \"yes\"}}}"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"method\": \"memory_compare_manifest\", \"arguments\": {\"path_prefix\": \"/\", \"items\": [], \"match\": null, \"include_asset_metadata\": 1}, \"context\": \"trusted\"}",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "arguments": {
+              "include_asset_metadata": 1,
+              "items": [],
+              "match": null,
+              "path_prefix": "/"
+            },
+            "context": "trusted",
+            "method": "memory_compare_manifest"
+          }
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_compare_manifest\", \"arguments\": {\"path_prefix\": \"/\", \"items\": [], \"match\": null, \"include_asset_metadata\": 1}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'path_prefix' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_compare_manifest\", \"arguments\": {\"items\": []}}}"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Required parameter 'items' is missing"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"memory_compare_manifest\", \"arguments\": {\"path_prefix\": \"/\"}}}"
+    }
+  ],
+  "definitions": [
+    {
+      "annotations": {
+        "operation": "search",
+        "roles": [
+          "reader"
+        ]
+      },
+      "description": "Search visible concepts by lexical or semantic query.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "concept_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Concept Type"
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cursor"
+          },
+          "limit": {
+            "default": 20,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "query_syntax": {
+            "default": "plain",
+            "enum": [
+              "plain",
+              "fts5"
+            ],
+            "title": "Query Syntax",
+            "type": "string"
+          },
+          "search_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Search Mode"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "SearchArgs",
+        "type": "object"
+      },
+      "name": "memory_search",
+      "parameters": [
+        {
+          "name": "query",
+          "required": true
+        },
+        {
+          "default": null,
+          "name": "concept_type",
+          "required": false
+        },
+        {
+          "default": 20,
+          "name": "limit",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "cursor",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "search_mode",
+          "required": false
+        },
+        {
+          "default": "plain",
+          "name": "query_syntax",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "read",
+        "roles": [
+          "reader"
+        ]
+      },
+      "description": "Read one visible concept by path or concept id.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "id_or_path": {
+            "title": "Id Or Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_or_path"
+        ],
+        "title": "ReadArgs",
+        "type": "object"
+      },
+      "name": "memory_read",
+      "parameters": [
+        {
+          "name": "id_or_path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "list",
+        "roles": [
+          "reader"
+        ]
+      },
+      "description": "List visible concepts under a path prefix.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "path_prefix": {
+            "default": "/",
+            "title": "Path Prefix",
+            "type": "string"
+          }
+        },
+        "title": "ListArgs",
+        "type": "object"
+      },
+      "name": "memory_list",
+      "parameters": [
+        {
+          "default": "/",
+          "name": "path_prefix",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "inventory",
+        "roles": [
+          "reader"
+        ]
+      },
+      "description": "Read a bounded namespace inventory with stable body digests and asset metadata, without concept bodies.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cursor"
+          },
+          "fields": {
+            "default": [
+              "path",
+              "id",
+              "title",
+              "status",
+              "type",
+              "tags",
+              "created_at",
+              "updated_at",
+              "updated_by",
+              "body_sha256",
+              "body_bytes",
+              "assets"
+            ],
+            "items": {
+              "enum": [
+                "path",
+                "id",
+                "title",
+                "status",
+                "type",
+                "tags",
+                "created_at",
+                "updated_at",
+                "updated_by",
+                "body_sha256",
+                "body_bytes",
+                "assets"
+              ],
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Fields",
+            "type": "array"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "path_prefix": {
+            "default": "/",
+            "title": "Path Prefix",
+            "type": "string"
+          }
+        },
+        "title": "InventoryArgs",
+        "type": "object"
+      },
+      "name": "memory_inventory",
+      "parameters": [
+        {
+          "default": "/",
+          "name": "path_prefix",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "fields",
+          "required": false
+        },
+        {
+          "default": 50,
+          "name": "limit",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "cursor",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "compare_manifest",
+        "roles": [
+          "reader"
+        ]
+      },
+      "description": "Compare a bounded caller-provided manifest with an authorised namespace inventory.",
+      "inputSchema": {
+        "$defs": {
+          "ManifestItemArgs": {
+            "additionalProperties": false,
+            "properties": {
+              "local_body_sha256": {
+                "pattern": "^[0-9a-fA-F]{64}$",
+                "title": "Local Body Sha256",
+                "type": "string"
+              },
+              "local_bytes": {
+                "minimum": 0,
+                "title": "Local Bytes",
+                "type": "integer"
+              },
+              "local_path": {
+                "maxLength": 512,
+                "minLength": 1,
+                "title": "Local Path",
+                "type": "string"
+              },
+              "local_updated_at": {
+                "format": "date-time",
+                "title": "Local Updated At",
+                "type": "string"
+              },
+              "memento_path": {
+                "anyOf": [
+                  {
+                    "maxLength": 1024,
+                    "minLength": 4,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Memento Path"
+              },
+              "name": {
+                "maxLength": 128,
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "local_path",
+              "local_updated_at",
+              "local_body_sha256",
+              "local_bytes"
+            ],
+            "title": "ManifestItemArgs",
+            "type": "object"
+          },
+          "ManifestMatchArgs": {
+            "additionalProperties": false,
+            "properties": {
+              "aliases": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Aliases",
+                "type": "object"
+              },
+              "path_template": {
+                "anyOf": [
+                  {
+                    "maxLength": 1024,
+                    "minLength": 5,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Path Template"
+              }
+            },
+            "title": "ManifestMatchArgs",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "include_asset_metadata": {
+            "default": false,
+            "title": "Include Asset Metadata",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/ManifestItemArgs"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          },
+          "match": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ManifestMatchArgs"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "path_prefix": {
+            "default": "/",
+            "maxLength": 1024,
+            "minLength": 1,
+            "title": "Path Prefix",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "CompareManifestArgs",
+        "type": "object"
+      },
+      "name": "memory_compare_manifest",
+      "parameters": [
+        {
+          "name": "path_prefix",
+          "required": true
+        },
+        {
+          "name": "items",
+          "required": true
+        },
+        {
+          "default": null,
+          "name": "match",
+          "required": false
+        },
+        {
+          "default": false,
+          "name": "include_asset_metadata",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "graph",
+        "roles": [
+          "reader"
+        ]
+      },
+      "description": "Inspect graph neighbors and backlinks for a concept.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "depth": {
+            "default": 1,
+            "title": "Depth",
+            "type": "integer"
+          },
+          "id_or_path": {
+            "title": "Id Or Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_or_path"
+        ],
+        "title": "GraphArgs",
+        "type": "object"
+      },
+      "name": "memory_graph",
+      "parameters": [
+        {
+          "name": "id_or_path",
+          "required": true
+        },
+        {
+          "default": 1,
+          "name": "depth",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "propose",
+        "roles": [
+          "proposer"
+        ]
+      },
+      "description": "Create a deterministic proposal from explicit changes.",
+      "inputSchema": {
+        "$defs": {
+          "ProposeAssetChange": {
+            "additionalProperties": false,
+            "oneOf": [
+              {
+                "not": {
+                  "required": [
+                    "staged_asset_id"
+                  ]
+                },
+                "required": [
+                  "zip_base64"
+                ]
+              },
+              {
+                "not": {
+                  "required": [
+                    "zip_base64"
+                  ]
+                },
+                "required": [
+                  "staged_asset_id"
+                ]
+              }
+            ],
+            "properties": {
+              "asset_kind": {
+                "title": "Asset Kind",
+                "type": "string"
+              },
+              "kind": {
+                "const": "attach_asset_pack",
+                "title": "Kind",
+                "type": "string"
+              },
+              "path": {
+                "title": "Path",
+                "type": "string"
+              },
+              "staged_asset_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Staged Asset Id"
+              },
+              "version": {
+                "title": "Version",
+                "type": "string"
+              },
+              "zip_base64": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Zip Base64"
+              }
+            },
+            "required": [
+              "kind",
+              "path",
+              "asset_kind",
+              "version"
+            ],
+            "title": "ProposeAssetChange",
+            "type": "object"
+          },
+          "ProposeCreateChange": {
+            "additionalProperties": false,
+            "properties": {
+              "aliases": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Aliases",
+                "type": "array"
+              },
+              "body": {
+                "title": "Body",
+                "type": "string"
+              },
+              "concept_type": {
+                "title": "Concept Type",
+                "type": "string"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "kind": {
+                "const": "create",
+                "title": "Kind",
+                "type": "string"
+              },
+              "path": {
+                "title": "Path",
+                "type": "string"
+              },
+              "tags": {
+                "default": [],
+                "items": {
+                  "type": "string"
+                },
+                "title": "Tags",
+                "type": "array"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "path",
+              "concept_type",
+              "title",
+              "body"
+            ],
+            "title": "ProposeCreateChange",
+            "type": "object"
+          },
+          "ProposePatchChange": {
+            "additionalProperties": false,
+            "properties": {
+              "aliases": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Aliases"
+              },
+              "body": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Body"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "kind": {
+                "const": "patch",
+                "title": "Kind",
+                "type": "string"
+              },
+              "path": {
+                "title": "Path",
+                "type": "string"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "tags": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Tags"
+              },
+              "title": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Title"
+              }
+            },
+            "required": [
+              "kind",
+              "path"
+            ],
+            "title": "ProposePatchChange",
+            "type": "object"
+          },
+          "ProposeRenameChange": {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "const": "rename",
+                "title": "Kind",
+                "type": "string"
+              },
+              "new_path": {
+                "title": "New Path",
+                "type": "string"
+              },
+              "path": {
+                "title": "Path",
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "path",
+              "new_path"
+            ],
+            "title": "ProposeRenameChange",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "base_revision": {
+            "title": "Base Revision",
+            "type": "string"
+          },
+          "changes": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ProposeCreateChange"
+                },
+                {
+                  "$ref": "#/$defs/ProposePatchChange"
+                },
+                {
+                  "$ref": "#/$defs/ProposeRenameChange"
+                },
+                {
+                  "$ref": "#/$defs/ProposeAssetChange"
+                }
+              ]
+            },
+            "title": "Changes",
+            "type": "array"
+          },
+          "intent": {
+            "title": "Intent",
+            "type": "string"
+          },
+          "rationale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Rationale"
+          }
+        },
+        "required": [
+          "intent",
+          "base_revision",
+          "changes"
+        ],
+        "title": "_ProposeArgsSchema",
+        "type": "object"
+      },
+      "name": "memory_propose",
+      "parameters": [
+        {
+          "name": "intent",
+          "required": true
+        },
+        {
+          "name": "base_revision",
+          "required": true
+        },
+        {
+          "name": "changes",
+          "required": true
+        },
+        {
+          "default": null,
+          "name": "rationale",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "proposal_get",
+        "roles": [
+          "proposer"
+        ]
+      },
+      "description": "Read a bounded proposal summary or the detailed proposal record with per-change conflict metadata.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "proposal_id": {
+            "title": "Proposal Id",
+            "type": "string"
+          },
+          "view": {
+            "default": "detailed",
+            "enum": [
+              "summary",
+              "detailed"
+            ],
+            "title": "View",
+            "type": "string"
+          }
+        },
+        "required": [
+          "proposal_id"
+        ],
+        "title": "ProposalGetArgs",
+        "type": "object"
+      },
+      "name": "memory_proposal_get",
+      "parameters": [
+        {
+          "name": "proposal_id",
+          "required": true
+        },
+        {
+          "default": "detailed",
+          "name": "view",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "proposal_list",
+        "roles": [
+          "proposer"
+        ]
+      },
+      "description": "List bounded, cursor-paginated summaries of visible proposal records.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cursor"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          }
+        },
+        "title": "ProposalListArgs",
+        "type": "object"
+      },
+      "name": "memory_proposal_list",
+      "parameters": [
+        {
+          "default": null,
+          "name": "status",
+          "required": false
+        },
+        {
+          "default": 50,
+          "name": "limit",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "cursor",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "proposal_asset_get",
+        "roles": [
+          "proposer"
+        ]
+      },
+      "description": "Inspect staged proposal asset metadata or one bounded manifest-listed file.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "type": "string"
+          },
+          "file_path": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "proposal_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "proposal_id",
+          "asset_id"
+        ],
+        "type": "object"
+      },
+      "name": "memory_proposal_asset_get",
+      "parameters": [
+        {
+          "name": "proposal_id",
+          "required": true
+        },
+        {
+          "name": "asset_id",
+          "required": true
+        },
+        {
+          "default": null,
+          "name": "file_path",
+          "required": false
+        },
+        {
+          "default": 0,
+          "name": "offset",
+          "required": false
+        },
+        {
+          "default": 65536,
+          "name": "limit",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "proposal_rebase",
+        "roles": [
+          "proposer",
+          "curator"
+        ]
+      },
+      "description": "Rebase a clean proposal in place, retaining author and assets; original author or scoped curator, durable key required.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "proposal_id": {
+            "title": "Proposal Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "proposal_id",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "ProposalRebaseArgs",
+        "type": "object"
+      },
+      "name": "memory_proposal_rebase",
+      "parameters": [
+        {
+          "name": "proposal_id",
+          "required": true
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "proposal_revise",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Create a follow-up proposal from a conflict-free subset of a stale proposal.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_revision": {
+            "type": "string"
+          },
+          "intent": {
+            "type": "string"
+          },
+          "proposal_id": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "selected_change_indexes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "proposal_id",
+          "selected_change_indexes",
+          "expected_revision"
+        ],
+        "type": "object"
+      },
+      "name": "memory_proposal_revise",
+      "parameters": [
+        {
+          "name": "proposal_id",
+          "required": true
+        },
+        {
+          "name": "selected_change_indexes",
+          "required": true
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "default": null,
+          "name": "intent",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "rationale",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "operation_get",
+        "roles": [
+          "proposer",
+          "curator"
+        ]
+      },
+      "description": "Reconcile an owned operation; proposers may reconcile their own rebases, curators their own mutations.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "idempotency_key": {
+            "type": "string"
+          },
+          "operation_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "memory_operation_get",
+      "parameters": [
+        {
+          "default": null,
+          "name": "idempotency_key",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "operation_id",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "proposal_review",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Review a proposal as curator.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Comment"
+          },
+          "decision": {
+            "title": "Decision",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Idempotency Key"
+          },
+          "proposal_id": {
+            "title": "Proposal Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "proposal_id",
+          "decision"
+        ],
+        "title": "ProposalReviewArgs",
+        "type": "object"
+      },
+      "name": "memory_proposal_review",
+      "parameters": [
+        {
+          "name": "proposal_id",
+          "required": true
+        },
+        {
+          "name": "decision",
+          "required": true
+        },
+        {
+          "default": null,
+          "name": "comment",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "idempotency_key",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "proposal_apply",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Apply an approved proposal through the Git transaction pipeline.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "proposal_id": {
+            "title": "Proposal Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "proposal_id",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "ProposalApplyArgs",
+        "type": "object"
+      },
+      "name": "memory_proposal_apply",
+      "parameters": [
+        {
+          "name": "proposal_id",
+          "required": true
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "asset_stage_begin",
+        "roles": [
+          "proposer"
+        ]
+      },
+      "description": "Create a one-time raw ZIP upload ticket for a staged asset pack.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_kind": {
+            "title": "Asset Kind",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_kind",
+          "version",
+          "idempotency_key"
+        ],
+        "title": "AssetStageBeginArgs",
+        "type": "object"
+      },
+      "name": "memory_asset_stage_begin",
+      "parameters": [
+        {
+          "name": "asset_kind",
+          "required": true
+        },
+        {
+          "name": "version",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "asset_stage_status",
+        "roles": [
+          "proposer"
+        ]
+      },
+      "description": "Reconcile a staged asset upload ticket and retrieve its staged_asset_id.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "idempotency_key"
+        ],
+        "title": "AssetStageStatusArgs",
+        "type": "object"
+      },
+      "name": "memory_asset_stage_status",
+      "parameters": [
+        {
+          "name": "idempotency_key",
+          "required": true
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "asset_get",
+        "roles": [
+          "reader"
+        ]
+      },
+      "description": "Read an accepted asset: view=manifest omits ZIP bytes; view=file requires file_path; view=archive supports bounded offset/limit. Small archives remain inline by default. Resume with the resolved version and expected_sha256. Limits: memory_status.limits.assets.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_kind": {
+            "title": "Asset Kind",
+            "type": "string"
+          },
+          "expected_sha256": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Sha256"
+          },
+          "file_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "File Path"
+          },
+          "id_or_path": {
+            "title": "Id Or Path",
+            "type": "string"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "maximum": 262144,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Limit"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Version"
+          },
+          "view": {
+            "default": "archive",
+            "enum": [
+              "archive",
+              "manifest",
+              "file"
+            ],
+            "title": "View",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_or_path",
+          "asset_kind"
+        ],
+        "title": "AssetGetArgs",
+        "type": "object"
+      },
+      "name": "memory_asset_get",
+      "parameters": [
+        {
+          "name": "id_or_path",
+          "required": true
+        },
+        {
+          "name": "asset_kind",
+          "required": true
+        },
+        {
+          "default": null,
+          "name": "version",
+          "required": false
+        },
+        {
+          "default": "archive",
+          "name": "view",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "file_path",
+          "required": false
+        },
+        {
+          "default": 0,
+          "name": "offset",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "limit",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "expected_sha256",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "asset_prune",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Prune retained asset pack versions as curator.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_kind": {
+            "title": "Asset Kind",
+            "type": "string"
+          },
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "id_or_path": {
+            "title": "Id Or Path",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "keep": {
+            "default": 5,
+            "title": "Keep",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id_or_path",
+          "asset_kind",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "AssetPruneArgs",
+        "type": "object"
+      },
+      "name": "memory_asset_prune",
+      "parameters": [
+        {
+          "name": "id_or_path",
+          "required": true
+        },
+        {
+          "name": "asset_kind",
+          "required": true
+        },
+        {
+          "default": 5,
+          "name": "keep",
+          "required": false
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "create",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Create a concept directly as curator.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "aliases": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Aliases",
+            "type": "array"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "concept_type": {
+            "title": "Concept Type",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "tags": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "concept_type",
+          "title",
+          "body",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "CreateArgs",
+        "type": "object"
+      },
+      "name": "memory_create",
+      "parameters": [
+        {
+          "name": "path",
+          "required": true
+        },
+        {
+          "name": "concept_type",
+          "required": true
+        },
+        {
+          "name": "title",
+          "required": true
+        },
+        {
+          "name": "body",
+          "required": true
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        },
+        {
+          "default": null,
+          "name": "description",
+          "required": false
+        },
+        {
+          "default": [],
+          "name": "tags",
+          "required": false
+        },
+        {
+          "default": [],
+          "name": "aliases",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "patch",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Patch a concept directly as curator.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "aliases": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Aliases"
+          },
+          "body": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Body"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tags"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Title"
+          }
+        },
+        "required": [
+          "path",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "PatchArgs",
+        "type": "object"
+      },
+      "name": "memory_patch",
+      "parameters": [
+        {
+          "name": "path",
+          "required": true
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        },
+        {
+          "default": null,
+          "name": "title",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "description",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "body",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "status",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "tags",
+          "required": false
+        },
+        {
+          "default": null,
+          "name": "aliases",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "trash",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Move a concept to /trash/ retaining original permissions and assets.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "TrashArgs",
+        "type": "object"
+      },
+      "name": "memory_trash",
+      "parameters": [
+        {
+          "name": "path",
+          "required": true
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "restore",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Restore a trashed concept to its original path; reject collisions.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "TrashArgs",
+        "type": "object"
+      },
+      "name": "memory_restore",
+      "parameters": [
+        {
+          "name": "path",
+          "required": true
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "purge",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Permanently delete a trashed concept and accepted assets from current state; requires confirm=true and retains Git history.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          },
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "PurgeArgs",
+        "type": "object"
+      },
+      "name": "memory_purge",
+      "parameters": [
+        {
+          "name": "path",
+          "required": true
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        },
+        {
+          "default": false,
+          "name": "confirm",
+          "required": false
+        }
+      ]
+    },
+    {
+      "annotations": {
+        "operation": "rename",
+        "roles": [
+          "curator"
+        ]
+      },
+      "description": "Rename a concept directly as curator.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_revision": {
+            "title": "Expected Revision",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "new_path": {
+            "title": "New Path",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "new_path",
+          "expected_revision",
+          "idempotency_key"
+        ],
+        "title": "RenameArgs",
+        "type": "object"
+      },
+      "name": "memory_rename",
+      "parameters": [
+        {
+          "name": "path",
+          "required": true
+        },
+        {
+          "name": "new_path",
+          "required": true
+        },
+        {
+          "name": "expected_revision",
+          "required": true
+        },
+        {
+          "name": "idempotency_key",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

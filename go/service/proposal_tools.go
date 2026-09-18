@@ -61,11 +61,13 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 		for _, parameter := range definition.Parameters {
 			kind := umcp.StringParam
 			switch parameter.Name {
-			case "confirm":
+			case "confirm", "include_asset_metadata":
 				kind = umcp.BooleanParam
 			case "limit", "offset", "depth", "keep":
 				kind = umcp.IntegerParam
-			case "changes", "selected_change_indexes", "tags", "aliases", "fields":
+			case "match":
+				kind = umcp.ObjectParam
+			case "changes", "selected_change_indexes", "tags", "aliases", "fields", "items":
 				kind = umcp.ArrayParam
 			}
 			parameters = append(parameters, umcp.Parameter{Name: parameter.Name, Types: []umcp.ParamType{kind}, HasDefault: !parameter.Required, Default: parameter.Default})
@@ -273,6 +275,20 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 			return nil, options, a.err
 		}
 		data, err = c.Read(ctx, actor, id)
+	case "memory_compare_manifest":
+		prefix, items := a.text("path_prefix"), a.array("items")
+		var match map[string]any
+		if args["match"] != nil {
+			var ok bool
+			match, ok = args["match"].(map[string]any)
+			if !ok {
+				a.err = umcp.ExecutionError{Type: "TypeError", Message: "manifest match must be a mapping"}
+			}
+		}
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		data, options, err = c.CompareManifest(ctx, actor, prefix, items, match, manifestTruthy(args["include_asset_metadata"]))
 	case "memory_inventory":
 		prefix, limit, cursor := a.text("path_prefix"), a.integer("limit"), a.optional("cursor")
 		var fields []string

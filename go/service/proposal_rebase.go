@@ -30,7 +30,9 @@ type ProposalControls struct {
 	MaxConceptBytes   int
 	Index             ReadIndex
 	DefaultSearchMode string
-	DerivedUpdate     repository.DerivedUpdateCallback
+	// Worker-owned live policy resolver for nested inventory calls.
+	inventoryPolicy func(context.Context) (access.EffectivePolicy, error)
+	DerivedUpdate   repository.DerivedUpdateCallback
 	// ChangedConcepts is optional hot-working-memory tracking. Core queue refresh
 	// always runs first; enabled intelligent tiers must supply their own hook.
 	ChangedConcepts func(context.Context, access.EffectivePolicy, []string) error

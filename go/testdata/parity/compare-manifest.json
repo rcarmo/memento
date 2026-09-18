@@ -1,0 +1,3710 @@
+{
+  "cases": [
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 0,
+            "matching": 1,
+            "memento_only": 1
+          },
+          "differing": [],
+          "local_only": [],
+          "matching": [
+            {
+              "body_bytes_match": true,
+              "body_match": true,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "include_asset_metadata": true,
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 0,
+            "matching": 1,
+            "memento_only": 1
+          },
+          "differing": [],
+          "local_only": [],
+          "matching": [
+            {
+              "asset_kinds_truncated": false,
+              "asset_present": true,
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0"
+                }
+              ],
+              "body_bytes_match": true,
+              "body_match": true,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "memento_only": [
+            {
+              "asset_kinds_truncated": false,
+              "asset_present": false,
+              "assets": [],
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 999,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 0,
+            "matching": 1,
+            "memento_only": 1
+          },
+          "differing": [],
+          "local_only": [],
+          "matching": [
+            {
+              "body_bytes_match": false,
+              "body_match": true,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 999,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "B3CC0475BB78A5026098858E9889ACF666D31062D513D303314ECA31D36E72F2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 0,
+            "matching": 1,
+            "memento_only": 1
+          },
+          "differing": [],
+          "local_only": [],
+          "matching": [
+            {
+              "body_bytes_match": true,
+              "body_match": true,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2027-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 1,
+            "local_only": 0,
+            "matching": 0,
+            "memento_only": 1
+          },
+          "differing": [
+            {
+              "body_bytes_match": true,
+              "body_match": false,
+              "likely_newer": "local",
+              "local_body_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2027-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "local_only": [],
+          "matching": [],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2025-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 1,
+            "local_only": 0,
+            "matching": 0,
+            "memento_only": 1
+          },
+          "differing": [
+            {
+              "body_bytes_match": true,
+              "body_match": false,
+              "likely_newer": "memento",
+              "local_body_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2025-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "local_only": [],
+          "matching": [],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T01:00:00+01:00",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 1,
+            "local_only": 0,
+            "matching": 0,
+            "memento_only": 1
+          },
+          "differing": [
+            {
+              "body_bytes_match": true,
+              "body_match": false,
+              "likely_newer": "unknown",
+              "local_body_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "local_only": [],
+          "matching": [],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/local.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 1,
+            "matching": 0,
+            "memento_only": 2
+          },
+          "differing": [],
+          "local_only": [
+            {
+              "body_match": null,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_path": "/public/local.md",
+              "memento_present": false,
+              "name": "a"
+            }
+          ],
+          "matching": [],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 100000000000000000000000000000000000000000000000000,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 0,
+            "matching": 1,
+            "memento_only": 1
+          },
+          "differing": [],
+          "local_only": [],
+          "matching": [
+            {
+              "body_bytes_match": false,
+              "body_match": true,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 100000000000000000000000000000000000000000000000000,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "bad"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must be an absolute directory prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest comparison requires between 1 and 50 items",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest comparison requires between 1 and 50 items",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "duplicate manifest item name: a",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "b"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "duplicate manifest memento_path: /public/a.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "aaa": 2,
+          "unknown": 1
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported manifest match fields: aaa, unknown",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "path_template": 1
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest path_template must be a bounded string",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "path_template": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest path_template must be a bounded string",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "path_template": "/{name}/{name}"
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest path_template must contain only one {name} field",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "path_template": "/{other}"
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest path_template must contain only one {name} field",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "aliases": null
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest aliases must be a mapping with at most 50 entries",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "aliases": {
+            "a": 1
+          }
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest aliases must map strings to strings",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "aliases": {
+            "": "a"
+          }
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest alias names must contain 1 to 128 characters",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "aliases": {
+            "0": "a",
+            "1": "a",
+            "10": "a",
+            "11": "a",
+            "12": "a",
+            "13": "a",
+            "14": "a",
+            "15": "a",
+            "16": "a",
+            "17": "a",
+            "18": "a",
+            "19": "a",
+            "2": "a",
+            "20": "a",
+            "21": "a",
+            "22": "a",
+            "23": "a",
+            "24": "a",
+            "25": "a",
+            "26": "a",
+            "27": "a",
+            "28": "a",
+            "29": "a",
+            "3": "a",
+            "30": "a",
+            "31": "a",
+            "32": "a",
+            "33": "a",
+            "34": "a",
+            "35": "a",
+            "36": "a",
+            "37": "a",
+            "38": "a",
+            "39": "a",
+            "4": "a",
+            "40": "a",
+            "41": "a",
+            "42": "a",
+            "43": "a",
+            "44": "a",
+            "45": "a",
+            "46": "a",
+            "47": "a",
+            "48": "a",
+            "49": "a",
+            "5": "a",
+            "50": "a",
+            "6": "a",
+            "7": "a",
+            "8": "a",
+            "9": "a"
+          }
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest aliases must be a mapping with at most 50 entries",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a",
+            "unknown": true
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported manifest item fields: unknown",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": ""
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest item name must contain 1 to 128 characters",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest item name must contain 1 to 128 characters",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": null,
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest local_path must contain 1 to 512 characters",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest local_path must contain 1 to 512 characters",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "bad",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest local_body_sha256 must be a SHA-256 hex digest",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": null,
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest local_body_sha256 must be a SHA-256 hex digest",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": true,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest local_bytes must be a non-negative integer",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": -1,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest local_bytes must be a non-negative integer",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 1.0,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest local_bytes must be a non-negative integer",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": null,
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest timestamps must be timezone-aware",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "bad",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest timestamps must be ISO 8601 values",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest timestamps must be timezone-aware",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": 1,
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest memento_path must be a string",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/private/p.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest memento_path must be a concept path under path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/else/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest memento_path must be a concept path under path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/../a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest memento_path is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public//a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest memento_path must be a concept path under path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/index.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "reserved file cannot be written: index.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest items without memento_path require match.path_template",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "aliases": {
+            "a": "empty"
+          },
+          "path_template": "/public/{name}.md"
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 0,
+            "matching": 1,
+            "memento_only": 1
+          },
+          "differing": [],
+          "local_only": [],
+          "matching": [
+            {
+              "body_bytes_match": true,
+              "body_match": true,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "name": "a"
+          }
+        ],
+        "match": {
+          "path_template": "/public/{name}.md"
+        },
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 0,
+            "matching": 1,
+            "memento_only": 1
+          },
+          "differing": [],
+          "local_only": [],
+          "matching": [
+            {
+              "body_bytes_match": true,
+              "body_match": true,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "include_asset_metadata": true,
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/local.md",
+            "name": "b"
+          },
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 1,
+            "matching": 1,
+            "memento_only": 1
+          },
+          "differing": [],
+          "local_only": [
+            {
+              "body_match": null,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_path": "/public/local.md",
+              "memento_present": false,
+              "name": "b"
+            }
+          ],
+          "matching": [
+            {
+              "asset_kinds_truncated": false,
+              "asset_present": true,
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0"
+                }
+              ],
+              "body_bytes_match": true,
+              "body_match": true,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "memento_only": [
+            {
+              "asset_kinds_truncated": false,
+              "asset_present": false,
+              "assets": [],
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal proposer lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "proposer",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal reader cannot compare manifests under /public/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 0,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/else/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "counts": {
+            "differing": 0,
+            "local_only": 0,
+            "matching": 1,
+            "memento_only": 49
+          },
+          "differing": [],
+          "local_only": [],
+          "matching": [
+            {
+              "body_bytes_match": true,
+              "body_match": true,
+              "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "local_bytes": 9,
+              "local_path": "local/a.md",
+              "local_present": true,
+              "local_updated_at": "2026-01-01T00:00:00Z",
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/a.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z",
+              "name": "a"
+            }
+          ],
+          "memento_only": [
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/empty.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z000.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z001.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z002.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z003.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z004.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z005.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z006.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z007.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z008.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z009.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z010.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z011.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z012.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z013.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z014.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z015.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z016.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z017.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z018.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z019.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z020.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z021.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z022.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z023.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z024.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z025.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z026.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z027.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z028.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z029.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z030.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z031.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z032.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z033.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z034.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z035.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z036.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z037.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z038.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z039.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z040.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z041.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z042.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z043.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z044.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z045.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z046.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            },
+            {
+              "local_present": false,
+              "memento_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "memento_bytes": 9,
+              "memento_path": "/public/z047.md",
+              "memento_present": true,
+              "memento_updated_at": "2026-01-01T00:00:00Z"
+            }
+          ],
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "extra": 48,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/new.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest comparison exceeds 50 combined records; narrow the manifest or path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 48,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest comparison namespace exceeds 50 concepts; use a narrower path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 49,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "items": [
+          {
+            "local_body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+            "local_bytes": 9,
+            "local_path": "local/a.md",
+            "local_updated_at": "2026-01-01T00:00:00Z",
+            "memento_path": "/public/a.md",
+            "name": "a"
+          }
+        ],
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "manifest comparison namespace exceeds 50 concepts; use a narrower path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "extra": 50,
+      "policy": {
+        "principal": "reader",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    }
+  ],
+  "files": {
+    "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+    "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+    "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+    "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+    "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+    "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljCg==",
+    "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+  },
+  "summaries": [
+    {
+      "expected": {
+        "asset_kinds_truncated": false,
+        "asset_present": false,
+        "assets": []
+      },
+      "value": null
+    },
+    {
+      "expected": {
+        "asset_kinds_truncated": false,
+        "asset_present": false,
+        "assets": []
+      },
+      "value": {}
+    },
+    {
+      "expected": {
+        "asset_kinds_truncated": false,
+        "asset_present": false,
+        "assets": []
+      },
+      "value": []
+    },
+    {
+      "expected": {
+        "asset_kinds_truncated": true,
+        "asset_present": true,
+        "assets": []
+      },
+      "value": [
+        {}
+      ]
+    },
+    {
+      "expected": {
+        "asset_kinds_truncated": true,
+        "asset_present": true,
+        "assets": []
+      },
+      "value": [
+        1
+      ]
+    },
+    {
+      "expected": {
+        "asset_kinds_truncated": true,
+        "asset_present": true,
+        "assets": [
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          },
+          {
+            "kind": "docs",
+            "latest_sha256": "x",
+            "latest_version": "1.0.0"
+          }
+        ]
+      },
+      "value": [
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        },
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": "1.0.0"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "asset_kinds_truncated": true,
+        "asset_present": true,
+        "assets": []
+      },
+      "value": [
+        {
+          "kind": "docs",
+          "latest_sha256": "x",
+          "latest_version": 1
+        }
+      ]
+    }
+  ]
+}

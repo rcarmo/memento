@@ -400,6 +400,17 @@ def main() -> None:
     (ROOT / "go/service/inventory_tools.json").write_text(
         json.dumps(inventory_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
     )
+    compare_manifest = importlib.import_module("compare_manifest")
+    save("compare-manifest.json", compare_manifest.fixtures())
+    save("manifest-timestamps.json", compare_manifest.timestamp_fixtures())
+    manifest_tool_fixtures = proposal_tools.fixtures(
+        names=[d["name"] for d in inventory_tool_fixtures["definitions"]]
+        + ["memory_compare_manifest"]
+    )
+    save("manifest-tool-dispatch.json", manifest_tool_fixtures)
+    (ROOT / "go/service/manifest_tools.json").write_text(
+        json.dumps(manifest_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
+    )
     # Runtime embeds only definitions for implemented tools, not test outcomes.
     (ROOT / "go/service/proposal_tools.json").write_text(
         json.dumps(proposal_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"

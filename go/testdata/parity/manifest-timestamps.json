@@ -1,0 +1,246 @@
+[
+  {
+    "error": "manifest timestamps must be timezone-aware",
+    "value": null
+  },
+  {
+    "error": "manifest timestamps must be timezone-aware",
+    "value": 0
+  },
+  {
+    "error": "manifest timestamps must be timezone-aware",
+    "value": true
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": ""
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "bad"
+  },
+  {
+    "error": "manifest timestamps must be timezone-aware",
+    "value": "2026-01-01"
+  },
+  {
+    "error": "manifest timestamps must be timezone-aware",
+    "value": "2026-01-01T12:00:00"
+  },
+  {
+    "error": "manifest timestamps must be timezone-aware",
+    "value": "2026-01-01Z"
+  },
+  {
+    "expected": "2026-01-01T00:00:00Z",
+    "value": "2026-01-01T00:00:00Z"
+  },
+  {
+    "expected": "2026-01-01T00:00:00Z",
+    "value": "2026-01-01T01:30:00+01:30"
+  },
+  {
+    "expected": "2026-01-01T00:00:00.123456Z",
+    "value": "2026-01-01 00:00:00.123456789Z"
+  },
+  {
+    "expected": "2026-01-01T11:04:56Z",
+    "value": "20260101T123456+0130"
+  },
+  {
+    "expected": "2026-01-01T12:34:00Z",
+    "value": "2026-01-01x12:34Z"
+  },
+  {
+    "expected": "2026-01-01T12:34:56.123000Z",
+    "value": "2026-01-01🍀12:34:56,123Z"
+  },
+  {
+    "expected": "2026-01-01T12:00:00Z",
+    "value": "2026-01-01T12Z"
+  },
+  {
+    "expected": "2026-01-01T12:00:00.250000Z",
+    "value": "2026-01-01T12.25Z"
+  },
+  {
+    "expected": "2026-01-01T12:34:00.250000Z",
+    "value": "2026-01-01T12:34.25Z"
+  },
+  {
+    "expected": "2025-12-31T23:59:29.500000Z",
+    "value": "2026-01-01T00:00:00+00:00:30.500000"
+  },
+  {
+    "expected": "2025-12-31T21:30:00Z",
+    "value": "2026-01-01T00:00:00+01:90"
+  },
+  {
+    "expected": "2026-01-01T02:00:00Z",
+    "value": "2026-01-01T00:00:00-02"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T24:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T00:60Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T00:00:60Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-02-30T00:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "0000-01-01T00:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T00:00+24:00"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T00:00+bad"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T1234:56Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-0101T00:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "202601-01T00:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T00:00:00z"
+  },
+  {
+    "expected": "2026-01-01T00:00:00Z",
+    "value": "2026-01-01T00:00:00+000000.25"
+  },
+  {
+    "expected": "2025-12-31T22:57:56.876544Z",
+    "value": "2026-01-01T00:00:00+01:02:03.1234567"
+  },
+  {
+    "expected": "2025-12-29T00:00:00Z",
+    "value": "2026-W01-1T00:00:00Z"
+  },
+  {
+    "expected": "2025-12-29T00:00:00Z",
+    "value": "2026W011T00:00:00Z"
+  },
+  {
+    "expected": "2025-12-29T00:00:00Z",
+    "value": "2026-W01T00:00:00Z"
+  },
+  {
+    "expected": "2025-12-29T00:00:00Z",
+    "value": "2026W01T00:00:00Z"
+  },
+  {
+    "expected": "2027-01-03T00:00:00Z",
+    "value": "2026-W53-7T00:00:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2025-W53-1T00:00:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-W00-1T00:00:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-W01-0T00:00:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-W011T00:00:00Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026W01-1T00:00:00Z"
+  },
+  {
+    "expected": "2026-01-01T12:00:00Z",
+    "value": "2026-01-01T12Z"
+  },
+  {
+    "expected": "2026-01-01T12:34:00Z",
+    "value": "2026-01-01T1234Z"
+  },
+  {
+    "expected": "2026-01-01T12:34:00Z",
+    "value": "2026-01-01T12:34Z"
+  },
+  {
+    "expected": "2026-01-01T12:34:56Z",
+    "value": "2026-01-01T123456Z"
+  },
+  {
+    "expected": "2026-01-01T12:34:56Z",
+    "value": "2026-01-01T12:34:56Z"
+  },
+  {
+    "expected": "2026-01-01T12:00:00.250000Z",
+    "value": "2026-01-01T12.25Z"
+  },
+  {
+    "expected": "2026-01-01T12:34:00.250000Z",
+    "value": "2026-01-01T12:34.25Z"
+  },
+  {
+    "expected": "2026-01-01T12:34:56.123456Z",
+    "value": "2026-01-01T12:34:56.1234567Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01TZ"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T12:3456Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T1234:56Z"
+  },
+  {
+    "expected": "2026-01-01T12:34:56Z",
+    "value": "2026-01-01\n12:34:56Z"
+  },
+  {
+    "error": "manifest timestamps must be ISO 8601 values",
+    "value": "2026-01-01T"
+  },
+  {
+    "error": "date value out of range",
+    "value": "9999-12-31T23:59:59-01"
+  },
+  {
+    "error": "date value out of range",
+    "value": "0001-01-01T00:00+01"
+  },
+  {
+    "expected": "2026-01-01T10:21:00Z",
+    "value": "2026-01-01T12:00+00:99"
+  },
+  {
+    "expected": "2026-01-01T11:58:21Z",
+    "value": "2026-01-01T12:00+00:00:99"
+  },
+  {
+    "expected": "2026-01-01T12:00:00Z",
+    "value": "2026-01-01T12:00+00:00:00.5"
+  }
+]
