@@ -292,10 +292,12 @@ func (r *ResourceRegistry) subscription(params map[string]any, remove bool) (any
 	return map[string]any{}, nil, nil
 }
 
-// Subscribe/Unsubscribe retain separate legacy-global and session registries.
+// Subscribe adds a URI to the legacy-global or current session registry.
 func (r *ResourceRegistry) Subscribe(_ context.Context, p map[string]any) (any, *RPCError, error) {
 	return r.subscription(p, false)
 }
+
+// Unsubscribe removes a URI from the legacy-global or current session registry.
 func (r *ResourceRegistry) Unsubscribe(_ context.Context, p map[string]any) (any, *RPCError, error) {
 	return r.subscription(p, true)
 }

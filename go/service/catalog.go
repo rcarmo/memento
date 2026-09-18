@@ -160,7 +160,7 @@ func (c *Catalog) Operation(name string) (map[string]any, error) {
 	return result, nil
 }
 
-// workflow() only receives generated, source-verified operation names.
+// Workflow returns one generated, source-verified workflow contract.
 func (c *Catalog) Workflow(goal string) (map[string]any, error) {
 	meta, ok := c.source.Workflows[goal]
 	if !ok {

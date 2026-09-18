@@ -328,7 +328,7 @@ func scanProposalAssets(rows operationRows) ([]ProposalAssetRecord, error) {
 	return out, rows.Err()
 }
 
-// UpdateStatus is the low-level blind update, not a review/apply policy check.
+// ProposalStatusUpdate contains the low-level blind status replacement fields.
 // Omitting optional review/application fields clears their prior values.
 type ProposalStatusUpdate struct {
 	Status                                                         ProposalStatus

@@ -12,11 +12,8 @@ import (
 	"time"
 )
 
-// Server composes implemented uMCP method registries with request dispatch.
-// It is protocol infrastructure, not the Memento service. Transports provide
-// trusted contexts and an appropriate authenticated notification sink.
 // StreamableHTTPSettings mirrors the five source server attributes used by
-// both sync and async Streamable HTTP transports.
+// both synchronous and asynchronous Streamable HTTP transports.
 type StreamableHTTPSettings struct {
 	SessionTTL            time.Duration
 	Keepalive             time.Duration

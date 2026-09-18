@@ -1,9 +1,30 @@
 GO ?= go
+GOTOOLCHAIN ?= go1.26.6
+export GOTOOLCHAIN
 ORACLE_PYTHON ?= python3
 UMCP_REFERENCE ?=
+TOOLS_DIR ?= ../build/go/tools
+STATICCHECK_VERSION ?= v0.6.1
+GOVULNCHECK_VERSION ?= v1.1.4
+STATICCHECK := $(TOOLS_DIR)/staticcheck
+GOVULNCHECK := $(TOOLS_DIR)/govulncheck
 
-.PHONY: check test vet format-check layout-check build race cross oracle coverage fuzz model-test corpus-test
-check: format-check layout-check vet coverage build
+.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check build race cross oracle coverage fuzz model-test corpus-test
+help:
+	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz and cross-build gates' 'tools       install pinned static-analysis tools under ../build/go/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck (correctness, style, simplification, unused)' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands'
+tools: $(STATICCHECK) $(GOVULNCHECK)
+$(STATICCHECK):
+	@mkdir -p $(TOOLS_DIR)
+	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
+$(GOVULNCHECK):
+	@mkdir -p $(TOOLS_DIR)
+	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
+check: quality
+quality: format-check layout-check vet lint test coverage build
+audit-fast: quality vuln
+audit: audit-fast race fuzz cross
+format:
+	gofmt -w $$(find . -name '*.go' -not -path './vendor/*')
 format-check:
 	@test -z "$$(gofmt -l $$(find . -name '*.go'))" || (echo 'Run gofmt before checking'; exit 1)
 layout-check:
@@ -13,6 +34,10 @@ layout-check:
 	@$(GO) mod tidy -diff
 vet:
 	CGO_ENABLED=0 $(GO) vet ./...
+lint: $(STATICCHECK)
+	CGO_ENABLED=0 $(STATICCHECK) ./...
+vuln: $(GOVULNCHECK)
+	CGO_ENABLED=0 $(GOVULNCHECK) ./...
 test:
 	CGO_ENABLED=0 $(GO) test ./...
 coverage:
@@ -21,44 +46,8 @@ coverage:
 	$(GO) tool cover -func=../build/go/coverage.out
 	@awk 'NR>1 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' ../build/go/coverage.out
 fuzz:
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzJSONRPCValidation -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzHTTPRules -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzDispatch -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzPagination -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzStdio -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzURLRules -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzToolResults -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzHTTPPost -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzStreamLine -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzLegacySSE -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzAsyncHTTPParser -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzSyncHTTPParser -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./umcp -run='^$$' -fuzz=FuzzTransportArgs -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzBundlePath -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzConceptMetadata -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzConceptFrontmatter -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzMarkdownLinks -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./repository -run='^$$' -fuzz=FuzzGitObjectRoundTrip -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./internal/pyjson -run='^$$' -fuzz=FuzzPythonJSON -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./access -run='^$$' -fuzz=FuzzAuthorizationPath -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzProposalChanges -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzProposalCursor -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzManifestTimestamp -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./internal/pydatetime -run='^$$' -fuzz=FuzzParseAware -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./service -run='^$$' -fuzz=FuzzAuditCursor -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./execute -run='^$$' -fuzz=FuzzExecutorValues -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./execute -run='^$$' -fuzz=FuzzExecutorPlan -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./execute -run='^$$' -fuzz=FuzzExecutorArguments -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./derived -run='^$$' -fuzz=FuzzLexicalQuery -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./derived -run='^$$' -fuzz=FuzzLexicalFTS -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./assets -run='^$$' -fuzz=FuzzAssetPack -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./assets -run='^$$' -fuzz=FuzzAssetRetrieval -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./internal/vector -run='^$$' -fuzz=FuzzF32LE -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzTokenizer -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./gte -run='^$$' -fuzz=FuzzModelParser -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./needle -run='^$$' -fuzz=FuzzModel -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./sentencepiece -run='^$$' -fuzz=FuzzProcessor -fuzztime=10000x -parallel=2 -timeout=120s
-	CGO_ENABLED=0 $(GO) test ./embedding -run='^$$' -fuzz=FuzzFrame -fuzztime=10000x -parallel=2 -timeout=120s
+	GO="$(GO)" FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}" ./tools/run-fuzz.sh
+
 model-test:
 	@test -n "$(GTE_MODEL_PATH)" || (echo 'Set GTE_MODEL_PATH to the digest-pinned public GTE1 model'; exit 1)
 	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(GO) test ./gte -run TestRealGTEModel -count=1 -v

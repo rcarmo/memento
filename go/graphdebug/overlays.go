@@ -2,11 +2,6 @@ package graphdebug
 
 import "sort"
 
-type overlayGroup struct {
-	kind, key string
-	nodes     []Node
-}
-
 func OverlayEdges(nodes []Node, revision string, limit int) []Edge {
 	if limit <= 0 {
 		return []Edge{}

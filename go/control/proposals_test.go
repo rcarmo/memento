@@ -14,7 +14,7 @@ import (
 func ptr[T any](v T) *T { return &v }
 func proposalStore(t *testing.T) Proposals {
 	ops, _ := newOperations(t)
-	return Proposals{DB: ops.DB, Now: ops.Now}
+	return Proposals(ops)
 }
 func proposalInput(id string) ProposalRequest {
 	return ProposalRequest{ProposalID: id, AuthorPrincipal: "alice", BaseRevision: "base", Intent: "synthetic", Rationale: ptr("because"), Patch: map[string]any{"changes": []any{}, "z": "日本", "n": 1.0}, Assets: []ProposalAssetInput{{AssetID: "asset-one", ConceptPath: "/public/a.md", AssetKind: "skill", Version: "1.0", MediaType: "application/zip", SHA256: "synthetic", BlobBytes: []byte("synthetic\x00\xff"), ManifestJSON: `{ "name": "日本" }`}}}

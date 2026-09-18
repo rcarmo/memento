@@ -1,4 +1,5 @@
-// SQL copied from the pinned Memento control/db.py schema.
+// Package control implements Memento's persisted operations, proposals, leases,
+// scheduling and managed-access control state.
 package control
 
 const SchemaVersion = "10"

@@ -92,6 +92,7 @@ func (s *Store) transaction(ctx context.Context, action func(*sql.Tx) error) err
 	return control.WithTransaction(ctx, s.db, action)
 }
 
+// ConfiguredPrincipal binds a bootstrap name to its namespace policy.
 // Bootstrap preserves input order, including the piclaw-workspace -> sandbox
 // alias. Existing rows/credentials are not overwritten or silently re-enabled.
 type ConfiguredPrincipal struct {
@@ -268,9 +269,9 @@ func (s *Store) audit(ctx context.Context, tx *sql.Tx, actor, action, target str
 	return err
 }
 
-// Mutations below do not authorise the actor. The embedding admin service must
-// verify trusted admin context first, as in Python. One-time key claims commit
-// before mutation and are not replayable even if a later step fails.
+// Create adds a managed principal and returns its credential once. It does not
+// authorise the actor; the embedding admin service must verify trusted admin
+// context first. One-time key claims commit before mutation and cannot replay.
 func (s *Store) Create(ctx context.Context, actor, name string, roles, reads, writes []string, key *string) (ManagedPrincipal, string, error) {
 	roles, reads, writes, err := validatePolicy(name, roles, reads, writes)
 	if err != nil {

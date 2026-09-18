@@ -3,6 +3,7 @@ package needle
 import (
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 type trie struct {
@@ -187,13 +188,14 @@ func (c *constraints) allowed() []int {
 	}
 	var allowed []int
 	for id, text := range c.strings {
-		for _, first := range text {
-			if node.children[first] != nil || first == '"' && node.terminal {
-				if tokenValid(text, node) {
-					allowed = append(allowed, id)
-				}
+		first, size := utf8.DecodeRuneInString(text)
+		if size == 0 {
+			continue
+		}
+		if node.children[first] != nil || first == '"' && node.terminal {
+			if tokenValid(text, node) {
+				allowed = append(allowed, id)
 			}
-			break
 		}
 	}
 	return allowed
