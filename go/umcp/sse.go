@@ -500,8 +500,14 @@ func (h *LegacySSE) Notify(recipients []string, method string, params map[string
 		}
 	}
 	h.mu.Unlock()
+	delivered := false
 	for id, session := range targets {
-		_ = h.deliver(id, session, payload)
+		if err := h.deliver(id, session, payload); err == nil {
+			delivered = true
+		}
+	}
+	if !delivered {
+		return h.server.writeNotification(method, params)
 	}
 	return nil
 }

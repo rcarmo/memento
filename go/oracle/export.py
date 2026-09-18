@@ -203,6 +203,8 @@ def main() -> None:
     save("umcp-sse.json", sse_transport.fixtures(args.umcp))
     raw_http = importlib.import_module("umcp_raw_http")
     save("umcp-raw-http.json", raw_http.fixtures(shared))
+    notifications = importlib.import_module("umcp_notifications")
+    save("umcp-notifications.json", notifications.fixtures())
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

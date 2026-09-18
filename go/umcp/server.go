@@ -3,6 +3,8 @@ package umcp
 import (
 	"context"
 	"encoding/json"
+	"io"
+	"os"
 	"regexp"
 	"strings"
 	"sync"
@@ -21,6 +23,8 @@ type Server struct {
 	mu                          sync.RWMutex
 	loggingLevel                string
 	notify                      func(string, map[string]any) error
+	notificationMu              sync.Mutex
+	notificationOutput          io.Writer
 }
 
 // NewServer uses the pinned uMCP defaults and wires only implemented methods.
@@ -28,7 +32,7 @@ func NewServer(name string) *Server {
 	if name == "" {
 		name = "MCPServer"
 	}
-	s := &Server{Name: name, Version: "0.2.2", Instructions: "This server provides tool functionality via the Model Context Protocol.", loggingLevel: "info"}
+	s := &Server{Name: name, Version: "0.2.2", Instructions: "This server provides tool functionality via the Model Context Protocol.", loggingLevel: "info", notificationOutput: os.Stdout}
 	s.Completions.Prompts = &s.Prompts
 	s.Completions.Resources = &s.Resources
 	s.dispatcher = Dispatcher{Handlers: map[string]Handler{
@@ -57,7 +61,28 @@ func (s *Server) send(method string, params map[string]any) error {
 	if notify != nil {
 		return notify(method, params)
 	}
-	return nil
+	return s.writeNotification(method, params)
+}
+
+// SetNotificationOutput sets the source stdout fallback for file/TCP/stdio and
+// legacy SSE without a successful recipient. Nil deliberately disables output.
+// Active Streamable HTTP suppresses fallback even with no connected streams.
+func (s *Server) SetNotificationOutput(output io.Writer) {
+	s.notificationMu.Lock()
+	defer s.notificationMu.Unlock()
+	s.notificationOutput = output
+}
+func (s *Server) writeNotification(method string, params map[string]any) error {
+	message := map[string]any{"jsonrpc": "2.0", "method": method}
+	if params != nil {
+		message["params"] = params
+	}
+	s.notificationMu.Lock()
+	defer s.notificationMu.Unlock()
+	if s.notificationOutput == nil {
+		return nil
+	}
+	return encodeLine(s.notificationOutput, message)
 }
 
 // Process applies the common reference validation/context rules.
