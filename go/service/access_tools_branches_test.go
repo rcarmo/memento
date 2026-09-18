@@ -30,6 +30,27 @@ func (s accessReaderStub) List(context.Context) ([]access.ManagedPrincipal, erro
 func (s accessReaderStub) Audit(context.Context, int) ([]access.AuditEntry, error) {
 	return nil, s.auditErr
 }
+func (s accessReaderStub) Create(context.Context, string, string, []string, []string, []string, *string) (access.ManagedPrincipal, string, error) {
+	return access.ManagedPrincipal{}, "", errors.New("create")
+}
+func (s accessReaderStub) Update(context.Context, string, string, []string, []string, []string) (access.ManagedPrincipal, error) {
+	return access.ManagedPrincipal{}, errors.New("update")
+}
+func (s accessReaderStub) Rename(context.Context, string, string, string) (access.ManagedPrincipal, error) {
+	return access.ManagedPrincipal{}, errors.New("rename")
+}
+func (s accessReaderStub) SetEnabled(context.Context, string, string, bool) (access.ManagedPrincipal, error) {
+	return access.ManagedPrincipal{}, errors.New("enabled")
+}
+func (s accessReaderStub) Rotate(context.Context, string, string, *string) (string, error) {
+	return "", errors.New("rotate")
+}
+func (s accessReaderStub) Revoke(context.Context, string, string) (access.ManagedPrincipal, error) {
+	return access.ManagedPrincipal{}, errors.New("revoke")
+}
+func (s accessReaderStub) Delete(context.Context, string, string) (access.ManagedPrincipal, error) {
+	return access.ManagedPrincipal{}, errors.New("delete")
+}
 
 func TestAccessReadToolBranches(t *testing.T) {
 	jobs, _ := jobsTest(t)
@@ -37,6 +58,9 @@ func TestAccessReadToolBranches(t *testing.T) {
 	jobs.Identity.managed = accessReaderStub{}
 	if err := jobs.registerAccessReadTools(server, []byte("{")); err == nil {
 		t.Fatal("invalid metadata")
+	}
+	if err := jobs.registerAccessTools(server, []byte(`[]`), 1); err == nil {
+		t.Fatal("incomplete metadata")
 	}
 	server.Tools.Visible = func(context.Context, umcp.Tool) bool { return false }
 	if err := jobs.RegisterAccessReadTools(server); err != nil {
