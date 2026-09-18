@@ -1,0 +1,6039 @@
+{
+  "cases": [
+    {
+      "arguments": {},
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            },
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/empty.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            },
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            },
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/empty.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            },
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/sub/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/sub/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/private/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /private/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/trash/public/t.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/trash/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/trash/public/t.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/trash/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/missing/"
+      },
+      "expected": {
+        "data": {
+          "entries": [],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/missing/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/a.md",
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/empty.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/empty.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/zz.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "title",
+          "path",
+          "title"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "path": "/public/a.md",
+              "title": "12345678"
+            },
+            {
+              "path": "/public/empty.md",
+              "title": "eeeeeeee"
+            },
+            {
+              "path": "/public/sub/b.md",
+              "title": "eeeeeeee"
+            }
+          ],
+          "fields": [
+            "title",
+            "path"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "body_bytes"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "body_bytes": 15
+            },
+            {
+              "body_bytes": 9
+            },
+            {
+              "body_bytes": 9
+            }
+          ],
+          "fields": [
+            "body_bytes"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "body_sha256"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c"
+            },
+            {
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2"
+            },
+            {
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2"
+            }
+          ],
+          "fields": [
+            "body_sha256"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "assets"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ]
+            },
+            {
+              "assets": []
+            },
+            {
+              "assets": []
+            }
+          ],
+          "fields": [
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": []
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory fields must not be empty",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": "path"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported inventory fields: a, h, p, t",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": ""
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory fields must not be empty",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "z",
+          "a",
+          "z"
+        ]
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported inventory fields: a, z",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 0
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory limit must be between 1 and 100",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 101
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory limit must be between 1 and 100",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": true
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/private/p.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory cursor must be a concept path under path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory cursor must be a concept path under path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/../a.md"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            },
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/empty.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            },
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must be an absolute directory prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must be an absolute directory prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "//"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must not contain empty segments",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a//b/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must not contain empty segments",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a/../"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a\\b/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a\u0000b/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {},
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/sub/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/sub/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/private/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /private/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "data": {
+          "entries": [],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/trash/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/trash/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/missing/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /missing/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/a.md",
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/zz.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "title",
+          "path",
+          "title"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "path": "/public/sub/b.md",
+              "title": "eeeeeeee"
+            }
+          ],
+          "fields": [
+            "title",
+            "path"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "body_bytes"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "body_bytes": 9
+            }
+          ],
+          "fields": [
+            "body_bytes"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "body_sha256"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2"
+            }
+          ],
+          "fields": [
+            "body_sha256"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "assets"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": []
+            }
+          ],
+          "fields": [
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": []
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory fields must not be empty",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": "path"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported inventory fields: a, h, p, t",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": ""
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory fields must not be empty",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "z",
+          "a",
+          "z"
+        ]
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported inventory fields: a, z",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 0
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory limit must be between 1 and 100",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 101
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory limit must be between 1 and 100",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": true
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/private/p.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory cursor must be a concept path under path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory cursor must be a concept path under path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/../a.md"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must be an absolute directory prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must be an absolute directory prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "//"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must not contain empty segments",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a//b/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must not contain empty segments",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a/../"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a\\b/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a\u0000b/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/sub/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {},
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "abcdef12",
+              "path": "/private/p.md",
+              "status": "active",
+              "tags": [],
+              "title": "abcdef12",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /public/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/sub/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /public/sub/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/private/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "abcdef12",
+              "path": "/private/p.md",
+              "status": "active",
+              "tags": [],
+              "title": "abcdef12",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/private/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "data": {
+          "entries": [],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/trash/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /trash/public/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/missing/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /missing/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /public/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/a.md",
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /public/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/zz.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /public/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "title",
+          "path",
+          "title"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "path": "/private/p.md",
+              "title": "abcdef12"
+            }
+          ],
+          "fields": [
+            "title",
+            "path"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "body_bytes"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "body_bytes": 9
+            }
+          ],
+          "fields": [
+            "body_bytes"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "body_sha256"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2"
+            }
+          ],
+          "fields": [
+            "body_sha256"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "assets"
+        ]
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": []
+            }
+          ],
+          "fields": [
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": []
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory fields must not be empty",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": "path"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported inventory fields: a, h, p, t",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": ""
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory fields must not be empty",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "z",
+          "a",
+          "z"
+        ]
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported inventory fields: a, z",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 0
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory limit must be between 1 and 100",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 101
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory limit must be between 1 and 100",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": true
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "abcdef12",
+              "path": "/private/p.md",
+              "status": "active",
+              "tags": [],
+              "title": "abcdef12",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/private/p.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read inventory under /public/",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory cursor must be a concept path under path_prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/../a.md"
+      },
+      "expected": {
+        "data": {
+          "entries": [],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must be an absolute directory prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must be an absolute directory prefix",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "//"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must not contain empty segments",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a//b/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix must not contain empty segments",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a/../"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a\\b/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a\u0000b/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "inventory path_prefix is unsafe",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/private/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {},
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/sub/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/private/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/missing/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/a.md",
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/zz.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "title",
+          "path",
+          "title"
+        ]
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "body_bytes"
+        ]
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "body_sha256"
+        ]
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "assets"
+        ]
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": []
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": "path"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": ""
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "z",
+          "a",
+          "z"
+        ]
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 0
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 101
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": true
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/private/p.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/../a.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "public/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "//"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a//b/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a/../"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a\\b/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/a\u0000b/"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor lacks role: reader",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": null,
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/private/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/private/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/empty.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/private/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/trash/public/t.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/trash/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/private/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/public/zbad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/public/zbad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/empty.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "frontmatter validation failed",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/public/zbad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/trash/public/t.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/trash/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/public/zbad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/public/sub/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/public/sub/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/empty.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "frontmatter validation failed",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/public/sub/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/trash/public/t.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/trash/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/public/sub/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/trash/public/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "8fbb16323e27ab0370ba24dba3e863fc991c2d1ea340065fbdd50dc3dd15e4e0",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ],
+              "body_bytes": 15,
+              "body_sha256": "a0bfbdda452a9c779654b4ee4c76b9342073131002833a8f2d1d8fd141d68f1c",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "12345678",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [],
+              "title": "12345678",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/trash/public/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "/public/empty.md",
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [],
+              "body_bytes": 9,
+              "body_sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+              "created_at": "2026-01-01T00:00:00Z",
+              "id": "eeeeeeee",
+              "path": "/public/sub/b.md",
+              "status": "active",
+              "tags": [],
+              "title": "eeeeeeee",
+              "type": "concept",
+              "updated_at": "2026-01-01T00:00:00Z",
+              "updated_by": "actor"
+            }
+          ],
+          "fields": [
+            "path",
+            "id",
+            "title",
+            "status",
+            "type",
+            "tags",
+            "created_at",
+            "updated_at",
+            "updated_by",
+            "body_sha256",
+            "body_bytes",
+            "assets"
+          ],
+          "next_cursor": null,
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/trash/public/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "frontmatter validation failed",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "bm90IGEgY29uY2VwdA==",
+        "path": "/trash/public/bad.md"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "path"
+        ],
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "path": "/public/a.md"
+            }
+          ],
+          "fields": [
+            "path"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6IG51bGx9",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "assets"
+        ],
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset metadata is missing zip_sha256",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6IG51bGx9",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "path"
+        ],
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "path": "/public/a.md"
+            }
+          ],
+          "fields": [
+            "path"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6IDE3fQ==",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "assets"
+        ],
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "asset metadata is missing zip_sha256",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6IDE3fQ==",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "path"
+        ],
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "path": "/public/a.md"
+            }
+          ],
+          "fields": [
+            "path"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6ICJ1bnZlcmlmaWVkIn0=",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "fields": [
+          "assets"
+        ],
+        "limit": 1,
+        "path_prefix": "/public/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "assets": [
+                {
+                  "kind": "docs",
+                  "latest_sha256": "unverified",
+                  "latest_version": "1.10.0",
+                  "versions": [
+                    "1.9.0",
+                    "1.10.0"
+                  ]
+                }
+              ]
+            }
+          ],
+          "fields": [
+            "assets"
+          ],
+          "next_cursor": "/public/a.md",
+          "path_prefix": "/public/"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "mutation": {
+        "base64": "eyJhY2NlcHRlZF9ieSI6ICJhY3RvciIsICJhc3NldF9raW5kIjogImRvY3MiLCAiY29uY2VwdF9pZCI6ICIxMjM0NTY3OCIsICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwgImtpbmQiOiAiYXNzZXRfcGFja192ZXJzaW9uIiwgIm1hbmlmZXN0IjogeyJlbnRyaWVzIjogW3sibWVkaWFfdHlwZSI6ICJ0ZXh0L3BsYWluIiwgInBhdGgiOiAiZmlsZS50eHQiLCAic2hhMjU2IjogIjZjMGEyZWJlNjgxYjY0ZDU3ODM4MjUzMjQ5MGM4MzQxYzU1NjZkYTZjOTc0NTEyNGM5NzI3MTA1ZTkwYTdlNzciLCAic2l6ZSI6IDE2fSwgeyJtZWRpYV90eXBlIjogImFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbSIsICJwYXRoIjogImJpbmFyeS5iaW4iLCAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLCAic2l6ZSI6IDN9XSwgImZpbGVfY291bnQiOiAyLCAic2hhMjU2IjogIjhmYmIxNjMyM2UyN2FiMDM3MGJhMjRkYmEzZTg2M2ZjOTkxYzJkMWVhMzQwMDY1ZmJkZDUwZGMzZGQxNWU0ZTAiLCAidG90YWxfdW5jb21wcmVzc2VkX2J5dGVzIjogMTl9LCAic2NoZW1hX3ZlcnNpb24iOiAxLCAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLCAidmVyc2lvbiI6ICIxLjEwLjAiLCAiemlwX3NoYTI1NiI6ICJ1bnZlcmlmaWVkIn0=",
+        "path": "/.assets/12345678/docs/1.10.0.json"
+      },
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    }
+  ],
+  "files": {
+    "/.assets/12345678/docs/1.10.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuMTAuMCIsCiAgInppcF9zaGEyNTYiOiAiOGZiYjE2MzIzZTI3YWIwMzcwYmEyNGRiYTNlODYzZmM5OTFjMmQxZWEzNDAwNjVmYmRkNTBkYzNkZDE1ZTRlMCIKfQo=",
+    "/.assets/12345678/docs/1.10.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+    "/.assets/12345678/docs/1.9.0.json": "ewogICJhY2NlcHRlZF9ieSI6ICJhY3RvciIsCiAgImFzc2V0X2tpbmQiOiAiZG9jcyIsCiAgImNvbmNlcHRfaWQiOiAiMTIzNDU2NzgiLAogICJjb25jZXB0X3BhdGgiOiAiL3B1YmxpYy9hLm1kIiwKICAia2luZCI6ICJhc3NldF9wYWNrX3ZlcnNpb24iLAogICJtYW5pZmVzdCI6IHsKICAgICJlbnRyaWVzIjogWwogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAidGV4dC9wbGFpbiIsCiAgICAgICAgInBhdGgiOiAiZmlsZS50eHQiLAogICAgICAgICJzaGEyNTYiOiAiNmMwYTJlYmU2ODFiNjRkNTc4MzgyNTMyNDkwYzgzNDFjNTU2NmRhNmM5NzQ1MTI0Yzk3MjcxMDVlOTBhN2U3NyIsCiAgICAgICAgInNpemUiOiAxNgogICAgICB9LAogICAgICB7CiAgICAgICAgIm1lZGlhX3R5cGUiOiAiYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtIiwKICAgICAgICAicGF0aCI6ICJiaW5hcnkuYmluIiwKICAgICAgICAic2hhMjU2IjogIjQ3ZmZhM2VhNDVhNzBiOGE0MWMyYzA4MjVkZjMyM2MwMGE4YjdhMDFjMWVhMDYwODNjYzQxZGRkY2MwMDExMjMiLAogICAgICAgICJzaXplIjogMwogICAgICB9CiAgICBdLAogICAgImZpbGVfY291bnQiOiAyLAogICAgInNoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIiwKICAgICJ0b3RhbF91bmNvbXByZXNzZWRfYnl0ZXMiOiAxOQogIH0sCiAgInNjaGVtYV92ZXJzaW9uIjogMSwKICAic291cmNlX3Byb3Bvc2FsX2lkIjogInAiLAogICJ2ZXJzaW9uIjogIjEuOS4wIiwKICAiemlwX3NoYTI1NiI6ICI4ZmJiMTYzMjNlMjdhYjAzNzBiYTI0ZGJhM2U4NjNmYzk5MWMyZDFlYTM0MDA2NWZiZGQ1MGRjM2RkMTVlNGUwIgp9Cg==",
+    "/.assets/12345678/docs/1.9.0.zip": "UEsDBBQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAZmlsZS50eHRzeW50aGV0aWMgY2Fmw6kKUEsDBBQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAYmluYXJ5LmJpbgD/AVBLAQIUAxQAAAAAAAAAMl3irND+EAAAABAAAAAIAAAAAAAAAAAAAACkgQAAAABmaWxlLnR4dFBLAQIUAxQAAAAAAAAAMl32FGIbAwAAAAMAAAAKAAAAAAAAAAAAAACkgTYAAABiaW5hcnkuYmluUEsFBgAAAAACAAIAbgAAAGEAAAAAAA==",
+    "/private/p.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBhYmNkZWYxMgp0eXBlOiBjb25jZXB0CnRpdGxlOiBhYmNkZWYxMgpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+    "/public/a.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiAnMTIzNDU2NzgnCnR5cGU6IGNvbmNlcHQKdGl0bGU6ICcxMjM0NTY3OCcKc3RhdHVzOiBhY3RpdmUKYWxpYXNlczogW10KdGFnczogW10Kc291cmNlX3JlZnM6IFtdCnN1cGVyc2VkZXM6IFtdCmNyZWF0ZWRfYXQ6ICcyMDI2LTAxLTAxVDAwOjAwOjAwWicKdXBkYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2J5OiBhY3RvcgotLS0Kc3ludGhldGljIGNhZsOpCgo=",
+    "/public/empty.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+    "/public/sub/b.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK",
+    "/trash/public/t.md": "LS0tCnNjaGVtYV92ZXJzaW9uOiAxCmlkOiBlZWVlZWVlZQp0eXBlOiBjb25jZXB0CnRpdGxlOiBlZWVlZWVlZQpzdGF0dXM6IGFjdGl2ZQphbGlhc2VzOiBbXQp0YWdzOiBbXQpzb3VyY2VfcmVmczogW10Kc3VwZXJzZWRlczogW10KY3JlYXRlZF9hdDogJzIwMjYtMDEtMDFUMDA6MDA6MDBaJwp1cGRhdGVkX2F0OiAnMjAyNi0wMS0wMVQwMDowMDowMFonCnVwZGF0ZWRfYnk6IGFjdG9yCi0tLQpzeW50aGV0aWMK"
+  }
+}

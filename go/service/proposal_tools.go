@@ -65,7 +65,7 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 				kind = umcp.BooleanParam
 			case "limit", "offset", "depth", "keep":
 				kind = umcp.IntegerParam
-			case "changes", "selected_change_indexes", "tags", "aliases":
+			case "changes", "selected_change_indexes", "tags", "aliases", "fields":
 				kind = umcp.ArrayParam
 			}
 			parameters = append(parameters, umcp.Parameter{Name: parameter.Name, Types: []umcp.ParamType{kind}, HasDefault: !parameter.Required, Default: parameter.Default})
@@ -273,6 +273,34 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 			return nil, options, a.err
 		}
 		data, err = c.Read(ctx, actor, id)
+	case "memory_inventory":
+		prefix, limit, cursor := a.text("path_prefix"), a.integer("limit"), a.optional("cursor")
+		var fields []string
+		if a.values["fields"] != nil {
+			fields = []string{}
+			var values []any
+			if text, ok := a.values["fields"].(string); ok {
+				// Python's Sequence annotation does not enforce a list: a string
+				// is iterated by code point before field validation.
+				for _, r := range text {
+					values = append(values, string(r))
+				}
+			} else {
+				values = a.array("fields")
+			}
+			for _, value := range values {
+				field, ok := value.(string)
+				if !ok {
+					a.err = umcp.ExecutionError{Type: "TypeError", Message: "inventory fields must be strings"}
+					break
+				}
+				fields = append(fields, field)
+			}
+		}
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		data, options, err = c.Inventory(ctx, actor, prefix, fields, limit, cursor)
 	case "memory_list":
 		prefix := a.text("path_prefix")
 		if a.err != nil {

@@ -328,6 +328,22 @@ def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
         {"name": "memory_restore", "arguments": {}},
         {"name": "memory_purge", "arguments": {}},
     ]
+    requests += [
+        {"name": "memory_inventory"},
+        {
+            "name": "memory_inventory",
+            "arguments": {
+                "path_prefix": "/public/",
+                "fields": ["title", "path", "title"],
+                "limit": "2",
+                "cursor": "/public/a.md",
+            },
+        },
+        {"name": "memory_inventory", "arguments": {"fields": [], "limit": True}},
+        {"name": "memory_inventory", "arguments": {"fields": None}},
+        {"name": "memory_inventory", "arguments": {"fields": "path"}},
+        {"name": "memory_inventory", "arguments": {"principal": "other"}},
+    ]
     calls = []
     for params in requests:
         if params["name"] not in names:
