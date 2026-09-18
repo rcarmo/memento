@@ -1,0 +1,776 @@
+[
+  {
+    "args": [],
+    "expected": {
+      "mode": "stdio"
+    }
+  },
+  {
+    "args": [
+      "file.json"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "file.json"
+    }
+  },
+  {
+    "args": [
+      "one",
+      "two"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "one"
+    }
+  },
+  {
+    "args": [
+      "--unknown"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "--unknown"
+    }
+  },
+  {
+    "args": [
+      "--"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "--"
+    }
+  },
+  {
+    "args": [
+      "--port"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "--port"
+    }
+  },
+  {
+    "args": [
+      "--host"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "--host"
+    }
+  },
+  {
+    "args": [
+      "--endpoint"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "--endpoint"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "--max-request-bytes"
+    }
+  },
+  {
+    "args": [
+      "--allowed-origin"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "--allowed-origin"
+    }
+  },
+  {
+    "args": [
+      "--transport"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "--transport"
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "stdio"
+    ],
+    "expected": {
+      "mode": "stdio"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0",
+      "--transport",
+      "stdio"
+    ],
+    "expected": {
+      "error": "stdio transport cannot use --port"
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "tcp"
+    ],
+    "expected": {
+      "error": "network transports require --port"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0",
+      "--transport",
+      "tcp"
+    ],
+    "expected": {
+      "host": "127.0.0.1",
+      "mode": "tcp",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "sse"
+    ],
+    "expected": {
+      "error": "network transports require --port"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0",
+      "--transport",
+      "sse"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "streamable-http"
+    ],
+    "expected": {
+      "error": "network transports require --port"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0",
+      "--transport",
+      "streamable-http"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "endpoint": "/mcp",
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "streamable-http",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "bad"
+    ],
+    "expected": {
+      "error": "unsupported transport: bad"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0",
+      "--transport",
+      "bad"
+    ],
+    "expected": {
+      "error": "unsupported transport: bad"
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      ""
+    ],
+    "expected": {
+      "error": "unsupported transport: "
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0",
+      "--transport",
+      ""
+    ],
+    "expected": {
+      "error": "unsupported transport: "
+    }
+  },
+  {
+    "args": [
+      "--tcp"
+    ],
+    "expected": {
+      "error": "network transports require --port"
+    }
+  },
+  {
+    "args": [
+      "--tcp",
+      "--port",
+      "0"
+    ],
+    "expected": {
+      "host": "127.0.0.1",
+      "mode": "tcp",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--tcp",
+      "--tcp",
+      "-p",
+      "12"
+    ],
+    "expected": {
+      "host": "127.0.0.1",
+      "mode": "tcp",
+      "port": 12
+    }
+  },
+  {
+    "args": [
+      "--tcp",
+      "--transport",
+      "stdio"
+    ],
+    "expected": {
+      "error": "conflicting transport options"
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "tcp",
+      "--tcp",
+      "-p",
+      "1"
+    ],
+    "expected": {
+      "host": "127.0.0.1",
+      "mode": "tcp",
+      "port": 1
+    }
+  },
+  {
+    "args": [
+      "--http"
+    ],
+    "expected": {
+      "error": "network transports require --port"
+    }
+  },
+  {
+    "args": [
+      "--http",
+      "--port",
+      "0"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "endpoint": "/mcp",
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "streamable-http",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--http",
+      "--http",
+      "-p",
+      "12"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "endpoint": "/mcp",
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "streamable-http",
+      "port": 12
+    }
+  },
+  {
+    "args": [
+      "--http",
+      "--transport",
+      "stdio"
+    ],
+    "expected": {
+      "error": "conflicting transport options"
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "tcp",
+      "--http",
+      "-p",
+      "1"
+    ],
+    "expected": {
+      "error": "conflicting transport options"
+    }
+  },
+  {
+    "args": [
+      "--sse"
+    ],
+    "expected": {
+      "error": "network transports require --port"
+    }
+  },
+  {
+    "args": [
+      "--sse",
+      "--port",
+      "0"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--sse",
+      "--sse",
+      "-p",
+      "12"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 12
+    }
+  },
+  {
+    "args": [
+      "--sse",
+      "--transport",
+      "stdio"
+    ],
+    "expected": {
+      "error": "conflicting transport options"
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "tcp",
+      "--sse",
+      "-p",
+      "1"
+    ],
+    "expected": {
+      "error": "conflicting transport options"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "-1"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": -1
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "+1_024"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 1024
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "１２"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 12
+    }
+  },
+  {
+    "args": [
+      "--port",
+      " 42 "
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 42
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "1e2"
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: '1e2'"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      ""
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: ''"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "--http"
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: '--http'"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0x10"
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: '0x10'"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "1__0"
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: '1__0'"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "999999999999999999999999999999"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 999999999999999999999999999999
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      "0"
+    ],
+    "expected": {
+      "mode": "stdio"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      "-1"
+    ],
+    "expected": {
+      "mode": "stdio"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      "+1_024"
+    ],
+    "expected": {
+      "mode": "stdio"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      "１２"
+    ],
+    "expected": {
+      "mode": "stdio"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      " 42 "
+    ],
+    "expected": {
+      "mode": "stdio"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      "1e2"
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: '1e2'"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      ""
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: ''"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      "--http"
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: '--http'"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      "0x10"
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: '0x10'"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      "1__0"
+    ],
+    "expected": {
+      "error": "invalid literal for int() with base 10: '1__0'"
+    }
+  },
+  {
+    "args": [
+      "--max-request-bytes",
+      "999999999999999999999999999999"
+    ],
+    "expected": {
+      "mode": "stdio"
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "1",
+      "-p",
+      "2",
+      "--host",
+      "localhost",
+      "--http",
+      "--endpoint",
+      "/custom",
+      "--max-request-bytes",
+      "128",
+      "--allowed-origin",
+      "http://one",
+      "--allowed-origin",
+      "http://two",
+      "ignored.json"
+    ],
+    "expected": {
+      "allowed_origins": [
+        "http://one",
+        "http://two"
+      ],
+      "endpoint": "/custom",
+      "host": "localhost",
+      "max_request_bytes": 128,
+      "mode": "streamable-http",
+      "port": 2
+    }
+  },
+  {
+    "args": [
+      "--host",
+      "::1",
+      "--sse",
+      "--port",
+      "0"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "::1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--endpoint",
+      "bad",
+      "--http",
+      "--port",
+      "0"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "endpoint": "bad",
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "streamable-http",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--port=10"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "--port=10"
+    }
+  },
+  {
+    "args": [
+      "--host",
+      "--tcp"
+    ],
+    "expected": {
+      "mode": "stdio"
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "",
+      "--http"
+    ],
+    "expected": {
+      "error": "conflicting transport options"
+    }
+  },
+  {
+    "args": [
+      "--transport",
+      "stdio",
+      "file.json"
+    ],
+    "expected": {
+      "mode": "file",
+      "path": "file.json"
+    }
+  },
+  {
+    "args": [
+      "file.json",
+      "--port",
+      "0"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 4194304,
+      "mode": "sse",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0",
+      "--max-request-bytes",
+      "-1"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": -1,
+      "mode": "sse",
+      "port": 0
+    }
+  },
+  {
+    "args": [
+      "--port",
+      "0",
+      "--max-request-bytes",
+      "0"
+    ],
+    "expected": {
+      "allowed_origins": [],
+      "host": "127.0.0.1",
+      "max_request_bytes": 0,
+      "mode": "sse",
+      "port": 0
+    }
+  }
+]

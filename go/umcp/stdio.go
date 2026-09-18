@@ -17,7 +17,6 @@ import (
 // does not close a caller-owned blocking reader (close it to interrupt a read).
 // Unlike the HTTP transport, the reference stdio transport has no line limit.
 func ServeStdio(ctx context.Context, input io.Reader, output io.Writer, handlers map[string]Handler) error {
-	reader := bufio.NewReader(input)
 	var writeMu sync.Mutex
 	write := func(value any) error {
 		writeMu.Lock()
@@ -29,6 +28,14 @@ func ServeStdio(ctx context.Context, input io.Reader, output io.Writer, handlers
 	dispatcher := Dispatcher{Handlers: handlers, Notify: func(method string, params map[string]any) error {
 		return write(map[string]any{"jsonrpc": "2.0", "method": method, "params": params})
 	}}
+	return serveStdioLoop(ctx, input, write, dispatcher.Process)
+}
+
+func (s *Server) serveStdio(ctx context.Context, input io.Reader, output io.Writer) error {
+	return serveStdioLoop(ctx, input, func(value any) error { return encodeLine(output, value) }, s.Process)
+}
+func serveStdioLoop(ctx context.Context, input io.Reader, write func(any) error, process func(context.Context, []byte, RequestContext) (*Response, error)) error {
+	reader := bufio.NewReader(input)
 	for {
 		if err := ctx.Err(); err != nil {
 			return err
@@ -37,7 +44,7 @@ func ServeStdio(ctx context.Context, input io.Reader, output io.Writer, handlers
 		if len(line) > 0 {
 			text := strings.TrimFunc(replaceInvalidUTF8(line), func(r rune) bool { return unicode.IsSpace(r) || (r >= 0x1c && r <= 0x1f) })
 			if text != "" {
-				response, err := dispatcher.Process(ctx, []byte(text), RequestContext{Transport: "stdio"})
+				response, err := process(ctx, []byte(text), RequestContext{Transport: "stdio"})
 				if err != nil {
 					return err
 				}
