@@ -7,6 +7,7 @@ require golang.org/x/text v0.24.0
 require (
 	github.com/go-git/go-billy/v5 v5.6.2
 	github.com/go-git/go-git/v5 v5.16.3
+	github.com/pmezard/go-difflib v1.0.0
 	github.com/yuin/goldmark v1.7.16
 	go.yaml.in/yaml/v3 v3.0.4
 	golang.org/x/crypto v0.37.0

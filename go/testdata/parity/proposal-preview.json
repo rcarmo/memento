@@ -1,0 +1,1573 @@
+{
+  "diffs": [
+    {
+      "after": "x\n",
+      "before": "",
+      "expected": "--- a/a.md\n+++ b/a.md\n@@ -0,0 +1 @@\n+x\n"
+    },
+    {
+      "after": "",
+      "before": "x\n",
+      "expected": "--- a/a.md\n+++ b/a.md\n@@ -1 +0,0 @@\n-x\n"
+    },
+    {
+      "after": "y",
+      "before": "x",
+      "expected": "--- a/a.md\n+++ b/a.md\n@@ -1 +1 @@\n-x+y"
+    },
+    {
+      "after": "a\r\nb\fnext last\u001c",
+      "before": "a\r\nb\u000bnext last",
+      "expected": "--- a/a.md\n+++ b/a.md\n@@ -1,4 +1,4 @@\n a\r\n-b\u000b-next -last+b\f+next +last\u001c"
+    },
+    {
+      "after": "same\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nnew\n",
+      "before": "same\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nsame\nold\n",
+      "expected": "--- a/a.md\n+++ b/a.md\n@@ -298,4 +298,4 @@\n same\n same\n same\n-old\n+new\n"
+    },
+    {
+      "after": "A\nb\nc\nd\ne\nf\ng\nh\nI\n",
+      "before": "a\nb\nc\nd\ne\nf\ng\nh\ni\n",
+      "expected": "--- a/a.md\n+++ b/a.md\n@@ -1,4 +1,4 @@\n-a\n+A\n b\n c\n d\n@@ -6,4 +6,4 @@\n f\n g\n h\n-i\n+I\n"
+    }
+  ],
+  "payloads": [
+    {
+      "events": [],
+      "expected": {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "changes": [
+          {
+            "kind": "rename",
+            "new_path": "/b.md",
+            "path": "/a.md"
+          }
+        ],
+        "conflicts": [
+          {
+            "conflicting_paths": [
+              "/b.md"
+            ],
+            "index": 0,
+            "status": "conflict"
+          }
+        ],
+        "consulted_concepts": [],
+        "contradictions": [],
+        "created_at": "created",
+        "current_revision": "main",
+        "diff": "preview text",
+        "expires_at": null,
+        "history": [],
+        "history_limit": 50,
+        "intent": "intent",
+        "proposal_id": "p0",
+        "rationale": "why",
+        "reciprocal_links": [],
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "target_hint": null,
+        "updated_at": "updated"
+      },
+      "record": {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "created",
+        "expires_at": null,
+        "intent": "intent",
+        "patch_hash": "28fdd18914c1db5485de700aa4adfb4421cebea3c763fc087b7166fbae382270",
+        "patch_json": "{\"changes\": [{\"kind\": \"rename\", \"new_path\": \"/b.md\", \"path\": \"/a.md\"}]}",
+        "proposal_id": "p0",
+        "rationale": "why",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "updated"
+      }
+    },
+    {
+      "events": [
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "0",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 1,
+          "from_status": "submitted",
+          "proposal_id": "p1",
+          "repo_revision": "main",
+          "to_status": "approved"
+        }
+      ],
+      "expected": {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "changes": [
+          {
+            "kind": "rename",
+            "new_path": "/b.md",
+            "path": "/a.md"
+          }
+        ],
+        "conflicts": [
+          {
+            "conflicting_paths": [
+              "/b.md"
+            ],
+            "index": 0,
+            "status": "conflict"
+          }
+        ],
+        "consulted_concepts": null,
+        "contradictions": [
+          {
+            "path": "/a.md"
+          }
+        ],
+        "created_at": "created",
+        "current_revision": "main",
+        "diff": "preview text",
+        "expires_at": null,
+        "history": [
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "0",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 1,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          }
+        ],
+        "history_limit": 50,
+        "intent": "intent",
+        "proposal_id": "p1",
+        "rationale": "why",
+        "reciprocal_links": [],
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "target_hint": "hint",
+        "updated_at": "updated"
+      },
+      "record": {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "created",
+        "expires_at": null,
+        "intent": "intent",
+        "patch_hash": "57eb8a37a0c91af4ee56104c11401bce7b5065f261bddbbc9b384bfcf22129cb",
+        "patch_json": "{\"changes\": [{\"kind\": \"rename\", \"new_path\": \"/b.md\", \"path\": \"/a.md\"}], \"consulted_concepts\": null, \"contradictions\": [{\"path\": \"/a.md\"}], \"target_hint\": \"hint\"}",
+        "proposal_id": "p1",
+        "rationale": "why",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "updated"
+      }
+    },
+    {
+      "events": [
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "0",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 2,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "1",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 3,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "2",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 4,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "3",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 5,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "4",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 6,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "5",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 7,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "6",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 8,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "7",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 9,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "8",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 10,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "9",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 11,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "10",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 12,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "11",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 13,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "12",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 14,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "13",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 15,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "14",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 16,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "15",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 17,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "16",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 18,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "17",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 19,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "18",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 20,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "19",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 21,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "20",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 22,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "21",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 23,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "22",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 24,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "23",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 25,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "24",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 26,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "25",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 27,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "26",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 28,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "27",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 29,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "28",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 30,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "29",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 31,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "30",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 32,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "31",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 33,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "32",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 34,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "33",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 35,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "34",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 36,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "35",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 37,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "36",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 38,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "37",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 39,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "38",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 40,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "39",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 41,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "40",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 42,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "41",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 43,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "42",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 44,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "43",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 45,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "44",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 46,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "45",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 47,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "46",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 48,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "47",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 49,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "48",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 50,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "49",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 51,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        },
+        {
+          "action": "review",
+          "actor": "reviewer",
+          "base_revision": "base",
+          "created_at": "50",
+          "details_json": "{\"synthetic\": true}",
+          "event_id": 52,
+          "from_status": "submitted",
+          "proposal_id": "p51",
+          "repo_revision": "main",
+          "to_status": "approved"
+        }
+      ],
+      "expected": {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "changes": [
+          {
+            "kind": "rename",
+            "new_path": "/b.md",
+            "path": "/a.md"
+          }
+        ],
+        "conflicts": [
+          {
+            "conflicting_paths": [
+              "/b.md"
+            ],
+            "index": 0,
+            "status": "conflict"
+          }
+        ],
+        "consulted_concepts": null,
+        "contradictions": [
+          {
+            "path": "/a.md"
+          }
+        ],
+        "created_at": "created",
+        "current_revision": "main",
+        "diff": "preview text",
+        "expires_at": null,
+        "history": [
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "50",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 52,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "49",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 51,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "48",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 50,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "47",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 49,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "46",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 48,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "45",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 47,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "44",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 46,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "43",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 45,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "42",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 44,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "41",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 43,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "40",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 42,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "39",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 41,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "38",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 40,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "37",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 39,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "36",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 38,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "35",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 37,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "34",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 36,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "33",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 35,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "32",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 34,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "31",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 33,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "30",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 32,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "29",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 31,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "28",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 30,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "27",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 29,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "26",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 28,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "25",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 27,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "24",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 26,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "23",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 25,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "22",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 24,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "21",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 23,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "20",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 22,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "19",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 21,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "18",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 20,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "17",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 19,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "16",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 18,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "15",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 17,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "14",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 16,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "13",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 15,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "12",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 14,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "11",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 13,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "10",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 12,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "9",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 11,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "8",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 10,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "7",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 9,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "6",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 8,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "5",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 7,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "4",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 6,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "3",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 5,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "2",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 4,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          },
+          {
+            "action": "review",
+            "actor": "reviewer",
+            "base_revision": "base",
+            "created_at": "1",
+            "details_json": "{\"synthetic\": true}",
+            "event_id": 3,
+            "from_status": "submitted",
+            "repo_revision": "main",
+            "to_status": "approved"
+          }
+        ],
+        "history_limit": 50,
+        "intent": "intent",
+        "proposal_id": "p51",
+        "rationale": "why",
+        "reciprocal_links": [],
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "target_hint": "hint",
+        "updated_at": "updated"
+      },
+      "record": {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "author",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "created",
+        "expires_at": null,
+        "intent": "intent",
+        "patch_hash": "57eb8a37a0c91af4ee56104c11401bce7b5065f261bddbbc9b384bfcf22129cb",
+        "patch_json": "{\"changes\": [{\"kind\": \"rename\", \"new_path\": \"/b.md\", \"path\": \"/a.md\"}], \"consulted_concepts\": null, \"contradictions\": [{\"path\": \"/a.md\"}], \"target_hint\": \"hint\"}",
+        "proposal_id": "p51",
+        "rationale": "why",
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "updated"
+      }
+    }
+  ],
+  "previews": [
+    {
+      "changes": [],
+      "expected": "",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 65536,
+      "name": "empty"
+    },
+    {
+      "changes": [
+        {
+          "body": "body",
+          "concept_type": "concept",
+          "kind": "create",
+          "path": "/a.md",
+          "title": "Title"
+        }
+      ],
+      "expected": "--- a/a.md\n+++ b/a.md\n@@ -0,0 +1,15 @@\n+---\n+schema_version: 1\n+id: <generated>\n+type: concept\n+title: Title\n+status: active\n+aliases: []\n+tags: []\n+source_refs: []\n+supersedes: []\n+created_at: '2026-01-01T00:00:00Z'\n+updated_at: '2026-01-01T00:00:00Z'\n+updated_by: <proposal>\n+---\n+body\n",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 65536,
+      "name": "create"
+    },
+    {
+      "changes": [
+        {
+          "body": "body",
+          "concept_type": "concept",
+          "kind": "create",
+          "path": "/a.md",
+          "title": ""
+        }
+      ],
+      "error_type": "ValidationError",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 65536,
+      "name": "create-invalid"
+    },
+    {
+      "changes": [
+        {
+          "body": "body",
+          "concept_type": "concept",
+          "kind": "create",
+          "path": "/a.md",
+          "title": "Title"
+        }
+      ],
+      "error_type": "ServiceError",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 1,
+      "name": "create-limit"
+    },
+    {
+      "changes": [
+        {
+          "body": "ONE\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nTEN",
+          "kind": "patch",
+          "path": "/a.md"
+        }
+      ],
+      "expected": "--- a/a.md\n+++ b/a.md\n@@ -12,7 +12,7 @@\n updated_at: '2026-01-01T00:00:00Z'\n updated_by: original\n ---\n-one\n+ONE\n two\n three\n four\n@@ -21,4 +21,4 @@\n seven\n eight\n nine\n-ten\n+TEN\n",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 65536,
+      "name": "patch"
+    },
+    {
+      "changes": [
+        {
+          "kind": "patch",
+          "path": "/a.md"
+        }
+      ],
+      "expected": "",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 65536,
+      "name": "unchanged"
+    },
+    {
+      "changes": [
+        {
+          "kind": "patch",
+          "path": "/a.md",
+          "tags": [
+            "b",
+            "",
+            "a",
+            "b"
+          ],
+          "title": ""
+        }
+      ],
+      "expected": "--- a/a.md\n+++ b/a.md\n@@ -2,10 +2,14 @@\n schema_version: 1\n id: '12345678'\n type: concept\n-title: Title\n+title: ''\n status: active\n aliases: []\n-tags: []\n+tags:\n+  - b\n+  - ''\n+  - a\n+  - b\n source_refs: []\n supersedes: []\n created_at: '2026-01-01T00:00:00Z'\n",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 65536,
+      "name": "patch-copy"
+    },
+    {
+      "changes": [
+        {
+          "kind": "patch",
+          "path": "/a.md"
+        }
+      ],
+      "error_type": "ServiceError",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 1,
+      "name": "patch-limit"
+    },
+    {
+      "changes": [
+        {
+          "kind": "patch",
+          "path": "/missing.md"
+        }
+      ],
+      "error_type": "PathSafetyError",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 65536,
+      "name": "missing"
+    },
+    {
+      "changes": [
+        {
+          "kind": "patch",
+          "path": "/a.md"
+        }
+      ],
+      "error_type": "RepresenterError",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 65536,
+      "name": "default"
+    },
+    {
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/a.md"
+        },
+        {
+          "kind": "rename",
+          "new_path": "/b.md",
+          "path": "/a.md"
+        },
+        {
+          "asset_id": "asset",
+          "asset_kind": "docs",
+          "kind": "attach_asset_pack",
+          "manifest": {},
+          "path": "/a.md",
+          "version": "1.0.0",
+          "zip_sha256": "digest"
+        }
+      ],
+      "expected": "archive /a.md -> /trash/a.md; assets and Git history retained; inbound links left unchanged\nrename /a.md -> /b.md\nattach docs asset 1.0.0 (digest) to /a.md\n",
+      "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-01-01T00:00:00Z'\nupdated_by: original\n---\none\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten\n",
+      "limit": 65536,
+      "name": "descriptions"
+    }
+  ]
+}

@@ -164,29 +164,7 @@ func (m WorktreeMutator) patch(root string, change ProposalChange, actor string,
 	if err != nil {
 		return err
 	}
-	document := entry.Document
-	meta := &document.Frontmatter
-	if value := change["title"]; value != nil {
-		meta.Title = value.(string)
-	}
-	if value := change["description"]; value != nil {
-		text := value.(string)
-		meta.Description = &text
-	}
-	if value := change["status"]; value != nil {
-		meta.SetCopiedStatus(value.(string))
-	}
-	if value := change["tags"]; value != nil {
-		meta.Tags = value.([]string)
-	}
-	if value := change["aliases"]; value != nil {
-		meta.Aliases = value.([]string)
-	}
-	meta.UpdatedAt = m.now()
-	meta.UpdatedBy = actor
-	if value := change["body"]; value != nil {
-		document.Body = value.(string)
-	}
+	document := patchDocument(entry.Document, change, actor, m.now())
 	if _, err = repository.ValidateRepositoryWritePath(root, path); err != nil {
 		return err
 	}
