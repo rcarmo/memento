@@ -1,0 +1,5098 @@
+{
+  "migrations": [
+    {
+      "scenario": "empty",
+      "schema": [
+        {
+          "name": "concept_embeddings",
+          "sql": "CREATE TABLE concept_embeddings (\n        concept_id TEXT PRIMARY KEY,\n        path TEXT NOT NULL,\n        embedding_text_hash TEXT NOT NULL,\n        model_id TEXT NOT NULL,\n        dimensions INTEGER NOT NULL,\n        embedding_revision TEXT NOT NULL,\n        status TEXT NOT NULL,\n        model_revision TEXT NOT NULL,\n        embedding_blob BLOB,\n        embedding_norm REAL,\n        updated_at TEXT NOT NULL,\n        error_message TEXT\n    )"
+        },
+        {
+          "name": "concept_fts",
+          "sql": "CREATE VIRTUAL TABLE concept_fts USING fts5(\n        concept_id UNINDEXED,\n        title,\n        description,\n        aliases,\n        tags,\n        body,\n        path,\n        tokenize='unicode61'\n    )"
+        },
+        {
+          "name": "concept_fts_config",
+          "sql": "CREATE TABLE 'concept_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID"
+        },
+        {
+          "name": "concept_fts_content",
+          "sql": "CREATE TABLE 'concept_fts_content'(id INTEGER PRIMARY KEY, c0, c1, c2, c3, c4, c5, c6)"
+        },
+        {
+          "name": "concept_fts_data",
+          "sql": "CREATE TABLE 'concept_fts_data'(id INTEGER PRIMARY KEY, block BLOB)"
+        },
+        {
+          "name": "concept_fts_docsize",
+          "sql": "CREATE TABLE 'concept_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)"
+        },
+        {
+          "name": "concept_fts_idx",
+          "sql": "CREATE TABLE 'concept_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID"
+        },
+        {
+          "name": "concepts",
+          "sql": "CREATE TABLE concepts (\n        id TEXT PRIMARY KEY,\n        path TEXT NOT NULL UNIQUE,\n        type TEXT NOT NULL,\n        title TEXT NOT NULL,\n        description TEXT,\n        status TEXT NOT NULL,\n        tags_json TEXT NOT NULL,\n        aliases_json TEXT NOT NULL,\n        body TEXT NOT NULL,\n        content_hash TEXT NOT NULL,\n        updated_at TEXT NOT NULL,\n        repo_revision TEXT NOT NULL\n    )"
+        },
+        {
+          "name": "graph_metrics",
+          "sql": "CREATE TABLE graph_metrics (\n        concept_id TEXT PRIMARY KEY,\n        inbound_degree INTEGER NOT NULL,\n        outbound_degree INTEGER NOT NULL,\n        broken_link_count INTEGER NOT NULL,\n        orphan_flag INTEGER NOT NULL\n    )"
+        },
+        {
+          "name": "idx_concept_embeddings_path",
+          "sql": "CREATE INDEX idx_concept_embeddings_path ON concept_embeddings(path)"
+        },
+        {
+          "name": "idx_concept_embeddings_status",
+          "sql": "CREATE INDEX idx_concept_embeddings_status ON concept_embeddings(status)"
+        },
+        {
+          "name": "idx_concepts_path",
+          "sql": "CREATE INDEX idx_concepts_path ON concepts(path)"
+        },
+        {
+          "name": "idx_concepts_status",
+          "sql": "CREATE INDEX idx_concepts_status ON concepts(status)"
+        },
+        {
+          "name": "idx_concepts_type",
+          "sql": "CREATE INDEX idx_concepts_type ON concepts(type)"
+        },
+        {
+          "name": "idx_links_source",
+          "sql": "CREATE INDEX idx_links_source ON links(source_id)"
+        },
+        {
+          "name": "idx_links_target",
+          "sql": "CREATE INDEX idx_links_target ON links(target_id)"
+        },
+        {
+          "name": "index_state",
+          "sql": "CREATE TABLE index_state (\n        key TEXT PRIMARY KEY,\n        value TEXT NOT NULL,\n        updated_at TEXT NOT NULL\n    )"
+        },
+        {
+          "name": "links",
+          "sql": "CREATE TABLE links (\n        source_id TEXT NOT NULL,\n        target_id TEXT,\n        raw_target TEXT NOT NULL,\n        target_path TEXT,\n        anchor TEXT,\n        link_kind TEXT NOT NULL,\n        resolution_state TEXT NOT NULL,\n        first_seen_revision TEXT NOT NULL,\n        last_checked_revision TEXT NOT NULL\n    )"
+        }
+      ],
+      "snapshot": {
+        "concept_embeddings": [],
+        "concept_fts": [],
+        "concepts": [],
+        "graph_metrics": [],
+        "index_state": [
+          {
+            "key": "schema_version",
+            "value": "2"
+          },
+          {
+            "key": "repo_revision",
+            "value": ""
+          },
+          {
+            "key": "index_revision",
+            "value": ""
+          },
+          {
+            "key": "status",
+            "value": "ready"
+          },
+          {
+            "key": "semantic_embedding_revision",
+            "value": ""
+          },
+          {
+            "key": "external_links_classified",
+            "value": "1"
+          }
+        ],
+        "links": []
+      },
+      "statements": []
+    },
+    {
+      "error_type": "DerivedIndexCorruptionError",
+      "scenario": "version",
+      "schema": [
+        {
+          "name": "concept_embeddings",
+          "sql": "CREATE TABLE concept_embeddings (\n        concept_id TEXT PRIMARY KEY,\n        path TEXT NOT NULL,\n        embedding_text_hash TEXT NOT NULL,\n        model_id TEXT NOT NULL,\n        dimensions INTEGER NOT NULL,\n        embedding_revision TEXT NOT NULL,\n        status TEXT NOT NULL,\n        model_revision TEXT NOT NULL,\n        embedding_blob BLOB,\n        embedding_norm REAL,\n        updated_at TEXT NOT NULL,\n        error_message TEXT\n    )"
+        },
+        {
+          "name": "concept_fts",
+          "sql": "CREATE VIRTUAL TABLE concept_fts USING fts5(\n        concept_id UNINDEXED,\n        title,\n        description,\n        aliases,\n        tags,\n        body,\n        path,\n        tokenize='unicode61'\n    )"
+        },
+        {
+          "name": "concept_fts_config",
+          "sql": "CREATE TABLE 'concept_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID"
+        },
+        {
+          "name": "concept_fts_content",
+          "sql": "CREATE TABLE 'concept_fts_content'(id INTEGER PRIMARY KEY, c0, c1, c2, c3, c4, c5, c6)"
+        },
+        {
+          "name": "concept_fts_data",
+          "sql": "CREATE TABLE 'concept_fts_data'(id INTEGER PRIMARY KEY, block BLOB)"
+        },
+        {
+          "name": "concept_fts_docsize",
+          "sql": "CREATE TABLE 'concept_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)"
+        },
+        {
+          "name": "concept_fts_idx",
+          "sql": "CREATE TABLE 'concept_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID"
+        },
+        {
+          "name": "concepts",
+          "sql": "CREATE TABLE concepts (\n        id TEXT PRIMARY KEY,\n        path TEXT NOT NULL UNIQUE,\n        type TEXT NOT NULL,\n        title TEXT NOT NULL,\n        description TEXT,\n        status TEXT NOT NULL,\n        tags_json TEXT NOT NULL,\n        aliases_json TEXT NOT NULL,\n        body TEXT NOT NULL,\n        content_hash TEXT NOT NULL,\n        updated_at TEXT NOT NULL,\n        repo_revision TEXT NOT NULL\n    )"
+        },
+        {
+          "name": "graph_metrics",
+          "sql": "CREATE TABLE graph_metrics (\n        concept_id TEXT PRIMARY KEY,\n        inbound_degree INTEGER NOT NULL,\n        outbound_degree INTEGER NOT NULL,\n        broken_link_count INTEGER NOT NULL,\n        orphan_flag INTEGER NOT NULL\n    )"
+        },
+        {
+          "name": "idx_concept_embeddings_path",
+          "sql": "CREATE INDEX idx_concept_embeddings_path ON concept_embeddings(path)"
+        },
+        {
+          "name": "idx_concept_embeddings_status",
+          "sql": "CREATE INDEX idx_concept_embeddings_status ON concept_embeddings(status)"
+        },
+        {
+          "name": "idx_concepts_path",
+          "sql": "CREATE INDEX idx_concepts_path ON concepts(path)"
+        },
+        {
+          "name": "idx_concepts_status",
+          "sql": "CREATE INDEX idx_concepts_status ON concepts(status)"
+        },
+        {
+          "name": "idx_concepts_type",
+          "sql": "CREATE INDEX idx_concepts_type ON concepts(type)"
+        },
+        {
+          "name": "idx_links_source",
+          "sql": "CREATE INDEX idx_links_source ON links(source_id)"
+        },
+        {
+          "name": "idx_links_target",
+          "sql": "CREATE INDEX idx_links_target ON links(target_id)"
+        },
+        {
+          "name": "index_state",
+          "sql": "CREATE TABLE index_state (\n        key TEXT PRIMARY KEY,\n        value TEXT NOT NULL,\n        updated_at TEXT NOT NULL\n    )"
+        },
+        {
+          "name": "links",
+          "sql": "CREATE TABLE links (\n        source_id TEXT NOT NULL,\n        target_id TEXT,\n        raw_target TEXT NOT NULL,\n        target_path TEXT,\n        anchor TEXT,\n        link_kind TEXT NOT NULL,\n        resolution_state TEXT NOT NULL,\n        first_seen_revision TEXT NOT NULL,\n        last_checked_revision TEXT NOT NULL\n    )"
+        }
+      ],
+      "snapshot": {
+        "concept_embeddings": [],
+        "concept_fts": [],
+        "concepts": [],
+        "graph_metrics": [],
+        "index_state": [
+          {
+            "key": "schema_version",
+            "value": "99"
+          },
+          {
+            "key": "repo_revision",
+            "value": ""
+          },
+          {
+            "key": "index_revision",
+            "value": ""
+          },
+          {
+            "key": "status",
+            "value": "ready"
+          },
+          {
+            "key": "semantic_embedding_revision",
+            "value": ""
+          },
+          {
+            "key": "external_links_classified",
+            "value": "1"
+          }
+        ],
+        "links": []
+      },
+      "statements": [
+        "UPDATE index_state SET value='99' WHERE key='schema_version'"
+      ]
+    },
+    {
+      "scenario": "reclassify",
+      "schema": [
+        {
+          "name": "concept_embeddings",
+          "sql": "CREATE TABLE concept_embeddings (\n        concept_id TEXT PRIMARY KEY,\n        path TEXT NOT NULL,\n        embedding_text_hash TEXT NOT NULL,\n        model_id TEXT NOT NULL,\n        dimensions INTEGER NOT NULL,\n        embedding_revision TEXT NOT NULL,\n        status TEXT NOT NULL,\n        model_revision TEXT NOT NULL,\n        embedding_blob BLOB,\n        embedding_norm REAL,\n        updated_at TEXT NOT NULL,\n        error_message TEXT\n    )"
+        },
+        {
+          "name": "concept_fts",
+          "sql": "CREATE VIRTUAL TABLE concept_fts USING fts5(\n        concept_id UNINDEXED,\n        title,\n        description,\n        aliases,\n        tags,\n        body,\n        path,\n        tokenize='unicode61'\n    )"
+        },
+        {
+          "name": "concept_fts_config",
+          "sql": "CREATE TABLE 'concept_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID"
+        },
+        {
+          "name": "concept_fts_content",
+          "sql": "CREATE TABLE 'concept_fts_content'(id INTEGER PRIMARY KEY, c0, c1, c2, c3, c4, c5, c6)"
+        },
+        {
+          "name": "concept_fts_data",
+          "sql": "CREATE TABLE 'concept_fts_data'(id INTEGER PRIMARY KEY, block BLOB)"
+        },
+        {
+          "name": "concept_fts_docsize",
+          "sql": "CREATE TABLE 'concept_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)"
+        },
+        {
+          "name": "concept_fts_idx",
+          "sql": "CREATE TABLE 'concept_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID"
+        },
+        {
+          "name": "concepts",
+          "sql": "CREATE TABLE concepts (\n        id TEXT PRIMARY KEY,\n        path TEXT NOT NULL UNIQUE,\n        type TEXT NOT NULL,\n        title TEXT NOT NULL,\n        description TEXT,\n        status TEXT NOT NULL,\n        tags_json TEXT NOT NULL,\n        aliases_json TEXT NOT NULL,\n        body TEXT NOT NULL,\n        content_hash TEXT NOT NULL,\n        updated_at TEXT NOT NULL,\n        repo_revision TEXT NOT NULL\n    )"
+        },
+        {
+          "name": "graph_metrics",
+          "sql": "CREATE TABLE graph_metrics (\n        concept_id TEXT PRIMARY KEY,\n        inbound_degree INTEGER NOT NULL,\n        outbound_degree INTEGER NOT NULL,\n        broken_link_count INTEGER NOT NULL,\n        orphan_flag INTEGER NOT NULL\n    )"
+        },
+        {
+          "name": "idx_concept_embeddings_path",
+          "sql": "CREATE INDEX idx_concept_embeddings_path ON concept_embeddings(path)"
+        },
+        {
+          "name": "idx_concept_embeddings_status",
+          "sql": "CREATE INDEX idx_concept_embeddings_status ON concept_embeddings(status)"
+        },
+        {
+          "name": "idx_concepts_path",
+          "sql": "CREATE INDEX idx_concepts_path ON concepts(path)"
+        },
+        {
+          "name": "idx_concepts_status",
+          "sql": "CREATE INDEX idx_concepts_status ON concepts(status)"
+        },
+        {
+          "name": "idx_concepts_type",
+          "sql": "CREATE INDEX idx_concepts_type ON concepts(type)"
+        },
+        {
+          "name": "idx_links_source",
+          "sql": "CREATE INDEX idx_links_source ON links(source_id)"
+        },
+        {
+          "name": "idx_links_target",
+          "sql": "CREATE INDEX idx_links_target ON links(target_id)"
+        },
+        {
+          "name": "index_state",
+          "sql": "CREATE TABLE index_state (\n        key TEXT PRIMARY KEY,\n        value TEXT NOT NULL,\n        updated_at TEXT NOT NULL\n    )"
+        },
+        {
+          "name": "links",
+          "sql": "CREATE TABLE links (\n        source_id TEXT NOT NULL,\n        target_id TEXT,\n        raw_target TEXT NOT NULL,\n        target_path TEXT,\n        anchor TEXT,\n        link_kind TEXT NOT NULL,\n        resolution_state TEXT NOT NULL,\n        first_seen_revision TEXT NOT NULL,\n        last_checked_revision TEXT NOT NULL\n    )"
+        }
+      ],
+      "snapshot": {
+        "concept_embeddings": [],
+        "concept_fts": [],
+        "concepts": [],
+        "graph_metrics": [],
+        "index_state": [
+          {
+            "key": "schema_version",
+            "value": "2"
+          },
+          {
+            "key": "repo_revision",
+            "value": ""
+          },
+          {
+            "key": "index_revision",
+            "value": ""
+          },
+          {
+            "key": "status",
+            "value": "ready"
+          },
+          {
+            "key": "semantic_embedding_revision",
+            "value": ""
+          },
+          {
+            "key": "external_links_classified",
+            "value": "1"
+          }
+        ],
+        "links": [
+          {
+            "anchor": null,
+            "first_seen_revision": "old",
+            "last_checked_revision": "old",
+            "link_kind": "markdown",
+            "raw_target": "https://example.org",
+            "resolution_state": "external",
+            "source_id": "source",
+            "target_id": null,
+            "target_path": null
+          },
+          {
+            "anchor": null,
+            "first_seen_revision": "old",
+            "last_checked_revision": "old",
+            "link_kind": "markdown",
+            "raw_target": "/missing",
+            "resolution_state": "broken",
+            "source_id": "source",
+            "target_id": null,
+            "target_path": "/missing"
+          }
+        ]
+      },
+      "statements": [
+        "DELETE FROM index_state WHERE key='external_links_classified'",
+        "INSERT INTO links VALUES('source','target','https://example.org','/wrong',NULL,'markdown','broken','old','old')",
+        "INSERT INTO links VALUES('source',NULL,'/missing','/missing',NULL,'markdown','broken','old','old')"
+      ]
+    },
+    {
+      "scenario": "quarantined",
+      "schema": [
+        {
+          "name": "concept_embeddings",
+          "sql": "CREATE TABLE concept_embeddings (\n        concept_id TEXT PRIMARY KEY,\n        path TEXT NOT NULL,\n        embedding_text_hash TEXT NOT NULL,\n        model_id TEXT NOT NULL,\n        dimensions INTEGER NOT NULL,\n        embedding_revision TEXT NOT NULL,\n        status TEXT NOT NULL,\n        model_revision TEXT NOT NULL,\n        embedding_blob BLOB,\n        embedding_norm REAL,\n        updated_at TEXT NOT NULL,\n        error_message TEXT\n    )"
+        },
+        {
+          "name": "concept_fts",
+          "sql": "CREATE VIRTUAL TABLE concept_fts USING fts5(\n        concept_id UNINDEXED,\n        title,\n        description,\n        aliases,\n        tags,\n        body,\n        path,\n        tokenize='unicode61'\n    )"
+        },
+        {
+          "name": "concept_fts_config",
+          "sql": "CREATE TABLE 'concept_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID"
+        },
+        {
+          "name": "concept_fts_content",
+          "sql": "CREATE TABLE 'concept_fts_content'(id INTEGER PRIMARY KEY, c0, c1, c2, c3, c4, c5, c6)"
+        },
+        {
+          "name": "concept_fts_data",
+          "sql": "CREATE TABLE 'concept_fts_data'(id INTEGER PRIMARY KEY, block BLOB)"
+        },
+        {
+          "name": "concept_fts_docsize",
+          "sql": "CREATE TABLE 'concept_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)"
+        },
+        {
+          "name": "concept_fts_idx",
+          "sql": "CREATE TABLE 'concept_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID"
+        },
+        {
+          "name": "concepts",
+          "sql": "CREATE TABLE concepts (\n        id TEXT PRIMARY KEY,\n        path TEXT NOT NULL UNIQUE,\n        type TEXT NOT NULL,\n        title TEXT NOT NULL,\n        description TEXT,\n        status TEXT NOT NULL,\n        tags_json TEXT NOT NULL,\n        aliases_json TEXT NOT NULL,\n        body TEXT NOT NULL,\n        content_hash TEXT NOT NULL,\n        updated_at TEXT NOT NULL,\n        repo_revision TEXT NOT NULL\n    )"
+        },
+        {
+          "name": "graph_metrics",
+          "sql": "CREATE TABLE graph_metrics (\n        concept_id TEXT PRIMARY KEY,\n        inbound_degree INTEGER NOT NULL,\n        outbound_degree INTEGER NOT NULL,\n        broken_link_count INTEGER NOT NULL,\n        orphan_flag INTEGER NOT NULL\n    )"
+        },
+        {
+          "name": "idx_concept_embeddings_path",
+          "sql": "CREATE INDEX idx_concept_embeddings_path ON concept_embeddings(path)"
+        },
+        {
+          "name": "idx_concept_embeddings_status",
+          "sql": "CREATE INDEX idx_concept_embeddings_status ON concept_embeddings(status)"
+        },
+        {
+          "name": "idx_concepts_path",
+          "sql": "CREATE INDEX idx_concepts_path ON concepts(path)"
+        },
+        {
+          "name": "idx_concepts_status",
+          "sql": "CREATE INDEX idx_concepts_status ON concepts(status)"
+        },
+        {
+          "name": "idx_concepts_type",
+          "sql": "CREATE INDEX idx_concepts_type ON concepts(type)"
+        },
+        {
+          "name": "idx_links_source",
+          "sql": "CREATE INDEX idx_links_source ON links(source_id)"
+        },
+        {
+          "name": "idx_links_target",
+          "sql": "CREATE INDEX idx_links_target ON links(target_id)"
+        },
+        {
+          "name": "index_state",
+          "sql": "CREATE TABLE index_state (\n        key TEXT PRIMARY KEY,\n        value TEXT NOT NULL,\n        updated_at TEXT NOT NULL\n    )"
+        },
+        {
+          "name": "links",
+          "sql": "CREATE TABLE links (\n        source_id TEXT NOT NULL,\n        target_id TEXT,\n        raw_target TEXT NOT NULL,\n        target_path TEXT,\n        anchor TEXT,\n        link_kind TEXT NOT NULL,\n        resolution_state TEXT NOT NULL,\n        first_seen_revision TEXT NOT NULL,\n        last_checked_revision TEXT NOT NULL\n    )"
+        }
+      ],
+      "snapshot": {
+        "concept_embeddings": [],
+        "concept_fts": [],
+        "concepts": [],
+        "graph_metrics": [],
+        "index_state": [
+          {
+            "key": "schema_version",
+            "value": "2"
+          },
+          {
+            "key": "repo_revision",
+            "value": ""
+          },
+          {
+            "key": "index_revision",
+            "value": ""
+          },
+          {
+            "key": "status",
+            "value": "quarantined"
+          },
+          {
+            "key": "semantic_embedding_revision",
+            "value": ""
+          },
+          {
+            "key": "external_links_classified",
+            "value": "1"
+          }
+        ],
+        "links": []
+      },
+      "statements": [
+        "UPDATE index_state SET value='quarantined' WHERE key='status'"
+      ]
+    }
+  ],
+  "sequences": [
+    {
+      "defer": false,
+      "steps": [
+        {
+          "action": "rebuild",
+          "files": {
+            "/.assets/ignored.md": "asset",
+            "/a.md": "---\nid: 'a'\ntype: concept\ntitle: First\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)\n",
+            "/index.md": "generated",
+            "/private/p.md": "---\nid: 'p'\ntype: concept\ntitle: Private\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[trash](/trash/t.md)\n",
+            "/trash/t.md": "---\nid: 't'\ntype: concept\ntitle: Archived\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[first](/a.md)\n",
+            "/z.md": "---\nid: 'z'\ntype: concept\ntitle: Second\nstatus: active\ndescription: Description\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\nA body\n"
+          },
+          "revision": "r1",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[trash](/trash/t.md)",
+                "concept_id": "p",
+                "description": "",
+                "path": "/private/p.md",
+                "tags": "a z",
+                "title": "Private"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/z.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[trash](/trash/t.md)",
+                "content_hash": "86ceee305ee8031918721e8ce79a24766a2dd60c85421efb9e37ef7a93ce277d",
+                "description": null,
+                "id": "p",
+                "path": "/private/p.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Private",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/z.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 3,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "p",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r1"
+              },
+              {
+                "key": "index_revision",
+                "value": "r1"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/trash/t.md",
+                "resolution_state": "resolved",
+                "source_id": "p",
+                "target_id": "t",
+                "target_path": "/trash/t.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "seed-embeddings",
+          "snapshot": {
+            "concept_embeddings": [
+              {
+                "concept_id": "z",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r1",
+                "embedding_text_hash": "b64ce9a3cf93e23f173a157a87b40ab23669f61610e7c981d3d08494400df924",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/z.md",
+                "status": "ready",
+                "updated_at": "stamp"
+              },
+              {
+                "concept_id": "a",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r1",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/a.md",
+                "status": "ready",
+                "updated_at": "stamp"
+              },
+              {
+                "concept_id": "gone",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r1",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/gone.md",
+                "status": "ready",
+                "updated_at": "stamp"
+              }
+            ],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[trash](/trash/t.md)",
+                "concept_id": "p",
+                "description": "",
+                "path": "/private/p.md",
+                "tags": "a z",
+                "title": "Private"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/z.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[trash](/trash/t.md)",
+                "content_hash": "86ceee305ee8031918721e8ce79a24766a2dd60c85421efb9e37ef7a93ce277d",
+                "description": null,
+                "id": "p",
+                "path": "/private/p.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Private",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/z.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 3,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "p",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r1"
+              },
+              {
+                "key": "index_revision",
+                "value": "r1"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/trash/t.md",
+                "resolution_state": "resolved",
+                "source_id": "p",
+                "target_id": "t",
+                "target_path": "/trash/t.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "rebuild",
+          "files": {},
+          "revision": "r2",
+          "snapshot": {
+            "concept_embeddings": [
+              {
+                "concept_id": "z",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r2",
+                "embedding_text_hash": "b64ce9a3cf93e23f173a157a87b40ab23669f61610e7c981d3d08494400df924",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/z.md",
+                "status": "ready",
+                "updated_at": "stamp"
+              },
+              {
+                "concept_id": "a",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r2",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/a.md",
+                "status": "stale",
+                "updated_at": "stamp"
+              }
+            ],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[trash](/trash/t.md)",
+                "concept_id": "p",
+                "description": "",
+                "path": "/private/p.md",
+                "tags": "a z",
+                "title": "Private"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/z.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r2",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[trash](/trash/t.md)",
+                "content_hash": "86ceee305ee8031918721e8ce79a24766a2dd60c85421efb9e37ef7a93ce277d",
+                "description": null,
+                "id": "p",
+                "path": "/private/p.md",
+                "repo_revision": "r2",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Private",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r2",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/z.md",
+                "repo_revision": "r2",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 3,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "p",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r2"
+              },
+              {
+                "key": "index_revision",
+                "value": "r2"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/trash/t.md",
+                "resolution_state": "resolved",
+                "source_id": "p",
+                "target_id": "t",
+                "target_path": "/trash/t.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "update",
+          "files": {
+            "/0.md": "---\nid: 'z'\ntype: concept\ntitle: Second\nstatus: active\ndescription: Description\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\nA body\n",
+            "/z.md": null
+          },
+          "paths": [
+            "/0.md",
+            "/z.md",
+            "/z.md"
+          ],
+          "revision": "r3",
+          "snapshot": {
+            "concept_embeddings": [
+              {
+                "concept_id": "a",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r2",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/a.md",
+                "status": "stale",
+                "updated_at": "stamp"
+              }
+            ],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[trash](/trash/t.md)",
+                "concept_id": "p",
+                "description": "",
+                "path": "/private/p.md",
+                "tags": "a z",
+                "title": "Private"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r3",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[trash](/trash/t.md)",
+                "content_hash": "86ceee305ee8031918721e8ce79a24766a2dd60c85421efb9e37ef7a93ce277d",
+                "description": null,
+                "id": "p",
+                "path": "/private/p.md",
+                "repo_revision": "r3",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Private",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r3",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r3",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 5,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "p",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 0,
+                "orphan_flag": 1,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r3"
+              },
+              {
+                "key": "index_revision",
+                "value": "r3"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/trash/t.md",
+                "resolution_state": "resolved",
+                "source_id": "p",
+                "target_id": "t",
+                "target_path": "/trash/t.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "update",
+          "files": {
+            "/private/p.md": null
+          },
+          "paths": [
+            "/.assets/ignored.md",
+            "/index.md",
+            "/private/p.md",
+            "/missing.md",
+            "/text.txt"
+          ],
+          "revision": "r4",
+          "snapshot": {
+            "concept_embeddings": [
+              {
+                "concept_id": "a",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r2",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/a.md",
+                "status": "stale",
+                "updated_at": "stamp"
+              }
+            ],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r4",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r4",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r4",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 5,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 0,
+                "orphan_flag": 1,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r4"
+              },
+              {
+                "key": "index_revision",
+                "value": "r4"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "update",
+          "files": {
+            "/a.md": "---\nid: 'a'\ntype: concept\ntitle: Updated\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[renamed](/0.md)\n"
+          },
+          "paths": [
+            "/a.md"
+          ],
+          "revision": "r5",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[renamed](/0.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "Updated"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[renamed](/0.md)",
+                "content_hash": "f364a235d5e7c8e3b546e56753c60a6c9f34c918cf68966a436d881e392e8773",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Updated",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 0,
+                "concept_id": "a",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r5"
+              },
+              {
+                "key": "index_revision",
+                "value": "r5"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": null,
+                "first_seen_revision": "r5",
+                "last_checked_revision": "r5",
+                "link_kind": "markdown",
+                "raw_target": "/0.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/0.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r5",
+                "last_checked_revision": "r5",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "update",
+          "error_type": "FrontmatterError",
+          "files": {
+            "/a.md": "---\nid: 'a'\ntype: concept\ntitle: Partial\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\ncommitted before parse failure\n",
+            "/bad.md": "invalid"
+          },
+          "paths": [
+            "/a.md",
+            "/bad.md"
+          ],
+          "revision": "r6",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "committed before parse failure",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "Partial"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "committed before parse failure",
+                "content_hash": "6d8afb2c4055a3cbe133746d3f6c492aec0dd67da467ba831b9e6366fca786b1",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r6",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Partial",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r6"
+              },
+              {
+                "key": "index_revision",
+                "value": "r5"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": []
+          }
+        },
+        {
+          "action": "rebuild",
+          "error_type": "BundleError",
+          "files": {},
+          "revision": "r7",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "committed before parse failure",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "Partial"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "committed before parse failure",
+                "content_hash": "6d8afb2c4055a3cbe133746d3f6c492aec0dd67da467ba831b9e6366fca786b1",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r6",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Partial",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r6"
+              },
+              {
+                "key": "index_revision",
+                "value": "r5"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": []
+          }
+        },
+        {
+          "action": "rebuild",
+          "files": {
+            "/bad.md": null
+          },
+          "revision": "r8",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "committed before parse failure",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "Partial"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r8",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "committed before parse failure",
+                "content_hash": "6d8afb2c4055a3cbe133746d3f6c492aec0dd67da467ba831b9e6366fca786b1",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r8",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Partial",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r8",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 0,
+                "concept_id": "a",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 0,
+                "orphan_flag": 1,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r8"
+              },
+              {
+                "key": "index_revision",
+                "value": "r8"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": null,
+                "first_seen_revision": "r8",
+                "last_checked_revision": "r8",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "duplicate-rebuild",
+          "files": {
+            "/duplicate.md": "---\nid: 'a'\ntype: concept\ntitle: First\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)\n"
+          },
+          "revision": "r9",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/duplicate.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r9",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/duplicate.md",
+                "repo_revision": "r9",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r9",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 6,
+                "concept_id": "a",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 1,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 0,
+                "orphan_flag": 1,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r9"
+              },
+              {
+                "key": "index_revision",
+                "value": "r9"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "disabled"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "broken",
+                "source_id": "t",
+                "target_id": null,
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "defer": true,
+      "steps": [
+        {
+          "action": "rebuild",
+          "files": {
+            "/.assets/ignored.md": "asset",
+            "/a.md": "---\nid: 'a'\ntype: concept\ntitle: First\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)\n",
+            "/index.md": "generated",
+            "/private/p.md": "---\nid: 'p'\ntype: concept\ntitle: Private\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[trash](/trash/t.md)\n",
+            "/trash/t.md": "---\nid: 't'\ntype: concept\ntitle: Archived\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[first](/a.md)\n",
+            "/z.md": "---\nid: 'z'\ntype: concept\ntitle: Second\nstatus: active\ndescription: Description\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\nA body\n"
+          },
+          "revision": "r1",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[trash](/trash/t.md)",
+                "concept_id": "p",
+                "description": "",
+                "path": "/private/p.md",
+                "tags": "a z",
+                "title": "Private"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/z.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[trash](/trash/t.md)",
+                "content_hash": "86ceee305ee8031918721e8ce79a24766a2dd60c85421efb9e37ef7a93ce277d",
+                "description": null,
+                "id": "p",
+                "path": "/private/p.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Private",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/z.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 3,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "p",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r1"
+              },
+              {
+                "key": "index_revision",
+                "value": "r1"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": ""
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/trash/t.md",
+                "resolution_state": "resolved",
+                "source_id": "p",
+                "target_id": "t",
+                "target_path": "/trash/t.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "seed-embeddings",
+          "snapshot": {
+            "concept_embeddings": [
+              {
+                "concept_id": "z",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r1",
+                "embedding_text_hash": "b64ce9a3cf93e23f173a157a87b40ab23669f61610e7c981d3d08494400df924",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/z.md",
+                "status": "ready",
+                "updated_at": "stamp"
+              },
+              {
+                "concept_id": "a",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r1",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/a.md",
+                "status": "ready",
+                "updated_at": "stamp"
+              },
+              {
+                "concept_id": "gone",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r1",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/gone.md",
+                "status": "ready",
+                "updated_at": "stamp"
+              }
+            ],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[trash](/trash/t.md)",
+                "concept_id": "p",
+                "description": "",
+                "path": "/private/p.md",
+                "tags": "a z",
+                "title": "Private"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/z.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[trash](/trash/t.md)",
+                "content_hash": "86ceee305ee8031918721e8ce79a24766a2dd60c85421efb9e37ef7a93ce277d",
+                "description": null,
+                "id": "p",
+                "path": "/private/p.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Private",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/z.md",
+                "repo_revision": "r1",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 3,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "p",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r1"
+              },
+              {
+                "key": "index_revision",
+                "value": "r1"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": ""
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/trash/t.md",
+                "resolution_state": "resolved",
+                "source_id": "p",
+                "target_id": "t",
+                "target_path": "/trash/t.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r1",
+                "last_checked_revision": "r1",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "rebuild",
+          "files": {},
+          "revision": "r2",
+          "snapshot": {
+            "concept_embeddings": [
+              {
+                "concept_id": "z",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r2",
+                "embedding_text_hash": "b64ce9a3cf93e23f173a157a87b40ab23669f61610e7c981d3d08494400df924",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/z.md",
+                "status": "ready",
+                "updated_at": "stamp"
+              },
+              {
+                "concept_id": "a",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r2",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/a.md",
+                "status": "stale",
+                "updated_at": "stamp"
+              }
+            ],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[trash](/trash/t.md)",
+                "concept_id": "p",
+                "description": "",
+                "path": "/private/p.md",
+                "tags": "a z",
+                "title": "Private"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/z.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r2",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[trash](/trash/t.md)",
+                "content_hash": "86ceee305ee8031918721e8ce79a24766a2dd60c85421efb9e37ef7a93ce277d",
+                "description": null,
+                "id": "p",
+                "path": "/private/p.md",
+                "repo_revision": "r2",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Private",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r2",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/z.md",
+                "repo_revision": "r2",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 3,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "p",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r2"
+              },
+              {
+                "key": "index_revision",
+                "value": "r2"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "partial"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/trash/t.md",
+                "resolution_state": "resolved",
+                "source_id": "p",
+                "target_id": "t",
+                "target_path": "/trash/t.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r2",
+                "last_checked_revision": "r2",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "update",
+          "files": {
+            "/0.md": "---\nid: 'z'\ntype: concept\ntitle: Second\nstatus: active\ndescription: Description\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\nA body\n",
+            "/z.md": null
+          },
+          "paths": [
+            "/0.md",
+            "/z.md",
+            "/z.md"
+          ],
+          "revision": "r3",
+          "snapshot": {
+            "concept_embeddings": [
+              {
+                "concept_id": "a",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r2",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/a.md",
+                "status": "stale",
+                "updated_at": "stamp"
+              }
+            ],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[trash](/trash/t.md)",
+                "concept_id": "p",
+                "description": "",
+                "path": "/private/p.md",
+                "tags": "a z",
+                "title": "Private"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r3",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[trash](/trash/t.md)",
+                "content_hash": "86ceee305ee8031918721e8ce79a24766a2dd60c85421efb9e37ef7a93ce277d",
+                "description": null,
+                "id": "p",
+                "path": "/private/p.md",
+                "repo_revision": "r3",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Private",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r3",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r3",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 5,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "p",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 0,
+                "orphan_flag": 1,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r3"
+              },
+              {
+                "key": "index_revision",
+                "value": "r3"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": "partial"
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/trash/t.md",
+                "resolution_state": "resolved",
+                "source_id": "p",
+                "target_id": "t",
+                "target_path": "/trash/t.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r3",
+                "last_checked_revision": "r3",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "update",
+          "files": {
+            "/private/p.md": null
+          },
+          "paths": [
+            "/.assets/ignored.md",
+            "/index.md",
+            "/private/p.md",
+            "/missing.md",
+            "/text.txt"
+          ],
+          "revision": "r4",
+          "snapshot": {
+            "concept_embeddings": [
+              {
+                "concept_id": "a",
+                "dimensions": 1,
+                "embedding_blob": "0000803f",
+                "embedding_norm": 1.0,
+                "embedding_revision": "r2",
+                "embedding_text_hash": "different",
+                "error_message": null,
+                "model_id": "model",
+                "model_revision": "model-rev",
+                "path": "/a.md",
+                "status": "stale",
+                "updated_at": "stamp"
+              }
+            ],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r4",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r4",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r4",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 5,
+                "concept_id": "a",
+                "inbound_degree": 2,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 0,
+                "orphan_flag": 1,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r4"
+              },
+              {
+                "key": "index_revision",
+                "value": "r4"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": ""
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "a",
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r4",
+                "last_checked_revision": "r4",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "update",
+          "files": {
+            "/a.md": "---\nid: 'a'\ntype: concept\ntitle: Updated\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[renamed](/0.md)\n"
+          },
+          "paths": [
+            "/a.md"
+          ],
+          "revision": "r5",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[renamed](/0.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "Updated"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[renamed](/0.md)",
+                "content_hash": "f364a235d5e7c8e3b546e56753c60a6c9f34c918cf68966a436d881e392e8773",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Updated",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 0,
+                "concept_id": "a",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r5"
+              },
+              {
+                "key": "index_revision",
+                "value": "r5"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": ""
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": null,
+                "first_seen_revision": "r5",
+                "last_checked_revision": "r5",
+                "link_kind": "markdown",
+                "raw_target": "/0.md",
+                "resolution_state": "resolved",
+                "source_id": "a",
+                "target_id": "z",
+                "target_path": "/0.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r5",
+                "last_checked_revision": "r5",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "update",
+          "error_type": "FrontmatterError",
+          "files": {
+            "/a.md": "---\nid: 'a'\ntype: concept\ntitle: Partial\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\ncommitted before parse failure\n",
+            "/bad.md": "invalid"
+          },
+          "paths": [
+            "/a.md",
+            "/bad.md"
+          ],
+          "revision": "r6",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "committed before parse failure",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "Partial"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "committed before parse failure",
+                "content_hash": "6d8afb2c4055a3cbe133746d3f6c492aec0dd67da467ba831b9e6366fca786b1",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r6",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Partial",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r6"
+              },
+              {
+                "key": "index_revision",
+                "value": "r5"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": ""
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": []
+          }
+        },
+        {
+          "action": "rebuild",
+          "error_type": "BundleError",
+          "files": {},
+          "revision": "r7",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "committed before parse failure",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "Partial"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r5",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "committed before parse failure",
+                "content_hash": "6d8afb2c4055a3cbe133746d3f6c492aec0dd67da467ba831b9e6366fca786b1",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r6",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Partial",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r6"
+              },
+              {
+                "key": "index_revision",
+                "value": "r5"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": ""
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": []
+          }
+        },
+        {
+          "action": "rebuild",
+          "files": {
+            "/bad.md": null
+          },
+          "revision": "r8",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "committed before parse failure",
+                "concept_id": "a",
+                "description": "",
+                "path": "/a.md",
+                "tags": "a z",
+                "title": "Partial"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r8",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "committed before parse failure",
+                "content_hash": "6d8afb2c4055a3cbe133746d3f6c492aec0dd67da467ba831b9e6366fca786b1",
+                "description": null,
+                "id": "a",
+                "path": "/a.md",
+                "repo_revision": "r8",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Partial",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r8",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 0,
+                "concept_id": "a",
+                "inbound_degree": 1,
+                "orphan_flag": 0,
+                "outbound_degree": 0
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 0,
+                "orphan_flag": 1,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r8"
+              },
+              {
+                "key": "index_revision",
+                "value": "r8"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": ""
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": null,
+                "first_seen_revision": "r8",
+                "last_checked_revision": "r8",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "resolved",
+                "source_id": "t",
+                "target_id": "a",
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        },
+        {
+          "action": "duplicate-rebuild",
+          "files": {
+            "/duplicate.md": "---\nid: 'a'\ntype: concept\ntitle: First\nstatus: active\ntags: [z, a, z]\naliases: [One, Deux]\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-09-18T00:00:00.123456Z\nupdated_by: actor\n---\n[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)\n"
+          },
+          "revision": "r9",
+          "snapshot": {
+            "concept_embeddings": [],
+            "concept_fts": [
+              {
+                "aliases": "Deux One",
+                "body": "A body",
+                "concept_id": "z",
+                "description": "Description",
+                "path": "/0.md",
+                "tags": "a z",
+                "title": "Second"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "concept_id": "a",
+                "description": "",
+                "path": "/duplicate.md",
+                "tags": "a z",
+                "title": "First"
+              },
+              {
+                "aliases": "Deux One",
+                "body": "[first](/a.md)",
+                "concept_id": "t",
+                "description": "",
+                "path": "/trash/t.md",
+                "tags": "a z",
+                "title": "Archived"
+              }
+            ],
+            "concepts": [
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "A body",
+                "content_hash": "680183ead4a95a01a4d4fe0f13fd4aad3105fb8cca072054313977d23f6b3c2a",
+                "description": "Description",
+                "id": "z",
+                "path": "/0.md",
+                "repo_revision": "r9",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Second",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[b](/z.md#anchor) [b again](/z.md) [missing](/missing.md) [relative](foo) [anchor](#local) [web](https://example.org) [mail](mailto:test@example.org) [network](//example.org) [self](/a.md)",
+                "content_hash": "1c8c075a880dc75485d4009b8ec5e3ff86e5167533c322c30fe2eaca99378274",
+                "description": null,
+                "id": "a",
+                "path": "/duplicate.md",
+                "repo_revision": "r9",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "First",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              },
+              {
+                "aliases_json": "[\"Deux\", \"One\"]",
+                "body": "[first](/a.md)",
+                "content_hash": "c8957ecec3c2c542e109abc6405ab7d531489960bda15511107a5cfed95f498e",
+                "description": null,
+                "id": "t",
+                "path": "/trash/t.md",
+                "repo_revision": "r9",
+                "status": "active",
+                "tags_json": "[\"a\", \"z\"]",
+                "title": "Archived",
+                "type": "concept",
+                "updated_at": "2026-09-18T00:00:00.123456Z"
+              }
+            ],
+            "graph_metrics": [
+              {
+                "broken_link_count": 6,
+                "concept_id": "a",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 4
+              },
+              {
+                "broken_link_count": 1,
+                "concept_id": "t",
+                "inbound_degree": 0,
+                "orphan_flag": 0,
+                "outbound_degree": 1
+              },
+              {
+                "broken_link_count": 0,
+                "concept_id": "z",
+                "inbound_degree": 0,
+                "orphan_flag": 1,
+                "outbound_degree": 0
+              }
+            ],
+            "index_state": [
+              {
+                "key": "schema_version",
+                "value": "2"
+              },
+              {
+                "key": "repo_revision",
+                "value": "r9"
+              },
+              {
+                "key": "index_revision",
+                "value": "r9"
+              },
+              {
+                "key": "status",
+                "value": "ready"
+              },
+              {
+                "key": "semantic_embedding_revision",
+                "value": ""
+              },
+              {
+                "key": "external_links_classified",
+                "value": "1"
+              }
+            ],
+            "links": [
+              {
+                "anchor": "anchor",
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/z.md#anchor",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/z.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/z.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/missing.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/missing.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "foo",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": "local",
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "#local",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "https://example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "mailto:test@example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "//example.org",
+                "resolution_state": "external",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": null
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "broken",
+                "source_id": "a",
+                "target_id": null,
+                "target_path": "/a.md"
+              },
+              {
+                "anchor": null,
+                "first_seen_revision": "r9",
+                "last_checked_revision": "r9",
+                "link_kind": "markdown",
+                "raw_target": "/a.md",
+                "resolution_state": "broken",
+                "source_id": "t",
+                "target_id": null,
+                "target_path": "/a.md"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
