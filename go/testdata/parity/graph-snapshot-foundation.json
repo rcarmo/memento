@@ -178,6 +178,63 @@
     "schema_version": 1,
     "truncated": true
   },
+  "cluster_expansion": {
+    "cluster_id": "cluster:overflow",
+    "edges": [],
+    "next_cursor": "1",
+    "nodes": [
+      {
+        "anomaly_ids": [],
+        "asset_bytes": 69,
+        "broken_link_count": 0,
+        "coarse_position": {
+          "x": 0.4780775143073507,
+          "y": -0.37380943904192776,
+          "z": 0.8357155378907919
+        },
+        "combined_bytes": 269,
+        "embedding": {
+          "dimensions": 3,
+          "embedding_revision": "main",
+          "error": null,
+          "model_id": "model",
+          "model_revision": "v1",
+          "status": "ready",
+          "updated_at": "2026-01-04T00:00:00Z"
+        },
+        "explicit_in_degree": 0,
+        "explicit_out_degree": 1,
+        "id": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+        "markdown_bytes": 200,
+        "namespace": "/a.md/",
+        "orphan": false,
+        "path": "/a.md",
+        "pending_proposal_count": 1,
+        "proposal_count": 2,
+        "provenance_keys": [],
+        "status": "active",
+        "tags": [
+          "one"
+        ],
+        "title": "Alpha",
+        "type": "concept",
+        "updated_at": "2026-01-02T00:00:00Z",
+        "updated_by": "alice"
+      }
+    ],
+    "parent_position": {
+      "x": -3.322186423092401,
+      "y": 1.3867506517829804,
+      "z": 0.5606442792341113
+    },
+    "revisions": {
+      "embedding": "embed",
+      "index": "old",
+      "repository": "main",
+      "stale": true
+    },
+    "schema_version": 1
+  },
   "detail": {
     "assets": [
       {

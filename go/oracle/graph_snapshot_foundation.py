@@ -103,16 +103,25 @@ def fixtures() -> dict[str, Any]:
             ]
 
         overview = service.overview(policy=policy).model_dump(mode="json")
-        aggregated_overview = (
-            GraphSnapshotService(
-                GraphExplorerConfig(direct_node_limit=1),
-                repository_root=root,
-                derived_db_path=derived,
-                control_db_path=control,
-            )
-            .overview(policy=policy)
-            .model_dump(mode="json")
+        aggregate_service = GraphSnapshotService(
+            GraphExplorerConfig(direct_node_limit=1),
+            repository_root=root,
+            derived_db_path=derived,
+            control_db_path=control,
         )
+        aggregated_overview = aggregate_service.overview(policy=policy).model_dump(mode="json")
+        expansion_service = GraphSnapshotService(
+            GraphExplorerConfig(
+                direct_node_limit=1, expansion_node_limit=1, overview_cluster_limit=1
+            ),
+            repository_root=root,
+            derived_db_path=derived,
+            control_db_path=control,
+        )
+        expansion_overview = expansion_service.overview(policy=policy).model_dump(mode="json")
+        cluster_expansion = expansion_service.expand_cluster(
+            expansion_overview["clusters"][0]["id"], policy=policy
+        ).model_dump(mode="json")
         with sqlite3.connect(derived) as db:
             db.row_factory = sqlite3.Row
             db.execute(
@@ -178,6 +187,7 @@ def fixtures() -> dict[str, Any]:
             "export_selection": export_selection,
             "overview": overview,
             "aggregated_overview": aggregated_overview,
+            "cluster_expansion": cluster_expansion,
             "semantic_edges": semantic_edges,
             "fresh_overview": fresh_overview,
             "neighbourhood": neighbourhood,
