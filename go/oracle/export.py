@@ -291,6 +291,8 @@ def main() -> None:
     save("service-envelopes.json", service_envelopes.fixtures())
     service_workers = importlib.import_module("service_workers")
     save("service-workers.json", service_workers.fixtures())
+    operation_get = importlib.import_module("operation_get")
+    save("operation-get.json", operation_get.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )

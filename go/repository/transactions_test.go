@@ -594,3 +594,26 @@ func TestControlTransactionLock(t *testing.T) {
 		t.Fatal("control lock stuck")
 	}
 }
+
+func TestTryTransactionLockErrors(t *testing.T) {
+	ctx := context.Background()
+	paths := GitRepositoryPaths{}
+	cause := errors.New("probe failure")
+	if ok, err := tryTransactionLock(ctx, paths, func() error { return nil }, func(GitRepositoryPaths) (*sync.Mutex, error) { return nil, cause }); ok || !errors.Is(err, cause) {
+		t.Fatal(ok, err)
+	}
+	canceled, cancel := context.WithCancel(ctx)
+	cancel()
+	if ok, err := tryTransactionLock(canceled, paths, func() error { t.Fatal("cancelled callback"); return nil }, func(GitRepositoryPaths) (*sync.Mutex, error) { return &sync.Mutex{}, nil }); !ok || !errors.Is(err, context.Canceled) {
+		t.Fatal(ok, err)
+	}
+	lock := &sync.Mutex{}
+	lock.Lock()
+	if ok, err := tryTransactionLock(ctx, paths, func() error { t.Fatal("locked callback"); return nil }, func(GitRepositoryPaths) (*sync.Mutex, error) { return lock, nil }); ok || err != nil {
+		t.Fatal(ok, err)
+	}
+	lock.Unlock()
+	if ok, err := TryTransactionLock(ctx, GitRepositoryPaths{BareDir: t.TempDir()}, func() error { return cause }); !ok || !errors.Is(err, cause) {
+		t.Fatal(ok, err)
+	}
+}

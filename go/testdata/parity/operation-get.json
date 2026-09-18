@@ -1,0 +1,1966 @@
+[
+  {
+    "after": [],
+    "before": [],
+    "expected": {
+      "data": {
+        "changed_paths": [],
+        "final_state": "not_committed",
+        "operation": null,
+        "partial": false,
+        "retry_guidance": "No operation exists for this principal and idempotency key; retry the original request with the same key.",
+        "safe_to_retry": true
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "missing"
+  },
+  {
+    "after": [],
+    "before": [],
+    "expected": {
+      "data": {
+        "changed_paths": [],
+        "final_state": "in_progress",
+        "operation": null,
+        "partial": false,
+        "retry_guidance": "Writer is active; reconcile the original key after it finishes.",
+        "safe_to_retry": false
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": null,
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "writer"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "committed",
+        "operation": {
+          "base_revision": "base",
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "The commit completed; do not retry the mutation.",
+        "safe_to_retry": false
+      },
+      "index_revision": "result",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "result",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "late-insert"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "provide exactly one of idempotency_key or operation_id",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "id": null,
+    "key": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "no-selector"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "provide exactly one of idempotency_key or operation_id",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "id": "op",
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "two-selectors"
+  },
+  {
+    "after": [],
+    "before": [],
+    "expected": {
+      "error_class": "not_found",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "'missing'",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "id": "missing",
+    "key": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "id-missing"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "other",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "other",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "operation belongs to another principal",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "id": "op",
+    "key": null,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "foreign"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal actor lacks role: curator",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "reader"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "reader"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "proposers may reconcile only their own proposal rebases",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "proposer-write"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"proposal_id\": \"proposal\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_proposal_rebase"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"proposal_id\": \"proposal\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_proposal_rebase"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [],
+        "final_state": "committed",
+        "operation": {
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_rebase"
+        },
+        "partial": false,
+        "proposal_id": "proposal",
+        "result": {
+          "proposal_id": "proposal"
+        },
+        "retry_guidance": "Control-state change committed; use the recorded result, do not repeat.",
+        "safe_to_retry": false
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "proposer"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "actor",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "expires_at": "2026-10-18T08:33:09Z",
+        "intent": "keep",
+        "patch_hash": "9586c8ba6223e6b05e79b90b9ec3441008995fb1a92027b35f71a6b54cf14e71",
+        "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/public/a.md\"}]}",
+        "proposal_id": "proposal",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T08:33:09Z"
+      }
+    ],
+    "revision": "base",
+    "scenario": "proposer-rebase"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"proposal_id\": \"proposal\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_proposal_review"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"proposal_id\": \"proposal\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_proposal_review"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [],
+        "final_state": "committed",
+        "operation": {
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_review"
+        },
+        "partial": false,
+        "proposal_id": "proposal",
+        "result": {
+          "proposal_id": "proposal"
+        },
+        "retry_guidance": "Control-state change committed; use the recorded result, do not repeat.",
+        "safe_to_retry": false
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "actor",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "expires_at": "2026-10-18T08:33:09Z",
+        "intent": "keep",
+        "patch_hash": "9586c8ba6223e6b05e79b90b9ec3441008995fb1a92027b35f71a6b54cf14e71",
+        "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/public/a.md\"}]}",
+        "proposal_id": "proposal",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T08:33:09Z"
+      }
+    ],
+    "revision": "base",
+    "scenario": "control-review"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"proposal_id\": \"proposal\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_proposal_review"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"proposal_id\": \"proposal\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_proposal_review"
+      }
+    ],
+    "expected": {
+      "error_class": "forbidden",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "principal actor cannot review proposal proposal",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [
+      {
+        "applied_operation_id": null,
+        "applied_revision": null,
+        "author_principal": "actor",
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "expires_at": "2026-10-18T08:33:09Z",
+        "intent": "keep",
+        "patch_hash": "91e73c233596c904fea4ec5b2984ddf9e7b2f2c81aead5a38814ef743615a861",
+        "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/private/a.md\"}]}",
+        "proposal_id": "proposal",
+        "rationale": null,
+        "review_comment": null,
+        "reviewed_by": null,
+        "status": "submitted",
+        "updated_at": "2026-09-18T08:33:09Z"
+      }
+    ],
+    "revision": "base",
+    "scenario": "control-denied"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"proposal_id\": \"proposal\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_proposal_review"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"proposal_id\": \"proposal\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_proposal_review"
+      }
+    ],
+    "expected": {
+      "error_class": "not_found",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "'proposal'",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "control-missing"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "queued",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "queued",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "in_progress",
+        "operation": {
+          "base_revision": "base",
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": null,
+          "state": "queued",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "The outcome is not final; wait and reconcile again.",
+        "safe_to_retry": false
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "queued"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "running",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "running",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "in_progress",
+        "operation": {
+          "base_revision": "base",
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": null,
+          "state": "running",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "The outcome is not final; wait and reconcile again.",
+        "safe_to_retry": false
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "running"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "recovering",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:09Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "recovering",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "in_progress",
+        "operation": {
+          "base_revision": "base",
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": null,
+          "state": "recovering",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "The outcome is not final; wait and reconcile again.",
+        "safe_to_retry": false
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "recovering"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "committed",
+        "operation": {
+          "base_revision": "base",
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "The commit completed; do not retry the mutation.",
+        "safe_to_retry": false
+      },
+      "index_revision": "result",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "result",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "succeeded"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "conflict",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "conflict",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "not_committed",
+        "operation": {
+          "base_revision": "base",
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": null,
+          "state": "conflict",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "Nothing was published by this operation. Read current state, then use a fresh expected revision and a new idempotency key.",
+        "safe_to_retry": false
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "conflict"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": "failure",
+        "error_message": "synthetic",
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "failed",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": "failure",
+        "error_message": "synthetic",
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "failed",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "failed_before_mutation",
+        "operation": {
+          "base_revision": "base",
+          "error_class": "failure",
+          "error_message": "synthetic",
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": null,
+          "state": "failed",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "The operation failed before publication; retry the identical request with the same key.",
+        "safe_to_retry": true
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "failed-before"
+  },
+  {
+    "after": [
+      {
+        "base_revision": null,
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": "failure",
+        "error_message": "synthetic",
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "failed",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": null,
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": "failure",
+        "error_message": "synthetic",
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "failed",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "failed_before_mutation",
+        "operation": {
+          "base_revision": null,
+          "error_class": "failure",
+          "error_message": "synthetic",
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": null,
+          "state": "failed",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "The operation failed before publication; retry the identical request with the same key.",
+        "safe_to_retry": true
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "failed-no-base"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": "failure",
+        "error_message": "synthetic",
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "failed",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": "failure",
+        "error_message": "synthetic",
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "failed",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "indeterminate",
+        "operation": {
+          "base_revision": "base",
+          "error_class": "failure",
+          "error_message": "synthetic",
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": null,
+          "state": "failed",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "Repository history advanced after this operation began; inspect affected paths before retrying.",
+        "safe_to_retry": false
+      },
+      "index_revision": "advanced",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "advanced",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "advanced",
+    "scenario": "failed-advanced"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": "failure",
+        "error_message": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "failed",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": "failure",
+        "error_message": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": [\"/public/a.md\", \"/private/a.md\", \"/read-only/a.md\", 1, null, \"/public/a.md\"]}",
+        "result_revision": null,
+        "source_chat": null,
+        "started_at": null,
+        "state": "failed",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [
+          "/public/a.md",
+          "/public/a.md"
+        ],
+        "final_state": "failed_before_mutation",
+        "operation": {
+          "base_revision": "base",
+          "error_class": "failure",
+          "error_message": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": null,
+          "state": "failed",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "The operation failed before publication; retry the identical request with the same key.",
+        "safe_to_retry": true
+      },
+      "index_revision": "base",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "base",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "unicode-error"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "error_class": "validation_error",
+      "index_revision": null,
+      "index_stale": false,
+      "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "operation_id": null,
+      "repo_revision": null,
+      "status": "error",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "bad-replay"
+  },
+  {
+    "after": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": \"bad\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "before": [
+      {
+        "base_revision": "base",
+        "client_instance_id": null,
+        "created_at": "2026-09-18T08:33:10Z",
+        "error_class": null,
+        "error_message": null,
+        "finished_at": null,
+        "idempotency_key": "key",
+        "mcp_session_id": null,
+        "op_id": "op",
+        "principal": "actor",
+        "request_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "request_json": "{}",
+        "result_json": "{\"changed_paths\": \"bad\"}",
+        "result_revision": "result",
+        "source_chat": null,
+        "started_at": null,
+        "state": "succeeded",
+        "tool_name": "memory_patch"
+      }
+    ],
+    "expected": {
+      "data": {
+        "changed_paths": [],
+        "final_state": "committed",
+        "operation": {
+          "base_revision": "base",
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "operation_id": "op",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_patch"
+        },
+        "partial": false,
+        "retry_guidance": "The commit completed; do not retry the mutation.",
+        "safe_to_retry": false
+      },
+      "index_revision": "result",
+      "index_stale": false,
+      "next_tools": [],
+      "operation_id": "op",
+      "repo_revision": "result",
+      "status": "success",
+      "warnings": []
+    },
+    "id": null,
+    "key": "key",
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/",
+        "/read-only/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "proposals": [],
+    "revision": "base",
+    "scenario": "nonlist-paths"
+  }
+]

@@ -100,6 +100,26 @@ func withTransactionLock(ctx context.Context, paths GitRepositoryPaths, fn func(
 	return fn()
 }
 
+// TryTransactionLock probes the in-process writer without waiting. Used only
+// by operation reconciliation; cross-process ownership still needs WriterLease.
+func TryTransactionLock(ctx context.Context, paths GitRepositoryPaths, fn func() error) (bool, error) {
+	return tryTransactionLock(ctx, paths, fn, transactionLock)
+}
+func tryTransactionLock(ctx context.Context, paths GitRepositoryPaths, fn func() error, getLock func(GitRepositoryPaths) (*sync.Mutex, error)) (bool, error) {
+	lock, err := getLock(paths)
+	if err != nil {
+		return false, err
+	}
+	if !lock.TryLock() {
+		return false, nil
+	}
+	defer lock.Unlock()
+	if err = ctx.Err(); err != nil {
+		return true, err
+	}
+	return true, fn()
+}
+
 func (m *TransactionManager) hit(name string) error {
 	if m.Checkpoint != nil {
 		return m.Checkpoint(name)
