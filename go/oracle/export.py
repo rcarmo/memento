@@ -289,6 +289,8 @@ def main() -> None:
     save("service-identity.json", service_identity.fixtures())
     service_reads = importlib.import_module("service_reads")
     save("service-reads.json", service_reads.fixtures())
+    staging_http = importlib.import_module("staging_http")
+    save("staging-http.json", staging_http.fixtures())
     service_envelopes = importlib.import_module("service_envelopes")
     save("service-envelopes.json", service_envelopes.fixtures())
     service_workers = importlib.import_module("service_workers")

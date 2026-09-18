@@ -1,0 +1,576 @@
+{
+  "cases": [
+    {
+      "auth_calls": 0,
+      "expected": null,
+      "method": "GET",
+      "path": "/other"
+    },
+    {
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "error": "proposer bearer credential required"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 401
+      },
+      "method": "GET",
+      "path": "/assets/staging"
+    },
+    {
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "error": "proposer bearer credential required"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 401
+      },
+      "headers": {
+        "authorization": "reader"
+      },
+      "method": "POST",
+      "path": "/assets/staging"
+    },
+    {
+      "auth_calls": 0,
+      "expected": {
+        "body": {
+          "error": "Content-Type must be application/zip"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 415
+      },
+      "headers": {},
+      "method": "POST",
+      "path": "/assets/staging/upload"
+    },
+    {
+      "auth_calls": 0,
+      "expected": {
+        "body": {
+          "error": "upload ticket not found"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 400
+      },
+      "headers": {
+        "content-type": "application/zip"
+      },
+      "method": "POST",
+      "path": "/assets/staging/upload"
+    },
+    {
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "error": "Content-Type must be application/zip"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 415
+      },
+      "headers": {
+        "authorization": "actor",
+        "content-type": "Application/Zip"
+      },
+      "method": "POST",
+      "path": "/assets/staging"
+    },
+    {
+      "auth_calls": 1,
+      "body": "zip",
+      "expected": {
+        "body": {
+          "asset_kind": "docs",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "manifest": {
+            "entries": [
+              {
+                "media_type": "text/plain",
+                "path": "file.txt",
+                "sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+                "size": 9
+              }
+            ],
+            "file_count": 1,
+            "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+            "total_uncompressed_bytes": 9
+          },
+          "media_type": "application/zip",
+          "proposal_id": null,
+          "replayed": false,
+          "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+          "staged_asset_id": "00000000-0000-4000-8000-000000000000",
+          "state": "ready",
+          "version": "1.0.0"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 201
+      },
+      "headers": {
+        "authorization": "actor",
+        "content-type": " application/zip ; charset=binary",
+        "idempotency-key": "inline",
+        "x-memento-asset-kind": "docs",
+        "x-memento-asset-version": "1.0.0"
+      },
+      "method": "POST",
+      "path": "/assets/staging?ignored=1"
+    },
+    {
+      "auth_calls": 1,
+      "body": "zip",
+      "expected": {
+        "body": {
+          "asset_kind": "docs",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "manifest": {
+            "entries": [
+              {
+                "media_type": "text/plain",
+                "path": "file.txt",
+                "sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+                "size": 9
+              }
+            ],
+            "file_count": 1,
+            "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+            "total_uncompressed_bytes": 9
+          },
+          "media_type": "application/zip",
+          "proposal_id": null,
+          "replayed": true,
+          "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+          "staged_asset_id": "00000000-0000-4000-8000-000000000000",
+          "state": "ready",
+          "version": "1.0.0"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 200
+      },
+      "headers": {
+        "authorization": "actor",
+        "content-type": "application/zip",
+        "idempotency-key": "inline",
+        "x-memento-asset-kind": "docs",
+        "x-memento-asset-version": "1.0.0"
+      },
+      "method": "POST",
+      "path": "/assets/staging"
+    },
+    {
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "asset_kind": "docs",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "manifest": {
+            "entries": [
+              {
+                "media_type": "text/plain",
+                "path": "file.txt",
+                "sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+                "size": 9
+              }
+            ],
+            "file_count": 1,
+            "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+            "total_uncompressed_bytes": 9
+          },
+          "media_type": "application/zip",
+          "proposal_id": null,
+          "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+          "staged_asset_id": "00000000-0000-4000-8000-000000000000",
+          "state": "ready",
+          "version": "1.0.0"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 200
+      },
+      "headers": {
+        "authorization": "actor"
+      },
+      "method": "GET",
+      "path": "/assets/staging/00000000-0000-4000-8000-000000000000"
+    },
+    {
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "error": "staged asset not found"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 400
+      },
+      "headers": {
+        "authorization": "other"
+      },
+      "method": "GET",
+      "path": "/assets/staging/00000000-0000-4000-8000-000000000000"
+    },
+    {
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "error": "not found"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 404
+      },
+      "headers": {
+        "authorization": "actor"
+      },
+      "method": "PUT",
+      "path": "/assets/staging"
+    },
+    {
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "error": "staged asset not found"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 400
+      },
+      "headers": {
+        "authorization": "actor"
+      },
+      "method": "GET",
+      "path": "/assets/staging/"
+    },
+    {
+      "auth_calls": 0,
+      "body": "zip",
+      "expected": {
+        "body": {
+          "error": "upload ticket not found"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 400
+      },
+      "headers": {
+        "content-type": "application/zip",
+        "x-memento-upload-ticket": "ticket"
+      },
+      "method": "POST",
+      "path": "/assets/staging/upload"
+    },
+    {
+      "auth_calls": 0,
+      "body": "zip",
+      "expected": {
+        "body": {
+          "error": "upload ticket not found"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 400
+      },
+      "headers": {
+        "authorization": "reader",
+        "content-type": "application/zip",
+        "x-memento-upload-ticket": "ticket"
+      },
+      "method": "POST",
+      "path": "/assets/staging/upload?x=y"
+    },
+    {
+      "auth_calls": 0,
+      "body": "bad",
+      "expected": {
+        "body": {
+          "error": "upload ticket not found"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 400
+      },
+      "headers": {
+        "content-type": "application/zip",
+        "x-memento-upload-ticket": "ticket"
+      },
+      "method": "POST",
+      "path": "/assets/staging/upload"
+    },
+    {
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "error": "staged asset not found"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 400
+      },
+      "headers": {
+        "authorization": "actor"
+      },
+      "method": "GET",
+      "path": "/assets/staging/%30"
+    },
+    {
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "error": "proposer bearer credential required"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 401
+      },
+      "headers": {},
+      "method": "GET",
+      "path": "/assets/staging/upload"
+    },
+    {
+      "advance": 25,
+      "auth_calls": 1,
+      "expected": {
+        "body": {
+          "asset_kind": "docs",
+          "consumed_at": null,
+          "created_at": "2026-09-18T00:00:00Z",
+          "expires_at": "2026-09-19T00:00:00Z",
+          "manifest": {
+            "entries": [
+              {
+                "media_type": "text/plain",
+                "path": "file.txt",
+                "sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+                "size": 9
+              }
+            ],
+            "file_count": 1,
+            "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+            "total_uncompressed_bytes": 9
+          },
+          "media_type": "application/zip",
+          "proposal_id": null,
+          "sha256": "fbaaae42e5e45c0934c7a5bdda5ebe0688f30f6e329d63764d94413464787fb3",
+          "staged_asset_id": "00000000-0000-4000-8000-000000000000",
+          "state": "expired",
+          "version": "1.0.0"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 200
+      },
+      "headers": {
+        "authorization": "actor"
+      },
+      "method": "GET",
+      "path": "/assets/staging/00000000-0000-4000-8000-000000000000"
+    },
+    {
+      "auth_calls": 0,
+      "body": "zip",
+      "expected": {
+        "body": {
+          "error": "upload ticket not found"
+        },
+        "content_type": "application/json; charset=utf-8",
+        "headers": [
+          [
+            "Cache-Control",
+            "no-store"
+          ],
+          [
+            "X-Content-Type-Options",
+            "nosniff"
+          ]
+        ],
+        "status": 400
+      },
+      "headers": {
+        "content-type": "application/zip",
+        "x-memento-upload-ticket": "ticket"
+      },
+      "method": "POST",
+      "path": "/assets/staging/upload"
+    }
+  ],
+  "ticket": {
+    "asset_kind": "docs",
+    "consumed_at": null,
+    "created_at": "2026-09-18T00:00:00Z",
+    "expires_at": "2026-09-18T01:00:00Z",
+    "idempotency_key": "ticket-key",
+    "principal": "actor",
+    "staged_asset_id": null,
+    "token_digest": "751671dd9b617baaac348761e72b74e533aeab89f9e50fa0a95a2789da8dfeb6",
+    "version": "1.0.0"
+  },
+  "zip": "UEsDBBQAAAAAAAAAIVxXAsRBCQAAAAkAAAAIAAAAZmlsZS50eHRzeW50aGV0aWNQSwECFAMUAAAAAAAAACFcVwLEQQkAAAAJAAAACAAAAAAAAAAAAAAAgAEAAAAAZmlsZS50eHRQSwUGAAAAAAEAAQA2AAAALwAAAAAA"
+}
