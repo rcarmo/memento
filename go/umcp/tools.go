@@ -64,6 +64,9 @@ type ToolRegistry struct {
 	tools           map[string]Tool
 	Notify          func(string, map[string]any) error
 	DefaultPageSize int
+	// Visible optionally filters discovery using trusted request context. It
+	// never authorises calls; handlers and transport hooks retain that boundary.
+	Visible func(context.Context, Tool) bool
 }
 
 // InferToolAnnotations mirrors name-based source hints, including read precedence.
@@ -195,7 +198,17 @@ func (r *ToolRegistry) List(ctx context.Context, params map[string]any) (any, *R
 		tools = append(tools, cloneTool(tool))
 	}
 	pageSize := r.DefaultPageSize
+	visible := r.Visible
 	r.mu.RUnlock()
+	if visible != nil {
+		filtered := tools[:0]
+		for _, tool := range tools {
+			if visible(ctx, cloneTool(tool)) {
+				filtered = append(filtered, tool)
+			}
+		}
+		tools = filtered
+	}
 	sort.Slice(tools, func(i, j int) bool { return tools[i].Name < tools[j].Name })
 	items := make([]DiscoveryItem, 0, len(tools))
 	for _, tool := range tools {

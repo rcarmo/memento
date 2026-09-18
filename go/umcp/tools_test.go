@@ -217,3 +217,40 @@ func TestHandlerPanicIsRedacted(t *testing.T) {
 		t.Fatal(response, err)
 	}
 }
+
+func TestToolVisibility(t *testing.T) {
+	r := ToolRegistry{}
+	for _, name := range []string{"public", "admin"} {
+		name := name
+		_ = r.Register(Tool{Name: name, Call: func(context.Context, map[string]any) (any, error) { return name, nil }})
+	}
+	r.Visible = func(ctx context.Context, tool Tool) bool {
+		name := tool.Name
+		tool.Name = "mutated"
+		if tool.InputSchema != nil {
+			tool.InputSchema["mutated"] = true
+		}
+		// Visibility callbacks execute outside the registry lock.
+		if err := r.Register(Tool{Name: name, Call: func(context.Context, map[string]any) (any, error) { return name, nil }}); err != nil {
+			t.Fatal(err)
+		}
+		return name != "admin" || Context(ctx).Principal == "admin"
+	}
+	d := Dispatcher{Handlers: map[string]Handler{"tools/list": r.List}}
+	for _, tc := range []struct {
+		principal string
+		count     int
+	}{{"reader", 1}, {"admin", 2}} {
+		response, err := d.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/list"}`), RequestContext{Principal: tc.principal})
+		tools := response.Result.(map[string]any)["tools"].([]any)
+		if err != nil || response.Error != nil || len(tools) != tc.count {
+			t.Fatal(tc, response, err)
+		}
+		for _, raw := range tools {
+			metadata := raw.(map[string]any)
+			if metadata["name"] == "mutated" || metadata["inputSchema"].(map[string]any)["mutated"] != nil {
+				t.Fatal("visibility callback mutated stored discovery metadata", metadata)
+			}
+		}
+	}
+}
