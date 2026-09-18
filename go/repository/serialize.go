@@ -26,7 +26,17 @@ func SerializeConcept(document ConceptDocument) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	m = validated
+	return SerializeCopiedConcept(ConceptDocument{Frontmatter: validated, Body: document.Body})
+}
+
+// SerializeCopiedConcept mirrors Python model_copy(update=...) followed by
+// serialize_concept: copy updates bypass field validation and tuple sorting.
+// Use only with already parsed metadata and service-validated update shapes.
+func SerializeCopiedConcept(document ConceptDocument) (string, error) {
+	m := document.Frontmatter
+	if m.defaultStatus {
+		return "", &FrontmatterError{Message: "cannot represent an object: <ConceptStatus.ACTIVE: 'active'>"}
+	}
 	var out strings.Builder
 	out.WriteString("---\nschema_version: 1\n")
 	scalar := func(key, value string) {

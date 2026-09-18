@@ -1,0 +1,1233 @@
+[
+  {
+    "change": {
+      "aliases": [
+        "b",
+        "a"
+      ],
+      "body": "\nHello  \r\n",
+      "concept_type": "concept",
+      "kind": "create",
+      "path": "/new/deep/a.md",
+      "tags": [
+        "z",
+        "",
+        "a",
+        "z"
+      ],
+      "title": "New"
+    },
+    "changed": [
+      "/new/deep/a.md"
+    ],
+    "directories": [
+      "/new",
+      "/new/deep",
+      "/private",
+      "/public"
+    ],
+    "files": {
+      "/new/deep/a.md": "---\nschema_version: 1\nid: 00000000-0000-4000-8000-000000000000\ntype: concept\ntitle: New\nstatus: active\naliases:\n  - a\n  - b\ntags:\n  - a\n  - z\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\nHello\n",
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "create",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "create"
+  },
+  {
+    "change": {
+      "aliases": [
+        "b",
+        "a"
+      ],
+      "body": "\nHello  \r\n",
+      "concept_type": "concept",
+      "kind": "create",
+      "path": "/public/a.md",
+      "tags": [
+        "z",
+        "",
+        "a",
+        "z"
+      ],
+      "title": "New"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "path already exists: /public/a.md",
+    "error_type": "ConflictError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "create",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "create-exists"
+  },
+  {
+    "change": {
+      "aliases": [
+        "b",
+        "a"
+      ],
+      "body": "\nHello  \r\n",
+      "concept_type": "not-controlled",
+      "kind": "create",
+      "path": "/new/deep/a.md",
+      "tags": [
+        "z",
+        "",
+        "a",
+        "z"
+      ],
+      "title": "New"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "1 validation error for ConceptFrontmatter\ntype\n  Value error, type must be one of: concept, instance, person, project, service, system [type=value_error, input_value='not-controlled', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+    "error_type": "ValidationError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "create",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "create-invalid"
+  },
+  {
+    "change": {
+      "aliases": [
+        "b",
+        "a"
+      ],
+      "body": "\nHello  \r\n",
+      "concept_type": "concept",
+      "kind": "create",
+      "path": "/new/deep/a.md",
+      "tags": [
+        "z",
+        "",
+        "a",
+        "z"
+      ],
+      "title": "New"
+    },
+    "directories": [
+      "/new",
+      "/new/deep",
+      "/private",
+      "/public"
+    ],
+    "error": "serialised concept exceeds max_concept_bytes",
+    "error_type": "ServiceError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "create",
+    "limit": 10,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "create-size"
+  },
+  {
+    "change": {
+      "aliases": [],
+      "body": "Patched  \r\n",
+      "description": "",
+      "kind": "patch",
+      "path": "/public/a.md",
+      "tags": [
+        "b",
+        "",
+        "a",
+        "b"
+      ],
+      "title": "Patched"
+    },
+    "changed": [
+      "/public/a.md"
+    ],
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Patched\nstatus: active\ndescription: ''\naliases: []\ntags:\n  - b\n  - ''\n  - a\n  - b\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\nPatched\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "patch",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "patch"
+  },
+  {
+    "change": {
+      "aliases": null,
+      "body": null,
+      "description": null,
+      "kind": "patch",
+      "path": "/public/a.md",
+      "tags": null,
+      "title": null
+    },
+    "changed": [
+      "/public/a.md"
+    ],
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "patch",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "patch-null"
+  },
+  {
+    "change": {
+      "aliases": [],
+      "body": "Patched  \r\n",
+      "description": "",
+      "kind": "patch",
+      "path": "/public/a.md",
+      "tags": [
+        "b",
+        "",
+        "a",
+        "b"
+      ],
+      "title": ""
+    },
+    "changed": [
+      "/public/a.md"
+    ],
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: ''\nstatus: active\ndescription: ''\naliases: []\ntags:\n  - b\n  - ''\n  - a\n  - b\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\nPatched\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "patch",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "patch-copy"
+  },
+  {
+    "change": {
+      "aliases": [],
+      "body": "Patched  \r\n",
+      "description": "",
+      "kind": "patch",
+      "path": "/public/a.md",
+      "status": "deprecated",
+      "tags": [
+        "b",
+        "",
+        "a",
+        "b"
+      ],
+      "title": "Patched"
+    },
+    "changed": [
+      "/public/a.md"
+    ],
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Patched\nstatus: deprecated\ndescription: ''\naliases: []\ntags:\n  - b\n  - ''\n  - a\n  - b\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\nPatched\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "patch",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "patch-status"
+  },
+  {
+    "change": {
+      "aliases": [],
+      "body": "Patched  \r\n",
+      "description": "",
+      "kind": "patch",
+      "path": "/public/missing.md",
+      "tags": [
+        "b",
+        "",
+        "a",
+        "b"
+      ],
+      "title": "Patched"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "path does not exist: /public/missing.md",
+    "error_type": "PathSafetyError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "patch",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "patch-missing"
+  },
+  {
+    "change": {
+      "aliases": [],
+      "body": "Patched  \r\n",
+      "description": "",
+      "kind": "patch",
+      "path": "/public/a.md",
+      "tags": [
+        "b",
+        "",
+        "a",
+        "b"
+      ],
+      "title": "Patched"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "frontmatter validation failed",
+    "error_type": "FrontmatterError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "not a concept",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "not a concept",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "patch",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "patch-invalid"
+  },
+  {
+    "change": {
+      "aliases": [],
+      "body": "Patched  \r\n",
+      "description": "",
+      "kind": "patch",
+      "path": "/public/a.md",
+      "tags": [
+        "b",
+        "",
+        "a",
+        "b"
+      ],
+      "title": "Patched"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "serialised concept exceeds max_concept_bytes",
+    "error_type": "ServiceError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "patch",
+    "limit": 10,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "patch-size"
+  },
+  {
+    "change": {
+      "aliases": [],
+      "body": "Patched  \r\n",
+      "description": "",
+      "kind": "patch",
+      "path": "/public/a.md",
+      "tags": [
+        "b",
+        "",
+        "a",
+        "b"
+      ],
+      "title": "Patched"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "cannot represent an object: <ConceptStatus.ACTIVE: 'active'>",
+    "error_type": "RepresenterError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "patch",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "patch-default"
+  },
+  {
+    "change": {
+      "aliases": [],
+      "body": "Patched  \r\n",
+      "description": "",
+      "kind": "patch",
+      "path": "/public/a.md",
+      "status": "deprecated",
+      "tags": [
+        "b",
+        "",
+        "a",
+        "b"
+      ],
+      "title": "Patched"
+    },
+    "changed": [
+      "/public/a.md"
+    ],
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Patched\nstatus: deprecated\ndescription: ''\naliases: []\ntags:\n  - b\n  - ''\n  - a\n  - b\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\nPatched\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "patch",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "patch-default-override"
+  },
+  {
+    "change": {
+      "kind": "rename",
+      "new_path": "/new/deep/renamed.md",
+      "path": "/public/a.md"
+    },
+    "changed": [
+      "/new/deep/renamed.md",
+      "/public/a.md",
+      "/public/ref.md"
+    ],
+    "directories": [
+      "/new",
+      "/new/deep",
+      "/private",
+      "/public"
+    ],
+    "files": {
+      "/new/deep/renamed.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\nOriginal [self](/public/a.md).\n",
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\n[target](/new/deep/renamed.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "rename",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "rename"
+  },
+  {
+    "change": {
+      "kind": "rename",
+      "new_path": "/public/a.md",
+      "path": "/public/a.md"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "path already exists: /public/a.md",
+    "error_type": "ConflictError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "rename",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "rename-same"
+  },
+  {
+    "change": {
+      "kind": "rename",
+      "new_path": "/new/deep/renamed.md",
+      "path": "/public/missing.md"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "/public/missing.md",
+    "error_type": "NotFoundError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "rename",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "rename-missing"
+  },
+  {
+    "change": {
+      "kind": "rename",
+      "new_path": "/public/ref.md",
+      "path": "/public/a.md"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "path already exists: /public/ref.md",
+    "error_type": "ConflictError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "rename",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "rename-collision"
+  },
+  {
+    "change": {
+      "kind": "rename",
+      "new_path": "/new/deep/renamed.md",
+      "path": "/public/a.md"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "principal actor cannot write /private/ref.md",
+    "error_type": "AuthorizationError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md)\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md)\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "rename",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "rename-unwritable-ref"
+  },
+  {
+    "change": {
+      "kind": "rename",
+      "new_path": "/new/deep/renamed.md",
+      "path": "/public/a.md"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "frontmatter validation failed",
+    "error_type": "FrontmatterError",
+    "files": {
+      "/private/ref.md": "not a concept",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "not a concept",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "rename",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "rename-invalid-ref"
+  },
+  {
+    "change": {
+      "kind": "rename",
+      "new_path": "/new/deep/renamed.md",
+      "path": "/public/a.md"
+    },
+    "changed": [
+      "/new/deep/renamed.md",
+      "/public/a.md",
+      "/public/ref.md"
+    ],
+    "directories": [
+      "/new",
+      "/new/deep",
+      "/private",
+      "/public"
+    ],
+    "files": {
+      "/new/deep/renamed.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\nOriginal [self](/public/a.md).\n",
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\n[target](/new/deep/renamed.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "rename",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "rename-self-link"
+  },
+  {
+    "change": {
+      "kind": "rename",
+      "new_path": "/new/deep/renamed.md",
+      "path": "/public/a.md"
+    },
+    "directories": [
+      "/new",
+      "/new/deep",
+      "/private",
+      "/public"
+    ],
+    "error": "serialised concept exceeds max_concept_bytes",
+    "error_type": "ServiceError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "rename",
+    "limit": 10,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "rename-size"
+  },
+  {
+    "change": {
+      "kind": "rename",
+      "new_path": "/new/deep/renamed.md",
+      "path": "/public/a.md"
+    },
+    "directories": [
+      "/new",
+      "/new/deep",
+      "/private",
+      "/public"
+    ],
+    "error": "serialised concept exceeds max_concept_bytes",
+    "error_type": "ServiceError",
+    "files": {
+      "/new/deep/renamed.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: actor\n---\nOriginal [self](/public/a.md).\n",
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md)\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md) [target](/public/a.md)\n"
+    },
+    "kind": "rename",
+    "limit": 600,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "rename-rewrite-size"
+  },
+  {
+    "change": {
+      "kind": "trash",
+      "path": "/public/a.md"
+    },
+    "changed": [
+      "/public/a.md",
+      "/trash/public/a.md"
+    ],
+    "directories": [
+      "/private",
+      "/public",
+      "/trash",
+      "/trash/public"
+    ],
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n",
+      "/trash/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "trash",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "trash"
+  },
+  {
+    "change": {
+      "kind": "trash",
+      "path": "/public/a.md"
+    },
+    "directories": [
+      "/private",
+      "/public",
+      "/trash",
+      "/trash/public"
+    ],
+    "error": "trash destination already exists",
+    "error_type": "ConflictError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n",
+      "/trash/public/a.md": "collision"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n",
+      "/trash/public/a.md": "collision"
+    },
+    "kind": "trash",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "trash-collision"
+  },
+  {
+    "change": {
+      "kind": "trash",
+      "path": "/public/a.md"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "principal actor cannot write /public/a.md",
+    "error_type": "AuthorizationError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "trash",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": []
+    },
+    "scenario": "trash-denied"
+  },
+  {
+    "change": {
+      "kind": "trash",
+      "path": "/public/a.md"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "frontmatter validation failed",
+    "error_type": "FrontmatterError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "not a concept",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "not a concept",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "trash",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "trash-invalid"
+  },
+  {
+    "change": {
+      "kind": "trash",
+      "path": "/trash/public/a.md"
+    },
+    "directories": [
+      "/private",
+      "/public"
+    ],
+    "error": "expected an active Markdown concept path",
+    "error_type": "PathSafetyError",
+    "files": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "initial": {
+      "/private/ref.md": "---\nschema_version: 1\nid: '11111111'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nno link\n",
+      "/public/a.md": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\nOriginal [self](/public/a.md).\n",
+      "/public/ref.md": "---\nschema_version: 1\nid: '87654321'\ntype: concept\ntitle: Title\nstatus: active\ndescription: original\naliases: []\ntags:\n  - original\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T05:00:00Z'\nupdated_at: '2026-09-18T05:00:00Z'\nupdated_by: original\n---\n[target](/public/a.md#section) and `[/public/a.md]`\n"
+    },
+    "kind": "trash",
+    "limit": 65536,
+    "policy": {
+      "principal": "actor",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/",
+        "/new/"
+      ]
+    },
+    "scenario": "trash-path"
+  }
+]

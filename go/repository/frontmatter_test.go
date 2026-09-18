@@ -90,3 +90,23 @@ func TestYAMLAliasExpansionLimit(t *testing.T) {
 		t.Fatal("budget ignored")
 	}
 }
+
+func TestCopiedMetadataSerialization(t *testing.T) {
+	doc, err := ParseConceptText("---\nid: '12345678'\ntype: concept\ntitle: Title\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-01T00:00:00Z\nupdated_by: original\n---\nbody\n")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = SerializeCopiedConcept(doc); err == nil {
+		t.Fatal("implicit enum default must still fail")
+	}
+	doc.Frontmatter.SetCopiedStatus("active")
+	doc.Frontmatter.Title = ""
+	doc.Frontmatter.Tags = []string{"b", "", "a", "b"}
+	text, err := SerializeCopiedConcept(doc)
+	if err != nil || !strings.Contains(text, "title: ''\n") || !strings.Contains(text, "tags:\n  - b\n  - ''\n  - a\n  - b\n") {
+		t.Fatal(text, err)
+	}
+	if _, err = SerializeConcept(doc); err == nil {
+		t.Fatal("ordinary serialization must still validate")
+	}
+}

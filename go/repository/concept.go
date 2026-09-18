@@ -15,7 +15,8 @@ import (
 )
 
 // ConceptFrontmatter is the validated metadata model. APIs return independent
-// slices; callers must revalidate modified values before serialising or writing.
+// slices. Normally revalidate modified values; service model-copy updates use
+// SerializeCopiedConcept to retain the source's deliberate validation bypass.
 type ConceptFrontmatter struct {
 	// The reference's unvalidated enum default cannot be emitted by ruamel.
 	// Keep its provenance for serialisation parity; explicit active is valid.
@@ -34,6 +35,14 @@ type ConceptFrontmatter struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 	UpdatedBy     string    `json:"updated_by"`
 }
+
+// SetCopiedStatus clears enum-default provenance when a patch explicitly
+// supplies a validated status string through model_copy.
+func (m *ConceptFrontmatter) SetCopiedStatus(status string) {
+	m.Status = status
+	m.defaultStatus = false
+}
+
 type ConceptDocument struct {
 	Frontmatter ConceptFrontmatter `json:"frontmatter"`
 	Body        string             `json:"body"`
