@@ -212,6 +212,10 @@ def main() -> None:
     save("umcp-cli.json", cli.fixtures(shared))
     repository_paths = importlib.import_module("repository_paths")
     save("repository-paths.json", repository_paths.fixtures())
+    concept_schema = importlib.import_module("concept_schema")
+    save("concept-schema.json", concept_schema.fixtures())
+    concept_frontmatter = importlib.import_module("concept_frontmatter")
+    save("concept-frontmatter.json", concept_frontmatter.fixtures())
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

@@ -1,0 +1,6178 @@
+{
+  "bodies": [
+    {
+      "expected": "",
+      "input": ""
+    },
+    {
+      "expected": "",
+      "input": "\n"
+    },
+    {
+      "expected": "  hello\n world",
+      "input": "  hello  \r\n world\t\r"
+    },
+    {
+      "expected": "# Title",
+      "input": "\n\n# Title\n\n"
+    },
+    {
+      "expected": " text",
+      "input": "  \n text \n\t"
+    },
+    {
+      "expected": "a\n\nb",
+      "input": "a\n\u001c\nb "
+    },
+    {
+      "expected": "x",
+      "input": "\r\n\r\nx\r\n"
+    },
+    {
+      "expected": "  leading space",
+      "input": "  leading space"
+    },
+    {
+      "expected": "\tindented\n\nend",
+      "input": "\tindented\n\nend   "
+    }
+  ],
+  "metadata": [
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": null
+    },
+    {
+      "expected": null,
+      "input": []
+    },
+    {
+      "expected": null,
+      "input": ""
+    },
+    {
+      "expected": null,
+      "input": {}
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "unknown": 1,
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": null,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": true,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": false,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": 0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": 1.0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": -1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": 1.5,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": " ",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "one",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": {},
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": [
+          "one"
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": [
+          1
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": null,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": true,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": false,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": 0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": 1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": 1.0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": -1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": 1.5,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": " ",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": " ",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "one",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "one",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": {},
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": [
+          "one"
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": [
+          1
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": null,
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": true,
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": false,
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": 0,
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": 1,
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": 1.0,
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": -1,
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": 1.5,
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": " ",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "one",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": [],
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": {},
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": [
+          "one"
+        ],
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": [
+          1
+        ],
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": null,
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": true,
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": false,
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": 0,
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": 1,
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": 1.0,
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": -1,
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": 1.5,
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": " ",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": " ",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "one",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "one",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": [],
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": {},
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": [
+          "one"
+        ],
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": [
+          1
+        ],
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": null,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": true,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": false,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": 0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": 1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": 1.0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": -1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": 1.5,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": "",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": " ",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": "one",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": {},
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": [
+          "one"
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": [
+          1
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": true,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": false,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": 0,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": 1,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": 1.0,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": -1,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": 1.5,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": " ",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": " ",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "one",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "one",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": [],
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": {},
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": [
+          "one"
+        ],
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": [
+          1
+        ],
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": null,
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": true,
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": false,
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": 0,
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": 1,
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": 1.0,
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": -1,
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": 1.5,
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": "",
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": " ",
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": "one",
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": {},
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          "one"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          "one"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "aliases": [
+          1
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          " b ",
+          "Z",
+          "a",
+          "é",
+          "ß",
+          "é"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": null,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": true,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": false,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": 0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": 1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": 1.0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": -1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": 1.5,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": "",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": " ",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": "one",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": {},
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [
+          "one"
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": [
+          "one"
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": [
+          1
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [
+          " b ",
+          "Z",
+          "a",
+          "é",
+          "ß",
+          "é"
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "tags": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": null,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": true,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": false,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": 0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": 1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": 1.0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": -1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": 1.5,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": "",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": " ",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": "one",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": {},
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [
+          "one"
+        ],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": [
+          "one"
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": [
+          1
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [
+          " b ",
+          "Z",
+          "a",
+          "é",
+          "ß",
+          "é"
+        ],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "source_refs": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": null,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": true,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": false,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": 0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": 1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": 1.0,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": -1,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": 1.5,
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": "",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": " ",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": "one",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": {},
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [
+          "one"
+        ],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": [
+          "one"
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": [
+          1
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [
+          " b ",
+          "Z",
+          "a",
+          "é",
+          "ß",
+          "é"
+        ],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "supersedes": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": null
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": true
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": false
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": 0
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": 1
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": 1.0
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": -1
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": 1.5
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": ""
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": " "
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": " "
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "one"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "one"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": []
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": {}
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": [
+          "one"
+        ]
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": [
+          1
+        ]
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ]
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": null,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": true,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": false,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:00Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 0,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:01Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 1,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:01Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 1.0,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:59Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -1,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:01.500000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 1.5,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": " ",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "one",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": [],
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": {},
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": [
+          "one"
+        ],
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": [
+          1
+        ],
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": null,
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": true,
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": false,
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "1970-01-01T00:00:00Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": 0,
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "1970-01-01T00:00:01Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": 1,
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "1970-01-01T00:00:01Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": 1.0,
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "1969-12-31T23:59:59Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": -1,
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "1970-01-01T00:00:01.500000Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": 1.5,
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": " ",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "one",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": [],
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": {},
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": [
+          "one"
+        ],
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": [
+          1
+        ],
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": [
+          "a",
+          "",
+          "a",
+          "Z",
+          "ß",
+          "é",
+          "é",
+          " b "
+        ],
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "line\nnext",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "tab\there",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "\u0000",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "\u001f",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "é",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "é",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "😀",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "😀",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "<script>",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "<script>",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": " a ",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": " a ",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "line\nnext",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "line\nnext",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "tab\there",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "tab\there",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "\u0000",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "\u0000",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "\u001f",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "\u001f",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "é",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "é",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "😀",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "😀",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "<script>",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "<script>",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": " a ",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": " a ",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "line\nnext",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "line\nnext",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "tab\there",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "tab\there",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "\u0000",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "\u0000",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "\u001f",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "\u001f",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "é",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "é",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "😀",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "😀",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "<script>",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": "<script>",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": " a ",
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": " a ",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "line\nnext"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "tab\there"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "\u0000"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "\u001f"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": ""
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": ""
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": ""
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "é"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "é"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "😀"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "😀"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "<script>"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "<script>"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": " a "
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": " a "
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          "line\nnext"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          "line\nnext"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          "tab\there"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          "tab\there"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          "\u0000"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          "\u0000"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          "\u001f"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          "\u001f"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          ""
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          ""
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          ""
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          ""
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          "é"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          "é"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          "😀"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          "😀"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          "<script>"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          "<script>"
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [
+          " a "
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "aliases": [
+          " a "
+        ],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "instance",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "instance",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "person",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "person",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "project",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "project",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "service",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "service",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "system",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "system",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "Concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": "active",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "deprecated",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": "deprecated",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "tombstone",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": "tombstone",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "status": "ACTIVE",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "1",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "01",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "+1",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": " 1 ",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "1.0",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "01.00",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "1e0",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "1_0",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "0_1",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "1.",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "١",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "１",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "1",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "1\u001c",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "id": "synthetic-id",
+        "schema_version": "1\u0000",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:00Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18t12:34:56z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T11:04:56Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18 12:34:56+0130",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56+01",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56+24:00",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56+00:60",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T14:04:56Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56-01:30",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56.123456789Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2026-09-18T12:34:56.123456Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2026-09-18T12:34:56,1234567Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T24:00:00Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-02-29T00:00:00Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2024-02-29T00:00:00Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "2024-02-29T00:00:00Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18X12:34:56Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:60Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "0001-01-01T00:00:00Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "0001-01-01T00:00:00Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "9999-12-31T23:59:59.999999Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "9999-12-31T23:59:59.999999Z",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:00Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "0",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:59Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "-1",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:01Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "+1",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:01.500000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "1.5",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:58.500000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "-1.5",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": " 0 ",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "1e3",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "NaN",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2603-10-11T11:33:20Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "20000000000",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-08-20T11:33:20.001000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "20000000001",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1336-03-23T12:26:40Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "-20000000000",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-05-14T12:26:39.999000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "-20000000001",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": "2026-09-18T12:34:56Z ",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:00Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 0,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:01Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 1,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:59Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -1,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:01.000001Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 1.000001,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:01.123457Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 1.1234567,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:58.123457Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -1.1234567,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:59.100000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -0.1,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:58.900000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -1.9,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:00Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -0.9999999,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:58.000001Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -1.0000005,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-01-01T00:00:02Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 1.9999999,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-08-20T11:33:20.001500Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 20000000001.5,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-05-14T12:26:39.998500Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -20000000001.5,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:58.900000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "-1.1",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-12-31T23:59:58.100000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "-1.9",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-08-20T11:33:20.000500Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": "20000000000.5",
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2603-10-11T11:33:20Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 20000000000,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1970-08-20T11:33:20.001000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 20000000001,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1336-03-23T12:26:40Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -20000000000,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-05-14T12:26:39.999000Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -20000000001,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "2603-10-11T11:33:20.000500Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 20000000000.5,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "1969-05-14T12:26:39.999500Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -20000000000.5,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "9999-12-31T23:59:59Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": 253402300799000,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": 253402300800000,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": {
+        "aliases": [],
+        "created_at": "0001-01-01T00:00:00Z",
+        "description": null,
+        "id": "synthetic-id",
+        "schema_version": 1,
+        "source_refs": [],
+        "status": "active",
+        "supersedes": [],
+        "tags": [],
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T12:34:56Z",
+        "updated_by": "test-agent"
+      },
+      "input": {
+        "created_at": -62135596800000,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    },
+    {
+      "expected": null,
+      "input": {
+        "created_at": -62135596800001,
+        "id": "synthetic-id",
+        "title": "Synthetic",
+        "type": "concept",
+        "updated_at": "2026-09-18T14:34:56+02:00",
+        "updated_by": "test-agent"
+      }
+    }
+  ]
+}
