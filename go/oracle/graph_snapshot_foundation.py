@@ -20,13 +20,25 @@ def fixtures() -> dict[str, Any]:
         with sqlite3.connect(derived) as db:
             db.executescript(
                 "CREATE TABLE index_state(key TEXT PRIMARY KEY,value TEXT,updated_at TEXT);"
-                "CREATE TABLE concepts(id TEXT PRIMARY KEY,path TEXT);"
+                "CREATE TABLE concepts(id TEXT PRIMARY KEY,path TEXT,type TEXT,title TEXT,status TEXT,tags_json TEXT,updated_at TEXT,repo_revision TEXT,body TEXT,content_hash TEXT);"
+                "CREATE TABLE graph_metrics(concept_id TEXT PRIMARY KEY,inbound_degree INTEGER,outbound_degree INTEGER,broken_link_count INTEGER,orphan_flag INTEGER);"
+                "CREATE TABLE concept_embeddings(concept_id TEXT PRIMARY KEY,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT);"
                 "CREATE TABLE links(source_id TEXT,target_id TEXT,raw_target TEXT,target_path TEXT,anchor TEXT,link_kind TEXT,resolution_state TEXT,first_seen_revision TEXT,last_checked_revision TEXT);"
                 "INSERT INTO index_state VALUES('repo_revision','main','now'),('index_revision','old','now'),('semantic_embedding_revision','embed','now');"
-                "INSERT INTO concepts VALUES('a','/a.md'),('b','/b.md');"
-                "INSERT INTO links VALUES('a','b','/public/b.md','/public/b.md',NULL,'internal','resolved','r1','r2'),('a',NULL,'/private/missing.md','/private/missing.md','x','internal','broken','r1','r2'),('b',NULL,'/public/missing.md','/public/missing.md',NULL,'internal','broken','r1','r2');"
+                "INSERT INTO concepts VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','/a.md','concept','Alpha','active','[\"one\"]','2026-01-02T00:00:00Z','main','Body','ha'),('6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e','/b.md','concept','Beta','active','[]','2026-01-03T00:00:00Z','main','Body','hb');"
+                "INSERT INTO graph_metrics VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d',9,9,9,0);"
+                "INSERT INTO concept_embeddings VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','ready','model',3,'main','v1','2026-01-04T00:00:00Z',NULL);"
+                "INSERT INTO links VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e','/public/b.md','/public/b.md',NULL,'internal','resolved','r1','r2'),('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d',NULL,'/private/missing.md','/private/missing.md','x','internal','broken','r1','r2'),('6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e',NULL,'/public/missing.md','/public/missing.md',NULL,'internal','broken','r1','r2');"
             )
         control.touch()
+        (root / "a.md").write_text(
+            "---\nschema_version: 1\nid: '5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d'\ntype: concept\ntitle: Alpha\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-02T00:00:00Z\nupdated_by: alice\n---\nBody\n",
+            encoding="utf-8",
+        )
+        (root / "b.md").write_text(
+            "---\nschema_version: 1\nid: '6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e'\ntype: concept\ntitle: Beta\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-03T00:00:00Z\nupdated_by: bob\n---\nBody\n",
+            encoding="utf-8",
+        )
         service = GraphSnapshotService(
             GraphExplorerConfig(),
             repository_root=root,
@@ -47,16 +59,45 @@ def fixtures() -> dict[str, Any]:
             db.row_factory = sqlite3.Row
             edges = [
                 item.model_dump(mode="json")
-                for item in service._edges(db, ids={"a", "b"}, limit=10, policy=policy)
+                for item in service._edges(
+                    db,
+                    ids={
+                        "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+                        "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+                    },
+                    limit=10,
+                    policy=policy,
+                )
+            ]
+        with sqlite3.connect(derived) as db:
+            db.row_factory = sqlite3.Row
+            nodes = [
+                item.model_dump(mode="json")
+                for item in service._nodes(db, proposal_counts={}, limit=10)
             ]
         return {
             "revisions": revisions,
             "edges": edges,
+            "nodes": nodes,
             "paths_cases": [
                 {"ids": [], "paths": list(service.paths_for_ids(()))},
                 {
-                    "ids": ["b", "missing", "a", "b"],
-                    "paths": list(service.paths_for_ids(("b", "missing", "a", "b"))),
+                    "ids": [
+                        "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+                        "missing",
+                        "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+                        "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+                    ],
+                    "paths": list(
+                        service.paths_for_ids(
+                            (
+                                "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+                                "missing",
+                                "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+                                "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+                            )
+                        )
+                    ),
                 },
             ],
         }

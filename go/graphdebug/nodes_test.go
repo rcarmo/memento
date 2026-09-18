@@ -1,0 +1,130 @@
+package graphdebug
+
+import (
+	"context"
+	"database/sql"
+	"encoding/json"
+	"os"
+	"path/filepath"
+	"reflect"
+	"testing"
+
+	"github.com/rcarmo/memento/go/access"
+	_ "modernc.org/sqlite"
+)
+
+func nodeDB(t *testing.T) (string, string) {
+	t.Helper()
+	root := t.TempDir()
+	path := filepath.Join(root, "derived.sqlite")
+	db, e := sql.Open("sqlite", path)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer db.Close()
+	sql := `CREATE TABLE concepts(id TEXT PRIMARY KEY,path TEXT,type TEXT,title TEXT,status TEXT,tags_json TEXT,updated_at TEXT,repo_revision TEXT,body TEXT,content_hash TEXT);CREATE TABLE graph_metrics(concept_id TEXT PRIMARY KEY,inbound_degree INTEGER,outbound_degree INTEGER,broken_link_count INTEGER,orphan_flag INTEGER);CREATE TABLE concept_embeddings(concept_id TEXT PRIMARY KEY,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT);INSERT INTO concepts VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','/a.md','concept','Alpha','active','["one"]','2026-01-02T00:00:00Z','main','Body','ha'),('6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e','/b.md','concept','Beta','active','[]','2026-01-03T00:00:00Z','main','Body','hb');INSERT INTO graph_metrics VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d',9,9,9,0);INSERT INTO concept_embeddings VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','ready','model',3,'main','v1','2026-01-04T00:00:00Z',NULL);`
+	if _, e = db.Exec(sql); e != nil {
+		t.Fatal(e)
+	}
+	files := map[string]string{"a.md": "---\nschema_version: 1\nid: '5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d'\ntype: concept\ntitle: Alpha\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-02T00:00:00Z\nupdated_by: alice\n---\nBody\n", "b.md": "---\nschema_version: 1\nid: '6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e'\ntype: concept\ntitle: Beta\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-03T00:00:00Z\nupdated_by: bob\n---\nBody\n"}
+	for name, text := range files {
+		if e = os.WriteFile(filepath.Join(root, name), []byte(text), 0600); e != nil {
+			t.Fatal(e)
+		}
+	}
+	return root, path
+}
+func TestNodeFilesystemFields(t *testing.T) {
+	root := t.TempDir()
+	s := NewSnapshotService(root, "", "")
+	if _, err := s.repositoryPath("/../escape"); err == nil {
+		t.Fatal("escape")
+	}
+	if _, err := s.repositoryPath("/missing"); err == nil {
+		t.Fatal("missing")
+	}
+	if err := os.Mkdir(filepath.Join(root, "dir"), 0700); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.repositoryPath("/dir"); err == nil {
+		t.Fatal("directory")
+	}
+	if err := os.WriteFile(filepath.Join(root, "bad.md"), []byte("bad"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	size, updated, keys, assets := s.filesystemFields("/bad.md", "id")
+	if size != 3 || updated != nil || len(keys) != 0 || assets != 0 {
+		t.Fatal(size, updated, keys, assets)
+	}
+	size, updated, keys, assets = s.filesystemFields("/missing.md", "id")
+	if size != 0 || updated != nil || len(keys) != 0 || assets != 0 {
+		t.Fatal(size, updated, keys, assets)
+	}
+	concept := "---\nschema_version: 1\nid: '5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d'\ntype: concept\ntitle: Alpha\nstatus: active\nsource_refs:\n  - https://example.com\n  - https://example.com\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-02T00:00:00Z\nupdated_by: alice\n---\nBody"
+	if err := os.WriteFile(filepath.Join(root, "good.md"), []byte(concept), 0600); err != nil {
+		t.Fatal(err)
+	}
+	assetDir := filepath.Join(root, ".assets", "id", "docs")
+	if err := os.MkdirAll(assetDir, 0700); err != nil {
+		t.Fatal(err)
+	}
+	_ = os.WriteFile(filepath.Join(assetDir, "1.json"), []byte("{}"), 0600)
+	_ = os.WriteFile(filepath.Join(assetDir, "1.zip"), []byte("zip"), 0600)
+	_ = os.Mkdir(filepath.Join(assetDir, "ignored.json"), 0700)
+	size, updated, keys, assets = s.filesystemFields("/good.md", "id")
+	if size == 0 || updated == nil || *updated != "alice" || len(keys) != 1 || assets != 5 {
+		t.Fatal(size, updated, keys, assets)
+	}
+}
+
+func TestNodeQueryVariants(t *testing.T) {
+	root, path := nodeDB(t)
+	db, _ := sql.Open("sqlite", path)
+	_, _ = db.Exec("INSERT INTO concepts VALUES('trash','/trash/a.md','concept','Trash','active','[]','now','main','Body','h'),('root','','concept','Root','active','[]','now','main','Body','h')")
+	db.Close()
+	s := NewSnapshotService(root, path, "")
+	nodes, err := s.Nodes(context.Background(), nil, 10, nil, false)
+	if err != nil || len(nodes) != 3 || nodes[2].Namespace != "/" {
+		t.Fatal(nodes, err)
+	}
+	nodes, err = s.Nodes(context.Background(), nil, 10, nil, true)
+	if err != nil || len(nodes) != 4 {
+		t.Fatal(nodes, err)
+	}
+	policy := access.EffectivePolicy{Roles: []string{"reader"}, ReadPrefixes: []string{"/a.md/"}}
+	nodes, err = s.Nodes(context.Background(), []string{"5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", "missing"}, 10, &policy, false)
+	if err != nil || len(nodes) != 1 {
+		t.Fatal(nodes, err)
+	}
+	nodes, err = s.Nodes(context.Background(), []string{}, 10, nil, false)
+	if err != nil || nodes == nil || len(nodes) != 0 {
+		t.Fatal(nodes, err)
+	}
+	db, _ = sql.Open("sqlite", path)
+	_, _ = db.Exec("UPDATE concepts SET tags_json='bad' WHERE id='5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d'")
+	db.Close()
+	if _, err = s.Nodes(context.Background(), nil, 10, nil, false); err == nil {
+		t.Fatal("invalid tags")
+	}
+}
+
+func TestNodesFixture(t *testing.T) {
+	root, path := nodeDB(t)
+	service := NewSnapshotService(root, path, "")
+	nodes, e := service.Nodes(context.Background(), nil, 10, nil, false)
+	var fixture struct {
+		Nodes []Node `json:"nodes"`
+	}
+	raw, err := os.ReadFile("../testdata/parity/graph-snapshot-foundation.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = json.Unmarshal(raw, &fixture); err != nil {
+		t.Fatal(err)
+	}
+	if e != nil || !reflect.DeepEqual(nodes, fixture.Nodes) {
+		a, _ := json.Marshal(nodes)
+		b, _ := json.Marshal(fixture.Nodes)
+		t.Fatal(string(a), string(b), e)
+	}
+}

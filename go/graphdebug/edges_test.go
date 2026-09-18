@@ -20,7 +20,7 @@ func edgeDB(t *testing.T) string {
 		t.Fatal(e)
 	}
 	defer db.Close()
-	_, e = db.Exec(`CREATE TABLE links(source_id TEXT,target_id TEXT,raw_target TEXT,target_path TEXT,anchor TEXT,link_kind TEXT,resolution_state TEXT,first_seen_revision TEXT,last_checked_revision TEXT);INSERT INTO links VALUES('a','b','/public/b.md','/public/b.md',NULL,'internal','resolved','r1','r2'),('a',NULL,'/private/missing.md','/private/missing.md','x','internal','broken','r1','r2'),('b',NULL,'/public/missing.md','/public/missing.md',NULL,'internal','broken','r1','r2')`)
+	_, e = db.Exec(`CREATE TABLE links(source_id TEXT,target_id TEXT,raw_target TEXT,target_path TEXT,anchor TEXT,link_kind TEXT,resolution_state TEXT,first_seen_revision TEXT,last_checked_revision TEXT);INSERT INTO links VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e','/public/b.md','/public/b.md',NULL,'internal','resolved','r1','r2'),('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d',NULL,'/private/missing.md','/private/missing.md','x','internal','broken','r1','r2'),('6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e',NULL,'/public/missing.md','/public/missing.md',NULL,'internal','broken','r1','r2')`)
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -29,7 +29,7 @@ func edgeDB(t *testing.T) string {
 func TestExplicitEdges(t *testing.T) {
 	s := NewSnapshotService("", edgeDB(t), "")
 	reader := access.EffectivePolicy{Roles: []string{"reader"}, ReadPrefixes: []string{"/"}, ProtectedReadPrefixes: []string{"/private/"}}
-	edges, e := s.ExplicitEdges(context.Background(), []string{"a", "b"}, nil, nil, 10, &reader)
+	edges, e := s.ExplicitEdges(context.Background(), []string{"5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"}, nil, nil, 10, &reader)
 	var fixture struct {
 		Edges []Edge `json:"edges"`
 	}
@@ -43,8 +43,8 @@ func TestExplicitEdges(t *testing.T) {
 	if e != nil || !reflect.DeepEqual(edges, fixture.Edges) {
 		t.Fatal(edges, fixture.Edges, e)
 	}
-	source := "a"
-	target := "b"
+	source := "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d"
+	target := "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
 	edges, e = s.ExplicitEdges(context.Background(), nil, &source, &target, 1, nil)
 	if e != nil || len(edges) != 1 {
 		t.Fatal(edges, e)

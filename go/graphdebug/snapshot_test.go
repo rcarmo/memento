@@ -20,7 +20,7 @@ func snapshotDB(t *testing.T) string {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	for _, statement := range []string{"CREATE TABLE index_state(key TEXT PRIMARY KEY,value TEXT NOT NULL,updated_at TEXT NOT NULL)", "CREATE TABLE concepts(id TEXT PRIMARY KEY,path TEXT NOT NULL)", "INSERT INTO index_state VALUES('repo_revision','main','now'),('index_revision','old','now'),('semantic_embedding_revision','embed','now')", "INSERT INTO concepts VALUES('a','/a.md'),('b','/b.md')"} {
+	for _, statement := range []string{"CREATE TABLE index_state(key TEXT PRIMARY KEY,value TEXT NOT NULL,updated_at TEXT NOT NULL)", "CREATE TABLE concepts(id TEXT PRIMARY KEY,path TEXT NOT NULL)", "INSERT INTO index_state VALUES('repo_revision','main','now'),('index_revision','old','now'),('semantic_embedding_revision','embed','now')", "INSERT INTO concepts VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','/a.md'),('6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e','/b.md')"} {
 		if _, err = db.Exec(statement); err != nil {
 			t.Fatal(err)
 		}

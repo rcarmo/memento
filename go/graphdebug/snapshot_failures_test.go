@@ -42,6 +42,9 @@ func (snapshotFaultConn) QueryContext(_ context.Context, query string, _ []drive
 	if len(query) >= 12 && query[:12] == "SELECT rowid" {
 		return &snapshotFaultRows{mode: "edges-" + mode}, nil
 	}
+	if len(query) >= 11 && query[:11] == "SELECT c.id" {
+		return &snapshotFaultRows{mode: "nodes-" + mode}, nil
+	}
 	return &snapshotFaultRows{mode: "revisions-" + mode}, nil
 }
 func (r *snapshotFaultRows) Columns() []string {
@@ -51,12 +54,15 @@ func (r *snapshotFaultRows) Columns() []string {
 	if len(r.mode) >= 6 && r.mode[:6] == "edges-" {
 		return []string{"rowid", "source_id", "target_id", "raw_target", "resolution_state", "anchor", "first_seen_revision", "last_checked_revision"}
 	}
+	if len(r.mode) >= 6 && r.mode[:6] == "nodes-" {
+		return make([]string, 18)
+	}
 	return []string{"key", "value"}
 }
 func (*snapshotFaultRows) Close() error { return nil }
 func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	if r.emitted {
-		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" {
+		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" || r.mode == "nodes-rows" {
 			return io.ErrClosedPipe
 		}
 		if r.mode != "edges-multi" || r.count >= 2 {
@@ -65,9 +71,24 @@ func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	}
 	r.emitted = true
 	r.count++
-	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" {
+	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" {
 		values[0] = nil
 		values[1] = "value"
+	} else if len(r.mode) >= 6 && r.mode[:6] == "nodes-" {
+		values[0] = "id"
+		values[1] = "/a.md"
+		values[2] = "Title"
+		values[3] = "concept"
+		values[4] = "active"
+		values[5] = "[]"
+		values[6] = "now"
+		values[7] = int64(0)
+		values[8] = int64(0)
+		values[9] = int64(0)
+		values[10] = int64(0)
+		for i := 11; i < 18; i++ {
+			values[i] = nil
+		}
 	} else if len(r.mode) >= 6 && r.mode[:6] == "edges-" {
 		values[0] = int64(1)
 		values[1] = "a"
@@ -99,6 +120,9 @@ func TestSnapshotDatabaseFailureBranches(t *testing.T) {
 	ctx := context.Background()
 	service := NewSnapshotService("root", "derived", "control")
 	service.open = func(context.Context, string) (*sql.DB, error) { return nil, io.ErrClosedPipe }
+	if _, err := service.Nodes(ctx, nil, 1, nil, false); err == nil {
+		t.Fatal("nodes open")
+	}
 	if _, err := service.Revisions(ctx); err == nil {
 		t.Fatal("revision open")
 	}
@@ -117,6 +141,10 @@ func TestSnapshotDatabaseFailureBranches(t *testing.T) {
 		service.open = faultOpen(t, mode)
 		if _, err := service.ExplicitEdges(ctx, nil, nil, nil, 2, nil); err == nil {
 			t.Fatal("edges", mode)
+		}
+		service.open = faultOpen(t, mode)
+		if _, err := service.Nodes(ctx, nil, 2, nil, false); err == nil {
+			t.Fatal("nodes", mode)
 		}
 	}
 	service.open = faultOpen(t, "multi")
