@@ -192,6 +192,8 @@ def main() -> None:
     save("umcp-prompts.json", prompts.fixtures(shared))
     completion = importlib.import_module("umcp_completion")
     save("umcp-completion.json", completion.fixtures(shared))
+    http = importlib.import_module("umcp_http")
+    save("umcp-http.json", http.fixtures(args.umcp))
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

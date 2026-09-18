@@ -140,7 +140,7 @@ func (r *PromptRegistry) RegisterAndNotify(p Prompt) error {
 		return err
 	}
 	if r.Notify != nil {
-		return r.Notify("notifications/prompts/list_changed", map[string]any{})
+		return r.Notify("notifications/prompts/list_changed", nil)
 	}
 	return nil
 }
@@ -149,7 +149,7 @@ func (r *PromptRegistry) RegisterAndNotify(p Prompt) error {
 func (r *PromptRegistry) UnregisterAndNotify(name string) (bool, error) {
 	removed := r.Unregister(name)
 	if removed && r.Notify != nil {
-		return true, r.Notify("notifications/prompts/list_changed", map[string]any{})
+		return true, r.Notify("notifications/prompts/list_changed", nil)
 	}
 	return removed, nil
 }

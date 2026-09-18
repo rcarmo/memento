@@ -173,7 +173,7 @@ func (r *ToolRegistry) RegisterAndNotify(tool Tool) error {
 		return err
 	}
 	if r.Notify != nil {
-		return r.Notify("notifications/tools/list_changed", map[string]any{})
+		return r.Notify("notifications/tools/list_changed", nil)
 	}
 	return nil
 }
@@ -182,7 +182,7 @@ func (r *ToolRegistry) RegisterAndNotify(tool Tool) error {
 func (r *ToolRegistry) UnregisterAndNotify(name string) (bool, error) {
 	removed := r.Unregister(name)
 	if removed && r.Notify != nil {
-		return true, r.Notify("notifications/tools/list_changed", map[string]any{})
+		return true, r.Notify("notifications/tools/list_changed", nil)
 	}
 	return removed, nil
 }
