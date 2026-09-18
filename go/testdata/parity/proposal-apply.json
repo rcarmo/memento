@@ -1,0 +1,1967 @@
+[
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "apply",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "data": {
+            "changed_paths": [
+              "/a.md"
+            ],
+            "proposal": {
+              "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+              "applied_revision": "result",
+              "author_principal": "author",
+              "base_revision": "main",
+              "changes": [
+                {
+                  "body": "new",
+                  "kind": "patch",
+                  "path": "/a.md"
+                }
+              ],
+              "conflicts": [
+                {
+                  "conflicting_paths": [
+                    "/a.md"
+                  ],
+                  "index": 0,
+                  "status": "conflict"
+                }
+              ],
+              "consulted_concepts": [],
+              "contradictions": [],
+              "created_at": "created",
+              "current_revision": "result",
+              "diff": "",
+              "expires_at": "2099-01-01T00:00:00Z",
+              "history": [],
+              "history_limit": 50,
+              "intent": "synthetic",
+              "proposal_id": "proposal",
+              "rationale": "keep",
+              "reciprocal_links": [],
+              "review_comment": "keep",
+              "reviewed_by": "reviewer",
+              "status": "applied",
+              "target_hint": null,
+              "updated_at": "2026-09-18T00:00:00Z"
+            },
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "denied",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "approved",
+          "updated_at": "updated"
+        },
+        "changed": [],
+        "expected": "main",
+        "operation": null,
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": []
+        },
+        "response": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal author cannot review proposal proposal",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 0
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "reader",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "approved",
+          "updated_at": "updated"
+        },
+        "changed": [],
+        "expected": "main",
+        "operation": null,
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "reader"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal author lacks role: curator",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 0
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "stale-clean",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "needs_rebase",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [],
+        "expected": "main",
+        "operation": null,
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "needs_rebase",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal needs rebase and review before apply",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 0
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "base",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "stale-conflict",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "base",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "conflicted",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": null,
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal has conflicting changes; inspect and resolve before apply",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 0
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "draft",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "draft",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "draft",
+          "updated_at": "updated"
+        },
+        "changed": [],
+        "expected": "main",
+        "operation": null,
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is draft",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 0
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "rejected",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "rejected",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "rejected",
+          "updated_at": "updated"
+        },
+        "changed": [],
+        "expected": "main",
+        "operation": null,
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is rejected",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 0
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2000-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "expired",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2000-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "expired",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [],
+        "expected": "main",
+        "operation": null,
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is expired",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 0
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "applied",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "applied",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "updated"
+        },
+        "changed": [],
+        "expected": "main",
+        "operation": null,
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal proposal is applied",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 0
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "expected-revision",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "approved",
+          "updated_at": "updated"
+        },
+        "changed": [],
+        "expected": "wrong",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "4a8d80b612c682a749bb2334e60be7672fdae89a6e1f18e62a61c4046fb6ba2e",
+          "request_json": "{\"expected_revision\": \"wrong\", \"proposal_id\": \"proposal\"}",
+          "result_json": null,
+          "result_revision": null,
+          "state": "queued",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "synthetic expected revision mismatch",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "transaction-failure",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "approved",
+          "updated_at": "updated"
+        },
+        "changed": [],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": null,
+          "result_revision": null,
+          "state": "queued",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "synthetic transaction failure",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "main",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "update-failure",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": null,
+          "applied_revision": null,
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "approved",
+          "updated_at": "updated"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "exception": "IntegrityError",
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": "CREATE TRIGGER blocked BEFORE UPDATE ON proposals WHEN NEW.status='applied' BEGIN SELECT RAISE(ABORT,'synthetic'); END"
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "refresh-failure",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "replay",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "data": {
+            "changed_paths": [
+              "/a.md"
+            ],
+            "proposal": {
+              "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+              "applied_revision": "result",
+              "author_principal": "author",
+              "base_revision": "main",
+              "changes": [
+                {
+                  "body": "new",
+                  "kind": "patch",
+                  "path": "/a.md"
+                }
+              ],
+              "conflicts": [
+                {
+                  "conflicting_paths": [
+                    "/a.md"
+                  ],
+                  "index": 0,
+                  "status": "conflict"
+                }
+              ],
+              "consulted_concepts": [],
+              "contradictions": [],
+              "created_at": "created",
+              "current_revision": "result",
+              "diff": "",
+              "expires_at": "2099-01-01T00:00:00Z",
+              "history": [],
+              "history_limit": 50,
+              "intent": "synthetic",
+              "proposal_id": "proposal",
+              "rationale": "keep",
+              "reciprocal_links": [],
+              "review_comment": "keep",
+              "reviewed_by": "reviewer",
+              "status": "applied",
+              "target_hint": null,
+              "updated_at": "2026-09-18T00:00:00Z"
+            },
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      },
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "data": {
+            "changed_paths": [
+              "/a.md"
+            ],
+            "proposal": {
+              "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+              "applied_revision": "result",
+              "author_principal": "author",
+              "base_revision": "main",
+              "changes": [
+                {
+                  "body": "new",
+                  "kind": "patch",
+                  "path": "/a.md"
+                }
+              ],
+              "conflicts": [
+                {
+                  "conflicting_paths": [
+                    "/a.md"
+                  ],
+                  "index": 0,
+                  "status": "conflict"
+                }
+              ],
+              "consulted_concepts": [],
+              "contradictions": [],
+              "created_at": "created",
+              "current_revision": "result",
+              "diff": "",
+              "expires_at": "2099-01-01T00:00:00Z",
+              "history": [],
+              "history_limit": 50,
+              "intent": "synthetic",
+              "proposal_id": "proposal",
+              "rationale": "keep",
+              "reciprocal_links": [],
+              "review_comment": "keep",
+              "reviewed_by": "reviewer",
+              "status": "applied",
+              "target_hint": null,
+              "updated_at": "2026-09-18T00:00:00Z"
+            },
+            "replayed": true
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "replay-conflict",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "data": {
+            "changed_paths": [
+              "/a.md"
+            ],
+            "proposal": {
+              "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+              "applied_revision": "result",
+              "author_principal": "author",
+              "base_revision": "main",
+              "changes": [
+                {
+                  "body": "new",
+                  "kind": "patch",
+                  "path": "/a.md"
+                }
+              ],
+              "conflicts": [
+                {
+                  "conflicting_paths": [
+                    "/a.md"
+                  ],
+                  "index": 0,
+                  "status": "conflict"
+                }
+              ],
+              "consulted_concepts": [],
+              "contradictions": [],
+              "created_at": "created",
+              "current_revision": "result",
+              "diff": "",
+              "expires_at": "2099-01-01T00:00:00Z",
+              "history": [],
+              "history_limit": 50,
+              "intent": "synthetic",
+              "proposal_id": "proposal",
+              "rationale": "keep",
+              "reciprocal_links": [],
+              "review_comment": "keep",
+              "reviewed_by": "reviewer",
+              "status": "applied",
+              "target_hint": null,
+              "updated_at": "2026-09-18T00:00:00Z"
+            },
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      },
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "wrong",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "idempotency_conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "idempotency key already used for a different request",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "replay-denied",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "data": {
+            "changed_paths": [
+              "/a.md"
+            ],
+            "proposal": {
+              "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+              "applied_revision": "result",
+              "author_principal": "author",
+              "base_revision": "main",
+              "changes": [
+                {
+                  "body": "new",
+                  "kind": "patch",
+                  "path": "/a.md"
+                }
+              ],
+              "conflicts": [
+                {
+                  "conflicting_paths": [
+                    "/a.md"
+                  ],
+                  "index": 0,
+                  "status": "conflict"
+                }
+              ],
+              "consulted_concepts": [],
+              "contradictions": [],
+              "created_at": "created",
+              "current_revision": "result",
+              "diff": "",
+              "expires_at": "2099-01-01T00:00:00Z",
+              "history": [],
+              "history_limit": 50,
+              "intent": "synthetic",
+              "proposal_id": "proposal",
+              "rationale": "keep",
+              "reciprocal_links": [],
+              "review_comment": "keep",
+              "reviewed_by": "reviewer",
+              "status": "applied",
+              "target_hint": null,
+              "updated_at": "2026-09-18T00:00:00Z"
+            },
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      },
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": []
+        },
+        "response": {
+          "error_class": "forbidden",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "principal author cannot review proposal proposal",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+      "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "replay-no-state",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "data": {
+            "changed_paths": [
+              "/a.md"
+            ],
+            "proposal": {
+              "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+              "applied_revision": "result",
+              "author_principal": "author",
+              "base_revision": "main",
+              "changes": [
+                {
+                  "body": "new",
+                  "kind": "patch",
+                  "path": "/a.md"
+                }
+              ],
+              "conflicts": [
+                {
+                  "conflicting_paths": [
+                    "/a.md"
+                  ],
+                  "index": 0,
+                  "status": "conflict"
+                }
+              ],
+              "consulted_concepts": [],
+              "contradictions": [],
+              "created_at": "created",
+              "current_revision": "result",
+              "diff": "",
+              "expires_at": "2099-01-01T00:00:00Z",
+              "history": [],
+              "history_limit": 50,
+              "intent": "synthetic",
+              "proposal_id": "proposal",
+              "rationale": "keep",
+              "reciprocal_links": [],
+              "review_comment": "keep",
+              "reviewed_by": "reviewer",
+              "status": "applied",
+              "target_hint": null,
+              "updated_at": "2026-09-18T00:00:00Z"
+            },
+            "replayed": false
+          },
+          "index_revision": "result",
+          "index_stale": false,
+          "next_tools": [],
+          "operation_id": "00000000-0000-4000-8000-000000000000",
+          "repo_revision": "result",
+          "status": "success",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      },
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "d33bf3dac692143b111d121cb00d00887aa44c3d5e9655c8b76b18efff5cf34d",
+          "patch_json": "{\"changes\": [{\"body\": \"new\", \"kind\": \"patch\", \"path\": \"/a.md\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "failed",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "conflict",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "proposal has conflicting changes; inspect and resolve before apply",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": ""
+  },
+  {
+    "before": {
+      "applied_operation_id": null,
+      "applied_revision": null,
+      "author_principal": "author",
+      "base_revision": "main",
+      "client_instance_id": "client",
+      "created_at": "created",
+      "expires_at": "2099-01-01T00:00:00Z",
+      "intent": "synthetic",
+      "patch_hash": "bac441a017deead32dc64792a98d62aaa91caf189fdf66b0237996f2da98f785",
+      "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\", \"title\": \"\"}]}",
+      "proposal_id": "proposal",
+      "rationale": "keep",
+      "review_comment": "keep",
+      "reviewed_by": "reviewer",
+      "status": "approved",
+      "updated_at": "updated"
+    },
+    "initial": "---\nschema_version: 1\nid: '12345678'\ntype: concept\ntitle: Title\nstatus: active\naliases: []\ntags: []\nsource_refs: []\nsupersedes: []\ncreated_at: '2026-09-18T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00Z'\nupdated_by: original\n---\noriginal\n",
+    "scenario": "preview-failure",
+    "steps": [
+      {
+        "after": {
+          "applied_operation_id": "00000000-0000-4000-8000-000000000000",
+          "applied_revision": "result",
+          "author_principal": "author",
+          "base_revision": "main",
+          "client_instance_id": "client",
+          "created_at": "created",
+          "expires_at": "2099-01-01T00:00:00Z",
+          "intent": "synthetic",
+          "patch_hash": "bac441a017deead32dc64792a98d62aaa91caf189fdf66b0237996f2da98f785",
+          "patch_json": "{\"changes\": [{\"kind\": \"patch\", \"path\": \"/a.md\", \"title\": \"\"}]}",
+          "proposal_id": "proposal",
+          "rationale": "keep",
+          "review_comment": "keep",
+          "reviewed_by": "reviewer",
+          "status": "applied",
+          "updated_at": "2026-09-18T00:00:00Z"
+        },
+        "changed": [
+          "/a.md"
+        ],
+        "expected": "main",
+        "operation": {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "00000000-0000-4000-8000-000000000000",
+          "principal": "author",
+          "request_hash": "c3cbb6522a87b536ef6175db3b6d28964c6d59e0d2d96e95f1f9d43635340d59",
+          "request_json": "{\"expected_revision\": \"main\", \"proposal_id\": \"proposal\"}",
+          "result_json": "{\"changed_paths\": [\"/a.md\"]}",
+          "result_revision": "result",
+          "state": "succeeded",
+          "tool_name": "memory_proposal_apply"
+        },
+        "policy": {
+          "principal": "author",
+          "protected_read_prefixes": [],
+          "read_prefixes": [
+            "/"
+          ],
+          "roles": [
+            "curator"
+          ],
+          "write_prefixes": [
+            "/"
+          ]
+        },
+        "response": {
+          "error_class": "validation_error",
+          "index_revision": null,
+          "index_stale": false,
+          "message": "frontmatter validation failed",
+          "operation_id": null,
+          "repo_revision": null,
+          "status": "error",
+          "warnings": []
+        },
+        "revision": "result",
+        "transaction_calls": 1
+      }
+    ],
+    "trigger": ""
+  }
+]

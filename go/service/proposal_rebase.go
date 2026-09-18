@@ -22,12 +22,19 @@ type ProposalControls struct {
 	Queue            ProposalQueue
 	Random           io.Reader
 	DerivedIndexPath string
+	MaxConceptBytes  int
+	DerivedUpdate    repository.DerivedUpdateCallback
+	// ChangedConcepts is optional hot-working-memory tracking. Core queue refresh
+	// always runs first; enabled intelligent tiers must supply their own hook.
+	ChangedConcepts func(context.Context, access.EffectivePolicy, []string) error
 }
 
 // ProposalActor contains resolved authorisation plus trusted client metadata.
 type ProposalActor struct {
 	Policy           access.EffectivePolicy
 	ClientInstanceID *string
+	MCPSessionID     *string
+	SourceChat       *string
 }
 type ProposalControlResult struct {
 	Data        map[string]any `json:"data"`

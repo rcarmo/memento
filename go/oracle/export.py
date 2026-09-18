@@ -264,6 +264,8 @@ def main() -> None:
     save("worktree-assets.json", worktree_assets.fixtures())
     proposal_preview = importlib.import_module("proposal_preview")
     save("proposal-preview.json", proposal_preview.fixtures())
+    proposal_apply = importlib.import_module("proposal_apply")
+    save("proposal-apply.json", proposal_apply.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )

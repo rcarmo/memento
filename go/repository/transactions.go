@@ -129,6 +129,13 @@ func (m *TransactionManager) applyWithLock(ctx context.Context, request Transact
 	if err = ctx.Err(); err != nil {
 		return TransactionResult{}, err
 	}
+	return m.ApplyUnderLock(ctx, request, mutate)
+}
+
+// ApplyUnderLock composes service policy checks and publication under one
+// caller-held WithTransactionLock. The caller must also hold WriterLease.
+// Calling Apply instead would recursively acquire the non-reentrant Go mutex.
+func (m *TransactionManager) ApplyUnderLock(ctx context.Context, request TransactionRequest, mutate MutationCallback) (TransactionResult, error) {
 	return m.apply(ctx, request, mutate, defaultTransactionGit())
 }
 
