@@ -12,6 +12,32 @@ permissions:
   contents: read
 
 jobs:
+  python-compatibility:
+    name: Python/uMCP compatibility ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install pinned uMCP and Python test dependencies
+        run: make install-dev
+      - name: Validate Python service against this stdlib
+        run: |
+          make lint format-check typecheck test graph-check
+          .venv/bin/python - <<'PY'
+          import platform
+          import aioumcp
+          import umcp
+          import umcp_shared
+
+          print(platform.python_version(), aioumcp.__file__, umcp.__file__, umcp_shared.__file__)
+          PY
+
   scalar-parity:
     strategy:
       matrix:
