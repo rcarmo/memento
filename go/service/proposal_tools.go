@@ -17,6 +17,15 @@ import (
 //go:embed proposal_tools.json
 var proposalToolDefinitions []byte
 
+//go:embed read_tools.json
+var readToolDefinitions []byte
+
+// RegisterReadProposalTools registers the 13 implemented models-off read and
+// proposal/control tools. Full configured surfaces/catalog remain unfinished.
+func (j *Jobs) RegisterReadProposalTools(server *umcp.Server, notify ProposalNotifier) error {
+	return registerProposalTools(server, j.callProposalTool, notify, readToolDefinitions)
+}
+
 type ProposalNotifier func(context.Context, string, map[string]any, []string) error
 
 type proposalToolDefinition struct {
@@ -52,7 +61,7 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 		for _, parameter := range definition.Parameters {
 			kind := umcp.StringParam
 			switch parameter.Name {
-			case "limit", "offset":
+			case "limit", "offset", "depth":
 				kind = umcp.IntegerParam
 			case "changes", "selected_change_indexes":
 				kind = umcp.ArrayParam
@@ -198,6 +207,30 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 		data, err = result.Data, failure
 		options.RepoRevision = result.Revision
 		options.OperationID = result.OperationID
+	case "memory_read":
+		id := a.text("id_or_path")
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		data, err = c.Read(ctx, actor, id)
+	case "memory_list":
+		prefix := a.text("path_prefix")
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		data, err = c.List(ctx, actor, prefix)
+	case "memory_search":
+		query, kind, limit, cursor, mode, syntax := a.text("query"), a.optional("concept_type"), a.integer("limit"), a.optional("cursor"), a.optional("search_mode"), a.text("query_syntax")
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		data, options, err = c.Search(ctx, actor, query, kind, limit, cursor, mode, syntax)
+	case "memory_graph":
+		id, depth := a.text("id_or_path"), a.integer("depth")
+		if a.err != nil {
+			return nil, options, a.err
+		}
+		data, options, err = c.Graph(ctx, actor, id, depth)
 	default:
 		return nil, options, errors.New("unregistered proposal method")
 	}

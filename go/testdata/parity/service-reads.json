@@ -1,0 +1,3677 @@
+{
+  "cases": [
+    {
+      "arguments": {
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "a"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/private/p.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read /private/p.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "p"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "p",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/missing.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "path does not exist: /missing.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "missing"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "missing",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/trash/public/t.md"
+      },
+      "expected": {
+        "data": {
+          "body": "archived alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": null,
+            "id": "t",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "t",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/trash/public/t.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/../a.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "bundle paths must not contain empty or dot components",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {},
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": "description",
+              "id": "a",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            },
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": null,
+              "id": "b",
+              "path": "/public/b.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/a"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": "description",
+              "id": "a",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": null,
+              "id": "t",
+              "path": "/trash/public/t.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "t",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash"
+      },
+      "expected": {
+        "data": {
+          "entries": []
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "relative"
+      },
+      "expected": {
+        "data": {
+          "entries": []
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "what is alpha?"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "lexical"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "offset:1",
+        "limit": 1,
+        "query": "alpha"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "lexical"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": "semantic"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "semantic"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": [
+          "semantic_search_unavailable: semantic search embedding client is unavailable"
+        ]
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": "hybrid"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "hybrid"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": [
+          "semantic_search_unavailable: semantic search embedding client is unavailable"
+        ]
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": "invalid"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported search_mode: invalid",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": ""
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "lexical"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "\"unterminated",
+        "query_syntax": "fts5"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid FTS query",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "depth": 2,
+        "id_or_path": "a"
+      },
+      "expected": {
+        "data": {
+          "broken_targets": [],
+          "center_id": "a",
+          "inbound": [],
+          "outbound": [
+            {
+              "broken_link_count": 0,
+              "concept_id": "b",
+              "depth": 1,
+              "direction": "outbound",
+              "orphan_flag": false,
+              "path": "/public/b.md",
+              "title": "b"
+            }
+          ]
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "broken_targets": [],
+          "center_id": "a",
+          "inbound": [],
+          "outbound": [
+            {
+              "broken_link_count": 0,
+              "concept_id": "b",
+              "depth": 1,
+              "direction": "outbound",
+              "orphan_flag": false,
+              "path": "/public/b.md",
+              "title": "b"
+            }
+          ]
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "p"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'p'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/private/p.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read /private/p.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "missing"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'missing'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/missing.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "path does not exist: /missing.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "proposer"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "a"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/private/p.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read /private/p.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "p"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "p",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/missing.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read /missing.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "missing"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "missing",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/trash/public/t.md"
+      },
+      "expected": {
+        "data": {
+          "body": "archived alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": null,
+            "id": "t",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "t",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/trash/public/t.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/../a.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "bundle paths must not contain empty or dot components",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {},
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": "description",
+              "id": "a",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            },
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": null,
+              "id": "b",
+              "path": "/public/b.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/a"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": "description",
+              "id": "a",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": null,
+              "id": "t",
+              "path": "/trash/public/t.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "t",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash"
+      },
+      "expected": {
+        "data": {
+          "entries": []
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "relative"
+      },
+      "expected": {
+        "data": {
+          "entries": []
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "what is alpha?"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "lexical"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "offset:1",
+        "limit": 1,
+        "query": "alpha"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "lexical"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": "semantic"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "semantic"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": [
+          "semantic_search_unavailable: semantic search embedding client is unavailable"
+        ]
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": "hybrid"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "hybrid"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": [
+          "semantic_search_unavailable: semantic search embedding client is unavailable"
+        ]
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": "invalid"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported search_mode: invalid",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": ""
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "lexical"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "\"unterminated",
+        "query_syntax": "fts5"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid FTS query",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "depth": 2,
+        "id_or_path": "a"
+      },
+      "expected": {
+        "data": {
+          "broken_targets": [],
+          "center_id": "a",
+          "inbound": [],
+          "outbound": [
+            {
+              "broken_link_count": 0,
+              "concept_id": "b",
+              "depth": 1,
+              "direction": "outbound",
+              "orphan_flag": false,
+              "path": "/public/b.md",
+              "title": "b"
+            }
+          ]
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "broken_targets": [],
+          "center_id": "a",
+          "inbound": [],
+          "outbound": [
+            {
+              "broken_link_count": 0,
+              "concept_id": "b",
+              "depth": 1,
+              "direction": "outbound",
+              "orphan_flag": false,
+              "path": "/public/b.md",
+              "title": "b"
+            }
+          ]
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "p"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'p'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/private/p.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read /private/p.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "missing"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'missing'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/missing.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "principal actor cannot read /missing.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "actor",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "a"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/private/p.md"
+      },
+      "expected": {
+        "data": {
+          "body": "secret alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": null,
+            "id": "p",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "p",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/private/p.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "p"
+      },
+      "expected": {
+        "data": {
+          "body": "secret alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": null,
+            "id": "p",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "p",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/private/p.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/missing.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "path does not exist: /missing.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "missing"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "missing",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/trash/public/t.md"
+      },
+      "expected": {
+        "data": {
+          "body": "archived alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": null,
+            "id": "t",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "t",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/trash/public/t.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/../a.md"
+      },
+      "expected": {
+        "error_class": "forbidden",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "bundle paths must not contain empty or dot components",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {},
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": null,
+              "id": "p",
+              "path": "/private/p.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "p",
+              "type": "concept"
+            },
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": "description",
+              "id": "a",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            },
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": null,
+              "id": "b",
+              "path": "/public/b.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/a"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": "description",
+              "id": "a",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash/"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": null,
+              "id": "t",
+              "path": "/trash/public/t.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "t",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "/trash"
+      },
+      "expected": {
+        "data": {
+          "entries": []
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "path_prefix": "relative"
+      },
+      "expected": {
+        "data": {
+          "entries": []
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "what is alpha?"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "p",
+              "path": "/private/p.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "secret alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "p",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "lexical"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "cursor": "offset:1",
+        "limit": 1,
+        "query": "alpha"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": "offset:2",
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "p",
+              "path": "/private/p.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "secret alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "p",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "lexical"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": "semantic"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "p",
+              "path": "/private/p.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "secret alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "p",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "semantic"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": [
+          "semantic_search_unavailable: semantic search embedding client is unavailable"
+        ]
+      },
+      "method": "search",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": "hybrid"
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "p",
+              "path": "/private/p.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "secret alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "p",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "hybrid"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": [
+          "semantic_search_unavailable: semantic search embedding client is unavailable"
+        ]
+      },
+      "method": "search",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": "invalid"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "unsupported search_mode: invalid",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "alpha",
+        "search_mode": ""
+      },
+      "expected": {
+        "data": {
+          "next_cursor": null,
+          "query_syntax": "plain",
+          "results": [
+            {
+              "id": "b",
+              "path": "/public/b.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "beta alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "b",
+              "type": "concept"
+            },
+            {
+              "id": "p",
+              "path": "/private/p.md",
+              "score": 1.8061674008810573e-06,
+              "snippet": "secret alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "p",
+              "type": "concept"
+            },
+            {
+              "id": "a",
+              "path": "/public/a.md",
+              "score": 1.7076864823930329e-06,
+              "snippet": "[b](/public/b.md) alpha",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ],
+          "search_mode": "lexical"
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "query": "\"unterminated",
+        "query_syntax": "fts5"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid FTS query",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "search",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "depth": 2,
+        "id_or_path": "a"
+      },
+      "expected": {
+        "data": {
+          "broken_targets": [],
+          "center_id": "a",
+          "inbound": [],
+          "outbound": [
+            {
+              "broken_link_count": 0,
+              "concept_id": "b",
+              "depth": 1,
+              "direction": "outbound",
+              "orphan_flag": false,
+              "path": "/public/b.md",
+              "title": "b"
+            }
+          ]
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "broken_targets": [],
+          "center_id": "a",
+          "inbound": [],
+          "outbound": [
+            {
+              "broken_link_count": 0,
+              "concept_id": "b",
+              "depth": 1,
+              "direction": "outbound",
+              "orphan_flag": false,
+              "path": "/public/b.md",
+              "title": "b"
+            }
+          ]
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "p"
+      },
+      "expected": {
+        "data": {
+          "broken_targets": [],
+          "center_id": "p",
+          "inbound": [],
+          "outbound": []
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/private/p.md"
+      },
+      "expected": {
+        "data": {
+          "broken_targets": [],
+          "center_id": "p",
+          "inbound": [],
+          "outbound": []
+        },
+        "index_revision": "indexed",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "missing"
+      },
+      "expected": {
+        "error_class": "not_found",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "'missing'",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "arguments": {
+        "id_or_path": "/missing.md"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "path does not exist: /missing.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "graph",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    }
+  ],
+  "files": {
+    "/private/p.md": "---\nschema_version: 1\nid: p\ntype: concept\ntitle: p\nstatus: active\naliases:\n  - alias\ntags:\n  - a\n  - z\nsource_refs:\n  - synthetic\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00.123456Z'\nupdated_by: actor\n---\nsecret alpha\n",
+    "/public/a.md": "---\nschema_version: 1\nid: a\ntype: concept\ntitle: a\nstatus: active\ndescription: description\naliases:\n  - alias\ntags:\n  - a\n  - z\nsource_refs:\n  - synthetic\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00.123456Z'\nupdated_by: actor\n---\n[b](/public/b.md) alpha\n",
+    "/public/b.md": "---\nschema_version: 1\nid: b\ntype: concept\ntitle: b\nstatus: active\naliases:\n  - alias\ntags:\n  - a\n  - z\nsource_refs:\n  - synthetic\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00.123456Z'\nupdated_by: actor\n---\nbeta alpha\n",
+    "/trash/public/t.md": "---\nschema_version: 1\nid: t\ntype: concept\ntitle: t\nstatus: active\naliases:\n  - alias\ntags:\n  - a\n  - z\nsource_refs:\n  - synthetic\nsupersedes: []\ncreated_at: '2026-01-01T00:00:00Z'\nupdated_at: '2026-09-18T00:00:00.123456Z'\nupdated_by: actor\n---\narchived alpha\n"
+  },
+  "malformed": [
+    {
+      "arguments": {
+        "id_or_path": "a"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "path": "/private/bad.md"
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "path": "/private/bad.md"
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/a"
+      },
+      "expected": {
+        "data": {
+          "entries": [
+            {
+              "aliases": [
+                "alias"
+              ],
+              "description": "description",
+              "id": "a",
+              "path": "/public/a.md",
+              "status": "active",
+              "tags": [
+                "a",
+                "z"
+              ],
+              "title": "a",
+              "type": "concept"
+            }
+          ]
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "list",
+      "path": "/private/bad.md"
+    },
+    {
+      "arguments": {
+        "id_or_path": "a"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid concept at /public/bad.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "path": "/public/bad.md"
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "path": "/public/bad.md"
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/a"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid concept at /public/bad.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "list",
+      "path": "/public/bad.md"
+    },
+    {
+      "arguments": {
+        "id_or_path": "a"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid concept at /trash/public/bad.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "read",
+      "path": "/trash/public/bad.md"
+    },
+    {
+      "arguments": {
+        "id_or_path": "/public/a.md"
+      },
+      "expected": {
+        "data": {
+          "body": "[b](/public/b.md) alpha",
+          "frontmatter": {
+            "aliases": [
+              "alias"
+            ],
+            "created_at": "2026-01-01T00:00:00Z",
+            "description": "description",
+            "id": "a",
+            "schema_version": 1,
+            "source_refs": [
+              "synthetic"
+            ],
+            "status": "active",
+            "supersedes": [],
+            "tags": [
+              "a",
+              "z"
+            ],
+            "title": "a",
+            "type": "concept",
+            "updated_at": "2026-09-18T00:00:00.123456Z",
+            "updated_by": "actor"
+          },
+          "path": "/public/a.md"
+        },
+        "index_revision": "main",
+        "index_stale": false,
+        "next_tools": [],
+        "operation_id": null,
+        "repo_revision": "main",
+        "status": "success",
+        "warnings": []
+      },
+      "method": "read",
+      "path": "/trash/public/bad.md"
+    },
+    {
+      "arguments": {
+        "path_prefix": "/public/a"
+      },
+      "expected": {
+        "error_class": "validation_error",
+        "index_revision": null,
+        "index_stale": false,
+        "message": "invalid concept at /trash/public/bad.md",
+        "operation_id": null,
+        "repo_revision": null,
+        "status": "error",
+        "warnings": []
+      },
+      "method": "list",
+      "path": "/trash/public/bad.md"
+    }
+  ]
+}

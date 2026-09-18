@@ -287,6 +287,8 @@ def main() -> None:
     save("derived-lifecycle.json", derived_lifecycle.fixtures())
     service_identity = importlib.import_module("service_identity")
     save("service-identity.json", service_identity.fixtures())
+    service_reads = importlib.import_module("service_reads")
+    save("service-reads.json", service_reads.fixtures())
     service_envelopes = importlib.import_module("service_envelopes")
     save("service-envelopes.json", service_envelopes.fixtures())
     service_workers = importlib.import_module("service_workers")
@@ -296,6 +298,13 @@ def main() -> None:
     proposal_tools = importlib.import_module("proposal_tools")
     proposal_tool_fixtures = proposal_tools.fixtures()
     save("proposal-tools.json", proposal_tool_fixtures)
+    read_tool_fixtures = proposal_tools.fixtures(
+        names=proposal_tools.NAMES + proposal_tools.READ_NAMES
+    )
+    save("read-tools.json", read_tool_fixtures)
+    (ROOT / "go/service/read_tools.json").write_text(
+        json.dumps(read_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
+    )
     # Runtime embeds only definitions for implemented tools, not test outcomes.
     (ROOT / "go/service/proposal_tools.json").write_text(
         json.dumps(proposal_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"

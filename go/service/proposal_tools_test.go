@@ -11,7 +11,13 @@ import (
 )
 
 func TestProposalToolReference(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/proposal-tools.json")
+	testToolReference(t, "proposal-tools.json", proposalToolDefinitions)
+}
+func TestReadToolReference(t *testing.T) {
+	testToolReference(t, "read-tools.json", readToolDefinitions)
+}
+func testToolReference(t *testing.T, file string, definitions []byte) {
+	raw, err := os.ReadFile("../testdata/parity/" + file)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -29,7 +35,7 @@ func TestProposalToolReference(t *testing.T) {
 	server.SetNotificationOutput(nil)
 	if err := registerProposalTools(server, func(_ context.Context, method string, args map[string]any) (any, error) {
 		return map[string]any{"method": method, "arguments": args, "context": "trusted"}, nil
-	}, nil, proposalToolDefinitions); err != nil {
+	}, nil, definitions); err != nil {
 		t.Fatal(err)
 	}
 	for _, c := range fixture.Calls {

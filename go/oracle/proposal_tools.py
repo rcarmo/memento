@@ -22,7 +22,11 @@ NAMES = [
 ]
 
 
-def fixtures() -> dict[str, Any]:
+READ_NAMES = ["memory_read", "memory_list", "memory_search", "memory_graph"]
+
+
+def fixtures(*, names: list[str] | None = None) -> dict[str, Any]:
+    names = names if names is not None else NAMES
     module: Any = importlib.import_module("memento.server")
     umcp: Any = importlib.import_module("aioumcp")
     shared: Any = importlib.import_module("umcp_shared")
@@ -54,7 +58,7 @@ def fixtures() -> dict[str, Any]:
     server._memory_call = call
     server._notify_for_envelope = notify
     definitions = []
-    for name in [spec.tool_name for spec in registry.OPERATION_SPECS if spec.tool_name in NAMES]:
+    for name in [spec.tool_name for spec in registry.OPERATION_SPECS if spec.tool_name in names]:
         method = getattr(server, "tool_" + name)
         spec = registry.OPERATION_SPEC_BY_TOOL[name]
         parameters = []
@@ -72,7 +76,7 @@ def fixtures() -> dict[str, Any]:
                 "parameters": parameters,
             }
         )
-    requests = [
+    requests: list[dict[str, Any]] = [
         {
             "name": "memory_propose",
             "arguments": {"intent": "new", "base_revision": "base", "changes": []},
@@ -119,8 +123,20 @@ def fixtures() -> dict[str, Any]:
             },
         },
     ]
+    requests += [
+        {"name": "memory_read", "arguments": {"id_or_path": "/public/a.md"}},
+        {"name": "memory_list"},
+        {"name": "memory_search", "arguments": {"query": "alpha"}},
+        {
+            "name": "memory_search",
+            "arguments": {"query": "alpha", "limit": "2", "search_mode": "hybrid"},
+        },
+        {"name": "memory_graph", "arguments": {"id_or_path": "id", "depth": "２"}},
+    ]
     calls = []
     for params in requests:
+        if params["name"] not in names:
+            continue
         request = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": params})
         response = asyncio.run(
             server.process_request_async(

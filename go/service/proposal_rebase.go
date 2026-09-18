@@ -21,14 +21,16 @@ import (
 // lock with Apply/Recover; direct queue refresh must run under that same lock.
 // No MCP endpoints are registered by this helper.
 type ProposalControls struct {
-	Queue            ProposalQueue
-	Random           io.Reader
-	cursorMu         sync.Mutex
-	cursor           *proposalCursor
-	DerivedIndexPath string
-	Staging          *assets.StagingStore
-	MaxConceptBytes  int
-	DerivedUpdate    repository.DerivedUpdateCallback
+	Queue             ProposalQueue
+	Random            io.Reader
+	cursorMu          sync.Mutex
+	cursor            *proposalCursor
+	DerivedIndexPath  string
+	Staging           *assets.StagingStore
+	MaxConceptBytes   int
+	Index             ReadIndex
+	DefaultSearchMode string
+	DerivedUpdate     repository.DerivedUpdateCallback
 	// ChangedConcepts is optional hot-working-memory tracking. Core queue refresh
 	// always runs first; enabled intelligent tiers must supply their own hook.
 	ChangedConcepts func(context.Context, access.EffectivePolicy, []string) error

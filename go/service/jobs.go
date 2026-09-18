@@ -52,7 +52,7 @@ func (j *Jobs) run(ctx context.Context, principal access.Principal, session *str
 	q.Proposals = control.Proposals{DB: db, Now: template.Queue.Proposals.Now}
 	// Never copy locks. Source worker instances share only the cursor key and
 	// callbacks/configuration; every worker owns its SQLite/staging handle.
-	controls := &ProposalControls{Queue: q, cursor: &codec, DerivedIndexPath: template.DerivedIndexPath, MaxConceptBytes: template.MaxConceptBytes, DerivedUpdate: template.DerivedUpdate, ChangedConcepts: template.ChangedConcepts}
+	controls := &ProposalControls{Queue: q, cursor: &codec, DerivedIndexPath: template.DerivedIndexPath, MaxConceptBytes: template.MaxConceptBytes, DerivedUpdate: template.DerivedUpdate, ChangedConcepts: template.ChangedConcepts, Index: template.Index, DefaultSearchMode: template.DefaultSearchMode}
 	if template.Staging != nil {
 		controls.Staging = &assets.StagingStore{DB: db, Now: template.Staging.Now}
 	}
@@ -71,7 +71,7 @@ func (j *Jobs) run(ctx context.Context, principal access.Principal, session *str
 	}
 	// Mirror the Python @_serialized scope, including policy resolution and
 	// success revision lookup. Reconciliation and asset reads are not serialized.
-	if method == "memory_operation_get" || method == "memory_proposal_asset_get" {
+	if method == "memory_operation_get" || method == "memory_proposal_asset_get" || method == "memory_read" || method == "memory_list" || method == "memory_search" || method == "memory_graph" {
 		err = run()
 	} else {
 		err = repository.WithTransactionLock(ctx, q.Paths, run)
