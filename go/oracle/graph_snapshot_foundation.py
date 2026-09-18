@@ -38,8 +38,8 @@ def fixtures() -> dict[str, Any]:
             )
         with sqlite3.connect(control) as db:
             db.executescript(
-                "CREATE TABLE proposals(proposal_id TEXT,status TEXT,patch_json TEXT,author_principal TEXT);"
-                "INSERT INTO proposals VALUES('one','draft','{\"path\":\"/a.md\"}','reader'),('two','applied','{\"changes\":[{\"concept_path\":\"/a.md\"},{\"new_path\":\"/b.md\"}]}','reader');"
+                "CREATE TABLE proposals(proposal_id TEXT,status TEXT,patch_json TEXT,author_principal TEXT,intent TEXT,base_revision TEXT,applied_revision TEXT,created_at TEXT,updated_at TEXT);"
+                "INSERT INTO proposals VALUES('one','draft','{\"path\":\"/a.md\"}','reader','one','base',NULL,'2026-01-01','2026-01-02'),('two','applied','{\"changes\":[{\"concept_path\":\"/a.md\"},{\"new_path\":\"/b.md\"}]}','reader','two','base','main','2026-01-03','2026-01-04');"
             )
         (root / "a.md").write_text(
             "---\nschema_version: 1\nid: '5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d'\ntype: concept\ntitle: Alpha\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-02T00:00:00Z\nupdated_by: alice\n---\nBody\n",
@@ -49,6 +49,12 @@ def fixtures() -> dict[str, Any]:
             "---\nschema_version: 1\nid: '6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e'\ntype: concept\ntitle: Beta\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-03T00:00:00Z\nupdated_by: bob\n---\nBody\n",
             encoding="utf-8",
         )
+        asset_dir = root / ".assets" / "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d" / "docs"
+        asset_dir.mkdir(parents=True)
+        (asset_dir / "1.0.0.json").write_text(
+            '{"asset_kind":"docs","version":"1.0.0","source_proposal_id":"one"}', encoding="utf-8"
+        )
+        (asset_dir / "1.0.0.zip").write_bytes(b"zip")
         service = GraphSnapshotService(
             GraphExplorerConfig(),
             repository_root=root,
@@ -150,6 +156,9 @@ def fixtures() -> dict[str, Any]:
         neighbourhood = fresh_service.neighbourhood(
             "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy=policy
         ).model_dump(mode="json")
+        detail = fresh_service.detail(
+            "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy=policy
+        ).model_dump(mode="json")
         export_nodes, export_edges, export_revisions = service.export_selection(
             (
                 "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
@@ -172,6 +181,7 @@ def fixtures() -> dict[str, Any]:
             "semantic_edges": semantic_edges,
             "fresh_overview": fresh_overview,
             "neighbourhood": neighbourhood,
+            "detail": detail,
             "revisions": revisions,
             "edges": edges,
             "nodes": nodes,

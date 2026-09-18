@@ -22,14 +22,14 @@
     ],
     "clusters": [
       {
-        "asset_bytes": 0,
+        "asset_bytes": 69,
         "broken_link_count": 0,
         "coarse_position": {
           "x": -1.17375520060363,
           "y": 3.6651695122598458,
           "z": 0.7985101975500584
         },
-        "combined_bytes": 200,
+        "combined_bytes": 269,
         "explicit_in_degree": 0,
         "explicit_out_degree": 1,
         "id": "cluster:a.md:0:4dc867a17bfd",
@@ -160,7 +160,7 @@
       ]
     ],
     "metrics": {
-      "asset_bytes": 0,
+      "asset_bytes": 69,
       "broken_edges": 1,
       "explicit_edges": 2,
       "markdown_bytes": 397,
@@ -177,6 +177,104 @@
     },
     "schema_version": 1,
     "truncated": true
+  },
+  "detail": {
+    "assets": [
+      {
+        "asset_kind": "docs",
+        "metadata_bytes": 66,
+        "payload_bytes": 3,
+        "source_proposal_id": "one",
+        "version": "1.0.0"
+      }
+    ],
+    "inbound": [],
+    "node": {
+      "anomaly_ids": [],
+      "asset_bytes": 69,
+      "broken_link_count": 0,
+      "coarse_position": {
+        "x": 0.4780775143073507,
+        "y": -0.37380943904192776,
+        "z": 0.8357155378907919
+      },
+      "combined_bytes": 269,
+      "embedding": {
+        "dimensions": 2,
+        "embedding_revision": "main",
+        "error": null,
+        "model_id": "model",
+        "model_revision": "v1",
+        "status": "ready",
+        "updated_at": "now"
+      },
+      "explicit_in_degree": 0,
+      "explicit_out_degree": 1,
+      "id": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+      "markdown_bytes": 200,
+      "namespace": "/a.md/",
+      "orphan": false,
+      "path": "/a.md",
+      "pending_proposal_count": 1,
+      "proposal_count": 2,
+      "provenance_keys": [],
+      "status": "active",
+      "tags": [
+        "one"
+      ],
+      "title": "Alpha",
+      "type": "concept",
+      "updated_at": "2026-01-02T00:00:00Z",
+      "updated_by": "alice"
+    },
+    "outbound": [
+      {
+        "anchor": null,
+        "canonical": true,
+        "embedding_revision": null,
+        "first_seen_revision": "r1",
+        "id": "explicit:1",
+        "kind": "explicit",
+        "last_checked_revision": "r2",
+        "model_id": null,
+        "raw_target": "/public/b.md",
+        "resolution": "resolved",
+        "similarity": null,
+        "source": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+        "target": "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+      }
+    ],
+    "preview": "Body",
+    "preview_truncated": false,
+    "proposals": [
+      {
+        "applied_revision": null,
+        "author": "reader",
+        "base_revision": "base",
+        "created_at": "2026-01-01",
+        "intent": "one",
+        "proposal_id": "one",
+        "status": "draft",
+        "updated_at": "2026-01-02"
+      },
+      {
+        "applied_revision": "main",
+        "author": "reader",
+        "base_revision": "base",
+        "created_at": "2026-01-03",
+        "intent": "two",
+        "proposal_id": "two",
+        "status": "applied",
+        "updated_at": "2026-01-04"
+      }
+    ],
+    "revisions": {
+      "embedding": "main",
+      "index": "old",
+      "repository": "main",
+      "stale": true
+    },
+    "schema_version": 1
   },
   "edges": [
     {
@@ -246,14 +344,14 @@
     "nodes": [
       {
         "anomaly_ids": [],
-        "asset_bytes": 0,
+        "asset_bytes": 69,
         "broken_link_count": 0,
         "coarse_position": {
           "x": 0.4780775143073507,
           "y": -0.37380943904192776,
           "z": 0.8357155378907919
         },
-        "combined_bytes": 200,
+        "combined_bytes": 269,
         "embedding": {
           "dimensions": 2,
           "embedding_revision": "main",
@@ -445,7 +543,7 @@
     "layout_version": "v1",
     "memberships": [],
     "metrics": {
-      "asset_bytes": 0,
+      "asset_bytes": 69,
       "broken_edges": 1,
       "explicit_edges": 2,
       "markdown_bytes": 397,
@@ -459,14 +557,14 @@
           "diagnostic:index_stale:3974f881f42dea5b",
           "diagnostic:pending_proposals:cb66d7dac191c803"
         ],
-        "asset_bytes": 0,
+        "asset_bytes": 69,
         "broken_link_count": 0,
         "coarse_position": {
           "x": 0.4780775143073507,
           "y": -0.37380943904192776,
           "z": 0.8357155378907919
         },
-        "combined_bytes": 200,
+        "combined_bytes": 269,
         "embedding": {
           "dimensions": 2,
           "embedding_revision": "main",
@@ -597,14 +695,14 @@
     "nodes": [
       {
         "anomaly_ids": [],
-        "asset_bytes": 0,
+        "asset_bytes": 69,
         "broken_link_count": 0,
         "coarse_position": {
           "x": 0.4780775143073507,
           "y": -0.37380943904192776,
           "z": 0.8357155378907919
         },
-        "combined_bytes": 200,
+        "combined_bytes": 269,
         "embedding": {
           "dimensions": 2,
           "embedding_revision": "main",
@@ -681,14 +779,14 @@
   "nodes": [
     {
       "anomaly_ids": [],
-      "asset_bytes": 0,
+      "asset_bytes": 69,
       "broken_link_count": 9,
       "coarse_position": {
         "x": 0.4780775143073507,
         "y": -0.37380943904192776,
         "z": 0.8357155378907919
       },
-      "combined_bytes": 200,
+      "combined_bytes": 269,
       "embedding": {
         "dimensions": 3,
         "embedding_revision": "main",
@@ -872,7 +970,7 @@
     "layout_version": "v1",
     "memberships": [],
     "metrics": {
-      "asset_bytes": 0,
+      "asset_bytes": 69,
       "broken_edges": 1,
       "explicit_edges": 2,
       "markdown_bytes": 397,
@@ -886,14 +984,14 @@
           "diagnostic:index_stale:3974f881f42dea5b",
           "diagnostic:pending_proposals:cb66d7dac191c803"
         ],
-        "asset_bytes": 0,
+        "asset_bytes": 69,
         "broken_link_count": 0,
         "coarse_position": {
           "x": 0.4780775143073507,
           "y": -0.37380943904192776,
           "z": 0.8357155378907919
         },
-        "combined_bytes": 200,
+        "combined_bytes": 269,
         "embedding": {
           "dimensions": 3,
           "embedding_revision": "main",
@@ -1000,14 +1098,14 @@
   "scoped_nodes": [
     {
       "anomaly_ids": [],
-      "asset_bytes": 0,
+      "asset_bytes": 69,
       "broken_link_count": 0,
       "coarse_position": {
         "x": 0.4780775143073507,
         "y": -0.37380943904192776,
         "z": 0.8357155378907919
       },
-      "combined_bytes": 200,
+      "combined_bytes": 269,
       "embedding": {
         "dimensions": 3,
         "embedding_revision": "main",

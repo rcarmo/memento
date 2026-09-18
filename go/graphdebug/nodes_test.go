@@ -20,7 +20,7 @@ func fixtureControlDB(t *testing.T) string {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if _, err = db.Exec(`INSERT INTO proposals VALUES('one','draft','{"path":"/a.md"}','reader'),('two','applied','{"changes":[{"concept_path":"/a.md"},{"new_path":"/b.md"}]}','reader')`); err != nil {
+	if _, err = db.Exec(`INSERT INTO proposals VALUES('one','draft','{"path":"/a.md"}','reader','one','base',NULL,'2026-01-01','2026-01-02'),('two','applied','{"changes":[{"concept_path":"/a.md"},{"new_path":"/b.md"}]}','reader','two','base','main','2026-01-03','2026-01-04')`); err != nil {
 		t.Fatal(err)
 	}
 	return path
@@ -32,7 +32,7 @@ func emptyControlDB(t *testing.T) string {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if _, err = db.Exec("CREATE TABLE proposals(proposal_id TEXT,status TEXT,patch_json TEXT,author_principal TEXT)"); err != nil {
+	if _, err = db.Exec("CREATE TABLE proposals(proposal_id TEXT,status TEXT,patch_json TEXT,author_principal TEXT,intent TEXT,base_revision TEXT,applied_revision TEXT,created_at TEXT,updated_at TEXT)"); err != nil {
 		t.Fatal(err)
 	}
 	return path
@@ -56,6 +56,10 @@ func nodeDB(t *testing.T) (string, string) {
 			t.Fatal(e)
 		}
 	}
+	asset := filepath.Join(root, ".assets", "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", "docs")
+	_ = os.MkdirAll(asset, 0700)
+	_ = os.WriteFile(filepath.Join(asset, "1.0.0.json"), []byte(`{"asset_kind":"docs","version":"1.0.0","source_proposal_id":"one"}`), 0600)
+	_ = os.WriteFile(filepath.Join(asset, "1.0.0.zip"), []byte("zip"), 0600)
 	return root, path
 }
 func TestNodeFilesystemFields(t *testing.T) {
