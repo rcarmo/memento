@@ -273,6 +273,10 @@ def main() -> None:
     save("proposal-get.json", proposal_get.fixtures())
     proposal_revise = importlib.import_module("proposal_revise")
     save("proposal-revise.json", proposal_revise.fixtures())
+    proposal_list = importlib.import_module("proposal_list")
+    save("proposal-list.json", proposal_list.fixtures())
+    save("proposal-fernet.json", proposal_list.fernet_fixtures())
+    save("proposal-fernet-decrypt.json", proposal_list.decrypt_fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )

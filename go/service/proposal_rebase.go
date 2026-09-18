@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"io"
+	"sync"
 
 	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/assets"
@@ -22,6 +23,8 @@ import (
 type ProposalControls struct {
 	Queue            ProposalQueue
 	Random           io.Reader
+	cursorMu         sync.Mutex
+	cursor           *proposalCursor
 	DerivedIndexPath string
 	Staging          *assets.StagingStore
 	MaxConceptBytes  int

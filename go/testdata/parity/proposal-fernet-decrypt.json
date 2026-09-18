@@ -1,0 +1,46 @@
+[
+  {
+    "expected": "cGF5bG9hZA==",
+    "token": "gAAAAABqrH8A______________________-CIXSy-4weQhkorGQoTBhDdw6SxKGsS19T9m3w3AUFbqnXP5AucROfxhoAE970ag=="
+  },
+  {
+    "expected": "cGF5bG9hZA==",
+    "token": "gAAAAABqrH8A______________________-CIXSy-4weQhkorGQoTBhDdw6SxKGsS19T9m3w3AUFbqnXP5AucROfxhoAE970ag===="
+  },
+  {
+    "expected": "cGF5bG9hZA==",
+    "token": "gAA!\nAAABqrH8A______________________-CIXSy-4weQhkorGQoTBhDdw6SxKGsS19T9m3w3AUFbqnXP5AucROfxhoAE970ag=="
+  },
+  {
+    "expected": "cGF5bG9hZA==",
+    "token": "gAAAAABqrH8A//////////////////////+CIXSy+4weQhkorGQoTBhDdw6SxKGsS19T9m3w3AUFbqnXP5AucROfxhoAE970ag=="
+  },
+  {
+    "error": true,
+    "token": "gAAAAABqrH8A______________________-CIXSy-4weQhkorGQoTBhDdw6SxKGsS19T9m3w3AUFbqnXP5AucROfxhoAE970ag="
+  },
+  {
+    "error": true,
+    "token": "gAAAAABqrH8A______________________-CIXSy-4weQhkorGQoTBhDdw6SxKGsS19T9m3w3AUFbqnXP5AucROfxhoAE970ag"
+  },
+  {
+    "error": true,
+    "token": ""
+  },
+  {
+    "error": true,
+    "token": "bad"
+  },
+  {
+    "error": true,
+    "token": "="
+  },
+  {
+    "error": true,
+    "token": "💀"
+  },
+  {
+    "error": true,
+    "token": "gAAAAABqAH8A______________________-CIXSy-4weQhkorGQoTBhDdw6SxKGsS19T9m3w3AUFbqnXP5AucROfxhoAE970ag=="
+  }
+]
