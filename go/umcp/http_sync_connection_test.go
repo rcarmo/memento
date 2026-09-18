@@ -278,7 +278,9 @@ func TestSyncRouteDependentReadsAndTimeout(t *testing.T) {
 		defer b.Close()
 		_ = b.SetDeadline(time.Now().Add(time.Second))
 		options := DefaultSyncHTTPConnectionOptions(false)
-		options.IOTimeout = 5 * time.Millisecond
+		// Leave enough time for race-instrumented header parsing while still
+		// forcing the deliberately short body to time out.
+		options.IOTimeout = 250 * time.Millisecond
 		done := make(chan error, 1)
 		go func() { done <- ServeSyncHTTPConnection(context.Background(), a, h, options) }()
 		_, _ = io.WriteString(b, raw)
