@@ -705,3 +705,42 @@ func TestHTTPReferenceModeOrdering(t *testing.T) {
 		}
 	}
 }
+
+func TestHTTPStreamContextAfterHandshake(t *testing.T) {
+	_, h := testHTTP(t)
+	id := initialiseHTTP(t, h)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	request := httptest.NewRequest("GET", "/mcp", nil).WithContext(ctx)
+	request.Header.Set("Authorization", "Bearer reader")
+	request.Header.Set("Mcp-Protocol-Version", "2025-03-26")
+	request.Header.Set("Mcp-Session-Id", id)
+	// The session must first attach; cancelling before ServeHTTP lets earlier
+	// hook checks race this branch. No queue/disconnect/ticker is ready here.
+	h.options.Keepalive = time.Hour
+	writer := &streamWriter{onFlush: func(int) { cancel() }}
+	h.ServeHTTP(writer, request)
+	if writer.writes != 1 {
+		t.Fatal("expected handshake only", writer.writes)
+	}
+}
+
+func TestHTTPStreamDisconnectAfterHandshake(t *testing.T) {
+	_, h := testHTTP(t)
+	id := initialiseHTTP(t, h)
+	request := httptest.NewRequest("GET", "/mcp", nil)
+	request.Header.Set("Authorization", "Bearer reader")
+	request.Header.Set("Mcp-Protocol-Version", "2025-03-26")
+	request.Header.Set("Mcp-Session-Id", id)
+	h.options.Keepalive = time.Hour
+	writer := &streamWriter{onFlush: func(int) {
+		h.sessions.mu.Lock()
+		session := h.sessions.sessions[id]
+		h.sessions.mu.Unlock()
+		h.sessions.remove(id, session)
+	}}
+	h.ServeHTTP(writer, request)
+	if writer.writes != 1 {
+		t.Fatal("expected handshake only", writer.writes)
+	}
+}

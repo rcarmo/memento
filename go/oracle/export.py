@@ -241,6 +241,8 @@ def main() -> None:
     save("asset-pack.json", pack_fixtures)
     staged_assets = importlib.import_module("staged_assets")
     save("staged-assets.json", staged_assets.fixtures())
+    asset_retrieval = importlib.import_module("asset_retrieval")
+    save("asset-retrieval.json", asset_retrieval.fixtures())
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )

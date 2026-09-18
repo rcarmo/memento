@@ -11,6 +11,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"hash/crc32"
 	"io"
 	"math/big"
 	"net/url"
@@ -204,7 +205,14 @@ func readArchiveFile(file *zip.File) ([]byte, error) {
 		return nil, err
 	}
 	defer r.Close()
-	return io.ReadAll(io.LimitReader(r, MaxFileBytes+1))
+	data, err := io.ReadAll(io.LimitReader(r, MaxFileBytes+1))
+	if err != nil {
+		return nil, err
+	}
+	if crc32.ChecksumIEEE(data) != file.CRC32 {
+		return nil, zip.ErrChecksum
+	}
+	return data, nil
 }
 func validateMemberPath(raw string) (string, error) {
 	if raw == "" {
