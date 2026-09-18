@@ -222,6 +222,8 @@ def main() -> None:
     save("repository-bundle.json", repository_bundle.fixtures())
     repository_lease = importlib.import_module("repository_lease")
     save("repository-lease.json", repository_lease.fixtures())
+    repository_git = importlib.import_module("repository_git")
+    save("repository-git.json", repository_git.fixtures())
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

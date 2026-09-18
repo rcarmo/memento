@@ -14,6 +14,10 @@ Scalar vector functions are ported from Memento's MIT-licensed Rust vector libra
 
 `repository/links.go` adapts link validation and URI normalisation rules from markdown-it-py 3.0.0, markdown-it and mdurl 0.1.2, using Goldmark v1.7.16 for pure-Go CommonMark parsing and `golang.org/x/net/idna` for hostname conversion. The Python/project MIT notices are retained under `repository/licenses/`. Source extraction and rename logic comes from Memento; the parser/URI edge compatibility limits are tracked in the parity matrix.
 
+## Git storage dependencies
+
+Packed/loose Git object and reference decoding uses MIT-licensed go-git v5.16.3 and go-billy v5.6.2. Main publication uses Memento's own Git-compatible lock-file CAS; it does not use the dependency's advisory-lock ref writer. No Git subprocess is used by the Go runtime. Dependency versions and transitive licence sources remain recorded in `go.mod`/`go.sum` and the Go module cache; final distribution licence bundling is a packaging gate.
+
 ## SentencePiece port (Apache-2.0)
 
 `sentencepiece/` is a modified Go port of the inference algorithms in [sentencepiece-rust 0.1.1](https://github.com/VoiceLessQ/sentencepiece-rust), itself based on Google's SentencePiece and Darts-clone read-side algorithms. The original Apache-2.0 licence is retained at `sentencepiece/licenses/Apache-2.0.txt`; this derived package is distributed under those terms, not relicensed as MIT by the repository's general notice.
