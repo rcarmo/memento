@@ -1,0 +1,962 @@
+[
+  {
+    "base_revision": "main",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "draft"
+  },
+  {
+    "base_revision": "old",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "draft"
+  },
+  {
+    "base_revision": "main",
+    "expected": [
+      {
+        "recomputed_for": "reviewer"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "submitted"
+  },
+  {
+    "base_revision": "old",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "submitted"
+  },
+  {
+    "base_revision": "main",
+    "expected": [
+      {
+        "recomputed_for": "reviewer"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "approved"
+  },
+  {
+    "base_revision": "old",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "approved"
+  },
+  {
+    "base_revision": "main",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "rejected"
+  },
+  {
+    "base_revision": "old",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "rejected"
+  },
+  {
+    "base_revision": "main",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "applied"
+  },
+  {
+    "base_revision": "old",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "applied"
+  },
+  {
+    "base_revision": "main",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "stale"
+  },
+  {
+    "base_revision": "old",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "stale"
+  },
+  {
+    "base_revision": "main",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "needs_rebase"
+  },
+  {
+    "base_revision": "old",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "needs_rebase"
+  },
+  {
+    "base_revision": "main",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "conflicted"
+  },
+  {
+    "base_revision": "old",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "conflicted"
+  },
+  {
+    "base_revision": "main",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "expired"
+  },
+  {
+    "base_revision": "old",
+    "expected": [
+      {
+        "inbound_references": [
+          {
+            "path": "/public/source.md"
+          }
+        ],
+        "path": "/public/a.md",
+        "retained": "yes"
+      }
+    ],
+    "patch": {
+      "archival_impact": [
+        {
+          "inbound_references": [
+            {
+              "path": "/public/source.md"
+            },
+            {
+              "path": "/private/source.md"
+            }
+          ],
+          "path": "/public/a.md",
+          "retained": "yes"
+        },
+        {
+          "inbound_references": [],
+          "path": "/private/a.md"
+        }
+      ],
+      "changes": [
+        {
+          "kind": "trash",
+          "path": "/public/a.md"
+        }
+      ]
+    },
+    "policy": {
+      "principal": "reviewer",
+      "protected_read_prefixes": [],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "status": "expired"
+  }
+]

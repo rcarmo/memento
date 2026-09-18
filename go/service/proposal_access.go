@@ -126,9 +126,7 @@ func NormalizeProposalChanges(values []any) ([]ProposalChange, error) {
 	return result, nil
 }
 
-// ValidateChangeAuthorization requires already normalised changes. As in the
-// source, any action other than read/write requests both permissions.
-func ValidateChangeAuthorization(policy access.EffectivePolicy, changes []ProposalChange, action string) error {
+func validateArchivalBatch(changes []ProposalChange) error {
 	trash := 0
 	seen := map[string]bool{}
 	for _, change := range changes {
@@ -144,6 +142,15 @@ func ValidateChangeAuthorization(policy access.EffectivePolicy, changes []Propos
 		if len(seen) != len(changes) {
 			return &Error{"validation_error", "duplicate archival target"}
 		}
+	}
+	return nil
+}
+
+// ValidateChangeAuthorization requires already normalised changes. As in the
+// source, any action other than read/write requests both permissions.
+func ValidateChangeAuthorization(policy access.EffectivePolicy, changes []ProposalChange, action string) error {
+	if err := validateArchivalBatch(changes); err != nil {
+		return err
 	}
 	for _, change := range changes {
 		paths := []string{change["path"].(string)}

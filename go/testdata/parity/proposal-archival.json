@@ -1,0 +1,3308 @@
+[
+  {
+    "changes": [],
+    "expected": [],
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "empty",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "patch",
+        "path": "/public/a.md"
+      }
+    ],
+    "expected": [],
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "ordinary",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      },
+      {
+        "kind": "patch",
+        "path": "/public/b.md"
+      }
+    ],
+    "error": "archival proposals require 1-20 trash changes without mixed mutations",
+    "error_type": "ServiceError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "mixed",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      },
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "duplicate archival target",
+    "error_type": "ServiceError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "duplicate",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "archival impact requires the current repository revision",
+    "error_type": "ConflictError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "old",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "stale-repo",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "archival impact requires a fresh content index",
+    "error_type": "ConflictError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "stale-index",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "old"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "archival impact requires a fresh content index",
+    "error_type": "ConflictError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "index-not-ready",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "building"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "principal author cannot read /public/a.md",
+    "error_type": "AuthorizationError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "no-read",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "principal author cannot write /public/a.md",
+    "error_type": "AuthorizationError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": []
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "no-write",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/trash/public/a.md"
+      }
+    ],
+    "error": "expected an active Markdown concept path",
+    "error_type": "PathSafetyError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "trash-path",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.txt"
+      }
+    ],
+    "error": "expected an active Markdown concept path",
+    "error_type": "PathSafetyError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "extension",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "trash destination already exists",
+    "error_type": "ConflictError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "destination",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "synthetic",
+    "error_type": "FileNotFoundError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "missing",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "expected": [
+      {
+        "assets": [
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.0",
+            "version": "1.0.0"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:2.0.0",
+            "version": "2.0.0"
+          },
+          {
+            "action": "retained",
+            "kind": "skill",
+            "sha256": "skill:1.0.0",
+            "version": "1.0.0"
+          }
+        ],
+        "assets_action": "retained for restore; explicit purge removes current accepted versions",
+        "concept_id": "12345678",
+        "conflicts": [],
+        "destination": "/trash/public/a.md",
+        "history_retained": true,
+        "inbound_references": [
+          {
+            "after_archival": "unresolved",
+            "path": "/public/source.md",
+            "resolution": "resolved",
+            "target": "target"
+          }
+        ],
+        "links_action": "not rewritten; inbound links become unresolved until restore",
+        "path": "/public/a.md",
+        "reference_scope": "currently readable sources only; other namespaces may also refer to this item",
+        "revision": "main"
+      }
+    ],
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "valid",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "expected": [
+      {
+        "assets": [
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.0",
+            "version": "1.0.0"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:2.0.0",
+            "version": "2.0.0"
+          },
+          {
+            "action": "retained",
+            "kind": "skill",
+            "sha256": "skill:1.0.0",
+            "version": "1.0.0"
+          }
+        ],
+        "assets_action": "retained for restore; explicit purge removes current accepted versions",
+        "concept_id": "12345678",
+        "conflicts": [],
+        "destination": "/trash/public/a.md",
+        "history_retained": true,
+        "inbound_references": [],
+        "links_action": "not rewritten; inbound links become unresolved until restore",
+        "path": "/public/a.md",
+        "reference_scope": "currently readable sources only; other namespaces may also refer to this item",
+        "revision": "main"
+      }
+    ],
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/private/000.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/001.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/002.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/003.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/004.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/005.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/006.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/007.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/008.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/009.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/010.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/011.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/012.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/013.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/014.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/015.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/016.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/017.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/018.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/019.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/020.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/021.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/022.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/023.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/024.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/025.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/026.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/027.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/028.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/029.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/030.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/031.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/032.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/033.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/034.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/035.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/036.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/037.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/038.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/039.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/040.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/041.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/042.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/043.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/044.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/045.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/046.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/047.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/048.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/049.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/050.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/051.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/052.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/053.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/054.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/055.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/056.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/057.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/058.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/059.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/060.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/061.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/062.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/063.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/064.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/065.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/066.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/067.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/068.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/069.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/070.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/071.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/072.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/073.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/074.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/075.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/076.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/077.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/078.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/079.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/080.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/081.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/082.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/083.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/084.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/085.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/086.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/087.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/088.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/089.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/090.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/091.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/092.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/093.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/094.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/095.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/096.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/097.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/098.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/099.md",
+        "hidden",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "references-100",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "archival impact exceeds 100 inbound references; curate references first",
+    "error_type": "ServiceError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/private/000.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/001.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/002.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/003.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/004.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/005.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/006.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/007.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/008.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/009.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/010.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/011.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/012.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/013.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/014.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/015.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/016.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/017.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/018.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/019.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/020.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/021.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/022.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/023.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/024.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/025.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/026.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/027.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/028.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/029.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/030.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/031.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/032.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/033.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/034.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/035.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/036.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/037.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/038.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/039.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/040.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/041.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/042.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/043.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/044.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/045.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/046.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/047.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/048.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/049.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/050.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/051.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/052.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/053.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/054.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/055.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/056.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/057.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/058.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/059.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/060.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/061.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/062.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/063.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/064.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/065.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/066.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/067.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/068.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/069.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/070.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/071.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/072.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/073.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/074.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/075.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/076.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/077.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/078.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/079.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/080.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/081.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/082.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/083.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/084.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/085.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/086.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/087.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/088.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/089.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/090.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/091.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/092.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/093.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/094.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/095.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/096.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/097.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/098.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/099.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/private/100.md",
+        "hidden",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "references-101",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "expected": [
+      {
+        "assets": [
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.0",
+            "version": "1.0.0"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.1",
+            "version": "1.0.1"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.2",
+            "version": "1.0.2"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.3",
+            "version": "1.0.3"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.4",
+            "version": "1.0.4"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.5",
+            "version": "1.0.5"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.6",
+            "version": "1.0.6"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.7",
+            "version": "1.0.7"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.8",
+            "version": "1.0.8"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.9",
+            "version": "1.0.9"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.10",
+            "version": "1.0.10"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.11",
+            "version": "1.0.11"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.12",
+            "version": "1.0.12"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.13",
+            "version": "1.0.13"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.14",
+            "version": "1.0.14"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.15",
+            "version": "1.0.15"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.16",
+            "version": "1.0.16"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.17",
+            "version": "1.0.17"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.18",
+            "version": "1.0.18"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.19",
+            "version": "1.0.19"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.20",
+            "version": "1.0.20"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.21",
+            "version": "1.0.21"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.22",
+            "version": "1.0.22"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.23",
+            "version": "1.0.23"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.24",
+            "version": "1.0.24"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.25",
+            "version": "1.0.25"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.26",
+            "version": "1.0.26"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.27",
+            "version": "1.0.27"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.28",
+            "version": "1.0.28"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.29",
+            "version": "1.0.29"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.30",
+            "version": "1.0.30"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.31",
+            "version": "1.0.31"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.32",
+            "version": "1.0.32"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.33",
+            "version": "1.0.33"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.34",
+            "version": "1.0.34"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.35",
+            "version": "1.0.35"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.36",
+            "version": "1.0.36"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.37",
+            "version": "1.0.37"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.38",
+            "version": "1.0.38"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.39",
+            "version": "1.0.39"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.40",
+            "version": "1.0.40"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.41",
+            "version": "1.0.41"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.42",
+            "version": "1.0.42"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.43",
+            "version": "1.0.43"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.44",
+            "version": "1.0.44"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.45",
+            "version": "1.0.45"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.46",
+            "version": "1.0.46"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.47",
+            "version": "1.0.47"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.48",
+            "version": "1.0.48"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.49",
+            "version": "1.0.49"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.50",
+            "version": "1.0.50"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.51",
+            "version": "1.0.51"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.52",
+            "version": "1.0.52"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.53",
+            "version": "1.0.53"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.54",
+            "version": "1.0.54"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.55",
+            "version": "1.0.55"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.56",
+            "version": "1.0.56"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.57",
+            "version": "1.0.57"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.58",
+            "version": "1.0.58"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.59",
+            "version": "1.0.59"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.60",
+            "version": "1.0.60"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.61",
+            "version": "1.0.61"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.62",
+            "version": "1.0.62"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.63",
+            "version": "1.0.63"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.64",
+            "version": "1.0.64"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.65",
+            "version": "1.0.65"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.66",
+            "version": "1.0.66"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.67",
+            "version": "1.0.67"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.68",
+            "version": "1.0.68"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.69",
+            "version": "1.0.69"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.70",
+            "version": "1.0.70"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.71",
+            "version": "1.0.71"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.72",
+            "version": "1.0.72"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.73",
+            "version": "1.0.73"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.74",
+            "version": "1.0.74"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.75",
+            "version": "1.0.75"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.76",
+            "version": "1.0.76"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.77",
+            "version": "1.0.77"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.78",
+            "version": "1.0.78"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.79",
+            "version": "1.0.79"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.80",
+            "version": "1.0.80"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.81",
+            "version": "1.0.81"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.82",
+            "version": "1.0.82"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.83",
+            "version": "1.0.83"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.84",
+            "version": "1.0.84"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.85",
+            "version": "1.0.85"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.86",
+            "version": "1.0.86"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.87",
+            "version": "1.0.87"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.88",
+            "version": "1.0.88"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.89",
+            "version": "1.0.89"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.90",
+            "version": "1.0.90"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.91",
+            "version": "1.0.91"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.92",
+            "version": "1.0.92"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.93",
+            "version": "1.0.93"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.94",
+            "version": "1.0.94"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.95",
+            "version": "1.0.95"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.96",
+            "version": "1.0.96"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.97",
+            "version": "1.0.97"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.98",
+            "version": "1.0.98"
+          },
+          {
+            "action": "retained",
+            "kind": "docs",
+            "sha256": "docs:1.0.99",
+            "version": "1.0.99"
+          }
+        ],
+        "assets_action": "retained for restore; explicit purge removes current accepted versions",
+        "concept_id": "12345678",
+        "conflicts": [],
+        "destination": "/trash/public/a.md",
+        "history_retained": true,
+        "inbound_references": [
+          {
+            "after_archival": "unresolved",
+            "path": "/public/source.md",
+            "resolution": "resolved",
+            "target": "target"
+          }
+        ],
+        "links_action": "not rewritten; inbound links become unresolved until restore",
+        "path": "/public/a.md",
+        "reference_scope": "currently readable sources only; other namespaces may also refer to this item",
+        "revision": "main"
+      }
+    ],
+    "kinds": [
+      "docs"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "assets-100",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "1.0.1",
+        "1.0.2",
+        "1.0.3",
+        "1.0.4",
+        "1.0.5",
+        "1.0.6",
+        "1.0.7",
+        "1.0.8",
+        "1.0.9",
+        "1.0.10",
+        "1.0.11",
+        "1.0.12",
+        "1.0.13",
+        "1.0.14",
+        "1.0.15",
+        "1.0.16",
+        "1.0.17",
+        "1.0.18",
+        "1.0.19",
+        "1.0.20",
+        "1.0.21",
+        "1.0.22",
+        "1.0.23",
+        "1.0.24",
+        "1.0.25",
+        "1.0.26",
+        "1.0.27",
+        "1.0.28",
+        "1.0.29",
+        "1.0.30",
+        "1.0.31",
+        "1.0.32",
+        "1.0.33",
+        "1.0.34",
+        "1.0.35",
+        "1.0.36",
+        "1.0.37",
+        "1.0.38",
+        "1.0.39",
+        "1.0.40",
+        "1.0.41",
+        "1.0.42",
+        "1.0.43",
+        "1.0.44",
+        "1.0.45",
+        "1.0.46",
+        "1.0.47",
+        "1.0.48",
+        "1.0.49",
+        "1.0.50",
+        "1.0.51",
+        "1.0.52",
+        "1.0.53",
+        "1.0.54",
+        "1.0.55",
+        "1.0.56",
+        "1.0.57",
+        "1.0.58",
+        "1.0.59",
+        "1.0.60",
+        "1.0.61",
+        "1.0.62",
+        "1.0.63",
+        "1.0.64",
+        "1.0.65",
+        "1.0.66",
+        "1.0.67",
+        "1.0.68",
+        "1.0.69",
+        "1.0.70",
+        "1.0.71",
+        "1.0.72",
+        "1.0.73",
+        "1.0.74",
+        "1.0.75",
+        "1.0.76",
+        "1.0.77",
+        "1.0.78",
+        "1.0.79",
+        "1.0.80",
+        "1.0.81",
+        "1.0.82",
+        "1.0.83",
+        "1.0.84",
+        "1.0.85",
+        "1.0.86",
+        "1.0.87",
+        "1.0.88",
+        "1.0.89",
+        "1.0.90",
+        "1.0.91",
+        "1.0.92",
+        "1.0.93",
+        "1.0.94",
+        "1.0.95",
+        "1.0.96",
+        "1.0.97",
+        "1.0.98",
+        "1.0.99"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "archival impact exceeds 100 accepted asset versions",
+    "error_type": "ServiceError",
+    "kinds": [
+      "docs"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "main"
+    ],
+    "scenario": "assets-101",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "1.0.1",
+        "1.0.2",
+        "1.0.3",
+        "1.0.4",
+        "1.0.5",
+        "1.0.6",
+        "1.0.7",
+        "1.0.8",
+        "1.0.9",
+        "1.0.10",
+        "1.0.11",
+        "1.0.12",
+        "1.0.13",
+        "1.0.14",
+        "1.0.15",
+        "1.0.16",
+        "1.0.17",
+        "1.0.18",
+        "1.0.19",
+        "1.0.20",
+        "1.0.21",
+        "1.0.22",
+        "1.0.23",
+        "1.0.24",
+        "1.0.25",
+        "1.0.26",
+        "1.0.27",
+        "1.0.28",
+        "1.0.29",
+        "1.0.30",
+        "1.0.31",
+        "1.0.32",
+        "1.0.33",
+        "1.0.34",
+        "1.0.35",
+        "1.0.36",
+        "1.0.37",
+        "1.0.38",
+        "1.0.39",
+        "1.0.40",
+        "1.0.41",
+        "1.0.42",
+        "1.0.43",
+        "1.0.44",
+        "1.0.45",
+        "1.0.46",
+        "1.0.47",
+        "1.0.48",
+        "1.0.49",
+        "1.0.50",
+        "1.0.51",
+        "1.0.52",
+        "1.0.53",
+        "1.0.54",
+        "1.0.55",
+        "1.0.56",
+        "1.0.57",
+        "1.0.58",
+        "1.0.59",
+        "1.0.60",
+        "1.0.61",
+        "1.0.62",
+        "1.0.63",
+        "1.0.64",
+        "1.0.65",
+        "1.0.66",
+        "1.0.67",
+        "1.0.68",
+        "1.0.69",
+        "1.0.70",
+        "1.0.71",
+        "1.0.72",
+        "1.0.73",
+        "1.0.74",
+        "1.0.75",
+        "1.0.76",
+        "1.0.77",
+        "1.0.78",
+        "1.0.79",
+        "1.0.80",
+        "1.0.81",
+        "1.0.82",
+        "1.0.83",
+        "1.0.84",
+        "1.0.85",
+        "1.0.86",
+        "1.0.87",
+        "1.0.88",
+        "1.0.89",
+        "1.0.90",
+        "1.0.91",
+        "1.0.92",
+        "1.0.93",
+        "1.0.94",
+        "1.0.95",
+        "1.0.96",
+        "1.0.97",
+        "1.0.98",
+        "1.0.99",
+        "1.0.100"
+      ]
+    }
+  },
+  {
+    "changes": [
+      {
+        "kind": "trash",
+        "path": "/public/a.md"
+      }
+    ],
+    "error": "repository changed during archival impact inspection",
+    "error_type": "ConflictError",
+    "kinds": [
+      "docs",
+      "skill"
+    ],
+    "policy": {
+      "principal": "author",
+      "protected_read_prefixes": [
+        "/private/"
+      ],
+      "read_prefixes": [
+        "/public/"
+      ],
+      "roles": [
+        "curator"
+      ],
+      "write_prefixes": [
+        "/public/"
+      ]
+    },
+    "references": [
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ],
+      [
+        "/private/source.md",
+        "hidden",
+        "resolved"
+      ],
+      [
+        "/trash/public/old.md",
+        "archived",
+        "resolved"
+      ],
+      [
+        "/public/source.md",
+        "target",
+        "resolved"
+      ]
+    ],
+    "revision": "main",
+    "revisions": [
+      "main",
+      "next"
+    ],
+    "scenario": "repo-advanced",
+    "schema": "CREATE TABLE index_state(key TEXT,value TEXT); CREATE TABLE concepts(id TEXT,path TEXT); CREATE TABLE links(source_id TEXT,target_path TEXT,raw_target TEXT,resolution_state TEXT);",
+    "states": [
+      [
+        "index_revision",
+        "main"
+      ],
+      [
+        "status",
+        "ready"
+      ]
+    ],
+    "versions": {
+      "docs": [
+        "1.0.0",
+        "2.0.0"
+      ],
+      "skill": [
+        "1.0.0"
+      ]
+    }
+  }
+]
