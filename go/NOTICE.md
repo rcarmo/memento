@@ -18,6 +18,10 @@ Scalar vector functions are ported from Memento's MIT-licensed Rust vector libra
 
 Packed/loose Git object and reference decoding uses MIT-licensed go-git v5.16.3 and go-billy v5.6.2. Main publication uses Memento's own Git-compatible lock-file CAS; it does not use the dependency's advisory-lock ref writer. No Git subprocess is used by the Go runtime. Dependency versions and transitive licence sources remain recorded in `go.mod`/`go.sum` and the Go module cache; final distribution licence bundling is a packaging gate.
 
+## SQLite control storage
+
+Control databases use `modernc.org/sqlite v1.38.2` (BSD-3-Clause wrapper, generated Go SQLite implementation; upstream SQLite is public domain) without CGo or native extensions. Transitive dependencies are pinned in `go.mod`/`go.sum`; final distribution licence bundling remains a packaging gate. Memento's migration SQL and compatibility routines retain the repository MIT licence.
+
 ## SentencePiece port (Apache-2.0)
 
 `sentencepiece/` is a modified Go port of the inference algorithms in [sentencepiece-rust 0.1.1](https://github.com/VoiceLessQ/sentencepiece-rust), itself based on Google's SentencePiece and Darts-clone read-side algorithms. The original Apache-2.0 licence is retained at `sentencepiece/licenses/Apache-2.0.txt`; this derived package is distributed under those terms, not relicensed as MIT by the repository's general notice.

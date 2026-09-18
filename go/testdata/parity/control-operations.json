@@ -1,0 +1,448 @@
+{
+  "cases": [
+    {
+      "input": {
+        "action": "create",
+        "request": {
+          "client_instance_id": "client",
+          "idempotency_key": "key",
+          "mcp_session_id": "session",
+          "op_id": "op-one",
+          "principal": "agent",
+          "request_json": "{\"x\":1}",
+          "source_chat": "synthetic",
+          "tool_name": "memory_write"
+        }
+      },
+      "record": {
+        "base_revision": null,
+        "error_class": null,
+        "error_message": null,
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": null,
+        "result_revision": null,
+        "state": "queued",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "create",
+        "request": {
+          "client_instance_id": "client",
+          "idempotency_key": "key",
+          "mcp_session_id": "session",
+          "op_id": "discarded",
+          "principal": "agent",
+          "request_json": "{\"x\":1}",
+          "source_chat": "synthetic",
+          "tool_name": "different"
+        }
+      },
+      "record": {
+        "base_revision": null,
+        "error_class": null,
+        "error_message": null,
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": null,
+        "result_revision": null,
+        "state": "queued",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "error": "IdempotencyConflictError",
+      "input": {
+        "action": "create",
+        "request": {
+          "client_instance_id": "client",
+          "idempotency_key": "key",
+          "mcp_session_id": "session",
+          "op_id": "conflict",
+          "principal": "agent",
+          "request_json": "{\"x\": 1}",
+          "source_chat": "synthetic",
+          "tool_name": "memory_write"
+        }
+      }
+    },
+    {
+      "input": {
+        "action": "running",
+        "base": "base",
+        "op_id": "op-one"
+      },
+      "record": {
+        "base_revision": "base",
+        "error_class": null,
+        "error_message": null,
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": null,
+        "result_revision": null,
+        "state": "running",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "failed",
+        "error_class": "ValueError",
+        "message": "synthetic failure",
+        "op_id": "op-one"
+      },
+      "record": {
+        "base_revision": "base",
+        "error_class": "ValueError",
+        "error_message": "synthetic failure",
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": null,
+        "result_revision": null,
+        "state": "failed",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "create",
+        "request": {
+          "client_instance_id": "client",
+          "idempotency_key": "key",
+          "mcp_session_id": "session",
+          "op_id": "retry",
+          "principal": "agent",
+          "request_json": "{\"x\":1}",
+          "source_chat": "synthetic",
+          "tool_name": "memory_write"
+        }
+      },
+      "record": {
+        "base_revision": "base",
+        "error_class": "ValueError",
+        "error_message": "synthetic failure",
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": null,
+        "result_revision": null,
+        "state": "failed",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "running",
+        "base": "base-two",
+        "op_id": "op-one"
+      },
+      "record": {
+        "base_revision": "base-two",
+        "error_class": "ValueError",
+        "error_message": "synthetic failure",
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": null,
+        "result_revision": null,
+        "state": "running",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "succeeded",
+        "op_id": "op-one",
+        "result": {
+          "changed_paths": [
+            "/a.md"
+          ],
+          "n": 1.0,
+          "z": "日本 😀"
+        },
+        "revision": "result"
+      },
+      "record": {
+        "base_revision": "base-two",
+        "error_class": null,
+        "error_message": null,
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": "{\"changed_paths\": [\"/a.md\"], \"n\": 1.0, \"z\": \"\\u65e5\\u672c \\ud83d\\ude00\"}",
+        "result_revision": "result",
+        "state": "succeeded",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "get",
+        "op_id": "op-one"
+      },
+      "record": {
+        "base_revision": "base-two",
+        "error_class": null,
+        "error_message": null,
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": "{\"changed_paths\": [\"/a.md\"], \"n\": 1.0, \"z\": \"\\u65e5\\u672c \\ud83d\\ude00\"}",
+        "result_revision": "result",
+        "state": "succeeded",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "conflict",
+        "message": "blind state update",
+        "op_id": "op-one"
+      },
+      "record": {
+        "base_revision": "base-two",
+        "error_class": "conflict",
+        "error_message": "blind state update",
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": "{\"changed_paths\": [\"/a.md\"], \"n\": 1.0, \"z\": \"\\u65e5\\u672c \\ud83d\\ude00\"}",
+        "result_revision": "result",
+        "state": "conflict",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "succeeded",
+        "op_id": "op-one",
+        "result": {},
+        "revision": "result-two"
+      },
+      "record": {
+        "base_revision": "base-two",
+        "error_class": null,
+        "error_message": null,
+        "idempotency_key": "key",
+        "op_id": "op-one",
+        "principal": "agent",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": "{}",
+        "result_revision": "result-two",
+        "state": "succeeded",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "create",
+        "request": {
+          "client_instance_id": "client",
+          "idempotency_key": "key",
+          "mcp_session_id": "session",
+          "op_id": "op-other",
+          "principal": "other",
+          "request_json": "{\"x\":1}",
+          "source_chat": "synthetic",
+          "tool_name": "memory_write"
+        }
+      },
+      "record": {
+        "base_revision": null,
+        "error_class": null,
+        "error_message": null,
+        "idempotency_key": "key",
+        "op_id": "op-other",
+        "principal": "other",
+        "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+        "request_json": "{\"x\":1}",
+        "result_json": null,
+        "result_revision": null,
+        "state": "queued",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "error": "IntegrityError",
+      "input": {
+        "action": "create",
+        "request": {
+          "client_instance_id": "client",
+          "idempotency_key": "key",
+          "mcp_session_id": "session",
+          "op_id": "op-one",
+          "principal": "third",
+          "request_json": "{\"x\":1}",
+          "source_chat": "synthetic",
+          "tool_name": "memory_write"
+        }
+      }
+    },
+    {
+      "error": "KeyError",
+      "input": {
+        "action": "get",
+        "op_id": "missing"
+      }
+    },
+    {
+      "error": "KeyError",
+      "input": {
+        "action": "running",
+        "base": "base",
+        "op_id": "missing"
+      }
+    },
+    {
+      "input": {
+        "action": "create",
+        "request": {
+          "client_instance_id": "client",
+          "idempotency_key": "another",
+          "mcp_session_id": "session",
+          "op_id": "op-zero",
+          "principal": "agent",
+          "request_json": "not necessarily JSON",
+          "source_chat": "synthetic",
+          "tool_name": "memory_write"
+        }
+      },
+      "record": {
+        "base_revision": null,
+        "error_class": null,
+        "error_message": null,
+        "idempotency_key": "another",
+        "op_id": "op-zero",
+        "principal": "agent",
+        "request_hash": "36f0b472803724014cac51635036234b400584cef2a036cab8208fe0cbe96e0c",
+        "request_json": "not necessarily JSON",
+        "result_json": null,
+        "result_revision": null,
+        "state": "queued",
+        "tool_name": "memory_write"
+      }
+    },
+    {
+      "input": {
+        "action": "interrupted"
+      },
+      "records": [
+        {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "key",
+          "op_id": "op-other",
+          "principal": "other",
+          "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+          "request_json": "{\"x\":1}",
+          "result_json": null,
+          "result_revision": null,
+          "state": "queued",
+          "tool_name": "memory_write"
+        },
+        {
+          "base_revision": null,
+          "error_class": null,
+          "error_message": null,
+          "idempotency_key": "another",
+          "op_id": "op-zero",
+          "principal": "agent",
+          "request_hash": "36f0b472803724014cac51635036234b400584cef2a036cab8208fe0cbe96e0c",
+          "request_json": "not necessarily JSON",
+          "result_json": null,
+          "result_revision": null,
+          "state": "queued",
+          "tool_name": "memory_write"
+        }
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "base_revision": "base-two",
+      "client_instance_id": "client",
+      "created_at": "2026-09-18T00:00:00Z",
+      "error_class": null,
+      "error_message": null,
+      "finished_at": "2026-09-18T00:00:00Z",
+      "idempotency_key": "key",
+      "mcp_session_id": "session",
+      "op_id": "op-one",
+      "principal": "agent",
+      "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+      "request_json": "{\"x\":1}",
+      "result_json": "{}",
+      "result_revision": "result-two",
+      "source_chat": "synthetic",
+      "started_at": "2026-09-18T00:00:00Z",
+      "state": "succeeded",
+      "tool_name": "memory_write"
+    },
+    {
+      "base_revision": null,
+      "client_instance_id": "client",
+      "created_at": "2026-09-18T00:00:00Z",
+      "error_class": null,
+      "error_message": null,
+      "finished_at": null,
+      "idempotency_key": "key",
+      "mcp_session_id": "session",
+      "op_id": "op-other",
+      "principal": "other",
+      "request_hash": "5041bf1f713df204784353e82f6a4a535931cb64f1f4b4a5aeaffcb720918b22",
+      "request_json": "{\"x\":1}",
+      "result_json": null,
+      "result_revision": null,
+      "source_chat": "synthetic",
+      "started_at": null,
+      "state": "queued",
+      "tool_name": "memory_write"
+    },
+    {
+      "base_revision": null,
+      "client_instance_id": "client",
+      "created_at": "2026-09-18T00:00:00Z",
+      "error_class": null,
+      "error_message": null,
+      "finished_at": null,
+      "idempotency_key": "another",
+      "mcp_session_id": "session",
+      "op_id": "op-zero",
+      "principal": "agent",
+      "request_hash": "36f0b472803724014cac51635036234b400584cef2a036cab8208fe0cbe96e0c",
+      "request_json": "not necessarily JSON",
+      "result_json": null,
+      "result_revision": null,
+      "source_chat": "synthetic",
+      "started_at": null,
+      "state": "queued",
+      "tool_name": "memory_write"
+    }
+  ]
+}
