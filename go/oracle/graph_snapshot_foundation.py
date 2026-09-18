@@ -153,9 +153,23 @@ def fixtures() -> dict[str, Any]:
             .overview(policy=policy)
             .model_dump(mode="json")
         )
+        export_nodes, export_edges, export_revisions = service.export_selection(
+            (
+                "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+                "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+                "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+            ),
+            policy=policy,
+        )
+        export_selection = {
+            "nodes": [item.model_dump(mode="json") for item in export_nodes],
+            "edges": [item.model_dump(mode="json") for item in export_edges],
+            "revisions": export_revisions.model_dump(mode="json"),
+        }
         search = service.search("hello world", policy=policy)
         return {
             "search": search,
+            "export_selection": export_selection,
             "overview": overview,
             "aggregated_overview": aggregated_overview,
             "semantic_edges": semantic_edges,

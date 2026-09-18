@@ -18,6 +18,10 @@ type Revisions struct {
 
 var openSQL = sql.Open
 
+type SnapshotError struct{ Message string }
+
+func (e *SnapshotError) Error() string { return e.Message }
+
 type SnapshotService struct {
 	DerivedDBPath, ControlDBPath, RepositoryRoot string
 	open                                         func(context.Context, string) (*sql.DB, error)
