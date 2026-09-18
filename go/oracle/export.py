@@ -205,6 +205,9 @@ def main() -> None:
     save("umcp-raw-http.json", raw_http.fixtures(shared))
     notifications = importlib.import_module("umcp_notifications")
     save("umcp-notifications.json", notifications.fixtures())
+    sync_http = importlib.import_module("umcp_sync_http")
+    save("umcp-sync-http.json", sync_http.fixtures())
+    save("umcp-sync-wire.json", sync_http.wire_fixtures(shared))
     print(f"Exported pinned synthetic fixtures to {OUT}")
 
 

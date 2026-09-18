@@ -179,8 +179,13 @@ func TestHTTPWireWriter(t *testing.T) {
 	}
 }
 
-func TestAsyncHTTPListenerAndSSE(t *testing.T) {
-	_, h := testSSE(t, AsyncSSE)
+func TestHTTPRawListenerAndSSE(t *testing.T) {
+	for _, mode := range []SSEMode{SyncSSE, AsyncSSE} {
+		t.Run(strconv.Itoa(int(mode)), func(t *testing.T) { testHTTPRawListenerAndSSE(t, mode) })
+	}
+}
+func testHTTPRawListenerAndSSE(t *testing.T, mode SSEMode) {
+	_, h := testSSE(t, mode)
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		t.Fatal(err)
@@ -189,7 +194,13 @@ func TestAsyncHTTPListenerAndSSE(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	done := make(chan error, 1)
-	go func() { done <- ServeAsyncHTTP(ctx, listener, h, options) }()
+	go func() {
+		if mode == AsyncSSE {
+			done <- ServeAsyncHTTP(ctx, listener, h, options)
+		} else {
+			done <- ServeSyncHTTP(ctx, listener, h, DefaultSyncHTTPConnectionOptions(true))
+		}
+	}()
 	client := &http.Client{Timeout: 3 * time.Second}
 	base := "http://" + listener.Addr().String()
 	request, _ := http.NewRequest("GET", base+"/sse", nil)

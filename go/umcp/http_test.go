@@ -504,16 +504,13 @@ func TestEventDisconnectWinsBeforeWrite(t *testing.T) {
 }
 
 func TestPythonHTTPWireScenarios(t *testing.T) {
-	for _, rawAsync := range []bool{false, true} {
-		name := "net-http-sync"
-		if rawAsync {
-			name = "raw-async"
-		}
-		t.Run(name, func(t *testing.T) { pythonHTTPWireScenarios(t, rawAsync) })
+	for _, mode := range []string{"net-http-sync", "raw-async", "raw-sync"} {
+		t.Run(mode, func(t *testing.T) { pythonHTTPWireScenarios(t, mode) })
 	}
 }
 
-func pythonHTTPWireScenarios(t *testing.T, rawAsync bool) {
+func pythonHTTPWireScenarios(t *testing.T, mode string) {
+	rawAsync := mode == "raw-async"
 	data, err := os.ReadFile("../testdata/parity/umcp-http.json")
 	if err != nil {
 		t.Fatal(err)
@@ -561,7 +558,7 @@ func pythonHTTPWireScenarios(t *testing.T, rawAsync bool) {
 	defer h.Close()
 	var baseURL string
 	client := &http.Client{Timeout: 3 * time.Second}
-	if rawAsync {
+	if mode != "net-http-sync" {
 		listener, err := net.Listen("tcp", "127.0.0.1:0")
 		if err != nil {
 			t.Fatal(err)
@@ -570,7 +567,13 @@ func pythonHTTPWireScenarios(t *testing.T, rawAsync bool) {
 		connectionOptions := DefaultAsyncHTTPConnectionOptions(AsyncStreamableParser)
 		connectionOptions.Parser.MaxRequestBytes = options.MaxRequestBytes
 		done := make(chan error, 1)
-		go func() { done <- ServeAsyncHTTP(ctx, listener, h, connectionOptions) }()
+		go func() {
+			if rawAsync {
+				done <- ServeAsyncHTTP(ctx, listener, h, connectionOptions)
+			} else {
+				done <- ServeSyncHTTP(ctx, listener, h, DefaultSyncHTTPConnectionOptions(false))
+			}
+		}()
 		defer func() { client.CloseIdleConnections(); cancel(); <-done }()
 		baseURL = "http://" + listener.Addr().String()
 	} else {

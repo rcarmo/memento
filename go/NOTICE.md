@@ -12,6 +12,10 @@ Scalar vector functions are ported from Memento's MIT-licensed Rust vector libra
 
 Changes: Go protobuf/model reader, float32 BPE/Unigram and normaliser loops, explicit owned-return/context handling, and Go differential/fuzz tests. The reference's known user-defined normaliser-prefix limitation is preserved rather than silently replaced by a different tokenizer. No C++ wrapper, CGo or training runtime is imported.
 
+## Synchronous HTTP parser (PSF licence)
+
+`umcp/http_sync_parser.go` and `umcp/http_sync_connection.go` adapt parsing, connection and HTML-error behaviour from CPython 3.13.14 `http.server`, `http.client` and `email` modules. Copyright (c) 2001 Python Software Foundation; All Rights Reserved. The PSF licence and historical notices are retained in [`umcp/licenses/Python-3.13.14.txt`](umcp/licenses/Python-3.13.14.txt). Changes translate those routines into Go, add context cancellation and explicit stream ownership, and preserve the pinned reference through synthetic byte-stream fixtures. These files have no Python runtime dependency and retain the PSF terms rather than being relicensed by the repository's general MIT notice.
+
 ## Original Go GTE licence
 
 MIT License

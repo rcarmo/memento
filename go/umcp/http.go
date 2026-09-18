@@ -123,6 +123,12 @@ func protocolSupported(version string) bool {
 }
 func headersLower(r *http.Request) map[string]string {
 	out := map[string]string{}
+	if parsed := syncRequest(r); parsed != nil {
+		for key, value := range parsed.Last {
+			out[key] = value
+		}
+		return out
+	}
 	for name := range r.Header {
 		out[strings.ToLower(name)] = r.Header.Get(name)
 	}
@@ -132,6 +138,9 @@ func headersLower(r *http.Request) map[string]string {
 	return out
 }
 func badHeaders(r *http.Request) bool {
+	if parsed := syncRequest(r); parsed != nil {
+		return HasSingletonHeaderViolations(parsed.Counts, parsed.Version) || HasAmbiguousSingletonValues(parsed.Last)
+	}
 	counts := map[string]int{}
 	for name, values := range r.Header {
 		counts[strings.ToLower(name)] = len(values)
@@ -171,11 +180,13 @@ func (h *StreamableHTTP) authorize(r *http.Request, p *Principal, method, tool a
 	return hookCall(func() (bool, error) { return h.hooks.Authorize(r.Context(), p, method, tool) })
 }
 func (h *StreamableHTTP) body(w http.ResponseWriter, r *http.Request, origin string) ([]byte, bool) {
-	if len(r.TransferEncoding) > 0 || r.Header.Get("Transfer-Encoding") != "" {
+	if len(r.TransferEncoding) > 0 || r.Header.Get("Transfer-Encoding") != "" || syncRequest(r) != nil && r.ContentLength < 0 {
+		forceSyncClose(w, r)
 		emptyHTTP(w, 400, origin)
 		return nil, false
 	}
 	if r.ContentLength > h.options.MaxRequestBytes {
+		forceSyncClose(w, r)
 		emptyHTTP(w, 413, origin)
 		return nil, false
 	}
@@ -185,17 +196,20 @@ func (h *StreamableHTTP) body(w http.ResponseWriter, r *http.Request, origin str
 	data, err := io.ReadAll(io.LimitReader(r.Body, h.options.MaxRequestBytes+1))
 	if err != nil {
 		status := 400
-		if e, ok := err.(net.Error); ok && e.Timeout() {
+		if e, ok := err.(net.Error); ok && e.Timeout() && syncRequest(r) == nil {
 			status = 408
 		}
+		forceSyncClose(w, r)
 		emptyHTTP(w, status, origin)
 		return nil, false
 	}
 	if int64(len(data)) > h.options.MaxRequestBytes {
+		forceSyncClose(w, r)
 		emptyHTTP(w, 413, origin)
 		return nil, false
 	}
 	if r.ContentLength >= 0 && int64(len(data)) != r.ContentLength {
+		forceSyncClose(w, r)
 		emptyHTTP(w, 400, origin)
 		return nil, false
 	}
@@ -288,10 +302,12 @@ func (h *StreamableHTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if badHeaders(r) {
+		forceSyncClose(w, r)
 		emptyHTTP(w, 400, origin)
 		return
 	}
 	if r.Header.Get("Origin") != "" && origin == "" {
+		forceSyncClose(w, r)
 		emptyHTTP(w, 403, "")
 		return
 	}
