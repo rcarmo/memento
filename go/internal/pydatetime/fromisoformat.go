@@ -39,7 +39,6 @@ func Reason(err error) string {
 var week = regexp.MustCompile(`^([0-9]{4})(-?)W([0-9]{2})(?:-?([0-9]))?`)
 var dateTime = regexp.MustCompile(`(?s)^([0-9]{4})-?([0-9]{2})-?([0-9]{2})(?:.(.*))?$`)
 var clockParts = regexp.MustCompile(`^([0-9]{2})(?::?([0-9]{2}))?(?::?([0-9]{2}))?(?:[.,]([0-9]+))?$`)
-var pydanticDateTime = regexp.MustCompile(`^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt _][0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:[.,][0-9]+)?)?(?:[Zz]|[+-][0-9]{2}:[0-9]{2})$`)
 
 // ParseAware normalises an aware Python ISO datetime to UTC and microseconds.
 // time.Time is accepted for internal callers; JSON callers pass strings.
@@ -148,8 +147,8 @@ func ParseJSON(value any, strict bool) (time.Time, error) {
 		// pydantic-core's JSON grammar is deliberately narrower than
 		// datetime.fromisoformat: no basic/week dates, arbitrary separators,
 		// hour-only clocks or second/fractional timezone offsets.
-		if !pydanticDateTime.MatchString(text) {
-			return time.Time{}, parseError(ErrInvalid, "Input should be a valid datetime")
+		if reason := pydanticDiagnostic(text, strict); reason != "" {
+			return time.Time{}, parseError(ErrInvalid, reason)
 		}
 		if strings.HasSuffix(text, "z") {
 			text = text[:len(text)-1] + "Z"
@@ -169,6 +168,118 @@ func ParseJSON(value any, strict bool) (time.Time, error) {
 	}
 	return unixNumber(parsed)
 }
+func pydanticDiagnostic(text string, strict bool) string {
+	prefix := "Input should be a valid datetime"
+	if !strict {
+		prefix += " or date"
+	}
+	if len(text) < 4 {
+		return prefix + ", input is too short"
+	}
+	if len(text) >= 4 && text[:4] == "0000" {
+		return "Input should be a valid datetime, year 0 is out of range"
+	}
+	if len(text) < 10 {
+		return prefix + ", input is too short"
+	}
+	if text[4] != '-' {
+		return prefix + ", invalid date separator, expected `-`"
+	}
+	if text[5] < '0' || text[5] > '9' {
+		return prefix + ", invalid character in month"
+	}
+	if text[7] != '-' {
+		return prefix + ", invalid date separator, expected `-`"
+	}
+	if dayOutOfRange(text[:10]) {
+		return prefix + ", day value is outside expected range"
+	}
+	if !strict {
+		return prefix + ", unexpected extra characters at the end of the input"
+	}
+	if len(text) == 10 || !strings.ContainsRune("Tt _", rune(text[10])) {
+		return prefix + ", invalid datetime separator, expected `T`, `t`, `_` or space"
+	}
+	if len(text) < 16 {
+		return prefix + ", input is too short"
+	}
+	if text[13] != ':' {
+		return prefix + ", invalid time separator, expected `:`"
+	}
+	hour, _ := strconv.Atoi(text[11:13])
+	minute, _ := strconv.Atoi(text[14:16])
+	if hour > 23 {
+		return prefix + ", hour value is outside expected range of 0-23"
+	}
+	if minute > 59 {
+		return prefix + ", minute value is outside expected range of 0-59"
+	}
+	position := 16
+	if position < len(text) && text[position] == ':' {
+		if position+3 > len(text) {
+			return prefix + ", input is too short"
+		}
+		second, _ := strconv.Atoi(text[position+1 : position+3])
+		if second > 59 {
+			return prefix + ", second value is outside expected range of 0-59"
+		}
+		position += 3
+		if position < len(text) && (text[position] == '.' || text[position] == ',') {
+			position++
+			for position < len(text) && text[position] >= '0' && text[position] <= '9' {
+				position++
+			}
+		}
+	}
+	if position >= len(text) {
+		return prefix + ", invalid timezone sign"
+	}
+	if text[position] == 'Z' || text[position] == 'z' {
+		if position+1 == len(text) {
+			return ""
+		}
+		return prefix + ", unexpected extra characters at the end of the input"
+	}
+	if text[position] != '+' && text[position] != '-' {
+		return prefix + ", invalid timezone sign"
+	}
+	zone := text[position+1:]
+	if len(zone) < 2 || zone[0] < '0' || zone[0] > '9' {
+		return prefix + ", invalid timezone hour"
+	}
+	zhour, _ := strconv.Atoi(zone[:2])
+	if len(zone) > 5 && zone[2] != ':' {
+		return prefix + ", unexpected extra characters at the end of the input"
+	}
+	if len(zone) < 5 || zone[2] != ':' {
+		return prefix + ", invalid timezone minute"
+	}
+	if zone[3] < '0' || zone[3] > '9' {
+		return prefix + ", invalid timezone minute"
+	}
+	zminute, _ := strconv.Atoi(zone[3:5])
+	if zminute > 59 {
+		return prefix + ", timezone minute value is outside expected range of 0-59"
+	}
+	if zhour >= 24 {
+		return prefix + ", timezone offset must be less than 24 hours"
+	}
+	if len(zone) > 5 {
+		return prefix + ", unexpected extra characters at the end of the input"
+	}
+	return ""
+}
+func dayOutOfRange(date string) bool {
+	year, _ := strconv.Atoi(date[:4])
+	month, _ := strconv.Atoi(date[5:7])
+	day, _ := strconv.Atoi(date[8:10])
+	if month < 1 || month > 12 || day < 1 {
+		return true
+	}
+	base := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+	return base.Month() != time.Month(month)
+}
+
 func unixNumber(number float64) (time.Time, error) {
 	if math.Abs(number) > 2e10 {
 		number /= 1000
