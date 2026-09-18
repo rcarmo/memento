@@ -55,6 +55,12 @@ func TestManifestTimestampCorpus(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+func TestParseErrorReason(t *testing.T) {
+	err := parseError(ErrInvalid, "specific")
+	if !errors.Is(err, ErrInvalid) || Reason(err) != "specific" || Reason(ErrInvalid) != "" || err.Error() != "invalid ISO 8601 datetime: specific" {
+		t.Fatal(err, Reason(err))
+	}
+}
 func TestParseJSON(t *testing.T) {
 	cases := []struct {
 		value  any

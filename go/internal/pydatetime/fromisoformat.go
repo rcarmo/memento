@@ -18,6 +18,24 @@ var (
 	ErrOverflow = errors.New("date value out of range")
 )
 
+// ParseError retains a stable broad category for service error mapping while
+// exposing a parser reason to strict executor validation.
+type ParseError struct {
+	Kind   error
+	Reason string
+}
+
+func (e *ParseError) Error() string              { return e.Kind.Error() + ": " + e.Reason }
+func (e *ParseError) Unwrap() error              { return e.Kind }
+func parseError(kind error, reason string) error { return &ParseError{Kind: kind, Reason: reason} }
+func Reason(err error) string {
+	var parsed *ParseError
+	if errors.As(err, &parsed) {
+		return parsed.Reason
+	}
+	return ""
+}
+
 var week = regexp.MustCompile(`^([0-9]{4})(-?)W([0-9]{2})(?:-?([0-9]))?`)
 var dateTime = regexp.MustCompile(`(?s)^([0-9]{4})-?([0-9]{2})-?([0-9]{2})(?:.(.*))?$`)
 var clockParts = regexp.MustCompile(`^([0-9]{2})(?::?([0-9]{2}))?(?::?([0-9]{2}))?(?:[.,]([0-9]+))?$`)
@@ -129,15 +147,15 @@ func ParseJSON(value any, strict bool) (time.Time, error) {
 		return ParseAware(text)
 	}
 	if strict {
-		return time.Time{}, ErrInvalid
+		return time.Time{}, parseError(ErrInvalid, "Input should be a valid datetime")
 	}
 	number, ok := value.(json.Number)
 	if !ok {
-		return time.Time{}, ErrInvalid
+		return time.Time{}, parseError(ErrInvalid, "Input should be a valid datetime")
 	}
 	parsed, err := number.Float64()
 	if err != nil || math.IsInf(parsed, 0) || math.IsNaN(parsed) {
-		return time.Time{}, ErrInvalid
+		return time.Time{}, parseError(ErrInvalid, "Input should be a valid datetime")
 	}
 	return unixNumber(parsed)
 }

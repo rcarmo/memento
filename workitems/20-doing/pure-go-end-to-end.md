@@ -57,6 +57,7 @@ B (rejected for this request): replace only the Rust workers and retain the Pyth
 
 ### 2026-09-18
 
+* Neutral datetime errors now carry a structured parser reason while preserving broad `errors.Is` categories. Existing service envelopes remain unchanged and both packages retain zero uncovered statements after all local gates. This is the error-contract prerequisite for the 18 compare_manifest Pydantic diagnostics, not their implementation.
 * Captured 312 compare_manifest executor argument cases through Python's actual `_validated_operation`: 156 lax and 156 strict-JSON calls spanning nested fields, bounds, alias/mapping checks and all 61 datetime cases. Ruff/mypy pass and a Go integrity test pins corpus shape. This is reference capture, not nested-validator implementation.
 * The first Python compatibility matrix run passed Ruff, mypy and all 442 tests on 3.12/3.14 but failed graph-check because its new job omitted Bun. Added the same pinned Bun 1.3.14 setup used by main CI; remote rerun remains required.
 * Neutral datetime parsing now includes executor-only Pydantic JSON coercion: strict mode accepts strings, lax mode also accepts JSON numbers, magnitudes beyond ±20,000,000,000 use milliseconds and fractions round to microseconds. Focused tests retain zero uncovered statements. This leaves service parsing unchanged and clears the last prerequisite for compare_manifest argument validation.
