@@ -142,6 +142,11 @@ func (s *Server) RunTransport(ctx context.Context, args []string, input io.Reade
 	if output == nil {
 		return errors.New("transport output is required")
 	}
+	if config.Mode == "streamable-http" {
+		if err := s.StreamableHTTP.validate(); err != nil {
+			return err
+		}
+	}
 	out := &transportOutput{output: output}
 	// This entrypoint owns the transport sink. A previous HTTP run must not
 	// suppress notifications when the same server is restarted on stdio.
@@ -171,12 +176,7 @@ func (s *Server) RunTransport(ctx context.Context, args []string, input io.Reade
 			return errors.New("HTTP request limit exceeds int64")
 		}
 		if config.Mode == "streamable-http" {
-			options := DefaultHTTPOptions()
-			options.AsyncReference = asynchronous
-			options.Endpoint = config.Endpoint
-			options.MaxRequestBytes = config.MaxRequestBytes.Int64()
-			options.LocalBind = local
-			options.AllowedOrigins = config.AllowedOrigins
+			options := s.streamableHTTPOptions(config, local, asynchronous)
 			handler, err = NewStreamableHTTP(s, options, hooks)
 		} else {
 			mode := SyncSSE
@@ -221,17 +221,46 @@ func (s *Server) RunTransport(ctx context.Context, args []string, input io.Reade
 		return s.ServeTCP(ctx, listener, DefaultTCPOptions(mode))
 	}
 	if !asynchronous {
-		return ServeSyncHTTP(ctx, listener, handler, DefaultSyncHTTPConnectionOptions(config.Mode == "sse"))
+		return ServeSyncHTTP(ctx, listener, handler, s.syncHTTPOptions(config.Mode))
 	}
 	mode := AsyncStreamableParser
 	if config.Mode == "sse" {
 		mode = AsyncSSEParser
 	}
-	options := DefaultAsyncHTTPConnectionOptions(mode)
-	options.Parser.MaxRequestBytes = config.MaxRequestBytes.Int64()
+	options := s.asyncHTTPOptions(mode, config.Mode, config.MaxRequestBytes.Int64())
 	options.Parser.LocalBind = local
 	options.Parser.AllowedOrigins = config.AllowedOrigins
 	return ServeAsyncHTTP(ctx, listener, handler, options)
+}
+
+func (s *Server) streamableHTTPOptions(config TransportConfig, local, asynchronous bool) HTTPOptions {
+	options := DefaultHTTPOptions()
+	options.AsyncReference = asynchronous
+	options.Endpoint = config.Endpoint
+	options.MaxRequestBytes = config.MaxRequestBytes.Int64()
+	options.LocalBind = local
+	options.AllowedOrigins = config.AllowedOrigins
+	options.SessionTTL = s.StreamableHTTP.SessionTTL
+	options.MaxSessions = s.StreamableHTTP.MaxSessions
+	options.Keepalive = s.StreamableHTTP.Keepalive
+	return options
+}
+func (s *Server) syncHTTPOptions(mode string) SyncHTTPConnectionOptions {
+	options := DefaultSyncHTTPConnectionOptions(mode == "sse")
+	if mode == "streamable-http" {
+		options.IOTimeout = s.StreamableHTTP.RequestTimeout
+		options.MaxRequests = s.StreamableHTTP.MaxRequestsConnection
+	}
+	return options
+}
+func (s *Server) asyncHTTPOptions(parser AsyncHTTPParserMode, mode string, maxBytes int64) AsyncHTTPConnectionOptions {
+	options := DefaultAsyncHTTPConnectionOptions(parser)
+	options.Parser.MaxRequestBytes = maxBytes
+	if mode == "streamable-http" {
+		options.Parser.ReadTimeout = s.StreamableHTTP.RequestTimeout
+		options.MaxRequests = s.StreamableHTTP.MaxRequestsConnection
+	}
+	return options
 }
 
 // TransportExitCode gives host CLIs the source success/failure convention while

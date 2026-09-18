@@ -3,18 +3,42 @@ package umcp
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 )
 
 // Server composes implemented uMCP method registries with request dispatch.
 // It is protocol infrastructure, not the Memento service. Transports provide
 // trusted contexts and an appropriate authenticated notification sink.
+// StreamableHTTPSettings mirrors the five source server attributes used by
+// both sync and async Streamable HTTP transports.
+type StreamableHTTPSettings struct {
+	SessionTTL            time.Duration
+	Keepalive             time.Duration
+	RequestTimeout        time.Duration
+	MaxSessions           int
+	MaxRequestsConnection int
+}
+
+func DefaultStreamableHTTPSettings() StreamableHTTPSettings {
+	return StreamableHTTPSettings{30 * time.Minute, 15 * time.Second, 30 * time.Second, 1024, 1000}
+}
+
+func (c StreamableHTTPSettings) validate() error {
+	if c.SessionTTL <= 0 || c.Keepalive <= 0 || c.RequestTimeout <= 0 || c.MaxSessions <= 0 || c.MaxRequestsConnection <= 0 {
+		return errors.New("invalid Streamable HTTP settings")
+	}
+	return nil
+}
+
 type Server struct {
 	Name, Version, Instructions string
+	StreamableHTTP              StreamableHTTPSettings
 	Tools                       ToolRegistry
 	Prompts                     PromptRegistry
 	Resources                   ResourceRegistry
@@ -32,7 +56,7 @@ func NewServer(name string) *Server {
 	if name == "" {
 		name = "MCPServer"
 	}
-	s := &Server{Name: name, Version: "0.2.2", Instructions: "This server provides tool functionality via the Model Context Protocol.", loggingLevel: "info", notificationOutput: os.Stdout}
+	s := &Server{Name: name, Version: "0.2.2", Instructions: "This server provides tool functionality via the Model Context Protocol.", StreamableHTTP: DefaultStreamableHTTPSettings(), loggingLevel: "info", notificationOutput: os.Stdout}
 	s.Completions.Prompts = &s.Prompts
 	s.Completions.Resources = &s.Resources
 	s.dispatcher = Dispatcher{Handlers: map[string]Handler{

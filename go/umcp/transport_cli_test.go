@@ -124,6 +124,61 @@ func TestRunTransportFileAndStdio(t *testing.T) {
 	}
 }
 
+func TestStreamableHTTPSettings(t *testing.T) {
+	s := NewServer("test")
+	s.SetHandler("synthetic", func(context.Context, map[string]any) (any, *RPCError, error) { return nil, nil, nil })
+	if s.dispatcher.Handlers["synthetic"] == nil {
+		t.Fatal("handler replacement")
+	}
+	if NewServer("").Name != "MCPServer" {
+		t.Fatal("default name")
+	}
+	want := DefaultStreamableHTTPSettings()
+	if s.StreamableHTTP != want || want.validate() != nil {
+		t.Fatal(s.StreamableHTTP)
+	}
+	bad := []StreamableHTTPSettings{
+		{}, {SessionTTL: -1, Keepalive: 1, RequestTimeout: 1, MaxSessions: 1, MaxRequestsConnection: 1},
+		{SessionTTL: 1, Keepalive: -1, RequestTimeout: 1, MaxSessions: 1, MaxRequestsConnection: 1},
+		{SessionTTL: 1, Keepalive: 1, RequestTimeout: -1, MaxSessions: 1, MaxRequestsConnection: 1},
+		{SessionTTL: 1, Keepalive: 1, RequestTimeout: 1, MaxSessions: -1, MaxRequestsConnection: 1},
+		{SessionTTL: 1, Keepalive: 1, RequestTimeout: 1, MaxSessions: 1, MaxRequestsConnection: -1},
+	}
+	for _, settings := range bad {
+		if settings.validate() == nil {
+			t.Fatal(settings)
+		}
+		s.StreamableHTTP = settings
+		if err := s.RunTransport(context.Background(), []string{"--http", "--port", "0"}, nil, io.Discard, false, HTTPHooks{}); err == nil {
+			t.Fatal("invalid settings opened listener", settings)
+		}
+	}
+	s.StreamableHTTP = StreamableHTTPSettings{time.Second, 2 * time.Second, 3 * time.Second, 4, 5}
+	config, err := ParseTransportArgs([]string{"--http", "--port", "0", "--endpoint", "/x", "--allowed-origin", "https://x", "--max-request-bytes", "123"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	httpOptions := s.streamableHTTPOptions(config, false, true)
+	if !httpOptions.AsyncReference || httpOptions.Endpoint != "/x" || httpOptions.MaxRequestBytes != 123 || httpOptions.LocalBind || !reflect.DeepEqual(httpOptions.AllowedOrigins, []string{"https://x"}) || httpOptions.SessionTTL != time.Second || httpOptions.MaxSessions != 4 || httpOptions.Keepalive != 2*time.Second {
+		t.Fatal(httpOptions)
+	}
+	syncOptions := s.syncHTTPOptions("streamable-http")
+	if syncOptions.Legacy || syncOptions.IOTimeout != 3*time.Second || syncOptions.MaxRequests != 5 {
+		t.Fatal(syncOptions)
+	}
+	if !s.syncHTTPOptions("sse").Legacy {
+		t.Fatal("legacy options")
+	}
+	asyncOptions := s.asyncHTTPOptions(AsyncStreamableParser, "streamable-http", 123)
+	if asyncOptions.Parser.ReadTimeout != 3*time.Second || asyncOptions.Parser.MaxRequestBytes != 123 || asyncOptions.MaxRequests != 5 {
+		t.Fatal(asyncOptions)
+	}
+	legacy := s.asyncHTTPOptions(AsyncSSEParser, "sse", 456)
+	if legacy.Parser.ReadTimeout != 30*time.Second || legacy.Parser.MaxRequestBytes != 456 || legacy.MaxRequests != 1000 {
+		t.Fatal(legacy)
+	}
+}
+
 func TestRunTransportNetwork(t *testing.T) {
 	for _, async := range []bool{false, true} {
 		for _, mode := range []string{"tcp", "sse", "streamable-http"} {
