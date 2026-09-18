@@ -111,6 +111,7 @@ def fixtures() -> list[dict[str, Any]]:
                         else None,
                     ),
                 )
+                connection.execute("UPDATE operations SET created_at='2026-09-18T00:00:00Z'")
                 connection.commit()
 
             if scenario not in {"missing", "writer", "late-insert", "id-missing"}:
@@ -135,6 +136,10 @@ def fixtures() -> list[dict[str, Any]]:
                         ]
                     },
                 )
+            connection.execute(
+                "UPDATE proposals SET created_at='created',updated_at='updated',expires_at='2099-01-01T00:00:00Z'"
+            )
+            connection.commit()
             roles = (
                 ("reader",)
                 if scenario == "reader"

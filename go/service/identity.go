@@ -159,11 +159,7 @@ func (i *Identity) ResolvePolicy(ctx context.Context, principal access.Principal
 // already be authenticated by the transport, then mapped through current policy.
 // Only session_id is copied, as in MementoMCPServer._context; client/chat remain nil.
 func (i *Identity) Context(ctx context.Context) (ProposalActor, error) {
-	if i.touch != nil {
-		i.touch()
-	}
-	request := umcp.Context(ctx)
-	principal, err := i.resolvePrincipal(ctx, request.Principal)
+	principal, session, err := i.requestPrincipal(ctx)
 	if err != nil {
 		return ProposalActor{}, err
 	}
@@ -171,10 +167,21 @@ func (i *Identity) Context(ctx context.Context) (ProposalActor, error) {
 	if err != nil {
 		return ProposalActor{}, err
 	}
+	return ProposalActor{Policy: policy, MCPSessionID: session}, nil
+}
+func (i *Identity) requestPrincipal(ctx context.Context) (access.Principal, *string, error) {
+	if i.touch != nil {
+		i.touch()
+	}
+	request := umcp.Context(ctx)
+	principal, err := i.resolvePrincipal(ctx, request.Principal)
+	if err != nil {
+		return access.Principal{}, nil, err
+	}
 	var session *string
 	if request.SessionID != "" {
 		value := request.SessionID
 		session = &value
 	}
-	return ProposalActor{Policy: policy, MCPSessionID: session}, nil
+	return principal, session, nil
 }

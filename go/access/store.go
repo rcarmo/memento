@@ -72,6 +72,14 @@ func openStore(ctx context.Context, db *sql.DB, master string, random io.Reader,
 	}
 	return s, nil
 }
+
+// WithDB gives a worker its own connection pool while retaining the decrypted
+// verifier key. Callers own db lifetime. Production randomness is independent;
+// no mutex or injected test reader is copied between workers.
+func (s *Store) WithDB(db *sql.DB) *Store {
+	return &Store{db: db, verifier: append([]byte{}, s.verifier...), random: rand.Reader, now: s.now}
+}
+
 func (s *Store) timestamp() string { return s.now().UTC().Truncate(time.Second).Format(time.RFC3339) }
 func (s *Store) token() (string, error) {
 	s.randomMu.Lock()

@@ -293,6 +293,13 @@ def main() -> None:
     save("service-workers.json", service_workers.fixtures())
     operation_get = importlib.import_module("operation_get")
     save("operation-get.json", operation_get.fixtures())
+    proposal_tools = importlib.import_module("proposal_tools")
+    proposal_tool_fixtures = proposal_tools.fixtures()
+    save("proposal-tools.json", proposal_tool_fixtures)
+    # Runtime embeds only definitions for implemented tools, not test outcomes.
+    (ROOT / "go/service/proposal_tools.json").write_text(
+        json.dumps(proposal_tool_fixtures["definitions"], indent=2, sort_keys=True) + "\n"
+    )
     (ROOT / "go/assets/mime.json").write_text(
         json.dumps(pack_fixtures["mime"], ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     )

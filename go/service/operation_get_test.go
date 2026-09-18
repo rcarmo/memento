@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -174,6 +175,9 @@ func TestTimedOutApplyReconcilesOriginalKey(t *testing.T) {
 	actor.Policy.Roles = []string{"curator"}
 	key := "original-key"
 	started, release, finished := make(chan struct{}), make(chan struct{}), make(chan struct{})
+	var releaseOnce sync.Once
+	unblock := func() { releaseOnce.Do(func() { close(release) }) }
+	t.Cleanup(unblock)
 	c.DerivedUpdate = func(context.Context, string, string, []string) error { close(started); <-release; return nil }
 	workers := Workers{timeout: time.Millisecond}
 	call := make(chan workerResult, 1)
@@ -189,11 +193,15 @@ func TestTimedOutApplyReconcilesOriginalKey(t *testing.T) {
 	if timed.err != nil || timed.value.(map[string]any)["error_class"] != "indeterminate" {
 		t.Fatal(timed)
 	}
+	workers.mu.Lock()
+	workers.timeout = time.Hour
+	workers.mu.Unlock()
 	outcome, err := workers.Call(ctx, "memory_operation_get", func(job context.Context) (any, error) { return c.OperationGet(job, actor, &key, nil) })
-	if err != nil || outcome.(OperationOutcome).Data["final_state"] != "in_progress" {
+	inProgress, ok := outcome.(OperationOutcome)
+	if err != nil || !ok || inProgress.Data["final_state"] != "in_progress" {
 		t.Fatal(outcome, err)
 	}
-	close(release)
+	unblock()
 	<-finished
 	if err = workers.Drain(ctx); err != nil {
 		t.Fatal(err)

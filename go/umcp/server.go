@@ -47,6 +47,10 @@ func NewServer(name string) *Server {
 	return s
 }
 
+// SetHandler replaces a protocol handler during server construction, mirroring
+// source subclass overrides. Freeze all handlers before serving concurrently.
+func (s *Server) SetHandler(method string, handler Handler) { s.dispatcher.Handlers[method] = handler }
+
 // SetNotifier changes the delivery sink under a lock. The sink decides transport
 // framing, buffering and session recipients; no principal is accepted from args.
 func (s *Server) SetNotifier(notify func(string, map[string]any) error) {
