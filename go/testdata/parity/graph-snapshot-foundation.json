@@ -425,5 +425,22 @@
       "updated_at": "2026-01-03T00:00:00Z",
       "updated_by": "bob"
     }
+  ],
+  "semantic_edges": [
+    {
+      "anchor": null,
+      "canonical": false,
+      "embedding_revision": "main",
+      "first_seen_revision": "main",
+      "id": "semantic:5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d:6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e",
+      "kind": "semantic_similarity",
+      "last_checked_revision": "main",
+      "model_id": "model",
+      "raw_target": "cosine:0.9939",
+      "resolution": "derived",
+      "similarity": 0.993884,
+      "source": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+      "target": "6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e"
+    }
   ]
 }

@@ -49,6 +49,9 @@ func (snapshotFaultConn) QueryContext(_ context.Context, query string, _ []drive
 	if strings.HasPrefix(query, "SELECT status,") {
 		return &snapshotFaultRows{mode: "proposals-" + mode}, nil
 	}
+	if strings.HasPrefix(query, "SELECT concept_id,embedding_blob") {
+		return &snapshotFaultRows{mode: "semantic-" + mode}, nil
+	}
 	return &snapshotFaultRows{mode: "revisions-" + mode}, nil
 }
 func (r *snapshotFaultRows) Columns() []string {
@@ -64,12 +67,15 @@ func (r *snapshotFaultRows) Columns() []string {
 	if len(r.mode) >= 10 && r.mode[:10] == "proposals-" {
 		return []string{"status", "patch_json", "author_principal"}
 	}
+	if len(r.mode) >= 9 && r.mode[:9] == "semantic-" {
+		return []string{"concept_id", "embedding_blob", "embedding_norm", "model_id", "embedding_revision"}
+	}
 	return []string{"key", "value"}
 }
 func (*snapshotFaultRows) Close() error { return nil }
 func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	if r.emitted {
-		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" || r.mode == "nodes-rows" || r.mode == "proposals-rows" {
+		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" || r.mode == "nodes-rows" || r.mode == "proposals-rows" || r.mode == "semantic-rows" {
 			return io.ErrClosedPipe
 		}
 		if r.mode != "edges-multi" || r.count >= 2 {
@@ -78,9 +84,15 @@ func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	}
 	r.emitted = true
 	r.count++
-	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" || r.mode == "proposals-scan" {
+	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" || r.mode == "proposals-scan" || r.mode == "semantic-scan" {
 		values[0] = nil
 		values[1] = "value"
+	} else if len(r.mode) >= 9 && r.mode[:9] == "semantic-" {
+		values[0] = "a"
+		values[1] = blob(1, 0)
+		values[2] = float64(1)
+		values[3] = "m"
+		values[4] = "main"
 	} else if len(r.mode) >= 10 && r.mode[:10] == "proposals-" {
 		values[0] = "draft"
 		values[1] = `{"path":"/a"}`

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sqlite3
+import struct
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -25,12 +26,12 @@ def fixtures() -> dict[str, Any]:
                 "CREATE TABLE index_state(key TEXT PRIMARY KEY,value TEXT,updated_at TEXT);"
                 "CREATE TABLE concepts(id TEXT PRIMARY KEY,path TEXT,type TEXT,title TEXT,status TEXT,tags_json TEXT,updated_at TEXT,repo_revision TEXT,body TEXT,content_hash TEXT);"
                 "CREATE TABLE graph_metrics(concept_id TEXT PRIMARY KEY,inbound_degree INTEGER,outbound_degree INTEGER,broken_link_count INTEGER,orphan_flag INTEGER);"
-                "CREATE TABLE concept_embeddings(concept_id TEXT PRIMARY KEY,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT);"
+                "CREATE TABLE concept_embeddings(concept_id TEXT PRIMARY KEY,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT,embedding_blob BLOB,embedding_norm REAL,path TEXT,embedding_text_hash TEXT);"
                 "CREATE TABLE links(source_id TEXT,target_id TEXT,raw_target TEXT,target_path TEXT,anchor TEXT,link_kind TEXT,resolution_state TEXT,first_seen_revision TEXT,last_checked_revision TEXT);"
                 "INSERT INTO index_state VALUES('repo_revision','main','now'),('index_revision','old','now'),('semantic_embedding_revision','embed','now');"
                 "INSERT INTO concepts VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','/a.md','concept','Alpha','active','[\"one\"]','2026-01-02T00:00:00Z','main','Body','ha'),('6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e','/b.md','concept','Beta','active','[]','2026-01-03T00:00:00Z','main','Body','hb');"
                 "INSERT INTO graph_metrics VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d',9,9,9,0);"
-                "INSERT INTO concept_embeddings VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','ready','model',3,'main','v1','2026-01-04T00:00:00Z',NULL);"
+                "INSERT INTO concept_embeddings VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','ready','model',3,'main','v1','2026-01-04T00:00:00Z',NULL,NULL,NULL,'/a.md','hash');"
                 "INSERT INTO links VALUES('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d','6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e','/public/b.md','/public/b.md',NULL,'internal','resolved','r1','r2'),('5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d',NULL,'/private/missing.md','/private/missing.md','x','internal','broken','r1','r2'),('6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e',NULL,'/public/missing.md','/public/missing.md',NULL,'internal','broken','r1','r2');"
             )
         with sqlite3.connect(control) as db:
@@ -94,8 +95,46 @@ def fixtures() -> dict[str, Any]:
             ]
 
         overview = service.overview(policy=policy).model_dump(mode="json")
+        with sqlite3.connect(derived) as db:
+            db.row_factory = sqlite3.Row
+            db.execute(
+                "UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision'"
+            )
+            db.execute("DELETE FROM concept_embeddings")
+            for concept_id, values in (
+                ("5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", (1.0, 0.0)),
+                ("6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e", (0.9, 0.1)),
+            ):
+                db.execute(
+                    "INSERT INTO concept_embeddings(concept_id,status,model_id,dimensions,embedding_revision,model_revision,updated_at,error_message,embedding_blob,embedding_norm,path,embedding_text_hash) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (
+                        concept_id,
+                        "ready",
+                        "model",
+                        2,
+                        "main",
+                        "v1",
+                        "now",
+                        None,
+                        struct.pack("<2f", *values),
+                        None,
+                        "/",
+                        "hash",
+                    ),
+                )
+            db.commit()
+            fresh = service._revisions(db)
+            semantic_edges = [
+                item.model_dump(mode="json")
+                for item in __import__(
+                    "memento.graph_debug.snapshot", fromlist=["_semantic_edges"]
+                )._semantic_edges(
+                    db, raw_nodes, fresh, GraphExplorerConfig(semantic_min_similarity=0.5), 10
+                )
+            ]
         return {
             "overview": overview,
+            "semantic_edges": semantic_edges,
             "revisions": revisions,
             "edges": edges,
             "nodes": nodes,
