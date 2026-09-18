@@ -823,6 +823,21 @@
       "updated_by": "bob"
     }
   ],
+  "search": {
+    "results": [
+      {
+        "id": "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d",
+        "path": "/a.md",
+        "snippet": "hello world",
+        "tags": [
+          "one"
+        ],
+        "title": "Alpha",
+        "type": "concept"
+      }
+    ],
+    "schema_version": 1
+  },
   "semantic_edges": [
     {
       "anchor": null,

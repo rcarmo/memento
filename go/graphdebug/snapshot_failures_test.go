@@ -43,14 +43,17 @@ func (snapshotFaultConn) QueryContext(_ context.Context, query string, _ []drive
 	if len(query) >= 12 && query[:12] == "SELECT rowid" {
 		return &snapshotFaultRows{mode: "edges-" + mode}, nil
 	}
-	if len(query) >= 11 && query[:11] == "SELECT c.id" {
-		return &snapshotFaultRows{mode: "nodes-" + mode}, nil
-	}
 	if strings.HasPrefix(query, "SELECT status,") {
 		return &snapshotFaultRows{mode: "proposals-" + mode}, nil
 	}
 	if strings.HasPrefix(query, "SELECT concept_id,embedding_blob") {
 		return &snapshotFaultRows{mode: "semantic-" + mode}, nil
+	}
+	if strings.HasPrefix(query, "SELECT c.id,c.path,c.title,c.type,c.tags_json,snippet") {
+		return &snapshotFaultRows{mode: "search-" + mode}, nil
+	}
+	if strings.HasPrefix(query, "SELECT c.id") {
+		return &snapshotFaultRows{mode: "nodes-" + mode}, nil
 	}
 	return &snapshotFaultRows{mode: "revisions-" + mode}, nil
 }
@@ -70,12 +73,15 @@ func (r *snapshotFaultRows) Columns() []string {
 	if len(r.mode) >= 9 && r.mode[:9] == "semantic-" {
 		return []string{"concept_id", "embedding_blob", "embedding_norm", "model_id", "embedding_revision"}
 	}
+	if len(r.mode) >= 7 && r.mode[:7] == "search-" {
+		return []string{"id", "path", "title", "type", "tags_json", "snippet"}
+	}
 	return []string{"key", "value"}
 }
 func (*snapshotFaultRows) Close() error { return nil }
 func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	if r.emitted {
-		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" || r.mode == "nodes-rows" || r.mode == "proposals-rows" || r.mode == "semantic-rows" {
+		if r.mode == "revisions-rows" || r.mode == "paths-rows" || r.mode == "edges-rows" || r.mode == "nodes-rows" || r.mode == "proposals-rows" || r.mode == "semantic-rows" || r.mode == "search-rows" {
 			return io.ErrClosedPipe
 		}
 		if r.mode != "edges-multi" || r.count >= 2 {
@@ -84,9 +90,16 @@ func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	}
 	r.emitted = true
 	r.count++
-	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" || r.mode == "proposals-scan" || r.mode == "semantic-scan" {
+	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" || r.mode == "proposals-scan" || r.mode == "semantic-scan" || r.mode == "search-scan" {
 		values[0] = nil
 		values[1] = "value"
+	} else if len(r.mode) >= 7 && r.mode[:7] == "search-" {
+		values[0] = "a"
+		values[1] = "/a"
+		values[2] = "Title"
+		values[3] = "concept"
+		values[4] = "[]"
+		values[5] = ""
 	} else if len(r.mode) >= 9 && r.mode[:9] == "semantic-" {
 		values[0] = "a"
 		values[1] = blob(1, 0)
