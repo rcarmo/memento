@@ -1,5 +1,9 @@
 # Test gates for the Go port
 
+## Module layout
+
+The standalone module follows the standard `cmd/<binary>`, library-package, `internal/` and module-level `testdata` layout documented in `go/README.md`. `make -C go layout-check` verifies module tidiness/package discovery and rejects Go source at the module root or files directly under `cmd`; it is part of `make -C go check`. `go vet ./...`, `go mod tidy -diff` and package documentation enumeration pass. The import graph is acyclic and no package moves were warranted.
+
 ## Coverage is a gate, not a completion claim
 
 Every implemented Go package must have zero uncovered statements in `go test -coverpkg=./...` output. The gate checks raw counters rather than the rounded `100.0%` display, with no excluded production files or helper allowlists. CLI entry wiring is tested too. CI runs the same gate on amd64 and ARM64; cross-compilation alone does not prove execution correctness.

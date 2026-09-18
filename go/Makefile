@@ -2,10 +2,15 @@ GO ?= go
 ORACLE_PYTHON ?= python3
 UMCP_REFERENCE ?=
 
-.PHONY: check test vet format-check build race cross oracle coverage fuzz model-test corpus-test
-check: format-check vet coverage build
+.PHONY: check test vet format-check layout-check build race cross oracle coverage fuzz model-test corpus-test
+check: format-check layout-check vet coverage build
 format-check:
 	@test -z "$$(gofmt -l $$(find . -name '*.go'))" || (echo 'Run gofmt before checking'; exit 1)
+layout-check:
+	@test -z "$$(find . -maxdepth 1 -name '*.go' -print)" || (echo 'Move root Go files into a package or cmd/<name>'; exit 1)
+	@test -z "$$(find cmd -mindepth 1 -maxdepth 1 -type f -print)" || (echo 'Place each command in cmd/<name>/'; exit 1)
+	@$(GO) list ./... >/dev/null
+	@$(GO) mod tidy -diff
 vet:
 	CGO_ENABLED=0 $(GO) vet ./...
 test:
