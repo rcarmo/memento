@@ -238,6 +238,45 @@ func (i *Index) Status(ctx context.Context, policy access.EffectivePolicy) (Stat
 	err := i.withCore(ctx, false, func(s ContentStore) error { var err error; result, err = s.Status(ctx, policy); return err })
 	return result, err
 }
+func (i *Index) PendingEmbeddingPaths(ctx context.Context, limit int) ([]string, error) {
+	return i.pendingEmbeddingPaths(ctx, limit, func(ctx context.Context, db *sql.DB, limit int) (embeddingPathRows, error) {
+		return db.QueryContext(ctx, `SELECT c.path FROM concepts AS c LEFT JOIN concept_embeddings AS e ON e.concept_id=c.id WHERE e.concept_id IS NULL OR e.status IN ('stale','pending') ORDER BY CASE WHEN e.status='stale' THEN 0 ELSE 1 END,c.path LIMIT ?`, limit)
+	})
+}
+func (i *Index) pendingEmbeddingPaths(ctx context.Context, limit int, query func(context.Context, *sql.DB, int) (embeddingPathRows, error)) (paths []string, err error) {
+	if limit < 1 {
+		return nil, errors.New("limit must be positive")
+	}
+	err = i.withCore(ctx, false, func(s ContentStore) error {
+		rows, queryErr := query(ctx, s.DB, limit)
+		if queryErr != nil {
+			return queryErr
+		}
+		paths, queryErr = readEmbeddingPaths(rows)
+		return queryErr
+	})
+	return paths, err
+}
+
+type embeddingPathRows interface {
+	Next() bool
+	Scan(...any) error
+	Err() error
+	Close() error
+}
+
+func readEmbeddingPaths(rows embeddingPathRows) ([]string, error) {
+	defer rows.Close()
+	paths := []string{}
+	for rows.Next() {
+		var path string
+		if err := rows.Scan(&path); err != nil {
+			return nil, err
+		}
+		paths = append(paths, path)
+	}
+	return paths, rows.Err()
+}
 func (i *Index) SetRepoRevision(ctx context.Context, revision string) error {
 	return i.withCore(ctx, false, func(s ContentStore) error { return s.SetRepoRevision(ctx, revision) })
 }
