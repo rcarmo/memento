@@ -2,11 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
 
 	"github.com/rcarmo/memento/go/access"
+	"github.com/rcarmo/memento/go/derived"
 	"github.com/rcarmo/memento/go/umcp"
 )
 
@@ -27,6 +29,15 @@ func TestModelProposalArgumentsAndDisabled(t *testing.T) {
 	e := &ModelProposalEndpoint{}
 	if _, err := e.Freeform(context.Background(), map[string]any{}); err == nil || err.Error() != "content must be a string" {
 		t.Fatalf("freeform error = %v", err)
+	}
+	if _, err := e.Update(context.Background(), map[string]any{}); err == nil || err.Error() != "instruction must be a string" {
+		t.Fatalf("instruction error = %v", err)
+	}
+	if _, err := e.Freeform(context.Background(), map[string]any{"content": "x", "intent": 1}); err == nil || err.Error() != "intent must be a string or null" {
+		t.Fatalf("intent error = %v", err)
+	}
+	if _, err := e.Freeform(context.Background(), map[string]any{"content": "x", "suggested_path": 1}); err == nil || err.Error() != "suggested_path must be a string or null" {
+		t.Fatalf("suggested error = %v", err)
 	}
 	if _, err := e.Update(context.Background(), map[string]any{"instruction": "x", "target_hint": 1}); err == nil || err.Error() != "target_hint must be a string or null" {
 		t.Fatalf("update error = %v", err)
@@ -62,15 +73,35 @@ func TestValidateModelProposalDraft(t *testing.T) {
 		mutate   func(*DreamProposalDraft)
 		contains string
 	}{
+		{"empty rationale", func(d *DreamProposalDraft) { d.Rationale = "" }, "rationale"},
+		{"empty changes", func(d *DreamProposalDraft) { d.Changes = nil }, "at least one"},
+		{"too many changes", func(d *DreamProposalDraft) { limits.MaxChanges = 0 }, "change limits"},
 		{"missing citation", func(d *DreamProposalDraft) { d.Consulted = nil }, "cite every"},
+		{"unknown citation", func(d *DreamProposalDraft) { d.Consulted[0]["id"] = "other" }, "unconsulted"},
+		{"duplicate citation", func(d *DreamProposalDraft) {
+			d.Consulted = append(d.Consulted, d.Consulted[0])
+			consulted = append(consulted, consultedConcept{"other", "/other.md", revision, "Other", ""})
+		}, "citations must match"},
 		{"wrong title", func(d *DreamProposalDraft) { d.Consulted[0]["title"] = "Other" }, "citations must match"},
 		{"archive", func(d *DreamProposalDraft) { d.Changes[0]["kind"] = "trash" }, "only create normal"},
+		{"write acl", func(d *DreamProposalDraft) { policy.WritePrefixes = []string{"/allowed/"} }, "cannot write"},
+		{"invalid path", func(d *DreamProposalDraft) { d.Changes[0]["path"] = "relative.md" }, "absolute"},
+		{"body limit", func(d *DreamProposalDraft) { limits.MaxBodyChars = 1 }, "body exceeds"},
+		{"diff limit", func(d *DreamProposalDraft) { limits.MaxDiffChars = 1 }, "diff exceeds"},
 		{"reciprocal acl", func(d *DreamProposalDraft) {
 			d.ReciprocalLinks = []map[string]any{{"source_path": "/denied/a.md", "target_path": "/a.md", "justification": "x"}}
 		}, "cannot write"},
+		{"reciprocal read acl", func(d *DreamProposalDraft) {
+			policy.WritePrefixes = []string{"/"}
+			policy.ReadPrefixes = []string{"/a.md"}
+			d.ReciprocalLinks = []map[string]any{{"source_path": "/a.md", "target_path": "/denied.md", "justification": "x"}}
+		}, "cannot read"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
+			policy = access.EffectivePolicy{Principal: "actor", Roles: []string{"proposer"}, ReadPrefixes: []string{"/"}, WritePrefixes: []string{"/"}}
+			consulted = []consultedConcept{{"12345678", "/a.md", revision, "Title", "body"}}
+			limits = proposalTestLimits()
 			d := proposalTestDraft(revision)
 			if tc.name == "reciprocal acl" {
 				policy.WritePrefixes = []string{"/a.md"}
@@ -112,6 +143,45 @@ func TestModelProposalEndpointStoresAuthenticatedProposal(t *testing.T) {
 	rows := tableRows(t, jobs.Controls.Queue.Proposals.DB, `SELECT author_principal,intent,base_revision,status FROM proposals WHERE intent='model intent'`)
 	if len(rows) != 1 || rows[0]["author_principal"] != "actor" || rows[0]["base_revision"] != revision || rows[0]["status"] != "submitted" {
 		t.Fatalf("stored = %#v", rows)
+	}
+}
+
+func TestModelProposalCallFailures(t *testing.T) {
+	jobs, revision := jobsTest(t)
+	config := DefaultModelProposalsConfig()
+	config.Enabled = true
+	valid := fmt.Sprintf(`{"rationale":"because","consulted_concepts":[{"id":"12345678","path":"/a.md","revision":%q,"title":"Title"}],"changes":[{"kind":"patch","path":"/a.md","body":"changed"}]}`, revision)
+	for name, model := range map[string]*stubModelClient{"provider": {err: errors.New("provider")}, "parse": {response: ModelResponse{OutputText: "bad"}}, "validation": {response: ModelResponse{OutputText: `{"rationale":"","changes":[]}`}}} {
+		t.Run(name, func(t *testing.T) {
+			e := ModelProposalEndpoint{Jobs: jobs, Client: model, Config: config}
+			server := umcp.NewServer("x")
+			_ = server.Tools.Register(umcp.Tool{Name: "p", Parameters: []umcp.Parameter{{Name: "instruction", Types: []umcp.ParamType{umcp.StringParam}}, {Name: "target_hint", Types: []umcp.ParamType{umcp.StringParam}, HasDefault: true, Default: nil}}, Call: e.Update})
+			response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"p","arguments":{"instruction":"x","target_hint":"/a.md"}}}`), umcp.RequestContext{Principal: "actor"})
+			if err != nil || response == nil {
+				t.Fatal(response, err)
+			}
+		})
+	}
+	config.Limits.MaxRationaleChars = 1
+	model := &stubModelClient{response: ModelResponse{OutputText: valid}}
+	e := ModelProposalEndpoint{Jobs: jobs, Client: model, Config: config}
+	server := umcp.NewServer("x")
+	_ = server.Tools.Register(umcp.Tool{Name: "p", Parameters: []umcp.Parameter{{Name: "instruction", Types: []umcp.ParamType{umcp.StringParam}}, {Name: "target_hint", Types: []umcp.ParamType{umcp.StringParam}, HasDefault: true, Default: nil}}, Call: e.Update})
+	_, _ = server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"p","arguments":{"instruction":"x","target_hint":"/a.md"}}}`), umcp.RequestContext{Principal: "actor"})
+}
+
+func TestConsultModelProposalSearchBranches(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}, WritePrefixes: []string{"/"}}
+	index := &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{Path: "/a.md"}, {Path: "/a.md"}}}}
+	controls.Index = index
+	got, gotRevision, err := consultModelProposalContext(context.Background(), controls, policy, nil, proposalTestLimits())
+	if err != nil || gotRevision != revision || len(got) != 1 {
+		t.Fatalf("got=%#v rev=%s err=%v", got, gotRevision, err)
+	}
+	index.err = errors.New("search")
+	if _, _, err = consultModelProposalContext(context.Background(), controls, policy, nil, proposalTestLimits()); err == nil {
+		t.Fatal("search error")
 	}
 }
 
