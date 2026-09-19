@@ -239,6 +239,22 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		}
 	}
 	runtime.Jobs = jobs
+	runtime.ProtectedReadPrefixes = append([]string{}, config.Authorization.ProtectedReadPrefixes...)
+	if managed != nil {
+		runtime.AuditPrincipals = func(ctx context.Context) ([]AuditPrincipal, error) {
+			items, e := managed.List(ctx)
+			if e != nil {
+				return nil, e
+			}
+			result := make([]AuditPrincipal, 0, len(items))
+			for _, item := range items {
+				result = append(result, AuditPrincipal{item.Name, item.Roles, item.ReadPrefixes})
+			}
+			return result, nil
+		}
+	} else {
+		runtime.AuditPrincipals = StaticAuditPrincipals(config.Authorization)
+	}
 	runtime.HTTPHooks = identity.HTTPHooks()
 	stagingHTTP := StagingHTTP{Store: staging, Authenticate: identity.AuthenticateHeaders}
 	snapshotService := graphdebug.NewSnapshotService(paths.Repository.CurrentDir, paths.DerivedDB, paths.ControlDB)

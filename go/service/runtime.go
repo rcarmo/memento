@@ -16,14 +16,16 @@ import (
 // shielded requests before closing background components, SQLite, and finally
 // the process-wide writer lease.
 type Runtime struct {
-	Paths          RuntimePaths
-	Jobs           *Jobs
-	SemanticWorker *derived.SemanticWorker
-	GraphRefresh   *graphdebug.RefreshCoordinator
-	DB             *sql.DB
-	Lease          *repository.WriterLease
-	HTTPHooks      umcp.HTTPHooks
-	Closers        []func() error
+	Paths                 RuntimePaths
+	Jobs                  *Jobs
+	SemanticWorker        *derived.SemanticWorker
+	GraphRefresh          *graphdebug.RefreshCoordinator
+	DB                    *sql.DB
+	Lease                 *repository.WriterLease
+	HTTPHooks             umcp.HTTPHooks
+	Closers               []func() error
+	AuditPrincipals       func(context.Context) ([]AuditPrincipal, error)
+	ProtectedReadPrefixes []string
 
 	mu     sync.Mutex
 	closed bool

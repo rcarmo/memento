@@ -3,9 +3,11 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/derived"
 	"github.com/rcarmo/memento/go/repository"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -30,6 +32,54 @@ func (rebuildClient) ModelInfo() derived.SemanticModelInfo {
 	return derived.SemanticModelInfo{ModelID: "m", Dimensions: 1}
 }
 func (rebuildClient) Embed(string) ([]float32, error) { return []float32{1}, nil }
+func TestRuntimeAuditRepository(t *testing.T) {
+	ctx := context.Background()
+	root := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(root, "current"), 0700); err != nil {
+		t.Fatal(err)
+	}
+	runtime := &Runtime{Paths: RuntimePaths{Repository: repository.GitRepositoryPaths{CurrentDir: filepath.Join(root, "current")}}, ProtectedReadPrefixes: []string{"/private/"}}
+	runtime.AuditPrincipals = StaticAuditPrincipals(access.AuthorizationConfig{Principals: map[string]access.NamespacePolicy{"z": {Roles: []string{"reader"}, ReadPrefixes: []string{"/"}}, "admin": {Roles: []string{"admin"}, ReadPrefixes: []string{"/"}}}})
+	payload, err := runtime.AuditRepository(ctx, nil)
+	if err != nil || payload["ok"] != true || len(payload["warnings"].([]map[string]any)) != 1 || payload["warnings"].([]map[string]any)[0]["principal"] != "z" {
+		t.Fatal(payload, err)
+	}
+	concept := `---
+id: '12345678'
+type: concept
+title: Broken
+status: active
+created_at: 2025-01-01T00:00:00Z
+updated_at: 2025-01-01T00:00:00Z
+updated_by: test
+---
+[missing](/missing.md)
+`
+	if err = os.WriteFile(filepath.Join(root, "current", "x.md"), []byte(concept), 0600); err != nil {
+		t.Fatal(err)
+	}
+	wanted := "/x.md"
+	payload, err = runtime.AuditRepository(ctx, &wanted)
+	if err != nil || payload["ok"] != false || len(payload["issues"].([]repository.AuditIssue)) != 1 {
+		t.Fatal(payload, err)
+	}
+	wanted = "/other.md"
+	payload, err = runtime.AuditRepository(ctx, &wanted)
+	if err != nil || len(payload["issues"].([]repository.AuditIssue)) != 0 {
+		t.Fatal(payload, err)
+	}
+	runtime.AuditPrincipals = func(context.Context) ([]AuditPrincipal, error) { return nil, errors.New("principals") }
+	if _, err = runtime.AuditRepository(ctx, nil); err == nil {
+		t.Fatal("principals")
+	}
+	if err = os.WriteFile(filepath.Join(root, "current", "bad.md"), []byte("bad"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	runtime.AuditPrincipals = nil
+	if _, err = runtime.AuditRepository(ctx, nil); err == nil {
+		t.Fatal("parse")
+	}
+}
 func TestRuntimeRebuildIndex(t *testing.T) {
 	ctx := context.Background()
 	var config RuntimeConfig

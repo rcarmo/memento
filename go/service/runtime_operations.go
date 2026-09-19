@@ -4,11 +4,61 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"sort"
 
+	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/derived"
 	"github.com/rcarmo/memento/go/repository"
 )
+
+type AuditPrincipal struct {
+	Name                string
+	Roles, ReadPrefixes []string
+}
+
+func StaticAuditPrincipals(config access.AuthorizationConfig) func(context.Context) ([]AuditPrincipal, error) {
+	copy := copyAuthorization(config)
+	return func(context.Context) ([]AuditPrincipal, error) {
+		names := make([]string, 0, len(copy.Principals))
+		for name := range copy.Principals {
+			names = append(names, name)
+		}
+		sort.Strings(names)
+		result := make([]AuditPrincipal, 0, len(names))
+		for _, name := range names {
+			policy := copy.Principals[name]
+			result = append(result, AuditPrincipal{name, append([]string{}, policy.Roles...), append([]string{}, policy.ReadPrefixes...)})
+		}
+		return result, nil
+	}
+}
+func (r *Runtime) AuditRepository(ctx context.Context, path *string) (map[string]any, error) {
+	report, err := repository.AuditRepository(r.Paths.Repository.CurrentDir, nil)
+	if err != nil {
+		return nil, err
+	}
+	issues := []repository.AuditIssue{}
+	for _, issue := range report.Issues {
+		if path == nil || issue.BundlePath == *path {
+			issues = append(issues, issue)
+		}
+	}
+	principals := []AuditPrincipal{}
+	if r.AuditPrincipals != nil {
+		principals, err = r.AuditPrincipals(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+	warnings := []map[string]any{}
+	for _, principal := range principals {
+		if warning := access.BroadReadGrantWarning(principal.Roles, principal.ReadPrefixes, r.ProtectedReadPrefixes); warning != nil {
+			warnings = append(warnings, map[string]any{"principal": principal.Name, "warning": *warning})
+		}
+	}
+	return map[string]any{"ok": len(issues) == 0, "issues": issues, "warnings": warnings}, nil
+}
 
 type runtimeStatusOps struct {
 	revision  func(repository.GitRepositoryPaths) (string, error)

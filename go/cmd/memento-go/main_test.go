@@ -95,6 +95,28 @@ func TestRunStatus(t *testing.T) {
 		t.Fatal(code)
 	}
 }
+func TestRunAudit(t *testing.T) {
+	oldLoad, oldBuild := loadConfig, buildRuntime
+	t.Cleanup(func() { loadConfig, buildRuntime = oldLoad, oldBuild })
+	runtime, server := stubRuntime(t)
+	loadConfig = func(string) (service.RuntimeConfig, error) { return service.RuntimeConfig{}, nil }
+	buildRuntime = func(context.Context, service.RuntimeConfig, service.ModelsOffRuntimeOptions) (*service.Runtime, *umcp.Server, error) {
+		return runtime, server, nil
+	}
+	var out, stderr bytes.Buffer
+	if code := runContext(context.Background(), []string{"--config", "x", "audit", "--path", "/x.md"}, nil, &out, &stderr); code != 0 || stderr.Len() != 0 {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	var payload map[string]any
+	if err := json.Unmarshal(out.Bytes(), &payload); err != nil || payload["ok"] != true {
+		t.Fatal(payload, err)
+	}
+	for _, args := range [][]string{{"--config", "x", "audit", "--bad", "x"}, {"--config", "x", "audit", "--path", ""}, {"--config", "x", "audit", "extra"}} {
+		if code := runContext(context.Background(), args, nil, io.Discard, io.Discard); code != 2 {
+			t.Fatal(args, code)
+		}
+	}
+}
 func TestRunRebuildIndex(t *testing.T) {
 	oldLoad, oldBuild := loadConfig, buildRuntime
 	t.Cleanup(func() { loadConfig, buildRuntime = oldLoad, oldBuild })

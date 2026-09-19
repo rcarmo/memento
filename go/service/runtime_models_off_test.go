@@ -146,10 +146,21 @@ func TestBuildManagedModelsOffRuntime(t *testing.T) {
 	if count != 10 {
 		t.Fatal(count)
 	}
+	principals, listErr := runtime.AuditPrincipals(ctx)
+	if listErr != nil || len(principals) != 1 || principals[0].Name != "sandbox" {
+		t.Fatal(principals, listErr)
+	}
 	graphResponse, err := runtime.HTTPHooks.Route(ctx, "GET", "/graph/api/v1/principals", nil, nil, "")
 	if err != nil || graphResponse.Status != 200 || !bytes.Contains(graphResponse.Body, []byte(`"sandbox"`)) {
 		t.Fatal(graphResponse, err)
 	}
+	if err = runtime.DB.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if _, listErr = runtime.AuditPrincipals(ctx); listErr == nil {
+		t.Fatal("closed managed list")
+	}
+	runtime.DB = nil
 	if err = runtime.Close(ctx); err != nil {
 		t.Fatal(err)
 	}
