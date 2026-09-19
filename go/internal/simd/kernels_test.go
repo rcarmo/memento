@@ -11,7 +11,11 @@ func TestSelectAndCapabilities(t *testing.T) {
 	if caps.Architecture == "" || caps.Available[0] != Scalar {
 		t.Fatal(caps)
 	}
-	for _, value := range []string{"", "scalar", " SCALAR "} {
+	autoExpected, _ := Select("auto")
+	if backend, err := Select(""); err != nil || backend != autoExpected {
+		t.Fatal(backend, err)
+	}
+	for _, value := range []string{"scalar", " SCALAR "} {
 		backend, err := Select(value)
 		if err != nil || backend != Scalar {
 			t.Fatal(value, backend, err)

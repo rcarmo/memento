@@ -6,6 +6,26 @@ import (
 	"testing"
 )
 
+func TestLoadedModelDefaultsToAutoSIMD(t *testing.T) {
+	t.Setenv("MEMENTO_SIMD", "")
+	model, err := FromBytes(syntheticModel(0))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, err := msimd.Select("auto")
+	if err != nil || model.SIMDBackend() != want {
+		t.Fatal(model.SIMDBackend(), want, err)
+	}
+	t.Setenv("MEMENTO_SIMD", "scalar")
+	model, err = FromBytes(syntheticModel(0))
+	if err != nil || model.SIMDBackend() != msimd.Scalar {
+		t.Fatal(model, err)
+	}
+	t.Setenv("MEMENTO_SIMD", "bad")
+	if _, err = FromBytes(syntheticModel(0)); err == nil {
+		t.Fatal("bad")
+	}
+}
 func TestSIMDConfiguration(t *testing.T) {
 	model := &Model{}
 	if model.SIMDBackend() != msimd.Scalar {

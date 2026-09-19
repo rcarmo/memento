@@ -45,6 +45,13 @@ func NewRouter(model *Model) (*Router, error) {
 	hd := dm / heads
 	kvd := kv * hd
 	r := &Router{config: c}
+	engine, engineErr := msimd.NewFromEnvironment()
+	if engineErr != nil {
+		return nil, engineErr
+	}
+	if engine.Backend() != msimd.Scalar {
+		r.simd = &engine
+	}
 	var loadErr error
 	get := func(name string, shape ...uint32) []float32 {
 		if loadErr != nil {

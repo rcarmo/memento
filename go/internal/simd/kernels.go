@@ -66,7 +66,7 @@ func Select(value string) (Backend, error) { return selectBackend(value, Detect(
 func selectBackend(value string, caps Capabilities) (Backend, error) {
 	value = strings.ToLower(strings.TrimSpace(value))
 	if value == "" {
-		value = "scalar"
+		value = "auto"
 	}
 	if value == "auto" {
 		if caps.AVX2FMA {

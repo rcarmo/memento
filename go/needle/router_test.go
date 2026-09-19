@@ -48,6 +48,11 @@ func routerFixture(vocab int) *Model {
 }
 
 func TestRouterConstructionAndMath(t *testing.T) {
+	t.Setenv("MEMENTO_SIMD", "bad")
+	if _, err := NewRouter(routerFixture(13)); err == nil {
+		t.Fatal("invalid SIMD")
+	}
+	t.Setenv("MEMENTO_SIMD", "")
 	m := routerFixture(13)
 	r, err := NewRouter(m)
 	if err != nil {

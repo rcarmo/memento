@@ -6,6 +6,20 @@ import (
 	"testing"
 )
 
+func TestRouterDefaultsToAutoSIMD(t *testing.T) {
+	router := &Router{}
+	engine, err := msimd.NewFromEnvironment()
+	if err != nil {
+		t.Fatal(err)
+	}
+	router.simd = &engine
+	if engine.Backend() == msimd.Scalar {
+		router.simd = nil
+	}
+	if router.SIMDBackend() != engine.Backend() {
+		t.Fatal(router.SIMDBackend(), engine.Backend())
+	}
+}
 func TestRouterSIMDConfiguration(t *testing.T) {
 	router := &Router{}
 	if router.SIMDBackend() != msimd.Scalar {

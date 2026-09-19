@@ -183,6 +183,13 @@ func FromBytes(data []byte) (*Model, error) {
 		return a * b
 	}
 	m := &Model{config: c}
+	engine, engineErr := msimd.NewFromEnvironment()
+	if engineErr != nil {
+		return nil, engineErr
+	}
+	if engine.Backend() != msimd.Scalar {
+		m.simd = &engine
+	}
 	m.token = r.weights(product(c.VocabSize, h))
 	m.position = r.weights(product(c.MaxSequence, h))
 	m.tokenType = r.weights(product(2, h))
