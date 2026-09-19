@@ -149,9 +149,7 @@ func (s AnswerStore) GetHotContext(ctx context.Context, scope, question, mode, r
 		}
 		ids = append(ids, id)
 	}
-	if err = rows.Close(); err != nil {
-		return nil, nil, err
-	}
+	_ = rows.Close()
 	var raw string
 	err = s.DB.QueryRowContext(ctx, "SELECT response_json FROM hot_answers WHERE scope_key=? AND question_hash=? AND answer_mode=? AND repo_revision=? AND expires_at>?", scope, answerHash(question), mode, revision, answerISO(now)).Scan(&raw)
 	if err == sql.ErrNoRows {

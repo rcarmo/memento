@@ -171,6 +171,20 @@ func TestModelProposalEndpointStoresAuthenticatedProposal(t *testing.T) {
 	}
 }
 
+func TestModelProposalCallContextError(t *testing.T) {
+	jobs, _ := jobsTest(t)
+	jobs.Controls.Index = &answerIndex{err: errors.New("search")}
+	config := DefaultModelProposalsConfig()
+	config.Enabled = true
+	e := ModelProposalEndpoint{Jobs: jobs, Client: &stubModelClient{}, Config: config}
+	server := umcp.NewServer("x")
+	_ = server.Tools.Register(umcp.Tool{Name: "p", Parameters: []umcp.Parameter{{Name: "instruction", Types: []umcp.ParamType{umcp.StringParam}}}, Call: e.Update})
+	response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"p","arguments":{"instruction":"x"}}}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response == nil {
+		t.Fatal(response, err)
+	}
+}
+
 func TestModelProposalRoleAndEmptyContext(t *testing.T) {
 	jobs, _ := jobsTest(t)
 	config := DefaultModelProposalsConfig()

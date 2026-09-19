@@ -288,9 +288,6 @@ func (e *AnswerEndpoint) deep(ctx context.Context, c *ProposalControls, policy a
 			steps = append(steps, AnswerSearchStep{})
 			copy(steps[at+1:], steps[at:])
 			steps[at] = AnswerSearchStep{"graph_neighbors", strings.Join(paths, ",")}
-			if len(steps) > limits.MaxSteps {
-				steps = steps[:limits.MaxSteps]
-			}
 		}
 	}
 	strategy := map[bool]string{true: "hybrid_top_5_to_10", false: "hybrid_top_5"}[escalated]

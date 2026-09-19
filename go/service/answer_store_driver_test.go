@@ -39,6 +39,9 @@ func (r *answerFaultRows) Columns() []string {
 	if r.mode == "scan" {
 		return []string{"one", "two"}
 	}
+	if r.mode == "invalidate-scan" {
+		return []string{"scope_key", "question_hash", "answer_mode", "repo_revision", "concept_ids_json"}
+	}
 	return []string{"concept_id"}
 }
 func (r *answerFaultRows) Close() error {
@@ -48,6 +51,13 @@ func (r *answerFaultRows) Close() error {
 	return nil
 }
 func (r *answerFaultRows) Next(values []driver.Value) error {
+	if r.mode == "invalidate-scan" && !r.done {
+		r.done = true
+		for i := range values {
+			values[i] = nil
+		}
+		return nil
+	}
 	if (r.mode == "scan" || r.mode == "close") && !r.done {
 		r.done = true
 		values[0] = "x"
@@ -85,5 +95,9 @@ func TestAnswerStoreDriverFaults(t *testing.T) {
 	s := AnswerStore{DB: faultAnswerDB(t, "query")}
 	if err := s.InvalidateHot(context.Background(), map[string]bool{"x": true}); err == nil {
 		t.Fatal("invalidate query")
+	}
+	s = AnswerStore{DB: faultAnswerDB(t, "invalidate-scan")}
+	if err := s.InvalidateHot(context.Background(), map[string]bool{"x": true}); err == nil {
+		t.Fatal("invalidate scan")
 	}
 }

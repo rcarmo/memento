@@ -159,3 +159,20 @@ Extend coverage to persistent HTTP sessions, auth-bound retries, notifications/c
 GTE/Needle gates require exact token IDs, model-file validation, layer/intermediate golden tests, finite/shape checks, model outputs and full routing/retrieval corpora. Floating-point tolerances must be explicit and agreed; no hidden re-quantisation or embedding-space mixing. SIMD remains disabled in these baseline tests.
 
 The final gate is the entire parity matrix plus conformance, fuzz/race/fault tests, resource limits, browser behaviour and state-preserving migration/rollback in disposable copies. Only a separately authorised deployment can replace production.
+
+
+## Configured intelligent service evidence
+
+The configured daemon now uses real handlers for `memory_answer`, `memory_route`,
+`memory_propose_freeform`, and `memory_propose_update`. Answer tests cover secret-policy
+abstention, disabled mode, exact-cache reuse, changed-concept hot synthesis, bounded hybrid
+search escalation, sensitive/namespace/temporal filters, supersession, depth-one graph closure,
+citation repair, traces, expiry/LRU/invalidation, and SQL faults. Proposal tests cover trusted
+identity, bounded authorised context, restricted provider routing, exact citations, ACL/path/secret/
+body/diff limits, reciprocal links, ordinary proposal persistence, and provider/parser failures.
+
+`make -C go audit` passes vet, pinned staticcheck, all tests, strict zero-uncovered statement
+coverage, govulncheck, race, all fuzz targets, SIMD checks, and Linux amd64/arm64 cross-builds.
+`make -C go release-check` passes reproducibility/layout/ELF/smoke checks. After `make
+install-dev`, the reference-tree `make check` passes Ruff, formatting, strict mypy, Python tests,
+graph checks, and Rust formatting/clippy/tests.

@@ -62,6 +62,31 @@ type noopSemanticClient struct{}
 func (noopSemanticClient) Embed(string) ([]float32, error)      { return nil, nil }
 func (noopSemanticClient) ModelInfo() derived.SemanticModelInfo { return derived.SemanticModelInfo{} }
 
+type sequenceAnswerIndex struct {
+	pages []derived.SearchPage
+	errs  []error
+	calls int
+	graph derived.GraphNeighborhood
+}
+
+func (i *sequenceAnswerIndex) SearchLexical(context.Context, access.EffectivePolicy, derived.SearchOptions) (derived.SearchPage, error) {
+	n := i.calls
+	i.calls++
+	if n < len(i.errs) && i.errs[n] != nil {
+		return derived.SearchPage{}, i.errs[n]
+	}
+	return i.pages[min(n, len(i.pages)-1)], nil
+}
+func (i *sequenceAnswerIndex) Graph(context.Context, access.EffectivePolicy, string, derived.GraphOptions) (derived.GraphNeighborhood, error) {
+	return i.graph, nil
+}
+
+type graphErrorIndex struct{ answerIndex }
+
+func (g *graphErrorIndex) Graph(context.Context, access.EffectivePolicy, string, derived.GraphOptions) (derived.GraphNeighborhood, error) {
+	return derived.GraphNeighborhood{}, errors.New("graph")
+}
+
 type answerIndex struct {
 	page       derived.SearchPage
 	graph      derived.GraphNeighborhood
@@ -118,6 +143,25 @@ func TestAnswerHelperBranches(t *testing.T) {
 	}
 	if hasTerm([]string{"one"}, "two") || !hasTerm([]string{"one"}, "two", "one") {
 		t.Fatal("hasTerm")
+	}
+}
+
+func TestAnswerCallDeepError(t *testing.T) {
+	jobs, _ := jobsTest(t)
+	policy := jobs.Identity.authorization.Principals["actor"]
+	policy.Roles = append(policy.Roles, "reader")
+	jobs.Identity.authorization.Principals["actor"] = policy
+	principal := jobs.Identity.names["actor"]
+	principal.Roles = append(principal.Roles, "reader")
+	jobs.Identity.names["actor"] = principal
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	e := AnswerEndpoint{Jobs: jobs, Client: &stubModelClient{}, Store: failingAnswers{}, Deep: deep}
+	server := umcp.NewServer("x")
+	_ = server.Tools.Register(umcp.Tool{Name: "a", Parameters: []umcp.Parameter{{Name: "question", Types: []umcp.ParamType{umcp.StringParam}}}, Call: e.Call})
+	response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"a","arguments":{"question":"q"}}}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response == nil {
+		t.Fatal(response, err)
 	}
 }
 
@@ -260,6 +304,28 @@ func TestAnswerCallHotEndToEnd(t *testing.T) {
 	}
 }
 
+func TestAnswerCallRepositoryAndDeepErrors(t *testing.T) {
+	jobs, _ := jobsTest(t)
+	policy := jobs.Identity.authorization.Principals["actor"]
+	policy.Roles = append(policy.Roles, "reader")
+	jobs.Identity.authorization.Principals["actor"] = policy
+	principal := jobs.Identity.names["actor"]
+	principal.Roles = append(principal.Roles, "reader")
+	jobs.Identity.names["actor"] = principal
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	e := AnswerEndpoint{Jobs: jobs, Client: &stubModelClient{}, Store: failingAnswers{}, Deep: deep}
+	server := umcp.NewServer("x")
+	_ = server.Tools.Register(umcp.Tool{Name: "a", Parameters: []umcp.Parameter{{Name: "question", Types: []umcp.ParamType{umcp.StringParam}}}, Call: e.Call})
+	bad := jobs.Controls.Queue.Paths
+	bad.BareDir = filepath.Join(t.TempDir(), "missing")
+	jobs.Controls.Queue.Paths = bad
+	response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"a","arguments":{"question":"q"}}}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response == nil {
+		t.Fatal(response, err)
+	}
+}
+
 func TestAnswerHotFailureBranches(t *testing.T) {
 	controls, _, revision := realApplyTest(t)
 	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}}
@@ -276,6 +342,16 @@ func TestAnswerHotFailureBranches(t *testing.T) {
 	if record, err := e.hot(context.Background(), controls, policy, "q", "q", "summary", "scope", ProfileQuestion("q"), revision); err != nil || record != nil {
 		t.Fatal(record, err)
 	}
+	if err := os.WriteFile(filepath.Join(controls.Queue.Paths.CurrentDir, "broken.md"), []byte("bad"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.PutHotChanged(context.Background(), "broken", []string{"12345678"}, 10); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := e.hot(context.Background(), controls, policy, "q", "q", "summary", "broken", ProfileQuestion("q"), revision); err == nil {
+		t.Fatal("bundle")
+	}
+	_ = os.Remove(filepath.Join(controls.Queue.Paths.CurrentDir, "broken.md"))
 	if err := store.PutHotChanged(context.Background(), "scope", []string{"missing"}, 10); err != nil {
 		t.Fatal(err)
 	}
@@ -292,6 +368,34 @@ func TestAnswerHotFailureBranches(t *testing.T) {
 				t.Fatal(name)
 			}
 		})
+	}
+}
+
+func TestAnswerDeepEscalationAndGraphLimits(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}}
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	e := AnswerEndpoint{Client: &stubModelClient{}, Deep: deep}
+	index := &sequenceAnswerIndex{pages: []derived.SearchPage{{RepoRevision: revision}}, errs: []error{nil, errors.New("second")}}
+	controls.Index = index
+	if _, err := e.deep(context.Background(), controls, policy, "q", "summary", "scope", ProfileQuestion("q")); err == nil {
+		t.Fatal("second search")
+	}
+	index = &sequenceAnswerIndex{pages: []derived.SearchPage{{RepoRevision: revision}, {RepoRevision: revision, Results: []derived.SearchResult{{Path: "/missing.md"}}}}}
+	controls.Index = index
+	if _, err := e.deep(context.Background(), controls, policy, "q", "summary", "scope", ProfileQuestion("q")); err == nil {
+		t.Fatal("second read")
+	}
+	deep.Limits.MaxConcepts = 1
+	deep.Limits.MaxSteps = 1
+	e.Deep = deep
+	index = &sequenceAnswerIndex{pages: []derived.SearchPage{{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}}}}, graph: derived.GraphNeighborhood{Outbound: []derived.GraphEdge{{ConceptID: "x", Path: "/missing.md"}}}}
+	controls.Index = index
+	e.Client = &stubModelClient{response: ModelResponse{OutputText: `{"answer":"a","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}
+	result, err := e.deep(context.Background(), controls, policy, "Which service is linked to target?", "summary", "scope", ProfileQuestion("Which service is linked to target?"))
+	if err != nil || len(result.ReadConcepts) != 1 || len(result.Steps) != 1 {
+		t.Fatal(result, err)
 	}
 }
 
@@ -361,6 +465,37 @@ func TestAnswerDeepModelAndAbstention(t *testing.T) {
 		t.Fatalf("abstention=%#v requests=%d", result, len(model.requests))
 	}
 }
+func TestAnswerDeepFilteringLimitsAndEscalation(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/b.md", "b", "B", "beta target")
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/c.md", "c", "C", "gamma target")
+	index := &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "skip-secret", Path: "/a.md", Tags: []string{"secret"}, Status: "active"}, {ConceptID: "skip-namespace", Path: "/a.md", Status: "active"}, {ConceptID: "skip-current", Path: "/a.md", Status: "deprecated"}, {ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}, {ConceptID: "b", Path: "/b.md", Title: "B", Status: "active"}, {ConceptID: "c", Path: "/c.md", Title: "C", Status: "active"}}}}
+	controls.Index = index
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	deep.Limits.MaxConcepts = 2
+	deep.Limits.MaxSteps = 1
+	model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"a","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}
+	e := AnswerEndpoint{Client: model, Deep: deep}
+	personal := "personal"
+	profile := QueryProfile{TemporalIntent: "current", NamespaceHint: &personal, Terms: []string{"target"}}
+	result, err := e.deep(context.Background(), controls, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, "recent target", "summary", "scope", profile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(result.ReadConcepts) != 0 || len(result.Steps) != 1 {
+		t.Fatalf("result=%#v", result)
+	}
+	profile.NamespaceHint = nil
+	result, err = e.deep(context.Background(), controls, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, "changed target", "summary", "scope", profile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(result.ReadConcepts) != 2 || !strings.Contains(model.requests[len(model.requests)-1].Prompt, "QUESTION: changed target") {
+		t.Fatalf("result=%#v", result)
+	}
+}
+
 func TestAnswerDeepSemanticAndGraphFiltering(t *testing.T) {
 	controls, _, revision := realApplyTest(t)
 	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/b.md", "neighbor", "Neighbour", "linked target")
@@ -396,6 +531,97 @@ func TestAnswerDeepSemanticAndGraphFiltering(t *testing.T) {
 	}
 }
 
+func TestAnswerDeepRemainingGraphBranches(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/b.md", "b", "B", "linked target")
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/c.md", "c", "C", "linked target")
+	index := &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}, {ConceptID: "b", Path: "/b.md", Title: "B", Status: "active"}, {ConceptID: "c", Path: "/c.md", Title: "C", Status: "active"}}}, graph: derived.GraphNeighborhood{Outbound: []derived.GraphEdge{{ConceptID: "12345678", Path: "/a.md"}, {ConceptID: "b", Path: "/b.md"}, {ConceptID: "c", Path: "/c.md"}}}}
+	controls.Index = index
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	deep.Limits.MaxConcepts = 2
+	deep.Limits.MaxSteps = 2
+	model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"a","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}
+	e := AnswerEndpoint{Client: model, Deep: deep}
+	profile := ProfileQuestion("Which service is linked to changed target?")
+	result, err := e.deep(context.Background(), controls, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, "Which service is linked to changed target?", "summary", "scope", profile)
+	if err != nil || len(result.ReadConcepts) != 2 || len(result.Steps) != 2 {
+		t.Fatal(result, err)
+	}
+	// Make b superseded by the anchor and verify non-historical graph filtering.
+	entry, _ := repository.ReadBundleEntry(controls.Queue.Paths.CurrentDir, "/a.md")
+	entry.Document.Frontmatter.Supersedes = []string{"b"}
+	raw, _ := repository.SerializeConcept(entry.Document)
+	_ = os.WriteFile(filepath.Join(controls.Queue.Paths.CurrentDir, "a.md"), []byte(raw), 0600)
+	deep.Limits.MaxConcepts = 3
+	e.Deep = deep
+	result, err = e.deep(context.Background(), controls, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, "Which service is linked to target?", "summary", "scope", ProfileQuestion("Which service is linked to target?"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, c := range result.ReadConcepts {
+		if c.ID == "b" {
+			t.Fatal("superseded b retained")
+		}
+	}
+}
+
+func TestAnswerDeepThreeAnchorsAndGraphError(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/b.md", "b", "B", "linked target")
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/c.md", "c", "C", "linked target")
+	page := derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}, {ConceptID: "b", Path: "/b.md", Title: "B", Status: "active"}, {ConceptID: "c", Path: "/c.md", Title: "C", Status: "active"}}}
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	deep.Limits.MaxConcepts = 5
+	model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"a","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}
+	e := AnswerEndpoint{Client: model, Deep: deep}
+	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}}
+	controls.Index = &answerIndex{page: page}
+	if _, err := e.deep(context.Background(), controls, policy, "Which service is linked to target?", "summary", "scope", ProfileQuestion("Which service is linked to target?")); err != nil {
+		t.Fatal(err)
+	}
+	controls.Index = &graphErrorIndex{answerIndex: answerIndex{page: page}}
+	if _, err := e.deep(context.Background(), controls, policy, "Which service is linked to target?", "summary", "scope", ProfileQuestion("Which service is linked to target?")); err == nil {
+		t.Fatal("graph")
+	}
+}
+
+func TestAnswerDeepGraphSeenAndCapacity(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/b.md", "b", "B", "linked target")
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/c.md", "c", "C", "linked target")
+	index := &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}}}, graph: derived.GraphNeighborhood{Outbound: []derived.GraphEdge{{ConceptID: "12345678", Path: "/a.md"}, {ConceptID: "b", Path: "/b.md"}, {ConceptID: "c", Path: "/c.md"}}}}
+	controls.Index = index
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	deep.Limits.MaxConcepts = 2
+	model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"b","citations":[{"id":"b","path":"/b.md","revision":"` + revision + `"}]}`}}
+	e := AnswerEndpoint{Client: model, Deep: deep}
+	result, err := e.deep(context.Background(), controls, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, "Which service is linked to target?", "summary", "scope", ProfileQuestion("Which service is linked to target?"))
+	if err != nil || len(result.ReadConcepts) != 2 {
+		t.Fatal(result, err)
+	}
+}
+
+func TestAnswerDeepGraphLoopBranches(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/b.md", "b", "B", "linked target")
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/c.md", "c", "C", "linked target")
+	index := &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}}}, graph: derived.GraphNeighborhood{Outbound: []derived.GraphEdge{{ConceptID: "12345678", Path: "/a.md"}, {ConceptID: "b", Path: "/b.md"}, {ConceptID: "c", Path: "/c.md"}}}}
+	controls.Index = index
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	deep.Limits.MaxConcepts = 2
+	deep.Limits.MaxSteps = 3
+	model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"b","citations":[{"id":"b","path":"/b.md","revision":"` + revision + `"}]}`}}
+	e := AnswerEndpoint{Client: model, Deep: deep}
+	result, err := e.deep(context.Background(), controls, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, "Which service is linked to target?", "summary", "scope", ProfileQuestion("Which service is linked to target?"))
+	if err != nil || len(result.ReadConcepts) != 2 || len(result.Steps) != 3 {
+		t.Fatal(result, err)
+	}
+}
+
 func TestAnswerDeepRelationalGraphClosure(t *testing.T) {
 	controls, _, revision := realApplyTest(t)
 	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/b.md", "neighbor", "Neighbour", "The neighbour is linked to the target")
@@ -425,6 +651,40 @@ func TestAnswerDeepRelationalGraphClosure(t *testing.T) {
 	evidence := result.Record.Evidence.(map[string]any)
 	if evidence["retrieval_strategy"] != "hybrid_top_5_to_10_relational_depth_1" {
 		t.Fatalf("evidence=%#v", evidence)
+	}
+}
+
+func TestAnswerHotIneligibleConcept(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	store, _ := answerStoreTest(t)
+	_ = store.PutHotChanged(context.Background(), "scope", []string{"12345678"}, 10)
+	hot := DefaultHotWorkingMemoryConfig()
+	e := AnswerEndpoint{Store: store, Hot: hot, Deep: DefaultDeepAnswersConfig(), Client: &stubModelClient{}}
+	profile := QueryProfile{TemporalIntent: "current"}
+	entry, _ := repository.ReadBundleEntry(controls.Queue.Paths.CurrentDir, "/a.md")
+	entry.Document.Frontmatter.Status = "deprecated"
+	raw, _ := repository.SerializeConcept(entry.Document)
+	_ = os.WriteFile(filepath.Join(controls.Queue.Paths.CurrentDir, "a.md"), []byte(raw), 0600)
+	record, err := e.hot(context.Background(), controls, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, "q", "q", "summary", "scope", profile, revision)
+	if err != nil || record != nil {
+		t.Fatal(record, err)
+	}
+}
+
+func TestAnswerHotDuplicateCapAndPromptBound(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	store, _ := answerStoreTest(t)
+	scope := "scope"
+	_ = store.PutHotChanged(context.Background(), scope, []string{"12345678", "12345678"}, 10)
+	hot := DefaultHotWorkingMemoryConfig()
+	hot.MaxChangedConcepts = 1
+	hot.MaxExcerptChars = 128
+	deep := DefaultDeepAnswersConfig()
+	model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"a","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}
+	e := AnswerEndpoint{Client: model, Store: store, Hot: hot, Deep: deep}
+	record, err := e.hot(context.Background(), controls, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, strings.Repeat("long ", 100), "q", "summary", scope, ProfileQuestion("q"), revision)
+	if err != nil || record == nil || len([]rune(model.requests[0].Prompt)) != 128 {
+		t.Fatal(record, err, len([]rune(model.requests[0].Prompt)))
 	}
 }
 
