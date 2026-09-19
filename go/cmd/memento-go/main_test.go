@@ -37,7 +37,11 @@ func TestRunSyntax(t *testing.T) {
 func TestRunServe(t *testing.T) {
 	oldLoad, oldBuild, oldRun := loadConfig, buildRuntime, runServer
 	t.Cleanup(func() { loadConfig, buildRuntime, runServer = oldLoad, oldBuild, oldRun })
-	loadConfig = func(string) (service.RuntimeConfig, error) { return service.RuntimeConfig{}, nil }
+	loadConfig = func(string) (service.RuntimeConfig, error) {
+		var c service.RuntimeConfig
+		c.MCP = service.MCPConfig{ToolSurface: "standard", MaxRequestBytes: 4194304, AllowedOrigins: []string{"https://b.example", " http://a.example "}, Execute: service.MCPExecuteConfig{MaxOperations: 1, MaxIntermediates: 1, MaxRecords: 1, MaxOutputBytes: 512, MaxTimeSeconds: 1}}
+		return c, nil
+	}
 	runtime, server := stubRuntime(t)
 	buildRuntime = func(context.Context, service.RuntimeConfig, service.ModelsOffRuntimeOptions) (*service.Runtime, *umcp.Server, error) {
 		return runtime, server, nil
@@ -47,11 +51,11 @@ func TestRunServe(t *testing.T) {
 		got = append([]string{}, args...)
 		return nil
 	}
-	if code := runContext(context.Background(), []string{"--config", "x", "serve"}, nil, io.Discard, io.Discard); code != 0 || strings.Join(got, " ") != "--http --host 127.0.0.1 --port 8000 --endpoint /mcp" {
+	if code := runContext(context.Background(), []string{"--config", "x", "serve"}, nil, io.Discard, io.Discard); code != 0 || strings.Join(got, " ") != "--http --host 127.0.0.1 --port 8000 --endpoint /mcp --max-request-bytes 4194304 --allowed-origin http://a.example --allowed-origin https://b.example" {
 		t.Fatal(code, got)
 	}
 	runtime, server = stubRuntime(t)
-	if code := runContext(context.Background(), []string{"--config", "x", "serve", "--tcp", "--port", "1"}, nil, io.Discard, io.Discard); code != 0 || strings.Join(got, " ") != "--tcp --port 1" {
+	if code := runContext(context.Background(), []string{"--config", "x", "serve", "--tcp", "--port", "1", "--max-request-bytes", "9", "--allowed-origin", "https://override"}, nil, io.Discard, io.Discard); code != 0 || strings.Join(got, " ") != "--tcp --port 1 --max-request-bytes 9 --allowed-origin https://override" {
 		t.Fatal(code, got)
 	}
 }

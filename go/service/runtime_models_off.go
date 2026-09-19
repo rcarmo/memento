@@ -138,7 +138,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	if err != nil {
 		return nil, nil, err
 	}
-	controls := &ProposalControls{Queue: ProposalQueue{Proposals: control.Proposals{DB: runtime.DB}, Paths: paths.Repository}, Random: rand.Reader, DerivedIndexPath: paths.DerivedDB, Staging: staging, MaxConceptBytes: 1 << 20, Index: index, DefaultSearchMode: "lexical", Metadata: metadata, DerivedUpdate: manager.DerivedUpdate}
+	controls := &ProposalControls{Queue: ProposalQueue{Proposals: control.Proposals{DB: runtime.DB}, Paths: paths.Repository}, Random: rand.Reader, DerivedIndexPath: paths.DerivedDB, Staging: staging, MaxConceptBytes: config.Limits.MaxConceptBytes, Index: index, DefaultSearchMode: "lexical", Metadata: metadata, DerivedUpdate: manager.DerivedUpdate}
 	jobs := &Jobs{Controls: controls, Identity: identity, DBPath: paths.ControlDB}
 	server = umcp.NewServer("memento")
 	if err = ops.register(jobs, server, options.Surface, options.Limits); err != nil {

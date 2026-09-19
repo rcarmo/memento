@@ -8,9 +8,9 @@ import (
 	"io"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
-	"github.com/rcarmo/memento/go/execute"
 	"github.com/rcarmo/memento/go/service"
 	"github.com/rcarmo/memento/go/umcp"
 )
@@ -24,6 +24,14 @@ var runServer = func(ctx context.Context, server *umcp.Server, args []string, in
 	return server.RunTransport(ctx, args, input, output, true, hooks)
 }
 
+func hasFlag(args []string, name string) bool {
+	for _, arg := range args {
+		if arg == name {
+			return true
+		}
+	}
+	return false
+}
 func usage(stderr io.Writer) {
 	fmt.Fprintln(stderr, "usage: memento-go --config PATH serve [uMCP transport options]")
 	fmt.Fprintln(stderr, "       memento-go version")
@@ -42,15 +50,23 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1
 	}
-	limits := execute.Limits{MaxOperations: 12, MaxIntermediates: 12, MaxRecords: 50, MaxOutputBytes: "65536", MaxTimeSeconds: 3}
-	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: "standard", Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig()})
+	limits := config.MCP.ExecuteLimits()
+	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: config.MCP.ToolSurface, Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig()})
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1
 	}
-	transportArgs := args[3:]
+	transportArgs := append([]string{}, args[3:]...)
 	if len(transportArgs) == 0 {
 		transportArgs = []string{"--http", "--host", "127.0.0.1", "--port", "8000", "--endpoint", "/mcp"}
+	}
+	if !hasFlag(transportArgs, "--max-request-bytes") {
+		transportArgs = append(transportArgs, "--max-request-bytes", strconv.FormatInt(config.MCP.MaxRequestBytes, 10))
+	}
+	if len(config.MCP.AllowedOrigins) > 0 && !hasFlag(transportArgs, "--allowed-origin") {
+		for _, origin := range config.MCP.NormalizedOrigins() {
+			transportArgs = append(transportArgs, "--allowed-origin", origin)
+		}
 	}
 	err = runServer(ctx, server, transportArgs, input, out, runtime.HTTPHooks)
 	if ctx.Err() != nil && errors.Is(err, ctx.Err()) {

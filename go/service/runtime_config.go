@@ -16,11 +16,16 @@ import (
 )
 
 type RuntimeConfig struct {
-	Repository struct {
-		RootPath string `json:"root_path"`
+	SchemaVersion int `json:"schema_version"`
+	Repository    struct {
+		RootPath   string `json:"root_path"`
+		BundleRoot string `json:"bundle_root"`
 	} `json:"repository"`
-	Authorization access.AuthorizationConfig `json:"authorization"`
-	Observability ObservabilityConfig        `json:"observability"`
+	Authorization    access.AuthorizationConfig `json:"authorization"`
+	Limits           LimitsConfig               `json:"limits"`
+	MCP              MCPConfig                  `json:"mcp"`
+	IntelligentTiers IntelligentTiersConfig     `json:"intelligent_tiers"`
+	Observability    ObservabilityConfig        `json:"observability"`
 }
 type RuntimePaths struct {
 	Root, ControlDB, DerivedDB, WriterLock string
@@ -34,7 +39,8 @@ func LoadRuntimeConfig(path string) (RuntimeConfig, error) {
 	}
 	decoder := json.NewDecoder(bytes.NewReader(raw))
 	decoder.DisallowUnknownFields()
-	config := RuntimeConfig{Observability: ObservabilityConfig{GraphExplorer: DefaultGraphExplorerConfig()}}
+	config := RuntimeConfig{SchemaVersion: 2, Limits: defaultLimitsConfig(), MCP: defaultMCPConfig(), Observability: ObservabilityConfig{GraphExplorer: DefaultGraphExplorerConfig()}}
+	config.Repository.BundleRoot = "/"
 	if err = decoder.Decode(&config); err != nil {
 		return RuntimeConfig{}, err
 	}
@@ -42,8 +48,23 @@ func LoadRuntimeConfig(path string) (RuntimeConfig, error) {
 	if decoder.Decode(&extra) != io.EOF {
 		return RuntimeConfig{}, errors.New("trailing JSON")
 	}
+	if config.SchemaVersion != 2 {
+		return RuntimeConfig{}, errors.New("schema_version must be 2")
+	}
 	if strings.TrimSpace(config.Repository.RootPath) == "" {
 		return RuntimeConfig{}, errors.New("repository.root_path must not be empty")
+	}
+	if config.Repository.BundleRoot != "/" {
+		return RuntimeConfig{}, errors.New("bundle_root must be '/'")
+	}
+	if config.Limits.MaxConceptBytes < 1 || config.Limits.MaxSearchResults < 1 {
+		return RuntimeConfig{}, errors.New("service limit out of range")
+	}
+	if err = config.MCP.Validate(); err != nil {
+		return RuntimeConfig{}, err
+	}
+	if err = config.IntelligentTiers.ValidateModelsOff(); err != nil {
+		return RuntimeConfig{}, err
 	}
 	if err = config.Observability.GraphExplorer.Validate(); err != nil {
 		return RuntimeConfig{}, err
