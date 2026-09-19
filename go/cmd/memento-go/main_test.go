@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 func stubRuntime(t *testing.T) (*service.Runtime, *umcp.Server) {
@@ -68,8 +69,9 @@ type failingWriter struct{}
 
 func (failingWriter) Write([]byte) (int, error) { return 0, errors.New("write") }
 func TestRunStatus(t *testing.T) {
-	oldLoad, oldBuild := loadConfig, buildRuntime
-	t.Cleanup(func() { loadConfig, buildRuntime = oldLoad, oldBuild })
+	oldLoad, oldBuild, oldNow := loadConfig, buildRuntime, now
+	t.Cleanup(func() { loadConfig, buildRuntime, now = oldLoad, oldBuild, oldNow })
+	now = func() time.Time { return time.Unix(123, 0) }
 	runtime, server := stubRuntime(t)
 	loadConfig = func(string) (service.RuntimeConfig, error) {
 		var c service.RuntimeConfig
@@ -96,10 +98,32 @@ func TestRunStatus(t *testing.T) {
 	runtime, server = stubRuntime(t)
 	out.Reset()
 	stderr.Reset()
+	if code := runContext(context.Background(), []string{"--config", "x", "status", "--format", "graphite"}, nil, &out, &stderr); code != 0 || out.String() == "" || !strings.Contains(out.String(), "memento.service_up 1 123") {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	runtime, server = stubRuntime(t)
+	out.Reset()
+	stderr.Reset()
+	if code := runContext(context.Background(), []string{"--config", "x", "status", "--format", "graphite", "--graphite-prefix", "services.memento"}, nil, &out, &stderr); code != 0 || !strings.Contains(out.String(), "services.memento.proposal_backlog") {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	runtime, server = stubRuntime(t)
+	out.Reset()
+	stderr.Reset()
 	if code := runContext(context.Background(), []string{"--config", "x", "status", "--format", "json"}, nil, &out, &stderr); code != 0 || !json.Valid(out.Bytes()) {
 		t.Fatal(code, out.String(), stderr.String())
 	}
 	if code := runContext(context.Background(), []string{"--config", "x", "status", "--format", "bad"}, nil, io.Discard, &stderr); code != 2 {
+		t.Fatal(code)
+	}
+	runtime, server = stubRuntime(t)
+	stderr.Reset()
+	if code := runContext(context.Background(), []string{"--config", "x", "status", "--format", "graphite"}, nil, failingWriter{}, &stderr); code != 1 || !strings.Contains(stderr.String(), "write") {
+		t.Fatal(code, stderr.String())
+	}
+	runtime, server = stubRuntime(t)
+	stderr.Reset()
+	if code := runContext(context.Background(), []string{"--config", "x", "status", "--format", "graphite", "--graphite-prefix", "bad prefix"}, nil, io.Discard, &stderr); code != 1 {
 		t.Fatal(code)
 	}
 	runtime, server = stubRuntime(t)

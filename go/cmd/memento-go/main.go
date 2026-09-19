@@ -22,6 +22,7 @@ var version = "memento-go development (compatibility baseline: 0.5.9; models-off
 var exit = os.Exit
 var loadConfig = service.LoadRuntimeConfig
 var buildRuntime = service.BuildModelsOffRuntime
+var now = time.Now
 var runServer = func(ctx context.Context, server *umcp.Server, args []string, input io.Reader, output io.Writer, hooks umcp.HTTPHooks) error {
 	return server.RunTransport(ctx, args, input, output, true, hooks)
 }
@@ -36,7 +37,7 @@ func hasFlag(args []string, name string) bool {
 }
 func usage(stderr io.Writer) {
 	fmt.Fprintln(stderr, "usage: memento-go --config PATH serve [uMCP transport options]")
-	fmt.Fprintln(stderr, "       memento-go --config PATH status [--format json|prometheus]\n       memento-go --config PATH rebuild-index|audit [--path PATH]")
+	fmt.Fprintln(stderr, "       memento-go --config PATH status [--format json|prometheus|graphite] [--graphite-prefix PREFIX]\n       memento-go --config PATH rebuild-index|audit [--path PATH]")
 	fmt.Fprintln(stderr, "       memento-go --config PATH backup --output DIR")
 	fmt.Fprintln(stderr, "       memento-go --config PATH rotate-master-key")
 	fmt.Fprintln(stderr, "       memento-go --config PATH dream [--mode disabled|report_only|propose]")
@@ -48,7 +49,7 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(out, version)
 		return 0
 	}
-	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status" && args[2] != "rebuild-index" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key" && args[2] != "dream") || (args[2] != "serve" && args[2] != "status" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key" && args[2] != "dream" && len(args) != 3) || (args[2] == "status" && len(args) != 3 && !(len(args) == 5 && args[3] == "--format" && (args[4] == "json" || args[4] == "prometheus"))) || (args[2] == "audit" && len(args) != 3 && !(len(args) == 5 && args[3] == "--path" && args[4] != "")) || (args[2] == "backup" && !(len(args) == 5 && args[3] == "--output" && args[4] != "")) || (args[2] == "dream" && len(args) != 3 && !(len(args) == 5 && args[3] == "--mode" && (args[4] == "disabled" || args[4] == "report_only" || args[4] == "propose"))) || (args[2] == "restore" && !(len(args) == 5 && args[3] == "--input" && args[4] != "" || len(args) == 6 && args[3] == "--input" && args[4] != "" && args[5] == "--no-rebuild-derived")) {
+	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status" && args[2] != "rebuild-index" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key" && args[2] != "dream") || (args[2] != "serve" && args[2] != "status" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key" && args[2] != "dream" && len(args) != 3) || (args[2] == "status" && len(args) != 3 && !(len(args) == 5 && args[3] == "--format" && (args[4] == "json" || args[4] == "prometheus" || args[4] == "graphite") || len(args) == 7 && args[3] == "--format" && args[4] == "graphite" && args[5] == "--graphite-prefix" && args[6] != "")) || (args[2] == "audit" && len(args) != 3 && !(len(args) == 5 && args[3] == "--path" && args[4] != "")) || (args[2] == "backup" && !(len(args) == 5 && args[3] == "--output" && args[4] != "")) || (args[2] == "dream" && len(args) != 3 && !(len(args) == 5 && args[3] == "--mode" && (args[4] == "disabled" || args[4] == "report_only" || args[4] == "propose"))) || (args[2] == "restore" && !(len(args) == 5 && args[3] == "--input" && args[4] != "" || len(args) == 6 && args[3] == "--input" && args[4] != "" && args[5] == "--no-rebuild-derived")) {
 		usage(stderr)
 		return 2
 	}
@@ -146,14 +147,24 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 			if len(args) == 5 {
 				mode = args[4]
 			}
-			payload, statusErr = runtime.RunDream(ctx, mode, time.Now())
+			payload, statusErr = runtime.RunDream(ctx, mode, now())
 		case "backup":
 			manifest, e := runtime.CreateBackup(ctx, args[4])
 			statusErr = e
 			payload = map[string]any{"schema_version": manifest.SchemaVersion, "repo_revision": manifest.RepoRevision, "files": manifest.Files}
 		}
 		closeErr := runtime.Close(context.Background())
-		if statusErr == nil && args[2] == "status" && len(args) == 5 && args[4] == "prometheus" {
+		if statusErr == nil && args[2] == "status" && len(args) >= 5 && args[4] == "graphite" {
+			prefix := "memento"
+			if len(args) == 7 {
+				prefix = args[6]
+			}
+			var text string
+			text, statusErr = service.RenderGraphiteStatus(payload, prefix, now())
+			if statusErr == nil {
+				_, statusErr = io.WriteString(out, text)
+			}
+		} else if statusErr == nil && args[2] == "status" && len(args) == 5 && args[4] == "prometheus" {
 			var text string
 			text, statusErr = service.RenderPrometheusStatus(payload)
 			if statusErr == nil {

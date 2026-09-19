@@ -3,6 +3,7 @@ package service
 import (
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestRenderPrometheusStatus(t *testing.T) {
@@ -22,6 +23,25 @@ func TestRenderPrometheusStatus(t *testing.T) {
 		t.Fatal(text, err)
 	}
 }
+func TestRenderGraphiteStatus(t *testing.T) {
+	status := map[string]any{"repo_revision": "r", "index_revision": "i", "index_stale": true, "visible_concepts": 2, "proposal_backlog": 3, "closed": false}
+	text, err := RenderGraphiteStatus(status, "services.memento", time.Unix(123, 999))
+	expected := "services.memento.service_up 1 123\nservices.memento.control_db_open 1 123\nservices.memento.index_stale 1 123\nservices.memento.visible_concepts 2 123\nservices.memento.proposal_backlog 3 123\n"
+	if err != nil || text != expected {
+		t.Fatal(text, err)
+	}
+	status["closed"] = true
+	status["index_stale"] = false
+	text, err = RenderGraphiteStatus(status, "memento", time.Unix(1, 0))
+	if err != nil || !strings.Contains(text, "control_db_open 0 1") || !strings.Contains(text, "index_stale 0 1") {
+		t.Fatal(text, err)
+	}
+	for _, prefix := range []string{"", "bad prefix", ".bad", "bad.", "bad..path"} {
+		if _, err := RenderGraphiteStatus(status, prefix, time.Time{}); err == nil {
+			t.Fatal(prefix)
+		}
+	}
+}
 func TestRenderPrometheusStatusFailures(t *testing.T) {
 	base := map[string]any{"repo_revision": "r", "index_revision": "i", "index_stale": false, "visible_concepts": 1, "proposal_backlog": 2, "closed": false}
 	for _, key := range []string{"repo_revision", "index_revision", "index_stale", "visible_concepts", "proposal_backlog", "closed"} {
@@ -32,6 +52,9 @@ func TestRenderPrometheusStatusFailures(t *testing.T) {
 		delete(copy, key)
 		if _, err := RenderPrometheusStatus(copy); err == nil {
 			t.Fatal(key)
+		}
+		if _, err := RenderGraphiteStatus(copy, "memento", time.Unix(1, 0)); err == nil {
+			t.Fatal("graphite", key)
 		}
 	}
 }
