@@ -6,7 +6,7 @@ The port is not yet the default Memento daemon. [`../docs/go-port/parity.md`](..
 
 ## Commands
 
-* `cmd/memento-go` is the service command. Its operational daemon wiring is still in progress.
+* `cmd/memento-go` runs the models-off service daemon over uMCP transports. Enabled intelligent tiers and non-serve operational commands remain in progress.
 * `cmd/memento-embed-go` exposes scalar GTE inference through Memento's framed embedding-worker protocol.
 
 Command packages contain process concerns only. Reusable code belongs in library packages.

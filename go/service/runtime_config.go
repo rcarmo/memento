@@ -60,6 +60,10 @@ func LoadRuntimeConfig(path string) (RuntimeConfig, error) {
 	if config.Limits.MaxConceptBytes < 1 || config.Limits.MaxSearchResults < 1 {
 		return RuntimeConfig{}, errors.New("service limit out of range")
 	}
+	config.Authorization, err = access.ValidateConfig(config.Authorization)
+	if err != nil {
+		return RuntimeConfig{}, err
+	}
 	if err = config.MCP.Validate(); err != nil {
 		return RuntimeConfig{}, err
 	}

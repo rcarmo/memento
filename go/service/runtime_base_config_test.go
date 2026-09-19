@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -105,5 +106,16 @@ func TestFullModelsOffConfig(t *testing.T) {
 	}
 	if config.SchemaVersion != 2 || config.Repository.BundleRoot != "/" || config.Limits.MaxConceptBytes != 123 || config.MCP.ToolSurface != "admin" {
 		t.Fatal(config)
+	}
+	valid := strings.Replace(raw, `"principals":{}`, `"principals":{"a":{"roles":["reader","reader"],"token_env":" TOKEN ","read_prefixes":["/","/"],"write_prefixes":[]}}`, 1)
+	_ = os.WriteFile(path, []byte(valid), 0600)
+	config, err = LoadRuntimeConfig(path)
+	if err != nil || config.Authorization.Principals["a"].TokenEnv != "TOKEN" || len(config.Authorization.Principals["a"].Roles) != 1 {
+		t.Fatal(config, err)
+	}
+	invalid := strings.Replace(raw, `"principals":{}`, `"principals":{"a":{"roles":[],"token_env":"TOKEN","read_prefixes":["/"],"write_prefixes":[]}}`, 1)
+	_ = os.WriteFile(path, []byte(invalid), 0600)
+	if _, err = LoadRuntimeConfig(path); err == nil {
+		t.Fatal("authorization")
 	}
 }
