@@ -7,6 +7,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"database/sql"
 	"github.com/rcarmo/memento/go/access"
@@ -31,26 +32,27 @@ type ModelsOffRuntimeOptions struct {
 	Semantic       SemanticSearchConfig
 }
 type modelsOffBuildOps struct {
-	storage             func(context.Context, RuntimeConfig, string) (*Runtime, error)
-	revision            func(repository.GitRepositoryPaths) (string, error)
-	state               func(context.Context, *derived.Index) (derived.IndexState, error)
-	rebuild             func(context.Context, *derived.Index, string, string) error
-	expire              func(context.Context, *assets.StagingStore) (int64, error)
-	recover             func(context.Context, *repository.TransactionManager) ([]repository.RecoveryRecord, error)
-	metadata            func(string) (*ModelsOffMetadata, error)
-	register            func(*Jobs, *umcp.Server, string, execute.Limits) error
-	openAccess          func(context.Context, *sql.DB, string) (*access.Store, error)
-	bootstrapAccess     func(context.Context, *access.Store, []access.ConfiguredPrincipal, map[string]string) error
-	lookupEnv           func(string) (string, bool)
-	registerAccess      func(*Jobs, *umcp.Server) error
-	loadNeedleModel     func(string) (*needle.Model, error)
-	loadNeedleTokenizer func(string) (*needle.Tokenizer, error)
-	newNeedleRouter     func(*needle.Model) (*needle.Router, error)
-	buildRoute          func(NeedleRouterConfig) (RouteInference, *needle.Tokenizer, error)
-	registerRoute       func(*Jobs, *umcp.Server, string, execute.Limits, RouteInference, *needle.Tokenizer) error
-	loadSemantic        func(string, string, int, int, int) (*GTESemanticClient, error)
-	buildSemantic       func(SemanticSearchConfig) (derived.SemanticClient, error)
-	newSemanticWorker   func(derived.SemanticRefreshIndex, derived.SemanticClient, derived.SemanticRefreshConfig) *derived.SemanticWorker
+	storage              func(context.Context, RuntimeConfig, string) (*Runtime, error)
+	revision             func(repository.GitRepositoryPaths) (string, error)
+	state                func(context.Context, *derived.Index) (derived.IndexState, error)
+	rebuild              func(context.Context, *derived.Index, string, string) error
+	expire               func(context.Context, *assets.StagingStore) (int64, error)
+	recover              func(context.Context, *repository.TransactionManager) ([]repository.RecoveryRecord, error)
+	metadata             func(string) (*ModelsOffMetadata, error)
+	register             func(*Jobs, *umcp.Server, string, execute.Limits) error
+	openAccess           func(context.Context, *sql.DB, string) (*access.Store, error)
+	bootstrapAccess      func(context.Context, *access.Store, []access.ConfiguredPrincipal, map[string]string) error
+	lookupEnv            func(string) (string, bool)
+	registerAccess       func(*Jobs, *umcp.Server) error
+	loadNeedleModel      func(string) (*needle.Model, error)
+	loadNeedleTokenizer  func(string) (*needle.Tokenizer, error)
+	newNeedleRouter      func(*needle.Model) (*needle.Router, error)
+	buildRoute           func(NeedleRouterConfig) (RouteInference, *needle.Tokenizer, error)
+	registerRoute        func(*Jobs, *umcp.Server, string, execute.Limits, RouteInference, *needle.Tokenizer) error
+	loadSemantic         func(string, string, int, int, int) (*GTESemanticClient, error)
+	buildSemantic        func(SemanticSearchConfig) (derived.SemanticClient, error)
+	newSemanticWorker    func(derived.SemanticRefreshIndex, derived.SemanticClient, derived.SemanticRefreshConfig) *derived.SemanticWorker
+	newProgressiveWorker func(derived.SemanticRefreshIndex, derived.SemanticClient, derived.SemanticRefreshConfig, derived.SemanticWorkerPolicy, func() time.Duration, func() *float64, func() time.Time) *derived.SemanticWorker
 }
 
 func defaultModelsOffBuildOps() modelsOffBuildOps {
@@ -66,7 +68,7 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 		catalog, _ := NewCatalog(CatalogConfig{Surface: surface, RouteEnabled: true})
 		endpoint, _ := NewExecuteEndpoint(j, catalog, limits)
 		return (RouteEndpoint{Jobs: j, Router: inference, Tokenizer: tokenizer, Execute: endpoint}).Register(s)
-	}, LoadGTESemanticClient, nil, derived.NewSemanticWorker}
+	}, LoadGTESemanticClient, nil, derived.NewSemanticWorker, derived.NewProgressiveSemanticWorker}
 }
 func semanticRefreshNeeded(repo, embedding string) bool { return repo != embedding }
 func BuildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options ModelsOffRuntimeOptions) (*Runtime, *umcp.Server, error) {
@@ -147,7 +149,8 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		managedIdentity = managed
 		graphManaged = managed
 	}
-	identity, err := NewIdentity(tokens, config.Authorization, managedIdentity, nil)
+	activity := NewActivityClock(nil)
+	identity, err := NewIdentity(tokens, config.Authorization, managedIdentity, activity.Touch)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -177,7 +180,14 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		controls.SemanticClient = client
 		controls.SemanticMaxCandidates = options.Semantic.MaxCandidates
 		controls.DefaultSearchMode = options.Semantic.DefaultSearchMode
-		options.SemanticWorker = ops.newSemanticWorker(index, client, derived.SemanticRefreshConfig{ModelID: options.Semantic.ModelID, Dimensions: options.Semantic.Dimensions, MaxInputChars: options.Semantic.MaxInputChars, MaxBatch: options.Semantic.MaxBatchSize})
+		refreshConfig := derived.SemanticRefreshConfig{ModelID: options.Semantic.ModelID, Dimensions: options.Semantic.Dimensions, MaxInputChars: options.Semantic.MaxInputChars, MaxBatch: options.Semantic.MaxBatchSize}
+		if options.Semantic.ProgressiveEnabled {
+			sampler := NewCPUSampler()
+			policy := derived.SemanticWorkerPolicy{Enabled: true, StartupDelay: time.Duration(options.Semantic.ProgressiveStartupDelaySeconds * float64(time.Second)), InteractiveIdle: time.Duration(options.Semantic.ProgressiveInteractiveIdleSeconds * float64(time.Second)), Delay: time.Duration(options.Semantic.ProgressiveDelaySeconds * float64(time.Second)), CPUBusyLimit: options.Semantic.ProgressiveCPUBusyLimitPercent}
+			options.SemanticWorker = ops.newProgressiveWorker(index, client, refreshConfig, policy, activity.Idle, sampler.Sample, time.Now)
+		} else {
+			options.SemanticWorker = ops.newSemanticWorker(index, client, refreshConfig)
+		}
 		if options.Semantic.RefreshOnStartup {
 			state, _ := index.State(ctx)
 			embeddingRevision, _ := index.EmbeddingRevision(ctx)

@@ -32,6 +32,29 @@ func TestSemanticPathRequired(t *testing.T) {
 		t.Fatal(runtime, server, err)
 	}
 }
+func TestBuildProgressiveSemanticRuntime(t *testing.T) {
+	ctx := context.Background()
+	var config RuntimeConfig
+	config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
+	semantic := DefaultSemanticSearchConfig()
+	semantic.Enabled = true
+	semantic.ProgressiveEnabled = true
+	model := "/model"
+	semantic.ModelPath = &model
+	options := ModelsOffRuntimeOptions{Surface: "standard", Tokens: []BearerPrincipal{}, Semantic: semantic}
+	ops := defaultModelsOffBuildOps()
+	ops.buildSemantic = func(SemanticSearchConfig) (derived.SemanticClient, error) { return runtimeSemanticClient{}, nil }
+	called := false
+	ops.newProgressiveWorker = func(index derived.SemanticRefreshIndex, client derived.SemanticClient, config derived.SemanticRefreshConfig, policy derived.SemanticWorkerPolicy, idle func() time.Duration, cpu func() *float64, now func() time.Time) *derived.SemanticWorker {
+		called = policy.Enabled && idle != nil && cpu != nil && now != nil
+		return derived.NewSemanticWorker(index, client, config)
+	}
+	runtime, _, err := buildModelsOffRuntime(ctx, config, options, ops)
+	if err != nil || !called {
+		t.Fatal(runtime, called, err)
+	}
+	_ = runtime.Close(ctx)
+}
 func TestBuildSemanticEnabledRuntime(t *testing.T) {
 	ctx := context.Background()
 	var config RuntimeConfig
