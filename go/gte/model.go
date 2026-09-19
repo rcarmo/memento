@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sync"
 	"unicode/utf8"
 
 	msimd "github.com/rcarmo/memento/go/internal/simd"
@@ -36,6 +37,7 @@ type Model struct {
 	layers                                               []layer
 	pooler, poolerBias                                   []float32 // Present in the format, unused by mean pooling.
 	simd                                                 *msimd.Engine
+	workspaces, tokenBuffers                             sync.Pool
 }
 
 // Config returns a copy, preventing callers from invalidating tensor dimensions.

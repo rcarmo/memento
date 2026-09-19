@@ -102,9 +102,9 @@ Control database migrations reject unknown schema versions. Model changes mark i
 Stop the service, select a known-good backup, and run:
 
 ```bash
-memento-serve --config CONFIG restore --input BACKUP_DIR
-memento-serve --config CONFIG audit
-memento-serve --config CONFIG status
+memento-go --config CONFIG restore --input BACKUP_DIR
+memento-go --config CONFIG audit
+memento-go --config CONFIG status
 ```
 
 Restore verifies checksums, restores the bare repository and control database together, materialises the checkout, and rebuilds `derived.sqlite` unless `--no-rebuild-derived` is given. Preserve a compatible derived backup when minimizing post-restore embedding work matters. Keep the service stopped until audit and status checks finish.

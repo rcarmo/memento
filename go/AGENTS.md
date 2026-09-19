@@ -1,6 +1,6 @@
 # Pure-Go port
 
-This subtree is the verified end-to-end pure-Go replacement candidate. Production rollout remains separately authorised; the repository-level `AGENTS.md` still applies.
+This subtree is the verified end-to-end pure-Go `v1.0.0` replacement. Production rollout remains separately authorised; the repository-level `AGENTS.md` still applies.
 
 ## Runtime and parity boundaries
 
@@ -9,7 +9,7 @@ This subtree is the verified end-to-end pure-Go replacement candidate. Productio
 * Preserve observable Python/uMCP behaviour, ordering, diagnostics and security boundaries. Do not silently reinterpret reference behaviour while porting.
 * Keep `go/umcp` generic. Memento identity, policy, persistence, execution and managed access belong in service packages and use public uMCP APIs.
 * Scalar float32 inference remains the correctness oracle. SIMD changes require scalar differential tests, real-model gates and architecture-specific measurements; quantisation, GPU work and fast-math remain separate projects.
-* Python and Rust are pinned fixture oracles only. Go tests and builds consume checked-in synthetic/public fixtures without requiring either runtime.
+* Historical Python and Rust results survive only as checked-in parity fixtures/evidence. Go tests and builds consume those fixtures without either runtime.
 
 ## Go design rules
 
@@ -30,7 +30,7 @@ This subtree is the verified end-to-end pure-Go replacement candidate. Productio
 * Every implemented statement must be covered. Zero uncovered statements is necessary, not sufficient: include explicit error and concurrency assertions.
 * Add or extend fuzz targets for parsers, framing, coercion, path handling and persisted untrusted data. `make fuzz` discovers every `func Fuzz*` target automatically; new targets must not require Makefile edits.
 * Keep tests offline and repeatable. Model-dependent tests use digest-pinned public fixtures through `make model-test` or `make corpus-test`.
-* Do not change compatibility fixtures by hand. Regenerate them through `make oracle` and review the diff.
+* Do not change compatibility fixtures by hand. Regeneration belongs on the historical reference branch; review any imported fixture update separately.
 * Runtime code must cross-build for Linux amd64 and arm64. The race detector may use CGo in its test toolchain; shipped binaries may not.
 
 ## Make workflow
@@ -42,7 +42,7 @@ make -C go help        # list supported targets
 make -C go format      # apply gofmt
 make -C go quality     # format/layout, vet, staticcheck, tests, coverage, build
 make -C go audit-fast  # quality plus govulncheck
-make -C go audit       # audit-fast plus race, fuzz and cross-builds
+make -C go audit       # audit-fast plus race, fuzz, allocation budgets and cross-builds
 ```
 
 Pinned analysis tools install under `build/go/tools` through `make -C go tools`; do not commit tool binaries. `staticcheck.conf` excludes only ST1005 because uMCP-compatible error strings retain Python capitalisation.
@@ -59,4 +59,4 @@ make -C go cross
 git diff --check
 ```
 
-For a repository-wide audit or release candidate, run `make -C go audit`. Work only in `/workspace/projects/memento-go` on branch `go`; the separate Vulkan worktree has independent changes.
+For a repository-wide audit or release candidate, run `make -C go audit` and the root container contract. Work only in `/workspace/projects/memento-go` on branch `go`. NAS remains CPU-only.

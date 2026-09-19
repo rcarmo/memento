@@ -63,5 +63,5 @@ The end-to-end pure-Go replacement on branch `go` is complete and verified. [Por
 * Revision playback and animated graph diffs
 * Split comparison between relationship/force configurations
 * Standalone interactive graph export
-* Requalify the retained NAS Bookworm Vulkan recipe in Go as a separate backend: pin/snapshot Mesa 22.3.6 + loader/libdrm, preserve `/dev/dri/renderD128` and render-group mapping, and measure warm parity plus full-service memory before changing the CPU default
-* Evaluate the Mali-G720-Immortalis Vulkan path on `orangepi6plus.local` separately from the accepted CPU baseline
+* Keep the NAS CPU-only, including the Go replacement; retain the Mesa 22 results as reference and do not package, enable or retest NAS Vulkan without an explicit reversal
+* Evaluate the Mali-G720-Immortalis Vulkan path on `orangepi6plus.local` separately from the accepted CPU baseline if separately authorised

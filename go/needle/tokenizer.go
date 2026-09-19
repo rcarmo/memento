@@ -38,7 +38,7 @@ func LoadTokenizer(path string) (*Tokenizer, error) {
 }
 
 // VocabSize returns the number of SentencePiece pieces.
-func (t *Tokenizer) VocabSize() int { return len(t.processor.Pieces()) }
+func (t *Tokenizer) VocabSize() int { return t.processor.VocabSize() }
 
 // Decode preserves SentencePiece byte-run and control token handling.
 func (t *Tokenizer) Decode(ids []int) (string, error) {
@@ -50,14 +50,7 @@ func (t *Tokenizer) Decode(ids []int) (string, error) {
 }
 
 // TokenToID performs the reference's first-matching-piece lookup.
-func (t *Tokenizer) TokenToID(text string) (int, bool) {
-	for id, p := range t.processor.Pieces() {
-		if p.Text == text {
-			return id, true
-		}
-	}
-	return 0, false
-}
+func (t *Tokenizer) TokenToID(text string) (int, bool) { return t.processor.TokenID(text) }
 
 // TokenString returns the string fragment used by Needle's constrained decoder.
 func (t *Tokenizer) TokenString(id int) string {

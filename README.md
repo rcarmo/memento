@@ -57,7 +57,7 @@ GTE-small can add semantic ranking when different wording describes the same sub
 
 A fine-tuned 26M-parameter [Needle][needle] model can route a small set of natural-language read requests. It emits a candidate action that Memento validates before running. When configured, `memory_answer` assembles a versioned, authorisation-scoped evidence set before asking a model for a cited answer. Secret intent abstains before cache lookup, retrieval, repository reads, graph access or model invocation. Other optional model slots can draft proposals and maintenance suggestions; deployments without a configured provider keep the answer tool disabled.
 
-Model setup and measurements live in [`docs/semantic-search.md`](docs/semantic-search.md), [`docs/needle-fine-tuning.md`](docs/needle-fine-tuning.md) and [`docs/needle-performance.md`](docs/needle-performance.md).
+Model setup and search behaviour are documented in [`docs/semantic-search.md`](docs/semantic-search.md); retained Needle training and performance results live under [`docs/evidence/needle/`](docs/evidence/needle/).
 
 ## Assets And Skills
 
@@ -79,21 +79,16 @@ The debugger is disabled by default and unauthenticated when enabled. It is mean
 
 Memento supports Python 3.12-3.14 and ships as a non-root multi-architecture container. Start with [`examples/config.v1.json`](examples/config.v1.json), set `MEMENTO_ADMIN_MASTER_KEY`, then use [`docs/operations.md`](docs/operations.md) for deployment, health checks, backup and recovery. [`docs/access-management.md`](docs/access-management.md) covers the dedicated admin/curator profile split, Piclaw and Pi MCP configuration, `/admin`, direct MCP access tools, one-time credentials and explicit container master-key rotation.
 
-For development of the released Python/Rust line:
-
-```bash
-make install-dev
-make check
-```
-
-The completed pure-Go candidate lives under `go/` and builds three static binaries:
+The `go` branch prepares the pure-Go `v1.0.0` replacement for `ghcr.io/rcarmo/memento`. It builds static amd64-v1 and arm64 binaries and a non-root distroless image:
 
 ```bash
 make -C go audit
-make -C go release-check
+make -C go release-check VERSION=1.0.0
+python3 tools/prepare_runtime_models.py
+make go-container-contract MEMENTO_VERSION=1.0.0
 ```
 
-`memento-go` is the daemon and maintenance CLI, `memento-embed-go` is the framed GTE worker, and `memento-skill-import-go` installs recalled skill packs. The [Go-port index](docs/go-port/README.md) records compatibility boundaries and model/SIMD results. Production replacement is a separate operator decision; tagged Python/Rust images continue to be published at `ghcr.io/rcarmo/memento` until that switch is made.
+`memento-go` is the native daemon and maintenance CLI, `memento-embed-go` is the framed GTE worker, and `memento-skill-import-go` installs recalled skill packs. The image preserves the existing `/etc/memento/config.json`, `/var/lib/memento`, `/models`, port 8000, `/mcp`, graph/admin routes, authentication and response contracts. Existing repository and SQLite formats are opened directly and remain readable by the previous `0.5.9` image for rollback. Python/Rust executables and libraries are not retained as runtime compatibility shims.
 
 The DiskStation profile and its J3455 baseline constraints are in [`docs/diskstation.md`](docs/diskstation.md).
 

@@ -1,8 +1,6 @@
 GO ?= go
 GOTOOLCHAIN ?= go1.26.6
 export GOTOOLCHAIN
-ORACLE_PYTHON ?= python3
-UMCP_REFERENCE ?=
 TOOLS_DIR ?= ../build/go/tools
 STATICCHECK_VERSION ?= v0.6.1
 GOVULNCHECK_VERSION ?= v1.1.4
@@ -12,9 +10,9 @@ PREFIX ?= /usr/local
 DESTDIR ?=
 VERSION ?= development
 
-.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check build race cross release release-check install oracle coverage fuzz model-test simd-test corpus-test
+.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check build race cross release release-check install coverage fuzz performance model-test simd-test corpus-test clean
 help:
-	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz and cross-build gates' 'tools       install pinned static-analysis tools under ../build/go/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck (correctness, style, simplification, unused)' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install both host binaries under DESTDIR/PREFIX/bin'
+	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz, performance-allocation and cross-build gates' 'tools       install pinned static-analysis tools under ../build/go/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck (correctness, style, simplification, unused)' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install all three host binaries under DESTDIR/PREFIX/bin'
 tools: $(STATICCHECK) $(GOVULNCHECK)
 $(STATICCHECK):
 	@mkdir -p $(TOOLS_DIR)
@@ -25,7 +23,7 @@ $(GOVULNCHECK):
 check: quality
 quality: format-check layout-check vet lint test coverage umcp-check build
 audit-fast: quality vuln
-audit: audit-fast race fuzz cross
+audit: audit-fast race fuzz performance cross
 format:
 	gofmt -w $$(find . -name '*.go' -not -path './vendor/*')
 format-check:
@@ -53,6 +51,8 @@ coverage:
 fuzz:
 	GO="$(GO)" FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}" ./tools/run-fuzz.sh
 	$(MAKE) -C umcp fuzz FUZZ_TIME="$${UMCP_FUZZ_TIME:-10s}"
+performance:
+	./tools/check-performance.sh
 
 model-test:
 	@test -n "$(GTE_MODEL_PATH)" || (echo 'Set GTE_MODEL_PATH to the digest-pinned public GTE1 model'; exit 1)
@@ -91,11 +91,5 @@ cross: simd-test
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-embed-go-linux-arm64 ./cmd/memento-embed-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-skill-import-go-linux-amd64 ./cmd/memento-skill-import-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-skill-import-go-linux-arm64 ./cmd/memento-skill-import-go
-oracle:
-	@test -n "$(UMCP_REFERENCE)" || (echo 'Set UMCP_REFERENCE to the pinned uMCP checkout'; exit 1)
-	$(ORACLE_PYTHON) oracle/export.py --umcp "$(UMCP_REFERENCE)"
-	CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --quiet --manifest-path oracle/rust-vector/Cargo.toml > testdata/parity/vectors.json
-	CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --quiet --manifest-path oracle/rust-gte/Cargo.toml -- tokenizer > testdata/parity/gte-tokenizer.json
-	CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --quiet --manifest-path oracle/rust-gte/Cargo.toml -- inference > testdata/parity/gte-inference.json
-	CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --quiet --manifest-path oracle/rust-gte/Cargo.toml -- protocol > testdata/parity/embedding-protocol.json
-	CARGO_TARGET_DIR=../build/go/oracle-target cargo run --locked --quiet --manifest-path oracle/rust-needle/Cargo.toml -- synthetic-tokenizers > testdata/parity/sentencepiece.json
+clean:
+	rm -rf ../build/go

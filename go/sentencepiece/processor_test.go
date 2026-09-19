@@ -311,6 +311,7 @@ func TestNormalizerFlagsAndCharsmap(t *testing.T) {
 	blob = append(blob, 'a', 0)
 	m.normalizer = normalDefaults()
 	m.normalizer.charsmap = blob
+	m.normalizerMap = decodeCharsmap(blob)
 	if got := m.normalize("AA?"); got != "▁aa?" {
 		t.Fatal(got)
 	}
@@ -328,6 +329,7 @@ func TestNormalizerFlagsAndCharsmap(t *testing.T) {
 	cm.units[2] = 0
 	cm.replacement = []byte{0xff}
 	m.normalizer.charsmap = append(blob[:len(blob)-2], 0xff, 0)
+	m.normalizerMap = decodeCharsmap(m.normalizer.charsmap)
 	if m.normalize("A") != "" {
 		t.Fatal("invalid replacement should return empty")
 	}

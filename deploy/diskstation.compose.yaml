@@ -1,19 +1,24 @@
 services:
   memento:
-    image: ghcr.io/rcarmo/memento:${MEMENTO_VERSION:?set MEMENTO_VERSION to a release such as 0.3.26}
+    image: ghcr.io/rcarmo/memento:${MEMENTO_VERSION:?set MEMENTO_VERSION to a release such as 1.0.0}
     container_name: memento
     restart: unless-stopped
     user: "65532:65532"
     read_only: true
     init: true
-    entrypoint: ["/bin/sh", "-ec"]
     command:
-      - |
-        set -a
-        . /run/secrets/memento.env
-        set +a
-        exec memento-serve --config /etc/memento/config.json serve \
-          --host 0.0.0.0 --port 8000 --endpoint /mcp
+      - --env-file
+      - /run/secrets/memento.env
+      - --config
+      - /etc/memento/config.json
+      - serve
+      - --http
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --endpoint
+      - /mcp
     environment:
       RAYON_NUM_THREADS: "1"
       OMP_NUM_THREADS: "1"
@@ -37,9 +42,12 @@ services:
     healthcheck:
       test:
         - CMD
-        - python
-        - -c
-        - import socket; socket.create_connection(('127.0.0.1', 8000), 2).close()
+        - /usr/local/bin/memento-go
+        - healthcheck
+        - --address
+        - 127.0.0.1:8000
+        - --timeout
+        - 2s
       interval: 30s
       timeout: 5s
       start_period: 5m

@@ -1,10 +1,10 @@
 # Memento documentation
 
-Use the workflow guides for agent tasks, the contracts for exact arguments and the operations guide for service administration. Current operational pages describe the released Python/Rust line and the verified Go replacement candidate explicitly; dated evidence, ADRs and completed work items preserve the state at the time they were written.
+Use the workflow guides for agent tasks, the contracts for exact arguments and the operations guide for service administration. Current operational pages describe the pure-Go `v1.0.0` replacement; dated evidence, ADRs and completed work items preserve the historical Python/Rust baseline where relevant.
 
-## Pure-Go replacement candidate
+## Pure-Go replacement
 
-The [`go` branch port index](go-port/README.md) documents the completed CGO-free daemon, standalone uMCP module, storage/recovery implementation, GTE/Needle runtimes, SIMD results and strict quality gates. Production replacement remains an operator release decision rather than an automatic consequence of branch completion.
+The [`go` branch port index](go-port/README.md) documents the completed CGO-free daemon, standalone uMCP module, storage/recovery implementation, GTE/Needle runtimes, SIMD results, allocation budgets and strict quality gates. The release image contains only static Go executables and model/data assets.
 
 ## Connect a client
 
@@ -49,11 +49,10 @@ The [`go` branch port index](go-port/README.md) documents the completed CGO-free
 | Configure embeddings and progressive refresh | [Semantic search](semantic-search.md) |
 | Inspect links, assets, proposals and visibility in the trusted graph UI | [Graph debugger](graph-explorer-plan.md) |
 | Build, publish or deploy a release | [Release process](release.md) |
-| Run load tests | [Load testing](load-testing.md) |
 | Check recorded deployment and benchmark results | [Validation reports](evidence/README.md) |
 
 ## Model development and project records
 
-* [Needle fine-tuning](needle-fine-tuning.md) and [Needle performance](needle-performance.md) contain router training and measurement details.
+* [Needle evidence](evidence/needle/README.md) contains retained router corpus, training and performance records.
 * [Attribution](attribution.md) lists third-party code, models and licences.
 * [Delivery plan](../PLAN.md) tracks implementation work; [releases](https://github.com/rcarmo/memento/releases) identify published versions.

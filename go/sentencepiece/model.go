@@ -40,6 +40,7 @@ type model struct {
 	unk, bos, eos, pad   int
 	unkSurface           string
 	normalizer           normalizerSpec
+	normalizerMap        *charsmap
 }
 
 func normalDefaults() normalizerSpec {
@@ -202,6 +203,7 @@ func parseModel(data []byte) (model, error) {
 	if len(m.pieces) == 0 {
 		return m, fmt.Errorf("invalid model: model contains no pieces")
 	}
+	m.normalizerMap = decodeCharsmap(m.normalizer.charsmap)
 	return m, nil
 }
 func parsePiece(data []byte) (Piece, error) {

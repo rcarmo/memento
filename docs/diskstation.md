@@ -2,7 +2,7 @@
 
 The live deployment runs on a Synology DiskStation with an Intel Celeron J3455 (Apollo Lake). That CPU supports SSE4.2 but not AVX, AVX2 or FMA.
 
-Memento's vector kernels select CPU features at runtime. The released Rust image uses baseline x86-64 code on the J3455; the Go candidate selects its SSE2 backend because AVX2/FMA are unavailable. Both build paths prevent the GitHub runner's newer CPU features from leaking into ordinary baseline code.
+Memento's vector kernels select CPU features at runtime. The `v1.0.0` Go replacement selects its SSE2 backend on the J3455 because AVX2/FMA are unavailable. Baseline amd64-v1 compilation prevents the GitHub runner's newer CPU features from leaking into ordinary code.
 
 Before publishing any NAS candidate, the release workflow runs the amd64 image under QEMU's Westmere CPU model and checks:
 
@@ -39,7 +39,7 @@ docker compose \
   -f deploy/diskstation.compose.yaml up -d
 ```
 
-The template pins `MEMENTO_VERSION`, publishes MCP on port 18081, runs as UID/GID 65532, drops Linux capabilities, uses a read-only root filesystem and sets a 512 MiB memory limit for Needle plus subprocess GTE embedding refresh. Its TCP healthcheck has a five-minute startup grace because persisted-state reconciliation and SQLite/Git recovery complete before the listener opens. The bearer-token file is mounted read-only and sourced by the container entrypoint because a remote Portainer server cannot resolve an endpoint-local `env_file` during Compose parsing.
+The template pins `MEMENTO_VERSION`, publishes MCP on port 18081, runs as UID/GID 65532, drops Linux capabilities, uses a read-only root filesystem and sets a 512 MiB memory limit for Needle plus GTE embedding refresh. Its native Go TCP healthcheck has a five-minute startup grace because persisted-state reconciliation and SQLite/Git recovery complete before the listener opens. The bearer-token file is mounted read-only and loaded by `memento-go --env-file`; the distroless image needs neither a shell nor Python, and this still avoids relying on endpoint-local Compose `env_file` resolution.
 
 The trusted-LAN profile also enables the visual debugger at `http://192.168.1.250:18081/graph`. Browser module requests carry an Origin header, so the exact LAN origin appears in `mcp.allowed_origins`; arbitrary origins remain blocked. Leave `observability.graph_explorer.enabled` off on an Internet-facing deployment.
 
@@ -48,6 +48,12 @@ The deployed J3455 profile uses a 30-second `memory_execute` budget. A real-targ
 A commit may finish just after the execute deadline and still return a controlled timeout to the client. Mutation callers must reconcile an ambiguous timeout using the idempotency key, repository revision and target path before retrying. Natural-language search should use the default `query_syntax="plain"`, which tokenises terms and treats punctuation and operator words literally. Use `query_syntax="fts5"` only for deliberate raw FTS5 expressions.
 
 No DiskStation deployment is performed by GitHub Actions. Release automation builds and tests the image, then publishes it to GHCR. An operator pulls the immutable release, runs a uniquely named one-shot config helper to completion, updates the Portainer stack with an explicit version and verifies container, MCP, graph and revision health before considering the update complete. The helper runs as UID/GID 65532, writes and fsyncs a sibling file, then atomically replaces the root-owned `config.json`; this fits the Synology ACL, where the service UID owns the directory but cannot overwrite that file in place. It has no network, capabilities or writable root filesystem, and only the config directory is writable. Helper or stack failures stop the deployment instead of being treated as an asynchronous success.
+
+## Go replacement contract
+
+The planned `v1.0.0` image keeps the same image repository, mounts, UID/GID, port, `/mcp`, graph/admin routes, bearer tokens and JSON configuration. It opens the existing Git and SQLite state directly. A local contract drill starts a disposable volume with the pinned `0.5.9` image, opens it with the Go image, and reopens it with `0.5.9` while requiring identical repository and index revisions. This validates rollback format compatibility; final production replacement remains an operator action.
+
+The NAS is CPU-only by explicit decision. Do not package, map or enable Vulkan devices for this profile, and do not repeat NAS Vulkan tests unless that decision changes.
 
 ## Current release
 

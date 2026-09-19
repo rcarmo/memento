@@ -40,44 +40,26 @@ jobs:
           fi
 
   quality:
-    name: Validate Python ${{ matrix.python-version }}
+    name: Validate pure-Go runtime
     needs: validate-tag
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.12", "3.13", "3.14"]
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.1
         with:
           fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
-        with:
-          components: clippy,rustfmt
-
-      - name: Install Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: 1.3.14
-
-      - name: Install development dependencies
-        run: make install-dev
-
-      - name: Run release quality gate without downloading runtime models
+          go-version: '1.26.6'
+          cache-dependency-path: |
+            go/go.sum
+            go/umcp/go.sum
+      - name: Run release quality gates
         run: |
-          make check
-          make coverage
-          make build-wheel
-          make install-wheel
-          make diff-check
+          make -C go audit
+          make -C go release-check VERSION="${GITHUB_REF_NAME#v}" SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)"
+          git diff --exit-code
 
   runtime-models:
     name: Prepare cached runtime models
@@ -149,6 +131,7 @@ jobs:
           for path in $RUNTIME_MODEL_PATHS; do
             test -s "$path"
           done
+          python tools/prepare_runtime_models.py
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4
@@ -213,6 +196,15 @@ jobs:
       contents: read
       packages: read
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.6'
+          cache-dependency-path: go/go.sum
+
       - name: Download amd64 digest
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
@@ -226,16 +218,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Check native Needle memory ceiling
-        shell: bash
-        run: |
-          digest="$(basename /tmp/digests/*)"
-          image="${IMAGE_NAME}@sha256:${digest}"
-          docker pull "$image"
-          docker run --rm --entrypoint python \
-            -e MEMENTO_SMOKE_MAX_RSS_MIB=220 \
-            "$image" /usr/local/lib/memento/container_cpu_smoke.py needle
 
       - name: Install QEMU user emulator
         shell: bash
@@ -263,28 +245,20 @@ jobs:
           echo "$simd"
           grep -q '^arch=amd64 backend=sse2 sse2=true avx2_fma=false ' <<< "$simd"
 
-      - name: Run scalar-path model smoke under Westmere CPU
+      - name: Run pure-Go service/model smoke under Westmere CPU
         shell: bash
         run: |
-          features="$(sudo chroot /tmp/rootfs \
+          sudo mkdir -p /tmp/rootfs/etc/memento /tmp/rootfs/var/lib/memento
+          sudo cp deploy/diskstation.config.example.json /tmp/rootfs/etc/memento/config.json
+          sudo chroot /tmp/rootfs \
             /usr/bin/qemu-x86_64-static -cpu Westmere \
-            /usr/local/bin/memento-cpu-features)"
-          echo "$features"
-          grep -q 'sse4.2=true' <<< "$features"
-          grep -q 'avx2=false' <<< "$features"
-          grep -q 'fma=false' <<< "$features"
-          qemu=(
-            /usr/bin/qemu-x86_64-static -cpu Westmere
-            -E MEMENTO_FFI_LIBRARY=/usr/local/lib/memento/libmemento_ffi.so
-            -E MEMENTO_GTE_MODEL=/usr/local/share/memento/models/gte-small.gtemodel
-            -E MEMENTO_NEEDLE_FFI_LIBRARY=/usr/local/lib/memento/libmemento_needle_ffi.so
-            -E MEMENTO_NEEDLE_MODEL=/usr/local/share/memento/models/memento-router.ndl
-            -E MEMENTO_NEEDLE_TOKENIZER=/usr/local/share/memento/models/needle.model
-          )
-          sudo chroot /tmp/rootfs "${qemu[@]}" \
-            /usr/local/bin/python /usr/local/lib/memento/container_cpu_smoke.py gte
-          sudo chroot /tmp/rootfs "${qemu[@]}" \
-            /usr/local/bin/python /usr/local/lib/memento/container_cpu_smoke.py needle
+            -E MEMENTO_ADMIN_MASTER_KEY=compatibility-master \
+            -E MEMENTO_TOKEN_WORKSPACE=compatibility-workspace \
+            -E MEMENTO_TOKEN_FLINT=compatibility-flint \
+            -E MEMENTO_TOKEN_WORK_AGENT=compatibility-work \
+            /usr/local/bin/memento-go --config /etc/memento/config.json status \
+            > /tmp/westmere-status.json
+          jq -e '.semantic_search.enabled and .needle_router.enabled' /tmp/westmere-status.json
 
   publish:
     name: Publish multi-architecture image
@@ -293,6 +267,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
+      attestations: write
     outputs:
       digest: ${{ steps.inspect.outputs.digest }}
     steps:
@@ -352,6 +328,27 @@ jobs:
           digest="$(docker buildx imagetools inspect "$image" --format '{{json .Manifest.Digest}}' | tr -d '"')"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
+      - name: Attest image provenance
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-name: ${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.inspect.outputs.digest }}
+          push-to-registry: true
+
+      - name: Generate SPDX SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0
+        with:
+          image: ${{ env.IMAGE_NAME }}@${{ steps.inspect.outputs.digest }}
+          format: spdx-json
+          output-file: memento-${{ github.ref_name }}.spdx.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: memento-${{ github.ref_name }}-sbom
+          path: memento-${{ github.ref_name }}.spdx.json
+          if-no-files-found: error
+
   release:
     name: Publish GitHub release
     needs: [validate-tag, publish]
@@ -364,6 +361,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Download release SBOM
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: memento-${{ github.ref_name }}-sbom
+          path: release-assets
+
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -373,7 +376,7 @@ jobs:
         run: |
           args=("$GITHUB_REF_NAME" --generate-notes --title "$GITHUB_REF_NAME")
           [[ "$PRERELEASE" == "true" ]] && args+=(--prerelease)
-          gh release create "${args[@]}" --notes "Container: \`${IMAGE_NAME}:${GITHUB_REF_NAME#v}\`  
+          gh release create "${args[@]}" release-assets/* --notes "Container: \`${IMAGE_NAME}:${GITHUB_REF_NAME#v}\`
           Digest: \`${IMAGE_DIGEST}\`"
 
   cleanup:

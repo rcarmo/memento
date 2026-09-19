@@ -20,6 +20,7 @@ type SemanticSearchOptions struct {
 type semanticRow struct {
 	result SearchResult
 	blob   []byte
+	norm   float64
 }
 
 func (i *Index) SearchSemantic(ctx context.Context, policy access.EffectivePolicy, options SemanticSearchOptions, client SemanticClient) (page SearchPage, err error) {
@@ -54,12 +55,9 @@ func (i *Index) SearchSemantic(ctx context.Context, policy access.EffectivePolic
 		}
 		candidates := make([]SemanticCandidate, 0, len(rows))
 		byID := map[string]SearchResult{}
+		queryNorm, _ := semanticNorm(queryVector) // validateSemanticVector already proved this finite and nonzero
 		for _, row := range rows {
-			vector, e := unpackSemanticBlob(row.blob, info.Dimensions)
-			if e != nil {
-				return e
-			}
-			cosine, e := semanticCosine(queryVector, vector)
+			cosine, e := semanticBlobCosine(queryVector, queryNorm, row.blob, row.norm, info.Dimensions)
 			if e != nil {
 				return e
 			}
@@ -126,7 +124,7 @@ func semanticCandidateRows(ctx context.Context, db executor, policy access.Effec
 		maxCandidates = 200
 	}
 	parameters = append(parameters, maxCandidates)
-	rows, err := db.QueryContext(ctx, `SELECT c.id,c.path,c.title,c.type,c.status,c.tags_json,c.title,e.embedding_blob FROM concept_embeddings e JOIN concepts c ON c.id=e.concept_id WHERE `+strings.Join(conditions, " AND ")+` ORDER BY e.path,c.id LIMIT ?`, parameters...)
+	rows, err := db.QueryContext(ctx, `SELECT c.id,c.path,c.title,c.type,c.status,c.tags_json,c.title,e.embedding_blob,e.embedding_norm FROM concept_embeddings e JOIN concepts c ON c.id=e.concept_id WHERE `+strings.Join(conditions, " AND ")+` ORDER BY e.path,c.id LIMIT ?`, parameters...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +144,7 @@ func readSemanticRows(rows semanticRows) ([]semanticRow, error) {
 	for rows.Next() {
 		var row semanticRow
 		var tags string
-		if err := rows.Scan(&row.result.ConceptID, &row.result.Path, &row.result.Title, &row.result.ConceptType, &row.result.Status, &tags, &row.result.Snippet, &row.blob); err != nil {
+		if err := rows.Scan(&row.result.ConceptID, &row.result.Path, &row.result.Title, &row.result.ConceptType, &row.result.Status, &tags, &row.result.Snippet, &row.blob, &row.norm); err != nil {
 			return nil, err
 		}
 		if err := json.Unmarshal([]byte(tags), &row.result.Tags); err != nil {
@@ -160,32 +158,35 @@ func readSemanticRows(rows semanticRows) ([]semanticRow, error) {
 	}
 	return out, rows.Err()
 }
-func unpackSemanticBlob(blob []byte, dimensions int) ([]float32, error) {
-	if len(blob) != dimensions*4 {
-		return nil, errors.New("invalid embedding blob length")
+func semanticNorm(vector []float32) (float64, error) {
+	sum := 0.0
+	for _, value := range vector {
+		converted := float64(value)
+		if !finite(converted) {
+			return 0, errors.New("embedding contains non-finite value")
+		}
+		sum += converted * converted
 	}
-	out := make([]float32, dimensions)
-	for index := range out {
-		out[index] = math.Float32frombits(binary.LittleEndian.Uint32(blob[index*4:]))
+	if sum <= 0 {
+		return 0, errors.New("embedding has zero or invalid norm")
 	}
-	return out, nil
+	return math.Sqrt(sum), nil
 }
-func semanticCosine(left, right []float32) (float64, error) {
-	if len(left) != len(right) {
+func finite(value float64) bool { return !math.IsNaN(value) && !math.IsInf(value, 0) }
+func semanticBlobCosine(left []float32, leftNorm float64, blob []byte, rightNorm float64, dimensions int) (float64, error) {
+	if len(left) != dimensions || len(blob) != dimensions*4 {
 		return 0, errors.New("vector dimension mismatch")
 	}
-	dot, ln, rn := 0.0, 0.0, 0.0
+	if leftNorm <= 0 || rightNorm <= 0 || !finite(rightNorm) {
+		return 0, errors.New("embedding has zero or invalid norm")
+	}
+	dot := 0.0
 	for index, l := range left {
-		r := right[index]
-		if math.IsNaN(float64(l)) || math.IsInf(float64(l), 0) || math.IsNaN(float64(r)) || math.IsInf(float64(r), 0) {
+		r := math.Float32frombits(binary.LittleEndian.Uint32(blob[index*4:]))
+		if !finite(float64(r)) {
 			return 0, errors.New("embedding contains non-finite value")
 		}
 		dot += float64(l) * float64(r)
-		ln += float64(l) * float64(l)
-		rn += float64(r) * float64(r)
 	}
-	if ln <= 0 || rn <= 0 {
-		return 0, errors.New("embedding has zero or invalid norm")
-	}
-	return dot / (math.Sqrt(ln) * math.Sqrt(rn)), nil
+	return dot / (leftNorm * rightNorm), nil
 }

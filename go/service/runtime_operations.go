@@ -180,5 +180,9 @@ func (r *Runtime) statusSnapshot(ctx context.Context, schemaVersion int, ops run
 	r.mu.Lock()
 	closed := r.closed
 	r.mu.Unlock()
-	return map[string]any{"service_version": "0.5.9", "schema_version": schemaVersion, "repo_revision": revision, "index_revision": state.IndexRevision, "index_stale": state.IndexRevision != state.RepoRevision, "visible_concepts": len(bundle.Entries), "semantic_search": map[string]any{"enabled": capabilities.SemanticEnabled, "ready": ready, "model_id": model, "dimensions": dimensions, "embedding_revision": embedding, "sqlite_vector_enabled": false, "warnings": warnings, "worker": worker}, "needle_router": map[string]any{"enabled": capabilities.NeedleEnabled, "loaded": capabilities.NeedleLoaded, "runtime": needleRuntime, "model_path": capabilities.NeedleModelPath}, "proposal_backlog": backlog, "control_db": r.Paths.ControlDB, "derived_db": r.Paths.DerivedDB, "repo_root": r.Paths.Root, "closed": closed}, nil
+	serviceVersion := r.ServiceVersion
+	if serviceVersion == "" {
+		serviceVersion = "0.5.9"
+	}
+	return map[string]any{"service_version": serviceVersion, "schema_version": schemaVersion, "repo_revision": revision, "index_revision": state.IndexRevision, "index_stale": state.IndexRevision != state.RepoRevision, "visible_concepts": len(bundle.Entries), "semantic_search": map[string]any{"enabled": capabilities.SemanticEnabled, "ready": ready, "model_id": model, "dimensions": dimensions, "embedding_revision": embedding, "sqlite_vector_enabled": false, "warnings": warnings, "worker": worker}, "needle_router": map[string]any{"enabled": capabilities.NeedleEnabled, "loaded": capabilities.NeedleLoaded, "runtime": needleRuntime, "model_path": capabilities.NeedleModelPath}, "proposal_backlog": backlog, "control_db": r.Paths.ControlDB, "derived_db": r.Paths.DerivedDB, "repo_root": r.Paths.Root, "closed": closed}, nil
 }

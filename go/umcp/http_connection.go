@@ -2,6 +2,7 @@ package umcp
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -92,7 +93,7 @@ func (p *ParsedHTTPRequest) request(ctx context.Context, remote string) *http.Re
 	// Opaque preserves targets and percent escapes byte-for-byte, including
 	// malformed escapes which Python deliberately leaves for route parsing.
 	target, query, hasQuery := strings.Cut(p.Target, "?")
-	return (&http.Request{Method: p.Method, URL: &url.URL{Opaque: target, RawQuery: query, ForceQuery: hasQuery}, RequestURI: p.Target, Proto: p.Version, ProtoMajor: 1, ProtoMinor: int(p.Version[len(p.Version)-1] - '0'), Header: headers, Host: p.Headers["host"], RemoteAddr: remote, ContentLength: int64(len(p.Body)), Body: io.NopCloser(strings.NewReader(string(p.Body)))}).WithContext(context.WithValue(ctx, rawTargetKey{}, p.Target))
+	return (&http.Request{Method: p.Method, URL: &url.URL{Opaque: target, RawQuery: query, ForceQuery: hasQuery}, RequestURI: p.Target, Proto: p.Version, ProtoMajor: 1, ProtoMinor: int(p.Version[len(p.Version)-1] - '0'), Header: headers, Host: p.Headers["host"], RemoteAddr: remote, ContentLength: int64(len(p.Body)), Body: io.NopCloser(bytes.NewReader(p.Body))}).WithContext(context.WithValue(ctx, rawTargetKey{}, p.Target))
 }
 
 // httpWireWriter emits unchunked source framing. Each handler must supply a

@@ -66,7 +66,7 @@ func TestModelProposalConfig(t *testing.T) {
 	if err != nil || !good.Enabled || good.Limits.MaxOutputChars != 300 {
 		t.Fatal(good, err)
 	}
-	bad := []string{`{} {}`, `{"x":1}`, `{"prompt_version":""}`, `{"limits":{"max_search_results":0}}`, `{"limits":{"max_consulted_concepts":11}}`, `{"limits":{"max_context_chars":1}}`, `{"limits":{"max_output_chars":1}}`, `{"limits":{"max_diff_chars":0}}`, `{"limits":{"max_changes":101}}`, `{"limits":{"max_body_chars":0}}`, `{"limits":{"max_rationale_chars":0}}`, `{"limits":{"max_secret_entropy_chars":7}}`}
+	bad := []string{`{} {}`, `{"x":1}`, `{"prompt_version":""}`, `{"tool_version":""}`, `{"limits":{"max_search_results":0}}`, `{"limits":{"max_consulted_concepts":11}}`, `{"limits":{"max_context_chars":1}}`, `{"limits":{"max_output_chars":1}}`, `{"limits":{"max_diff_chars":0}}`, `{"limits":{"max_changes":101}}`, `{"limits":{"max_body_chars":0}}`, `{"limits":{"max_rationale_chars":0}}`, `{"limits":{"max_secret_entropy_chars":7}}`}
 	for _, raw := range bad {
 		if _, err := DecodeModelProposalsConfig([]byte(raw)); err == nil {
 			t.Fatal(raw)

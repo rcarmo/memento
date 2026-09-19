@@ -1,11 +1,5 @@
 .git
-.venv
-.pytest_cache
-.ruff_cache
-.mypy_cache
-.coverage
 build
-dist
-rust/target
+models/**/*.pointer
 **/__pycache__
 *.pyc

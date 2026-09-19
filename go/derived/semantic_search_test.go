@@ -129,17 +129,15 @@ func TestSemanticSearchFailures(t *testing.T) {
 	for _, tc := range []struct {
 		blob   []byte
 		vector []float32
-	}{{[]byte{1}, []float32{1, 0}}, {semanticBlob(0, 0), []float32{1, 0}}, {semanticBlob(float32(math.NaN()), 1), []float32{1, 0}}} {
+		norm   float64
+	}{{[]byte{1}, []float32{1, 0}, 1}, {semanticBlob(0, 0), []float32{1, 0}, 0}, {semanticBlob(float32(math.NaN()), 1), []float32{1, 0}, 1}} {
 		db, _ := sql.Open("sqlite", index.Path)
-		_, _ = db.Exec("UPDATE concept_embeddings SET embedding_blob=?", tc.blob)
+		_, _ = db.Exec("UPDATE concept_embeddings SET embedding_blob=?,embedding_norm=?", tc.blob, tc.norm)
 		_ = db.Close()
 		client.vector = tc.vector
 		if _, err := index.SearchSemantic(ctx, policy, options, client); err == nil {
 			t.Fatal(tc)
 		}
-	}
-	if _, err := semanticCosine([]float32{1}, []float32{1, 2}); err == nil {
-		t.Fatal("dimension")
 	}
 	for _, mutation := range []string{"DELETE FROM index_state WHERE key='repo_revision'", "DELETE FROM index_state WHERE key='index_revision'", "DROP TABLE concept_embeddings"} {
 		index = semanticSearchIndex(t)

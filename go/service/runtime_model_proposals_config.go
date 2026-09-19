@@ -22,11 +22,12 @@ type ModelProposalsConfig struct {
 	Enabled             bool                      `json:"enabled"`
 	ModelPolicyRevision string                    `json:"model_policy_revision"`
 	PromptVersion       string                    `json:"prompt_version"`
+	ToolVersion         string                    `json:"tool_version"`
 	Limits              ModelProposalLimitsConfig `json:"limits"`
 }
 
 func DefaultModelProposalsConfig() ModelProposalsConfig {
-	return ModelProposalsConfig{false, "disabled", "v1", ModelProposalLimitsConfig{5, 6, 12000, 8000, 2000000, 20, 32000, 4000, 32}}
+	return ModelProposalsConfig{false, "disabled", "v1", "v1", ModelProposalLimitsConfig{5, 6, 12000, 8000, 2000000, 20, 32000, 4000, 32}}
 }
 func DecodeModelProposalsConfig(raw json.RawMessage) (ModelProposalsConfig, error) {
 	defaults := DefaultModelProposalsConfig()
@@ -43,7 +44,7 @@ func DecodeModelProposalsConfig(raw json.RawMessage) (ModelProposalsConfig, erro
 		return ModelProposalsConfig{}, errors.New("trailing JSON")
 	}
 	l := defaults.Limits
-	if defaults.ModelPolicyRevision == "" || defaults.PromptVersion == "" || l.MaxSearchResults < 1 || l.MaxSearchResults > 10 || l.MaxConsultedConcepts < 1 || l.MaxConsultedConcepts > 10 || l.MaxContextChars < 512 || l.MaxOutputChars < 256 || l.MaxDiffChars < 1 || l.MaxChanges < 1 || l.MaxChanges > 100 || l.MaxBodyChars < 1 || l.MaxRationaleChars < 1 || l.MaxSecretEntropyChars < 8 {
+	if defaults.ModelPolicyRevision == "" || defaults.PromptVersion == "" || defaults.ToolVersion == "" || l.MaxSearchResults < 1 || l.MaxSearchResults > 10 || l.MaxConsultedConcepts < 1 || l.MaxConsultedConcepts > 10 || l.MaxContextChars < 512 || l.MaxOutputChars < 256 || l.MaxDiffChars < 1 || l.MaxChanges < 1 || l.MaxChanges > 100 || l.MaxBodyChars < 1 || l.MaxRationaleChars < 1 || l.MaxSecretEntropyChars < 8 {
 		return ModelProposalsConfig{}, errors.New("model proposal configuration out of range")
 	}
 	return defaults, nil

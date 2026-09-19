@@ -21,7 +21,7 @@ import (
 func TestBuildModelsOffComponentFailures(t *testing.T) {
 	ctx := context.Background()
 	boom := errors.New("boom")
-	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "legacy-detect", "legacy-revision", "legacy-migrate", "legacy-skill-revision", "legacy-skill-migrate", "legacy-stat", "legacy-materialize", "legacy-final-revision", "metadata", "register", "access-open", "access-bootstrap", "access-register", "needle-model", "needle-tokenizer", "needle-router", "needle-build", "needle-register", "semantic-load", "configured-register"} {
+	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "legacy-detect", "legacy-revision", "legacy-migrate", "legacy-skill-revision", "legacy-skill-migrate", "legacy-stat", "legacy-materialize", "legacy-final-revision", "metadata", "register", "access-open", "access-bootstrap", "access-register", "needle-model", "needle-tokenizer", "needle-router", "needle-build", "needle-register", "semantic-load", "semantic-subprocess", "configured-register"} {
 		t.Run(stage, func(t *testing.T) {
 			var config RuntimeConfig
 			config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
@@ -97,8 +97,14 @@ func TestBuildModelsOffComponentFailures(t *testing.T) {
 				model := "/model"
 				options.Semantic = DefaultSemanticSearchConfig()
 				options.Semantic.Enabled = true
+				options.Semantic.WorkerMode = "in_process"
 				options.Semantic.ModelPath = &model
 				ops.loadSemantic = func(string, string, int, int, int) (*GTESemanticClient, error) { return nil, boom }
+			case "semantic-subprocess":
+				model := filepath.Join(t.TempDir(), "missing")
+				options.Semantic = DefaultSemanticSearchConfig()
+				options.Semantic.Enabled = true
+				options.Semantic.ModelPath = &model
 			case "needle-register":
 				options.Needle = DefaultNeedleRouterConfig()
 				options.Needle.Enabled = true
@@ -130,7 +136,11 @@ func TestBuildModelsOffComponentFailures(t *testing.T) {
 				ops.registerAccess = func(*Jobs, *umcp.Server) error { return boom }
 			}
 			runtime, server, err := buildModelsOffRuntime(ctx, config, options, ops)
-			if !errors.Is(err, boom) || runtime != nil || server != nil {
+			if stage == "semantic-subprocess" {
+				if err == nil || runtime != nil || server != nil {
+					t.Fatal(runtime, server, err)
+				}
+			} else if !errors.Is(err, boom) || runtime != nil || server != nil {
 				t.Fatal(runtime, server, err)
 			}
 			lease, err := repository.AcquireWriterLease(RuntimePathsFor(config).WriterLock, "retry")

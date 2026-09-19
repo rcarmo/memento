@@ -38,7 +38,7 @@ Native C ABI users need an explicit decision: a `c-shared` Go library requires c
 
 Scalar service/model parity and CPU SIMD optimisation are complete. GPU work remains separate and needs its own backend identity, parity, memory and performance gates.
 
-Retain the verified NAS Vulkan container recipe from [`vulkan-nas-bookworm-2026-09-19.md`](../evidence/vulkan-nas-bookworm-2026-09-19.md): Debian Bookworm Mesa 22.3.6, Vulkan loader 1.3.239 and libdrm2 2.4.114 work through `/dev/dri/renderD128` on the Intel HD 500 when UID 65532 receives host render group 937. Mesa 26 failed. The four Rust/wgpu GTE cases reached maximum error `1.79e-7` under a standalone 512 MiB cap, but cold GPU execution was slower than CPU. A Go backend must requalify those results, warm behaviour and full-service memory before use; CPU remains the default.
+Retain the verified NAS Vulkan container recipe from [`vulkan-nas-bookworm-2026-09-19.md`](../evidence/vulkan-nas-bookworm-2026-09-19.md) as historical compatibility evidence. Same-process warm measurements remained slower than CPU, and Rui selected CPU-only NAS operation including the Go replacement. Do not package, enable or retest NAS Vulkan without an explicit reversal. Other hardware can be evaluated separately if authorised.
 
 ## Preparation decisions
 

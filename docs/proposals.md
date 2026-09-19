@@ -222,4 +222,4 @@ When refiling, package corrected bytes and use a version not already accepted fo
 
 Use `proposal_get` to obtain the generated asset ID and manifest, then `proposal_asset_get(view="file", file_path=...)` to inspect bounded content before approval. After apply, `asset_get` reads accepted versions. [Accepted-asset retrieval](accepted-assets.md) defines range, digest and EOF handling. Any client-side installation or script execution needs its own authorisation.
 
-The lifecycle rules are implemented in [`control/proposals.py`](../src/memento/control/proposals.py) and [`service.py`](../src/memento/service.py); operation arguments are in [`executor.py`](../src/memento/executor.py). The [contracts](contracts.md#proposal-records-and-lifecycle) define the exposed fields.
+The lifecycle rules are implemented in [`go/control/proposals.go`](../go/control/proposals.go) and the `go/service` proposal handlers; operation arguments are defined in [`go/execute/arguments.json`](../go/execute/arguments.json). The [contracts](contracts.md#proposal-records-and-lifecycle) define the exposed fields.

@@ -2,49 +2,22 @@
 
 The choice to keep lexical search primary is recorded in [ADR 0006](decisions/0006-keep-lexical-search-primary.md).
 
-Semantic search is optional and rebuildable. FTS5 stays the default because it is cheap to recover and always available. Local semantic-load measurements live under `docs/evidence/`; the DiskStation notes record deployed memory, scheduling and revision checks, while a production semantic-throughput benchmark is still outstanding.
+Semantic search is optional and rebuildable. FTS5 remains the default because it is cheap to recover and always available.
 
-## What operators decide
+## Pure-Go runtime
 
-* Enable semantic search only when the selected runtime and model artefact are in place. The released Python service needs its Rust libraries; the Go candidate loads the GTE1 model directly.
-* Keep `lexical` as the default unless benchmark data says otherwise.
-* Use the vendored model at `models/gte/gte-small.gtemodel` unless an explicitly reviewed replacement is configured. The container image copies that file to `/usr/local/share/memento/models/gte-small.gtemodel` and exports matching default environment variables.
+The `v1.0.0` image uses only:
 
-## Progressive low-priority generation
+* `go/gte` for GTE1 parsing, WordPiece tokenization and FP32 inference;
+* `go/internal/simd` for AVX2/SSE2/NEON/scalar vector operations;
+* `memento-embed-go` for the existing framed process-isolation protocol;
+* pure-Go SQLite access and cosine scoring over little-endian float32 blobs.
 
-On shared or low-power hosts, enable progressive generation instead of a full startup refresh:
+There is no Python, Rust, CGo, C ABI, native SQLite extension or external model runtime in the image.
 
-```json
-{
-  "progressive_enabled": true,
-  "progressive_startup_delay_seconds": 120,
-  "progressive_interactive_idle_seconds": 15,
-  "progressive_delay_seconds": 30,
-  "progressive_cpu_busy_limit_percent": 75,
-  "progressive_cpu_sample_seconds": 15,
-  "progressive_nice": 15,
-  "max_batch_size": 1,
-  "startup_refresh_enabled": false
-}
-```
+For low-memory NAS operation, `worker_mode: "subprocess"` invokes the static Go worker at `/usr/local/bin/memento-embed` once per request, then releases model memory when the process exits. `worker_mode: "in_process"` is available for separately qualified hosts that prefer lower latency and can retain the model in the daemon.
 
-The worker derives one missing or stale path at a time from `derived.sqlite`; no separate queue needs recovery. It waits through startup grace, recent interactive traffic, sampled CPU utilization from `/proc/stat` and pacing, then launches one short-lived embedding subprocess at low CPU priority with native thread pools restricted to one thread. Manual selected/visible/full refresh requests enter the same worker and receive priority without bypassing the gates. Transaction updates enqueue only changed concept Markdown paths; asset manifests, ZIPs and repository metadata never enter the embedding queue. A permanently failed priority path is removed so it cannot block later work. Transient SQLite busy/locked errors preserve selected and full requests and retry after a one-second, interruptible wait. The same handling covers queue polling; a temporary database lock cannot terminate the worker.
-
-Ready embeddings persist in `/var/lib/memento/derived.sqlite`. Container replacement therefore resumes from existing progress. Derived rebuilds retain embeddings whose concept text hash and model metadata remain valid, delete rows for removed concepts and enqueue only changed, missing or model-stale records. A degraded row is not retried forever in the background; changing its content/model marks it stale, and an operator can explicitly prioritize it with manual refresh. `/graph/api/v1/embeddings/status` reports `alive`, `running`, `pending`, `pause_reason`, `current_path`, `last_error` and `completed`. `completed` counts successful jobs since restart, not stored vectors; a full-refresh job can contain several embeddings. Status reads use in-memory worker state and do not query SQLite. `database-busy` identifies a contention retry. A stopped worker reports `alive: false`, `available: false` and an error instead of looking idle; new refresh requests are rejected until the service is recovered. The graph sidebar polls this status every 15 seconds while visible.
-
-For an ETA, measure completion or ready-row changes over time. The configured 30-second delay gives a theoretical ceiling of 120 single-path jobs/hour before model startup, computation, storage waits and other pause gates. A pending flag alone is not evidence of progress. If a worker on an older release has stopped, restart the service while retaining `derived.sqlite` and the model volume; no full embedding reset is required.
-
-## Components
-
-The released Python service uses:
-
-* `memento-gte`: Rust GTE1 FP32 model parser, tokenizer and inference;
-* `memento-vector`: packed float32 validation and scalar/SIMD cosine kernels;
-* `memento-ffi`: stable C ABI loaded from Python with `ctypes`;
-* `memento-sqlite-vector`: loadable SQLite extension exposing `vector_cosine`, `vector_dimensions` and `vector_is_valid`;
-* `memento-embed`: framed subprocess fallback for process isolation.
-
-The Go replacement uses `go/gte`, `go/internal/simd` and `cmd/memento-embed-go`; it needs no C ABI or SQLite extension.
+The old `ffi_library_path` and `sqlite_extension_path` fields remain accepted in schema-version-2 configuration so the production file can be mounted unchanged. Go does not load or require those paths. `MEMENTO_GTE_MODEL` remains a meaningful model-path override; `MEMENTO_SIMD` selects `auto`, `scalar`, `sse2`, `avx2` or `neon` where available.
 
 ## Configuration
 
@@ -53,62 +26,57 @@ The Go replacement uses `go/gte`, `go/internal/simd` and `cmd/memento-embed-go`;
   "intelligent_tiers": {
     "semantic_search": {
       "enabled": true,
+      "worker_mode": "subprocess",
+      "worker_path": "/usr/local/bin/memento-embed",
       "ffi_library_path": "/usr/local/lib/memento/libmemento_ffi.so",
       "sqlite_extension_path": "/usr/local/lib/memento/libmemento_sqlite_vector.so",
       "model_path": "/usr/local/share/memento/models/gte-small.gtemodel",
-      "model_id": "gte-small-fp32",
+      "model_id": "rust-gte",
       "dimensions": 384,
       "max_input_chars": 4096,
-      "max_batch_size": 16,
+      "max_batch_size": 1,
       "max_candidates": 200,
-      "default_search_mode": "lexical"
+      "default_search_mode": "lexical",
+      "refresh_on_startup": false,
+      "progressive_enabled": true,
+      "progressive_startup_delay_seconds": 120,
+      "progressive_interactive_idle_seconds": 15,
+      "progressive_delay_seconds": 30,
+      "progressive_cpu_busy_limit_percent": 75,
+      "progressive_cpu_sample_seconds": 15,
+      "progressive_nice": 15
     }
   }
 }
 ```
 
-The three paths may also come from `MEMENTO_FFI_LIBRARY`, `MEMENTO_SQLITE_VECTOR_EXTENSION` and `MEMENTO_GTE_MODEL`. Explicit JSON values take precedence. Those environment variables are optional path overrides, not mandatory global settings. The vendored model SHA-256 is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; replacing it changes the embedding revision and forces re-indexing.
+The model identifier is retained for compatibility with existing persisted rows. The vendored model SHA-256 is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; changing model identity or digest marks old embeddings stale.
 
 ## Search modes
 
 * `lexical`: weighted FTS5 ranking; default and always available.
-* `semantic`: cosine ranking over authorised, ready embeddings.
+* `semantic`: query embedding plus cosine ranking over authorised, ready vectors.
 * `hybrid`: deterministic reciprocal-rank fusion of lexical and semantic candidates.
 
-Authorisation path filters are applied before semantic scoring, so hidden concepts do not influence visible scores or rank order.
+Authorisation filters are applied before semantic scoring, so hidden concepts cannot influence visible scores or rank order. The optimized scorer reads vectors directly from SQLite blobs, uses their validated stored norms, and has an enforced zero-allocation kernel budget.
 
-## Derived-state rules
+## Progressive generation
 
-Concept embeddings are packed little-endian float32 BLOBs in `derived.sqlite`. Rows carry model, dimension, content hash and repository revision. Model changes mark old rows stale. Changed or deleted concepts update incrementally. A full derived rebuild retains ready rows whose text hash and model metadata still match, marks changed rows stale, removes deleted-concept rows and progressively fills only the remaining gaps.
+On shared or low-power hosts, progressive generation derives one missing or stale path at a time from `derived.sqlite`. It waits through startup grace, recent interactive activity, sampled CPU utilization and configured pacing. Manual selected/visible/full refresh requests enter the same queue and receive priority without bypassing those gates.
 
-If model loading or embedding fails, Memento still advances the lexical index, records the row as degraded, and keeps canonical writes successful. Semantic and hybrid requests then fall back to lexical with explicit warnings.
+Ready embeddings persist in `/var/lib/memento/derived.sqlite`. Container replacement therefore resumes from existing progress. Derived rebuilds retain embeddings whose concept text hash and model metadata remain valid, delete removed rows and enqueue only changed, missing or model-stale concepts.
 
-## Build and validation
+`/graph/api/v1/embeddings/status` reports worker liveness, activity, pending work, pause reason, current path, errors and completed jobs. A stopped worker rejects new work rather than appearing idle.
 
-```bash
-make rust-check
-make check
-```
+## Performance and release gates
 
-The Docker image builds the Rust FFI library, SQLite extension and subprocess worker in a separate stage, then copies the vendored GTE-small model into the runtime image. Python wheels do not currently bundle platform-specific Rust libraries; install or mount them separately and set the configured paths when needed.
-
-## Local evidence reproduction
-
-The reviewed semantic load report under [`docs/evidence/load-semantic-local.json`](evidence/load-semantic-local.json) was produced with:
+Run:
 
 ```bash
-PYTHONPATH=src .venv/bin/python tools/load_test.py \
-  --profile functional \
-  --concepts 100 \
-  --workers 8 \
-  --requests 200 \
-  --semantic-enabled \
-  --include-semantic \
-  --output docs/evidence/load-semantic-local.json
+python3 tools/prepare_runtime_models.py
+make model-test
+make performance
+make go-container-contract MEMENTO_VERSION=1.0.0
 ```
 
-`--semantic-enabled` matters here. It tells the harness to build the local Rust artefacts if needed and enable semantic search in the temporary test config instead of merely asking for semantic queries against a lexical-only runtime.
-
-## Remaining measurements
-
-The release container and DiskStation profile have verified packaged model loading, 384-dimensional output, persisted-vector reuse, progressive refresh, memory limits and J3455 operation. The Go candidate also has real x86-64 and ARM64 scalar/SIMD model measurements in [`go-port/simd.md`](go-port/simd.md). A repeatable production semantic-search latency/throughput report remains outstanding.
+The performance gate enforces allocation and byte ceilings for the semantic scorer, tokenizer lookups, SIMD kernels and real GTE inference. The container gate verifies the pure-Go subprocess path under the DiskStation read-only/512 MiB contract, authenticated semantic readiness, and old-image → Go → old-image state compatibility. Wall-clock figures are recorded as evidence but not used as cross-runner CI gates.

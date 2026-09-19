@@ -11,7 +11,7 @@ for ARCH in amd64 arm64; do
   STAGE="$OUT/memento-go-$VERSION-linux-$ARCH"
   mkdir -p "$STAGE"
   if [ "$ARCH" = amd64 ]; then AMD=GOAMD64=v1; else AMD=; fi
-  env CGO_ENABLED=0 GOOS=linux GOARCH="$ARCH" $AMD "$GO" build -trimpath -buildvcs=false -ldflags="-s -w -X 'main.version=memento-go $VERSION (compatibility baseline: 0.5.9; pure-Go service)'" -o "$STAGE/memento-go" ./cmd/memento-go
+  env CGO_ENABLED=0 GOOS=linux GOARCH="$ARCH" $AMD "$GO" build -trimpath -buildvcs=false -ldflags="-s -w -X 'main.version=$VERSION' -X 'github.com/rcarmo/memento/go/service.BuildVersion=$VERSION'" -o "$STAGE/memento-go" ./cmd/memento-go
   env CGO_ENABLED=0 GOOS=linux GOARCH="$ARCH" $AMD "$GO" build -trimpath -buildvcs=false -ldflags="-s -w" -o "$STAGE/memento-embed-go" ./cmd/memento-embed-go
   env CGO_ENABLED=0 GOOS=linux GOARCH="$ARCH" $AMD "$GO" build -trimpath -buildvcs=false -ldflags="-s -w" -o "$STAGE/memento-skill-import-go" ./cmd/memento-skill-import-go
   printf '%s\n' "$VERSION" > "$STAGE/VERSION"

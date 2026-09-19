@@ -1,44 +1,35 @@
 # Release
 
-The released Python/Rust path validates the reference implementation, wheel and container before publishing tagged multi-architecture images. The Go candidate has a separate reproducible static-archive path; switching the production OCI image to it remains an explicit release decision.
+`v1.0.0` changes the implementation behind `ghcr.io/rcarmo/memento` from Python/Rust to pure Go while preserving the client and persisted-state contracts. It is a major release because implementation-specific commands and environment variables are removed, not because MCP clients, mounted configuration or state require migration.
 
 ## Local release checklist
 
-For the released Python/Rust line:
-
-* `make install-dev`
-* `make check`
-* `make coverage`
-* `make build-wheel`
-* `make install-wheel`
-* `make diff-check`
-* build and smoke the release container with a fresh non-root state directory
-
-For the Go candidate:
-
 * `make -C go audit`
-* `make -C go release-check VERSION=<version> SOURCE_DATE_EPOCH=<epoch>`
-* inspect the generated amd64/arm64 archives and their SHA-256 manifests
-* smoke the selected binary against a disposable state copy before any production replacement
+* `make -C go release-check VERSION=1.0.0 SOURCE_DATE_EPOCH=<epoch>`
+* `python3 tools/prepare_runtime_models.py`
+* `make go-container-contract MEMENTO_VERSION=1.0.0`
+* inspect the generated amd64/arm64 archives, image metadata and SHA-256 manifests
+* use a disposable copy of production state for final target-host acceptance; do not modify the live volume during release qualification
 
 ## Packaging notes
 
-The existing OCI path uses pinned Debian Bookworm manifests: Rust 1.88 for the builder and Python 3.12 for the runtime. amd64 Rust code targets baseline x86-64; AVX2/FMA and NEON kernels are selected at runtime. The image pipeline runs the amd64 image under a no-AVX Westmere CPU model before publishing the manifest.
+The OCI image is built with pinned Go and distroless Debian 12 base manifests. Its runtime contains three static executables, the release-prepared GTE/Needle assets and no shell, Python, Rust libraries, CGo dependencies or Git executable. It runs as UID/GID 65532 with the existing read-only-root and `/var/lib/memento` volume contract. `memento-go` is PID 1 and handles SIGINT/SIGTERM directly; its native `healthcheck` subcommand replaces the Python socket probe.
 
-The Go path produces reproducible, stripped, static Linux archives for amd64-v1 and arm64. Each contains `memento-go`, `memento-embed-go`, `memento-skill-import-go`, a version marker and a sorted SHA-256 manifest. Release checks verify architecture, exact layout, checksums, absence of ELF `NEEDED` entries and a native version smoke test. Automatic inference dispatch is AVX2 -> SSE2 -> NEON -> scalar. See [ADR 0008](decisions/0008-build-for-baseline-cpus.md).
+The image and static archives target amd64-v1 and arm64. Automatic inference dispatch is AVX2 -> SSE2 -> NEON -> scalar, and the amd64 image is checked under a no-AVX Westmere CPU model. See [ADR 0008](decisions/0008-build-for-baseline-cpus.md).
 
-A future Go Vulkan package must preserve the verified NAS Bookworm route in [`docs/evidence/vulkan-nas-bookworm-2026-09-19.md`](evidence/vulkan-nas-bookworm-2026-09-19.md). Pin or snapshot the coherent Mesa 22.3.6/loader/libdrm package set; the successful test pinned the base image digest but did not version-lock apt packages, and Mesa 26 failed on the same host. CPU remains the release default until a Go build repeats parity, warm-performance and full-service memory checks.
+The NAS release is CPU-only by explicit operator decision. Retained [Mesa 22 Vulkan evidence](evidence/vulkan-nas-bookworm-2026-09-19.md) is historical reference, not a packaging dependency or an enabled backend. Vulkan on unrelated hardware remains a separately authorised future question.
 
-* The Python wheel contains the service and the client-side skill import command. Platform-specific Rust libraries are built separately.
-* The container packages the Rust GTE and Needle runtimes, release-prepared models and Git. Accepted versioned asset ZIPs are ordinary Git blobs.
-* `MEMENTO_ADMIN_MASTER_KEY` is mandatory when managed access is enabled. Bootstrap/recovery bearer variables are required for initial import; dynamically issued principal credentials live only as control-database verifiers. Provider API keys and model path overrides remain optional.
-* Asset submissions that fit the configured 72 MiB MCP request limit use `zip_base64`; reverse proxies must permit the same bounded request size. Larger packs use the principal-bound raw-upload staging path.
+* Existing `schema_version: 2` configuration is accepted directly, including obsolete FFI path fields that are syntactically validated but unused by Go.
+* Existing `repo.git`, `current`, `control.sqlite`, `derived.sqlite`, proposal, access and asset state is opened without conversion. The contract test proves the previous `0.5.9` image can reopen the same disposable volume after Go, preserving rollback.
+* `MEMENTO_ADMIN_MASTER_KEY`, configured principal token variables, optional provider-key variables, `MEMENTO_GTE_MODEL`, Needle model overrides and `MEMENTO_SIMD` retain meaningful behaviour. Python/Rust tuning variables are not carried forward.
+* The DiskStation secret file remains mounted at `/run/secrets/memento.env`; the native `--env-file` option reads it without requiring a shell.
+* Asset submissions that fit the configured 72 MiB MCP request limit use `zip_base64`; larger packs use the principal-bound raw-upload staging path.
 
 ## CI and publication
 
-Ordinary CI runs for pushes to `main` and pull requests, cancelling superseded runs for the same branch or pull request. It does not run for release tags or special asset refs. Tag releases and manual release dispatches use a separate, non-cancelling workflow with their own Python 3.12--3.14 quality matrix, Rust checks, wheel install and clean-diff gate before image publication. Cache and artifact transfers use commit-pinned Node 24 action releases. Stable `v*` tags then publish native `linux/amd64` and `linux/arm64` images to GHCR, create a multi-architecture OCI index, publish a GitHub release and retain five releases. Fresh untagged architecture manifests are protected for seven days so cleanup cannot break a tagged index.
+The `go` branch CI runs the complete Go audit plus a replacement-container contract. The release workflow reuses the main branch's model workflow unchanged: derive the cache key from `models/runtime-models.json`, restore or download the pinned `model-assets-v1` bundle, verify the archive and each file digest, upload the three files once, and feed that artifact to both native image builders.
 
-Published tags include the full version, major/minor, major and stable-only `latest`.
+A stable `v1.0.0` tag publishes native `linux/amd64` and `linux/arm64` manifests to the existing GHCR repository, assembles the multi-architecture index, attests its provenance, generates an SPDX JSON SBOM, attaches that SBOM to the GitHub release and tags the index as `1.0.0`, `1.0`, `1` and `latest`. Release cleanup retains five application releases while protecting fresh digest-first child manifests.
 
 ## Runtime model asset policy
 

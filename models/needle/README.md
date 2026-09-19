@@ -1,6 +1,6 @@
 # Needle shallow-router artefacts
 
-This directory documents the shallow router described in [ADR 0002](../../docs/decisions/0002-needle-feasibility.md). Corpus generation, training, hard-negative continuation and checkpoint conversion are documented in [`docs/needle-fine-tuning.md`](../../docs/needle-fine-tuning.md).
+This directory documents the shallow router described in [ADR 0002](../../docs/decisions/0002-needle-feasibility.md). Retained corpus, training and benchmark records are indexed under [`docs/evidence/needle/`](../../docs/evidence/needle/README.md).
 
 The binaries and corpora are deliberately not stored in Git.
 

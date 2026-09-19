@@ -2,23 +2,11 @@
 
 ## Visual memory debugger
 
-The optional visual debugger vendors [Three.js](https://threejs.org/) 0.180.0 and [Preact](https://preactjs.com/) 10.27.2, including Preact Hooks, under their MIT licences. Exact source URLs and SHA-256 digests are recorded in `src/memento/graph_debug/static/vendor/manifest.json`; the combined licence text is shipped beside the browser modules in `LICENSES.md`. `bun tools/vendor_graph_libraries.ts --check` verifies the committed files without network access.
+The optional visual debugger vendors [Three.js](https://threejs.org/) 0.180.0 and [Preact](https://preactjs.com/) 10.27.2, including Preact Hooks, under their MIT licences. Exact source URLs and SHA-256 digests are recorded in `go/service/graph_static/vendor/manifest.json`; the combined licence text is embedded beside the browser modules in `LICENSES.md`.
 
 ## uMCP
 
-Memento uses [`rcarmo/umcp`](https://github.com/rcarmo/umcp) for its MCP server, session-bound Streamable HTTP transport, request context, authentication and authorisation hooks. The Python package pins the `v0.2.2` release commit, `9c89a708d14ae804e32aa65de10af7c02922617d`, through the `mcp` optional dependency.
-
-## Rust workspace
-
-The Rust implementation under `rust/` includes code derived from and validated against the MIT-licensed [`rcarmo/go-gte`](https://github.com/rcarmo/go-gte) reference implementation. That attribution applies to:
-
-* `rust/crates/memento-gte`
-* `rust/crates/memento-vector`
-* `rust/crates/memento-embed`
-* `rust/crates/memento-sqlite-vector`
-* `rust/crates/memento-ffi`
-
-`memento-ffi` exposes the same Rust embedding and vector functionality through a stable C ABI, and keeps the same attribution chain intact.
+Memento's standalone pure-Go uMCP module under `go/umcp` implements the MCP server, session-bound Streamable HTTP transport, request context and protocol helpers. Its observable behaviour is pinned and differentially verified against [`rcarmo/umcp`](https://github.com/rcarmo/umcp) `v0.2.2` / deployed commit `9c89a708d14ae804e32aa65de10af7c02922617d`. The Python package is a test oracle only and is not shipped.
 
 ## Go SIMD kernels
 
@@ -36,7 +24,7 @@ Runtime code is MIT licensed. The model artefact follows the upstream model card
 
 ## Needle study artefacts
 
-The Needle feasibility and shallow-router study builds on [`cactus-compute/needle`](https://github.com/cactus-compute/needle), using upstream source commit `ffb1c51` and Hugging Face model revision `5f89b4307696d669c3df1d38ae057e6e1728b107`. The fine-tuned checkpoint, deterministic NDL1 conversion, pure-Rust inference runtime, SIMD kernels and C ABI are Memento additions; their evidence and corpora are described in [`docs/evidence/needle/README.md`](evidence/needle/README.md) and [`models/needle/README.md`](../models/needle/README.md).
+The Needle feasibility and shallow-router study builds on [`cactus-compute/needle`](https://github.com/cactus-compute/needle), using upstream source commit `ffb1c51` and Hugging Face model revision `5f89b4307696d669c3df1d38ae057e6e1728b107`. The fine-tuned checkpoint, deterministic NDL1 conversion and pure-Go inference/SentencePiece/SIMD runtime are Memento additions; their evidence and corpora are described in [`docs/evidence/needle/README.md`](evidence/needle/README.md) and [`models/needle/README.md`](../models/needle/README.md).
 
 Needle runtime files are release-hosted and verified through `models/runtime-models.json`. Prepare them before runtime checks with:
 
@@ -48,4 +36,4 @@ That prerequisite applies both to the fine-tuned checkpoint and to the family-se
 
 ## Release records
 
-`models/runtime-models.json` ties runtime model files to release-hosted archives and SHA-256 digests. Native image builds verify those files before publication, and GitHub releases record the immutable multi-architecture OCI digest. An attached SBOM remains the provenance gap tracked in [`PLAN.md`](../PLAN.md).
+`models/runtime-models.json` ties runtime model files to release-hosted archives and SHA-256 digests. Native image builds verify those files before publication, and GitHub releases record the immutable multi-architecture OCI digest, provenance attestation and attached SPDX JSON SBOM.

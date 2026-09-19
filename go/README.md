@@ -2,7 +2,7 @@
 
 This directory is a standalone Go module for the pure-Go Memento port. It builds with `CGO_ENABLED=0`; Python and Rust are test-oracle tools, not runtime dependencies.
 
-The module is the verified replacement candidate on branch `go`; selecting it for a production deployment remains an operator release decision. [`../docs/go-port/parity.md`](../docs/go-port/parity.md) records matched behaviour, explicit typed-boundary differences and deferred non-baseline work.
+The module is the verified `v1.0.0` replacement on branch `go`; production deployment remains an operator release action. [`../docs/go-port/parity.md`](../docs/go-port/parity.md) records matched behaviour, explicit typed-boundary differences and deferred non-baseline work.
 
 ## Commands
 

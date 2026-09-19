@@ -64,13 +64,22 @@ func headNorm(x []float32, heads, dim int, scale []float32) {
 	}
 }
 func project(input []float32, in, out int, kernel []float32) []float32 {
+	return projectWithEngine(input, in, out, kernel, nil)
+}
+func projectWithEngine(input []float32, in, out int, kernel []float32, engine *msimd.Engine) []float32 {
 	rows := len(input) / in
 	result := make([]float32, rows*out)
 	for r := 0; r < rows; r++ {
+		row := result[r*out : (r+1)*out]
 		for i := 0; i < in; i++ {
 			value := input[r*in+i]
+			weights := kernel[i*out : (i+1)*out]
+			if engine != nil {
+				_ = engine.AXPY(value, weights, row)
+				continue
+			}
 			for j := 0; j < out; j++ {
-				result[r*out+j] = float32(result[r*out+j] + float32(value*kernel[i*out+j]))
+				row[j] = float32(row[j] + float32(value*weights[j]))
 			}
 		}
 	}
@@ -94,9 +103,11 @@ func attendWithEngine(q, k, v []float32, heads, kvHeads, dim int, engine *msimd.
 		maxScore := float32(math.Inf(-1))
 		for token := range scores {
 			base := token*kvHeads*dim + kh*dim
-			product := dot(q[h*dim:(h+1)*dim], k[base:base+dim])
+			var product float32
 			if engine != nil {
 				product, _ = engine.Dot(q[h*dim:(h+1)*dim], k[base:base+dim])
+			} else {
+				product = dot(q[h*dim:(h+1)*dim], k[base:base+dim])
 			}
 			score := float32(product / scale)
 			scores[token] = score
@@ -135,9 +146,11 @@ func argmaxWithEngine(hidden, embedding []float32, allowed []int, engine *msimd.
 	maximum := float32(math.Inf(-1))
 	if len(allowed) == 0 {
 		for id := 0; id < len(embedding)/dim; id++ {
-			score := dot(hidden, embedding[id*dim:(id+1)*dim])
+			var score float32
 			if engine != nil {
 				score, _ = engine.Dot(hidden, embedding[id*dim:(id+1)*dim])
+			} else {
+				score = dot(hidden, embedding[id*dim:(id+1)*dim])
 			}
 			if score > maximum {
 				maximum = score
@@ -146,9 +159,11 @@ func argmaxWithEngine(hidden, embedding []float32, allowed []int, engine *msimd.
 		}
 	} else {
 		for _, id := range allowed {
-			score := dot(hidden, embedding[id*dim:(id+1)*dim])
+			var score float32
 			if engine != nil {
 				score, _ = engine.Dot(hidden, embedding[id*dim:(id+1)*dim])
+			} else {
+				score = dot(hidden, embedding[id*dim:(id+1)*dim])
 			}
 			if score > maximum {
 				maximum = score

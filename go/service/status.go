@@ -20,6 +20,10 @@ var statusDefaults []byte
 //go:embed status_tools.json
 var statusToolDefinitions []byte
 
+// BuildVersion is set by release builds. An empty value retains the pinned
+// source-runtime version used by differential fixtures and development tests.
+var BuildVersion string
+
 // ModelsOffMetadata is explicit models-disabled runtime configuration. It does
 // not enable semantic/router/dream features or replace full config validation.
 type ModelsOffMetadata struct {
@@ -43,6 +47,9 @@ func modelsOffMetadata(surface string, raw []byte) (*ModelsOffMetadata, error) {
 		return nil, err
 	}
 	meta.Catalog = catalog
+	if BuildVersion != "" {
+		meta.ServiceVersion = BuildVersion
+	}
 	return &meta, nil
 }
 

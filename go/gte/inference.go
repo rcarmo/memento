@@ -24,19 +24,23 @@ func (m *Model) EmbedTo(text string, out []float32, checkpoint Checkpoint) error
 	if len(out) != m.Dim() {
 		return fmt.Errorf("output buffer len %d != hidden size %d", len(out), m.Dim())
 	}
-	tokens, err := m.Tokenize(text)
+	var tokenBuffer []int
+	if pooled, _ := m.tokenBuffers.Get().(*[]int); pooled != nil {
+		tokenBuffer = *pooled
+	}
+	tokens, err := m.tokenizer.tokenizeInto(text, tokenBuffer)
 	if err != nil {
 		return err
 	}
+	tokenStorage := tokens[:0]
+	defer m.tokenBuffers.Put(&tokenStorage)
 	if err = check(checkpoint, "tokenized"); err != nil {
 		return err
 	}
-	outputs, err := m.forward([][]int{tokens}, checkpoint)
-	if err != nil {
-		return err
-	}
-	copy(out, outputs[0])
-	return nil
+	batch := [1][]int{tokens}
+	outputs := [1][]float32{out}
+	_, err = m.forwardInto(batch[:], checkpoint, outputs[:])
+	return err
 }
 
 // Embed returns an owned, mean-pooled, L2-normalised float32 vector.
@@ -98,7 +102,17 @@ func linear(x, w, b []float32, rows, in, out int) []float32 {
 	return linearWithEngine(x, w, b, rows, in, out, nil)
 }
 func linearWithEngine(x, w, b []float32, rows, in, out int, engine *msimd.Engine) []float32 {
-	y := make([]float32, rows*out)
+	return linearInto(x, w, b, rows, in, out, engine, nil)
+}
+func linearInto(x, w, b []float32, rows, in, out int, engine *msimd.Engine, target []float32) []float32 {
+	size := rows * out
+	if cap(target) < size {
+		target = make([]float32, size)
+	} else {
+		target = target[:size]
+		clear(target)
+	}
+	y := target
 	for row := 0; row < rows; row++ {
 		for col := 0; col < out; col++ {
 			var sum float32
@@ -164,12 +178,16 @@ func softmax(x []float32) {
 	}
 }
 
-func residual(x, other []float32) []float32 {
-	out := make([]float32, len(x))
-	for i := range out {
-		out[i] = float32(x[i] + other[i])
+func residualInto(x, other, target []float32) []float32 {
+	if cap(target) < len(x) {
+		target = make([]float32, len(x))
+	} else {
+		target = target[:len(x)]
 	}
-	return out
+	for i := range target {
+		target[i] = float32(x[i] + other[i])
+	}
+	return target
 }
 func normalize(x []float32) {
 	var sum float32
@@ -184,17 +202,49 @@ func normalize(x []float32) {
 	}
 }
 
+type forwardWorkspace struct {
+	state, q, k, v, attention, projected, after, inter, output []float32
+	mask                                                       []bool
+	scores                                                     []float32
+}
+
+func takeFloats(target []float32, size int) []float32 {
+	if cap(target) < size {
+		return make([]float32, size)
+	}
+	target = target[:size]
+	clear(target)
+	return target
+}
+func takeBools(target []bool, size int) []bool {
+	if cap(target) < size {
+		return make([]bool, size)
+	}
+	target = target[:size]
+	clear(target)
+	return target
+}
+
 // forward restores the original Go attention/FFN algorithms but uses Memento's
 // batch padding and exact-math scalar path, not upstream assembly or fast-math.
 func (m *Model) forward(batch [][]int, checkpoint Checkpoint) ([][]float32, error) {
+	return m.forwardInto(batch, checkpoint, nil)
+}
+func (m *Model) forwardInto(batch [][]int, checkpoint Checkpoint, outputs [][]float32) (_ [][]float32, err error) {
 	seq := 0
 	for _, tokens := range batch {
 		seq = max(seq, len(tokens))
 	}
 	h := m.Dim()
 	rows := len(batch) * seq
-	state := make([]float32, rows*h)
-	mask := make([]bool, rows)
+	workspace, _ := m.workspaces.Get().(*forwardWorkspace)
+	if workspace == nil {
+		workspace = &forwardWorkspace{}
+	}
+	defer m.workspaces.Put(workspace)
+	workspace.state = takeFloats(workspace.state, rows*h)
+	workspace.mask = takeBools(workspace.mask, rows)
+	state, mask := workspace.state, workspace.mask
 	for item, tokens := range batch {
 		for pos, token := range tokens {
 			row := item*seq + pos
@@ -211,11 +261,12 @@ func (m *Model) forward(batch [][]int, checkpoint Checkpoint) ([][]float32, erro
 	headDim := h / m.config.NumHeads
 	scale := float32(1) / float32(math.Sqrt(float64(float32(headDim))))
 	for _, l := range m.layers {
-		q := linearWithEngine(state, l.query, l.queryBias, rows, h, h, m.simd)
-		k := linearWithEngine(state, l.key, l.keyBias, rows, h, h, m.simd)
-		v := linearWithEngine(state, l.value, l.valueBias, rows, h, h, m.simd)
-		attention := make([]float32, rows*h)
-		scores := make([]float32, seq)
+		workspace.q = linearInto(state, l.query, l.queryBias, rows, h, h, m.simd, workspace.q)
+		workspace.k = linearInto(state, l.key, l.keyBias, rows, h, h, m.simd, workspace.k)
+		workspace.v = linearInto(state, l.value, l.valueBias, rows, h, h, m.simd, workspace.v)
+		workspace.attention = takeFloats(workspace.attention, rows*h)
+		workspace.scores = takeFloats(workspace.scores, seq)
+		q, k, v, attention, scores := workspace.q, workspace.k, workspace.v, workspace.attention, workspace.scores
 		for item := range batch {
 			base := item * seq
 			for head := 0; head < m.config.NumHeads; head++ {
@@ -249,21 +300,28 @@ func (m *Model) forward(batch [][]int, checkpoint Checkpoint) ([][]float32, erro
 				}
 			}
 		}
-		projected := linearWithEngine(attention, l.attention, l.attentionBias, rows, h, h, m.simd)
-		after := residual(projected, state)
-		layerNorm(after, l.attentionNorm, l.attentionNormBias, h)
-		inter := linearWithEngine(after, l.intermediate, l.intermediateBias, rows, h, m.config.Intermediate, m.simd)
-		gelu(inter)
-		out := linearWithEngine(inter, l.output, l.outputBias, rows, m.config.Intermediate, h, m.simd)
-		state = residual(out, after)
+		workspace.projected = linearInto(attention, l.attention, l.attentionBias, rows, h, h, m.simd, workspace.projected)
+		workspace.after = residualInto(workspace.projected, state, workspace.after)
+		layerNorm(workspace.after, l.attentionNorm, l.attentionNormBias, h)
+		workspace.inter = linearInto(workspace.after, l.intermediate, l.intermediateBias, rows, h, m.config.Intermediate, m.simd, workspace.inter)
+		gelu(workspace.inter)
+		workspace.output = linearInto(workspace.inter, l.output, l.outputBias, rows, m.config.Intermediate, h, m.simd, workspace.output)
+		state = residualInto(workspace.output, workspace.after, state)
 		layerNorm(state, l.outputNorm, l.outputNormBias, h)
 		if err := check(checkpoint, "layer_done"); err != nil {
 			return nil, err
 		}
 	}
-	outputs := make([][]float32, len(batch))
+	if len(outputs) != len(batch) {
+		outputs = make([][]float32, len(batch))
+	}
 	for item, tokens := range batch {
-		out := make([]float32, h)
+		out := outputs[item]
+		if len(out) != h {
+			out = make([]float32, h)
+		} else {
+			clear(out)
+		}
 		for pos := range tokens {
 			for d := range out {
 				out[d] = float32(out[d] + state[(item*seq+pos)*h+d])

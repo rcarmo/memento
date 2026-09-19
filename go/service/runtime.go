@@ -17,6 +17,7 @@ import (
 // the process-wide writer lease.
 type Runtime struct {
 	Paths                 RuntimePaths
+	ServiceVersion        string
 	Jobs                  *Jobs
 	SemanticWorker        *derived.SemanticWorker
 	GraphRefresh          *graphdebug.RefreshCoordinator

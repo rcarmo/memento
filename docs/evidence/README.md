@@ -20,63 +20,9 @@ Go-port performance records include the [Go/Python 1,000-concept benchmark](go-p
 
 [`release-0.3.27.md`](release-0.3.27.md) records the previous issue 13 contract and diagnostic checks, pinned uMCP dependency and state-preserving deployment. [`release-0.3.26.md`](release-0.3.26.md) records the earlier persistent Streamable HTTP checks and state-preserving deployment. [`release-0.3.25.md`](release-0.3.25.md) records the earlier embedding-preserving deployment, live graph and semantic state, and execute-only asset metadata checks. [`release-0.3.24.md`](release-0.3.24.md) records the bounded inventory and manifest comparison deployment, including progressive embedding convergence. [`release-0.3.23.md`](release-0.3.23.md) remains the historical answer, redeployment and tagged-source corpus record. These reports distinguish release gates from checks that ran against the live service.
 
-## Reproduction commands
+## Historical load reports
 
-### `load-operational-local.json`
-
-```bash
-PYTHONPATH=src .venv/bin/python tools/load_test.py \
-  --profile operational \
-  --concepts 250 \
-  --workers 16 \
-  --requests 1000 \
-  --output docs/evidence/load-operational-local.json
-```
-
-### `load-http-local.json`
-
-Start a local daemon first:
-
-```bash
-export MEMENTO_ADMIN_MASTER_KEY='temporary-load-test-key'
-export MEMENTO_TOKEN_SANDBOX_BOOTSTRAP='replace-me'
-export MEMENTO_TOKEN_WORK_AGENT_BOOTSTRAP='replace-me-too'
-memento-serve --config /path/to/config.json serve --host 127.0.0.1 --port 18768
-```
-
-Then run:
-
-```bash
-PYTHONPATH=src .venv/bin/python tools/load_test.py \
-  --profile check \
-  --concepts 50 \
-  --workers 8 \
-  --requests 200 \
-  --include-http \
-  --http-url http://127.0.0.1:18768/mcp \
-  --http-token "$MEMENTO_TOKEN_SANDBOX_BOOTSTRAP" \
-  --http-concurrency 8 \
-  --duration-seconds 10 \
-  --http-status-ratio 40 \
-  --http-search-ratio 60 \
-  --http-read-ratio 0 \
-  --output docs/evidence/load-http-local.json
-```
-
-### `load-semantic-local.json`
-
-```bash
-PYTHONPATH=src .venv/bin/python tools/load_test.py \
-  --profile functional \
-  --concepts 100 \
-  --workers 8 \
-  --requests 200 \
-  --semantic-enabled \
-  --include-semantic \
-  --output docs/evidence/load-semantic-local.json
-```
-
-Heavier or deployed runs should write new reports rather than replacing these local baselines. See [`../load-testing.md`](../load-testing.md).
+The `load-*.json` files were produced by the removed Python reference harness and remain immutable historical evidence. They are not reproducible from this pure-Go branch. New performance evidence uses repository-owned Go benchmarks, pprof profiles and explicit target-host acceptance records; it must be written to new files rather than replacing these baselines.
 
 ## Access evidence
 

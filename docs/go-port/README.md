@@ -1,6 +1,6 @@
 # Pure Go port
 
-The `go` branch contains the verified pure-Go Memento replacement candidate: the service daemon, standalone uMCP module, Git/SQLite persistence and recovery, GTE, Needle, operational commands and release tooling. Runtime binaries build with `CGO_ENABLED=0` and do not require Python, Rust, C inference, native SQLite extensions or external Git commands for core operation.
+The `go` branch contains the verified pure-Go Memento `v1.0.0` replacement: the service daemon, standalone uMCP module, Git/SQLite persistence and recovery, GTE, Needle, operational commands and release tooling. Runtime binaries build with `CGO_ENABLED=0` and do not require Python, Rust, C inference, native SQLite extensions or external Git commands for core operation.
 
 Python, Rust and the pinned upstream uMCP repository remain test oracles. The separate Vulkan worktree remains outside this baseline.
 
@@ -35,7 +35,7 @@ Storage uses pure-Go Git object/ref/worktree code and modernc SQLite. Concepts a
 
 Optional local inference uses the original scalar Go GTE algorithm and the pure-Go Needle/SentencePiece port. Automatic SIMD dispatch is AVX2 -> SSE2 -> NEON -> scalar, with `MEMENTO_SIMD=scalar` retaining the correctness oracle. Real assets pass GTE and Needle model gates on x86-64 and ARM64; the held-out Needle corpus is 360/360 exact under NEON.
 
-The separate Vulkan branch remains deferred, but its verified NAS container route must be retained: unmodified Debian Bookworm Mesa 22.3.6 plus the proprietary device mapping works on the Intel HD 500 without host changes. That Rust/wgpu result is a dependency for future Go work, not Go parity or a reason to change the CPU default. See [the NAS Vulkan evidence](../evidence/vulkan-nas-bookworm-2026-09-19.md).
+The NAS replacement is CPU-only by explicit decision. The verified Mesa 22 Intel HD 500 route remains [reference evidence](../evidence/vulkan-nas-bookworm-2026-09-19.md), but same-process warm GPU tests were still slower than CPU. Do not package, enable or retest Vulkan on NAS without a new decision; unrelated hardware remains a separate question.
 
 ## Verification
 

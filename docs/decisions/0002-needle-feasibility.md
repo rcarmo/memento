@@ -112,7 +112,7 @@ The go/no-go thresholds for any full-plan design are:
 
 Results must be repeated on AMD64 and ARM64. Claims about Cactus throughput require running the exact fine-tuned checkpoint through a pinned Cactus runtime; the Needle repository's published Cactus figures do not prove Memento workload performance.
 
-The reproducible corpus, recorded training settings and conversion steps are collected in [`docs/needle-fine-tuning.md`](../needle-fine-tuning.md).
+The reproducible corpus and retained measurement records are indexed under [`docs/evidence/needle/`](../evidence/needle/README.md).
 
 ## Shallow-router follow-up
 
@@ -141,7 +141,7 @@ The unchanged 360-case test then produced:
 | Median latency | 0.442 s | informational |
 | p95 latency | 0.579 s | informational |
 
-Argument exact match remained 54.17%, which confirms the intended boundary: Needle may classify intent and fixed enums only. Memento still derives search text from the original request, parses exact paths and IDs and expands fixed plans in deterministic code. `src/memento/router.py` freezes and tests that boundary without adding a JAX dependency to the normal runtime.
+Argument exact match remained 54.17%, which confirms the intended boundary: Needle may classify intent and fixed enums only. Memento still derives search text from the original request, parses exact paths and IDs and expands fixed plans in deterministic code. The pure-Go router freezes and tests that boundary without adding a training-framework dependency to the runtime.
 
 The passing checkpoint and family-separated corpora are pinned in the `training-assets-v1` release. The checkpoint SHA-256 is `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
 

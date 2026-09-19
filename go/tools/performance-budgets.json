@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "benchmarks": {
+    "BenchmarkSemanticBlobCosine384": {
+      "max_allocs_per_op": 0,
+      "max_bytes_per_op": 0
+    },
+    "BenchmarkTokenizerVocabularyLookups": {
+      "max_allocs_per_op": 0,
+      "max_bytes_per_op": 0
+    },
+    "BenchmarkDotSelected": {
+      "max_allocs_per_op": 0,
+      "max_bytes_per_op": 0
+    },
+    "BenchmarkRealGTEEmbed": {
+      "max_allocs_per_op": 2,
+      "max_bytes_per_op": 1600
+    },
+    "BenchmarkSearchLexical100": {
+      "max_allocs_per_op": 875,
+      "max_bytes_per_op": 43500
+    },
+    "BenchmarkRealNeedleGenerate": {
+      "max_allocs_per_op": 7600,
+      "max_bytes_per_op": 8800000
+    }
+  }
+}

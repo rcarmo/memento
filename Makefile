@@ -1,91 +1,47 @@
-PYTHON ?= python3
-VENV ?= .venv
-BIN := $(VENV)/bin
-MEMENTO_VERSION ?= 0.5.9
-RELEASE_TAG ?= v$(MEMENTO_VERSION)
-PORTAINER_URL ?= https://ops.local:9443
-PICLAW ?= piclaw
+GO ?= go
+MEMENTO_VERSION ?= 1.0.0
+SOURCE_DATE_EPOCH ?= 0
 
-.PHONY: install install-dev lint format format-check typecheck test coverage graph-check rust-format-check rust-lint rust-test rust-check check build-wheel install-wheel diff-check release-wait deploy-diskstation refresh-diskstation-embeddings verify-diskstation release-deploy-diskstation load-functional load-operational load-check clean
+.PHONY: check quality audit test performance model-test corpus-test release release-check go-container-build go-container-contract clean
 
-$(BIN)/python:
-	$(PYTHON) -m venv $(VENV)
+check quality:
+	$(MAKE) -C go quality
 
-install: $(BIN)/python
-	$(BIN)/python -m pip install -e .
-
-install-dev: $(BIN)/python
-	$(BIN)/python -m pip install -e '.[dev]' build
-
-lint:
-	$(BIN)/ruff check src tests tools
-
-format:
-	$(BIN)/ruff format src tests tools
-
-format-check:
-	$(BIN)/ruff format --check src tests tools
-
-typecheck:
-	$(BIN)/mypy src tests
+audit:
+	$(MAKE) -C go audit GTE_MODEL_PATH="$(abspath models/gte/gte-small.gtemodel)"
 
 test:
-	$(BIN)/pytest -q
+	$(MAKE) -C go test
 
-coverage:
-	$(BIN)/pytest --cov=memento --cov-branch --cov-report=term-missing
+performance:
+	$(MAKE) -C go performance \
+		GTE_MODEL_PATH="$(abspath models/gte/gte-small.gtemodel)" \
+		NEEDLE_MODEL_PATH="$(abspath models/needle/memento-router.ndl)" \
+		NEEDLE_TOKENIZER_PATH="$(abspath models/needle/needle.model)"
 
-graph-check:
-	bun tools/vendor_graph_libraries.ts --check
-	bun build src/memento/graph_debug/static/app.js --target=browser --format=esm --outfile=/tmp/memento-graph-check.js >/dev/null
-	rm -f /tmp/memento-graph-check.js
+model-test:
+	$(MAKE) -C go model-test \
+		GTE_MODEL_PATH="$(abspath models/gte/gte-small.gtemodel)" \
+		NEEDLE_MODEL_PATH="$(abspath models/needle/memento-router.ndl)" \
+		NEEDLE_TOKENIZER_PATH="$(abspath models/needle/needle.model)"
 
-rust-format-check:
-	cd rust && cargo fmt --all --check
+corpus-test:
+	$(MAKE) -C go corpus-test \
+		NEEDLE_MODEL_PATH="$(abspath models/needle/memento-router.ndl)" \
+		NEEDLE_TOKENIZER_PATH="$(abspath models/needle/needle.model)"
 
-rust-lint:
-	cd rust && cargo clippy --workspace --all-targets -- -D warnings
+release:
+	$(MAKE) -C go release VERSION="$(MEMENTO_VERSION)" SOURCE_DATE_EPOCH="$(SOURCE_DATE_EPOCH)"
 
-rust-test:
-	cd rust && cargo test --workspace
+release-check:
+	$(MAKE) -C go release-check VERSION="$(MEMENTO_VERSION)" SOURCE_DATE_EPOCH="$(SOURCE_DATE_EPOCH)"
 
-rust-check: rust-format-check rust-lint rust-test
+go-container-build:
+	docker build --build-arg VERSION="$(MEMENTO_VERSION)" --build-arg COMMIT="$$(git rev-parse HEAD)" --build-arg BUILD_DATE="$$(date -u +'%Y-%m-%dT%H:%M:%SZ')" -t memento-go:contract .
 
-check: lint format-check typecheck test graph-check rust-check
-
-build-wheel:
-	$(BIN)/python -m build --wheel
-
-install-wheel: build-wheel
-	$(BIN)/python -m pip install --force-reinstall dist/memento-$(MEMENTO_VERSION)-py3-none-any.whl
-
-diff-check:
-	git diff --exit-code -- . ':(exclude).coverage'
-
-release-wait:
-	@PICLAW="$(PICLAW)" $(BIN)/python tools/release_deploy.py wait-release "$(RELEASE_TAG)"
-
-deploy-diskstation:
-	@PORTAINER_URL="$(PORTAINER_URL)" PICLAW="$(PICLAW)" \
-		$(BIN)/python tools/release_deploy.py deploy "$(MEMENTO_VERSION)"
-
-refresh-diskstation-embeddings:
-	$(BIN)/python tools/release_deploy.py refresh-embeddings
-
-verify-diskstation:
-	$(BIN)/python tools/release_deploy.py verify
-
-release-deploy-diskstation: release-wait deploy-diskstation verify-diskstation
-
-load-functional:
-	PYTHONPATH=src $(BIN)/python tools/load_test.py --profile functional --concepts 12 --workers 4 --requests 24 --output build/load-functional.json
-
-load-operational:
-	PYTHONPATH=src $(BIN)/python tools/load_test.py --profile operational --concepts 12 --workers 4 --requests 24 --output build/load-operational.json
-
-load-check:
-	PYTHONPATH=src $(BIN)/python tools/load_test.py --profile check --concepts 8 --workers 3 --requests 12 --output build/load-check.json
+go-container-contract: go-container-build
+	IMAGE=memento-go:contract VERSION="$(MEMENTO_VERSION)" tools/test_go_container_contract.sh
 
 clean:
-	rm -rf $(VENV) .pytest_cache .ruff_cache .mypy_cache .coverage htmlcov build dist *.egg-info src/*.egg-info
-	find . -type d -name __pycache__ -prune -exec rm -rf {} +
+	rm -rf build
+	$(MAKE) -C go clean

@@ -159,8 +159,13 @@ func TestRuntimeStatusSnapshot(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if snapshot["schema_version"] != 2 || snapshot["visible_concepts"] != 0 || snapshot["proposal_backlog"] != 1 || snapshot["closed"] != false {
+	if snapshot["service_version"] != "0.5.9" || snapshot["schema_version"] != 2 || snapshot["visible_concepts"] != 0 || snapshot["proposal_backlog"] != 1 || snapshot["closed"] != false {
 		t.Fatal(snapshot)
+	}
+	runtime.ServiceVersion = "1.0.0"
+	snapshot, err = runtime.StatusSnapshot(ctx, 2)
+	if err != nil || snapshot["service_version"] != "1.0.0" {
+		t.Fatal(snapshot, err)
 	}
 	semantic := snapshot["semantic_search"].(map[string]any)
 	needle := snapshot["needle_router"].(map[string]any)

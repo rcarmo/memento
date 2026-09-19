@@ -5,16 +5,18 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/rcarmo/memento/go/access"
-	"github.com/rcarmo/memento/go/control"
-	"github.com/rcarmo/memento/go/service"
-	"github.com/rcarmo/memento/go/umcp"
 	"io"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/rcarmo/memento/go/access"
+	"github.com/rcarmo/memento/go/control"
+	"github.com/rcarmo/memento/go/service"
+	"github.com/rcarmo/memento/go/umcp"
 )
 
 func stubRuntime(t *testing.T) (*service.Runtime, *umcp.Server) {
@@ -35,8 +37,63 @@ func TestRunSyntax(t *testing.T) {
 		}
 	}
 	var out, stderr bytes.Buffer
-	if code := runContext(context.Background(), []string{"version"}, nil, &out, &stderr); code != 0 || !strings.Contains(out.String(), "models-off service") || stderr.Len() != 0 {
+	if code := runContext(context.Background(), []string{"version"}, nil, &out, &stderr); code != 0 || out.String() != "memento-go development\n" || stderr.Len() != 0 {
 		t.Fatal(code, out.String(), stderr.String())
+	}
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if code := runContext(context.Background(), []string{"healthcheck", "--address", listener.Addr().String(), "--timeout", "1s"}, nil, io.Discard, &stderr); code != 0 {
+		t.Fatal(code, stderr.String())
+	}
+	listener.Close()
+	if code := runContext(context.Background(), []string{"healthcheck", "--address", listener.Addr().String(), "--timeout", "1ms"}, nil, io.Discard, &stderr); code != 1 {
+		t.Fatal(code)
+	}
+	for _, args := range [][]string{{"healthcheck", "--bad", "x"}, {"healthcheck", "--timeout", "bad"}, {"healthcheck", "--timeout", "0s"}, {"healthcheck", "--address"}} {
+		if code := runContext(context.Background(), args, nil, io.Discard, io.Discard); code != 2 {
+			t.Fatal(args, code)
+		}
+	}
+}
+func TestHealthcheckCloseFailure(t *testing.T) {
+	previous := dialHealthcheck
+	t.Cleanup(func() { dialHealthcheck = previous })
+	dialHealthcheck = func(string, string, time.Duration) (net.Conn, error) { return closeFailureConn{}, nil }
+	if code := runHealthcheck(nil, io.Discard); code != 1 {
+		t.Fatal(code)
+	}
+}
+
+type closeFailureConn struct{ net.Conn }
+
+func (closeFailureConn) Close() error { return errors.New("close") }
+
+func TestEnvironmentFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "memento.env")
+	if err := os.WriteFile(path, []byte("# comment\nexport MEMENTO_TEST_ONE='one two'\nMEMENTO_TEST_TWO=three\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := loadEnvironmentFile(path); err != nil || os.Getenv("MEMENTO_TEST_ONE") != "one two" || os.Getenv("MEMENTO_TEST_TWO") != "three" {
+		t.Fatal(err)
+	}
+	for _, raw := range []string{"invalid\n", "BAD NAME=x\n"} {
+		bad := filepath.Join(t.TempDir(), "bad.env")
+		if err := os.WriteFile(bad, []byte(raw), 0600); err != nil {
+			t.Fatal(err)
+		}
+		if err := loadEnvironmentFile(bad); err == nil {
+			t.Fatal(raw)
+		}
+	}
+	if err := loadEnvironmentFile(filepath.Join(t.TempDir(), "missing")); err == nil {
+		t.Fatal("missing environment file")
+	}
+	for _, args := range [][]string{{"--env-file", "", "--config", "x", "serve"}, {"--env-file", filepath.Join(t.TempDir(), "missing"), "--config", "x", "serve"}} {
+		if code := runContext(context.Background(), args, nil, io.Discard, io.Discard); code == 0 {
+			t.Fatal(args)
+		}
 	}
 }
 func TestRunServe(t *testing.T) {
@@ -58,6 +115,14 @@ func TestRunServe(t *testing.T) {
 	}
 	if code := runContext(context.Background(), []string{"--config", "x", "serve"}, nil, io.Discard, io.Discard); code != 0 || strings.Join(got, " ") != "--http --host 127.0.0.1 --port 8000 --endpoint /mcp --max-request-bytes 4194304 --allowed-origin http://a.example --allowed-origin https://b.example" {
 		t.Fatal(code, got)
+	}
+	envFile := filepath.Join(t.TempDir(), "memento.env")
+	if err := os.WriteFile(envFile, []byte("MEMENTO_TEST_NATIVE=yes\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	runtime, server = stubRuntime(t)
+	if code := runContext(context.Background(), []string{"--env-file", envFile, "--config", "x", "serve"}, nil, io.Discard, io.Discard); code != 0 || os.Getenv("MEMENTO_TEST_NATIVE") != "yes" {
+		t.Fatal(code)
 	}
 	runtime, server = stubRuntime(t)
 	if code := runContext(context.Background(), []string{"--config", "x", "serve", "--tcp", "--port", "1", "--max-request-bytes", "9", "--allowed-origin", "https://override"}, nil, io.Discard, io.Discard); code != 0 || strings.Join(got, " ") != "--tcp --port 1 --max-request-bytes 9 --allowed-origin https://override" {

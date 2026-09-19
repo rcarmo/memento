@@ -10,6 +10,28 @@ import (
 	"testing"
 )
 
+func BenchmarkRealGTEEmbed(b *testing.B) {
+	path := os.Getenv("GTE_MODEL_PATH")
+	if path == "" {
+		b.Skip("set GTE_MODEL_PATH")
+	}
+	model, err := Load(path)
+	if err != nil {
+		b.Fatal(err)
+	}
+	if err = model.SetSIMD("auto"); err != nil {
+		b.Fatal(err)
+	}
+	output := make([]float32, model.Dim())
+	b.ReportAllocs()
+	b.ResetTimer()
+	for range b.N {
+		if err = model.EmbedTo("Memento semantic search allocation profile", output, nil); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
 // TestRealGTEModel is explicitly gated on a public, digest-pinned model artefact.
 // It supplements, rather than replaces, the always-on synthetic parity suite.
 func TestRealGTESIMD(t *testing.T) {

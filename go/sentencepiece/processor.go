@@ -60,6 +60,15 @@ func FromBytes(data []byte) (*Processor, error) {
 // Pieces returns an owned vocabulary copy.
 func (p *Processor) Pieces() []Piece { return append([]Piece{}, p.model.pieces...) }
 
+// VocabSize returns the immutable vocabulary size without copying it.
+func (p *Processor) VocabSize() int { return len(p.model.pieces) }
+
+// TokenID returns the first matching vocabulary ID without copying the vocab.
+func (p *Processor) TokenID(text string) (int, bool) {
+	id, ok := p.ids[text]
+	return id, ok
+}
+
 // IDs returns configured unknown/BOS/EOS/PAD IDs in that order.
 func (p *Processor) IDs() (int, int, int, int) {
 	return p.model.unk, p.model.bos, p.model.eos, p.model.pad

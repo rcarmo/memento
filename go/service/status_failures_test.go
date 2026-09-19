@@ -22,6 +22,13 @@ func (f failingStatusIndex) Status(context.Context, access.EffectivePolicy) (der
 	return f.result, f.err
 }
 func TestStatusFailurePaths(t *testing.T) {
+	previous := BuildVersion
+	BuildVersion = "1.0.0"
+	metadata, err := NewModelsOffMetadata("compact")
+	BuildVersion = previous
+	if err != nil || metadata.ServiceVersion != "1.0.0" {
+		t.Fatal(metadata, err)
+	}
 	if _, err := modelsOffMetadata("compact", []byte("{")); err == nil {
 		t.Fatal("invalid defaults")
 	}

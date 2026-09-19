@@ -2,7 +2,6 @@ package sentencepiece
 
 import (
 	"encoding/binary"
-	"strings"
 	"unicode/utf8"
 )
 
@@ -70,7 +69,7 @@ func (m *model) normalize(text string) string {
 		out = append(out, space...)
 	}
 	previous := m.normalizer.removeExtra
-	cm := decodeCharsmap(m.normalizer.charsmap)
+	cm := m.cachedNormalizer()
 	input := []byte(text)
 	for len(input) > 0 {
 		_, n := utf8.DecodeRune(input)
@@ -97,7 +96,7 @@ func (m *model) normalize(text string) string {
 		}
 	}
 	if m.normalizer.removeExtra {
-		for strings.HasSuffix(string(out), space) {
+		for len(out) >= len(space) && string(out[len(out)-len(space):]) == space {
 			out = out[:len(out)-len(space)]
 		}
 	}
@@ -108,4 +107,11 @@ func (m *model) normalize(text string) string {
 		return ""
 	}
 	return string(out)
+}
+
+func (m *model) cachedNormalizer() *charsmap {
+	if m.normalizerMap != nil {
+		return m.normalizerMap
+	}
+	return decodeCharsmap(m.normalizer.charsmap)
 }

@@ -9,6 +9,36 @@ import (
 	"testing"
 )
 
+func BenchmarkRealNeedleGenerate(b *testing.B) {
+	path, tokenizerPath := os.Getenv("NEEDLE_MODEL_PATH"), os.Getenv("NEEDLE_TOKENIZER_PATH")
+	if path == "" || tokenizerPath == "" {
+		b.Skip("set pinned model/tokenizer paths")
+	}
+	model, err := Load(path)
+	if err != nil {
+		b.Fatal(err)
+	}
+	tokenizer, err := LoadTokenizer(tokenizerPath)
+	if err != nil {
+		b.Fatal(err)
+	}
+	router, err := NewRouter(model)
+	if err != nil {
+		b.Fatal(err)
+	}
+	if err = router.SetSIMD("auto"); err != nil {
+		b.Fatal(err)
+	}
+	tools := `[{"name":"memory_status","description":"status","inputSchema":{"type":"object","properties":{}}}]`
+	b.ReportAllocs()
+	b.ResetTimer()
+	for range b.N {
+		if _, err = router.Generate(tokenizer, "show status", tools, DefaultGenerationOptions(), nil); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
 func TestRealNeedleSIMDGeneration(t *testing.T) {
 	path, tokenizerPath := os.Getenv("NEEDLE_MODEL_PATH"), os.Getenv("NEEDLE_TOKENIZER_PATH")
 	if path == "" || tokenizerPath == "" {

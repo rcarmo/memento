@@ -153,9 +153,9 @@ func (r *Router) encode(tokens []int, cp Checkpoint) ([]float32, error) {
 			return nil, err
 		}
 		normalized := normRows(x, dm, l.norm)
-		q := project(normalized, dm, dm, l.self.q)
-		k := project(normalized, dm, kv*hd, l.self.k)
-		v := project(normalized, dm, kv*hd, l.self.v)
+		q := projectWithEngine(normalized, dm, dm, l.self.q, r.simd)
+		k := projectWithEngine(normalized, dm, kv*hd, l.self.k, r.simd)
+		v := projectWithEngine(normalized, dm, kv*hd, l.self.v, r.simd)
 		headNorm(q, len(tokens)*heads, hd, l.self.qNorm)
 		headNorm(k, len(tokens)*kv, hd, l.self.kNorm)
 		ropeRows(q, heads, hd, rope)
@@ -164,7 +164,7 @@ func (r *Router) encode(tokens []int, cp Checkpoint) ([]float32, error) {
 		for pos := range tokens {
 			copy(contexts[pos*dm:], attendWithEngine(q[pos*dm:(pos+1)*dm], k, v, heads, kv, hd, r.simd))
 		}
-		output := project(contexts, dm, dm, l.self.out)
+		output := projectWithEngine(contexts, dm, dm, l.self.out, r.simd)
 		gatedResidual(x, output, l.gate[0])
 	}
 	return normRows(x, dm, r.encoderFinal), nil
@@ -178,8 +178,8 @@ func (r *Router) decoderState(encoded []float32, cp Checkpoint) (*decoderState, 
 		if err := poll(cp, "decoder_cross_prep"); err != nil {
 			return nil, err
 		}
-		k := project(encoded, dm, kv*hd, l.cross.k)
-		v := project(encoded, dm, kv*hd, l.cross.v)
+		k := projectWithEngine(encoded, dm, kv*hd, l.cross.k, r.simd)
+		v := projectWithEngine(encoded, dm, kv*hd, l.cross.v, r.simd)
 		headNorm(k, len(encoded)/dm*kv, hd, l.cross.kNorm)
 		s.cross[i] = crossCache{k, v}
 	}
@@ -205,9 +205,9 @@ func (r *Router) decodeStep(token, pos int, state *decoderState, cp Checkpoint) 
 			return nil, err
 		}
 		normalized := normVector(x, l.norm0)
-		q := project(normalized, dm, dm, l.self.q)
-		k := project(normalized, dm, kv*hd, l.self.k)
-		v := project(normalized, dm, kv*hd, l.self.v)
+		q := projectWithEngine(normalized, dm, dm, l.self.q, r.simd)
+		k := projectWithEngine(normalized, dm, kv*hd, l.self.k, r.simd)
+		v := projectWithEngine(normalized, dm, kv*hd, l.self.v, r.simd)
 		headNorm(q, heads, hd, l.self.qNorm)
 		headNorm(k, kv, hd, l.self.kNorm)
 		applyRope(q, heads, hd, state.rope, pos)
@@ -215,12 +215,12 @@ func (r *Router) decodeStep(token, pos int, state *decoderState, cp Checkpoint) 
 		state.k[i] = append(state.k[i], k...)
 		state.v[i] = append(state.v[i], v...)
 		context := attendWithEngine(q, state.k[i], state.v[i], heads, kv, hd, r.simd)
-		gatedResidual(x, project(context, dm, dm, l.self.out), l.selfGate[0])
+		gatedResidual(x, projectWithEngine(context, dm, dm, l.self.out, r.simd), l.selfGate[0])
 		normalized = normVector(x, l.norm1)
-		q = project(normalized, dm, dm, l.cross.q)
+		q = projectWithEngine(normalized, dm, dm, l.cross.q, r.simd)
 		headNorm(q, heads, hd, l.cross.qNorm)
 		context = attendWithEngine(q, state.cross[i].k, state.cross[i].v, heads, kv, hd, r.simd)
-		gatedResidual(x, project(context, dm, dm, l.cross.out), l.crossGate[0])
+		gatedResidual(x, projectWithEngine(context, dm, dm, l.cross.out, r.simd), l.crossGate[0])
 	}
 	return normVector(x, r.decoderFinal), nil
 }

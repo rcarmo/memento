@@ -249,9 +249,29 @@ func LexicalQuery(query, syntax string) (string, error) {
 }
 func pythonSpace(r rune) bool { return unicode.IsSpace(r) || r >= 0x1c && r <= 0x1f }
 func boundedSnippet(text string) string {
-	text = strings.Join(strings.FieldsFunc(text, pythonSpace), " ")
-	runes := []rune(text)
-	return string(runes[:min(240, len(runes))])
+	var out strings.Builder
+	out.Grow(min(len(text), 240))
+	space, count := true, 0
+	for _, value := range text {
+		if pythonSpace(value) {
+			space = true
+			continue
+		}
+		if space && out.Len() > 0 {
+			if count >= 240 {
+				break
+			}
+			out.WriteByte(' ')
+			count++
+		}
+		if count >= 240 {
+			break
+		}
+		out.WriteRune(value)
+		space = false
+		count++
+	}
+	return out.String()
 }
 func decodeOffset(cursor *string) (int, error) {
 	if cursor == nil {

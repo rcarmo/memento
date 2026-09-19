@@ -224,6 +224,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	if err != nil {
 		return nil, nil, err
 	}
+	runtime.ServiceVersion = metadata.ServiceVersion
 	if options.Needle.Enabled {
 		metadata.Catalog, _ = NewCatalog(CatalogConfig{Surface: options.Surface, RouteEnabled: true})
 	}
@@ -238,6 +239,8 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		var loadErr error
 		if ops.buildSemantic != nil {
 			client, loadErr = ops.buildSemantic(options.Semantic)
+		} else if options.Semantic.WorkerMode == "subprocess" {
+			client, loadErr = LoadSubprocessSemanticClient(options.Semantic)
 		} else {
 			client, loadErr = ops.loadSemantic(*options.Semantic.ModelPath, options.Semantic.ModelID, options.Semantic.Dimensions, options.Semantic.MaxBatchSize, options.Semantic.MaxInputChars)
 		}
@@ -265,6 +268,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		}
 	}
 	server = umcp.NewServer("memento")
+	server.Version = metadata.ServiceVersion
 	configured := options.DeepAnswers.Enabled || options.ModelProposals.Enabled
 	if !configured {
 		if err = ops.register(jobs, server, options.Surface, options.Limits); err != nil {
