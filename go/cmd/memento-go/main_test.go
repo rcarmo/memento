@@ -5,6 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/rcarmo/memento/go/access"
+	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/service"
 	"github.com/rcarmo/memento/go/umcp"
 	"io"
@@ -93,6 +95,40 @@ func TestRunStatus(t *testing.T) {
 	runtime.Closers = []func() error{func() error { return errors.New("close") }}
 	if code := runContext(context.Background(), []string{"--config", "x", "status"}, nil, io.Discard, &stderr); code != 1 {
 		t.Fatal(code)
+	}
+}
+func TestRunRotateMasterKey(t *testing.T) {
+	oldLoad := loadConfig
+	t.Cleanup(func() { loadConfig = oldLoad })
+	ctx := context.Background()
+	var config service.RuntimeConfig
+	config.Repository.RootPath = t.TempDir()
+	db, err := control.Connect(ctx, service.RuntimePathsFor(config).ControlDB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = control.Migrate(ctx, db); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = access.OpenStore(ctx, db, "old"); err != nil {
+		t.Fatal(err)
+	}
+	db.Close()
+	loadConfig = func(string) (service.RuntimeConfig, error) { return config, nil }
+	t.Setenv("MEMENTO_ADMIN_PREVIOUS_MASTER_KEY", "old")
+	t.Setenv("MEMENTO_ADMIN_MASTER_KEY", "new")
+	var out, stderr bytes.Buffer
+	if code := runContext(ctx, []string{"--config", "x", "rotate-master-key"}, nil, &out, &stderr); code != 0 || stderr.Len() != 0 || !strings.Contains(out.String(), `"rotated": true`) {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	t.Setenv("MEMENTO_ADMIN_PREVIOUS_MASTER_KEY", "wrong")
+	if code := runContext(ctx, []string{"--config", "x", "rotate-master-key"}, nil, io.Discard, &stderr); code != 1 {
+		t.Fatal(code)
+	}
+	t.Setenv("MEMENTO_ADMIN_PREVIOUS_MASTER_KEY", "new")
+	t.Setenv("MEMENTO_ADMIN_MASTER_KEY", "newer")
+	if code := runContext(ctx, []string{"--config", "x", "rotate-master-key"}, nil, failingWriter{}, &stderr); code != 1 || !strings.Contains(stderr.String(), "write") {
+		t.Fatal(code, stderr.String())
 	}
 }
 func TestRunBackupRestore(t *testing.T) {

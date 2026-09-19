@@ -37,6 +37,7 @@ func usage(stderr io.Writer) {
 	fmt.Fprintln(stderr, "usage: memento-go --config PATH serve [uMCP transport options]")
 	fmt.Fprintln(stderr, "       memento-go --config PATH status|rebuild-index|audit [--path PATH]")
 	fmt.Fprintln(stderr, "       memento-go --config PATH backup --output DIR")
+	fmt.Fprintln(stderr, "       memento-go --config PATH rotate-master-key")
 	fmt.Fprintln(stderr, "       memento-go --config PATH restore --input DIR [--no-rebuild-derived]")
 	fmt.Fprintln(stderr, "       memento-go version")
 }
@@ -45,7 +46,7 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(out, version)
 		return 0
 	}
-	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status" && args[2] != "rebuild-index" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore") || (args[2] != "serve" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && len(args) != 3) || (args[2] == "audit" && len(args) != 3 && !(len(args) == 5 && args[3] == "--path" && args[4] != "")) || (args[2] == "backup" && !(len(args) == 5 && args[3] == "--output" && args[4] != "")) || (args[2] == "restore" && !(len(args) == 5 && args[3] == "--input" && args[4] != "" || len(args) == 6 && args[3] == "--input" && args[4] != "" && args[5] == "--no-rebuild-derived")) {
+	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status" && args[2] != "rebuild-index" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key") || (args[2] != "serve" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key" && len(args) != 3) || (args[2] == "audit" && len(args) != 3 && !(len(args) == 5 && args[3] == "--path" && args[4] != "")) || (args[2] == "backup" && !(len(args) == 5 && args[3] == "--output" && args[4] != "")) || (args[2] == "restore" && !(len(args) == 5 && args[3] == "--input" && args[4] != "" || len(args) == 6 && args[3] == "--input" && args[4] != "" && args[5] == "--no-rebuild-derived")) {
 		usage(stderr)
 		return 2
 	}
@@ -53,6 +54,20 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1
+	}
+	if args[2] == "rotate-master-key" {
+		rotationErr := service.RotateMasterKey(ctx, config)
+		if rotationErr != nil {
+			fmt.Fprintln(stderr, "memento-go:", rotationErr)
+			return 1
+		}
+		encoder := json.NewEncoder(out)
+		encoder.SetIndent("", "  ")
+		if rotationErr = encoder.Encode(map[string]any{"rotated": true}); rotationErr != nil {
+			fmt.Fprintln(stderr, "memento-go:", rotationErr)
+			return 1
+		}
+		return 0
 	}
 	if args[2] == "restore" {
 		payload, restoreErr := service.RestoreBackup(ctx, config, args[4], !hasFlag(args, "--no-rebuild-derived"))
