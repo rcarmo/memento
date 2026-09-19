@@ -88,6 +88,21 @@ func TestRunStatus(t *testing.T) {
 		t.Fatal(payload, err)
 	}
 	runtime, server = stubRuntime(t)
+	out.Reset()
+	stderr.Reset()
+	if code := runContext(context.Background(), []string{"--config", "x", "status", "--format", "prometheus"}, nil, &out, &stderr); code != 0 || stderr.Len() != 0 || !strings.HasPrefix(out.String(), "# HELP memento_service_up") || !strings.HasSuffix(out.String(), " 1\n") {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	runtime, server = stubRuntime(t)
+	out.Reset()
+	stderr.Reset()
+	if code := runContext(context.Background(), []string{"--config", "x", "status", "--format", "json"}, nil, &out, &stderr); code != 0 || !json.Valid(out.Bytes()) {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	if code := runContext(context.Background(), []string{"--config", "x", "status", "--format", "bad"}, nil, io.Discard, &stderr); code != 2 {
+		t.Fatal(code)
+	}
+	runtime, server = stubRuntime(t)
 	if code := runContext(context.Background(), []string{"--config", "x", "status"}, nil, failingWriter{}, &stderr); code != 1 || !strings.Contains(stderr.String(), "write") {
 		t.Fatal(code, stderr.String())
 	}
