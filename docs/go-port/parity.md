@@ -35,6 +35,10 @@
 | Native C ABI compatibility | `memento-ffi`, `memento-needle-ffi`, SQLite extension | Inventory all consumers. C-shared compatibility conflicts with the final CGO-free runtime; resolve deliberately, never silently delete a used API | Open architecture gate |
 | In-flight Vulkan branch | separate `feat/gte-vulkan-pretest` | Track accepted upstream behaviour without mixing SIMD/GPU optimisation into scalar phase | Deferred; baseline does not include it |
 
+## Comparative performance evidence
+
+The reproducible [Go/Python baseline benchmark](benchmarks.md) uses the same synthesized 1,000-concept repository for five fresh derived-index rebuilds and 100 warm lexical searches per implementation. Both return 20 rows and the evidence records the corpus digest, host/toolchains, raw-sample summaries and Go/Python ratios. On the current x86-64 host, rebuild p50 is 1.028× Python and lexical-search p50 is 1.397× Python.
+
 ## Matching rules
 
 Wire semantics and persistence state transitions must match exactly. JSON member ordering is ignored where the protocol treats objects as unordered; no general normaliser may hide missing fields, null/empty differences, different errors or changed decisions. Time, UUID and commit-clock inputs need controllable fixture injection, not blanket removal from outputs.

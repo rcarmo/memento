@@ -1,0 +1,61 @@
+{
+  "date": "2026-09-19",
+  "host": {
+    "platform": "Linux-6.8.0-137-generic-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "python": "3.13.14",
+    "go": "go version go1.26.3 linux/amd64"
+  },
+  "dataset": {
+    "concepts": 1000,
+    "sha256": "7f1523a90bea7b902032b3b2e3db10e96aa56931c3fd5c1c4955ac60bbbcec59",
+    "query": "shared benchmark",
+    "rebuilds": 5,
+    "searches": 100,
+    "warmups": 10
+  },
+  "results": {
+    "python": {
+      "rebuild": {
+        "n": 5,
+        "min_ms": 1450.229,
+        "p50_ms": 1487.893,
+        "p95_ms": 1503.695,
+        "max_ms": 1503.695,
+        "mean_ms": 1481.563
+      },
+      "lexical_search": {
+        "n": 100,
+        "min_ms": 1.742,
+        "p50_ms": 2.736,
+        "p95_ms": 4.572,
+        "max_ms": 4.689,
+        "mean_ms": 2.963
+      },
+      "result_count": 20
+    },
+    "go": {
+      "rebuild": {
+        "n": 5,
+        "min_ms": 1484.724,
+        "p50_ms": 1529.048,
+        "p95_ms": 1548.243,
+        "max_ms": 1548.243,
+        "mean_ms": 1521.492
+      },
+      "lexical_search": {
+        "n": 100,
+        "min_ms": 3.671,
+        "p50_ms": 3.822,
+        "p95_ms": 4.295,
+        "max_ms": 5.766,
+        "mean_ms": 3.896
+      },
+      "result_count": 20
+    }
+  },
+  "relative_go_over_python": {
+    "rebuild_p50": 1.028,
+    "lexical_search_p50": 1.397
+  }
+}

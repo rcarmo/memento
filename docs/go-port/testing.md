@@ -1,5 +1,7 @@
 # Test gates for the Go port
 
+The synthesized comparative benchmark is documented in [benchmarks.md](benchmarks.md), with machine-readable evidence under `docs/evidence/go-python-models-off-benchmark-2026-09-19.json`. It verifies a stable corpus digest and equal 20-result cardinality before reporting rebuild and warm lexical-search latency.
+
 ## Module layout
 
 The standalone module follows the standard `cmd/<binary>`, library-package, `internal/` and module-level `testdata` layout documented in `go/README.md`. `make -C go layout-check` verifies module tidiness/package discovery and rejects Go source at the module root or files directly under `cmd`; it is part of `make -C go check`. `go vet ./...`, `go mod tidy -diff` and package documentation enumeration pass. The import graph is acyclic and no package moves were warranted.
