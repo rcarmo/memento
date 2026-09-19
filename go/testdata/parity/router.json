@@ -1,0 +1,114 @@
+{
+  "errors": [
+    {
+      "input": "bad",
+      "type": "JSONDecodeError"
+    },
+    {
+      "input": "[]",
+      "type": "ValueError"
+    },
+    {
+      "input": "[{}]",
+      "type": "ValueError"
+    },
+    {
+      "input": "[1]",
+      "type": "ValueError"
+    },
+    {
+      "input": "[{\"name\":\"\"}]",
+      "type": "ValueError"
+    },
+    {
+      "input": "[{\"name\":\"UNKNOWN\",\"arguments\":[]}]",
+      "type": "ValueError"
+    },
+    {
+      "input": "[{\"name\":\"search_paths\",\"arguments\":{\"query\":\"Piclaw\",\"limit\":4}}]",
+      "type": "ValidationError"
+    }
+  ],
+  "parsed": [
+    {
+      "action": {
+        "action": "search_then_read",
+        "query": "Piclaw",
+        "search_mode": null
+      },
+      "input": "[{\"name\":\"search_then_read\",\"arguments\":{\"query\":\"Piclaw\"}}]"
+    },
+    {
+      "action": {
+        "action": "search_then_read",
+        "query": "Piclaw",
+        "search_mode": "semantic"
+      },
+      "input": "[{\"name\":\"search_then_read\",\"arguments\":{\"query\":\"Piclaw\",\"search_mode\":\"semantic\"}}]"
+    },
+    {
+      "action": {
+        "action": "search_paths",
+        "limit": 3,
+        "query": "Piclaw",
+        "search_mode": "lexical"
+      },
+      "input": "[{\"name\":\"search_paths\",\"arguments\":{\"query\":\"Piclaw\"}}]"
+    },
+    {
+      "action": {
+        "action": "search_paths",
+        "limit": 5,
+        "query": "Piclaw",
+        "search_mode": "hybrid"
+      },
+      "input": "[{\"name\":\"search_paths\",\"arguments\":{\"query\":\"Piclaw\",\"limit\":5,\"search_mode\":\"hybrid\"}}]"
+    },
+    {
+      "action": {
+        "action": "status_field",
+        "field": "index_revision"
+      },
+      "input": "[{\"name\":\"status_field\",\"arguments\":{\"field\":\"indexed\"}}]"
+    },
+    {
+      "action": {
+        "action": "status_field",
+        "field": "readiness"
+      },
+      "input": "[{\"name\":\"status_field\",\"arguments\":{\"field\":\"status\"}}]"
+    },
+    {
+      "action": {
+        "action": "search_then_graph",
+        "depth": 1,
+        "query": "Piclaw",
+        "search_mode": "lexical"
+      },
+      "input": "[{\"name\":\"search_then_graph\",\"arguments\":{\"query\":\"Piclaw\"}}]"
+    },
+    {
+      "action": {
+        "action": "search_then_graph",
+        "depth": 2,
+        "query": "Piclaw",
+        "search_mode": "semantic"
+      },
+      "input": "[{\"name\":\"search_then_graph\",\"arguments\":{\"query\":\"Piclaw\",\"depth\":2,\"search_mode\":\"semantic\"}}]"
+    },
+    {
+      "action": {
+        "action": "read_field",
+        "field": "body",
+        "id_or_path": "/a.md"
+      },
+      "input": "[{\"name\":\"read_field\",\"arguments\":{\"id_or_path\":\"/a.md\",\"field\":\"contents\"}}]"
+    },
+    {
+      "action": {
+        "action": "UNKNOWN"
+      },
+      "input": "[{\"name\":\"UNKNOWN\",\"arguments\":{}}]"
+    }
+  ]
+}

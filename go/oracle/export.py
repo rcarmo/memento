@@ -498,6 +498,7 @@ def main() -> None:
     )
     save("graph-refresh.json", importlib.import_module("graph_refresh").fixtures())
     save("graph-export.json", importlib.import_module("graph_export").fixtures())
+    save("router.json", importlib.import_module("router").fixtures())
     (ROOT / "go/service/access_tools.json").write_text(
         json.dumps(access_tools["tools"], indent=2, sort_keys=True) + "\n"
     )
