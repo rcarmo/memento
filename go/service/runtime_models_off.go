@@ -61,6 +61,7 @@ type modelsOffBuildOps struct {
 	newNeedleRouter      func(*needle.Model) (*needle.Router, error)
 	buildRoute           func(NeedleRouterConfig) (RouteInference, *needle.Tokenizer, error)
 	registerRoute        func(*Jobs, *umcp.Server, string, execute.Limits, RouteInference, *needle.Tokenizer) error
+	registerConfigured   func(context.Context, *Runtime, *Jobs, *umcp.Server, ModelsOffRuntimeOptions, RouteInference, *needle.Tokenizer) error
 	loadSemantic         func(string, string, int, int, int) (*GTESemanticClient, error)
 	buildSemantic        func(SemanticSearchConfig) (derived.SemanticClient, error)
 	newSemanticWorker    func(derived.SemanticRefreshIndex, derived.SemanticClient, derived.SemanticRefreshConfig) *derived.SemanticWorker
@@ -80,6 +81,24 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 		catalog, _ := NewCatalog(CatalogConfig{Surface: surface, RouteEnabled: true})
 		endpoint, _ := NewExecuteEndpoint(j, catalog, limits)
 		return (RouteEndpoint{Jobs: j, Router: inference, Tokenizer: tokenizer, Execute: endpoint}).Register(s)
+	}, func(ctx context.Context, runtime *Runtime, jobs *Jobs, server *umcp.Server, options ModelsOffRuntimeOptions, inference RouteInference, tokenizer *needle.Tokenizer) error {
+		answers := AnswerStore{DB: runtime.DB}
+		if err := answers.Migrate(ctx); err != nil {
+			return err
+		}
+		catalogConfig := CatalogConfig{Surface: options.Surface, AnswerEnabled: options.DeepAnswers.Enabled && options.ModelClient != nil, RouteEnabled: options.Needle.Enabled, ProposalEnabled: options.ModelProposals.Enabled && options.ModelClient != nil}
+		catalog, err := NewCatalog(catalogConfig)
+		if err != nil {
+			return err
+		}
+		executeEndpoint, err := NewExecuteEndpoint(jobs, catalog, options.Limits)
+		if err != nil {
+			return err
+		}
+		answer := &AnswerEndpoint{Jobs: jobs, Client: options.ModelClient, Store: answers, Deep: options.DeepAnswers, Cache: options.ExactCache, Hot: options.HotMemory}
+		proposals := &ModelProposalEndpoint{Jobs: jobs, Client: options.ModelClient, Config: options.ModelProposals, Timeout: time.Duration(options.DeepAnswers.Limits.MaxTimeSeconds * float64(time.Second))}
+		route := RouteEndpoint{Jobs: jobs, Router: inference, Tokenizer: tokenizer, Execute: executeEndpoint}
+		return jobs.RegisterConfiguredServer(server, ConfiguredServerOptions{Catalog: catalogConfig, Limits: options.Limits, ModelHandlers: map[string]CatalogHandler{"memory_answer": answer.Call, "memory_route": route.Call, "memory_propose_freeform": proposals.Freeform, "memory_propose_update": proposals.Update}})
 	}, LoadGTESemanticClient, nil, derived.NewSemanticWorker, derived.NewProgressiveSemanticWorker}
 }
 func semanticRefreshNeeded(repo, embedding string) bool { return repo != embedding }
@@ -293,24 +312,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		}
 	}
 	if configured {
-		answers := AnswerStore{DB: runtime.DB}
-		if err = answers.Migrate(ctx); err != nil {
-			return nil, nil, err
-		}
-		catalogConfig := CatalogConfig{Surface: options.Surface, AnswerEnabled: options.DeepAnswers.Enabled && options.ModelClient != nil, RouteEnabled: options.Needle.Enabled, ProposalEnabled: options.ModelProposals.Enabled && options.ModelClient != nil}
-		catalog, catalogErr := NewCatalog(catalogConfig)
-		if catalogErr != nil {
-			return nil, nil, catalogErr
-		}
-		executeEndpoint, endpointErr := NewExecuteEndpoint(jobs, catalog, options.Limits)
-		if endpointErr != nil {
-			return nil, nil, endpointErr
-		}
-		answer := &AnswerEndpoint{Jobs: jobs, Client: options.ModelClient, Store: answers, Deep: options.DeepAnswers, Cache: options.ExactCache, Hot: options.HotMemory}
-		proposals := &ModelProposalEndpoint{Jobs: jobs, Client: options.ModelClient, Config: options.ModelProposals, Timeout: time.Duration(options.DeepAnswers.Limits.MaxTimeSeconds * float64(time.Second))}
-		route := RouteEndpoint{Jobs: jobs, Router: routeInference, Tokenizer: routeTokenizer, Execute: executeEndpoint}
-		handlers := map[string]CatalogHandler{"memory_answer": answer.Call, "memory_route": route.Call, "memory_propose_freeform": proposals.Freeform, "memory_propose_update": proposals.Update}
-		if err = jobs.RegisterConfiguredServer(server, ConfiguredServerOptions{Catalog: catalogConfig, Limits: options.Limits, ModelHandlers: handlers}); err != nil {
+		if err = ops.registerConfigured(ctx, runtime, jobs, server, options, routeInference, routeTokenizer); err != nil {
 			return nil, nil, err
 		}
 	}

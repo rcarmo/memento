@@ -21,7 +21,7 @@ import (
 func TestBuildModelsOffComponentFailures(t *testing.T) {
 	ctx := context.Background()
 	boom := errors.New("boom")
-	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "legacy-detect", "legacy-revision", "legacy-migrate", "legacy-skill-revision", "legacy-skill-migrate", "legacy-stat", "legacy-materialize", "legacy-final-revision", "metadata", "register", "access-open", "access-bootstrap", "access-register", "needle-model", "needle-tokenizer", "needle-router", "needle-build", "needle-register", "semantic-load"} {
+	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "legacy-detect", "legacy-revision", "legacy-migrate", "legacy-skill-revision", "legacy-skill-migrate", "legacy-stat", "legacy-materialize", "legacy-final-revision", "metadata", "register", "access-open", "access-bootstrap", "access-register", "needle-model", "needle-tokenizer", "needle-router", "needle-build", "needle-register", "semantic-load", "configured-register"} {
 		t.Run(stage, func(t *testing.T) {
 			var config RuntimeConfig
 			config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
@@ -118,6 +118,13 @@ func TestBuildModelsOffComponentFailures(t *testing.T) {
 				ops.newNeedleRouter = func(*needle.Model) (*needle.Router, error) { return nil, boom }
 				ops.loadNeedleTokenizer = func(string) (*needle.Tokenizer, error) { return &needle.Tokenizer{}, nil }
 				ops.loadNeedleModel = func(string) (*needle.Model, error) { return &needle.Model{}, nil }
+			case "configured-register":
+				options.DeepAnswers = DefaultDeepAnswersConfig()
+				options.DeepAnswers.Enabled = true
+				options.ModelClient = &stubModelClient{}
+				ops.registerConfigured = func(context.Context, *Runtime, *Jobs, *umcp.Server, ModelsOffRuntimeOptions, RouteInference, *needle.Tokenizer) error {
+					return boom
+				}
 			case "access-register":
 				ops.lookupEnv = func(name string) (string, bool) { return "master", true }
 				ops.registerAccess = func(*Jobs, *umcp.Server) error { return boom }
