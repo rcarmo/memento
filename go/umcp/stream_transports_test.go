@@ -293,7 +293,7 @@ func TestTCPListenerShutdownAndFinalLine(t *testing.T) {
 }
 
 func TestFileReferenceFixtures(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-file.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-file.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -341,7 +341,7 @@ func TestFileReferenceFixtures(t *testing.T) {
 }
 
 func TestTCPPythonWireFixtures(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-tcp.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-tcp.json")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,5 +1,5 @@
-// Package umcp ports the pinned Python uMCP contracts. Only the shared helpers
-// in this file are implemented; no transport/server compatibility is claimed yet.
+// Package umcp provides a pure-Go implementation of the pinned Python uMCP
+// protocol behavior, including dynamic registries, sessions and all transports.
 package umcp
 
 import (

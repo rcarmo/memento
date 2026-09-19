@@ -1,0 +1,1578 @@
+[
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "tools": [
+          {
+            "name": "alpha"
+          },
+          {
+            "name": "beta"
+          },
+          {
+            "name": "gamma"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {},
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "tools": [
+          {
+            "name": "alpha"
+          },
+          {
+            "name": "beta"
+          },
+          {
+            "name": "gamma"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": null
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "alpha"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "tools": [
+          {
+            "name": "alpha"
+          },
+          {
+            "name": "beta"
+          },
+          {
+            "name": "gamma"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": 3
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "tools": [
+          {
+            "name": "alpha"
+          },
+          {
+            "name": "beta"
+          },
+          {
+            "name": "gamma"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": 10000000000000000000000000000000000000000
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'pageSize' must be a positive integer"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": 0
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'pageSize' must be a positive integer"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": -1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'pageSize' must be a positive integer"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": true
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'pageSize' must be a positive integer"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": 1.0
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'pageSize' must be a positive integer"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": "1"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'cursor' must be a string"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'cursor' must be a string"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": false
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'cursor' must be a string"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": []
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": ""
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "界"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "%%%"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "alpha"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoyLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "beta"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "tools": [
+          {
+            "name": "beta"
+          },
+          {
+            "name": "gamma"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoyLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "beta"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 1,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": []
+      }
+    },
+    "input": {
+      "default_size": -1,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": []
+      }
+    },
+    "input": {
+      "default_size": -10,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0"
+      },
+      "principal": "other",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "changed"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "tools": []
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [],
+      "label": "tools",
+      "params": {
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoiXHU3NTRjXCJcXFxiXGZcblxyXHRcdWQ4M2RcdWRlMDBcdTAwMDEiLCJvIjoxLCJmIjoiY3NPOGFRcm5sWXdpWEFnTUNnMEo4Si1ZZ0FFS1lXeHdhR0VLWW1WMFlRcG5ZVzF0WVEifQ",
+        "tools": [
+          {
+            "name": "alpha"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "界\"\\\b\f\n\r\t😀\u0001",
+      "params": {
+        "pageSize": 1
+      },
+      "principal": "rüi",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "bnVsbA",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "W10",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "e30",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoyLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "beta"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogdHJ1ZSwgImwiOiAidG9vbHMiLCAibyI6IDEsICJmIjogImNtVmhaR1Z5Q25SdmIyeHpDbUZzY0doaENtSmxkR0VLWjJGdGJXRSJ9",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoyLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "beta"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMS4wLCAibCI6ICJ0b29scyIsICJvIjogMSwgImYiOiAiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMiwgImwiOiAidG9vbHMiLCAibyI6IDEsICJmIjogImNtVmhaR1Z5Q25SdmIyeHpDbUZzY0doaENtSmxkR0VLWjJGdGJXRSJ9",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogIjEiLCAibCI6ICJ0b29scyIsICJvIjogMSwgImYiOiAiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMSwgImwiOiAib3RoZXIiLCAibyI6IDEsICJmIjogImNtVmhaR1Z5Q25SdmIyeHpDbUZzY0doaENtSmxkR0VLWjJGdGJXRSJ9",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoyLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "beta"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMSwgImwiOiAidG9vbHMiLCAibyI6IHRydWUsICJmIjogImNtVmhaR1Z5Q25SdmIyeHpDbUZzY0doaENtSmxkR0VLWjJGdGJXRSJ9",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "alpha"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMSwgImwiOiAidG9vbHMiLCAibyI6IGZhbHNlLCAiZiI6ICJjbVZoWkdWeUNuUnZiMnh6Q21Gc2NHaGhDbUpsZEdFS1oyRnRiV0UifQ",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMSwgImwiOiAidG9vbHMiLCAibyI6IC0xLCAiZiI6ICJjbVZoWkdWeUNuUnZiMnh6Q21Gc2NHaGhDbUpsZEdFS1oyRnRiV0UifQ",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMSwgImwiOiAidG9vbHMiLCAibyI6IDEuMCwgImYiOiAiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "tools": []
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMSwgImwiOiAidG9vbHMiLCAibyI6IDEwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwLCAiZiI6ICJjbVZoWkdWeUNuUnZiMnh6Q21Gc2NHaGhDbUpsZEdFS1oyRnRiV0UifQ",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMSwgImwiOiAidG9vbHMiLCAibyI6IG51bGwsICJmIjogImNtVmhaR1Z5Q25SdmIyeHpDbUZzY0doaENtSmxkR0VLWjJGdGJXRSJ9",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjogMSwgImwiOiAidG9vbHMiLCAibyI6IDEsICJmIjogImJhZCJ9",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "bm90IGpzb24"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "_w"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "e30ge30"
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoyLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "beta"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0====",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoyLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "beta"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0!!!!",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoyLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "beta"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "!!!!eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0!",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0_",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid cursor"
+      },
+      "result": null
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0-",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  },
+  {
+    "expected": {
+      "error": null,
+      "result": {
+        "nextCursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoyLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "tools": [
+          {
+            "name": "beta"
+          }
+        ]
+      }
+    },
+    "input": {
+      "default_size": 0,
+      "items": [
+        {
+          "name": "alpha"
+        },
+        {
+          "name": "beta"
+        },
+        {
+          "name": "gamma"
+        }
+      ],
+      "label": "tools",
+      "params": {
+        "cursor": "eyJ2IjoxLCJsIjoidG9vbHMiLCJvIjoxLCJmIjoiY21WaFpHVnlDblJ2YjJ4ekNtRnNjR2hoQ21KbGRHRUtaMkZ0YldFIn0",
+        "pageSize": 1
+      },
+      "principal": "reader",
+      "result_key": "tools"
+    }
+  }
+]

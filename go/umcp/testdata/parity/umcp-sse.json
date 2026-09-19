@@ -1,0 +1,1292 @@
+[
+  {
+    "cases": [
+      {
+        "expected": {
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Accept, Authorization",
+            "access-control-allow-methods": "GET, POST, OPTIONS",
+            "access-control-allow-origin": "http://localhost",
+            "vary": "Origin"
+          },
+          "status": 204
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "http://localhost"
+          },
+          "method": "OPTIONS",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {
+            "allow": "GET, POST, OPTIONS"
+          },
+          "status": 405
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "OPTIONS",
+          "path": "/message"
+        }
+      },
+      {
+        "expected": {
+          "headers": {
+            "access-control-allow-origin": "http://localhost",
+            "vary": "Origin"
+          },
+          "status": 404
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "http://localhost"
+          },
+          "method": "OPTIONS",
+          "path": "/missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 406
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Accept": "application/json",
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {
+            "www-authenticate": "Bearer"
+          },
+          "status": 401
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 403
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer denied",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 500
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer crash",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 403
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "https://evil.example"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId=missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {
+            "www-authenticate": "Bearer"
+          },
+          "status": 401
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 403
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer other",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 500
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer crash",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 415
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "text/plain"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 406
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Accept": "text/event-stream",
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 413
+        },
+        "input": {
+          "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "result": {
+              "params": {},
+              "principal": "reader",
+              "session": true,
+              "transport": "sse"
+            }
+          },
+          "headers": {
+            "access-control-allow-origin": "http://localhost",
+            "vary": "Origin"
+          },
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "http://localhost"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "result": {
+              "params": {},
+              "principal": "reader",
+              "session": true,
+              "transport": "sse"
+            }
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId=&sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "error": {
+              "code": -32700,
+              "message": "Parse error"
+            },
+            "id": null,
+            "jsonrpc": "2.0"
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "error": {
+              "code": -32600,
+              "message": "Invalid Request: top-level JSON value must be an object"
+            },
+            "id": null,
+            "jsonrpc": "2.0"
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "null",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "error": {
+              "code": -32601,
+              "message": "Method not found: unknown"
+            },
+            "id": 2,
+            "jsonrpc": "2.0"
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"unknown\"}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":{}}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 403
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"forbidden\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 500
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"crash\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "error": {
+              "code": -32601,
+              "message": "Tool not found: missing"
+            },
+            "id": 2,
+            "jsonrpc": "2.0"
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"missing\"}}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "id": 3,
+            "jsonrpc": "2.0",
+            "result": {}
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\": \"2.0\", \"id\": 3, \"method\": \"resources/subscribe\", \"params\": {\"uri\": \"test://one\", \"_session_id\": \"spoof\"}}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "id": 3,
+            "jsonrpc": "2.0",
+            "result": {}
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\": \"2.0\", \"id\": 3, \"method\": \"resources/unsubscribe\", \"params\": {\"uri\": \"test://one\", \"_session_id\": \"spoof\"}}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {
+            "content-type": "text/html;charset=utf-8"
+          },
+          "status": 501
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "PUT",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 403
+        },
+        "input": {
+          "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "https://evil.example"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 415
+        },
+        "input": {
+          "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "text/plain"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      }
+    ],
+    "handshake": {
+      "headers": {
+        "access-control-allow-origin": "http://localhost",
+        "cache-control": "no-cache",
+        "content-type": "text/event-stream",
+        "vary": "Origin"
+      },
+      "status": 200
+    },
+    "mode": "sync"
+  },
+  {
+    "cases": [
+      {
+        "expected": {
+          "headers": {
+            "access-control-allow-headers": "Content-Type, Accept, Authorization",
+            "access-control-allow-methods": "GET, POST, OPTIONS",
+            "access-control-allow-origin": "http://localhost",
+            "vary": "Origin"
+          },
+          "status": 204
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "http://localhost"
+          },
+          "method": "OPTIONS",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {
+            "allow": "GET, POST, OPTIONS"
+          },
+          "status": 405
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "OPTIONS",
+          "path": "/message"
+        }
+      },
+      {
+        "expected": {
+          "headers": {
+            "access-control-allow-origin": "http://localhost",
+            "vary": "Origin"
+          },
+          "status": 404
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "http://localhost"
+          },
+          "method": "OPTIONS",
+          "path": "/missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 406
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Accept": "application/json",
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {
+            "www-authenticate": "Bearer"
+          },
+          "status": 401
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 403
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer denied",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 500
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer crash",
+            "Content-Type": "application/json"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 403
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "https://evil.example"
+          },
+          "method": "GET",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId=missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {
+            "www-authenticate": "Bearer"
+          },
+          "status": 401
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 403
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer other",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 500
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer crash",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 415
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "text/plain"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 406
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": false,
+          "headers": {
+            "Accept": "text/event-stream",
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 413
+        },
+        "input": {
+          "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "result": {
+              "params": {},
+              "principal": "reader",
+              "session": true,
+              "transport": "sse"
+            }
+          },
+          "headers": {
+            "access-control-allow-origin": "http://localhost",
+            "vary": "Origin"
+          },
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "http://localhost"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "result": {
+              "params": {},
+              "principal": "reader",
+              "session": true,
+              "transport": "sse"
+            }
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\"}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId=&sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "error": {
+              "code": -32700,
+              "message": "Parse error"
+            },
+            "id": null,
+            "jsonrpc": "2.0"
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "error": {
+              "code": -32600,
+              "message": "Invalid Request: top-level JSON value must be an object"
+            },
+            "id": null,
+            "jsonrpc": "2.0"
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "null",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "error": {
+              "code": -32601,
+              "message": "Method not found: unknown"
+            },
+            "id": 2,
+            "jsonrpc": "2.0"
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"unknown\"}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":{}}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 403
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"forbidden\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 500
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"crash\"}",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "error": {
+              "code": -32601,
+              "message": "Tool not found: missing"
+            },
+            "id": 2,
+            "jsonrpc": "2.0"
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"missing\"}}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "id": 3,
+            "jsonrpc": "2.0",
+            "result": {}
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\": \"2.0\", \"id\": 3, \"method\": \"resources/subscribe\", \"params\": {\"uri\": \"test://one\", \"_session_id\": \"spoof\"}}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "event": {
+            "id": 3,
+            "jsonrpc": "2.0",
+            "result": {}
+          },
+          "headers": {},
+          "status": 202
+        },
+        "input": {
+          "body": "{\"jsonrpc\": \"2.0\", \"id\": 3, \"method\": \"resources/unsubscribe\", \"params\": {\"uri\": \"test://one\", \"_session_id\": \"spoof\"}}",
+          "event": true,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 404
+        },
+        "input": {
+          "body": "",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "PUT",
+          "path": "/sse"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 413
+        },
+        "input": {
+          "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json"
+          },
+          "method": "POST",
+          "path": "/missing"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 413
+        },
+        "input": {
+          "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "application/json",
+            "Origin": "https://evil.example"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      },
+      {
+        "expected": {
+          "headers": {},
+          "status": 413
+        },
+        "input": {
+          "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "event": false,
+          "headers": {
+            "Authorization": "Bearer reader",
+            "Content-Type": "text/plain"
+          },
+          "method": "POST",
+          "path": "/message?sessionId={{SESSION}}"
+        }
+      }
+    ],
+    "handshake": {
+      "headers": {
+        "access-control-allow-origin": "http://localhost",
+        "cache-control": "no-cache",
+        "content-type": "text/event-stream",
+        "vary": "Origin"
+      },
+      "status": 200
+    },
+    "mode": "async"
+  }
+]

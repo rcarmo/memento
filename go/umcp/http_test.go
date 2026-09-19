@@ -511,7 +511,7 @@ func TestPythonHTTPWireScenarios(t *testing.T) {
 
 func pythonHTTPWireScenarios(t *testing.T, mode string) {
 	rawAsync := mode == "raw-async"
-	data, err := os.ReadFile("../testdata/parity/umcp-http.json")
+	data, err := os.ReadFile("testdata/parity/umcp-http.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -650,7 +650,7 @@ func FuzzHTTPPost(f *testing.F) {
 }
 
 func TestHTTPReferenceModeOrdering(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-http-modes.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-http-modes.json")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -32,7 +32,7 @@ func referenceResources(t *testing.T) *ResourceRegistry {
 	return r
 }
 func TestResourceSyncAsyncParity(t *testing.T) {
-	data, err := os.ReadFile("../testdata/parity/umcp-resources.json")
+	data, err := os.ReadFile("testdata/parity/umcp-resources.json")
 	if err != nil {
 		t.Fatal(err)
 	}

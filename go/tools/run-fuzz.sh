@@ -6,7 +6,7 @@ FUZZ_COUNT=${FUZZ_COUNT:-10000x}
 FUZZ_TIMEOUT=${FUZZ_TIMEOUT:-120s}
 FUZZ_PARALLEL=${FUZZ_PARALLEL:-2}
 
-find . -name '*_test.go' -not -path './vendor/*' -print | sort |
+find . -name '*_test.go' -not -path './vendor/*' -not -path './umcp/*' -print | sort |
   while IFS= read -r file; do
     pkg=./$(dirname "${file#./}")
     grep -hE '^func Fuzz[A-Za-z0-9_]+' "$file" |

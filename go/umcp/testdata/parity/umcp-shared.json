@@ -1,0 +1,241 @@
+{
+  "ids": [
+    {
+      "input": null,
+      "valid": true
+    },
+    {
+      "input": "",
+      "valid": true
+    },
+    {
+      "input": "req",
+      "valid": true
+    },
+    {
+      "input": 0,
+      "valid": true
+    },
+    {
+      "input": -1,
+      "valid": true
+    },
+    {
+      "input": 10000000000000000000000000000000000000000,
+      "valid": true
+    },
+    {
+      "input": true,
+      "valid": false
+    },
+    {
+      "input": false,
+      "valid": false
+    },
+    {
+      "input": 1.0,
+      "valid": false
+    },
+    {
+      "input": 1.5,
+      "valid": false
+    },
+    {
+      "input": [],
+      "valid": false
+    },
+    {
+      "input": {},
+      "valid": false
+    }
+  ],
+  "responses": [
+    {
+      "input": {},
+      "valid": false
+    },
+    {
+      "input": [],
+      "valid": false
+    },
+    {
+      "input": null,
+      "valid": false
+    },
+    {
+      "input": {
+        "result": 1
+      },
+      "valid": false
+    },
+    {
+      "input": {
+        "id": null,
+        "result": null
+      },
+      "valid": true
+    },
+    {
+      "input": {
+        "id": true,
+        "result": 1
+      },
+      "valid": false
+    },
+    {
+      "input": {
+        "id": 1.0,
+        "result": 1
+      },
+      "valid": false
+    },
+    {
+      "input": {
+        "id": 10000000000000000000000000000000000000000,
+        "result": {
+          "ok": true
+        }
+      },
+      "valid": true
+    },
+    {
+      "input": {
+        "error": {
+          "code": -1,
+          "message": ""
+        },
+        "id": "x"
+      },
+      "valid": true
+    },
+    {
+      "input": {
+        "error": {
+          "code": true,
+          "message": "bad"
+        },
+        "id": "x"
+      },
+      "valid": false
+    },
+    {
+      "input": {
+        "error": {
+          "code": 1.0,
+          "message": "bad"
+        },
+        "id": "x"
+      },
+      "valid": false
+    },
+    {
+      "input": {
+        "error": {
+          "code": 1,
+          "message": null
+        },
+        "id": "x"
+      },
+      "valid": false
+    },
+    {
+      "input": {
+        "error": null,
+        "id": "x"
+      },
+      "valid": false
+    },
+    {
+      "input": {
+        "error": {},
+        "id": "x"
+      },
+      "valid": false
+    },
+    {
+      "input": {
+        "id": 1
+      },
+      "valid": false
+    },
+    {
+      "input": {
+        "error": null,
+        "id": 1,
+        "result": null
+      },
+      "valid": false
+    }
+  ],
+  "versions": [
+    {
+      "accepted": null,
+      "error": {
+        "error": "missing MCP-Protocol-Version header",
+        "expected": "2025-03-26",
+        "supported": [
+          "2025-03-26",
+          "2024-11-05"
+        ]
+      },
+      "negotiated": "preferred-custom",
+      "preferred": "preferred-custom"
+    },
+    {
+      "accepted": "",
+      "error": {
+        "error": "unsupported MCP-Protocol-Version header",
+        "expected": "2025-03-26",
+        "received": "",
+        "supported": [
+          "2025-03-26",
+          "2024-11-05"
+        ]
+      },
+      "negotiated": "preferred-custom",
+      "preferred": "preferred-custom"
+    },
+    {
+      "accepted": "unknown",
+      "error": {
+        "error": "unsupported MCP-Protocol-Version header",
+        "expected": "2025-03-26",
+        "received": "unknown",
+        "supported": [
+          "2025-03-26",
+          "2024-11-05"
+        ]
+      },
+      "negotiated": "preferred-custom",
+      "preferred": "preferred-custom"
+    },
+    {
+      "accepted": "2025-03-26",
+      "error": {
+        "error": "unsupported MCP-Protocol-Version header",
+        "expected": "2025-03-26",
+        "received": "2025-03-26",
+        "supported": [
+          "2025-03-26",
+          "2024-11-05"
+        ]
+      },
+      "negotiated": "2025-03-26",
+      "preferred": "preferred-custom"
+    },
+    {
+      "accepted": "2024-11-05",
+      "error": {
+        "error": "unsupported MCP-Protocol-Version header",
+        "expected": "2025-03-26",
+        "received": "2024-11-05",
+        "supported": [
+          "2025-03-26",
+          "2024-11-05"
+        ]
+      },
+      "negotiated": "2024-11-05",
+      "preferred": "preferred-custom"
+    }
+  ]
+}

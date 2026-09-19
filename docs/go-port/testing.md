@@ -1,5 +1,7 @@
 # Test gates for the Go port
 
+The reusable nested `go/umcp` module is independently verified: 100% library statement coverage, race detector, 13 fuzz targets, baseline amd64/ARM64 cross-builds, an offline clean-copy test, 22 byte-identical regenerated Python fixture families, a machine-checked 143-symbol pinned public API inventory, and a behavioral crosswalk for all 24 upstream test files. The pinned upstream suite passes 254/254 tests.
+
 The synthesized comparative benchmark is documented in [benchmarks.md](benchmarks.md), with machine-readable evidence under `docs/evidence/go-python-models-off-benchmark-2026-09-19.json`. It verifies a stable corpus digest and equal 20-result cardinality before reporting rebuild and warm lexical-search latency.
 
 ## Module layout
@@ -8,7 +10,7 @@ The standalone module follows the standard `cmd/<binary>`, library-package, `int
 
 ## SIMD gates
 
-Scalar remains the default/oracle. SIMD tests cover runtime capability selection, unavailable/invalid backends, every tail length, bounded dot reduction drift, bit-exact AXPY, persistent Engine dispatch, GTE projection tolerance, Needle attention/argmax decisions, loader/runtime environment wiring, amd64 baseline/SSE2/AVX2 assembly, ARM64 NEON cross-assembly and gated real-model GTE/Needle comparisons. Local microbenchmarks are documented in [simd.md](simd.md); real ARM64 and model-asset evidence remains required before default enablement.
+Scalar remains the oracle/fallback; model constructors default to staggered auto dispatch (AVX2 → SSE2 → NEON → scalar), with `MEMENTO_SIMD=scalar` forcing exact-order execution. SIMD tests cover runtime capability selection, unavailable/invalid backends, every tail length, bounded dot reduction drift, bit-exact AXPY, persistent Engine dispatch, GTE projection tolerance, Needle attention/argmax decisions, loader/runtime environment wiring, amd64 baseline/SSE2/AVX2 assembly, ARM64 NEON cross-assembly and gated real-model GTE/Needle comparisons. Local microbenchmarks are documented in [simd.md](simd.md); real ARM64 and model-asset evidence remains required before default enablement.
 
 ## Quality workflow
 

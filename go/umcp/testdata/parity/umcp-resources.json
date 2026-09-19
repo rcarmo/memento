@@ -1,0 +1,652 @@
+{
+  "cases": [
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "resources": [
+            {
+              "name": "test:blob",
+              "uri": "test:blob"
+            },
+            {
+              "name": "test:cancelled",
+              "uri": "test:cancelled"
+            },
+            {
+              "name": "test:failure",
+              "uri": "test:failure"
+            },
+            {
+              "mimeType": "text/custom",
+              "name": "test:mixed",
+              "uri": "test:mixed"
+            },
+            {
+              "annotations": {
+                "priority": 1
+              },
+              "description": "Description",
+              "mimeType": "text/markdown",
+              "name": "text",
+              "size": 7,
+              "title": "Title",
+              "uri": "test:text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/list\", \"params\": {}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "nextCursor": "eyJ2IjoxLCJsIjoicmVzb3VyY2VzIiwibyI6MiwiZiI6ImNtVmhaR1Z5Q25KbGMyOTFjbU5sY3dwMFpYTjBPbUpzYjJJZmRHVnpkRHBpYkc5aUNuUmxjM1E2WTJGdVkyVnNiR1ZrSDNSbGMzUTZZMkZ1WTJWc2JHVmtDblJsYzNRNlptRnBiSFZ5WlI5MFpYTjBPbVpoYVd4MWNtVUtkR1Z6ZERwdGFYaGxaQjkwWlhOME9tMXBlR1ZrQ25SbGMzUTZkR1Y0ZEI5MFpYaDAifQ",
+          "resources": [
+            {
+              "name": "test:blob",
+              "uri": "test:blob"
+            },
+            {
+              "name": "test:cancelled",
+              "uri": "test:cancelled"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/list\", \"params\": {\"pageSize\": 2}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "resourceTemplates": [
+            {
+              "annotations": {
+                "priority": 0.5
+              },
+              "description": "path",
+              "mimeType": "text/plain",
+              "name": "template",
+              "title": "Template",
+              "uriTemplate": "test:///{path}"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/templates/list\", \"params\": {}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "resourceTemplates": [
+            {
+              "annotations": {
+                "priority": 0.5
+              },
+              "description": "path",
+              "mimeType": "text/plain",
+              "name": "template",
+              "title": "Template",
+              "uriTemplate": "test:///{path}"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/templates/list\", \"params\": {\"pageSize\": 1}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing 'uri' parameter"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32002,
+          "data": {
+            "uri": "missing"
+          },
+          "message": "Resource not found"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"missing\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "contents": [
+            {
+              "mimeType": "text/markdown",
+              "text": "hello ☃",
+              "uri": "test:text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:text\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "contents": [
+            {
+              "blob": "AAH/",
+              "mimeType": "application/octet-stream",
+              "uri": "test:blob"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:blob\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "contents": [
+            {
+              "mimeType": "text/custom",
+              "text": "entry",
+              "uri": "test:mixed"
+            },
+            {
+              "mimeType": "custom/type",
+              "text": "override",
+              "uri": "custom:"
+            },
+            {
+              "mimeType": "text/custom",
+              "text": "nested",
+              "uri": "test:mixed"
+            },
+            {
+              "mimeType": "text/custom",
+              "text": "None",
+              "uri": "test:mixed"
+            },
+            {
+              "mimeType": "text/custom",
+              "text": "True",
+              "uri": "test:mixed"
+            },
+            {
+              "mimeType": "text/custom",
+              "text": "7",
+              "uri": "test:mixed"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:mixed\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Resource read failed: private detail"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:failure\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32800,
+          "message": "Request cancelled"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:cancelled\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "contents": [
+            {
+              "mimeType": "text/plain",
+              "text": "path=raw%20path",
+              "uri": "test:///raw%20path"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:///raw%20path\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32002,
+          "data": {
+            "uri": "test:///two/segments"
+          },
+          "message": "Resource not found"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:///two/segments\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing 'uri' parameter"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/subscribe\", \"params\": {}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing 'uri' parameter"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/unsubscribe\", \"params\": {}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/subscribe\", \"params\": {\"uri\": \"missing\", \"_session_id\": \"s1\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/unsubscribe\", \"params\": {\"uri\": \"missing\", \"_session_id\": \"s1\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/subscribe\", \"params\": {\"uri\": \"missing\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/unsubscribe\", \"params\": {\"uri\": \"missing\"}}",
+      "transport": "stdio"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "resources": [
+            {
+              "name": "test:blob",
+              "uri": "test:blob"
+            },
+            {
+              "name": "test:cancelled",
+              "uri": "test:cancelled"
+            },
+            {
+              "name": "test:failure",
+              "uri": "test:failure"
+            },
+            {
+              "mimeType": "text/custom",
+              "name": "test:mixed",
+              "uri": "test:mixed"
+            },
+            {
+              "annotations": {
+                "priority": 1
+              },
+              "description": "Description",
+              "mimeType": "text/markdown",
+              "name": "text",
+              "size": 7,
+              "title": "Title",
+              "uri": "test:text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/list\", \"params\": {}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "nextCursor": "eyJ2IjoxLCJsIjoicmVzb3VyY2VzIiwibyI6MiwiZiI6ImNtVmhaR1Z5Q25KbGMyOTFjbU5sY3dwMFpYTjBPbUpzYjJJZmRHVnpkRHBpYkc5aUNuUmxjM1E2WTJGdVkyVnNiR1ZrSDNSbGMzUTZZMkZ1WTJWc2JHVmtDblJsYzNRNlptRnBiSFZ5WlI5MFpYTjBPbVpoYVd4MWNtVUtkR1Z6ZERwdGFYaGxaQjkwWlhOME9tMXBlR1ZrQ25SbGMzUTZkR1Y0ZEI5MFpYaDAifQ",
+          "resources": [
+            {
+              "name": "test:blob",
+              "uri": "test:blob"
+            },
+            {
+              "name": "test:cancelled",
+              "uri": "test:cancelled"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/list\", \"params\": {\"pageSize\": 2}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "resourceTemplates": [
+            {
+              "annotations": {
+                "priority": 0.5
+              },
+              "description": "path",
+              "mimeType": "text/plain",
+              "name": "template",
+              "title": "Template",
+              "uriTemplate": "test:///{path}"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/templates/list\", \"params\": {}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "resourceTemplates": [
+            {
+              "annotations": {
+                "priority": 0.5
+              },
+              "description": "path",
+              "mimeType": "text/plain",
+              "name": "template",
+              "title": "Template",
+              "uriTemplate": "test:///{path}"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/templates/list\", \"params\": {\"pageSize\": 1}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing 'uri' parameter"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32002,
+          "data": {
+            "uri": "missing"
+          },
+          "message": "Resource not found"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"missing\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "contents": [
+            {
+              "mimeType": "text/markdown",
+              "text": "hello ☃",
+              "uri": "test:text"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:text\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "contents": [
+            {
+              "blob": "AAH/",
+              "mimeType": "application/octet-stream",
+              "uri": "test:blob"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:blob\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "contents": [
+            {
+              "mimeType": "text/custom",
+              "text": "entry",
+              "uri": "test:mixed"
+            },
+            {
+              "mimeType": "custom/type",
+              "text": "override",
+              "uri": "custom:"
+            },
+            {
+              "mimeType": "text/custom",
+              "text": "nested",
+              "uri": "test:mixed"
+            },
+            {
+              "mimeType": "text/custom",
+              "text": "None",
+              "uri": "test:mixed"
+            },
+            {
+              "mimeType": "text/custom",
+              "text": "True",
+              "uri": "test:mixed"
+            },
+            {
+              "mimeType": "text/custom",
+              "text": "7",
+              "uri": "test:mixed"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:mixed\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32603,
+          "message": "Resource read failed"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:failure\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32800,
+          "message": "Request cancelled"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:cancelled\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "contents": [
+            {
+              "mimeType": "text/plain",
+              "text": "path=raw%20path",
+              "uri": "test:///raw%20path"
+            }
+          ]
+        }
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:///raw%20path\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32002,
+          "data": {
+            "uri": "test:///two/segments"
+          },
+          "message": "Resource not found"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/read\", \"params\": {\"uri\": \"test:///two/segments\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing 'uri' parameter"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/subscribe\", \"params\": {}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "error": {
+          "code": -32602,
+          "message": "Missing 'uri' parameter"
+        },
+        "id": 1,
+        "jsonrpc": "2.0"
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/unsubscribe\", \"params\": {}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/subscribe\", \"params\": {\"uri\": \"missing\", \"_session_id\": \"s1\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/unsubscribe\", \"params\": {\"uri\": \"missing\", \"_session_id\": \"s1\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/subscribe\", \"params\": {\"uri\": \"missing\"}}",
+      "transport": "streamable-http"
+    },
+    {
+      "expected": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "request": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"resources/unsubscribe\", \"params\": {\"uri\": \"missing\"}}",
+      "transport": "streamable-http"
+    }
+  ]
+}

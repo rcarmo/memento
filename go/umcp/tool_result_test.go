@@ -10,7 +10,7 @@ import (
 )
 
 func TestPythonToolResultParity(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-tool-results.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-tool-results.json")
 	if err != nil {
 		t.Fatal(err)
 	}

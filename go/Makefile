@@ -23,7 +23,7 @@ $(GOVULNCHECK):
 	@mkdir -p $(TOOLS_DIR)
 	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 check: quality
-quality: format-check layout-check vet lint test coverage build
+quality: format-check layout-check vet lint test coverage umcp-check build
 audit-fast: quality vuln
 audit: audit-fast race fuzz cross
 format:
@@ -43,13 +43,16 @@ vuln: $(GOVULNCHECK)
 	CGO_ENABLED=0 $(GOVULNCHECK) ./...
 test:
 	CGO_ENABLED=0 $(GO) test ./...
+umcp-check:
+	$(MAKE) -C umcp check
 coverage:
 	@mkdir -p ../build/go
-	CGO_ENABLED=0 $(GO) test -coverpkg=./... -covermode=atomic -coverprofile=../build/go/coverage.out ./...
+	CGO_ENABLED=0 $(GO) test -coverpkg="$$( $(GO) list ./... | paste -sd, - )" -covermode=atomic -coverprofile=../build/go/coverage.out ./...
 	$(GO) tool cover -func=../build/go/coverage.out
 	@awk 'NR>1 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' ../build/go/coverage.out
 fuzz:
 	GO="$(GO)" FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}" ./tools/run-fuzz.sh
+	$(MAKE) -C umcp fuzz FUZZ_TIME="$${UMCP_FUZZ_TIME:-10s}"
 
 model-test:
 	@test -n "$(GTE_MODEL_PATH)" || (echo 'Set GTE_MODEL_PATH to the digest-pinned public GTE1 model'; exit 1)
@@ -70,6 +73,7 @@ build:
 race:
 	# The Go race detector needs cgo in the test toolchain, not the shipped runtime.
 	CGO_ENABLED=1 $(GO) test -race ./...
+	$(MAKE) -C umcp race
 install: build
 	install -d "$(DESTDIR)$(PREFIX)/bin"
 	install -m 0755 ../build/go/memento-go "$(DESTDIR)$(PREFIX)/bin/memento-go"
@@ -80,6 +84,7 @@ release:
 release-check: release
 	./tools/release-check.sh
 cross: simd-test
+	$(MAKE) -C umcp cross
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-go-linux-amd64 ./cmd/memento-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-go-linux-arm64 ./cmd/memento-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-embed-go-linux-amd64 ./cmd/memento-embed-go

@@ -95,7 +95,7 @@ func connectSSE(t *testing.T, h *LegacySSE) (*httptest.Server, *http.Response, *
 	return server, response, reader, id
 }
 func TestLegacySSEPythonWire(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-sse.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-sse.json")
 	if err != nil {
 		t.Fatal(err)
 	}

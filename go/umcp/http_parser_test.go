@@ -15,7 +15,7 @@ import (
 )
 
 func TestPythonAsyncHTTPParser(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-raw-http.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-raw-http.json")
 	if err != nil {
 		t.Fatal(err)
 	}

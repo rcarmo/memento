@@ -8,7 +8,7 @@ import (
 )
 
 func TestPythonSharedParity(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-shared.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-shared.json")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func TestPythonURLRules(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-urls.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-urls.json")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,0 +1,909 @@
+[
+  {
+    "expected": {
+      "body": "",
+      "headers": {
+        "access-control-allow-headers": "Content-Type, Accept, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID, Authorization",
+        "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
+        "access-control-allow-origin": "http://localhost",
+        "access-control-expose-headers": "Mcp-Session-Id",
+        "vary": "Origin"
+      },
+      "status": 204
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Origin": "http://localhost"
+      },
+      "method": "OPTIONS",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {
+        "allow": "GET, POST, DELETE, OPTIONS"
+      },
+      "status": 405
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "OPTIONS",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "ok",
+      "headers": {
+        "access-control-allow-origin": "http://localhost",
+        "access-control-expose-headers": "Mcp-Session-Id",
+        "content-type": "text/plain",
+        "vary": "Origin",
+        "x-extra": "yes"
+      },
+      "status": 201
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Origin": "http://localhost"
+      },
+      "method": "OPTIONS",
+      "path": "/ok"
+    }
+  },
+  {
+    "expected": {
+      "body": "ok",
+      "headers": {
+        "content-type": "text/plain",
+        "x-extra": "yes"
+      },
+      "status": 201
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "GET",
+      "path": "/ok"
+    }
+  },
+  {
+    "expected": {
+      "body": "ok",
+      "headers": {
+        "content-type": "text/plain",
+        "x-extra": "yes"
+      },
+      "status": 201
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer denied",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "GET",
+      "path": "/ok"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "capabilities": {
+            "logging": {},
+            "prompts": {
+              "get": true,
+              "listChanged": true
+            },
+            "resources": {
+              "listChanged": true,
+              "subscribe": true
+            },
+            "tools": {
+              "listChanged": true
+            }
+          },
+          "instructions": "This server provides tool functionality via the Model Context Protocol.",
+          "protocolVersion": "2025-03-26",
+          "serverInfo": {
+            "name": "HTTPOracle",
+            "version": "0.2.2"
+          }
+        }
+      },
+      "headers": {
+        "content-type": "application/json",
+        "mcp-session-id": "{{SESSION}}"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"initialize\", \"params\": {\"protocolVersion\": \"2025-03-26\"}}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": ""
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "id": 2,
+        "jsonrpc": "2.0",
+        "result": {
+          "tools": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "id": 2,
+        "jsonrpc": "2.0",
+        "result": {
+          "tools": []
+        }
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Mcp-Session-Id": "{{SESSION}}"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 403
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer other",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Mcp-Session-Id": "{{SESSION}}"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "error": "unsupported MCP-Protocol-Version header",
+        "expected": "2025-03-26",
+        "received": "2024-11-05",
+        "supported": [
+          "2025-03-26",
+          "2024-11-05"
+        ]
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 400
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2024-11-05",
+        "Mcp-Session-Id": "{{SESSION}}"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 404
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Mcp-Session-Id": "missing"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 400
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"initialize\", \"params\": {\"protocolVersion\": \"2025-03-26\"}}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Mcp-Session-Id": "{{SESSION}}"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {
+        "www-authenticate": "Bearer"
+      },
+      "status": 401
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 403
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer denied",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 500
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer crash",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 406
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Accept": "text/event-stream",
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 415
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "text/plain",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "error": "unsupported MCP-Protocol-Version header",
+        "expected": "2025-03-26",
+        "received": "bad",
+        "supported": [
+          "2025-03-26",
+          "2024-11-05"
+        ]
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 400
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "bad"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 403
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Origin": "https://not.allowed"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "id": 2,
+        "jsonrpc": "2.0",
+        "result": {
+          "tools": []
+        }
+      },
+      "headers": {
+        "access-control-allow-origin": "http://localhost",
+        "access-control-expose-headers": "Mcp-Session-Id",
+        "content-type": "application/json",
+        "vary": "Origin"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Origin": "http://localhost"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "error": {
+          "code": -32700,
+          "message": "Parse error"
+        },
+        "id": null,
+        "jsonrpc": "2.0"
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "{",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        },
+        "id": null,
+        "jsonrpc": "2.0"
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "[]",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        },
+        "id": null,
+        "jsonrpc": "2.0"
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "null",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 202
+    },
+    "input": {
+      "body": "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":{}}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 202
+    },
+    "input": {
+      "body": "{\"jsonrpc\":\"2.0\",\"method\":\"unknown\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "error": {
+          "code": -32601,
+          "message": "Method not found: unknown"
+        },
+        "id": 3,
+        "jsonrpc": "2.0"
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"unknown\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 202
+    },
+    "input": {
+      "body": "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"notifications/initialized\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "id": 4,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"resources/subscribe\",\"params\":{\"uri\":\"u\",\"_session_id\":\"spoof\"}}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Mcp-Session-Id": "{{SESSION}}"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "id": 4,
+        "jsonrpc": "2.0",
+        "result": {}
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 200
+    },
+    "input": {
+      "body": "{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"resources/unsubscribe\",\"params\":{\"uri\":\"u\"}}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Mcp-Session-Id": "{{SESSION}}"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 406
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Accept": "application/json",
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "GET",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": {
+        "error": "unsupported MCP-Protocol-Version header",
+        "expected": "2025-03-26",
+        "received": "bad",
+        "supported": [
+          "2025-03-26",
+          "2024-11-05"
+        ]
+      },
+      "headers": {
+        "content-type": "application/json"
+      },
+      "status": 400
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "bad"
+      },
+      "method": "GET",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 400
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "GET",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "ok",
+      "headers": {
+        "content-type": "text/plain",
+        "x-extra": "yes"
+      },
+      "status": 201
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "GET",
+      "path": "/ok"
+    }
+  },
+  {
+    "expected": {
+      "body": "ok",
+      "headers": {
+        "access-control-allow-origin": "http://localhost",
+        "access-control-expose-headers": "Mcp-Session-Id",
+        "content-type": "text/plain",
+        "vary": "Origin",
+        "x-extra": "yes"
+      },
+      "status": 201
+    },
+    "input": {
+      "body": "body",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Origin": "http://localhost"
+      },
+      "method": "POST",
+      "path": "/ok"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {
+        "allow": "GET, POST, DELETE, OPTIONS"
+      },
+      "status": 405
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "GET",
+      "path": "/unknown"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 500
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "GET",
+      "path": "/bad-route"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 413
+    },
+    "input": {
+      "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 400
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "a,b",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 400
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26"
+      },
+      "method": "DELETE",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 200
+    },
+    "input": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Mcp-Session-Id": "{{SESSION}}"
+      },
+      "method": "DELETE",
+      "path": "/mcp"
+    }
+  },
+  {
+    "expected": {
+      "body": "",
+      "headers": {},
+      "status": 404
+    },
+    "input": {
+      "body": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/list\"}",
+      "headers": {
+        "Authorization": "Bearer reader",
+        "Content-Type": "application/json",
+        "Host": "localhost",
+        "MCP-Protocol-Version": "2025-03-26",
+        "Mcp-Session-Id": "{{SESSION}}"
+      },
+      "method": "POST",
+      "path": "/mcp"
+    }
+  }
+]

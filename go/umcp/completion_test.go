@@ -32,7 +32,7 @@ func referenceServer(t *testing.T) *Server {
 	return s
 }
 func TestCompletionSyncAsyncParity(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-completion.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-completion.json")
 	if err != nil {
 		t.Fatal(err)
 	}

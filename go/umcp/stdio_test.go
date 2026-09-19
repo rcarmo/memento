@@ -105,7 +105,7 @@ func FuzzStdio(f *testing.F) {
 }
 
 func TestPythonStdioParity(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-stdio.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-stdio.json")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -62,6 +62,37 @@ jobs:
           python -m coverage run --source=umcp,aioumcp -m pytest tests/ -q
           python -m coverage report
 
+  go-umcp-module:
+    name: Standalone Go uMCP module
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.3'
+          cache-dependency-path: go/umcp/go.sum
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Check out pinned Python uMCP reference
+        uses: actions/checkout@v4
+        with:
+          repository: rcarmo/umcp
+          ref: 30cce7dfe08c6ee63de235f7d81754ba286dafbb
+          path: .umcp-reference
+      - name: Independent quality and vulnerability gates
+        run: make -C go/umcp audit
+      - name: Race detector
+        run: make -C go/umcp race
+      - name: Fuzz targets
+        run: make -C go/umcp fuzz FUZZ_TIME=15s
+      - name: Build example
+        run: (cd go/umcp && CGO_ENABLED=0 go build -o /tmp/umcp-hello ./examples/hello)
+      - name: Regenerate and compare all Python parity fixtures
+        run: python tools/verify_umcp_go_fixtures.py --umcp .umcp-reference
+      - name: Verify pinned Python public API inventory
+        run: python tools/verify_umcp_public_api.py --umcp .umcp-reference
+
   scalar-parity:
     strategy:
       matrix:

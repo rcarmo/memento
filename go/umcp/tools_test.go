@@ -52,7 +52,7 @@ func registeredTools(t *testing.T) *ToolRegistry {
 }
 
 func TestSyncAsyncToolParity(t *testing.T) {
-	data, err := os.ReadFile("../testdata/parity/umcp-tools.json")
+	data, err := os.ReadFile("testdata/parity/umcp-tools.json")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -40,7 +40,7 @@ func referencePrompts(t *testing.T) *PromptRegistry {
 	return r
 }
 func TestPromptSyncAsyncParity(t *testing.T) {
-	data, err := os.ReadFile("../testdata/parity/umcp-prompts.json")
+	data, err := os.ReadFile("testdata/parity/umcp-prompts.json")
 	if err != nil {
 		t.Fatal(err)
 	}

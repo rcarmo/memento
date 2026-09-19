@@ -9,7 +9,7 @@ import (
 )
 
 func TestPaginationPythonParity(t *testing.T) {
-	data, err := os.ReadFile("../testdata/parity/umcp-pagination.json")
+	data, err := os.ReadFile("testdata/parity/umcp-pagination.json")
 	if err != nil {
 		t.Fatal(err)
 	}

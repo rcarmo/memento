@@ -33,7 +33,7 @@ func (c *memoryConn) SetReadDeadline(time.Time) error  { return nil }
 func (c *memoryConn) SetWriteDeadline(time.Time) error { return nil }
 
 func TestPythonSyncHTTPWire(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-sync-wire.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-sync-wire.json")
 	if err != nil {
 		t.Fatal(err)
 	}

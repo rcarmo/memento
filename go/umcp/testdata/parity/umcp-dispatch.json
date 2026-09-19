@@ -1,0 +1,441 @@
+[
+  {
+    "expected": {
+      "error": {
+        "code": -32700,
+        "message": "Parse error"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": ""
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32700,
+        "message": "Parse error"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "{"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32700,
+        "message": "Parse error"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "{} {}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32700,
+        "message": "Parse error"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\":\"2.0\",\"id\":NaN}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: top-level JSON value must be an object"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "null"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: top-level JSON value must be an object"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "[]"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: top-level JSON value must be an object"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "1"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: top-level JSON value must be an object"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "\"text\""
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: Not a JSON-RPC 2.0 request"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "{}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: method must be a string"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\"}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: Not a JSON-RPC 2.0 request"
+      },
+      "id": 3,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"1.0\", \"id\": 3, \"method\": \"initialize\"}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: expected an object"
+      },
+      "id": true,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"1.0\", \"id\": true, \"params\": []}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: expected an object"
+      },
+      "id": 1,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"params\": []}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: invalid id"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": true, \"method\": \"initialize\"}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: invalid id"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 1.0, \"method\": \"initialize\"}"
+  },
+  {
+    "expected": {
+      "id": 10000000000000000000000000000000000000000,
+      "jsonrpc": "2.0",
+      "result": {
+        "context": {
+          "headers": {
+            "x-test": "one"
+          },
+          "principal": "oracle-reader",
+          "progress_token": null,
+          "request_id": 10000000000000000000000000000000000000000,
+          "session_id": "session-1",
+          "transport": "streamable-http"
+        },
+        "params": {}
+      }
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 10000000000000000000000000000000000000000, \"method\": \"initialize\"}"
+  },
+  {
+    "expected": {
+      "id": "abc",
+      "jsonrpc": "2.0",
+      "result": {
+        "context": {
+          "headers": {
+            "x-test": "one"
+          },
+          "principal": "oracle-reader",
+          "progress_token": null,
+          "request_id": "abc",
+          "session_id": "session-1",
+          "transport": "streamable-http"
+        },
+        "params": {}
+      }
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": \"abc\", \"method\": \"initialize\", \"params\": null}"
+  },
+  {
+    "expected": {
+      "id": null,
+      "jsonrpc": "2.0",
+      "result": {
+        "context": {
+          "headers": {
+            "x-test": "one"
+          },
+          "principal": "oracle-reader",
+          "progress_token": "progress-1",
+          "request_id": null,
+          "session_id": "session-1",
+          "transport": "streamable-http"
+        },
+        "params": {
+          "_meta": {
+            "progressToken": "progress-1"
+          }
+        }
+      }
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": null, \"method\": \"initialize\", \"params\": {\"_meta\": {\"progressToken\": \"progress-1\"}}}"
+  },
+  {
+    "expected": {
+      "id": null,
+      "jsonrpc": "2.0",
+      "result": {
+        "context": {
+          "headers": {
+            "x-test": "one"
+          },
+          "principal": "oracle-reader",
+          "progress_token": 0,
+          "request_id": null,
+          "session_id": "session-1",
+          "transport": "streamable-http"
+        },
+        "params": {
+          "_meta": {
+            "progressToken": 0
+          }
+        }
+      }
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"method\": \"initialize\", \"params\": {\"_meta\": {\"progressToken\": 0}}}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: '_meta.progressToken' must be a string or integer"
+      },
+      "id": 4,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 4, \"method\": \"initialize\", \"params\": {\"_meta\": {\"progressToken\": true}}}"
+  },
+  {
+    "expected": {
+      "id": 4,
+      "jsonrpc": "2.0",
+      "result": {
+        "context": {
+          "headers": {
+            "x-test": "one"
+          },
+          "principal": "oracle-reader",
+          "progress_token": null,
+          "request_id": 4,
+          "session_id": "session-1",
+          "transport": "streamable-http"
+        },
+        "params": {
+          "_meta": []
+        }
+      }
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 4, \"method\": \"initialize\", \"params\": {\"_meta\": []}}"
+  },
+  {
+    "expected": {
+      "id": 4,
+      "jsonrpc": "2.0",
+      "result": {
+        "context": {
+          "headers": {
+            "x-test": "one"
+          },
+          "principal": "oracle-reader",
+          "progress_token": null,
+          "request_id": 4,
+          "session_id": "session-1",
+          "transport": "streamable-http"
+        },
+        "params": {
+          "_meta": {
+            "progressToken": null
+          }
+        }
+      }
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 4, \"method\": \"initialize\", \"params\": {\"_meta\": {\"progressToken\": null}}}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: method must be a string"
+      },
+      "id": 4,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 4, \"method\": false}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32601,
+        "message": "Method not found: unknown"
+      },
+      "id": 4,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 4, \"method\": \"unknown\"}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32601,
+        "message": "Method not found: unknown"
+      },
+      "id": null,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"method\": \"unknown\"}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"result\": null}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32600,
+        "message": "Invalid Request: malformed response"
+      },
+      "id": 2,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"result\": null, \"error\": null}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 2, \"error\": {\"code\": -1, \"message\": \"x\"}}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"method\": \"notifications/initialized\"}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"notifications/initialized\"}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": null, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": null}}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": null, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": false}}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": null, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": []}}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": null, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": \"x\"}}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": null, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": 10000000000000000000000000000000000000000}}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": null, \"method\": \"initialize\", \"params\": {\"cancel\": true}}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": null}}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'requestId' must be a string, integer, or null"
+      },
+      "id": 1,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": false}}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32602,
+        "message": "Invalid params: 'requestId' must be a string, integer, or null"
+      },
+      "id": 1,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": []}}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": \"x\"}}"
+  },
+  {
+    "expected": null,
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"notifications/cancelled\", \"params\": {\"requestId\": 10000000000000000000000000000000000000000}}"
+  },
+  {
+    "expected": {
+      "error": {
+        "code": -32800,
+        "message": "Request cancelled"
+      },
+      "id": 1,
+      "jsonrpc": "2.0"
+    },
+    "input": "{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"initialize\", \"params\": {\"cancel\": true}}"
+  }
+]

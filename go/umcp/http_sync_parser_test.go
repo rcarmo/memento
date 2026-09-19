@@ -13,7 +13,7 @@ import (
 )
 
 func TestPythonSyncHTTPParser(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-sync-http.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-sync-http.json")
 	if err != nil {
 		t.Fatal(err)
 	}

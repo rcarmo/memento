@@ -18,7 +18,7 @@ import (
 )
 
 func TestPythonTransportArgs(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-cli.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-cli.json")
 	if err != nil {
 		t.Fatal(err)
 	}

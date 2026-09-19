@@ -9,7 +9,7 @@ import (
 )
 
 func TestSyncAsyncProgressParity(t *testing.T) {
-	data, err := os.ReadFile("../testdata/parity/umcp-progress.json")
+	data, err := os.ReadFile("testdata/parity/umcp-progress.json")
 	if err != nil {
 		t.Fatal(err)
 	}

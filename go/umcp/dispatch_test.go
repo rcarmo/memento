@@ -19,7 +19,7 @@ func testHandler(ctx context.Context, params map[string]any) (any, *RPCError, er
 }
 
 func TestSyncAsyncDispatcherParity(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-dispatch.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-dispatch.json")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func TestPythonHTTPRules(t *testing.T) {
-	raw, err := os.ReadFile("../testdata/parity/umcp-http-rules.json")
+	raw, err := os.ReadFile("testdata/parity/umcp-http-rules.json")
 	if err != nil {
 		t.Fatal(err)
 	}
