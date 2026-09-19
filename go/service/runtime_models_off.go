@@ -161,7 +161,8 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	if options.Needle.Enabled {
 		metadata.Catalog, _ = NewCatalog(CatalogConfig{Surface: options.Surface, RouteEnabled: true})
 	}
-	controls := &ProposalControls{Queue: ProposalQueue{Proposals: control.Proposals{DB: runtime.DB}, Paths: paths.Repository}, Random: rand.Reader, DerivedIndexPath: paths.DerivedDB, Staging: staging, MaxConceptBytes: config.Limits.MaxConceptBytes, Index: index, DefaultSearchMode: "lexical", Metadata: metadata, DerivedUpdate: manager.DerivedUpdate}
+	capabilities := RuntimeCapabilities{SemanticEnabled: options.Semantic.Enabled, SemanticModelID: options.Semantic.ModelID, SemanticDimensions: options.Semantic.Dimensions, NeedleEnabled: options.Needle.Enabled, NeedleModelPath: options.Needle.ModelPath}
+	controls := &ProposalControls{Queue: ProposalQueue{Proposals: control.Proposals{DB: runtime.DB}, Paths: paths.Repository}, Random: rand.Reader, DerivedIndexPath: paths.DerivedDB, Staging: staging, MaxConceptBytes: config.Limits.MaxConceptBytes, Index: index, DefaultSearchMode: "lexical", Metadata: metadata, RuntimeCapabilities: capabilities, DerivedUpdate: manager.DerivedUpdate}
 	jobs := &Jobs{Controls: controls, Identity: identity, DBPath: paths.ControlDB}
 	if options.Semantic.Enabled && options.SemanticWorker == nil {
 		if options.Semantic.ModelPath == nil {
@@ -178,6 +179,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 			return nil, nil, loadErr
 		}
 		controls.SemanticClient = client
+		controls.RuntimeCapabilities.SemanticLoaded = true
 		controls.SemanticMaxCandidates = options.Semantic.MaxCandidates
 		controls.DefaultSearchMode = options.Semantic.DefaultSearchMode
 		refreshConfig := derived.SemanticRefreshConfig{ModelID: options.Semantic.ModelID, Dimensions: options.Semantic.Dimensions, MaxInputChars: options.Semantic.MaxInputChars, MaxBatch: options.Semantic.MaxBatchSize}
@@ -226,6 +228,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 			}
 			routeInference = router
 		}
+		controls.RuntimeCapabilities.NeedleLoaded = true
 		if err = ops.registerRoute(jobs, server, options.Surface, options.Limits, routeInference, tokenizer); err != nil {
 			return nil, nil, err
 		}

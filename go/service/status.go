@@ -49,6 +49,9 @@ func modelsOffMetadata(surface string, raw []byte) (*ModelsOffMetadata, error) {
 type StatusIndex interface {
 	Status(context.Context, access.EffectivePolicy) (derived.StatusSnapshot, error)
 }
+type SemanticStatusIndex interface {
+	EmbeddingRevision(context.Context) (string, error)
+}
 
 func (c *ProposalControls) Status(ctx context.Context, actor ProposalActor) (map[string]any, SuccessOptions, error) {
 	var data map[string]any
@@ -117,10 +120,39 @@ func (c *ProposalControls) statusWithList(ctx context.Context, actor ProposalAct
 	}
 	limits := copyCatalogObject(c.Metadata.Limits)
 	limits["assets"] = assets.RetrievalLimits()
+	capabilities := c.RuntimeCapabilities
+	var embeddingRevision any = nil
+	semanticReady := false
+	if capabilities.SemanticEnabled {
+		if semanticIndex, ok := c.Index.(SemanticStatusIndex); ok {
+			value, stateErr := semanticIndex.EmbeddingRevision(ctx)
+			if stateErr != nil {
+				return nil, options, stateErr
+			}
+			if value != "" {
+				embeddingRevision = value
+			}
+			semanticReady = capabilities.SemanticLoaded && value == revision
+		}
+	}
+	var semanticModel any = nil
+	var semanticDimensions any = nil
+	if capabilities.SemanticEnabled {
+		semanticModel = capabilities.SemanticModelID
+		semanticDimensions = capabilities.SemanticDimensions
+	}
+	var needleRuntime any = nil
+	if capabilities.NeedleLoaded {
+		needleRuntime = "go-scalar"
+	}
+	needlePath := capabilities.NeedleModelPath
+	if needlePath == "" {
+		needlePath = c.Metadata.NeedleModelPath
+	}
 	data := map[string]any{
 		"service_version": c.Metadata.ServiceVersion, "schema_version": c.Metadata.SchemaVersion, "repo_revision": revision, "index_revision": state.IndexRevision, "index_stale": stale, "principal": actor.Policy.Principal, "visible_concepts": count, "proposal_backlog": backlog, "limits": limits, "roles": append([]string{}, actor.Policy.Roles...),
-		"features":  map[string]any{"resources": true, "streamable_http": true, "proposal_rebase": true, "model_proposals": false, "dream_mode": "disabled", "semantic_search": false, "needle_router": false},
-		"readiness": map[string]any{"semantic_search": map[string]any{"ready": false, "model_id": nil, "dimensions": nil, "embedding_revision": nil, "sqlite_vector_enabled": false}, "needle_router": map[string]any{"enabled": false, "loaded": false, "runtime": nil, "model_path": c.Metadata.NeedleModelPath}},
+		"features":  map[string]any{"resources": true, "streamable_http": true, "proposal_rebase": true, "model_proposals": false, "dream_mode": "disabled", "semantic_search": capabilities.SemanticEnabled, "needle_router": capabilities.NeedleEnabled},
+		"readiness": map[string]any{"semantic_search": map[string]any{"ready": semanticReady, "model_id": semanticModel, "dimensions": semanticDimensions, "embedding_revision": embeddingRevision, "sqlite_vector_enabled": false}, "needle_router": map[string]any{"enabled": capabilities.NeedleEnabled, "loaded": capabilities.NeedleLoaded, "runtime": needleRuntime, "model_path": needlePath}},
 	}
 	options.RepoRevision = &revision
 	options.IndexRevision = &state.IndexRevision

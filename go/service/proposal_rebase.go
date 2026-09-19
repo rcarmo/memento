@@ -33,6 +33,7 @@ type ProposalControls struct {
 	DefaultSearchMode     string
 	SemanticClient        derived.SemanticClient
 	SemanticMaxCandidates int
+	RuntimeCapabilities   RuntimeCapabilities
 	AuditGraph            AuditGraphSnapshots
 	Metadata              *ModelsOffMetadata
 	// Worker-owned live policy resolver for nested inventory calls.
