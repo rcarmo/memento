@@ -65,6 +65,24 @@ func TestDefaultRunServer(t *testing.T) {
 	_ = runtime.Close(context.Background())
 }
 
+func TestRunCancellation(t *testing.T) {
+	oldLoad, oldBuild, oldRun := loadConfig, buildRuntime, runServer
+	t.Cleanup(func() { loadConfig, buildRuntime, runServer = oldLoad, oldBuild, oldRun })
+	loadConfig = func(string) (service.RuntimeConfig, error) { return service.RuntimeConfig{}, nil }
+	runtime, server := stubRuntime(t)
+	buildRuntime = func(context.Context, service.RuntimeConfig, service.ModelsOffRuntimeOptions) (*service.Runtime, *umcp.Server, error) {
+		return runtime, server, nil
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	runServer = func(context.Context, *umcp.Server, []string, io.Reader, io.Writer, umcp.HTTPHooks) error {
+		return context.Canceled
+	}
+	if code := runContext(ctx, []string{"--config", "x", "serve"}, nil, io.Discard, io.Discard); code != 0 {
+		t.Fatal(code)
+	}
+}
+
 func TestRunFailures(t *testing.T) {
 	oldLoad, oldBuild, oldRun := loadConfig, buildRuntime, runServer
 	t.Cleanup(func() { loadConfig, buildRuntime, runServer = oldLoad, oldBuild, oldRun })

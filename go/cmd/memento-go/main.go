@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -42,7 +43,7 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		return 1
 	}
 	limits := execute.Limits{MaxOperations: 12, MaxIntermediates: 12, MaxRecords: 50, MaxOutputBytes: "65536", MaxTimeSeconds: 3}
-	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: "standard", Limits: limits})
+	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: "standard", Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig()})
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1
@@ -52,6 +53,9 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		transportArgs = []string{"--http", "--host", "127.0.0.1", "--port", "8000", "--endpoint", "/mcp"}
 	}
 	err = runServer(ctx, server, transportArgs, input, out, runtime.HTTPHooks)
+	if ctx.Err() != nil && errors.Is(err, ctx.Err()) {
+		err = nil
+	}
 	closeErr := runtime.Close(context.Background())
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)

@@ -20,6 +20,7 @@ type RuntimeConfig struct {
 		RootPath string `json:"root_path"`
 	} `json:"repository"`
 	Authorization access.AuthorizationConfig `json:"authorization"`
+	Observability ObservabilityConfig        `json:"observability"`
 }
 type RuntimePaths struct {
 	Root, ControlDB, DerivedDB, WriterLock string
@@ -33,7 +34,7 @@ func LoadRuntimeConfig(path string) (RuntimeConfig, error) {
 	}
 	decoder := json.NewDecoder(bytes.NewReader(raw))
 	decoder.DisallowUnknownFields()
-	var config RuntimeConfig
+	config := RuntimeConfig{Observability: ObservabilityConfig{GraphExplorer: DefaultGraphExplorerConfig()}}
 	if err = decoder.Decode(&config); err != nil {
 		return RuntimeConfig{}, err
 	}
@@ -43,6 +44,9 @@ func LoadRuntimeConfig(path string) (RuntimeConfig, error) {
 	}
 	if strings.TrimSpace(config.Repository.RootPath) == "" {
 		return RuntimeConfig{}, errors.New("repository.root_path must not be empty")
+	}
+	if err = config.Observability.GraphExplorer.Validate(); err != nil {
+		return RuntimeConfig{}, err
 	}
 	return config, nil
 }
