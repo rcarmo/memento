@@ -3,6 +3,8 @@ package service
 import (
 	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/repository"
+	"golang.org/x/text/cases"
+	"math"
 	"sort"
 	"strings"
 	"time"
@@ -58,6 +60,7 @@ func DetectDreamSignals(bundle repository.RepositoryBundle, revision, previous s
 			out = append(out, control.DetectedSignal{SignalType: "recent_activity", EntityRefs: []string{m.ID, entry.BundlePath}, Severity: "low", DedupeKey: "recent_activity|" + m.ID + "|" + revision, Evidence: map[string]any{"path": entry.BundlePath, "since_revision": previous, "repo_revision": revision}})
 		}
 	}
+	out = append(out, detectDreamDuplicates(bundle, config.DuplicateSimilarityThreshold)...)
 	sort.Slice(large, func(i, j int) bool {
 		if large[i].weight != large[j].weight {
 			return large[i].weight > large[j].weight
@@ -74,6 +77,68 @@ func DetectDreamSignals(bundle repository.RepositoryBundle, revision, previous s
 		}
 		return out[i].DedupeKey < out[j].DedupeKey
 	})
+	return out
+}
+func detectDreamDuplicates(bundle repository.RepositoryBundle, threshold float64) []control.DetectedSignal {
+	active := []repository.BundleEntry{}
+	for _, entry := range bundle.Entries {
+		if entry.Document.Frontmatter.Status == "active" {
+			active = append(active, entry)
+		}
+	}
+	fold := cases.Fold()
+	out := []control.DetectedSignal{}
+	for i, left := range active {
+		for _, right := range active[i+1:] {
+			lm, rm := left.Document.Frontmatter, right.Document.Frontmatter
+			title := sequenceRatio(fold.String(lm.Title), fold.String(rm.Title))
+			ld, rd := "", ""
+			if lm.Description != nil {
+				ld = *lm.Description
+			}
+			if rm.Description != nil {
+				rd = *rm.Description
+			}
+			description := sequenceRatio(fold.String(ld), fold.String(rd))
+			leftTags, rightTags := map[string]bool{}, map[string]bool{}
+			for _, tag := range lm.Tags {
+				leftTags[tag] = true
+			}
+			for _, tag := range rm.Tags {
+				rightTags[tag] = true
+			}
+			intersection := 0
+			for tag := range leftTags {
+				if rightTags[tag] {
+					intersection++
+				}
+			}
+			union := len(leftTags)
+			for tag := range rightTags {
+				if !leftTags[tag] {
+					union++
+				}
+			}
+			tagRatio := 0.0
+			if union > 0 {
+				tagRatio = float64(intersection) / float64(union)
+			}
+			score := math.Max(title, title*.6+description*.2+tagRatio*.2)
+			if title < 1 && score < threshold {
+				continue
+			}
+			ids := []string{lm.ID, rm.ID}
+			paths := []string{left.BundlePath, right.BundlePath}
+			sort.Strings(ids)
+			sort.Strings(paths)
+			severity := "medium"
+			if title < 1 {
+				severity = "low"
+			}
+			out = append(out, control.DetectedSignal{SignalType: "likely_duplicate", EntityRefs: ids, Severity: severity, DedupeKey: "likely_duplicate|" + ids[0] + "|" + ids[1], Evidence: map[string]any{"paths": paths, "score": math.Round(score*1000) / 1000}})
+		}
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i].DedupeKey < out[j].DedupeKey })
 	return out
 }
 func DreamQuietUntil(bundle repository.RepositoryBundle, nowUnix int64, seconds int) *string {

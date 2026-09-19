@@ -1,0 +1,72 @@
+[
+  {
+    "a": "",
+    "b": "",
+    "ratio": 1.0
+  },
+  {
+    "a": "a",
+    "b": "",
+    "ratio": 0.0
+  },
+  {
+    "a": "abc",
+    "b": "abc",
+    "ratio": 1.0
+  },
+  {
+    "a": "abc",
+    "b": "acb",
+    "ratio": 0.6666666666666666
+  },
+  {
+    "a": "abcd",
+    "b": "bc",
+    "ratio": 0.6666666666666666
+  },
+  {
+    "a": "tide",
+    "b": "diet",
+    "ratio": 0.25
+  },
+  {
+    "a": "diet",
+    "b": "tide",
+    "ratio": 0.5
+  },
+  {
+    "a": "strasse",
+    "b": "strasse",
+    "ratio": 1.0
+  },
+  {
+    "a": "\u754c\u9762",
+    "b": "\u754c\u7ebf",
+    "ratio": 0.5
+  },
+  {
+    "a": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",
+    "b": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac",
+    "ratio": 0.995
+  },
+  {
+    "a": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxa",
+    "b": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxb",
+    "ratio": 0.995260663507109
+  },
+  {
+    "a": "abababab",
+    "b": "babababa",
+    "ratio": 0.875
+  },
+  {
+    "a": "project alpha",
+    "b": "project alfa",
+    "ratio": 0.88
+  },
+  {
+    "a": "notes",
+    "b": "note",
+    "ratio": 0.8888888888888888
+  }
+]
