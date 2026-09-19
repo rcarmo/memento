@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -17,9 +18,12 @@ type RouteInference interface {
 	Generate(*needle.Tokenizer, string, string, needle.GenerationOptions, needle.Checkpoint) (string, error)
 }
 type RouteEndpoint struct {
-	Jobs      *Jobs
-	Router    RouteInference
-	Tokenizer *needle.Tokenizer
+	Jobs       *Jobs
+	Router     RouteInference
+	Tokenizer  *needle.Tokenizer
+	Execute    *ExecuteEndpoint
+	dispatchFn func(context.Context, map[string]any) (any, error)
+	adaptFn    func(any, *RouteProjection) (map[string]any, SuccessOptions, error)
 }
 
 func (e RouteEndpoint) Call(ctx context.Context, args map[string]any) (any, error) {
@@ -35,9 +39,6 @@ func (e RouteEndpoint) Call(ctx context.Context, args map[string]any) (any, erro
 			return nil, errors.New("execute must be a boolean")
 		}
 	}
-	if execute {
-		return e.failure(errors.New("needle route execution is not implemented"))
-	}
 	request = strings.TrimSpace(request)
 	if request == "" {
 		return e.failure(errors.New("request must not be empty"))
@@ -48,24 +49,78 @@ func (e RouteEndpoint) Call(ctx context.Context, args map[string]any) (any, erro
 	if e.Router == nil || e.Tokenizer == nil {
 		return e.failure(errors.New("needle router is not loaded"))
 	}
-	return e.Jobs.Call(ctx, "memory_route", func(ctx context.Context, c *ProposalControls, _ ProposalActor) (map[string]any, SuccessOptions, error) {
-		raw, err := e.Router.Generate(e.Tokenizer, request, CanonicalShallowToolsJSON, needle.DefaultGenerationOptions(), func(string) error { return ctx.Err() })
-		if err != nil {
-			return nil, SuccessOptions{}, err
-		}
-		action, err := ParseNeedleRouterOutput(raw)
-		if err != nil {
-			return nil, SuccessOptions{}, &ChangeValidationError{err.Error()}
-		}
-		payload := map[string]any{"request": request, "router_output": boundedRouteOutput(raw), "action": routerActionPayload(action), "executed": false}
-		expansion := ExpandRouterAction(action, request)
-		if expansion == nil {
-			payload["abstained"] = true
-		} else {
-			payload["expansion"] = expansion
-		}
-		return payload, SuccessOptions{}, nil
+	if _, err := e.Jobs.Identity.Context(ctx); err != nil {
+		return nil, err
+	}
+	generated, err := e.Jobs.Workers.Call(ctx, "memory_route", func(work context.Context) (any, error) {
+		return e.Router.Generate(e.Tokenizer, request, CanonicalShallowToolsJSON, needle.DefaultGenerationOptions(), func(string) error { return work.Err() })
 	})
+	if err != nil {
+		return nil, err
+	}
+	raw, ok := generated.(string)
+	if !ok {
+		return generated, nil
+	}
+	action, err := ParseNeedleRouterOutput(raw)
+	if err != nil {
+		return e.failure(err)
+	}
+	payload := map[string]any{"request": request, "router_output": boundedRouteOutput(raw), "action": routerActionPayload(action), "executed": false}
+	expansion := ExpandRouterAction(action, request)
+	if expansion == nil {
+		payload["abstained"] = true
+		return e.routeSuccess(payload, SuccessOptions{})
+	}
+	payload["expansion"] = expansion
+	if !execute {
+		return e.routeSuccess(payload, SuccessOptions{})
+	}
+	dispatch := e.dispatch
+	if e.dispatchFn != nil {
+		dispatch = e.dispatchFn
+	}
+	routed, dispatchErr := dispatch(ctx, expansion)
+	if dispatchErr != nil {
+		return nil, dispatchErr
+	}
+	adapt := projectRoutedEnvelope
+	if e.adaptFn != nil {
+		adapt = e.adaptFn
+	}
+	result, options, adaptErr := adapt(routed, routeProjection(expansion))
+	if adaptErr != nil {
+		return e.failure(adaptErr)
+	}
+	payload["executed"] = true
+	payload["result"] = result
+	return e.routeSuccess(payload, options)
+}
+func (e RouteEndpoint) routeSuccess(payload map[string]any, options SuccessOptions) (any, error) {
+	return e.Jobs.Controls.Queue.SuccessEnvelope(payload, options)
+}
+func (e RouteEndpoint) dispatch(ctx context.Context, expansion map[string]any) (any, error) {
+	tool, _ := expansion["tool"].(string)
+	args, _ := expansion["args"].(map[string]any)
+	switch tool {
+	case "memory_search":
+		if args["query_syntax"] == nil {
+			args["query_syntax"] = "plain"
+		}
+		if limit, ok := args["limit"].(int); ok {
+			args["limit"] = json.Number(strconv.Itoa(limit))
+		}
+		return e.Jobs.callStatusOrTool(ctx, tool, args)
+	case "memory_status", "memory_read":
+		return e.Jobs.callStatusOrTool(ctx, tool, args)
+	case "memory_execute":
+		if e.Execute == nil {
+			return e.failure(errors.New("memory execute is not configured"))
+		}
+		return e.Execute.Call(ctx, args)
+	default:
+		return e.failure(errors.New("unsupported direct routed tool: " + tool))
+	}
 }
 func (e RouteEndpoint) failure(err error) (any, error) {
 	failure, _ := FailureEnvelope(&ChangeValidationError{err.Error()})
