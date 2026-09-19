@@ -9,6 +9,7 @@ import (
 	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/derived"
 	"github.com/rcarmo/memento/go/execute"
+	"github.com/rcarmo/memento/go/graphdebug"
 	"github.com/rcarmo/memento/go/repository"
 	"github.com/rcarmo/memento/go/umcp"
 )
@@ -18,6 +19,7 @@ type ModelsOffRuntimeOptions struct {
 	Limits        execute.Limits
 	BootstrapSeed string
 	Tokens        []BearerPrincipal
+	Graph         GraphHTTPConfig
 }
 type modelsOffBuildOps struct {
 	storage  func(context.Context, RuntimeConfig, string) (*Runtime, error)
@@ -102,5 +104,15 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		return nil, nil, err
 	}
 	runtime.Jobs = jobs
+	runtime.HTTPHooks = identity.HTTPHooks()
+	stagingHTTP := StagingHTTP{Store: staging, Authenticate: identity.AuthenticateHeaders}
+	graphHTTP := GraphHTTP{Config: options.Graph, Snapshots: graphdebug.NewSnapshotService(paths.Repository.CurrentDir, paths.DerivedDB, paths.ControlDB), Policies: &GraphPolicyDirectory{Static: config.Authorization}}
+	runtime.HTTPHooks.Route = func(ctx context.Context, method, path string, headers map[string]string, body []byte, peer string) (*umcp.HTTPResponse, error) {
+		response, routeErr := stagingHTTP.Handle(ctx, method, path, headers, body, peer)
+		if response != nil || routeErr != nil {
+			return response, routeErr
+		}
+		return graphHTTP.Handle(ctx, method, path, headers, body, peer)
+	}
 	return runtime, server, nil
 }

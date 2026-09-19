@@ -7,17 +7,19 @@ import (
 	"sync"
 
 	"github.com/rcarmo/memento/go/repository"
+	"github.com/rcarmo/memento/go/umcp"
 )
 
 // Runtime owns resources shared by the configured service. Close drains
 // shielded requests before closing background components, SQLite, and finally
 // the process-wide writer lease.
 type Runtime struct {
-	Paths   RuntimePaths
-	Jobs    *Jobs
-	DB      *sql.DB
-	Lease   *repository.WriterLease
-	Closers []func() error
+	Paths     RuntimePaths
+	Jobs      *Jobs
+	DB        *sql.DB
+	Lease     *repository.WriterLease
+	HTTPHooks umcp.HTTPHooks
+	Closers   []func() error
 
 	mu     sync.Mutex
 	closed bool

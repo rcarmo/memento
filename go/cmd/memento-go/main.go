@@ -51,7 +51,7 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 	if len(transportArgs) == 0 {
 		transportArgs = []string{"--http", "--host", "127.0.0.1", "--port", "8000", "--endpoint", "/mcp"}
 	}
-	err = runServer(ctx, server, transportArgs, input, out, runtime.Jobs.Identity.HTTPHooks())
+	err = runServer(ctx, server, transportArgs, input, out, runtime.HTTPHooks)
 	closeErr := runtime.Close(context.Background())
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)
