@@ -175,7 +175,9 @@ func (c *constraints) update(token int) {
 		c.machine.feed(c.template.strings[token])
 	}
 }
-func (c *constraints) allowed() []int {
+func (c *constraints) allowed() []int { return c.allowedInto(nil) }
+func (c *constraints) allowedInto(allowed []int) []int {
+	allowed = allowed[:0]
 	var root *trie
 	switch c.machine.state {
 	case free:
@@ -192,7 +194,6 @@ func (c *constraints) allowed() []int {
 	if node == nil {
 		return nil
 	}
-	var allowed []int
 	for id, text := range c.template.strings {
 		first, size := utf8.DecodeRuneInString(text)
 		if size == 0 {

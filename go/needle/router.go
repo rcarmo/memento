@@ -129,11 +129,19 @@ func sliceLayer(values []float32, layer, width int) []float32 {
 	return values[layer*width : (layer+1)*width]
 }
 
+type constraintCache struct {
+	normalized string
+	names      map[string]string
+	template   *constraintTemplate
+}
 type crossCache struct{ k, v []float32 }
 type decoderState struct {
 	k, v  [][]float32
 	cross []crossCache
 	rope  rope
+
+	x, norm0, norm1, qSelf, qCross, kStep, vStep, context, output, scores []float32
+	maxGenerated                                                          int
 }
 
 func (r *Router) encode(tokens []int, cp Checkpoint) ([]float32, error) {
@@ -151,33 +159,56 @@ func (r *Router) encode(tokens []int, cp Checkpoint) ([]float32, error) {
 		}
 	}
 	rope := precomputeRope(hd, len(tokens), r.config.RopeTheta)
+	rows, kvRows := len(tokens)*dm, len(tokens)*kv*hd
+	normalized := make([]float32, rows)
+	q := make([]float32, rows)
+	k := make([]float32, kvRows)
+	v := make([]float32, kvRows)
+	contexts := make([]float32, rows)
+	output := make([]float32, rows)
+	scores := make([]float32, len(tokens))
 	for _, l := range r.encoder {
 		if err := poll(cp, "encoder_layer"); err != nil {
 			return nil, err
 		}
-		normalized := normRows(x, dm, l.norm)
-		q := projectWithEngine(normalized, dm, dm, l.self.q, r.simd)
-		k := projectWithEngine(normalized, dm, kv*hd, l.self.k, r.simd)
-		v := projectWithEngine(normalized, dm, kv*hd, l.self.v, r.simd)
+		normalized = normRowsInto(normalized, x, dm, l.norm)
+		q = projectInto(q, normalized, dm, dm, l.self.q, r.simd)
+		k = projectInto(k, normalized, dm, kv*hd, l.self.k, r.simd)
+		v = projectInto(v, normalized, dm, kv*hd, l.self.v, r.simd)
 		headNorm(q, len(tokens)*heads, hd, l.self.qNorm)
 		headNorm(k, len(tokens)*kv, hd, l.self.kNorm)
 		ropeRows(q, heads, hd, rope)
 		ropeRows(k, kv, hd, rope)
-		contexts := make([]float32, len(tokens)*dm)
 		for pos := range tokens {
-			copy(contexts[pos*dm:], attendWithEngine(q[pos*dm:(pos+1)*dm], k, v, heads, kv, hd, r.simd))
+			start := pos * dm
+			attendInto(contexts[start:start+dm], scores, q[start:start+dm], k, v, heads, kv, hd, r.simd)
 		}
-		output := projectWithEngine(contexts, dm, dm, l.self.out, r.simd)
+		output = projectInto(output, contexts, dm, dm, l.self.out, r.simd)
 		gatedResidual(x, output, l.gate[0])
 	}
-	return normRows(x, dm, r.encoderFinal), nil
+	return normRowsInto(normalized, x, dm, r.encoderFinal), nil
 }
 func (r *Router) decoderState(encoded []float32, cp Checkpoint) (*decoderState, error) {
+	return r.decoderStateFor(encoded, 0, cp)
+}
+func (r *Router) decoderStateFor(encoded []float32, maxGenerated int, cp Checkpoint) (*decoderState, error) {
 	dm := int(r.config.DModel)
 	hd := dm / int(r.config.Heads)
 	kv := int(r.config.KVHeads)
-	s := &decoderState{k: make([][]float32, len(r.decoder)), v: make([][]float32, len(r.decoder)), cross: make([]crossCache, len(r.decoder)), rope: precomputeRope(hd, int(r.config.MaxSequence), r.config.RopeTheta)}
+	s := &decoderState{
+		k: make([][]float32, len(r.decoder)), v: make([][]float32, len(r.decoder)), cross: make([]crossCache, len(r.decoder)),
+		rope: precomputeRope(hd, int(r.config.MaxSequence), r.config.RopeTheta),
+		x:    make([]float32, dm), norm0: make([]float32, dm), norm1: make([]float32, dm),
+		qSelf: make([]float32, dm), qCross: make([]float32, dm), kStep: make([]float32, kv*hd), vStep: make([]float32, kv*hd),
+		context: make([]float32, dm), output: make([]float32, dm), scores: make([]float32, max(int(r.config.MaxSequence), len(encoded)/dm)),
+		maxGenerated: min(maxGenerated, int(r.config.MaxSequence), 32),
+	}
+	cacheCapacity := s.maxGenerated * kv * hd
 	for i, l := range r.decoder {
+		if cacheCapacity > 0 {
+			s.k[i] = make([]float32, 0, cacheCapacity)
+			s.v[i] = make([]float32, 0, cacheCapacity)
+		}
 		if err := poll(cp, "decoder_cross_prep"); err != nil {
 			return nil, err
 		}
@@ -198,7 +229,7 @@ func (r *Router) decodeStep(token, pos int, state *decoderState, cp Checkpoint) 
 	if pos < 0 || pos >= int(r.config.MaxSequence) {
 		return nil, fmt.Errorf("generation position %d exceeds model sequence length %d", pos, r.config.MaxSequence)
 	}
-	x := make([]float32, dm)
+	x := state.x
 	scale := sqrt32(float32(dm))
 	for i := range x {
 		x[i] = float32(r.embedding[token*dm+i] * scale)
@@ -207,23 +238,26 @@ func (r *Router) decodeStep(token, pos int, state *decoderState, cp Checkpoint) 
 		if err := poll(cp, "decoder_layer"); err != nil {
 			return nil, err
 		}
-		normalized := normVector(x, l.norm0)
-		q := projectWithEngine(normalized, dm, dm, l.self.q, r.simd)
-		k := projectWithEngine(normalized, dm, kv*hd, l.self.k, r.simd)
-		v := projectWithEngine(normalized, dm, kv*hd, l.self.v, r.simd)
+		normalized := normVectorInto(state.norm0, x, l.norm0)
+		q := projectInto(state.qSelf, normalized, dm, dm, l.self.q, r.simd)
+		k := projectInto(state.kStep, normalized, dm, kv*hd, l.self.k, r.simd)
+		v := projectInto(state.vStep, normalized, dm, kv*hd, l.self.v, r.simd)
 		headNorm(q, heads, hd, l.self.qNorm)
 		headNorm(k, kv, hd, l.self.kNorm)
 		applyRope(q, heads, hd, state.rope, pos)
 		applyRope(k, kv, hd, state.rope, pos)
 		state.k[i] = append(state.k[i], k...)
 		state.v[i] = append(state.v[i], v...)
-		context := attendWithEngine(q, state.k[i], state.v[i], heads, kv, hd, r.simd)
-		gatedResidual(x, projectWithEngine(context, dm, dm, l.self.out, r.simd), l.selfGate[0])
-		normalized = normVector(x, l.norm1)
-		q = projectWithEngine(normalized, dm, dm, l.cross.q, r.simd)
+		context := attendInto(state.context, state.scores[:pos+1], q, state.k[i], state.v[i], heads, kv, hd, r.simd)
+		output := projectInto(state.output, context, dm, dm, l.self.out, r.simd)
+		gatedResidual(x, output, l.selfGate[0])
+		normalized = normVectorInto(state.norm1, x, l.norm1)
+		q = projectInto(state.qCross, normalized, dm, dm, l.cross.q, r.simd)
 		headNorm(q, heads, hd, l.cross.qNorm)
-		context = attendWithEngine(q, state.cross[i].k, state.cross[i].v, heads, kv, hd, r.simd)
-		gatedResidual(x, projectWithEngine(context, dm, dm, l.cross.out, r.simd), l.crossGate[0])
+		crossTokens := len(state.cross[i].k) / (kv * hd)
+		context = attendInto(state.context, state.scores[:crossTokens], q, state.cross[i].k, state.cross[i].v, heads, kv, hd, r.simd)
+		output = projectInto(state.output, context, dm, dm, l.cross.out, r.simd)
+		gatedResidual(x, output, l.crossGate[0])
 	}
-	return normVector(x, r.decoderFinal), nil
+	return normVectorInto(state.norm0, x, r.decoderFinal), nil
 }

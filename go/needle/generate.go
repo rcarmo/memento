@@ -38,7 +38,22 @@ func (r *Router) Generate(t *Tokenizer, query, tools string, options GenerationO
 	if options.MaxEncoded < 0 || options.MaxGenerated < 0 {
 		return "", invalid("generation lengths must be nonnegative")
 	}
-	tools, names := NormalizeToolsJSON(tools)
+	rawTools := tools
+	key := struct {
+		tools     string
+		tokenizer *Tokenizer
+	}{rawTools, t}
+	cached, ok := r.constraintTemplates.Load(key)
+	if !ok {
+		normalized, names := NormalizeToolsJSON(rawTools)
+		cached, _ = r.constraintTemplates.LoadOrStore(key, &constraintCache{
+			normalized: normalized,
+			names:      names,
+			template:   newConstraintTemplate(normalized, t),
+		})
+	}
+	entry := cached.(*constraintCache)
+	tools = entry.normalized
 	tokens, err := encoderInput(t, query, tools, options.MaxEncoded)
 	if err != nil {
 		return "", err
@@ -53,29 +68,22 @@ func (r *Router) Generate(t *Tokenizer, query, tools string, options GenerationO
 	if err = poll(cp, "encoded"); err != nil {
 		return "", err
 	}
-	key := struct {
-		tools     string
-		tokenizer *Tokenizer
-	}{tools, t}
-	template, ok := r.constraintTemplates.Load(key)
-	if !ok {
-		template, _ = r.constraintTemplates.LoadOrStore(key, newConstraintTemplate(tools, t))
-	}
-	decoder := &constraints{template: template.(*constraintTemplate)}
-	state, err := r.decoderState(encoded, cp)
+	decoder := &constraints{template: entry.template}
+	state, err := r.decoderStateFor(encoded, options.MaxGenerated, cp)
 	if err != nil {
 		return "", err
 	}
 	token := TokenEOS
-	generated := []int{}
+	generated := make([]int, 0, min(options.MaxGenerated, int(r.config.MaxSequence)))
+	allowed := make([]int, 0, 64)
 	for i := 0; i < options.MaxGenerated; i++ {
 		hidden, err := r.decodeStep(token, len(generated), state, cp)
 		if err != nil {
 			return "", err
 		}
-		var allowed []int
+		allowed = allowed[:0]
 		if options.Constrained {
-			allowed = decoder.allowed()
+			allowed = decoder.allowedInto(allowed)
 		}
 		next := argmaxWithEngine(hidden, r.embedding, allowed, r.simd)
 		if options.Constrained {
@@ -95,7 +103,7 @@ func (r *Router) Generate(t *Tokenizer, query, tools string, options GenerationO
 		return "", err
 	}
 	text = strings.TrimPrefix(text, "<tool_call>")
-	return RestoreToolNames(text, names), nil
+	return RestoreToolNames(text, entry.names), nil
 }
 
 // SnakeCase intentionally preserves the reference's uppercase-run behaviour.

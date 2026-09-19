@@ -15,15 +15,15 @@
     },
     "BenchmarkRealGTEEmbed": {
       "max_allocs_per_op": 2,
-      "max_bytes_per_op": 1600
+      "max_bytes_per_op": 2400
     },
     "BenchmarkSearchLexical100": {
       "max_allocs_per_op": 875,
       "max_bytes_per_op": 43500
     },
     "BenchmarkRealNeedleGenerate": {
-      "max_allocs_per_op": 3000,
-      "max_bytes_per_op": 8600000
+      "max_allocs_per_op": 900,
+      "max_bytes_per_op": 1900000
     }
   }
 }

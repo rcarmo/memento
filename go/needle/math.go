@@ -40,13 +40,21 @@ func ropeRows(x []float32, heads, dim int, r rope) {
 		applyRope(x[row*heads*dim:(row+1)*heads*dim], heads, dim, r, row)
 	}
 }
-func normVector(x, scale []float32) []float32 {
-	out := append([]float32{}, x...)
+func resizeFloat32(buffer []float32, size int) []float32 {
+	if cap(buffer) < size {
+		return make([]float32, size)
+	}
+	return buffer[:size]
+}
+func normVectorInto(out, x, scale []float32) []float32 {
+	out = resizeFloat32(out, len(x))
+	copy(out, x)
 	headNorm(out, 1, len(x), scale)
 	return out
 }
-func normRows(x []float32, width int, scale []float32) []float32 {
-	out := append([]float32{}, x...)
+func normRowsInto(out, x []float32, width int, scale []float32) []float32 {
+	out = resizeFloat32(out, len(x))
+	copy(out, x)
 	headNorm(out, len(x)/width, width, scale)
 	return out
 }
@@ -67,8 +75,12 @@ func project(input []float32, in, out int, kernel []float32) []float32 {
 	return projectWithEngine(input, in, out, kernel, nil)
 }
 func projectWithEngine(input []float32, in, out int, kernel []float32, engine *msimd.Engine) []float32 {
+	return projectInto(nil, input, in, out, kernel, engine)
+}
+func projectInto(result, input []float32, in, out int, kernel []float32, engine *msimd.Engine) []float32 {
 	rows := len(input) / in
-	result := make([]float32, rows*out)
+	result = resizeFloat32(result, rows*out)
+	clear(result)
 	for r := 0; r < rows; r++ {
 		row := result[r*out : (r+1)*out]
 		for i := 0; i < in; i++ {
@@ -93,10 +105,14 @@ func dot(a, b []float32) float32 {
 	return sum
 }
 func attendWithEngine(q, k, v []float32, heads, kvHeads, dim int, engine *msimd.Engine) []float32 {
+	return attendInto(nil, nil, q, k, v, heads, kvHeads, dim, engine)
+}
+func attendInto(out, scores, q, k, v []float32, heads, kvHeads, dim int, engine *msimd.Engine) []float32 {
 	tokens := len(k) / (kvHeads * dim)
 	repeats := heads / kvHeads
-	out := make([]float32, heads*dim)
-	scores := make([]float32, tokens)
+	out = resizeFloat32(out, heads*dim)
+	clear(out)
+	scores = resizeFloat32(scores, tokens)
 	scale := float32(math.Sqrt(float64(float32(dim))))
 	for h := 0; h < heads; h++ {
 		kh := h / repeats
