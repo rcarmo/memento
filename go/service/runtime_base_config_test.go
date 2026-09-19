@@ -46,7 +46,7 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 	if err := c.ValidateModelsOff(); err != nil {
 		t.Fatal(err)
 	}
-	disabled := []byte(`{"enabled":false,"limits":{"x":1}}`)
+	disabled := []byte(`{"enabled":false}`)
 	c = IntelligentTiersConfig{DeepAnswers: disabled, ExactAnswerCache: disabled, HotWorkingMemory: disabled, ModelProposals: disabled, Dream: []byte(`{"mode":"disabled","scanner":{}}`), SemanticSearch: []byte(`{"enabled":false}`), NeedleRouter: []byte(`{"enabled":false}`), ModelProviderSlots: []byte(`{"hot_query":{}}`)}
 	if err := c.ValidateModelsOff(); err != nil {
 		t.Fatal(err)
@@ -56,8 +56,8 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 		encoded, _ := json.Marshal(raw)
 		var active IntelligentTiersConfig
 		_ = json.Unmarshal(encoded, &active)
-		if active.ValidateModelsOff() == nil {
-			t.Fatal(i, field)
+		if err := active.ValidateModelsOff(); err != nil {
+			t.Fatal(i, field, err)
 		}
 	}
 	c = IntelligentTiersConfig{SemanticSearch: []byte(`{"enabled":true,"model_path":"/model"}`)}
@@ -69,8 +69,8 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 		t.Fatal(err)
 	}
 	c = IntelligentTiersConfig{Dream: []byte(`{"mode":"propose"}`)}
-	if c.ValidateModelsOff() == nil {
-		t.Fatal("dream")
+	if err := c.ValidateModelsOff(); err != nil {
+		t.Fatal(err)
 	}
 	c = IntelligentTiersConfig{DeepAnswers: []byte(`{"enabled":"yes"}`)}
 	if c.ValidateModelsOff() == nil {

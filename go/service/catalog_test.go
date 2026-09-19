@@ -45,7 +45,7 @@ func TestCatalogReference(t *testing.T) {
 	f := loadCatalogFixture(t)
 	for _, tc := range f.Cases {
 		t.Run(fmt.Sprintf("%s-%t-%t", tc.Surface, tc.Answer, tc.Route), func(t *testing.T) {
-			c, err := NewCatalog(CatalogConfig{Surface: tc.Surface, AnswerEnabled: tc.Answer, RouteEnabled: tc.Route})
+			c, err := NewCatalog(CatalogConfig{Surface: tc.Surface, AnswerEnabled: tc.Answer, RouteEnabled: tc.Route, ProposalEnabled: true})
 			if err != nil {
 				t.Fatal(err)
 			}

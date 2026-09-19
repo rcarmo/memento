@@ -19,9 +19,9 @@ var catalogData []byte
 var catalogToolDefinitions []byte
 
 type CatalogConfig struct {
-	Surface                     string
-	AnswerEnabled, RouteEnabled bool
-	ExecuteLimits               map[string]any
+	Surface                                      string
+	AnswerEnabled, RouteEnabled, ProposalEnabled bool
+	ExecuteLimits                                map[string]any
 }
 type catalogOperation struct {
 	Name     string   `json:"op_name"`
@@ -85,6 +85,9 @@ func newCatalog(config CatalogConfig, raw []byte) (*Catalog, error) {
 			included = false
 		}
 		if op.Tool == "memory_route" && !config.RouteEnabled {
+			included = false
+		}
+		if (op.Tool == "memory_propose_freeform" || op.Tool == "memory_propose_update") && !config.ProposalEnabled {
 			included = false
 		}
 		if included {

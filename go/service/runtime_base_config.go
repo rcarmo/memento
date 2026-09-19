@@ -81,24 +81,6 @@ func (c MCPConfig) NormalizedOrigins() []string {
 func (c MCPConfig) ExecuteLimits() execute.Limits {
 	return execute.Limits{MaxOperations: c.Execute.MaxOperations, MaxIntermediates: c.Execute.MaxIntermediates, MaxRecords: c.Execute.MaxRecords, MaxOutputBytes: json.Number(strconv.Itoa(c.Execute.MaxOutputBytes)), MaxTimeSeconds: c.Execute.MaxTimeSeconds}
 }
-func activeField(raw json.RawMessage, field string) (bool, error) {
-	if len(raw) == 0 {
-		return false, nil
-	}
-	var object map[string]json.RawMessage
-	if err := json.Unmarshal(raw, &object); err != nil {
-		return false, err
-	}
-	value := object[field]
-	if len(value) == 0 {
-		return false, nil
-	}
-	var enabled bool
-	if err := json.Unmarshal(value, &enabled); err != nil {
-		return false, err
-	}
-	return enabled, nil
-}
 func (c IntelligentTiersConfig) ValidateModelsOff() error {
 	if _, err := DecodeNeedleRouterConfig(c.NeedleRouter); err != nil {
 		return err
@@ -106,24 +88,23 @@ func (c IntelligentTiersConfig) ValidateModelsOff() error {
 	if _, err := DecodeSemanticSearchConfig(c.SemanticSearch, nil); err != nil {
 		return err
 	}
-	dream, err := DecodeDreamConfig(c.Dream)
-	if err != nil {
+	if _, err := DecodeDreamConfig(c.Dream); err != nil {
 		return err
 	}
-	if dream.Mode == "propose" {
-		return errors.New("enabled intelligent tiers are not supported by the models-off runtime")
+	if _, err := DecodeDeepAnswersConfig(c.DeepAnswers); err != nil {
+		return err
 	}
-	for _, item := range []struct {
-		raw   json.RawMessage
-		field string
-	}{{c.DeepAnswers, "enabled"}, {c.ExactAnswerCache, "enabled"}, {c.HotWorkingMemory, "enabled"}, {c.ModelProposals, "enabled"}} {
-		active, err := activeField(item.raw, item.field)
-		if err != nil {
-			return err
-		}
-		if active {
-			return errors.New("enabled intelligent tiers are not supported by the models-off runtime")
-		}
+	if _, err := DecodeExactAnswerCacheConfig(c.ExactAnswerCache); err != nil {
+		return err
+	}
+	if _, err := DecodeHotWorkingMemoryConfig(c.HotWorkingMemory); err != nil {
+		return err
+	}
+	if _, err := DecodeModelProposalsConfig(c.ModelProposals); err != nil {
+		return err
+	}
+	if _, err := DecodeModelProviderSlots(c.ModelProviderSlots); err != nil {
+		return err
 	}
 	return nil
 }

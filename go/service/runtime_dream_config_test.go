@@ -22,8 +22,8 @@ func TestDreamConfig(t *testing.T) {
 		t.Fatal(err)
 	}
 	tiers.Dream = json.RawMessage(`{"mode":"propose"}`)
-	if err = tiers.ValidateModelsOff(); err == nil {
-		t.Fatal("propose")
+	if err = tiers.ValidateModelsOff(); err != nil {
+		t.Fatal(err)
 	}
 }
 func TestDreamConfigFailures(t *testing.T) {

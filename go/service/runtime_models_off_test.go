@@ -65,6 +65,35 @@ func TestBuildModelsOffRuntime(t *testing.T) {
 	}
 }
 
+func TestBuildConfiguredIntelligentRuntime(t *testing.T) {
+	ctx := context.Background()
+	var config RuntimeConfig
+	config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
+	config.Authorization = access.AuthorizationConfig{Principals: map[string]access.NamespacePolicy{"actor": {Roles: []string{"reader", "proposer"}, ReadPrefixes: []string{"/"}, WritePrefixes: []string{"/"}}}}
+	proposals := DefaultModelProposalsConfig()
+	proposals.Enabled = true
+	runtime, server, err := BuildModelsOffRuntime(ctx, config, ModelsOffRuntimeOptions{Surface: "standard", Tokens: []BearerPrincipal{{Token: "token", Principal: access.Principal{Name: "actor", Roles: []string{"reader", "proposer"}}}}, ModelClient: &stubModelClient{}, ModelProposals: proposals, DeepAnswers: DefaultDeepAnswersConfig(), ExactCache: DefaultExactAnswerCacheConfig(), HotMemory: DefaultHotWorkingMemoryConfig()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Close(ctx)
+	response, err := server.Process(ctx, []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/list"}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response.Error != nil {
+		t.Fatal(response, err)
+	}
+	names := map[string]bool{}
+	for _, raw := range response.Result.(map[string]any)["tools"].([]any) {
+		names[raw.(map[string]any)["name"].(string)] = true
+	}
+	if !names["memory_propose_freeform"] || !names["memory_propose_update"] || !names["memory_answer"] || names["memory_route"] {
+		t.Fatalf("tools=%v", names)
+	}
+	var table string
+	if err = runtime.DB.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='answer_cache'`).Scan(&table); err != nil || table != "answer_cache" {
+		t.Fatalf("table=%q err=%v", table, err)
+	}
+}
+
 func TestModelsOffRuntimeHTTPHooks(t *testing.T) {
 	ctx := context.Background()
 	var config RuntimeConfig

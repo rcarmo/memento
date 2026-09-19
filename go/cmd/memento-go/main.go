@@ -96,6 +96,21 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(stderr, "memento-go:", configErr)
 		return 1
 	}
+	deepConfig, configErr := service.DecodeDeepAnswersConfig(config.IntelligentTiers.DeepAnswers)
+	if configErr != nil {
+		fmt.Fprintln(stderr, "memento-go:", configErr)
+		return 1
+	}
+	cacheConfig, configErr := service.DecodeExactAnswerCacheConfig(config.IntelligentTiers.ExactAnswerCache)
+	if configErr != nil {
+		fmt.Fprintln(stderr, "memento-go:", configErr)
+		return 1
+	}
+	hotConfig, configErr := service.DecodeHotWorkingMemoryConfig(config.IntelligentTiers.HotWorkingMemory)
+	if configErr != nil {
+		fmt.Fprintln(stderr, "memento-go:", configErr)
+		return 1
+	}
 	proposalConfig, configErr := service.DecodeModelProposalsConfig(config.IntelligentTiers.ModelProposals)
 	if configErr != nil {
 		fmt.Fprintln(stderr, "memento-go:", configErr)
@@ -111,11 +126,24 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		effectiveDreamMode = args[4]
 	}
 	var modelClient service.ModelClient
-	if effectiveDreamMode == "propose" {
-		if providerConfig.Dream.Primary == nil {
-			fmt.Fprintln(stderr, "memento-go: dream propose requires a configured dream model provider")
-			return 1
-		}
+	needsModel := effectiveDreamMode == "propose" || deepConfig.Enabled || hotConfig.Enabled || proposalConfig.Enabled
+	if effectiveDreamMode == "propose" && providerConfig.Dream.Primary == nil {
+		fmt.Fprintln(stderr, "memento-go: dream propose requires a configured dream model provider")
+		return 1
+	}
+	if deepConfig.Enabled && providerConfig.DeepQuery.Primary == nil {
+		fmt.Fprintln(stderr, "memento-go: deep answers require a configured deep_query model provider")
+		return 1
+	}
+	if hotConfig.Enabled && providerConfig.HotQuery.Primary == nil {
+		fmt.Fprintln(stderr, "memento-go: hot memory requires a configured hot_query model provider")
+		return 1
+	}
+	if proposalConfig.Enabled && providerConfig.Proposal.Primary == nil {
+		fmt.Fprintln(stderr, "memento-go: model proposals require a configured proposal model provider")
+		return 1
+	}
+	if needsModel {
 		modelClient = &service.RoutedModelClient{Slots: providerConfig}
 	}
 	needleConfig, configErr := service.DecodeNeedleRouterConfig(config.IntelligentTiers.NeedleRouter)
@@ -123,7 +151,7 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(stderr, "memento-go:", configErr)
 		return 1
 	}
-	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: config.MCP.ToolSurface, Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig(), Needle: needleConfig, Semantic: semanticConfig, Dream: dreamConfig, ModelClient: modelClient, ModelProposals: proposalConfig})
+	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: config.MCP.ToolSurface, Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig(), Needle: needleConfig, Semantic: semanticConfig, Dream: dreamConfig, ModelClient: modelClient, ModelProposals: proposalConfig, DeepAnswers: deepConfig, ExactCache: cacheConfig, HotMemory: hotConfig})
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1

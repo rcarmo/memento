@@ -34,6 +34,9 @@ type ModelsOffRuntimeOptions struct {
 	Dream          DreamConfig
 	ModelClient    ModelClient
 	ModelProposals ModelProposalsConfig
+	DeepAnswers    DeepAnswersConfig
+	ExactCache     ExactAnswerCacheConfig
+	HotMemory      HotWorkingMemoryConfig
 }
 type modelsOffBuildOps struct {
 	storage              func(context.Context, RuntimeConfig, string) (*Runtime, error)
@@ -243,12 +246,16 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		}
 	}
 	server = umcp.NewServer("memento")
-	if err = ops.register(jobs, server, options.Surface, options.Limits); err != nil {
-		return nil, nil, err
+	configured := options.DeepAnswers.Enabled || options.ModelProposals.Enabled
+	if !configured {
+		if err = ops.register(jobs, server, options.Surface, options.Limits); err != nil {
+			return nil, nil, err
+		}
 	}
+	var routeInference RouteInference
+	var routeTokenizer *needle.Tokenizer
 	if options.Needle.Enabled {
 		resolved := options.Needle.Resolved(ops.lookupEnv)
-		var routeInference RouteInference
 		var tokenizer *needle.Tokenizer
 		var loadErr error
 		if ops.buildRoute != nil {
@@ -278,7 +285,32 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 			routeInference = router
 		}
 		controls.RuntimeCapabilities.NeedleLoaded = true
-		if err = ops.registerRoute(jobs, server, options.Surface, options.Limits, routeInference, tokenizer); err != nil {
+		routeTokenizer = tokenizer
+		if !configured {
+			if err = ops.registerRoute(jobs, server, options.Surface, options.Limits, routeInference, tokenizer); err != nil {
+				return nil, nil, err
+			}
+		}
+	}
+	if configured {
+		answers := AnswerStore{DB: runtime.DB}
+		if err = answers.Migrate(ctx); err != nil {
+			return nil, nil, err
+		}
+		catalogConfig := CatalogConfig{Surface: options.Surface, AnswerEnabled: options.DeepAnswers.Enabled && options.ModelClient != nil, RouteEnabled: options.Needle.Enabled, ProposalEnabled: options.ModelProposals.Enabled && options.ModelClient != nil}
+		catalog, catalogErr := NewCatalog(catalogConfig)
+		if catalogErr != nil {
+			return nil, nil, catalogErr
+		}
+		executeEndpoint, endpointErr := NewExecuteEndpoint(jobs, catalog, options.Limits)
+		if endpointErr != nil {
+			return nil, nil, endpointErr
+		}
+		answer := &AnswerEndpoint{Jobs: jobs, Client: options.ModelClient, Store: answers, Deep: options.DeepAnswers, Cache: options.ExactCache, Hot: options.HotMemory}
+		proposals := &ModelProposalEndpoint{Jobs: jobs, Client: options.ModelClient, Config: options.ModelProposals, Timeout: time.Duration(options.DeepAnswers.Limits.MaxTimeSeconds * float64(time.Second))}
+		route := RouteEndpoint{Jobs: jobs, Router: routeInference, Tokenizer: routeTokenizer, Execute: executeEndpoint}
+		handlers := map[string]CatalogHandler{"memory_answer": answer.Call, "memory_route": route.Call, "memory_propose_freeform": proposals.Freeform, "memory_propose_update": proposals.Update}
+		if err = jobs.RegisterConfiguredServer(server, ConfiguredServerOptions{Catalog: catalogConfig, Limits: options.Limits, ModelHandlers: handlers}); err != nil {
 			return nil, nil, err
 		}
 	}
