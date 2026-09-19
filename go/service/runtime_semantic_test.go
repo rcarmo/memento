@@ -4,8 +4,11 @@ import (
 	"context"
 	"path/filepath"
 	"testing"
+	"time"
 
+	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/derived"
+	"github.com/rcarmo/memento/go/umcp"
 )
 
 type runtimeSemanticClient struct{}
@@ -33,6 +36,7 @@ func TestBuildSemanticEnabledRuntime(t *testing.T) {
 	ctx := context.Background()
 	var config RuntimeConfig
 	config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
+	config.Authorization = access.AuthorizationConfig{Principals: map[string]access.NamespacePolicy{"actor": {Roles: []string{"reader"}, ReadPrefixes: []string{"/"}}}}
 	semantic := DefaultSemanticSearchConfig()
 	semantic.Enabled = true
 	model := "/model"
@@ -42,15 +46,24 @@ func TestBuildSemanticEnabledRuntime(t *testing.T) {
 	semantic.RefreshOnStartup = true
 	seed := t.TempDir()
 	installMutationFiles(t, seed, map[string]string{"/a.md": mutationConcept})
-	options := ModelsOffRuntimeOptions{Surface: "standard", Tokens: []BearerPrincipal{}, BootstrapSeed: seed, Semantic: semantic, Graph: GraphHTTPConfig{Enabled: true, RoutePrefix: "/graph"}}
+	options := ModelsOffRuntimeOptions{Surface: "standard", Tokens: []BearerPrincipal{{Token: "token", Principal: access.Principal{Name: "actor", Roles: []string{"reader"}}}}, BootstrapSeed: seed, Semantic: semantic, Graph: GraphHTTPConfig{Enabled: true, RoutePrefix: "/graph"}}
 	ops := defaultModelsOffBuildOps()
 	ops.buildSemantic = func(SemanticSearchConfig) (derived.SemanticClient, error) { return runtimeSemanticClient{}, nil }
-	runtime, _, err := buildModelsOffRuntime(ctx, config, options, ops)
+	runtime, server, err := buildModelsOffRuntime(ctx, config, options, ops)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if runtime.SemanticWorker == nil || runtime.GraphRefresh == nil {
 		t.Fatal(runtime)
+	}
+	waitCtx, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+	if err = runtime.SemanticWorker.WaitIdle(waitCtx); err != nil {
+		t.Fatal(err)
+	}
+	response, callErr := server.Process(ctx, []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"memory_search","arguments":{"query":"x","search_mode":"semantic","query_syntax":"plain","limit":5}}}`), umcp.RequestContext{Principal: "actor"})
+	if callErr != nil || response.Error != nil {
+		t.Fatal(response, callErr)
 	}
 	if err = runtime.Close(ctx); err != nil {
 		t.Fatal(err)

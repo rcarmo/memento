@@ -174,6 +174,9 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		if loadErr != nil {
 			return nil, nil, loadErr
 		}
+		controls.SemanticClient = client
+		controls.SemanticMaxCandidates = options.Semantic.MaxCandidates
+		controls.DefaultSearchMode = options.Semantic.DefaultSearchMode
 		options.SemanticWorker = ops.newSemanticWorker(index, client, derived.SemanticRefreshConfig{ModelID: options.Semantic.ModelID, Dimensions: options.Semantic.Dimensions, MaxInputChars: options.Semantic.MaxInputChars, MaxBatch: options.Semantic.MaxBatchSize})
 		if options.Semantic.RefreshOnStartup {
 			state, _ := index.State(ctx)

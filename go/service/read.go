@@ -16,6 +16,9 @@ type ReadIndex interface {
 	SearchLexical(context.Context, access.EffectivePolicy, derived.SearchOptions) (derived.SearchPage, error)
 	Graph(context.Context, access.EffectivePolicy, string, derived.GraphOptions) (derived.GraphNeighborhood, error)
 }
+type SemanticReadIndex interface {
+	SearchSemantic(context.Context, access.EffectivePolicy, derived.SemanticSearchOptions, derived.SemanticClient) (derived.SearchPage, error)
+}
 
 func readable(policy access.EffectivePolicy, path string) bool {
 	_, err := access.AuthorizePath(policy, path, "read")
@@ -103,7 +106,15 @@ func (c *ProposalControls) Search(ctx context.Context, actor ProposalActor, quer
 	if c.Index == nil {
 		return nil, options, &derived.UnavailableError{Message: "derived index is unavailable"}
 	}
-	page, err := c.Index.SearchLexical(ctx, actor.Policy, derived.SearchOptions{Query: query, Syntax: syntax, ConceptType: conceptType, Limit: limit, Cursor: cursor})
+	searchOptions := derived.SearchOptions{Query: query, Syntax: syntax, ConceptType: conceptType, Limit: limit, Cursor: cursor}
+	var page derived.SearchPage
+	var err error
+	semanticIndex, semanticAvailable := c.Index.(SemanticReadIndex)
+	if selected != "lexical" && c.SemanticClient != nil && semanticAvailable {
+		page, err = semanticIndex.SearchSemantic(ctx, actor.Policy, derived.SemanticSearchOptions{SearchOptions: searchOptions, Hybrid: selected == "hybrid", MaxCandidates: c.SemanticMaxCandidates}, c.SemanticClient)
+	} else {
+		page, err = c.Index.SearchLexical(ctx, actor.Policy, searchOptions)
+	}
 	if err != nil {
 		return nil, options, err
 	}
@@ -112,9 +123,7 @@ func (c *ProposalControls) Search(ctx context.Context, actor ProposalActor, quer
 		results = append(results, map[string]any{"id": item.ConceptID, "path": item.Path, "title": item.Title, "type": item.ConceptType, "status": item.Status, "tags": item.Tags, "score": item.Score, "snippet": item.Snippet})
 	}
 	warnings := append([]string{}, page.Warnings...)
-	// Source models-off service falls back to lexical candidates if semantic or
-	// hybrid is explicitly requested. Enabled semantic workers remain unported.
-	if selected != "lexical" {
+	if selected != "lexical" && (c.SemanticClient == nil || !semanticAvailable) {
 		warnings = append(warnings, "semantic_search_unavailable: semantic search embedding client is unavailable")
 	}
 	options.RepoRevision = &page.RepoRevision

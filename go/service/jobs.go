@@ -62,7 +62,7 @@ func (j *Jobs) runWithPolicy(ctx context.Context, principal access.Principal, se
 	q.Proposals = control.Proposals{DB: db, Now: template.Queue.Proposals.Now}
 	// Never copy locks. Source worker instances share only the cursor key and
 	// callbacks/configuration; every worker owns its SQLite/staging handle.
-	controls := &ProposalControls{Queue: q, cursor: &codec, DerivedIndexPath: template.DerivedIndexPath, MaxConceptBytes: template.MaxConceptBytes, DerivedUpdate: template.DerivedUpdate, ChangedConcepts: template.ChangedConcepts, Index: template.Index, DefaultSearchMode: template.DefaultSearchMode, Metadata: template.Metadata, AuditGraph: template.AuditGraph}
+	controls := &ProposalControls{Queue: q, cursor: &codec, DerivedIndexPath: template.DerivedIndexPath, MaxConceptBytes: template.MaxConceptBytes, DerivedUpdate: template.DerivedUpdate, ChangedConcepts: template.ChangedConcepts, Index: template.Index, DefaultSearchMode: template.DefaultSearchMode, SemanticClient: template.SemanticClient, SemanticMaxCandidates: template.SemanticMaxCandidates, Metadata: template.Metadata, AuditGraph: template.AuditGraph}
 	controls.inventoryPolicy = func(ctx context.Context) (access.EffectivePolicy, error) {
 		return identity.ResolvePolicy(ctx, principal)
 	}

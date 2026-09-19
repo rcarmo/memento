@@ -11,6 +11,7 @@ import (
 	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/assets"
 	"github.com/rcarmo/memento/go/control"
+	"github.com/rcarmo/memento/go/derived"
 	"github.com/rcarmo/memento/go/internal/pyjson"
 	"github.com/rcarmo/memento/go/repository"
 )
@@ -21,17 +22,19 @@ import (
 // lock with Apply/Recover; direct queue refresh must run under that same lock.
 // No MCP endpoints are registered by this helper.
 type ProposalControls struct {
-	Queue             ProposalQueue
-	Random            io.Reader
-	cursorMu          sync.Mutex
-	cursor            *proposalCursor
-	DerivedIndexPath  string
-	Staging           *assets.StagingStore
-	MaxConceptBytes   int
-	Index             ReadIndex
-	DefaultSearchMode string
-	AuditGraph        AuditGraphSnapshots
-	Metadata          *ModelsOffMetadata
+	Queue                 ProposalQueue
+	Random                io.Reader
+	cursorMu              sync.Mutex
+	cursor                *proposalCursor
+	DerivedIndexPath      string
+	Staging               *assets.StagingStore
+	MaxConceptBytes       int
+	Index                 ReadIndex
+	DefaultSearchMode     string
+	SemanticClient        derived.SemanticClient
+	SemanticMaxCandidates int
+	AuditGraph            AuditGraphSnapshots
+	Metadata              *ModelsOffMetadata
 	// Worker-owned live policy resolver for nested inventory calls.
 	inventoryPolicy func(context.Context) (access.EffectivePolicy, error)
 	DerivedUpdate   repository.DerivedUpdateCallback
