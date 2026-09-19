@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/rcarmo/memento/go/access"
@@ -65,6 +66,99 @@ func TestAnswerHelperBranches(t *testing.T) {
 	}
 	if hasTerm([]string{"one"}, "two") || !hasTerm([]string{"one"}, "two", "one") {
 		t.Fatal("hasTerm")
+	}
+}
+
+func TestAnswerCallDeepCacheEndToEnd(t *testing.T) {
+	jobs, revision := jobsTest(t)
+	policy := jobs.Identity.authorization.Principals["actor"]
+	policy.Roles = append(policy.Roles, "reader")
+	jobs.Identity.authorization.Principals["actor"] = policy
+	principal := jobs.Identity.names["actor"]
+	principal.Roles = append(principal.Roles, "reader")
+	jobs.Identity.names["actor"] = principal
+	jobs.Controls.Index = &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}}}}
+	store := AnswerStore{DB: jobs.Controls.Queue.Proposals.DB}
+	if err := store.Migrate(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"answer","confidence":"high","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	cache := DefaultExactAnswerCacheConfig()
+	cache.Enabled = true
+	e := AnswerEndpoint{Jobs: jobs, Client: model, Store: store, Deep: deep, Cache: cache}
+	server := umcp.NewServer("answer")
+	if err := server.Tools.Register(umcp.Tool{Name: "answer", Parameters: []umcp.Parameter{{Name: "question", Types: []umcp.ParamType{umcp.StringParam}}, {Name: "answer_mode", Types: []umcp.ParamType{umcp.StringParam}, HasDefault: true, Default: "summary"}}, Call: e.Call}); err != nil {
+		t.Fatal(err)
+	}
+	request := []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"answer","arguments":{"question":"What is the target?"}}}`)
+	for i := 0; i < 2; i++ {
+		response, err := server.Process(context.Background(), request, umcp.RequestContext{Principal: "actor"})
+		if err != nil || response == nil {
+			t.Fatal(response, err)
+		}
+	}
+	if len(model.requests) != 1 {
+		t.Fatalf("requests=%d", len(model.requests))
+	}
+	var caches, traces int
+	if err := store.DB.QueryRow(`SELECT COUNT(*) FROM answer_cache`).Scan(&caches); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.DB.QueryRow(`SELECT COUNT(*) FROM answer_traces`).Scan(&traces); err != nil {
+		t.Fatal(err)
+	}
+	if caches != 1 || traces != 1 {
+		t.Fatalf("cache=%d traces=%d", caches, traces)
+	}
+}
+
+func TestAnswerCallHotEndToEnd(t *testing.T) {
+	jobs, revision := jobsTest(t)
+	policy := jobs.Identity.authorization.Principals["actor"]
+	policy.Roles = append(policy.Roles, "reader")
+	jobs.Identity.authorization.Principals["actor"] = policy
+	principal := jobs.Identity.names["actor"]
+	principal.Roles = append(principal.Roles, "reader")
+	jobs.Identity.names["actor"] = principal
+	store := AnswerStore{DB: jobs.Controls.Queue.Proposals.DB}
+	if err := store.Migrate(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.PutHotChanged(context.Background(), ScopeFingerprint("actor", policy.Roles, policy.ReadPrefixes, nil), []string{"12345678"}, 10); err != nil {
+		t.Fatal(err)
+	}
+	model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"hot","confidence":"high","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}
+	hot := DefaultHotWorkingMemoryConfig()
+	hot.Enabled = true
+	e := AnswerEndpoint{Jobs: jobs, Client: model, Store: store, Deep: DefaultDeepAnswersConfig(), Hot: hot}
+	server := umcp.NewServer("answer")
+	_ = server.Tools.Register(umcp.Tool{Name: "answer", Parameters: []umcp.Parameter{{Name: "question", Types: []umcp.ParamType{umcp.StringParam}}}, Call: e.Call})
+	response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"answer","arguments":{"question":"What target changed?"}}}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response == nil || len(model.requests) != 1 {
+		t.Fatalf("response=%#v err=%v requests=%d", response, err, len(model.requests))
+	}
+}
+
+func TestAnswerDeepFailureBranches(t *testing.T) {
+	controls, _, _ := realApplyTest(t)
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}}
+	e := AnswerEndpoint{Client: &stubModelClient{}, Deep: deep}
+	if _, err := e.deep(context.Background(), controls, policy, "q", "summary", "scope", ProfileQuestion("q")); err == nil {
+		t.Fatal("missing index")
+	}
+	index := &answerIndex{err: errors.New("search")}
+	controls.Index = index
+	if _, err := e.deep(context.Background(), controls, policy, "q", "summary", "scope", ProfileQuestion("q")); err == nil {
+		t.Fatal("search")
+	}
+	index.err = nil
+	index.page = derived.SearchPage{RepoRevision: "rev", Results: []derived.SearchResult{{Path: "/missing.md", Status: "active"}}}
+	if _, err := e.deep(context.Background(), controls, policy, "q", "summary", "scope", ProfileQuestion("q")); err == nil {
+		t.Fatal("read")
 	}
 }
 
