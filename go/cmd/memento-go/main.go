@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 
 	"github.com/rcarmo/memento/go/service"
 	"github.com/rcarmo/memento/go/umcp"
@@ -38,6 +39,7 @@ func usage(stderr io.Writer) {
 	fmt.Fprintln(stderr, "       memento-go --config PATH status|rebuild-index|audit [--path PATH]")
 	fmt.Fprintln(stderr, "       memento-go --config PATH backup --output DIR")
 	fmt.Fprintln(stderr, "       memento-go --config PATH rotate-master-key")
+	fmt.Fprintln(stderr, "       memento-go --config PATH dream [--mode disabled|report_only]")
 	fmt.Fprintln(stderr, "       memento-go --config PATH restore --input DIR [--no-rebuild-derived]")
 	fmt.Fprintln(stderr, "       memento-go version")
 }
@@ -46,7 +48,7 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(out, version)
 		return 0
 	}
-	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status" && args[2] != "rebuild-index" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key") || (args[2] != "serve" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key" && len(args) != 3) || (args[2] == "audit" && len(args) != 3 && !(len(args) == 5 && args[3] == "--path" && args[4] != "")) || (args[2] == "backup" && !(len(args) == 5 && args[3] == "--output" && args[4] != "")) || (args[2] == "restore" && !(len(args) == 5 && args[3] == "--input" && args[4] != "" || len(args) == 6 && args[3] == "--input" && args[4] != "" && args[5] == "--no-rebuild-derived")) {
+	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status" && args[2] != "rebuild-index" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key" && args[2] != "dream") || (args[2] != "serve" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && args[2] != "rotate-master-key" && args[2] != "dream" && len(args) != 3) || (args[2] == "audit" && len(args) != 3 && !(len(args) == 5 && args[3] == "--path" && args[4] != "")) || (args[2] == "backup" && !(len(args) == 5 && args[3] == "--output" && args[4] != "")) || (args[2] == "dream" && len(args) != 3 && !(len(args) == 5 && args[3] == "--mode" && (args[4] == "disabled" || args[4] == "report_only"))) || (args[2] == "restore" && !(len(args) == 5 && args[3] == "--input" && args[4] != "" || len(args) == 6 && args[3] == "--input" && args[4] != "" && args[5] == "--no-rebuild-derived")) {
 		usage(stderr)
 		return 2
 	}
@@ -88,17 +90,22 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(stderr, "memento-go:", configErr)
 		return 1
 	}
+	dreamConfig, configErr := service.DecodeDreamConfig(config.IntelligentTiers.Dream)
+	if configErr != nil {
+		fmt.Fprintln(stderr, "memento-go:", configErr)
+		return 1
+	}
 	needleConfig, configErr := service.DecodeNeedleRouterConfig(config.IntelligentTiers.NeedleRouter)
 	if configErr != nil {
 		fmt.Fprintln(stderr, "memento-go:", configErr)
 		return 1
 	}
-	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: config.MCP.ToolSurface, Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig(), Needle: needleConfig, Semantic: semanticConfig})
+	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: config.MCP.ToolSurface, Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig(), Needle: needleConfig, Semantic: semanticConfig, Dream: dreamConfig})
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1
 	}
-	if args[2] == "status" || args[2] == "rebuild-index" || args[2] == "audit" || args[2] == "backup" {
+	if args[2] == "status" || args[2] == "rebuild-index" || args[2] == "audit" || args[2] == "backup" || args[2] == "dream" {
 		var payload map[string]any
 		var statusErr error
 		switch args[2] {
@@ -112,6 +119,12 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 				path = &args[4]
 			}
 			payload, statusErr = runtime.AuditRepository(ctx, path)
+		case "dream":
+			mode := ""
+			if len(args) == 5 {
+				mode = args[4]
+			}
+			payload, statusErr = runtime.RunDream(ctx, mode, time.Now())
 		case "backup":
 			manifest, e := runtime.CreateBackup(ctx, args[4])
 			statusErr = e

@@ -97,6 +97,32 @@ func TestRunStatus(t *testing.T) {
 		t.Fatal(code)
 	}
 }
+func TestRunDream(t *testing.T) {
+	oldLoad, oldBuild := loadConfig, buildRuntime
+	t.Cleanup(func() { loadConfig, buildRuntime = oldLoad, oldBuild })
+	runtime, server := stubRuntime(t)
+	runtime.Dream = service.DefaultDreamConfig()
+	loadConfig = func(string) (service.RuntimeConfig, error) { return service.RuntimeConfig{}, nil }
+	buildRuntime = func(context.Context, service.RuntimeConfig, service.ModelsOffRuntimeOptions) (*service.Runtime, *umcp.Server, error) {
+		return runtime, server, nil
+	}
+	var out, stderr bytes.Buffer
+	if code := runContext(context.Background(), []string{"--config", "x", "dream", "--mode", "disabled"}, nil, &out, &stderr); code != 0 || !strings.Contains(out.String(), `"state": "disabled"`) {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	runtime, server = stubRuntime(t)
+	loadConfig = func(string) (service.RuntimeConfig, error) {
+		return service.RuntimeConfig{IntelligentTiers: service.IntelligentTiersConfig{Dream: []byte(`{"extra":1}`)}}, nil
+	}
+	if code := runContext(context.Background(), []string{"--config", "x", "dream"}, nil, io.Discard, &stderr); code != 1 {
+		t.Fatal(code)
+	}
+	for _, args := range [][]string{{"--config", "x", "dream", "--mode", "propose"}, {"--config", "x", "dream", "--mode", "bad"}, {"--config", "x", "dream", "extra"}} {
+		if code := runContext(context.Background(), args, nil, io.Discard, io.Discard); code != 2 {
+			t.Fatal(args, code)
+		}
+	}
+}
 func TestRunRotateMasterKey(t *testing.T) {
 	oldLoad := loadConfig
 	t.Cleanup(func() { loadConfig = oldLoad })

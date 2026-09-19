@@ -26,6 +26,7 @@ type Runtime struct {
 	Closers               []func() error
 	AuditPrincipals       func(context.Context) ([]AuditPrincipal, error)
 	ProtectedReadPrefixes []string
+	Dream                 DreamConfig
 
 	mu     sync.Mutex
 	closed bool

@@ -30,6 +30,7 @@ type ModelsOffRuntimeOptions struct {
 	Needle         NeedleRouterConfig
 	SemanticWorker *derived.SemanticWorker
 	Semantic       SemanticSearchConfig
+	Dream          DreamConfig
 }
 type modelsOffBuildOps struct {
 	storage              func(context.Context, RuntimeConfig, string) (*Runtime, error)
@@ -239,6 +240,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		}
 	}
 	runtime.Jobs = jobs
+	runtime.Dream = options.Dream
 	runtime.ProtectedReadPrefixes = append([]string{}, config.Authorization.ProtectedReadPrefixes...)
 	if managed != nil {
 		runtime.AuditPrincipals = func(ctx context.Context) ([]AuditPrincipal, error) {
