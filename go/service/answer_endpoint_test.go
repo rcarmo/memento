@@ -3,10 +3,14 @@ package service
 import (
 	"context"
 	"errors"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/derived"
+	"github.com/rcarmo/memento/go/repository"
 	"github.com/rcarmo/memento/go/umcp"
 )
 
@@ -42,6 +46,21 @@ func (f failingAnswers) InsertTrace(context.Context, string, string, string, str
 	}
 	return "trace", nil
 }
+
+type semanticAnswerIndex struct {
+	answerIndex
+	semantic    derived.SearchPage
+	semanticErr error
+}
+
+func (i *semanticAnswerIndex) SearchSemantic(_ context.Context, _ access.EffectivePolicy, _ derived.SemanticSearchOptions, _ derived.SemanticClient) (derived.SearchPage, error) {
+	return i.semantic, i.semanticErr
+}
+
+type noopSemanticClient struct{}
+
+func (noopSemanticClient) Embed(string) ([]float32, error)      { return nil, nil }
+func (noopSemanticClient) ModelInfo() derived.SemanticModelInfo { return derived.SemanticModelInfo{} }
 
 type answerIndex struct {
 	page       derived.SearchPage
@@ -342,6 +361,41 @@ func TestAnswerDeepModelAndAbstention(t *testing.T) {
 		t.Fatalf("abstention=%#v requests=%d", result, len(model.requests))
 	}
 }
+func TestAnswerDeepSemanticAndGraphFiltering(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/b.md", "neighbor", "Neighbour", "linked target")
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/c.md", "secret", "Secret", "linked target")
+	index := &semanticAnswerIndex{semantic: derived.SearchPage{RepoRevision: revision, Warnings: []string{"fallback"}, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}}}, answerIndex: answerIndex{graph: derived.GraphNeighborhood{Outbound: []derived.GraphEdge{{ConceptID: "12345678", Path: "/a.md"}, {ConceptID: "missing", Path: "/missing.md"}}}}}
+	controls.Index = index
+	controls.SemanticClient = noopSemanticClient{}
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"a","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}
+	e := AnswerEndpoint{Client: model, Deep: deep}
+	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}}
+	if _, err := e.deep(context.Background(), controls, policy, "Which service is linked?", "summary", "scope", ProfileQuestion("Which service is linked?")); err == nil {
+		t.Fatal("missing graph neighbor")
+	}
+	index.graph = derived.GraphNeighborhood{Outbound: []derived.GraphEdge{{ConceptID: "12345678", Path: "/a.md"}, {ConceptID: "neighbor", Path: "/b.md"}, {ConceptID: "secret", Path: "/c.md"}}}
+	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/c.md", "secret", "Secret", "linked target")
+	entry, _ := repository.ReadBundleEntry(controls.Queue.Paths.CurrentDir, "/c.md")
+	entry.Document.Frontmatter.Tags = []string{"secret"}
+	raw, _ := repository.SerializeConcept(entry.Document)
+	_ = os.WriteFile(filepath.Join(controls.Queue.Paths.CurrentDir, "c.md"), []byte(raw), 0600)
+	result, err := e.deep(context.Background(), controls, policy, "Which service is linked?", "summary", "scope", ProfileQuestion("Which service is linked?"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	strategy := result.Record.Evidence.(map[string]any)["retrieval_strategy"].(string)
+	if !strings.Contains(strategy, "lexical_fallback") || len(result.ReadConcepts) != 2 {
+		t.Fatalf("strategy=%s concepts=%#v", strategy, result.ReadConcepts)
+	}
+	index.semanticErr = errors.New("semantic")
+	if _, err = e.deep(context.Background(), controls, policy, "q", "summary", "scope", ProfileQuestion("q")); err == nil {
+		t.Fatal("semantic")
+	}
+}
+
 func TestAnswerDeepRelationalGraphClosure(t *testing.T) {
 	controls, _, revision := realApplyTest(t)
 	writeDreamConcept(t, controls.Queue.Paths.CurrentDir, "/b.md", "neighbor", "Neighbour", "The neighbour is linked to the target")
