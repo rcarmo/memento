@@ -97,6 +97,12 @@ func TestRunFailures(t *testing.T) {
 		t.Fatal(code, stderr.String())
 	}
 	loadConfig = func(string) (service.RuntimeConfig, error) {
+		return service.RuntimeConfig{IntelligentTiers: service.IntelligentTiersConfig{SemanticSearch: []byte(`{"extra":1}`)}}, nil
+	}
+	if code := runContext(context.Background(), []string{"--config", "x", "serve"}, nil, io.Discard, io.Discard); code != 1 {
+		t.Fatal(code)
+	}
+	loadConfig = func(string) (service.RuntimeConfig, error) {
 		return service.RuntimeConfig{IntelligentTiers: service.IntelligentTiersConfig{NeedleRouter: []byte(`{"extra":1}`)}}, nil
 	}
 	if code := runContext(context.Background(), []string{"--config", "x", "serve"}, nil, io.Discard, io.Discard); code != 1 {

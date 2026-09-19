@@ -28,6 +28,13 @@ func (e *StaleIndexError) Error() string {
 // State and Status read an already initialised database. As with SearchLexical,
 // the lifecycle owner is responsible for migration and corruption handling.
 func (s ContentStore) State(ctx context.Context) (IndexState, error) { return readState(ctx, s.DB) }
+func (i *Index) EmbeddingRevision(ctx context.Context) (revision string, err error) {
+	err = i.withCore(ctx, false, func(s ContentStore) error {
+		revision, err = requiredState(ctx, s.DB, "semantic_embedding_revision")
+		return err
+	})
+	return revision, err
+}
 func readState(ctx context.Context, db executor) (IndexState, error) {
 	state := IndexState{}
 	for _, field := range []struct {

@@ -51,12 +51,17 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		return 1
 	}
 	limits := config.MCP.ExecuteLimits()
+	semanticConfig, configErr := service.DecodeSemanticSearchConfig(config.IntelligentTiers.SemanticSearch, os.LookupEnv)
+	if configErr != nil {
+		fmt.Fprintln(stderr, "memento-go:", configErr)
+		return 1
+	}
 	needleConfig, configErr := service.DecodeNeedleRouterConfig(config.IntelligentTiers.NeedleRouter)
 	if configErr != nil {
 		fmt.Fprintln(stderr, "memento-go:", configErr)
 		return 1
 	}
-	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: config.MCP.ToolSurface, Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig(), Needle: needleConfig})
+	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: config.MCP.ToolSurface, Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig(), Needle: needleConfig, Semantic: semanticConfig})
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1

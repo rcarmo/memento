@@ -28,6 +28,7 @@ type ModelsOffRuntimeOptions struct {
 	Graph          GraphHTTPConfig
 	Needle         NeedleRouterConfig
 	SemanticWorker *derived.SemanticWorker
+	Semantic       SemanticSearchConfig
 }
 type modelsOffBuildOps struct {
 	storage             func(context.Context, RuntimeConfig, string) (*Runtime, error)
@@ -47,6 +48,9 @@ type modelsOffBuildOps struct {
 	newNeedleRouter     func(*needle.Model) (*needle.Router, error)
 	buildRoute          func(NeedleRouterConfig) (RouteInference, *needle.Tokenizer, error)
 	registerRoute       func(*Jobs, *umcp.Server, string, execute.Limits, RouteInference, *needle.Tokenizer) error
+	loadSemantic        func(string, string, int, int, int) (*GTESemanticClient, error)
+	buildSemantic       func(SemanticSearchConfig) (derived.SemanticClient, error)
+	newSemanticWorker   func(derived.SemanticRefreshIndex, derived.SemanticClient, derived.SemanticRefreshConfig) *derived.SemanticWorker
 }
 
 func defaultModelsOffBuildOps() modelsOffBuildOps {
@@ -62,8 +66,9 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 		catalog, _ := NewCatalog(CatalogConfig{Surface: surface, RouteEnabled: true})
 		endpoint, _ := NewExecuteEndpoint(j, catalog, limits)
 		return (RouteEndpoint{Jobs: j, Router: inference, Tokenizer: tokenizer, Execute: endpoint}).Register(s)
-	}}
+	}, LoadGTESemanticClient, nil, derived.NewSemanticWorker}
 }
+func semanticRefreshNeeded(repo, embedding string) bool { return repo != embedding }
 func BuildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options ModelsOffRuntimeOptions) (*Runtime, *umcp.Server, error) {
 	return buildModelsOffRuntime(ctx, config, options, defaultModelsOffBuildOps())
 }
@@ -85,7 +90,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	if err != nil {
 		return nil, nil, err
 	}
-	index := &derived.Index{Path: paths.DerivedDB}
+	index := &derived.Index{Path: paths.DerivedDB, DeferEmbeddings: options.Semantic.Enabled, MaxInputChars: options.Semantic.MaxInputChars}
 	state, stateErr := ops.state(ctx, index)
 	if stateErr != nil || state.IndexRevision == "" {
 		if err = ops.rebuild(ctx, index, paths.Repository.CurrentDir, revision); err != nil {
@@ -155,6 +160,29 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	}
 	controls := &ProposalControls{Queue: ProposalQueue{Proposals: control.Proposals{DB: runtime.DB}, Paths: paths.Repository}, Random: rand.Reader, DerivedIndexPath: paths.DerivedDB, Staging: staging, MaxConceptBytes: config.Limits.MaxConceptBytes, Index: index, DefaultSearchMode: "lexical", Metadata: metadata, DerivedUpdate: manager.DerivedUpdate}
 	jobs := &Jobs{Controls: controls, Identity: identity, DBPath: paths.ControlDB}
+	if options.Semantic.Enabled && options.SemanticWorker == nil {
+		if options.Semantic.ModelPath == nil {
+			return nil, nil, errors.New("semantic model path is required")
+		}
+		var client derived.SemanticClient
+		var loadErr error
+		if ops.buildSemantic != nil {
+			client, loadErr = ops.buildSemantic(options.Semantic)
+		} else {
+			client, loadErr = ops.loadSemantic(*options.Semantic.ModelPath, options.Semantic.ModelID, options.Semantic.Dimensions, options.Semantic.MaxBatchSize, options.Semantic.MaxInputChars)
+		}
+		if loadErr != nil {
+			return nil, nil, loadErr
+		}
+		options.SemanticWorker = ops.newSemanticWorker(index, client, derived.SemanticRefreshConfig{ModelID: options.Semantic.ModelID, Dimensions: options.Semantic.Dimensions, MaxInputChars: options.Semantic.MaxInputChars, MaxBatch: options.Semantic.MaxBatchSize})
+		if options.Semantic.RefreshOnStartup {
+			state, _ := index.State(ctx)
+			embeddingRevision, _ := index.EmbeddingRevision(ctx)
+			if semanticRefreshNeeded(state.RepoRevision, embeddingRevision) {
+				options.SemanticWorker.Enqueue(paths.Repository.CurrentDir, state.RepoRevision, nil, true)
+			}
+		}
+	}
 	server = umcp.NewServer("memento")
 	if err = ops.register(jobs, server, options.Surface, options.Limits); err != nil {
 		return nil, nil, err
