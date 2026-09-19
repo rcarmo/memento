@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/rcarmo/memento/go/access"
@@ -109,6 +110,56 @@ func TestModelsOffRuntimeHTTPHooks(t *testing.T) {
 	}
 	if status := request("POST", "/mcp", "token", rpc); status != 200 {
 		t.Fatal(status)
+	}
+}
+
+func TestBuildManagedModelsOffRuntime(t *testing.T) {
+	t.Setenv("MEMENTO_ADMIN_MASTER_KEY", "master")
+	t.Setenv("SANDBOX_TOKEN", "sandbox-token")
+	ctx := context.Background()
+	var config RuntimeConfig
+	config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
+	config.Authorization = access.AuthorizationConfig{Principals: map[string]access.NamespacePolicy{"piclaw-workspace": {TokenEnv: "SANDBOX_TOKEN", Roles: []string{"reader", "proposer", "curator"}, ReadPrefixes: []string{"/"}, WritePrefixes: []string{"/"}}}}
+	options := ModelsOffRuntimeOptions{Surface: "standard", Graph: GraphHTTPConfig{Enabled: true, RoutePrefix: "/graph"}}
+	runtime, server, err := BuildModelsOffRuntime(ctx, config, options)
+	if err != nil {
+		t.Fatal(err)
+	}
+	principal, err := runtime.Jobs.Identity.AuthenticateHeaders(ctx, map[string]string{"authorization": "Bearer sandbox-token"})
+	if err != nil || principal == nil || principal.Name != "sandbox" {
+		t.Fatal(principal, err)
+	}
+	if value, err := runtime.Jobs.Identity.AuthenticateHeaders(ctx, map[string]string{"authorization": "Bearer other"}); err != nil || value != nil {
+		t.Fatal(value, err)
+	}
+	response, err := server.Process(ctx, []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/list"}`), umcp.RequestContext{Principal: "sandbox"})
+	if err != nil || response.Error != nil {
+		t.Fatal(response, err)
+	}
+	count := 0
+	for _, raw := range response.Result.(map[string]any)["tools"].([]any) {
+		if strings.HasPrefix(raw.(map[string]any)["name"].(string), "access_") {
+			count++
+		}
+	}
+	if count != 10 {
+		t.Fatal(count)
+	}
+	graphResponse, err := runtime.HTTPHooks.Route(ctx, "GET", "/graph/api/v1/principals", nil, nil, "")
+	if err != nil || graphResponse.Status != 200 || !bytes.Contains(graphResponse.Body, []byte(`"sandbox"`)) {
+		t.Fatal(graphResponse, err)
+	}
+	if err = runtime.Close(ctx); err != nil {
+		t.Fatal(err)
+	}
+	runtime, _, err = BuildModelsOffRuntime(ctx, config, options)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Close(ctx)
+	principal, err = runtime.Jobs.Identity.AuthenticateHeaders(ctx, map[string]string{"authorization": "Bearer sandbox-token"})
+	if err != nil || principal == nil {
+		t.Fatal(principal, err)
 	}
 }
 

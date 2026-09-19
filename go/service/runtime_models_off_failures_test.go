@@ -2,24 +2,30 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/assets"
 	"github.com/rcarmo/memento/go/derived"
 	"github.com/rcarmo/memento/go/execute"
 	"github.com/rcarmo/memento/go/repository"
 	"github.com/rcarmo/memento/go/umcp"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
 func TestBuildModelsOffComponentFailures(t *testing.T) {
 	ctx := context.Background()
 	boom := errors.New("boom")
-	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "metadata", "register"} {
+	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "metadata", "register", "access-open", "access-bootstrap", "access-register"} {
 		t.Run(stage, func(t *testing.T) {
 			var config RuntimeConfig
 			config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
 			options := ModelsOffRuntimeOptions{Surface: "standard", Tokens: []BearerPrincipal{}}
+			if strings.HasPrefix(stage, "access-") {
+				options.Tokens = nil
+			}
 			ops := defaultModelsOffBuildOps()
 			switch stage {
 			case "revision":
@@ -40,6 +46,17 @@ func TestBuildModelsOffComponentFailures(t *testing.T) {
 				ops.metadata = func(string) (*ModelsOffMetadata, error) { return nil, boom }
 			case "register":
 				ops.register = func(*Jobs, *umcp.Server, string, execute.Limits) error { return boom }
+			case "access-open":
+				ops.lookupEnv = func(name string) (string, bool) { return "master", true }
+				ops.openAccess = func(context.Context, *sql.DB, string) (*access.Store, error) { return nil, boom }
+			case "access-bootstrap":
+				ops.lookupEnv = func(name string) (string, bool) { return "master", true }
+				ops.bootstrapAccess = func(context.Context, *access.Store, []access.ConfiguredPrincipal, map[string]string) error {
+					return boom
+				}
+			case "access-register":
+				ops.lookupEnv = func(name string) (string, bool) { return "master", true }
+				ops.registerAccess = func(*Jobs, *umcp.Server) error { return boom }
 			}
 			runtime, server, err := buildModelsOffRuntime(ctx, config, options, ops)
 			if !errors.Is(err, boom) || runtime != nil || server != nil {

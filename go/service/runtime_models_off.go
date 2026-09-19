@@ -4,7 +4,12 @@ import (
 	"context"
 	"crypto/rand"
 	"errors"
+	"os"
+	"sort"
+	"strings"
 
+	"database/sql"
+	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/assets"
 	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/derived"
@@ -22,14 +27,18 @@ type ModelsOffRuntimeOptions struct {
 	Graph         GraphHTTPConfig
 }
 type modelsOffBuildOps struct {
-	storage  func(context.Context, RuntimeConfig, string) (*Runtime, error)
-	revision func(repository.GitRepositoryPaths) (string, error)
-	state    func(context.Context, *derived.Index) (derived.IndexState, error)
-	rebuild  func(context.Context, *derived.Index, string, string) error
-	expire   func(context.Context, *assets.StagingStore) (int64, error)
-	recover  func(context.Context, *repository.TransactionManager) ([]repository.RecoveryRecord, error)
-	metadata func(string) (*ModelsOffMetadata, error)
-	register func(*Jobs, *umcp.Server, string, execute.Limits) error
+	storage         func(context.Context, RuntimeConfig, string) (*Runtime, error)
+	revision        func(repository.GitRepositoryPaths) (string, error)
+	state           func(context.Context, *derived.Index) (derived.IndexState, error)
+	rebuild         func(context.Context, *derived.Index, string, string) error
+	expire          func(context.Context, *assets.StagingStore) (int64, error)
+	recover         func(context.Context, *repository.TransactionManager) ([]repository.RecoveryRecord, error)
+	metadata        func(string) (*ModelsOffMetadata, error)
+	register        func(*Jobs, *umcp.Server, string, execute.Limits) error
+	openAccess      func(context.Context, *sql.DB, string) (*access.Store, error)
+	bootstrapAccess func(context.Context, *access.Store, []access.ConfiguredPrincipal, map[string]string) error
+	lookupEnv       func(string) (string, bool)
+	registerAccess  func(*Jobs, *umcp.Server) error
 }
 
 func defaultModelsOffBuildOps() modelsOffBuildOps {
@@ -39,7 +48,9 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 		return m.RecoverStartup(ctx)
 	}, NewModelsOffMetadata, func(j *Jobs, s *umcp.Server, surface string, limits execute.Limits) error {
 		return j.RegisterModelsOffServer(s, surface, limits, nil)
-	}}
+	}, access.OpenStore, func(ctx context.Context, s *access.Store, p []access.ConfiguredPrincipal, t map[string]string) error {
+		return s.Bootstrap(ctx, p, t)
+	}, os.LookupEnv, func(j *Jobs, s *umcp.Server) error { return j.RegisterAccessTools(s) }}
 }
 func BuildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options ModelsOffRuntimeOptions) (*Runtime, *umcp.Server, error) {
 	return buildModelsOffRuntime(ctx, config, options, defaultModelsOffBuildOps())
@@ -83,13 +94,43 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		return nil, nil, err
 	}
 	tokens := options.Tokens
-	if tokens == nil {
-		tokens, err = StaticBearerPrincipals(config.Authorization, nil)
+	var managed *access.Store
+	master, _ := ops.lookupEnv("MEMENTO_ADMIN_MASTER_KEY")
+	master = strings.TrimSpace(master)
+	if options.Tokens == nil && master != "" {
+		if managed, err = ops.openAccess(ctx, runtime.DB, master); err != nil {
+			return nil, nil, err
+		}
+		names := make([]string, 0, len(config.Authorization.Principals))
+		for name := range config.Authorization.Principals {
+			names = append(names, name)
+		}
+		sort.Strings(names)
+		principals := make([]access.ConfiguredPrincipal, 0, len(names))
+		bootstrapTokens := map[string]string{}
+		for _, name := range names {
+			policy := config.Authorization.Principals[name]
+			principals = append(principals, access.ConfiguredPrincipal{Name: name, Policy: policy})
+			value, _ := ops.lookupEnv(policy.TokenEnv)
+			bootstrapTokens[name] = strings.TrimSpace(value)
+		}
+		if err = ops.bootstrapAccess(ctx, managed, principals, bootstrapTokens); err != nil {
+			return nil, nil, err
+		}
+		tokens = nil
+	} else if tokens == nil {
+		tokens, err = StaticBearerPrincipals(config.Authorization, ops.lookupEnv)
 		if err != nil {
 			return nil, nil, err
 		}
 	}
-	identity, err := NewIdentity(tokens, config.Authorization, nil, nil)
+	var managedIdentity ManagedIdentity
+	var graphManaged GraphManagedPolicies
+	if managed != nil {
+		managedIdentity = managed
+		graphManaged = managed
+	}
+	identity, err := NewIdentity(tokens, config.Authorization, managedIdentity, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -103,10 +144,15 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	if err = ops.register(jobs, server, options.Surface, options.Limits); err != nil {
 		return nil, nil, err
 	}
+	if managed != nil {
+		if err = ops.registerAccess(jobs, server); err != nil {
+			return nil, nil, err
+		}
+	}
 	runtime.Jobs = jobs
 	runtime.HTTPHooks = identity.HTTPHooks()
 	stagingHTTP := StagingHTTP{Store: staging, Authenticate: identity.AuthenticateHeaders}
-	graphHTTP := GraphHTTP{Config: options.Graph, Snapshots: graphdebug.NewSnapshotService(paths.Repository.CurrentDir, paths.DerivedDB, paths.ControlDB), Policies: &GraphPolicyDirectory{Static: config.Authorization}}
+	graphHTTP := GraphHTTP{Config: options.Graph, Snapshots: graphdebug.NewSnapshotService(paths.Repository.CurrentDir, paths.DerivedDB, paths.ControlDB), Policies: &GraphPolicyDirectory{Static: config.Authorization, Managed: graphManaged}}
 	runtime.HTTPHooks.Route = func(ctx context.Context, method, path string, headers map[string]string, body []byte, peer string) (*umcp.HTTPResponse, error) {
 		response, routeErr := stagingHTTP.Handle(ctx, method, path, headers, body, peer)
 		if response != nil || routeErr != nil {
