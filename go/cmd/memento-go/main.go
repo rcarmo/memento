@@ -17,7 +17,7 @@ import (
 	"github.com/rcarmo/memento/go/umcp"
 )
 
-const version = "memento-go development (compatibility baseline: 0.5.9; models-off service)"
+var version = "memento-go development (compatibility baseline: 0.5.9; models-off service)"
 
 var exit = os.Exit
 var loadConfig = service.LoadRuntimeConfig

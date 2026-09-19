@@ -8,10 +8,13 @@ STATICCHECK_VERSION ?= v0.6.1
 GOVULNCHECK_VERSION ?= v1.1.4
 STATICCHECK := $(TOOLS_DIR)/staticcheck
 GOVULNCHECK := $(TOOLS_DIR)/govulncheck
+PREFIX ?= /usr/local
+DESTDIR ?=
+VERSION ?= development
 
-.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check build race cross oracle coverage fuzz model-test corpus-test
+.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check build race cross release release-check install oracle coverage fuzz model-test corpus-test
 help:
-	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz and cross-build gates' 'tools       install pinned static-analysis tools under ../build/go/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck (correctness, style, simplification, unused)' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands'
+	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz and cross-build gates' 'tools       install pinned static-analysis tools under ../build/go/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck (correctness, style, simplification, unused)' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install both host binaries under DESTDIR/PREFIX/bin'
 tools: $(STATICCHECK) $(GOVULNCHECK)
 $(STATICCHECK):
 	@mkdir -p $(TOOLS_DIR)
@@ -63,6 +66,14 @@ build:
 race:
 	# The Go race detector needs cgo in the test toolchain, not the shipped runtime.
 	CGO_ENABLED=1 $(GO) test -race ./...
+install: build
+	install -d "$(DESTDIR)$(PREFIX)/bin"
+	install -m 0755 ../build/go/memento-go "$(DESTDIR)$(PREFIX)/bin/memento-go"
+	install -m 0755 ../build/go/memento-embed-go "$(DESTDIR)$(PREFIX)/bin/memento-embed-go"
+release:
+	GO="$(GO)" VERSION="$(VERSION)" ./tools/release.sh
+release-check: release
+	./tools/release-check.sh
 cross:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-go-linux-amd64 ./cmd/memento-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-go-linux-arm64 ./cmd/memento-go

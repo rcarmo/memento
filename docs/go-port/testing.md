@@ -23,7 +23,7 @@ make -C go fuzz
 make -C go cross
 ```
 
-The race detector's build needs cgo on the test runner; distributed binaries and normal test builds use `CGO_ENABLED=0`. Check runtime dependencies in packaging tests. Fuzzing uses a fixed 10,000 generated executions per target with a separate 120-second safety timeout; this avoids a wall-clock shutdown race observed on a loaded native CI runner. Longer scheduled corpus runs are still required. Fuzzing starts with small bounded runs for CI and needs longer scheduled corpus runs as parsers/transports are ported. No untrusted fixture can trigger unbounded allocation or leak the daemon's resources.
+Release tests build two independent amd64/arm64 archive sets and require byte identity, valid sorted checksums, exact archive contents, static stripped ELF metadata, expected machine architecture, no dynamic NEEDED entries and native version smoke. Install tests verify only the two expected 0755 binaries under DESTDIR/PREFIX. The race detector's build needs cgo on the test runner; distributed binaries and normal test builds use `CGO_ENABLED=0`. Check runtime dependencies in packaging tests. Fuzzing uses a fixed 10,000 generated executions per target with a separate 120-second safety timeout; this avoids a wall-clock shutdown race observed on a loaded native CI runner. Longer scheduled corpus runs are still required. Fuzzing starts with small bounded runs for CI and needs longer scheduled corpus runs as parsers/transports are ported. No untrusted fixture can trigger unbounded allocation or leak the daemon's resources.
 
 ## Reference generation
 

@@ -6,7 +6,7 @@ The port is not yet the default Memento daemon. [`../docs/go-port/parity.md`](..
 
 ## Commands
 
-* `cmd/memento-go` runs the models-off service daemon over uMCP transports. Enabled intelligent tiers and non-serve operational commands remain in progress.
+* `cmd/memento-go` runs the pure-Go service daemon and operational status, rebuild, audit, backup/restore, key-rotation and Dream report-only commands. Dream propose mode remains fail-closed.
 * `cmd/memento-embed-go` exposes scalar GTE inference through Memento's framed embedding-worker protocol.
 
 Command packages contain process concerns only. Reusable code belongs in library packages.
@@ -37,6 +37,11 @@ make check
 make race
 make fuzz
 make cross
+make release VERSION=0.5.9-go1 SOURCE_DATE_EPOCH=0
+make release-check VERSION=0.5.9-go1 SOURCE_DATE_EPOCH=0
+make install DESTDIR=/tmp/package-root PREFIX=/usr/local
 ```
+
+Release archives contain static stripped `linux/amd64` (`GOAMD64=v1`) and `linux/arm64` binaries for both commands, a version marker and a sorted SHA-256 manifest. `release-check` validates archive layout, architecture, absence of ELF dynamic dependencies, checksums and the native `version` smoke test. Fixed source epochs, sorted tar entries, numeric ownership, `-trimpath` and disabled VCS metadata make identical source/toolchain inputs byte-reproducible.
 
 `make layout-check` additionally verifies module tidiness, package discovery, command placement and that no Go source leaks into the module root. The repository-level gates remain mandatory before a port slice is committed.
