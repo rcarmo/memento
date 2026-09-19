@@ -311,6 +311,7 @@ def build_runtime(config_path: Path, *, bootstrap_seed: Path | None = None) -> M
                     max_batch=semantic.max_batch_size,
                     max_input_chars=semantic.max_input_chars,
                     timeout_seconds=semantic.worker_timeout_seconds,
+                    idle_seconds=semantic.worker_idle_seconds,
                     nice=semantic.progressive_nice if semantic.progressive_enabled else 0,
                     threads=1,
                     backend=semantic.backend,

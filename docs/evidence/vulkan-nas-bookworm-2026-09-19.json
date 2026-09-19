@@ -1,0 +1,223 @@
+{
+  "date": "2026-09-19",
+  "issue": 39,
+  "verdict": "PASS: NAS hardware Vulkan and four same-model parity cases using container-only Mesa22 stack; cold Vulkan slower than CPU",
+  "worker_source_commit": "d4b72524020e5b02c93862a9dbec328b3e4b6e0a",
+  "followup_source_commit": "b30389ca65ec0dd8b453324a65ccd6966b96f401",
+  "rust_and_runner_unchanged_between_commits": true,
+  "image_id": "sha256:c4f3a3a73d302a8d3661a3f6116c5cfc14d5c5c1f84402c62832d040a0d87d7e",
+  "base_image": "debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251",
+  "packages": {
+    "mesa": "22.3.6-1+deb12u2",
+    "vulkan_loader": "1.3.239.0-1",
+    "vulkan_tools": "1.3.239.0+dfsg1-1",
+    "libdrm2": "2.4.114-1+b1"
+  },
+  "hardware": {
+    "kernel": "4.4.302+",
+    "device": "Intel(R) HD Graphics 500 (APL 2)",
+    "pci": "8086:5a85",
+    "device_api": "1.3.230",
+    "icd": "/usr/share/vulkan/icd.d/intel_icd.x86_64.json"
+  },
+  "limits": {
+    "uid": "65532:65532",
+    "render_group": 937,
+    "device": "/dev/dri/renderD128:rw",
+    "network": "none",
+    "read_only_root": true,
+    "cap_drop": [
+      "ALL"
+    ],
+    "privileged": false,
+    "cpuset": "3",
+    "cpu_shares": 128,
+    "memory": 536870912,
+    "memory_swap": 536870912,
+    "tmpfs": 33554432,
+    "per_worker_timeout_seconds": 120,
+    "outer_test_timeout_seconds": 600
+  },
+  "run": {
+    "started": "2026-09-19T15:02:16.092891863Z",
+    "finished": "2026-09-19T15:04:26.640206541Z",
+    "exit_code": 0,
+    "oom_killed": false,
+    "cgroup_peak_bytes": 409124864,
+    "cgroup_peak_mib": 390.171875,
+    "cgroup_memory_failcnt": 0
+  },
+  "pretest": {
+    "platform": "Linux-4.4.302+-x86_64-with-glibc2.36",
+    "model": "gte-small.gtemodel",
+    "model_sha256": "06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171",
+    "worker_sha256": "03c7feb68fd0e4dd93001fc7c1ddd5508f1d1635d10773478d2c8d4991b8ca75",
+    "requested_device": "Intel",
+    "repeats": 1,
+    "cases": [
+      {
+        "name": "short",
+        "batch": 1,
+        "samples": [
+          {
+            "cpu_seconds": 0.3469174122437835,
+            "vulkan_seconds": 17.364884710870683,
+            "backend": {
+              "requested": "vulkan",
+              "selected": "vulkan",
+              "device": "Intel(R) HD Graphics 500 (APL 2)",
+              "fallback_reason": null
+            },
+            "parity": {
+              "minimum_cosine": 0.9999999999999035,
+              "max_abs_error": 7.450580596923828e-8
+            },
+            "passed": true
+          }
+        ],
+        "median_cpu_seconds": 0.3469174122437835,
+        "median_vulkan_seconds": 17.364884710870683
+      },
+      {
+        "name": "unicode-batch",
+        "batch": 3,
+        "samples": [
+          {
+            "cpu_seconds": 0.8302183211781085,
+            "vulkan_seconds": 18.031397189944983,
+            "backend": {
+              "requested": "vulkan",
+              "selected": "vulkan",
+              "device": "Intel(R) HD Graphics 500 (APL 2)",
+              "fallback_reason": null
+            },
+            "parity": {
+              "minimum_cosine": 0.9999999999996154,
+              "max_abs_error": 1.7881393432617188e-7
+            },
+            "passed": true
+          }
+        ],
+        "median_cpu_seconds": 0.8302183211781085,
+        "median_vulkan_seconds": 18.031397189944983
+      },
+      {
+        "name": "medium",
+        "batch": 1,
+        "samples": [
+          {
+            "cpu_seconds": 3.199783891905099,
+            "vulkan_seconds": 20.798613130114973,
+            "backend": {
+              "requested": "vulkan",
+              "selected": "vulkan",
+              "device": "Intel(R) HD Graphics 500 (APL 2)",
+              "fallback_reason": null
+            },
+            "parity": {
+              "minimum_cosine": 0.9999999999999458,
+              "max_abs_error": 7.450580596923828e-8
+            },
+            "passed": true
+          }
+        ],
+        "median_cpu_seconds": 3.199783891905099,
+        "median_vulkan_seconds": 20.798613130114973
+      },
+      {
+        "name": "token-limit",
+        "batch": 1,
+        "samples": [
+          {
+            "cpu_seconds": 20.125616130884737,
+            "vulkan_seconds": 33.73586933128536,
+            "backend": {
+              "requested": "vulkan",
+              "selected": "vulkan",
+              "device": "Intel(R) HD Graphics 500 (APL 2)",
+              "fallback_reason": null
+            },
+            "parity": {
+              "minimum_cosine": 0.9999999999997825,
+              "max_abs_error": 9.872019290924072e-8
+            },
+            "passed": true
+          }
+        ],
+        "median_cpu_seconds": 20.125616130884737,
+        "median_vulkan_seconds": 33.73586933128536
+      }
+    ],
+    "passed": true,
+    "timing_scope": "cold subprocess including model load, adapter/pipelines and self-test",
+    "missing_device_fallback": {
+      "requested": "auto",
+      "selected": "cpu",
+      "device": null,
+      "fallback_reason": "embedding backend: no matching hardware Vulkan adapter; software adapters are excluded"
+    }
+  },
+  "preservation": {
+    "checked_at": "2026-09-19T15:06:06.702Z",
+    "same_container": true,
+    "same_image": true,
+    "same_complete_config": true,
+    "same_host_config": true,
+    "same_mounts_by_destination": true,
+    "same_start_time": true,
+    "healthy": true,
+    "restarts": 0,
+    "no_test_containers": true,
+    "production_config_sha256": "fd07ec278f3d7dce8e7244c99243caed9f6c4e3017297d3719836e577423b5e6",
+    "test_image_cleanup": [
+      {
+        "Untagged": "memento-nas-bookworm-test:20260919"
+      },
+      {
+        "Deleted": "sha256:c4f3a3a73d302a8d3661a3f6116c5cfc14d5c5c1f84402c62832d040a0d87d7e"
+      },
+      {
+        "Deleted": "sha256:e943520381d78ff5570b426670fc098f83875ff2a426f5139971c72f7c91adeb"
+      },
+      {
+        "Deleted": "sha256:575e59fa3fb62f14495ae0f399b8d97162af411583c32b349f76126d8694d8da"
+      },
+      {
+        "Deleted": "sha256:1de3090e65e437fb7f3c373da0a09e516e54ad63f3144b21463714208cad51be"
+      },
+      {
+        "Deleted": "sha256:34467cc93912af891dfee8a3902adf9b4f355a9bca4eaa46f658d1181a21de0d"
+      }
+    ],
+    "embeddings_after": {
+      "alive": true,
+      "available": true,
+      "completed": 74,
+      "current_path": null,
+      "last_error": null,
+      "last_scope": "selected",
+      "pause_reason": null,
+      "pending": false,
+      "queued_paths": 1,
+      "repository_revision": "7f2fb6d6b184dedd2e1a5d8d79f83a5e9ff25a71",
+      "running": false
+    },
+    "scope": "Production data/model/configuration volumes were never mounted by the test. Contents not individually rehashed."
+  },
+  "scope_limits": [
+    "One cold sample per case/backend, no statistically established throughput or warm measurements.",
+    "Includes model load, adapter/pipelines and startup self-test. No CPU subtraction estimate of GPU startup.",
+    "Raw vectors not retained by original pretest; parity/norm/finiteness are recorded runner checks.",
+    "512MiB cap passed for this standalone disposable test, not simultaneous full Memento service + worker or sustained production proof.",
+    "Older Mesa is unmodified distro userspace; no host/kernel changes or patched capability checks.",
+    "No local reserved GPU or Sigma work."
+  ],
+  "source_sha256": {
+    "test.log": "ee5a8becdd959925ddbd24bba3e46092ed80a287d681b396d6a801349ec79e04",
+    "state.json": "f0af2d5e6267b4ddafa54b7cb9c25e51f19a2eb64d2f7478965df9ae8260f4c4",
+    "create-request.json": "90949d67468c260ea5b5689e13f41dd68fb54321852db416c3ca7010bae6b6da",
+    "Dockerfile": "d28464894b1ba0b777fd4bdf2d8438700e21110118e5f3dad9d1502588fc7ede",
+    "image-check.log": "94d30c598cd18df15724c32e015fbc6d2b103415792ed74d2aa71feddcb46f4a",
+    "preservation-check.json": "42d880fef7a4fa130ecd7e1a978cb41954dc9d8be68836b635ec2490698b1972"
+  }
+}

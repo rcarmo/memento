@@ -12,6 +12,10 @@ The historical Python 3.14 local container rebuild produced image ID `sha256:2b5
 
 Graph evidence includes the 2,000-node fixture performance record and a DiskStation browser capture under [`graph/`](graph/). The real-target MCP benchmark is [`diskstation-memory-benchmark-2026-07-19.json`](diskstation-memory-benchmark-2026-07-19.json).
 
+## Vulkan qualification
+
+[`vulkan-nas-bookworm-2026-09-19.md`](vulkan-nas-bookworm-2026-09-19.md) records successful hardware GTE parity on the NAS using container-only Mesa 22.3.6: four cases pass within a standalone 512 MiB cap, but cold Vulkan is slower than CPU. Production stayed unchanged. This follows the [Mesa 26 adapter failure](vulkan-nas-2026-09-19.md); its error text is shared by capture and timeline-fence checks. Both reports link machine-readable results and preserve their different scopes.
+
 ## Release and deployment evidence
 
 [`release-0.5.9.md`](release-0.5.9.md) records the current deployment and issue #33 embedding-worker recovery, lock handling, liveness and resumed computation. [`release-0.5.8.md`](release-0.5.8.md) records issue #28 proposal visibility, asset/state preservation and historical-base handling. [`release-0.5.6.md`](release-0.5.6.md) records issue #23 typed-reference checks and the earlier prolonged storage-bound startup. [`release-0.5.5.md`](release-0.5.5.md) records issue #21 manifest/file/range retrieval checks. [`release-0.5.4.md`](release-0.5.4.md) records reviewed archival of the issue #20 fixtures and semantic opacity/shared-force verification. [`release-0.5.1.md`](release-0.5.1.md) records the earlier graph and Trash checks, restored runtime-model archive and preserved DiskStation model volume. [`release-0.5.0.md`](release-0.5.0.md) records the preceding safety and recovery release. [`release-0.4.2.md`](release-0.4.2.md) records the earlier issues 14--19 and graph-audit checks.

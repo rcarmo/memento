@@ -319,6 +319,7 @@ class SemanticSearchConfig(BaseModel):
     worker_mode: Literal["subprocess", "in_process"] = "subprocess"
     worker_path: str = "/usr/local/bin/memento-embed"
     worker_timeout_seconds: float = Field(default=300.0, gt=0)
+    worker_idle_seconds: float = Field(default=0.0, ge=0, le=3600, allow_inf_nan=False)
     backend: Literal["cpu", "vulkan", "auto"] = "cpu"
     vulkan_device: str | None = Field(default=None, min_length=1, max_length=128)
     ffi_library_path: str | None = None
@@ -344,6 +345,8 @@ class SemanticSearchConfig(BaseModel):
     def backend_requires_subprocess(self) -> SemanticSearchConfig:
         if self.backend != "cpu" and self.worker_mode != "subprocess":
             raise ValueError("Vulkan/auto embeddings require subprocess worker mode")
+        if self.worker_idle_seconds > 0 and self.worker_mode != "subprocess":
+            raise ValueError("worker_idle_seconds requires subprocess worker mode")
         return self
 
     @field_validator("ffi_library_path", "sqlite_extension_path", "model_path")
