@@ -4,6 +4,12 @@ Debian Bookworm's unmodified Mesa 22.3.6 runs the existing FP32 GTE1 model on th
 
 This follows the [Mesa 26 compatibility failure](vulkan-nas-2026-09-19.md) and Rui's instruction to test the container-only workaround in [#39](https://github.com/rcarmo/memento/issues/39). It supersedes the earlier blocker for this older userspace stack only.
 
+## NAS decision: CPU only
+
+Rui decided against Vulkan on the NAS after the later same-process warm test. Completed three-repeat warm medians were CPU/Vulkan 0.212/8.085 seconds (short), 0.680/8.844 (mixed batch) and 3.072/12.004 (medium). CPU token-limit median was 19.245 seconds; two Vulkan samples took 24.784 and 25.257 seconds before the user stopped the run. Startup was separately timed at 0.291 seconds CPU and 12.322 seconds Vulkan. The same PID was retained for each backend's completed calls; recorded GPU parity passed.
+
+The test was stopped immediately and its container/imported image removed. Exit 137 reflects the requested stop; `OOMKilled` was false. Idle-120-second snapshots, expiry and restart were not reached, so the interrupted experiment does not qualify them. Production remained unchanged and healthy with zero restarts. [Issue #39](https://github.com/rcarmo/memento/issues/39#issuecomment-5745080164) is closed as not planned. This CPU-only decision also applies to the Go port on this NAS; retained recipes are historical references, not deployment instructions. Other GPU targets are unaffected. Further NAS Vulkan work requires a new explicit request.
+
 ## Exact stack and isolation
 
 The test ran from 15:02:16 to 15:04:26 UTC on 2026-09-19. The NAS kept kernel `4.4.302+`, its existing i915 driver and PCI device `8086:5a85`. Vulkan identified `Intel(R) HD Graphics 500 (APL 2)`, an integrated GPU, with device API 1.3.230 and Mesa 22.3.6.
