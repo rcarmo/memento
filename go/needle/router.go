@@ -1,6 +1,9 @@
 package needle
 
-import "fmt"
+import (
+	"fmt"
+	msimd "github.com/rcarmo/memento/go/internal/simd"
+)
 
 // Checkpoint is a cooperative cancellation callback at the reference boundaries.
 type Checkpoint func(string) error
@@ -28,6 +31,7 @@ type Router struct {
 	embedding, encoderFinal, decoderFinal []float32
 	encoder                               []encoderLayer
 	decoder                               []decoderLayer
+	simd                                  *msimd.Engine
 }
 
 // NewRouter checks all model tensor names/shapes before inference. Invalid head
@@ -93,6 +97,24 @@ func NewRouter(model *Model) (*Router, error) {
 	}
 	return r, nil
 }
+func (r *Router) SetSIMD(value string) error {
+	engine, err := msimd.New(value)
+	if err != nil {
+		return err
+	}
+	if engine.Backend() == msimd.Scalar {
+		r.simd = nil
+	} else {
+		r.simd = &engine
+	}
+	return nil
+}
+func (r *Router) SIMDBackend() msimd.Backend {
+	if r.simd == nil {
+		return msimd.Scalar
+	}
+	return r.simd.Backend()
+}
 func sliceLayer(values []float32, layer, width int) []float32 {
 	return values[layer*width : (layer+1)*width]
 }
@@ -133,7 +155,7 @@ func (r *Router) encode(tokens []int, cp Checkpoint) ([]float32, error) {
 		ropeRows(k, kv, hd, rope)
 		contexts := make([]float32, len(tokens)*dm)
 		for pos := range tokens {
-			copy(contexts[pos*dm:], attend(q[pos*dm:(pos+1)*dm], k, v, heads, kv, hd))
+			copy(contexts[pos*dm:], attendWithEngine(q[pos*dm:(pos+1)*dm], k, v, heads, kv, hd, r.simd))
 		}
 		output := project(contexts, dm, dm, l.self.out)
 		gatedResidual(x, output, l.gate[0])
@@ -185,12 +207,12 @@ func (r *Router) decodeStep(token, pos int, state *decoderState, cp Checkpoint) 
 		applyRope(k, kv, hd, state.rope, pos)
 		state.k[i] = append(state.k[i], k...)
 		state.v[i] = append(state.v[i], v...)
-		context := attend(q, state.k[i], state.v[i], heads, kv, hd)
+		context := attendWithEngine(q, state.k[i], state.v[i], heads, kv, hd, r.simd)
 		gatedResidual(x, project(context, dm, dm, l.self.out), l.selfGate[0])
 		normalized = normVector(x, l.norm1)
 		q = project(normalized, dm, dm, l.cross.q)
 		headNorm(q, heads, hd, l.cross.qNorm)
-		context = attend(q, state.cross[i].k, state.cross[i].v, heads, kv, hd)
+		context = attendWithEngine(q, state.cross[i].k, state.cross[i].v, heads, kv, hd, r.simd)
 		gatedResidual(x, project(context, dm, dm, l.cross.out), l.crossGate[0])
 	}
 	return normVector(x, r.decoderFinal), nil

@@ -1,6 +1,9 @@
 package needle
 
-import "math"
+import (
+	msimd "github.com/rcarmo/memento/go/internal/simd"
+	"math"
+)
 
 func sqrt32(x float32) float32 { return float32(math.Sqrt(float64(x))) }
 
@@ -80,7 +83,7 @@ func dot(a, b []float32) float32 {
 	}
 	return sum
 }
-func attend(q, k, v []float32, heads, kvHeads, dim int) []float32 {
+func attendWithEngine(q, k, v []float32, heads, kvHeads, dim int, engine *msimd.Engine) []float32 {
 	tokens := len(k) / (kvHeads * dim)
 	repeats := heads / kvHeads
 	out := make([]float32, heads*dim)
@@ -91,7 +94,11 @@ func attend(q, k, v []float32, heads, kvHeads, dim int) []float32 {
 		maxScore := float32(math.Inf(-1))
 		for token := range scores {
 			base := token*kvHeads*dim + kh*dim
-			score := float32(dot(q[h*dim:(h+1)*dim], k[base:base+dim]) / scale)
+			product := dot(q[h*dim:(h+1)*dim], k[base:base+dim])
+			if engine != nil {
+				product, _ = engine.Dot(q[h*dim:(h+1)*dim], k[base:base+dim])
+			}
+			score := float32(product / scale)
 			scores[token] = score
 			if score > maxScore {
 				maxScore = score
@@ -122,13 +129,16 @@ func gatedResidual(x, other []float32, gate float32) {
 		x[i] = float32(x[i] + float32(g*other[i]))
 	}
 }
-func argmax(hidden, embedding []float32, allowed []int) int {
+func argmaxWithEngine(hidden, embedding []float32, allowed []int, engine *msimd.Engine) int {
 	dim := len(hidden)
 	best := 0
 	maximum := float32(math.Inf(-1))
 	if len(allowed) == 0 {
 		for id := 0; id < len(embedding)/dim; id++ {
 			score := dot(hidden, embedding[id*dim:(id+1)*dim])
+			if engine != nil {
+				score, _ = engine.Dot(hidden, embedding[id*dim:(id+1)*dim])
+			}
 			if score > maximum {
 				maximum = score
 				best = id
@@ -137,6 +147,9 @@ func argmax(hidden, embedding []float32, allowed []int) int {
 	} else {
 		for _, id := range allowed {
 			score := dot(hidden, embedding[id*dim:(id+1)*dim])
+			if engine != nil {
+				score, _ = engine.Dot(hidden, embedding[id*dim:(id+1)*dim])
+			}
 			if score > maximum {
 				maximum = score
 				best = id

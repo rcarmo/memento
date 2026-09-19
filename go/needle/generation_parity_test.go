@@ -9,6 +9,39 @@ import (
 	"testing"
 )
 
+func TestRealNeedleSIMDGeneration(t *testing.T) {
+	path, tokenizerPath := os.Getenv("NEEDLE_MODEL_PATH"), os.Getenv("NEEDLE_TOKENIZER_PATH")
+	if path == "" || tokenizerPath == "" {
+		t.Skip("set pinned model/tokenizer paths")
+	}
+	model, err := Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tokenizer, err := LoadTokenizer(tokenizerPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	scalar, err := NewRouter(model)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fast, err := NewRouter(model)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = fast.SetSIMD("auto"); err != nil {
+		t.Fatal(err)
+	}
+	tools := `[{"name":"memory_status","description":"status","inputSchema":{"type":"object","properties":{}}}]`
+	for _, query := range []string{"show status", "what can you do?"} {
+		want, wantErr := scalar.Generate(tokenizer, query, tools, DefaultGenerationOptions(), nil)
+		got, gotErr := fast.Generate(tokenizer, query, tools, DefaultGenerationOptions(), nil)
+		if (wantErr == nil) != (gotErr == nil) || wantErr != nil && wantErr.Error() != gotErr.Error() || got != want {
+			t.Fatal(query, want, wantErr, got, gotErr)
+		}
+	}
+}
 func TestRealNeedleGeneration(t *testing.T) {
 	path, tokenizerPath := os.Getenv("NEEDLE_MODEL_PATH"), os.Getenv("NEEDLE_TOKENIZER_PATH")
 	if path == "" || tokenizerPath == "" {

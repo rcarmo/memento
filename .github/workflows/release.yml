@@ -255,6 +255,14 @@ jobs:
           docker rm "$container"
           sudo cp /usr/bin/qemu-x86_64-static /tmp/rootfs/usr/bin/
 
+      - name: Run Go SSE2 SIMD smoke under Westmere CPU
+        shell: bash
+        run: |
+          (cd go && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 go build -o /tmp/memento-simd-check ./cmd/memento-simd-check)
+          simd="$(/usr/bin/qemu-x86_64-static -cpu Westmere /tmp/memento-simd-check)"
+          echo "$simd"
+          grep -q '^arch=amd64 backend=sse2 sse2=true avx2_fma=false ' <<< "$simd"
+
       - name: Run scalar-path model smoke under Westmere CPU
         shell: bash
         run: |

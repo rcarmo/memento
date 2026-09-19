@@ -10,6 +10,14 @@ import (
 	"github.com/rcarmo/memento/go/gte"
 )
 
+type gteSemanticSIMDStub struct {
+	gteSemanticStub
+	value   string
+	simdErr error
+}
+
+func (s *gteSemanticSIMDStub) SetSIMD(value string) error { s.value = value; return s.simdErr }
+
 type gteSemanticStub struct {
 	dim    int
 	vector []float32
@@ -32,6 +40,24 @@ func TestGTESemanticClientMethods(t *testing.T) {
 	}
 	if batch, err := client.EmbedBatch([]string{"x"}); err != nil || len(batch) != 1 {
 		t.Fatal(batch, err)
+	}
+}
+func TestGTESemanticConfiguration(t *testing.T) {
+	model := &gteSemanticSIMDStub{gteSemanticStub: gteSemanticStub{dim: 2}}
+	client, err := loadConfiguredGTESemanticClient("x", "m", 2, 1, 1, func(string) ([]byte, error) { return []byte("x"), nil }, func([]byte) (gteSemanticModel, error) { return model, nil }, func(string) (string, bool) { return "scalar", true })
+	if err != nil || client == nil || model.value != "scalar" {
+		t.Fatal(client, model.value, err)
+	}
+	boom := errors.New("simd")
+	model.simdErr = boom
+	if _, err = loadConfiguredGTESemanticClient("x", "m", 2, 1, 1, func(string) ([]byte, error) { return []byte("x"), nil }, func([]byte) (gteSemanticModel, error) { return model, nil }, func(string) (string, bool) { return "bad", true }); !errors.Is(err, boom) {
+		t.Fatal(err)
+	}
+	if _, err = loadConfiguredGTESemanticClient("x", "m", 2, 1, 1, func(string) ([]byte, error) { return []byte("x"), nil }, func([]byte) (gteSemanticModel, error) { return gteSemanticStub{dim: 2}, nil }, func(string) (string, bool) { return "auto", true }); err == nil {
+		t.Fatal("unsupported")
+	}
+	if _, err = loadConfiguredGTESemanticClient("x", "m", 2, 1, 1, func(string) ([]byte, error) { return nil, boom }, func([]byte) (gteSemanticModel, error) { return model, nil }, func(string) (string, bool) { return "", false }); !errors.Is(err, boom) {
+		t.Fatal(err)
 	}
 }
 func TestGTESemanticClientErrors(t *testing.T) {

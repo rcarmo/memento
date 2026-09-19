@@ -12,7 +12,7 @@ PREFIX ?= /usr/local
 DESTDIR ?=
 VERSION ?= development
 
-.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check build race cross release release-check install oracle coverage fuzz model-test corpus-test
+.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check build race cross release release-check install oracle coverage fuzz model-test simd-test corpus-test
 help:
 	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz and cross-build gates' 'tools       install pinned static-analysis tools under ../build/go/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck (correctness, style, simplification, unused)' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install both host binaries under DESTDIR/PREFIX/bin'
 tools: $(STATICCHECK) $(GOVULNCHECK)
@@ -57,6 +57,9 @@ model-test:
 	@test -n "$(NEEDLE_MODEL_PATH)" || (echo 'Set NEEDLE_MODEL_PATH to the digest-pinned NDL1 model'; exit 1)
 	@test -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Set NEEDLE_TOKENIZER_PATH to the pinned SentencePiece model'; exit 1)
 	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./needle -run 'TestRealNeedle(Model|Tokenizer|Generation)' -count=1 -v -timeout=10m
+simd-test:
+	CGO_ENABLED=0 GOAMD64=v1 $(GO) build -o ../build/go/memento-simd-check ./cmd/memento-simd-check
+	GODEBUG=cpu.avx=off,cpu.avx2=off,cpu.fma=off ../build/go/memento-simd-check | grep -E '^arch=amd64 backend=sse2 sse2=true avx2_fma=false '
 corpus-test:
 	@test -n "$(NEEDLE_MODEL_PATH)" -a -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Corpus gate requires pinned Needle model and tokenizer paths'; exit 1)
 	CGO_ENABLED=0 NEEDLE_FULL_CORPUS=1 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./needle -run TestRealNeedleCorpus -count=1 -v -timeout=80m
@@ -76,7 +79,7 @@ release:
 	GO="$(GO)" VERSION="$(VERSION)" ./tools/release.sh
 release-check: release
 	./tools/release-check.sh
-cross:
+cross: simd-test
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-go-linux-amd64 ./cmd/memento-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-go-linux-arm64 ./cmd/memento-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-embed-go-linux-amd64 ./cmd/memento-embed-go

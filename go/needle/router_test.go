@@ -95,14 +95,14 @@ func TestRouterConstructionAndMath(t *testing.T) {
 			t.Fatal("missing tensor", name)
 		}
 	}
-	zero := attend([]float32{1, 1}, nil, nil, 1, 1, 2)
+	zero := attendWithEngine([]float32{1, 1}, nil, nil, 1, 1, 2, nil)
 	if !reflect.DeepEqual(zero, []float32{0, 0}) {
 		t.Fatal(zero)
 	}
-	if got := argmax([]float32{1}, []float32{-1, 2, 1}, []int{0, 2}); got != 2 {
+	if got := argmaxWithEngine([]float32{1}, []float32{-1, 2, 1}, []int{0, 2}, nil); got != 2 {
 		t.Fatal(got)
 	}
-	if got := argmax([]float32{1}, []float32{-1, 2, 1}, nil); got != 1 {
+	if got := argmaxWithEngine([]float32{1}, []float32{-1, 2, 1}, nil, nil); got != 1 {
 		t.Fatal(got)
 	}
 }

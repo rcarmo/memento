@@ -12,6 +12,37 @@ import (
 
 // TestRealGTEModel is explicitly gated on a public, digest-pinned model artefact.
 // It supplements, rather than replaces, the always-on synthetic parity suite.
+func TestRealGTESIMD(t *testing.T) {
+	path := os.Getenv("GTE_MODEL_PATH")
+	if path == "" {
+		t.Skip("set GTE_MODEL_PATH")
+	}
+	model, err := Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	scalar, err := model.EmbedBatch([]string{"hello world", "Unicode café 日本語"}, BatchOptions{}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = model.SetSIMD("auto"); err != nil {
+		t.Fatal(err)
+	}
+	fast, err := model.EmbedBatch([]string{"hello world", "Unicode café 日本語"}, BatchOptions{}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i := range scalar {
+		var maxError float64
+		for j := range scalar[i] {
+			maxError = math.Max(maxError, math.Abs(float64(scalar[i][j]-fast[i][j])))
+		}
+		t.Logf("%s max_abs=%g", model.SIMDBackend(), maxError)
+		if maxError > 1e-5 {
+			t.Fatal(i, maxError)
+		}
+	}
+}
 func TestRealGTEModel(t *testing.T) {
 	path := os.Getenv("GTE_MODEL_PATH")
 	if path == "" {

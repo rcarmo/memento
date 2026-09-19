@@ -3,6 +3,8 @@ package gte
 import (
 	"fmt"
 	"math"
+
+	msimd "github.com/rcarmo/memento/go/internal/simd"
 )
 
 // Checkpoint preserves the reference's named cooperative cancellation points.
@@ -93,6 +95,9 @@ func check(checkpoint Checkpoint, label string) error {
 // linear follows the original Go x*w^T layout with scalar accumulation. Bias
 // begins the accumulation to preserve the Memento vector kernel's operation order.
 func linear(x, w, b []float32, rows, in, out int) []float32 {
+	return linearWithEngine(x, w, b, rows, in, out, nil)
+}
+func linearWithEngine(x, w, b []float32, rows, in, out int, engine *msimd.Engine) []float32 {
 	y := make([]float32, rows*out)
 	for row := 0; row < rows; row++ {
 		for col := 0; col < out; col++ {
@@ -100,8 +105,13 @@ func linear(x, w, b []float32, rows, in, out int) []float32 {
 			if b != nil {
 				sum = b[col]
 			}
-			for k := 0; k < in; k++ {
-				sum = float32(sum + float32(x[row*in+k]*w[col*in+k]))
+			if engine != nil {
+				dot, _ := engine.Dot(x[row*in:(row+1)*in], w[col*in:(col+1)*in])
+				sum = float32(sum + dot)
+			} else {
+				for k := 0; k < in; k++ {
+					sum = float32(sum + float32(x[row*in+k]*w[col*in+k]))
+				}
 			}
 			y[row*out+col] = sum
 		}
@@ -201,9 +211,9 @@ func (m *Model) forward(batch [][]int, checkpoint Checkpoint) ([][]float32, erro
 	headDim := h / m.config.NumHeads
 	scale := float32(1) / float32(math.Sqrt(float64(float32(headDim))))
 	for _, l := range m.layers {
-		q := linear(state, l.query, l.queryBias, rows, h, h)
-		k := linear(state, l.key, l.keyBias, rows, h, h)
-		v := linear(state, l.value, l.valueBias, rows, h, h)
+		q := linearWithEngine(state, l.query, l.queryBias, rows, h, h, m.simd)
+		k := linearWithEngine(state, l.key, l.keyBias, rows, h, h, m.simd)
+		v := linearWithEngine(state, l.value, l.valueBias, rows, h, h, m.simd)
 		attention := make([]float32, rows*h)
 		scores := make([]float32, seq)
 		for item := range batch {
@@ -239,12 +249,12 @@ func (m *Model) forward(batch [][]int, checkpoint Checkpoint) ([][]float32, erro
 				}
 			}
 		}
-		projected := linear(attention, l.attention, l.attentionBias, rows, h, h)
+		projected := linearWithEngine(attention, l.attention, l.attentionBias, rows, h, h, m.simd)
 		after := residual(projected, state)
 		layerNorm(after, l.attentionNorm, l.attentionNormBias, h)
-		inter := linear(after, l.intermediate, l.intermediateBias, rows, h, m.config.Intermediate)
+		inter := linearWithEngine(after, l.intermediate, l.intermediateBias, rows, h, m.config.Intermediate, m.simd)
 		gelu(inter)
-		out := linear(inter, l.output, l.outputBias, rows, m.config.Intermediate, h)
+		out := linearWithEngine(inter, l.output, l.outputBias, rows, m.config.Intermediate, h, m.simd)
 		state = residual(out, after)
 		layerNorm(state, l.outputNorm, l.outputNormBias, h)
 		if err := check(checkpoint, "layer_done"); err != nil {

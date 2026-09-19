@@ -6,6 +6,10 @@ The synthesized comparative benchmark is documented in [benchmarks.md](benchmark
 
 The standalone module follows the standard `cmd/<binary>`, library-package, `internal/` and module-level `testdata` layout documented in `go/README.md`. `make -C go layout-check` verifies module tidiness/package discovery and rejects Go source at the module root or files directly under `cmd`; it is part of `make -C go check`. `go vet ./...`, `go mod tidy -diff` and package documentation enumeration pass. The import graph is acyclic and no package moves were warranted.
 
+## SIMD gates
+
+Scalar remains the default/oracle. SIMD tests cover runtime capability selection, unavailable/invalid backends, every tail length, bounded dot reduction drift, bit-exact AXPY, persistent Engine dispatch, GTE projection tolerance, Needle attention/argmax decisions, loader/runtime environment wiring, amd64 baseline/SSE2/AVX2 assembly, ARM64 NEON cross-assembly and gated real-model GTE/Needle comparisons. Local microbenchmarks are documented in [simd.md](simd.md); real ARM64 and model-asset evidence remains required before default enablement.
+
 ## Quality workflow
 
 The Go module exposes reproducible quality tiers through `go/Makefile`: `quality` runs format/layout checks, vet, pinned Staticcheck, tests, zero-uncovered coverage and pure-Go builds; `audit-fast` adds strict `govulncheck`; `audit` adds race, every discovered fuzz target and Linux amd64/arm64 cross-builds. Tools install under `build/go/tools`. Go 1.26.6 is the minimum secure toolchain because earlier Go 1.26 releases have reachable standard-library vulnerabilities.

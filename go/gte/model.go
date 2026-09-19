@@ -7,6 +7,8 @@ import (
 	"math"
 	"os"
 	"unicode/utf8"
+
+	msimd "github.com/rcarmo/memento/go/internal/simd"
 )
 
 // Config matches the six little-endian GTE1 header fields.
@@ -33,6 +35,7 @@ type Model struct {
 	token, position, tokenType, embedNorm, embedNormBias []float32
 	layers                                               []layer
 	pooler, poolerBias                                   []float32 // Present in the format, unused by mean pooling.
+	simd                                                 *msimd.Engine
 }
 
 // Config returns a copy, preventing callers from invalidating tensor dimensions.
@@ -40,6 +43,24 @@ func (m *Model) Config() Config { return m.config }
 
 // Dim is the embedding width.
 func (m *Model) Dim() int { return m.config.HiddenSize }
+func (m *Model) SetSIMD(value string) error {
+	engine, err := msimd.New(value)
+	if err != nil {
+		return err
+	}
+	if engine.Backend() == msimd.Scalar {
+		m.simd = nil
+	} else {
+		m.simd = &engine
+	}
+	return nil
+}
+func (m *Model) SIMDBackend() msimd.Backend {
+	if m.simd == nil {
+		return msimd.Scalar
+	}
+	return m.simd.Backend()
+}
 
 // Tokenize uses the same immutable vocabulary and bounds as inference.
 func (m *Model) Tokenize(text string) ([]int, error) { return m.tokenizer.Tokenize(text) }

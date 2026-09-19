@@ -270,6 +270,11 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 			if loadErr != nil {
 				return nil, nil, loadErr
 			}
+			if value, _ := ops.lookupEnv("MEMENTO_SIMD"); strings.TrimSpace(value) != "" {
+				if loadErr = router.SetSIMD(value); loadErr != nil {
+					return nil, nil, loadErr
+				}
+			}
 			routeInference = router
 		}
 		controls.RuntimeCapabilities.NeedleLoaded = true

@@ -21,7 +21,23 @@ type GTESemanticClient struct {
 }
 
 func LoadGTESemanticClient(path, modelID string, dimensions, maxBatch, maxInput int) (*GTESemanticClient, error) {
-	return loadGTESemanticClient(path, modelID, dimensions, maxBatch, maxInput, os.ReadFile, func(raw []byte) (gteSemanticModel, error) { return gte.FromBytes(raw) })
+	return loadConfiguredGTESemanticClient(path, modelID, dimensions, maxBatch, maxInput, os.ReadFile, func(raw []byte) (gteSemanticModel, error) { return gte.FromBytes(raw) }, os.LookupEnv)
+}
+func loadConfiguredGTESemanticClient(path, modelID string, dimensions, maxBatch, maxInput int, read func(string) ([]byte, error), decode func([]byte) (gteSemanticModel, error), lookup func(string) (string, bool)) (*GTESemanticClient, error) {
+	client, err := loadGTESemanticClient(path, modelID, dimensions, maxBatch, maxInput, read, decode)
+	if err != nil {
+		return nil, err
+	}
+	if value, ok := lookup("MEMENTO_SIMD"); ok && value != "" {
+		model, supported := client.Model.(interface{ SetSIMD(string) error })
+		if !supported {
+			return nil, fmt.Errorf("embedding model does not support SIMD configuration")
+		}
+		if err = model.SetSIMD(value); err != nil {
+			return nil, err
+		}
+	}
+	return client, nil
 }
 func loadGTESemanticClient(path, modelID string, dimensions, maxBatch, maxInput int, read func(string) ([]byte, error), decode func([]byte) (gteSemanticModel, error)) (*GTESemanticClient, error) {
 	raw, err := read(path)

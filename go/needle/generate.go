@@ -69,7 +69,7 @@ func (r *Router) Generate(t *Tokenizer, query, tools string, options GenerationO
 		if options.Constrained {
 			allowed = decoder.allowed()
 		}
-		next := argmax(hidden, r.embedding, allowed)
+		next := argmaxWithEngine(hidden, r.embedding, allowed, r.simd)
 		if options.Constrained {
 			decoder.update(next)
 		}

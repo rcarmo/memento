@@ -33,6 +33,38 @@ func TestBuildNeedleRealConstructionBoundaries(t *testing.T) {
 	_ = runtime.Close(ctx)
 }
 
+func TestBuildNeedleSIMDConfiguration(t *testing.T) {
+	for _, fixture := range []struct {
+		value string
+		fails bool
+	}{{"scalar", false}, {"auto", false}, {"bad", true}} {
+		t.Run(fixture.value, func(t *testing.T) {
+			ctx := context.Background()
+			var config RuntimeConfig
+			config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
+			options := ModelsOffRuntimeOptions{Surface: "compact", Tokens: []BearerPrincipal{}, Needle: DefaultNeedleRouterConfig()}
+			options.Needle.Enabled = true
+			ops := defaultModelsOffBuildOps()
+			ops.loadNeedleModel = func(string) (*needle.Model, error) { return &needle.Model{}, nil }
+			ops.loadNeedleTokenizer = func(string) (*needle.Tokenizer, error) { return &needle.Tokenizer{}, nil }
+			ops.newNeedleRouter = func(*needle.Model) (*needle.Router, error) { return &needle.Router{}, nil }
+			ops.lookupEnv = func(name string) (string, bool) {
+				if name == "MEMENTO_SIMD" {
+					return fixture.value, true
+				}
+				return "", false
+			}
+			ops.registerRoute = func(*Jobs, *umcp.Server, string, execute.Limits, RouteInference, *needle.Tokenizer) error { return nil }
+			runtime, _, err := buildModelsOffRuntime(ctx, config, options, ops)
+			if runtime != nil {
+				_ = runtime.Close(ctx)
+			}
+			if (err != nil) != fixture.fails {
+				t.Fatal(err)
+			}
+		})
+	}
+}
 func TestBuildNeedleEnabledRuntime(t *testing.T) {
 	ctx := context.Background()
 	var config RuntimeConfig
