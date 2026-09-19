@@ -70,6 +70,9 @@ func TestValidateModelProposalDraft(t *testing.T) {
 	if err := validateModelProposalDraft(controls.Queue.Paths.CurrentDir, revision, policy, consulted, proposalTestDraft(revision), limits); err != nil {
 		t.Fatal(err)
 	}
+	if err := validateModelProposalDraft(filepath.Join(t.TempDir(), "missing"), revision, policy, consulted, proposalTestDraft(revision), limits); err == nil {
+		t.Fatal("repository root")
+	}
 	cases := []struct {
 		name     string
 		mutate   func(*DreamProposalDraft)
@@ -88,6 +91,9 @@ func TestValidateModelProposalDraft(t *testing.T) {
 		{"archive", func(d *DreamProposalDraft) { d.Changes[0]["kind"] = "trash" }, "only create normal"},
 		{"write acl", func(d *DreamProposalDraft) { policy.WritePrefixes = []string{"/allowed/"} }, "cannot write"},
 		{"invalid path", func(d *DreamProposalDraft) { d.Changes[0]["path"] = "relative.md" }, "absolute"},
+		{"repository path", func(d *DreamProposalDraft) {
+			d.Changes = []map[string]any{{"kind": "create", "path": "/x\x00.md", "concept_type": "concept", "title": "X", "body": "body", "description": nil, "tags": []string{}, "aliases": []string{}}}
+		}, "control characters"},
 		{"body limit", func(d *DreamProposalDraft) { limits.MaxBodyChars = 1 }, "body exceeds"},
 		{"diff limit", func(d *DreamProposalDraft) { limits.MaxDiffChars = 1 }, "diff exceeds"},
 		{"preview failure", func(d *DreamProposalDraft) { d.Changes[0]["path"] = "/missing.md"; d.Changes[0]["kind"] = "patch" }, "does not exist"},
@@ -116,6 +122,21 @@ func TestValidateModelProposalDraft(t *testing.T) {
 				t.Fatalf("error = %v", err)
 			}
 		})
+	}
+}
+
+func TestModelProposalFreeformIntentOverride(t *testing.T) {
+	jobs, revision := jobsTest(t)
+	model := &stubModelClient{response: ModelResponse{OutputText: fmt.Sprintf(`{"intent":"model","rationale":"because","consulted_concepts":[{"id":"12345678","path":"/a.md","revision":%q,"title":"Title"}],"changes":[{"kind":"patch","path":"/a.md","body":"changed"}]}`, revision)}}
+	config := DefaultModelProposalsConfig()
+	config.Enabled = true
+	e := ModelProposalEndpoint{Jobs: jobs, Client: model, Config: config}
+	server := umcp.NewServer("x")
+	_ = server.Tools.Register(umcp.Tool{Name: "p", Parameters: []umcp.Parameter{{Name: "content", Types: []umcp.ParamType{umcp.StringParam}}, {Name: "suggested_path", Types: []umcp.ParamType{umcp.StringParam}, HasDefault: true, Default: nil}, {Name: "intent", Types: []umcp.ParamType{umcp.StringParam}, HasDefault: true, Default: nil}}, Call: e.Freeform})
+	_, _ = server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"p","arguments":{"content":"x","suggested_path":"/a.md","intent":"override"}}}`), umcp.RequestContext{Principal: "actor"})
+	rows := tableRows(t, jobs.Controls.Queue.Proposals.DB, `SELECT intent FROM proposals WHERE intent='override'`)
+	if len(rows) != 1 {
+		t.Fatal(rows)
 	}
 }
 
@@ -180,6 +201,30 @@ func TestModelProposalRoleAndEmptyContext(t *testing.T) {
 	}
 }
 
+func TestModelProposalCallContextAndPersistenceFailures(t *testing.T) {
+	jobs, revision := jobsTest(t)
+	config := DefaultModelProposalsConfig()
+	config.Enabled = true
+	valid := fmt.Sprintf(`{"rationale":"because","consulted_concepts":[{"id":"12345678","path":"/a.md","revision":%q,"title":"Title"}],"changes":[{"kind":"patch","path":"/a.md","body":"changed"}]}`, revision)
+	e := ModelProposalEndpoint{Jobs: jobs, Client: &stubModelClient{response: ModelResponse{OutputText: valid}}, Config: config}
+	server := umcp.NewServer("x")
+	_ = server.Tools.Register(umcp.Tool{Name: "p", Parameters: []umcp.Parameter{{Name: "instruction", Types: []umcp.ParamType{umcp.StringParam}}, {Name: "target_hint", Types: []umcp.ParamType{umcp.StringParam}, HasDefault: true, Default: nil}}, Call: e.Update})
+	for id, target := range map[int]string{1: "/missing.md", 2: "/a.md"} {
+		if id == 2 {
+			jobs.Controls.Random = errorReader{}
+		}
+		body := fmt.Sprintf(`{"jsonrpc":"2.0","id":%d,"method":"tools/call","params":{"name":"p","arguments":{"instruction":"x","target_hint":%q}}}`, id, target)
+		response, err := server.Process(context.Background(), []byte(body), umcp.RequestContext{Principal: "actor"})
+		if err != nil || response == nil {
+			t.Fatal(response, err)
+		}
+	}
+}
+
+type errorReader struct{}
+
+func (errorReader) Read([]byte) (int, error) { return 0, errors.New("random") }
+
 func TestModelProposalCallFailures(t *testing.T) {
 	jobs, revision := jobsTest(t)
 	config := DefaultModelProposalsConfig()
@@ -236,7 +281,10 @@ func TestConsultModelProposalSearchBranches(t *testing.T) {
 	if err != nil || gotRevision != revision || len(got) != 1 {
 		t.Fatalf("got=%#v rev=%s err=%v", got, gotRevision, err)
 	}
-	index.page.Results=[]derived.SearchResult{{Path:"/missing.md"}};if _,_,err=consultModelProposalContext(context.Background(),controls,policy,nil,proposalTestLimits());err==nil{t.Fatal("search result read")}
+	index.page.Results = []derived.SearchResult{{Path: "/missing.md"}}
+	if _, _, err = consultModelProposalContext(context.Background(), controls, policy, nil, proposalTestLimits()); err == nil {
+		t.Fatal("search result read")
+	}
 	index.err = errors.New("search")
 	if _, _, err = consultModelProposalContext(context.Background(), controls, policy, nil, proposalTestLimits()); err == nil {
 		t.Fatal("search error")
