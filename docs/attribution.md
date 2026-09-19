@@ -24,6 +24,10 @@ The Rust implementation under `rust/` includes code derived from and validated a
 
 The opt-in Go SIMD dot/AXPY substrate under `go/internal/simd` is informed by the MIT-licensed [`rcarmo/go-gte`](https://github.com/rcarmo/go-gte) assembly design and retains scalar correctness fallbacks. Memento adds baseline amd64 SSE2, runtime-gated AVX2, and ARM64 NEON variants plus explicit runtime selection and differential tests. The upstream MIT licence is retained in the repository's existing attribution chain. Automatic model dispatch was enabled after scalar/corpus parity and x86-64/ARM64 architecture benchmarks passed; `MEMENTO_SIMD=scalar` retains the exact-order oracle.
 
+## Deferred Vulkan dependency
+
+The retained NAS compatibility recipe uses the ARM-proprietary/Mesa userspace delivered by Debian Bookworm packages and a pinned Debian base-image digest. The exact tested versions, device/group mapping and limitations are recorded in [`docs/evidence/vulkan-nas-bookworm-2026-09-19.md`](evidence/vulkan-nas-bookworm-2026-09-19.md). That report covers the separate Rust/wgpu experiment; no Vulkan code or binary is part of the accepted Go baseline.
+
 ## GTE-small model
 
 The repository vendors the FP32 `gte-small.gtemodel` generated from [`thenlper/gte-small`](https://huggingface.co/thenlper/gte-small) through the `rcarmo/go-gte` conversion tooling. The file is `models/gte/gte-small.gtemodel`, is about 128 MB, and has SHA-256 `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`.

@@ -27,6 +27,8 @@ The existing OCI path uses pinned Debian Bookworm manifests: Rust 1.88 for the b
 
 The Go path produces reproducible, stripped, static Linux archives for amd64-v1 and arm64. Each contains `memento-go`, `memento-embed-go`, `memento-skill-import-go`, a version marker and a sorted SHA-256 manifest. Release checks verify architecture, exact layout, checksums, absence of ELF `NEEDED` entries and a native version smoke test. Automatic inference dispatch is AVX2 -> SSE2 -> NEON -> scalar. See [ADR 0008](decisions/0008-build-for-baseline-cpus.md).
 
+A future Go Vulkan package must preserve the verified NAS Bookworm route in [`docs/evidence/vulkan-nas-bookworm-2026-09-19.md`](evidence/vulkan-nas-bookworm-2026-09-19.md). Pin or snapshot the coherent Mesa 22.3.6/loader/libdrm package set; the successful test pinned the base image digest but did not version-lock apt packages, and Mesa 26 failed on the same host. CPU remains the release default until a Go build repeats parity, warm-performance and full-service memory checks.
+
 * The Python wheel contains the service and the client-side skill import command. Platform-specific Rust libraries are built separately.
 * The container packages the Rust GTE and Needle runtimes, release-prepared models and Git. Accepted versioned asset ZIPs are ordinary Git blobs.
 * `MEMENTO_ADMIN_MASTER_KEY` is mandatory when managed access is enabled. Bootstrap/recovery bearer variables are required for initial import; dynamically issued principal credentials live only as control-database verifiers. Provider API keys and model path overrides remain optional.

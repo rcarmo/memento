@@ -33,7 +33,9 @@ The nested `go/umcp` module has no Memento dependency. It covers dynamic tools/r
 
 Storage uses pure-Go Git object/ref/worktree code and modernc SQLite. Concepts and accepted assets remain canonical Git data; `control.sqlite` owns operations, proposals and managed access; `derived.sqlite` owns rebuildable FTS5, graph and embedding state. Startup recovery and legacy asset/skill migrations use the same journalled transaction path.
 
-Optional local inference uses the original scalar Go GTE algorithm and the pure-Go Needle/SentencePiece port. Automatic SIMD dispatch is AVX2 -> SSE2 -> NEON -> scalar, with `MEMENTO_SIMD=scalar` retaining the correctness oracle. Real assets pass GTE and Needle model gates on x86-64 and ARM64; the held-out Needle corpus is 360/360 exact under NEON. The separate Vulkan branch is deferred.
+Optional local inference uses the original scalar Go GTE algorithm and the pure-Go Needle/SentencePiece port. Automatic SIMD dispatch is AVX2 -> SSE2 -> NEON -> scalar, with `MEMENTO_SIMD=scalar` retaining the correctness oracle. Real assets pass GTE and Needle model gates on x86-64 and ARM64; the held-out Needle corpus is 360/360 exact under NEON.
+
+The separate Vulkan branch remains deferred, but its verified NAS container route must be retained: unmodified Debian Bookworm Mesa 22.3.6 plus the proprietary device mapping works on the Intel HD 500 without host changes. That Rust/wgpu result is a dependency for future Go work, not Go parity or a reason to change the CPU default. See [the NAS Vulkan evidence](../evidence/vulkan-nas-bookworm-2026-09-19.md).
 
 ## Verification
 
