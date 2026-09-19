@@ -107,6 +107,9 @@ func activeField(raw json.RawMessage, field string) (bool, error) {
 	return enabled, nil
 }
 func (c IntelligentTiersConfig) ValidateModelsOff() error {
+	if _, err := decodeNeedleConfig(c.NeedleRouter); err != nil {
+		return err
+	}
 	for _, item := range []struct {
 		raw   json.RawMessage
 		field string

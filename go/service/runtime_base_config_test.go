@@ -47,7 +47,7 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 		t.Fatal(err)
 	}
 	disabled := []byte(`{"enabled":false,"limits":{"x":1}}`)
-	c = IntelligentTiersConfig{DeepAnswers: disabled, ExactAnswerCache: disabled, HotWorkingMemory: disabled, ModelProposals: disabled, Dream: []byte(`{"mode":"disabled","scanner":{}}`), SemanticSearch: disabled, NeedleRouter: disabled, ModelProviderSlots: []byte(`{"hot_query":{}}`)}
+	c = IntelligentTiersConfig{DeepAnswers: disabled, ExactAnswerCache: disabled, HotWorkingMemory: disabled, ModelProposals: disabled, Dream: []byte(`{"mode":"disabled","scanner":{}}`), SemanticSearch: disabled, NeedleRouter: []byte(`{"enabled":false}`), ModelProviderSlots: []byte(`{"hot_query":{}}`)}
 	if err := c.ValidateModelsOff(); err != nil {
 		t.Fatal(err)
 	}
@@ -81,6 +81,10 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 	c = IntelligentTiersConfig{DeepAnswers: []byte(`bad`)}
 	if c.ValidateModelsOff() == nil {
 		t.Fatal("object type")
+	}
+	c = IntelligentTiersConfig{NeedleRouter: []byte(`{"extra":1}`)}
+	if c.ValidateModelsOff() == nil {
+		t.Fatal("needle")
 	}
 }
 func TestRuntimeTopLevelValidation(t *testing.T) {
