@@ -93,13 +93,6 @@ func activeField(raw json.RawMessage, field string) (bool, error) {
 	if len(value) == 0 {
 		return false, nil
 	}
-	if field == "mode" {
-		var mode string
-		if err := json.Unmarshal(value, &mode); err != nil {
-			return false, err
-		}
-		return mode != "" && mode != "disabled", nil
-	}
 	var enabled bool
 	if err := json.Unmarshal(value, &enabled); err != nil {
 		return false, err
@@ -113,10 +106,17 @@ func (c IntelligentTiersConfig) ValidateModelsOff() error {
 	if _, err := DecodeSemanticSearchConfig(c.SemanticSearch, nil); err != nil {
 		return err
 	}
+	dream, err := DecodeDreamConfig(c.Dream)
+	if err != nil {
+		return err
+	}
+	if dream.Mode == "propose" {
+		return errors.New("enabled intelligent tiers are not supported by the models-off runtime")
+	}
 	for _, item := range []struct {
 		raw   json.RawMessage
 		field string
-	}{{c.DeepAnswers, "enabled"}, {c.ExactAnswerCache, "enabled"}, {c.HotWorkingMemory, "enabled"}, {c.ModelProposals, "enabled"}, {c.Dream, "mode"}} {
+	}{{c.DeepAnswers, "enabled"}, {c.ExactAnswerCache, "enabled"}, {c.HotWorkingMemory, "enabled"}, {c.ModelProposals, "enabled"}} {
 		active, err := activeField(item.raw, item.field)
 		if err != nil {
 			return err
