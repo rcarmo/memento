@@ -53,7 +53,15 @@ func (r *Router) Generate(t *Tokenizer, query, tools string, options GenerationO
 	if err = poll(cp, "encoded"); err != nil {
 		return "", err
 	}
-	decoder := newConstraints(tools, t)
+	key := struct {
+		tools     string
+		tokenizer *Tokenizer
+	}{tools, t}
+	template, ok := r.constraintTemplates.Load(key)
+	if !ok {
+		template, _ = r.constraintTemplates.LoadOrStore(key, newConstraintTemplate(tools, t))
+	}
+	decoder := &constraints{template: template.(*constraintTemplate)}
 	state, err := r.decoderState(encoded, cp)
 	if err != nil {
 		return "", err

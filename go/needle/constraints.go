@@ -126,15 +126,18 @@ func (s *stateMachine) feedRune(ch rune) {
 	}
 }
 
-type constraints struct {
-	machine stateMachine
+type constraintTemplate struct {
 	strings []string
 	names   trie
 	params  map[string]*trie
 }
+type constraints struct {
+	machine  stateMachine
+	template *constraintTemplate
+}
 
-func newConstraints(tools string, t *Tokenizer) *constraints {
-	c := &constraints{params: make(map[string]*trie), strings: make([]string, t.VocabSize())}
+func newConstraintTemplate(tools string, t *Tokenizer) *constraintTemplate {
+	c := &constraintTemplate{params: make(map[string]*trie), strings: make([]string, t.VocabSize())}
 	for i := range c.strings {
 		c.strings[i] = t.TokenString(i)
 	}
@@ -164,9 +167,12 @@ func newConstraints(tools string, t *Tokenizer) *constraints {
 	}
 	return c
 }
+func newConstraints(tools string, t *Tokenizer) *constraints {
+	return &constraints{template: newConstraintTemplate(tools, t)}
+}
 func (c *constraints) update(token int) {
-	if token >= 0 && token < len(c.strings) {
-		c.machine.feed(c.strings[token])
+	if token >= 0 && token < len(c.template.strings) {
+		c.machine.feed(c.template.strings[token])
 	}
 }
 func (c *constraints) allowed() []int {
@@ -175,9 +181,9 @@ func (c *constraints) allowed() []int {
 	case free:
 		return nil
 	case inName:
-		root = &c.names
+		root = &c.template.names
 	case inArgKey:
-		root = c.params[c.machine.currentFunction]
+		root = c.template.params[c.machine.currentFunction]
 		if root == nil {
 			return nil
 		}
@@ -187,7 +193,7 @@ func (c *constraints) allowed() []int {
 		return nil
 	}
 	var allowed []int
-	for id, text := range c.strings {
+	for id, text := range c.template.strings {
 		first, size := utf8.DecodeRuneInString(text)
 		if size == 0 {
 			continue

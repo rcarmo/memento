@@ -2,6 +2,8 @@ package needle
 
 import (
 	"fmt"
+	"sync"
+
 	msimd "github.com/rcarmo/memento/go/internal/simd"
 )
 
@@ -32,6 +34,7 @@ type Router struct {
 	encoder                               []encoderLayer
 	decoder                               []decoderLayer
 	simd                                  *msimd.Engine
+	constraintTemplates                   sync.Map
 }
 
 // NewRouter checks all model tensor names/shapes before inference. Invalid head

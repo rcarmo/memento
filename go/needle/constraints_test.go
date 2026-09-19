@@ -89,8 +89,8 @@ func TestConstraintTrieAndMachine(t *testing.T) {
 		t.Fatal("unknown prefix")
 	}
 	c.machine = stateMachine{state: inName, constrained: "a"}
-	c.strings = append(c.strings, `"done`)
-	if ids := c.allowed(); len(ids) != 1 || ids[0] != len(c.strings)-1 {
+	c.template.strings = append(c.template.strings, `"done`)
+	if ids := c.allowed(); len(ids) != 1 || ids[0] != len(c.template.strings)-1 {
 		t.Fatal(ids)
 	}
 	for _, raw := range []string{"bad", `{}`, `[{"name":"x"}]`} {
