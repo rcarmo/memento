@@ -96,6 +96,12 @@ func TestRunFailures(t *testing.T) {
 	if code := runContext(context.Background(), []string{"--config", "x", "serve"}, nil, io.Discard, &stderr); code != 1 || !strings.Contains(stderr.String(), "boom") {
 		t.Fatal(code, stderr.String())
 	}
+	loadConfig = func(string) (service.RuntimeConfig, error) {
+		return service.RuntimeConfig{IntelligentTiers: service.IntelligentTiersConfig{NeedleRouter: []byte(`{"extra":1}`)}}, nil
+	}
+	if code := runContext(context.Background(), []string{"--config", "x", "serve"}, nil, io.Discard, io.Discard); code != 1 {
+		t.Fatal(code)
+	}
 	loadConfig = func(string) (service.RuntimeConfig, error) { return service.RuntimeConfig{}, nil }
 	buildRuntime = func(context.Context, service.RuntimeConfig, service.ModelsOffRuntimeOptions) (*service.Runtime, *umcp.Server, error) {
 		return nil, nil, boom

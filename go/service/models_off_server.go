@@ -8,8 +8,8 @@ import (
 )
 
 // RegisterModelsOffServer composes the verified 29-tool development surface and
-// memory_execute. It does not claim the missing configured 34-tool/admin/model
-// surface or own transport/daemon lifecycle.
+// memory_execute. Optional intelligent-tier tools are registered by their
+// runtime owners only after model construction succeeds.
 func (j *Jobs) RegisterModelsOffServer(server *umcp.Server, surface string, limits execute.Limits, notify ProposalNotifier) error {
 	if server == nil {
 		return errors.New("models-off server requires a uMCP server")

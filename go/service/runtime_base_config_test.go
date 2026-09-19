@@ -51,7 +51,7 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 	if err := c.ValidateModelsOff(); err != nil {
 		t.Fatal(err)
 	}
-	for i, field := range []string{"deep_answers", "exact_answer_cache", "hot_working_memory", "model_proposals", "semantic_search", "needle_router"} {
+	for i, field := range []string{"deep_answers", "exact_answer_cache", "hot_working_memory", "model_proposals", "semantic_search"} {
 		raw := map[string]json.RawMessage{field: []byte(`{"enabled":true}`)}
 		encoded, _ := json.Marshal(raw)
 		var active IntelligentTiersConfig
@@ -59,6 +59,10 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 		if active.ValidateModelsOff() == nil {
 			t.Fatal(i, field)
 		}
+	}
+	c = IntelligentTiersConfig{NeedleRouter: []byte(`{"enabled":true}`)}
+	if err := c.ValidateModelsOff(); err != nil {
+		t.Fatal(err)
 	}
 	c = IntelligentTiersConfig{Dream: []byte(`{"mode":"propose"}`)}
 	if c.ValidateModelsOff() == nil {

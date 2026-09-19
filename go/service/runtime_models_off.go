@@ -15,6 +15,7 @@ import (
 	"github.com/rcarmo/memento/go/derived"
 	"github.com/rcarmo/memento/go/execute"
 	"github.com/rcarmo/memento/go/graphdebug"
+	"github.com/rcarmo/memento/go/needle"
 	"github.com/rcarmo/memento/go/repository"
 	"github.com/rcarmo/memento/go/umcp"
 )
@@ -25,20 +26,26 @@ type ModelsOffRuntimeOptions struct {
 	BootstrapSeed string
 	Tokens        []BearerPrincipal
 	Graph         GraphHTTPConfig
+	Needle        NeedleRouterConfig
 }
 type modelsOffBuildOps struct {
-	storage         func(context.Context, RuntimeConfig, string) (*Runtime, error)
-	revision        func(repository.GitRepositoryPaths) (string, error)
-	state           func(context.Context, *derived.Index) (derived.IndexState, error)
-	rebuild         func(context.Context, *derived.Index, string, string) error
-	expire          func(context.Context, *assets.StagingStore) (int64, error)
-	recover         func(context.Context, *repository.TransactionManager) ([]repository.RecoveryRecord, error)
-	metadata        func(string) (*ModelsOffMetadata, error)
-	register        func(*Jobs, *umcp.Server, string, execute.Limits) error
-	openAccess      func(context.Context, *sql.DB, string) (*access.Store, error)
-	bootstrapAccess func(context.Context, *access.Store, []access.ConfiguredPrincipal, map[string]string) error
-	lookupEnv       func(string) (string, bool)
-	registerAccess  func(*Jobs, *umcp.Server) error
+	storage             func(context.Context, RuntimeConfig, string) (*Runtime, error)
+	revision            func(repository.GitRepositoryPaths) (string, error)
+	state               func(context.Context, *derived.Index) (derived.IndexState, error)
+	rebuild             func(context.Context, *derived.Index, string, string) error
+	expire              func(context.Context, *assets.StagingStore) (int64, error)
+	recover             func(context.Context, *repository.TransactionManager) ([]repository.RecoveryRecord, error)
+	metadata            func(string) (*ModelsOffMetadata, error)
+	register            func(*Jobs, *umcp.Server, string, execute.Limits) error
+	openAccess          func(context.Context, *sql.DB, string) (*access.Store, error)
+	bootstrapAccess     func(context.Context, *access.Store, []access.ConfiguredPrincipal, map[string]string) error
+	lookupEnv           func(string) (string, bool)
+	registerAccess      func(*Jobs, *umcp.Server) error
+	loadNeedleModel     func(string) (*needle.Model, error)
+	loadNeedleTokenizer func(string) (*needle.Tokenizer, error)
+	newNeedleRouter     func(*needle.Model) (*needle.Router, error)
+	buildRoute          func(NeedleRouterConfig) (RouteInference, *needle.Tokenizer, error)
+	registerRoute       func(*Jobs, *umcp.Server, string, execute.Limits, RouteInference, *needle.Tokenizer) error
 }
 
 func defaultModelsOffBuildOps() modelsOffBuildOps {
@@ -50,7 +57,11 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 		return j.RegisterModelsOffServer(s, surface, limits, nil)
 	}, access.OpenStore, func(ctx context.Context, s *access.Store, p []access.ConfiguredPrincipal, t map[string]string) error {
 		return s.Bootstrap(ctx, p, t)
-	}, os.LookupEnv, func(j *Jobs, s *umcp.Server) error { return j.RegisterAccessTools(s) }}
+	}, os.LookupEnv, func(j *Jobs, s *umcp.Server) error { return j.RegisterAccessTools(s) }, needle.Load, needle.LoadTokenizer, needle.NewRouter, nil, func(j *Jobs, s *umcp.Server, surface string, limits execute.Limits, inference RouteInference, tokenizer *needle.Tokenizer) error {
+		catalog, _ := NewCatalog(CatalogConfig{Surface: surface, RouteEnabled: true})
+		endpoint, _ := NewExecuteEndpoint(j, catalog, limits)
+		return (RouteEndpoint{Jobs: j, Router: inference, Tokenizer: tokenizer, Execute: endpoint}).Register(s)
+	}}
 }
 func BuildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options ModelsOffRuntimeOptions) (*Runtime, *umcp.Server, error) {
 	return buildModelsOffRuntime(ctx, config, options, defaultModelsOffBuildOps())
@@ -138,11 +149,44 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	if err != nil {
 		return nil, nil, err
 	}
+	if options.Needle.Enabled {
+		metadata.Catalog, _ = NewCatalog(CatalogConfig{Surface: options.Surface, RouteEnabled: true})
+	}
 	controls := &ProposalControls{Queue: ProposalQueue{Proposals: control.Proposals{DB: runtime.DB}, Paths: paths.Repository}, Random: rand.Reader, DerivedIndexPath: paths.DerivedDB, Staging: staging, MaxConceptBytes: config.Limits.MaxConceptBytes, Index: index, DefaultSearchMode: "lexical", Metadata: metadata, DerivedUpdate: manager.DerivedUpdate}
 	jobs := &Jobs{Controls: controls, Identity: identity, DBPath: paths.ControlDB}
 	server = umcp.NewServer("memento")
 	if err = ops.register(jobs, server, options.Surface, options.Limits); err != nil {
 		return nil, nil, err
+	}
+	if options.Needle.Enabled {
+		resolved := options.Needle.Resolved(ops.lookupEnv)
+		var routeInference RouteInference
+		var tokenizer *needle.Tokenizer
+		var loadErr error
+		if ops.buildRoute != nil {
+			routeInference, tokenizer, loadErr = ops.buildRoute(resolved)
+			if loadErr != nil {
+				return nil, nil, loadErr
+			}
+		} else {
+			model, modelErr := ops.loadNeedleModel(resolved.ModelPath)
+			loadErr = modelErr
+			if loadErr != nil {
+				return nil, nil, loadErr
+			}
+			tokenizer, loadErr = ops.loadNeedleTokenizer(resolved.TokenizerPath)
+			if loadErr != nil {
+				return nil, nil, loadErr
+			}
+			router, loadErr := ops.newNeedleRouter(model)
+			if loadErr != nil {
+				return nil, nil, loadErr
+			}
+			routeInference = router
+		}
+		if err = ops.registerRoute(jobs, server, options.Surface, options.Limits, routeInference, tokenizer); err != nil {
+			return nil, nil, err
+		}
 	}
 	if managed != nil {
 		if err = ops.registerAccess(jobs, server); err != nil {

@@ -33,17 +33,17 @@ func TestNeedleRouterConfig(t *testing.T) {
 	}
 }
 func TestDecodeNeedleConfig(t *testing.T) {
-	c, err := decodeNeedleConfig(nil)
+	c, err := DecodeNeedleRouterConfig(nil)
 	if err != nil || c != DefaultNeedleRouterConfig() {
 		t.Fatal(c, err)
 	}
 	raw := json.RawMessage(`{"enabled":false,"model_path":" /model ","tokenizer_path":"/tokenizer","ffi_library_path":"/ffi"}`)
-	c, err = decodeNeedleConfig(raw)
+	c, err = DecodeNeedleRouterConfig(raw)
 	if err != nil || c.ModelPath != "/model" {
 		t.Fatal(c, err)
 	}
 	for _, raw := range []json.RawMessage{[]byte(`{"extra":1}`), []byte(`{"model_path":""}`), []byte(`bad`)} {
-		if _, err = decodeNeedleConfig(raw); err == nil {
+		if _, err = DecodeNeedleRouterConfig(raw); err == nil {
 			t.Fatal(string(raw))
 		}
 	}

@@ -36,7 +36,7 @@ func (c NeedleRouterConfig) Resolved(lookup func(string) (string, bool)) NeedleR
 	}
 	return c
 }
-func decodeNeedleConfig(raw json.RawMessage) (NeedleRouterConfig, error) {
+func DecodeNeedleRouterConfig(raw json.RawMessage) (NeedleRouterConfig, error) {
 	c := DefaultNeedleRouterConfig()
 	if len(raw) == 0 {
 		return c, nil

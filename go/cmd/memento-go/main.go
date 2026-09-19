@@ -51,7 +51,12 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		return 1
 	}
 	limits := config.MCP.ExecuteLimits()
-	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: config.MCP.ToolSurface, Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig()})
+	needleConfig, configErr := service.DecodeNeedleRouterConfig(config.IntelligentTiers.NeedleRouter)
+	if configErr != nil {
+		fmt.Fprintln(stderr, "memento-go:", configErr)
+		return 1
+	}
+	runtime, server, err := buildRuntime(ctx, config, service.ModelsOffRuntimeOptions{Surface: config.MCP.ToolSurface, Limits: limits, Graph: config.Observability.GraphExplorer.HTTPConfig(), Needle: needleConfig})
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1
