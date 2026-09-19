@@ -1,0 +1,133 @@
+package service
+
+import (
+	"context"
+	"fmt"
+	"strings"
+	"testing"
+
+	"github.com/rcarmo/memento/go/access"
+	"github.com/rcarmo/memento/go/umcp"
+)
+
+func proposalTestLimits() ModelProposalLimitsConfig {
+	return ModelProposalLimitsConfig{MaxSearchResults: 5, MaxConsultedConcepts: 6, MaxContextChars: 64, MaxOutputChars: 8000, MaxDiffChars: 2000000, MaxChanges: 20, MaxBodyChars: 32000, MaxRationaleChars: 4000, MaxSecretEntropyChars: 32}
+}
+
+func proposalTestDraft(revision string) DreamProposalDraft {
+	return DreamProposalDraft{
+		Intent: "improve", Rationale: "because",
+		Consulted:      []map[string]any{{"id": "12345678", "path": "/a.md", "revision": revision, "title": "Title"}},
+		Contradictions: []map[string]any{}, ReciprocalLinks: []map[string]any{},
+		Changes: []map[string]any{{"kind": "patch", "path": "/a.md", "body": "changed"}},
+	}
+}
+
+func TestModelProposalArgumentsAndDisabled(t *testing.T) {
+	e := &ModelProposalEndpoint{}
+	if _, err := e.Freeform(context.Background(), map[string]any{}); err == nil || err.Error() != "content must be a string" {
+		t.Fatalf("freeform error = %v", err)
+	}
+	if _, err := e.Update(context.Background(), map[string]any{"instruction": "x", "target_hint": 1}); err == nil || err.Error() != "target_hint must be a string or null" {
+		t.Fatalf("update error = %v", err)
+	}
+	if _, err := e.Freeform(context.Background(), map[string]any{"content": "x"}); err == nil || err.Error() != "model-assisted proposals are disabled" {
+		t.Fatalf("disabled error = %v", err)
+	}
+}
+
+func TestModelProposalPromptBoundsUntrustedContent(t *testing.T) {
+	policy := access.EffectivePolicy{ReadPrefixes: []string{"/public/"}, WritePrefixes: []string{"/public/"}}
+	prompt := modelProposalPrompt("TASK", []consultedConcept{{"id", "/public/a.md", "rev", "Title", "0123456789"}}, policy, 96)
+	for _, want := range []string{"AUTHORIZED_WRITE_PREFIXES: /public/", "UNTRUSTED_CONCEPT_BEGIN", "01234"} {
+		if !strings.Contains(prompt, want) {
+			t.Fatalf("prompt missing %q: %s", want, prompt)
+		}
+	}
+	if strings.Contains(prompt, "0123456789\nUNTRUSTED_CONCEPT_END") {
+		t.Fatalf("context was not bounded: %s", prompt)
+	}
+}
+
+func TestValidateModelProposalDraft(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	policy := access.EffectivePolicy{Principal: "actor", Roles: []string{"proposer"}, ReadPrefixes: []string{"/"}, WritePrefixes: []string{"/"}}
+	consulted := []consultedConcept{{"12345678", "/a.md", revision, "Title", "body"}}
+	limits := proposalTestLimits()
+	if err := validateModelProposalDraft(controls.Queue.Paths.CurrentDir, revision, policy, consulted, proposalTestDraft(revision), limits); err != nil {
+		t.Fatal(err)
+	}
+	cases := []struct {
+		name     string
+		mutate   func(*DreamProposalDraft)
+		contains string
+	}{
+		{"missing citation", func(d *DreamProposalDraft) { d.Consulted = nil }, "cite every"},
+		{"wrong title", func(d *DreamProposalDraft) { d.Consulted[0]["title"] = "Other" }, "citations must match"},
+		{"archive", func(d *DreamProposalDraft) { d.Changes[0]["kind"] = "trash" }, "only create normal"},
+		{"reciprocal acl", func(d *DreamProposalDraft) {
+			d.ReciprocalLinks = []map[string]any{{"source_path": "/denied/a.md", "target_path": "/a.md", "justification": "x"}}
+		}, "cannot write"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			d := proposalTestDraft(revision)
+			if tc.name == "reciprocal acl" {
+				policy.WritePrefixes = []string{"/a.md"}
+			}
+			tc.mutate(&d)
+			err := validateModelProposalDraft(controls.Queue.Paths.CurrentDir, revision, policy, consulted, d, limits)
+			if err == nil || !strings.Contains(err.Error(), tc.contains) {
+				t.Fatalf("error = %v", err)
+			}
+		})
+	}
+}
+
+func TestModelProposalEndpointStoresAuthenticatedProposal(t *testing.T) {
+	jobs, revision := jobsTest(t)
+	model := &stubModelClient{response: ModelResponse{OutputText: fmt.Sprintf(`{"intent":"model intent","rationale":"because","consulted_concepts":[{"id":"12345678","path":"/a.md","revision":%q,"title":"Title"}],"contradictions":[],"reciprocal_links":[],"changes":[{"kind":"patch","path":"/a.md","body":"model changed"}]}`, revision)}}
+	config := DefaultModelProposalsConfig()
+	config.Enabled = true
+	endpoint := &ModelProposalEndpoint{Jobs: jobs, Client: model, Config: config}
+	server := umcp.NewServer("test")
+	if err := server.Tools.Register(umcp.Tool{Name: "model", Parameters: []umcp.Parameter{{Name: "instruction", Types: []umcp.ParamType{umcp.StringParam}}, {Name: "target_hint", Types: []umcp.ParamType{umcp.StringParam}, HasDefault: true, Default: nil}}, Call: endpoint.Update}); err != nil {
+		t.Fatal(err)
+	}
+	request := `{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"model","arguments":{"instruction":"improve it","target_hint":"/a.md"}}}`
+	response, err := server.Process(context.Background(), []byte(request), umcp.RequestContext{Principal: "actor", SessionID: "session"})
+	if err != nil || response == nil {
+		t.Fatalf("response=%#v err=%v", response, err)
+	}
+	// The bare test tool has no generated output schema/envelope adapter; its
+	// transport-level output validation may fail after the authenticated handler
+	// has completed. The durable record below is the endpoint assertion.
+	if len(model.requests) != 1 {
+		t.Fatalf("model requests = %d", len(model.requests))
+	}
+	got := model.requests[0]
+	if got.Task != "memory_proposal_draft" || got.SlotName != "proposal" || got.DataClassification != "restricted" || !strings.Contains(got.Prompt, "UNTRUSTED_INPUT_BEGIN\nimprove it") {
+		t.Fatalf("request = %#v", got)
+	}
+	rows := tableRows(t, jobs.Controls.Queue.Proposals.DB, `SELECT author_principal,intent,base_revision,status FROM proposals WHERE intent='model intent'`)
+	if len(rows) != 1 || rows[0]["author_principal"] != "actor" || rows[0]["base_revision"] != revision || rows[0]["status"] != "submitted" {
+		t.Fatalf("stored = %#v", rows)
+	}
+}
+
+func TestConsultModelProposalExactTarget(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	path := "/a.md"
+	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}, WritePrefixes: []string{"/"}}
+	got, gotRevision, err := consultModelProposalContext(context.Background(), controls, policy, &path, proposalTestLimits())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if gotRevision != revision || len(got) != 1 || got[0].ID != "12345678" || got[0].Path != path {
+		t.Fatalf("context = %#v revision=%s", got, gotRevision)
+	}
+	denied := access.EffectivePolicy{ReadPrefixes: []string{"/public/"}}
+	if _, _, err = consultModelProposalContext(context.Background(), controls, denied, &path, proposalTestLimits()); err == nil {
+		t.Fatal("expected exact target authorisation failure")
+	}
+}
