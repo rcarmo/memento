@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"github.com/rcarmo/memento/go/service"
 	"github.com/rcarmo/memento/go/umcp"
@@ -57,6 +58,40 @@ func TestRunServe(t *testing.T) {
 	runtime, server = stubRuntime(t)
 	if code := runContext(context.Background(), []string{"--config", "x", "serve", "--tcp", "--port", "1", "--max-request-bytes", "9", "--allowed-origin", "https://override"}, nil, io.Discard, io.Discard); code != 0 || strings.Join(got, " ") != "--tcp --port 1 --max-request-bytes 9 --allowed-origin https://override" {
 		t.Fatal(code, got)
+	}
+}
+
+type failingWriter struct{}
+
+func (failingWriter) Write([]byte) (int, error) { return 0, errors.New("write") }
+func TestRunStatus(t *testing.T) {
+	oldLoad, oldBuild := loadConfig, buildRuntime
+	t.Cleanup(func() { loadConfig, buildRuntime = oldLoad, oldBuild })
+	runtime, server := stubRuntime(t)
+	loadConfig = func(string) (service.RuntimeConfig, error) {
+		var c service.RuntimeConfig
+		c.SchemaVersion = 2
+		return c, nil
+	}
+	buildRuntime = func(context.Context, service.RuntimeConfig, service.ModelsOffRuntimeOptions) (*service.Runtime, *umcp.Server, error) {
+		return runtime, server, nil
+	}
+	var out, stderr bytes.Buffer
+	if code := runContext(context.Background(), []string{"--config", "x", "status"}, nil, &out, &stderr); code != 0 || stderr.Len() != 0 {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	var payload map[string]any
+	if err := json.Unmarshal(out.Bytes(), &payload); err != nil || payload["schema_version"] != float64(2) || payload["closed"] != false {
+		t.Fatal(payload, err)
+	}
+	runtime, server = stubRuntime(t)
+	if code := runContext(context.Background(), []string{"--config", "x", "status"}, nil, failingWriter{}, &stderr); code != 1 || !strings.Contains(stderr.String(), "write") {
+		t.Fatal(code, stderr.String())
+	}
+	runtime, server = stubRuntime(t)
+	runtime.Closers = []func() error{func() error { return errors.New("close") }}
+	if code := runContext(context.Background(), []string{"--config", "x", "status"}, nil, io.Discard, &stderr); code != 1 {
+		t.Fatal(code)
 	}
 }
 func TestDefaultRunServer(t *testing.T) {
