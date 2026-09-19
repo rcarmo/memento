@@ -1,6 +1,6 @@
 # Test gates for the Go port
 
-The reusable nested `go/umcp` module is independently verified: 100% library statement coverage, race detector, 13 fuzz targets, baseline amd64/ARM64 cross-builds, an offline clean-copy test, 22 byte-identical regenerated Python fixture families, a machine-checked 143-symbol pinned public API inventory, and a behavioral crosswalk for all 24 upstream test files. The pinned upstream suite passes 254/254 tests.
+The reusable nested `go/umcp` module is independently verified: 100% library statement coverage, race detector, 14 fuzz targets across the library and example command, baseline amd64/ARM64 cross-builds, an offline clean-copy test, 22 byte-identical regenerated Python fixture families, a machine-checked 143-symbol pinned public API inventory, and a behavioral crosswalk for all 24 upstream test files. The pinned upstream suite passes 254/254 tests.
 
 The synthesized comparative benchmark is documented in [benchmarks.md](benchmarks.md), with machine-readable evidence under `docs/evidence/go-python-models-off-benchmark-2026-09-19.json`. It verifies a stable corpus digest and equal 20-result cardinality before reporting rebuild and warm lexical-search latency.
 
@@ -14,7 +14,7 @@ Scalar remains the oracle/fallback; model constructors default to staggered auto
 
 ## Quality workflow
 
-The Go module exposes reproducible quality tiers through `go/Makefile`: `quality` runs format/layout checks, vet, pinned Staticcheck, tests, zero-uncovered coverage and pure-Go builds; `audit-fast` adds strict `govulncheck`; `audit` adds race, every discovered fuzz target and Linux amd64/arm64 cross-builds. Tools install under `build/go/tools`. Go 1.26.6 is the minimum secure toolchain because earlier Go 1.26 releases have reachable standard-library vulnerabilities.
+The Go module exposes reproducible quality tiers through `go/Makefile`: `quality` runs format/layout checks, a package-level fuzz coverage audit, vet, pinned Staticcheck, tests, zero-uncovered coverage and pure-Go builds; `audit-fast` adds strict `govulncheck`; `audit` adds race, every discovered fuzz target and Linux amd64/arm64 cross-builds. Every package containing production Go code in the root and nested uMCP modules must expose at least one meaningful fuzz target; the audit fails when a new runtime package lacks one. Tools install under `build/go/tools`. Go 1.26.6 is the minimum secure toolchain because earlier Go 1.26 releases have reachable standard-library vulnerabilities.
 
 ## Coverage is a gate, not a completion claim
 

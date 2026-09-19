@@ -56,10 +56,13 @@ func TestBenchmarkCLI(t *testing.T) {
 	if code := runCLI([]string{root, "1", "1"}, &out, io.Discard); code != 0 || !json.Valid(out.Bytes()) {
 		t.Fatal(code, out.String())
 	}
-	for _, args := range [][]string{{}, {root, "x", "1"}, {root, "1", "x"}, {root, "0", "1"}} {
+	for _, args := range [][]string{{}, {root, "x", "1"}, {root, "1", "x"}, {root, "0", "1"}, {root, "1", "0"}} {
 		if code := runCLI(args, io.Discard, io.Discard); code == 0 {
 			t.Fatal(args)
 		}
+	}
+	if code := runCLIWith([]string{root, "1", "1"}, io.Discard, io.Discard, func(string, int, int) (result, error) { return result{}, errors.New("run") }); code != 1 {
+		t.Fatal(code)
 	}
 	if code := runCLI([]string{root, "1", "1"}, badWriter{}, io.Discard); code != 1 {
 		t.Fatal(code)

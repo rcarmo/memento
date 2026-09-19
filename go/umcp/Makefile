@@ -34,7 +34,7 @@ coverage:
 	CGO_ENABLED=0 $(GO) test -covermode=atomic -coverprofile=../../build/go/umcp-coverage.out .
 	@awk 'NR>1 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' ../../build/go/umcp-coverage.out
 fuzz:
-	@for target in $$($(GO) test -list '^Fuzz' . | grep '^Fuzz'); do $(GO) test . -run '^$$' -fuzz "^$$target$$" -fuzztime "$${FUZZ_TIME:-10s}"; done
+	@for package in $$($(GO) list ./...); do for target in $$($(GO) test -list '^Fuzz' $$package | grep '^Fuzz'); do CGO_ENABLED=0 $(GO) test $$package -run '^$$' -fuzz "^$$target$$" -fuzztime "$${FUZZ_COUNT:-10000x}" -parallel "$${FUZZ_PARALLEL:-2}" -timeout "$${FUZZ_TIMEOUT:-120s}"; done; done
 cross:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) test -c -o /tmp/umcp-linux-amd64.test .
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) test -c -o /tmp/umcp-linux-arm64.test .

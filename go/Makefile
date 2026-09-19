@@ -10,7 +10,7 @@ PREFIX ?= /usr/local
 DESTDIR ?=
 VERSION ?= development
 
-.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check build race cross release release-check install coverage fuzz performance model-test simd-test corpus-test clean
+.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check fuzz-coverage build race cross release release-check install coverage fuzz performance model-test simd-test corpus-test clean
 help:
 	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz, performance-allocation and cross-build gates' 'tools       install pinned static-analysis tools under ../build/go/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck (correctness, style, simplification, unused)' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install all three host binaries under DESTDIR/PREFIX/bin'
 tools: $(STATICCHECK) $(GOVULNCHECK)
@@ -21,7 +21,7 @@ $(GOVULNCHECK):
 	@mkdir -p $(TOOLS_DIR)
 	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 check: quality
-quality: format-check layout-check vet lint test coverage umcp-check build
+quality: format-check layout-check fuzz-coverage vet lint test coverage umcp-check build
 audit-fast: quality vuln
 audit: audit-fast race fuzz performance cross
 format:
@@ -33,6 +33,8 @@ layout-check:
 	@test -z "$$(find cmd -mindepth 1 -maxdepth 1 -type f -print)" || (echo 'Place each command in cmd/<name>/'; exit 1)
 	@$(GO) list ./... >/dev/null
 	@$(GO) mod tidy -diff
+fuzz-coverage:
+	GO="$(GO)" ./tools/check-fuzz-coverage.sh
 vet:
 	CGO_ENABLED=0 $(GO) vet ./...
 lint: $(STATICCHECK)
@@ -50,7 +52,7 @@ coverage:
 	@awk 'NR>1 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' ../build/go/coverage.out
 fuzz:
 	GO="$(GO)" FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}" ./tools/run-fuzz.sh
-	$(MAKE) -C umcp fuzz FUZZ_TIME="$${UMCP_FUZZ_TIME:-10s}"
+	$(MAKE) -C umcp fuzz FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}"
 performance:
 	./tools/check-performance.sh
 

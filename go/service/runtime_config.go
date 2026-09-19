@@ -37,7 +37,11 @@ func LoadRuntimeConfig(path string) (RuntimeConfig, error) {
 	if err != nil {
 		return RuntimeConfig{}, err
 	}
+	return parseRuntimeConfig(raw)
+}
+func parseRuntimeConfig(raw []byte) (RuntimeConfig, error) {
 	decoder := json.NewDecoder(bytes.NewReader(raw))
+	var err error
 	decoder.DisallowUnknownFields()
 	config := RuntimeConfig{SchemaVersion: 2, Limits: defaultLimitsConfig(), MCP: defaultMCPConfig(), Observability: ObservabilityConfig{GraphExplorer: DefaultGraphExplorerConfig()}}
 	config.Repository.BundleRoot = "/"

@@ -37,9 +37,6 @@ func run(root string, rebuilds, searches int) (result, error) {
 }
 func runWithOps(root string, rebuilds, searches int, ops benchmarkOps) (result, error) {
 	ctx := context.Background()
-	if rebuilds < 1 || searches < 1 {
-		return result{}, fmt.Errorf("rebuilds and searches must be positive")
-	}
 	out := result{Runtime: "go", RebuildNS: []int64{}, SearchNS: []int64{}}
 	var index *derived.Index
 	for i := 0; i < rebuilds; i++ {
@@ -68,21 +65,32 @@ func runWithOps(root string, rebuilds, searches int, ops benchmarkOps) (result, 
 	}
 	return out, nil
 }
-func runCLI(args []string, out, stderr io.Writer) int {
+func parseBenchmarkArgs(args []string) (string, int, int, error) {
 	if len(args) != 3 {
-		fmt.Fprintln(stderr, "usage: memento-benchmark-go ROOT REBUILDS SEARCHES")
-		return 2
+		return "", 0, 0, fmt.Errorf("usage: memento-benchmark-go ROOT REBUILDS SEARCHES")
 	}
 	var rebuilds, searches int
 	if _, err := fmt.Sscan(args[1], &rebuilds); err != nil {
-		fmt.Fprintln(stderr, err)
-		return 2
+		return "", 0, 0, err
 	}
 	if _, err := fmt.Sscan(args[2], &searches); err != nil {
+		return "", 0, 0, err
+	}
+	if rebuilds < 1 || searches < 1 {
+		return "", 0, 0, fmt.Errorf("rebuilds and searches must be positive")
+	}
+	return args[0], rebuilds, searches, nil
+}
+func runCLI(args []string, out, stderr io.Writer) int {
+	return runCLIWith(args, out, stderr, run)
+}
+func runCLIWith(args []string, out, stderr io.Writer, execute func(string, int, int) (result, error)) int {
+	root, rebuilds, searches, err := parseBenchmarkArgs(args)
+	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 2
 	}
-	value, err := run(args[0], rebuilds, searches)
+	value, err := execute(root, rebuilds, searches)
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1

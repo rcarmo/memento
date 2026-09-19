@@ -55,7 +55,10 @@ func loadEnvironmentFile(path string) error {
 		return err
 	}
 	defer file.Close()
-	scanner := bufio.NewScanner(file)
+	return loadEnvironment(file, os.Setenv)
+}
+func loadEnvironment(input io.Reader, setenv func(string, string) error) error {
+	scanner := bufio.NewScanner(input)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if line == "" || strings.HasPrefix(line, "#") {
@@ -71,28 +74,37 @@ func loadEnvironmentFile(path string) error {
 		if len(value) >= 2 && ((value[0] == '\'' && value[len(value)-1] == '\'') || (value[0] == '"' && value[len(value)-1] == '"')) {
 			value = value[1 : len(value)-1]
 		}
-		_ = os.Setenv(name, value) // validated names cannot fail on supported hosts
+		if err := setenv(name, value); err != nil {
+			return err
+		}
 	}
 	return scanner.Err()
 }
-func runHealthcheck(args []string, stderr io.Writer) int {
+func parseHealthcheckArgs(args []string) (string, time.Duration, error) {
 	address, timeout := "127.0.0.1:8000", 2*time.Second
 	for len(args) > 0 {
 		if len(args) < 2 || (args[0] != "--address" && args[0] != "--timeout") {
-			usage(stderr)
-			return 2
+			return "", 0, errors.New("invalid healthcheck arguments")
 		}
 		if args[0] == "--address" {
 			address = args[1]
 		} else {
 			parsed, err := time.ParseDuration(args[1])
 			if err != nil || parsed <= 0 {
-				fmt.Fprintln(stderr, "memento-go: invalid healthcheck timeout")
-				return 2
+				return "", 0, errors.New("invalid healthcheck timeout")
 			}
 			timeout = parsed
 		}
 		args = args[2:]
+	}
+	return address, timeout, nil
+}
+func runHealthcheck(args []string, stderr io.Writer) int {
+	address, timeout, err := parseHealthcheckArgs(args)
+	if err != nil {
+		fmt.Fprintln(stderr, "memento-go:", err)
+		usage(stderr)
+		return 2
 	}
 	connection, err := dialHealthcheck("tcp", address, timeout)
 	if err != nil {

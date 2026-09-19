@@ -90,6 +90,9 @@ func TestEnvironmentFile(t *testing.T) {
 	if err := loadEnvironmentFile(filepath.Join(t.TempDir(), "missing")); err == nil {
 		t.Fatal("missing environment file")
 	}
+	if err := loadEnvironment(strings.NewReader("FAIL=x\n"), func(string, string) error { return errors.New("setenv") }); err == nil {
+		t.Fatal("setenv failure")
+	}
 	for _, args := range [][]string{{"--env-file", "", "--config", "x", "serve"}, {"--env-file", filepath.Join(t.TempDir(), "missing"), "--config", "x", "serve"}} {
 		if code := runContext(context.Background(), args, nil, io.Discard, io.Discard); code == 0 {
 			t.Fatal(args)
