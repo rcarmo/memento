@@ -2,12 +2,13 @@
 
 The live deployment runs on a Synology DiskStation with an Intel Celeron J3455 (Apollo Lake). That CPU supports SSE4.2 but not AVX, AVX2 or FMA.
 
-Memento's vector kernels select AVX2/FMA only after runtime feature detection. On the J3455 they use the scalar implementation automatically. The amd64 release build also sets Rust's target CPU to baseline `x86-64`, which prevents the GitHub runner's newer CPU features from leaking into ordinary generated code.
+Memento's vector kernels select CPU features at runtime. The released Rust image uses baseline x86-64 code on the J3455; the Go candidate selects its SSE2 backend because AVX2/FMA are unavailable. Both build paths prevent the GitHub runner's newer CPU features from leaking into ordinary baseline code.
 
 Before publishing any NAS candidate, the release workflow runs the amd64 image under QEMU's Westmere CPU model and checks:
 
-* SSE4.2 is visible;
+* SSE2/SSE4.2 are visible;
 * AVX2 and FMA are not visible;
+* the Go candidate selects `backend=sse2`;
 * GTE-small loads and produces a 384-value embedding;
 * the fine-tuned Needle router loads and produces one valid shallow action.
 

@@ -2,7 +2,7 @@
 
 Memento separates shared facts from an agent's chats, reminders and local maintenance state. I wrote it for independent Piclaw instances such as Smith and Flint, but any authenticated MCP client can use the same read, proposal, curation and asset contracts.
 
-The implementation is a Python daemon around a Git-backed Markdown repository, `control.sqlite` for operational state, and rebuildable search and graph indexes. Read, proposal and curation tools do not depend on optional model features.
+Memento has two implementations over the same Git-backed Markdown repository, `control.sqlite` operational state and rebuildable search/graph indexes: the released Python/Rust daemon and the verified CGO-free Go replacement candidate on branch `go`. Both keep read, proposal and curation tools independent from optional model features.
 
 The request and state transitions are collected in [Memento transition diagrams](diagrams.md). Accepted architecture decisions are indexed under [`docs/decisions/`](decisions/README.md).
 
@@ -274,7 +274,7 @@ Search modes are exact:
 * `semantic`
 * `hybrid`
 
-Lexical search uses weighted FTS5 fields. Semantic search uses the Rust GTE runtime when enabled and ready. Hybrid search uses deterministic reciprocal-rank fusion. If semantic components are degraded or unavailable, Memento reports warnings and falls back safely instead of blocking the repository. Progressive mode derives missing/stale paths from persisted rows and processes one concept through the same worker used by manual refresh.
+Lexical search uses weighted FTS5 fields. Semantic search uses GTE-small when enabled and ready: the released Python service loads the Rust runtime, while the Go candidate runs the original scalar Go algorithm with validated SIMD dispatch. Hybrid search uses deterministic reciprocal-rank fusion. If semantic components are degraded or unavailable, Memento reports warnings and falls back safely instead of blocking the repository. Progressive mode derives missing/stale paths from persisted rows and processes one concept through the same worker used by manual refresh.
 
 ### Implemented limits
 
@@ -697,9 +697,9 @@ Fallback applies to one model generation step, not to the whole agent run.
 
 ### Needle shallow router
 
-The passing shallow-action checkpoint is implemented as an opt-in embedded pure-Rust runtime behind `intelligent_tiers.needle_router.enabled`; it remains disabled by default. The NDL1 loader, pinned SentencePiece tokenizer, constrained generator, C ABI and Python wrapper use vendored offline artefacts, bounded output and cooperative cancellation.
+The passing shallow-action checkpoint is opt-in behind `intelligent_tiers.needle_router.enabled`; it remains disabled by default. The released Python daemon uses the embedded Rust runtime and C ABI. The Go candidate loads the same NDL1 model and SentencePiece tokenizer directly, with bounded output and cooperative cancellation.
 
-The full-plan attempt failed its gates. The shallow router passed all 360 untouched AMD64 held-out cases, scalar/SIMD parity, FFI lifecycle and cancellation tests, and a clean-container MCP SDK smoke. It can classify only fixed shallow actions. Deterministic code derives search text from the original request, accepts an exact read reference only when it appears verbatim in that request, validates fixed enums, and applies the normal service authorisation boundary. ARM64 has portable/NEON implementation coverage but still needs measured hardware performance evidence.
+The full-plan attempt failed its gates. The shallow router passes all 360 held-out cases, scalar/SIMD parity, FFI lifecycle and cancellation tests, and a clean-container MCP SDK smoke. The Go runtime also passes 360/360 exact output/error comparisons under NEON on `orangepi6plus.local`; performance and the corrected horizontal reduction are recorded in [`docs/evidence/go-real-model-simd-2026-09-19.json`](evidence/go-real-model-simd-2026-09-19.json). It can classify only fixed shallow actions. Deterministic code derives search text from the original request, accepts an exact read reference only when it appears verbatim in that request, validates fixed enums, and applies the normal service authorisation boundary.
 
 ## Security invariants
 
@@ -720,7 +720,7 @@ The repository, transaction, proposal, indexing, MCP, model, access-management, 
 
 The operator-managed DiskStation deployment serves authenticated MCP clients from the pinned multi-architecture container, persists Git/control/derived state, exposes the trusted-LAN graph debugger and has exercised distinct managed principals, namespace filtering, curator proposal review/apply (including same-principal authorship), asset publication/retrieval and container replacement. Published releases carry immutable OCI digests and BuildKit provenance attestations.
 
-Remaining operational gaps are collected in [`PLAN.md`](../PLAN.md): enforcement of the requested production PIDs limit, a clean-host production restore drill, real ARM64 performance measurements, an attached SBOM and TLS before any exposure beyond the trusted LAN. The systemd units and reverse-proxy example remain reference configurations rather than claims of production parity.
+Remaining operational gaps are collected in [`PLAN.md`](../PLAN.md): enforcement of the requested production PIDs limit, a clean-host production restore drill, an attached SBOM and TLS before any exposure beyond the trusted LAN. The systemd units and reverse-proxy example remain reference configurations rather than claims of production parity.
 
 ## Dynamic access plane
 

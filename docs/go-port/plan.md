@@ -1,5 +1,7 @@
 # Implementation sequence and decisions
 
+> Status: completed on branch `go`. This document preserves the staged plan and the constraints used during implementation; current behaviour and remaining deliberate differences are recorded in [the parity matrix](parity.md).
+
 ## Phase 0: pinned references and failing gaps
 
 Create the isolated `go` branch/worktree, pure-Go module, coverage gates, reference snapshots and this matrix. Capture public uMCP helper/schema behaviour and Rust numerical fixtures from known revisions. The initial command must identify itself as incomplete. Keep production and the separate Vulkan worktree untouched.

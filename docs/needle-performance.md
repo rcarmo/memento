@@ -18,16 +18,20 @@ The 2026-07-18 release build was pinned with `taskset -c 0` to one logical CPU o
 
 Per-request latency excludes initial model and tokenizer loading. Wall time, throughput and peak RSS include loading. CPU frequency and host contention were not fixed, so the values are observations from this host, not portable guarantees. The machine-readable record is [`evidence/needle/rust-router-single-core-i7-12700.json`](evidence/needle/rust-router-single-core-i7-12700.json).
 
+## Pure-Go ARM64 result
+
+The accepted Go candidate was also measured on `orangepi6plus.local` (CIX P1 CD8160, four Cortex-A520 plus eight Cortex-A720 cores). The fixed NEON backend passes the five real generation cases and the complete 360-case corpus with exact Rust output/error matches. The five-case package run took 27.292 s under NEON versus 26.125 s scalar; the full NEON corpus took 2001.84 s. Needle does not benefit materially from the current dot/AXPY kernels, even though the 384-element dot microbenchmark improves by roughly 1.8x. See [`go-port/simd.md`](go-port/simd.md) and the [machine-readable record](evidence/go-real-model-simd-2026-09-19.json).
+
 ## Planning projections
 
-These ranges are capacity-planning estimates anchored to the measured i7-12700 result. They are not benchmark results. Actual latency depends on clock policy, cache, memory bandwidth, compiler target, thermal limits, prompt length and generated token count. Validate on the deployment hardware before setting an SLO.
+These ranges were capacity-planning estimates anchored to the measured Rust i7-12700 result. They are retained for historical comparison, not as Go runtime benchmarks. Actual latency depends on clock policy, cache, memory bandwidth, compiler target, thermal limits, prompt length and generated token count. Validate on the deployment hardware before setting an SLO.
 
 | CPU class | Expected warm p50 | Expected serial throughput | Rationale |
 |---|---:|---:|---|
 | Recent Intel P-core (Alder/Raptor/Meteor class, AVX2/FMA) | 0.45-0.65 s | 1.5-2.2 req/s | Closest to measured host; clock and cache dominate variance. |
 | Recent AMD Zen 3/4/5 core (AVX2/FMA) | 0.40-0.65 s | 1.5-2.5 req/s | Similar SIMD width; newer cores may improve scalar/front-end work and memory access. |
 | Older Intel Haswell/Skylake core (AVX2/FMA) | 0.65-1.00 s | 1.0-1.5 req/s | Lower IPC/clock and smaller effective cache than the measured P-core. |
-| ARM server core (Neoverse N1/V1/N2 class, NEON) | 0.60-1.00 s | 1.0-1.7 req/s | Native NEON path exists, but narrower vectors and platform clocks vary widely. |
+| ARM server core (Neoverse N1/V1/N2 class, NEON) | 0.60-1.00 s | 1.0-1.7 req/s | Historical estimate; the measured CIX P1 end-to-end Go router is much slower despite a faster dot kernel. |
 | Apple M-series performance core under Linux/macOS-equivalent native build (NEON) | 0.40-0.70 s | 1.4-2.5 req/s | Strong single-core and memory subsystem; no repository hardware measurement yet. |
 | Modern ARM SBC performance core (Cortex-A76/A78 class, NEON) | 1.0-1.8 s | 0.55-1.0 req/s | Lower sustained clock and bandwidth; thermal throttling can widen the range. |
 | Low-power x86 core (Atom-class or older mobile AVX2) | 1.2-2.5 s | 0.4-0.8 req/s | Lower single-thread IPC and sustained clock despite AVX2 availability. |

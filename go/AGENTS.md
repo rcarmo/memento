@@ -1,6 +1,6 @@
 # Pure-Go port
 
-This subtree is an in-progress end-to-end port, not a production replacement. The repository-level `AGENTS.md` still applies.
+This subtree is the verified end-to-end pure-Go replacement candidate. Production rollout remains separately authorised; the repository-level `AGENTS.md` still applies.
 
 ## Runtime and parity boundaries
 
@@ -8,7 +8,7 @@ This subtree is an in-progress end-to-end port, not a production replacement. Th
 * Core service operations must not shell out to Git. Use pure-Go Git code and prove equivalent compare-and-swap, locking, object/ref and crash-recovery behaviour.
 * Preserve observable Python/uMCP behaviour, ordering, diagnostics and security boundaries. Do not silently reinterpret reference behaviour while porting.
 * Keep `go/umcp` generic. Memento identity, policy, persistence, execution and managed access belong in service packages and use public uMCP APIs.
-* Scalar float32 reference inference remains the baseline: no assembly, SIMD, quantisation, GPU work, fast-math or speculative parallelism until parity is complete.
+* Scalar float32 inference remains the correctness oracle. SIMD changes require scalar differential tests, real-model gates and architecture-specific measurements; quantisation, GPU work and fast-math remain separate projects.
 * Python and Rust are pinned fixture oracles only. Go tests and builds consume checked-in synthetic/public fixtures without requiring either runtime.
 
 ## Go design rules

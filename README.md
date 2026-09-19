@@ -79,14 +79,23 @@ The debugger is disabled by default and unauthenticated when enabled. It is mean
 
 Memento supports Python 3.12-3.14 and ships as a non-root multi-architecture container. Start with [`examples/config.v1.json`](examples/config.v1.json), set `MEMENTO_ADMIN_MASTER_KEY`, then use [`docs/operations.md`](docs/operations.md) for deployment, health checks, backup and recovery. [`docs/access-management.md`](docs/access-management.md) covers the dedicated admin/curator profile split, Piclaw and Pi MCP configuration, `/admin`, direct MCP access tools, one-time credentials and explicit container master-key rotation.
 
-For development:
+For development of the released Python/Rust line:
 
 ```bash
 make install-dev
 make check
 ```
 
-Tagged images are published at `ghcr.io/rcarmo/memento`. The DiskStation profile, including the scalar Intel J3455 path, is in [`docs/diskstation.md`](docs/diskstation.md).
+The completed pure-Go candidate lives under `go/` and builds three static binaries:
+
+```bash
+make -C go audit
+make -C go release-check
+```
+
+`memento-go` is the daemon and maintenance CLI, `memento-embed-go` is the framed GTE worker, and `memento-skill-import-go` installs recalled skill packs. The [Go-port index](docs/go-port/README.md) records compatibility boundaries and model/SIMD results. Production replacement is a separate operator decision; tagged Python/Rust images continue to be published at `ghcr.io/rcarmo/memento` until that switch is made.
+
+The DiskStation profile and its J3455 baseline constraints are in [`docs/diskstation.md`](docs/diskstation.md).
 
 Client setup guides cover [Pi](docs/setup-pi.md), [Piclaw](docs/setup-piclaw.md) and [Codex](docs/setup-codex.md).
 

@@ -17,12 +17,18 @@ This document covers Docker, Compose, systemd and reverse-proxy deployments. The
 
 ## CLI
 
-* `memento --config CONFIG serve`
-* `memento --config CONFIG status [--format json|prometheus]`
-* `memento --config CONFIG audit [--path /bundle/path.md]`
-* `memento --config CONFIG rebuild-index`
-* `memento --config CONFIG backup --output DIR`
-* `memento --config CONFIG restore --input DIR [--no-rebuild-derived]`
+The released Python entry point is `memento`; the Go candidate uses `memento-go`. They share the same operational command families:
+
+* `COMMAND --config CONFIG serve`
+* `COMMAND --config CONFIG status [--format json|prometheus|graphite] [--graphite-prefix PREFIX]`
+* `COMMAND --config CONFIG audit [--path /bundle/path.md]`
+* `COMMAND --config CONFIG rebuild-index`
+* `COMMAND --config CONFIG backup --output DIR`
+* `COMMAND --config CONFIG restore --input DIR [--no-rebuild-derived]`
+* `COMMAND --config CONFIG rotate-master-key`
+* `COMMAND --config CONFIG dream [--mode disabled|report_only|propose]`
+
+Use the binary that belongs to the selected release; do not mix maintenance commands from one implementation with a running daemon from the other.
 
 ## Live vs offline operator use
 
@@ -36,7 +42,7 @@ Practical rule:
 
 ## Logging
 
-Commands emit structured JSON logs to stderr. JSON command results go to stdout. In Prometheus mode, `status --format prometheus` writes only metrics text to stdout and keeps structured logs on stderr, so a scraper or shell redirect gets clean exposition output.
+Commands emit structured JSON logs to stderr. JSON command results go to stdout. Prometheus and Graphite modes write only metrics text to stdout and keep structured logs on stderr, so a scraper or shell redirect gets clean output.
 
 Common secret-bearing keys such as `authorization`, `token`, `password`, `secret` and `api_key` are redacted, which is the bare minimum for anything that might end up in journald or a central log sink.
 
@@ -51,7 +57,7 @@ Common secret-bearing keys such as `authorization`, `token`, `password`, `secret
 * `memento_proposal_backlog`
 * `memento_repo_revision_info`
 
-Because the CLI status path also needs the writer lease, use it for offline inspection or one-shot scrape jobs against a stopped instance. For live status, use MCP.
+`status --format graphite` emits the five numeric operational gauges as Carbon plaintext with one Unix timestamp and a validated prefix (default `memento`). Because either CLI status path needs the writer lease, use it for offline inspection or one-shot scrape jobs against a stopped instance. For live status, use MCP.
 
 ## Asset-pack storage
 

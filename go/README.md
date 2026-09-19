@@ -2,12 +2,12 @@
 
 This directory is a standalone Go module for the pure-Go Memento port. It builds with `CGO_ENABLED=0`; Python and Rust are test-oracle tools, not runtime dependencies.
 
-The port is not yet the default Memento daemon. [`../docs/go-port/parity.md`](../docs/go-port/parity.md) tracks implemented behaviour and remaining gaps.
+The module is the verified replacement candidate on branch `go`; selecting it for a production deployment remains an operator release decision. [`../docs/go-port/parity.md`](../docs/go-port/parity.md) records matched behaviour, explicit typed-boundary differences and deferred non-baseline work.
 
 ## Commands
 
-* `cmd/memento-go` runs the pure-Go service daemon and operational status, rebuild, audit, backup/restore, key-rotation and Dream report-only commands. Dream propose mode remains fail-closed.
-* `cmd/memento-embed-go` exposes scalar GTE inference through Memento's framed embedding-worker protocol.
+* `cmd/memento-go` runs the pure-Go service daemon and operational status, rebuild, audit, backup/restore, key-rotation and Dream commands. Model-backed modes require their configured provider slots and fail closed otherwise.
+* `cmd/memento-embed-go` exposes pure-Go GTE inference through Memento's framed embedding-worker protocol, using automatic AVX2/SSE2/NEON/scalar dispatch unless overridden.
 * `cmd/memento-skill-import-go` validates and atomically imports recalled skill packs into a workspace.
 
 Command packages contain process concerns only. Reusable code belongs in library packages.
@@ -34,10 +34,8 @@ Build artefacts go to `../build/go`, outside this module tree.
 ## Checks
 
 ```bash
-make check
-make race
-make fuzz
-make cross
+make audit
+make release-check
 make release VERSION=0.5.9-go1 SOURCE_DATE_EPOCH=0
 make release-check VERSION=0.5.9-go1 SOURCE_DATE_EPOCH=0
 make install DESTDIR=/tmp/package-root PREFIX=/usr/local

@@ -22,7 +22,7 @@ The Rust implementation under `rust/` includes code derived from and validated a
 
 ## Go SIMD kernels
 
-The opt-in Go SIMD dot/AXPY substrate under `go/internal/simd` is informed by the MIT-licensed [`rcarmo/go-gte`](https://github.com/rcarmo/go-gte) assembly design and retains scalar correctness fallbacks. Memento adds baseline amd64 SSE2, runtime-gated AVX2, and ARM64 NEON variants plus explicit runtime selection and differential tests. The upstream MIT licence is retained in the repository's existing attribution chain; these kernels are not enabled for model inference until scalar/corpus parity and architecture benchmarks pass.
+The opt-in Go SIMD dot/AXPY substrate under `go/internal/simd` is informed by the MIT-licensed [`rcarmo/go-gte`](https://github.com/rcarmo/go-gte) assembly design and retains scalar correctness fallbacks. Memento adds baseline amd64 SSE2, runtime-gated AVX2, and ARM64 NEON variants plus explicit runtime selection and differential tests. The upstream MIT licence is retained in the repository's existing attribution chain. Automatic model dispatch was enabled after scalar/corpus parity and x86-64/ARM64 architecture benchmarks passed; `MEMENTO_SIMD=scalar` retains the exact-order oracle.
 
 ## GTE-small model
 

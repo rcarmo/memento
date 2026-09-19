@@ -26,7 +26,7 @@ Git owns knowledge. The control database owns durable operation state. Derived i
 
 ## Model and storage architecture
 
-Memento uses small specialist models behind deterministic boundaries. GTE-small embeds concepts for semantic retrieval. The Rust Needle router classifies shallow read requests. Optional completion-model slots handle answer synthesis, proposal drafting and Dream drafts; they never own policy or persistence.
+Memento uses small specialist models behind deterministic boundaries. GTE-small embeds concepts for semantic retrieval, and Needle classifies shallow read requests. The released Python service uses Rust runtimes; the Go replacement runs both models directly in pure Go. Optional completion-model slots handle answer synthesis, proposal drafting and Dream drafts; they never own policy or persistence.
 
 ```mermaid
 flowchart LR
@@ -35,8 +35,8 @@ flowchart LR
     surface --> deterministic[Deterministic service methods]
 
     subgraph localModels[Local embedded models]
-        needle[Needle shallow router<br/>26M params / Rust FFI]
-        gte[GTE-small embedder<br/>384d / Rust FFI]
+        needle[Needle shallow router<br/>26M params / Rust or pure Go]
+        gte[GTE-small embedder<br/>384d / Rust or pure Go]
     end
 
     subgraph optionalModels[Optional completion-model slots]
@@ -119,7 +119,7 @@ Administrative `access_*` tools are direct tools, outside execute plans. See [ac
 
 ## Needle router lifecycle
 
-Needle has two distinct histories: the failed full-plan attempt and the successful shallow router. The router now runs through the embedded Rust FFI runtime; ARM64 performance evidence remains a deployment follow-up.
+Needle has two distinct histories: the failed full-plan attempt and the successful shallow router. The released Python daemon uses the embedded Rust FFI runtime; the Go candidate uses the pure-Go NDL1/SentencePiece implementation. Both preserve the same deterministic shallow-action boundary, and the Go runtime has real x86-64 and ARM64 model/corpus results.
 
 ```mermaid
 stateDiagram-v2
@@ -133,10 +133,11 @@ stateDiagram-v2
     ShallowRouterDesign --> ShallowRouterFineTuned: family-separated shallow corpus
     ShallowRouterFineTuned --> RouterCheckpointPassed: 100% AMD64 held-out routing and UNKNOWN gates
     RouterCheckpointPassed --> RustPort: NDL1 conversion and scalar parity
-    RustPort --> SimdOptimised: AVX2/FMA and NEON kernels
-    SimdOptimised --> Enabled: 360-case FFI parity and MCP smoke pass
+    RustPort --> GoPort: pure-Go NDL1, SentencePiece and scalar inference
+    GoPort --> SimdOptimised: SSE2, AVX2/FMA and NEON kernels
+    SimdOptimised --> Enabled: 360-case exact parity and MCP smoke pass
     Enabled --> Disabled: runtime or model parity regression
-    Disabled --> RustPort: corrected runtime available
+    Disabled --> GoPort: corrected runtime available
 ```
 
 The current repository state is `Enabled` when `intelligent_tiers.needle_router.enabled` is true. The default remains disabled so deployments opt into the extra model load explicitly.
@@ -181,10 +182,10 @@ sequenceDiagram
     participant Client as Piclaw / MCP client
     participant MCP as uMCP transport
     participant Policy as Auth and namespace policy
-    participant Router as Rust Needle router
+    participant Router as Needle router
     participant Service as Memento service
     participant Search as FTS / graph / vector index
-    participant GTE as Rust GTE embedder
+    participant GTE as GTE embedder
     participant Answer as Optional answer model
 
     Client->>MCP: initialize and discover compact tools

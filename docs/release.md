@@ -1,8 +1,10 @@
 # Release
 
-The release path validates Python, Rust, the wheel and the container, then publishes tagged multi-architecture images and a GitHub release.
+The released Python/Rust path validates the reference implementation, wheel and container before publishing tagged multi-architecture images. The Go candidate has a separate reproducible static-archive path; switching the production OCI image to it remains an explicit release decision.
 
 ## Local release checklist
+
+For the released Python/Rust line:
 
 * `make install-dev`
 * `make check`
@@ -12,9 +14,18 @@ The release path validates Python, Rust, the wheel and the container, then publi
 * `make diff-check`
 * build and smoke the release container with a fresh non-root state directory
 
+For the Go candidate:
+
+* `make -C go audit`
+* `make -C go release-check VERSION=<version> SOURCE_DATE_EPOCH=<epoch>`
+* inspect the generated amd64/arm64 archives and their SHA-256 manifests
+* smoke the selected binary against a disposable state copy before any production replacement
+
 ## Packaging notes
 
-The base images are pinned Debian Bookworm manifests: Rust 1.88 for the builder and Python 3.12 for the runtime. amd64 Rust code targets baseline x86-64; AVX2/FMA and NEON kernels are selected at runtime. The release pipeline runs the amd64 image under a no-AVX Westmere CPU model before publishing the manifest. See [ADR 0008](decisions/0008-build-for-baseline-cpus.md).
+The existing OCI path uses pinned Debian Bookworm manifests: Rust 1.88 for the builder and Python 3.12 for the runtime. amd64 Rust code targets baseline x86-64; AVX2/FMA and NEON kernels are selected at runtime. The image pipeline runs the amd64 image under a no-AVX Westmere CPU model before publishing the manifest.
+
+The Go path produces reproducible, stripped, static Linux archives for amd64-v1 and arm64. Each contains `memento-go`, `memento-embed-go`, `memento-skill-import-go`, a version marker and a sorted SHA-256 manifest. Release checks verify architecture, exact layout, checksums, absence of ELF `NEEDED` entries and a native version smoke test. Automatic inference dispatch is AVX2 -> SSE2 -> NEON -> scalar. See [ADR 0008](decisions/0008-build-for-baseline-cpus.md).
 
 * The Python wheel contains the service and the client-side skill import command. Platform-specific Rust libraries are built separately.
 * The container packages the Rust GTE and Needle runtimes, release-prepared models and Git. Accepted versioned asset ZIPs are ordinary Git blobs.

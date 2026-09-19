@@ -6,7 +6,7 @@ Semantic search is optional and rebuildable. FTS5 stays the default because it i
 
 ## What operators decide
 
-* Enable semantic search only when the local Rust stack and model artefacts are in place.
+* Enable semantic search only when the selected runtime and model artefact are in place. The released Python service needs its Rust libraries; the Go candidate loads the GTE1 model directly.
 * Keep `lexical` as the default unless benchmark data says otherwise.
 * Use the vendored model at `models/gte/gte-small.gtemodel` unless an explicitly reviewed replacement is configured. The container image copies that file to `/usr/local/share/memento/models/gte-small.gtemodel` and exports matching default environment variables.
 
@@ -36,11 +36,15 @@ For an ETA, measure completion or ready-row changes over time. The configured 30
 
 ## Components
 
-* `memento-gte`: GTE1 FP32 model parser, tokenizer and inference.
-* `memento-vector`: packed float32 validation and scalar/SIMD cosine kernels.
-* `memento-ffi`: stable C ABI loaded from Python with `ctypes`.
-* `memento-sqlite-vector`: loadable SQLite extension exposing `vector_cosine`, `vector_dimensions` and `vector_is_valid`.
+The released Python service uses:
+
+* `memento-gte`: Rust GTE1 FP32 model parser, tokenizer and inference;
+* `memento-vector`: packed float32 validation and scalar/SIMD cosine kernels;
+* `memento-ffi`: stable C ABI loaded from Python with `ctypes`;
+* `memento-sqlite-vector`: loadable SQLite extension exposing `vector_cosine`, `vector_dimensions` and `vector_is_valid`;
 * `memento-embed`: framed subprocess fallback for process isolation.
+
+The Go replacement uses `go/gte`, `go/internal/simd` and `cmd/memento-embed-go`; it needs no C ABI or SQLite extension.
 
 ## Configuration
 
@@ -107,4 +111,4 @@ PYTHONPATH=src .venv/bin/python tools/load_test.py \
 
 ## Remaining measurements
 
-The release container and DiskStation profile have verified packaged model loading, 384-dimensional output, persisted-vector reuse, progressive refresh, memory limits and scalar J3455 operation. A repeatable production semantic-search latency/throughput report and real ARM64 hardware measurements remain outstanding.
+The release container and DiskStation profile have verified packaged model loading, 384-dimensional output, persisted-vector reuse, progressive refresh, memory limits and J3455 operation. The Go candidate also has real x86-64 and ARM64 scalar/SIMD model measurements in [`go-port/simd.md`](go-port/simd.md). A repeatable production semantic-search latency/throughput report remains outstanding.

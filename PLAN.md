@@ -7,7 +7,7 @@ Memento's repository, transaction, MCP, proposal, search, model, debugger and co
 
 ## Pure Go replacement branch
 
-The user authorised an end-to-end pure Go port on branch `go`, with 1:1 behaviour and full test coverage before SIMD optimisation. [Port index](docs/go-port/README.md), [parity matrix](docs/go-port/parity.md) and [test gates](docs/go-port/testing.md) track this independently of the production delivery ledger. Current Go foundations do not constitute a working MCP server or model runtime. Python/Rust remain pinned test oracles until the complete replacement is verified.
+The end-to-end pure-Go replacement on branch `go` is complete and verified. [Port index](docs/go-port/README.md), [parity matrix](docs/go-port/parity.md), [test gates](docs/go-port/testing.md) and [SIMD results](docs/go-port/simd.md) record the accepted boundaries. The daemon, standalone uMCP module, storage/recovery, GTE, Needle, intelligent service handlers and release tooling build with `CGO_ENABLED=0`; Python and Rust remain pinned test oracles rather than runtime dependencies. Production replacement is still a separately authorised release operation.
 
 ## Working Rules
 
@@ -52,7 +52,6 @@ The user authorised an end-to-end pure Go port on branch `go`, with 1:1 behaviou
 
 ## Remaining Live Work
 
-* Repeat model performance checks on a real ARM64 host.
 * Enforce or explain the missing production PIDs limit requested by the DiskStation Compose profile.
 * Decide when to enable protected read prefixes on the existing DiskStation configuration and migrate broad-reader grants explicitly.
 * Run a live restore drill for the selected primary deployment path.
@@ -64,4 +63,4 @@ The user authorised an end-to-end pure Go port on branch `go`, with 1:1 behaviou
 * Revision playback and animated graph diffs
 * Split comparison between relationship/force configurations
 * Standalone interactive graph export
-* ARM64 embedded-runtime measurements for Needle
+* Evaluate the Mali-G720 Vulkan path separately from the accepted CPU baseline

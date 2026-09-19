@@ -1,10 +1,10 @@
 # Memento documentation
 
-Use the workflow guides for agent tasks, the contracts for exact arguments and the operations guide for service administration.
+Use the workflow guides for agent tasks, the contracts for exact arguments and the operations guide for service administration. Current operational pages describe the released Python/Rust line and the verified Go replacement candidate explicitly; dated evidence, ADRs and completed work items preserve the state at the time they were written.
 
-## Development branch: pure Go port
+## Pure-Go replacement candidate
 
-The [`go` branch port index](go-port/README.md) tracks end-to-end compatibility, the pinned uMCP reference, scalar GTE/Needle plans and strict coverage gates. This is not yet a deployable replacement.
+The [`go` branch port index](go-port/README.md) documents the completed CGO-free daemon, standalone uMCP module, storage/recovery implementation, GTE/Needle runtimes, SIMD results and strict quality gates. Production replacement remains an operator release decision rather than an automatic consequence of branch completion.
 
 ## Connect a client
 
