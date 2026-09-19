@@ -117,7 +117,39 @@ func TestRunDream(t *testing.T) {
 	if code := runContext(context.Background(), []string{"--config", "x", "dream"}, nil, io.Discard, &stderr); code != 1 {
 		t.Fatal(code)
 	}
-	for _, args := range [][]string{{"--config", "x", "dream", "--mode", "propose"}, {"--config", "x", "dream", "--mode", "bad"}, {"--config", "x", "dream", "extra"}} {
+	stderr.Reset()
+	loadConfig = func(string) (service.RuntimeConfig, error) { return service.RuntimeConfig{}, nil }
+	if code := runContext(context.Background(), []string{"--config", "x", "dream", "--mode", "propose"}, nil, io.Discard, &stderr); code != 1 || !strings.Contains(stderr.String(), "configured dream model provider") {
+		t.Fatal(code, stderr.String())
+	}
+	for _, field := range []string{"ModelProposals", "ModelProviderSlots"} {
+		stderr.Reset()
+		loadConfig = func(string) (service.RuntimeConfig, error) {
+			tiers := service.IntelligentTiersConfig{}
+			if field == "ModelProposals" {
+				tiers.ModelProposals = []byte(`{"x":1}`)
+			} else {
+				tiers.ModelProviderSlots = []byte(`{"x":1}`)
+			}
+			return service.RuntimeConfig{IntelligentTiers: tiers}, nil
+		}
+		if code := runContext(context.Background(), []string{"--config", "x", "dream"}, nil, io.Discard, &stderr); code != 1 {
+			t.Fatal(field, code)
+		}
+	}
+	loadConfig = func(string) (service.RuntimeConfig, error) {
+		return service.RuntimeConfig{IntelligentTiers: service.IntelligentTiersConfig{ModelProviderSlots: []byte(`{"dream":{"primary":{"base_url":"http://localhost","api_format":"openai","model":"m"},"allowed_data_classifications":["restricted"]}}`)}}, nil
+	}
+	buildRuntime = func(_ context.Context, _ service.RuntimeConfig, options service.ModelsOffRuntimeOptions) (*service.Runtime, *umcp.Server, error) {
+		if options.ModelClient == nil {
+			t.Fatal("client")
+		}
+		return nil, nil, errors.New("built")
+	}
+	if code := runContext(context.Background(), []string{"--config", "x", "dream", "--mode", "propose"}, nil, io.Discard, io.Discard); code != 1 {
+		t.Fatal(code)
+	}
+	for _, args := range [][]string{{"--config", "x", "dream", "--mode", "bad"}, {"--config", "x", "dream", "extra"}} {
 		if code := runContext(context.Background(), args, nil, io.Discard, io.Discard); code != 2 {
 			t.Fatal(args, code)
 		}

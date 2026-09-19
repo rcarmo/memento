@@ -27,6 +27,8 @@ type Runtime struct {
 	AuditPrincipals       func(context.Context) ([]AuditPrincipal, error)
 	ProtectedReadPrefixes []string
 	Dream                 DreamConfig
+	ModelClient           ModelClient
+	ModelProposals        ModelProposalsConfig
 
 	mu     sync.Mutex
 	closed bool

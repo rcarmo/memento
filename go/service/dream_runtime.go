@@ -38,9 +38,13 @@ func (r *Runtime) runDream(ctx context.Context, mode string, now time.Time, ops 
 	if mode == "disabled" {
 		return map[string]any{"ok": true, "mode": mode, "state": "disabled"}, nil
 	}
-	if mode != "report_only" {
-		return nil, errors.New("dream propose mode is not supported")
+	if mode != "report_only" && mode != "propose" {
+		return nil, errors.New("dream mode must be disabled, report_only, or propose")
 	}
+	if mode == "propose" && r.ModelClient == nil {
+		return nil, errors.New("dream propose requires a configured model provider")
+	}
+	started := time.Now()
 	revision, err := ops.revision(r.Paths.Repository)
 	if err != nil {
 		return nil, err
@@ -99,7 +103,16 @@ func (r *Runtime) runDream(ctx context.Context, mode string, now time.Time, ops 
 	if err != nil {
 		return nil, failed(err)
 	}
-	if _, err = ops.finish(ctx, claim.Record.RunID, "succeeded", &revision, len(signals), 0, nil, nil); err != nil {
+	proposalCount := 0
+	var modelChain []control.ModelAttempt
+	if mode == "propose" {
+		remaining := time.Duration(r.Dream.Budgets.MaxRuntimeSeconds*float64(time.Second)) - time.Since(started)
+		proposalCount, modelChain, err = r.generateDreamProposal(ctx, actionable, revision, remaining, now)
+		if err != nil {
+			return nil, failed(err)
+		}
+	}
+	if _, err = ops.finish(ctx, claim.Record.RunID, "succeeded", &revision, len(signals), proposalCount, modelChain, nil); err != nil {
 		return nil, err
 	}
 	if err = ops.setState(ctx, r.DB, "last_dream_revision", revision); err != nil {
@@ -113,5 +126,5 @@ func (r *Runtime) runDream(ctx context.Context, mode string, now time.Time, ops 
 	for _, signal := range all {
 		payload = append(payload, map[string]any{"type": signal.SignalType, "status": signal.Status, "dedupe_key": signal.DedupeKey, "entities": append([]string{}, signal.EntityRefs...)})
 	}
-	return map[string]any{"ok": true, "mode": mode, "state": "succeeded", "run_id": claim.Record.RunID, "window_key": window, "repo_revision": revision, "signal_count": len(signals), "actionable_signal_count": len(actionable), "proposal_count": 0, "signals": payload}, nil
+	return map[string]any{"ok": true, "mode": mode, "state": "succeeded", "run_id": claim.Record.RunID, "window_key": window, "repo_revision": revision, "signal_count": len(signals), "actionable_signal_count": len(actionable), "proposal_count": proposalCount, "signals": payload}, nil
 }

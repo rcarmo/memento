@@ -59,6 +59,9 @@ func TestDreamRunStates(t *testing.T) {
 	if _, err = runtime.runDream(ctx, "propose", now, dreamOps()); err == nil {
 		t.Fatal("propose")
 	}
+	if _, err = runtime.runDream(ctx, "invalid", now, dreamOps()); err == nil {
+		t.Fatal("invalid")
+	}
 	ops := dreamOps()
 	stamp := now.Add(-time.Second)
 	ops.scan = func(string, repository.BundleFilter) (repository.RepositoryBundle, error) {
@@ -86,6 +89,22 @@ func TestDreamRunStates(t *testing.T) {
 		t.Fatal(payload, err)
 	}
 }
+func TestDreamProposeFailureFinishing(t *testing.T) {
+	ctx, runtime, revision := configuredDreamRuntime(t)
+	defer runtime.Close(ctx)
+	runtime.ModelClient = &stubModelClient{err: errors.New("model")}
+	ops := dreamOps()
+	ops.revision = func(repository.GitRepositoryPaths) (string, error) { return revision, nil }
+	var failed bool
+	ops.finish = func(_ context.Context, _ string, state string, _ *string, _ int, _ int, _ []control.ModelAttempt, _ *string) (control.SchedulerRunRecord, error) {
+		failed = state == "failed"
+		return control.SchedulerRunRecord{}, nil
+	}
+	if _, err := runtime.runDream(ctx, "propose", time.Unix(21600, 0), ops); err == nil || !failed {
+		t.Fatal(err, failed)
+	}
+}
+
 func TestDreamRunSuccessAndFailures(t *testing.T) {
 	ctx := context.Background()
 	runtime := &Runtime{Dream: DefaultDreamConfig()}
