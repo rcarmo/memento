@@ -20,9 +20,13 @@ type SemanticClient interface {
 	ModelInfo() SemanticModelInfo
 	Embed(string) ([]float32, error)
 }
+type SemanticBatchClient interface {
+	SemanticClient
+	EmbedBatch([]string) ([][]float32, error)
+}
 type SemanticRefreshConfig struct {
-	ModelID                   string
-	Dimensions, MaxInputChars int
+	ModelID                             string
+	Dimensions, MaxInputChars, MaxBatch int
 }
 
 func embeddingText(title string, description *string, body string) string {
@@ -70,6 +74,9 @@ func (i *Index) RefreshEmbeddingPaths(ctx context.Context, revision string, path
 		return errors.New("semantic embedding model metadata mismatch")
 	}
 	return i.withCore(ctx, true, func(s ContentStore) error {
+		type pendingEmbedding struct{ id, path, text, digest string }
+		pending := make([]pendingEmbedding, 0, len(paths))
+		texts := make([]string, 0, len(paths))
 		for _, path := range paths {
 			var id, title, body string
 			var description *string
@@ -85,8 +92,13 @@ func (i *Index) RefreshEmbeddingPaths(ctx context.Context, revision string, path
 				text = text[:limit]
 			}
 			content := string(text)
-			digest := fmt.Sprintf("%x", sha256.Sum256([]byte(content)))
-			vector, embedErr := client.Embed(content)
+			pending = append(pending, pendingEmbedding{id, path, content, fmt.Sprintf("%x", sha256.Sum256([]byte(content)))})
+			texts = append(texts, content)
+		}
+		results := EmbedSemanticBatch(client, texts, config.MaxBatch)
+		for index, item := range pending {
+			vector, embedErr := results[index].Vector, results[index].Err
+			id, path, digest := item.id, item.path, item.digest
 			now := time.Now().UTC().Truncate(time.Second).Format(time.RFC3339)
 			if embedErr != nil {
 				if _, err := s.DB.ExecContext(ctx, `INSERT INTO concept_embeddings(concept_id,path,embedding_text_hash,model_id,dimensions,embedding_revision,status,model_revision,embedding_blob,embedding_norm,updated_at,error_message) VALUES(?,?,?,?,?,?,'error',?,NULL,NULL,?,?) ON CONFLICT(concept_id) DO UPDATE SET path=excluded.path,embedding_text_hash=excluded.embedding_text_hash,model_id=excluded.model_id,dimensions=excluded.dimensions,embedding_revision=excluded.embedding_revision,status='error',model_revision=excluded.model_revision,embedding_blob=NULL,embedding_norm=NULL,updated_at=excluded.updated_at,error_message=excluded.error_message`, id, path, digest, config.ModelID, config.Dimensions, revision, info.Revision, now, embedErr.Error()); err != nil {

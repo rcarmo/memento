@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"math"
+	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -31,7 +33,7 @@ func TestRefreshEmbeddingPaths(t *testing.T) {
 	}
 	pending, _ := index.PendingEmbeddingPaths(ctx, 10)
 	client := &semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}, vector: []float32{3, 4}}
-	config := SemanticRefreshConfig{"m", 2, 4096}
+	config := SemanticRefreshConfig{"m", 2, 4096, 16}
 	if err := index.RefreshEmbeddingPaths(ctx, "r1", pending, config, client); err != nil {
 		t.Fatal(err)
 	}
@@ -71,9 +73,36 @@ func TestRefreshEmbeddingSQLFailures(t *testing.T) {
 		if kind == "degraded" {
 			client.err = errors.New("embed")
 		}
-		if err := index.RefreshEmbeddingPaths(ctx, "r", pending, SemanticRefreshConfig{"m", 2, 0}, client); err == nil {
+		if err := index.RefreshEmbeddingPaths(ctx, "r", pending, SemanticRefreshConfig{"m", 2, 0, 16}, client); err == nil {
 			t.Fatal(kind)
 		}
+	}
+}
+func TestRefreshEmbeddingBatchIntegration(t *testing.T) {
+	ctx := context.Background()
+	root := t.TempDir()
+	installConcept(t, root)
+	second := strings.Replace(testConcept, "id: 'id'", "id: 'id-2'", 1)
+	if err := os.WriteFile(filepath.Join(root, "b.md"), []byte(second), 0600); err != nil {
+		t.Fatal(err)
+	}
+	index := &Index{Path: filepath.Join(t.TempDir(), "index.sqlite"), DeferEmbeddings: true}
+	if err := index.Rebuild(ctx, root, "r"); err != nil {
+		t.Fatal(err)
+	}
+	paths, _ := index.PendingEmbeddingPaths(ctx, 10)
+	client := &semanticBatchStub{semanticClientStub: semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}}, batchVectors: [][]float32{{1, 0}, {0, 1}}}
+	if err := index.RefreshEmbeddingPaths(ctx, "r", paths, SemanticRefreshConfig{"m", 2, 4096, 10}, client); err != nil {
+		t.Fatal(err)
+	}
+	if len(client.batches) != 1 || len(client.batches[0]) != 2 || len(client.singles) != 0 {
+		t.Fatal(client.batches, client.singles)
+	}
+	db, _ := sql.Open("sqlite", index.Path)
+	defer db.Close()
+	var ready int
+	if err := db.QueryRow("SELECT COUNT(*) FROM concept_embeddings WHERE status='ready'").Scan(&ready); err != nil || ready != 2 {
+		t.Fatal(ready, err)
 	}
 }
 func TestRefreshEmbeddingFailures(t *testing.T) {
@@ -82,7 +111,7 @@ func TestRefreshEmbeddingFailures(t *testing.T) {
 	root := t.TempDir()
 	installConcept(t, root)
 	_ = index.Rebuild(ctx, root, "r")
-	config := SemanticRefreshConfig{"m", 2, 2}
+	config := SemanticRefreshConfig{"m", 2, 2, 16}
 	if err := index.RefreshEmbeddingPaths(ctx, "r", nil, config, nil); err == nil {
 		t.Fatal("nil")
 	}
