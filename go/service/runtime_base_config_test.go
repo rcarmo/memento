@@ -47,11 +47,11 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 		t.Fatal(err)
 	}
 	disabled := []byte(`{"enabled":false,"limits":{"x":1}}`)
-	c = IntelligentTiersConfig{DeepAnswers: disabled, ExactAnswerCache: disabled, HotWorkingMemory: disabled, ModelProposals: disabled, Dream: []byte(`{"mode":"disabled","scanner":{}}`), SemanticSearch: disabled, NeedleRouter: []byte(`{"enabled":false}`), ModelProviderSlots: []byte(`{"hot_query":{}}`)}
+	c = IntelligentTiersConfig{DeepAnswers: disabled, ExactAnswerCache: disabled, HotWorkingMemory: disabled, ModelProposals: disabled, Dream: []byte(`{"mode":"disabled","scanner":{}}`), SemanticSearch: []byte(`{"enabled":false}`), NeedleRouter: []byte(`{"enabled":false}`), ModelProviderSlots: []byte(`{"hot_query":{}}`)}
 	if err := c.ValidateModelsOff(); err != nil {
 		t.Fatal(err)
 	}
-	for i, field := range []string{"deep_answers", "exact_answer_cache", "hot_working_memory", "model_proposals", "semantic_search"} {
+	for i, field := range []string{"deep_answers", "exact_answer_cache", "hot_working_memory", "model_proposals"} {
 		raw := map[string]json.RawMessage{field: []byte(`{"enabled":true}`)}
 		encoded, _ := json.Marshal(raw)
 		var active IntelligentTiersConfig
@@ -59,6 +59,10 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 		if active.ValidateModelsOff() == nil {
 			t.Fatal(i, field)
 		}
+	}
+	c = IntelligentTiersConfig{SemanticSearch: []byte(`{"enabled":true,"model_path":"/model"}`)}
+	if err := c.ValidateModelsOff(); err != nil {
+		t.Fatal(err)
 	}
 	c = IntelligentTiersConfig{NeedleRouter: []byte(`{"enabled":true}`)}
 	if err := c.ValidateModelsOff(); err != nil {
