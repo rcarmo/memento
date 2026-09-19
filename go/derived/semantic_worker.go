@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+type SemanticWorkerPolicy struct {
+	Enabled                              bool
+	StartupDelay, InteractiveIdle, Delay time.Duration
+	CPUBusyLimit                         float64
+}
 type SemanticWorkerState struct {
 	Alive, Running, Pending             bool
 	LastError, PauseReason, CurrentPath *string
@@ -21,6 +26,10 @@ type SemanticWorker struct {
 	Index                     SemanticRefreshIndex
 	Client                    SemanticClient
 	Config                    SemanticRefreshConfig
+	Policy                    SemanticWorkerPolicy
+	IdleSeconds               func() time.Duration
+	CPUUsage                  func() *float64
+	Now                       func() time.Time
 	mu                        sync.Mutex
 	wake                      chan struct{}
 	done                      chan struct{}
@@ -29,10 +38,22 @@ type SemanticWorker struct {
 	paths                     []string
 	lastError, pause, current *string
 	completed                 int
+	started, lastCompleted    time.Time
 }
 
 func NewSemanticWorker(index SemanticRefreshIndex, client SemanticClient, config SemanticRefreshConfig) *SemanticWorker {
-	w := &SemanticWorker{Index: index, Client: client, Config: config, wake: make(chan struct{}, 1), done: make(chan struct{})}
+	return NewProgressiveSemanticWorker(index, client, config, SemanticWorkerPolicy{}, nil, nil, time.Now)
+}
+func NewProgressiveSemanticWorker(index SemanticRefreshIndex, client SemanticClient, config SemanticRefreshConfig, policy SemanticWorkerPolicy, idle func() time.Duration, cpu func() *float64, now func() time.Time) *SemanticWorker {
+	if now == nil {
+		now = time.Now
+	}
+	w := &SemanticWorker{Index: index, Client: client, Config: config, Policy: policy, IdleSeconds: idle, CPUUsage: cpu, Now: now, wake: make(chan struct{}, 1), done: make(chan struct{})}
+	w.started = now()
+	if policy.Enabled {
+		reason := "startup"
+		w.pause = &reason
+	}
 	go w.loop()
 	return w
 }
@@ -144,6 +165,12 @@ func (w *SemanticWorker) loop() {
 			path = pending[0]
 		}
 		w.mu.Lock()
+		if reason, wait := w.pauseForWork(); reason != "" {
+			w.pause = &reason
+			w.mu.Unlock()
+			w.waitWake(wait)
+			continue
+		}
 		w.running = true
 		w.current = &path
 		w.pause = nil
@@ -170,6 +197,7 @@ func (w *SemanticWorker) loop() {
 			w.lastError = nil
 			w.pause = nil
 			w.completed++
+			w.lastCompleted = w.Now()
 			if len(w.paths) > 0 && w.paths[0] == path {
 				w.paths = w.paths[1:]
 			}
@@ -178,6 +206,46 @@ func (w *SemanticWorker) loop() {
 		if err != nil {
 			time.Sleep(time.Millisecond)
 		}
+	}
+}
+func (w *SemanticWorker) pauseForWork() (string, time.Duration) {
+	if !w.Policy.Enabled {
+		return "", 0
+	}
+	now := w.Now()
+	if remaining := w.Policy.StartupDelay - now.Sub(w.started); remaining > 0 {
+		return "startup", remaining
+	}
+	if w.IdleSeconds != nil {
+		if remaining := w.Policy.InteractiveIdle - w.IdleSeconds(); remaining > 0 {
+			return "interactive", remaining
+		}
+	}
+	if w.CPUUsage != nil {
+		cpu := w.CPUUsage()
+		if cpu == nil {
+			return "cpu-sampling", time.Second
+		}
+		if *cpu > w.Policy.CPUBusyLimit {
+			return "cpu", time.Second
+		}
+	}
+	if !w.lastCompleted.IsZero() {
+		if remaining := w.Policy.Delay - now.Sub(w.lastCompleted); remaining > 0 {
+			return "pacing", remaining
+		}
+	}
+	return "", 0
+}
+func (w *SemanticWorker) waitWake(wait time.Duration) {
+	if wait < 10*time.Millisecond {
+		wait = 10 * time.Millisecond
+	}
+	timer := time.NewTimer(min(wait, time.Second))
+	defer timer.Stop()
+	select {
+	case <-w.wake:
+	case <-timer.C:
 	}
 }
 func (w *SemanticWorker) fail(err error, reason string) {
