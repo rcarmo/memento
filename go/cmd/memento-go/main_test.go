@@ -95,6 +95,51 @@ func TestRunStatus(t *testing.T) {
 		t.Fatal(code)
 	}
 }
+func TestRunBackupRestore(t *testing.T) {
+	oldLoad, oldBuild := loadConfig, buildRuntime
+	t.Cleanup(func() { loadConfig, buildRuntime = oldLoad, oldBuild })
+	runtime, server := stubRuntime(t)
+	root := runtime.Paths.Root
+	loadConfig = func(string) (service.RuntimeConfig, error) {
+		var config service.RuntimeConfig
+		config.Repository.RootPath = root
+		return config, nil
+	}
+	buildRuntime = func(context.Context, service.RuntimeConfig, service.ModelsOffRuntimeOptions) (*service.Runtime, *umcp.Server, error) {
+		return runtime, server, nil
+	}
+	backup := filepath.Join(t.TempDir(), "backup")
+	var out, stderr bytes.Buffer
+	if code := runContext(context.Background(), []string{"--config", "x", "backup", "--output", backup}, nil, &out, &stderr); code != 0 || stderr.Len() != 0 {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	var manifest map[string]any
+	if err := json.Unmarshal(out.Bytes(), &manifest); err != nil || manifest["schema_version"] != float64(1) {
+		t.Fatal(manifest, err)
+	}
+	out.Reset()
+	if code := runContext(context.Background(), []string{"--config", "x", "restore", "--input", backup, "--no-rebuild-derived"}, nil, &out, &stderr); code != 0 {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	var payload map[string]any
+	if err := json.Unmarshal(out.Bytes(), &payload); err != nil || payload["rebuild_derived"] != false {
+		t.Fatal(payload, err)
+	}
+	badRoot := filepath.Join(t.TempDir(), "bad-root")
+	loadConfig = func(string) (service.RuntimeConfig, error) {
+		var config service.RuntimeConfig
+		config.Repository.RootPath = badRoot
+		return config, nil
+	}
+	if code := runContext(context.Background(), []string{"--config", "x", "restore", "--input", filepath.Join(t.TempDir(), "missing")}, nil, io.Discard, &stderr); code != 1 || !strings.Contains(stderr.String(), "memento-go:") {
+		t.Fatal(code, stderr.String())
+	}
+	for _, args := range [][]string{{"--config", "x", "backup"}, {"--config", "x", "backup", "--output", ""}, {"--config", "x", "restore"}, {"--config", "x", "restore", "--input", ""}, {"--config", "x", "restore", "--input", backup, "bad"}} {
+		if code := runContext(context.Background(), args, nil, io.Discard, io.Discard); code != 2 {
+			t.Fatal(args, code)
+		}
+	}
+}
 func TestRunAudit(t *testing.T) {
 	oldLoad, oldBuild := loadConfig, buildRuntime
 	t.Cleanup(func() { loadConfig, buildRuntime = oldLoad, oldBuild })

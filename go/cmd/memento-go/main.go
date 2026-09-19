@@ -36,6 +36,8 @@ func hasFlag(args []string, name string) bool {
 func usage(stderr io.Writer) {
 	fmt.Fprintln(stderr, "usage: memento-go --config PATH serve [uMCP transport options]")
 	fmt.Fprintln(stderr, "       memento-go --config PATH status|rebuild-index|audit [--path PATH]")
+	fmt.Fprintln(stderr, "       memento-go --config PATH backup --output DIR")
+	fmt.Fprintln(stderr, "       memento-go --config PATH restore --input DIR [--no-rebuild-derived]")
 	fmt.Fprintln(stderr, "       memento-go version")
 }
 func runContext(ctx context.Context, args []string, input io.Reader, out, stderr io.Writer) int {
@@ -43,7 +45,7 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(out, version)
 		return 0
 	}
-	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status" && args[2] != "rebuild-index" && args[2] != "audit") || (args[2] != "serve" && args[2] != "audit" && len(args) != 3) || (args[2] == "audit" && len(args) != 3 && !(len(args) == 5 && args[3] == "--path" && args[4] != "")) {
+	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status" && args[2] != "rebuild-index" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore") || (args[2] != "serve" && args[2] != "audit" && args[2] != "backup" && args[2] != "restore" && len(args) != 3) || (args[2] == "audit" && len(args) != 3 && !(len(args) == 5 && args[3] == "--path" && args[4] != "")) || (args[2] == "backup" && !(len(args) == 5 && args[3] == "--output" && args[4] != "")) || (args[2] == "restore" && !(len(args) == 5 && args[3] == "--input" && args[4] != "" || len(args) == 6 && args[3] == "--input" && args[4] != "" && args[5] == "--no-rebuild-derived")) {
 		usage(stderr)
 		return 2
 	}
@@ -51,6 +53,19 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 	if err != nil {
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1
+	}
+	if args[2] == "restore" {
+		payload, restoreErr := service.RestoreBackup(ctx, config, args[4], !hasFlag(args, "--no-rebuild-derived"))
+		if restoreErr == nil {
+			encoder := json.NewEncoder(out)
+			encoder.SetIndent("", "  ")
+			restoreErr = encoder.Encode(payload)
+		}
+		if restoreErr != nil {
+			fmt.Fprintln(stderr, "memento-go:", restoreErr)
+			return 1
+		}
+		return 0
 	}
 	limits := config.MCP.ExecuteLimits()
 	semanticConfig, configErr := service.DecodeSemanticSearchConfig(config.IntelligentTiers.SemanticSearch, os.LookupEnv)
@@ -68,7 +83,7 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1
 	}
-	if args[2] == "status" || args[2] == "rebuild-index" || args[2] == "audit" {
+	if args[2] == "status" || args[2] == "rebuild-index" || args[2] == "audit" || args[2] == "backup" {
 		var payload map[string]any
 		var statusErr error
 		switch args[2] {
@@ -82,6 +97,10 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 				path = &args[4]
 			}
 			payload, statusErr = runtime.AuditRepository(ctx, path)
+		case "backup":
+			manifest, e := runtime.CreateBackup(ctx, args[4])
+			statusErr = e
+			payload = map[string]any{"schema_version": manifest.SchemaVersion, "repo_revision": manifest.RepoRevision, "files": manifest.Files}
 		}
 		closeErr := runtime.Close(context.Background())
 		if statusErr == nil {
