@@ -10,6 +10,39 @@ import (
 	"github.com/rcarmo/memento/go/umcp"
 )
 
+type failingAnswers struct{ stage string }
+
+func (f failingAnswers) GetExact(context.Context, string) (*AnswerRecord, error) {
+	if f.stage == "get_exact" {
+		return nil, errors.New("get exact")
+	}
+	return nil, nil
+}
+func (f failingAnswers) PutExact(context.Context, string, string, string, string, string, AnswerRecord, []string, []string, int, int) error {
+	if f.stage == "put_exact" {
+		return errors.New("put exact")
+	}
+	return nil
+}
+func (f failingAnswers) GetHotContext(context.Context, string, string, string, string) ([]string, *AnswerRecord, error) {
+	if f.stage == "get_hot" {
+		return nil, nil, errors.New("get hot")
+	}
+	return nil, nil, nil
+}
+func (f failingAnswers) PutHot(context.Context, string, string, string, string, AnswerRecord, []string, int, int) error {
+	if f.stage == "put_hot" {
+		return errors.New("put hot")
+	}
+	return nil
+}
+func (f failingAnswers) InsertTrace(context.Context, string, string, string, string, DeepAnswerResult, int, int) (string, error) {
+	if f.stage == "trace" {
+		return "", errors.New("trace")
+	}
+	return "trace", nil
+}
+
 type answerIndex struct {
 	page       derived.SearchPage
 	graph      derived.GraphNeighborhood
@@ -69,6 +102,35 @@ func TestAnswerHelperBranches(t *testing.T) {
 	}
 }
 
+func TestAnswerCallPersistenceFailures(t *testing.T) {
+	for _, stage := range []string{"get_exact", "trace", "put_exact", "get_hot", "put_hot"} {
+		t.Run(stage, func(t *testing.T) {
+			jobs, revision := jobsTest(t)
+			policy := jobs.Identity.authorization.Principals["actor"]
+			policy.Roles = append(policy.Roles, "reader")
+			jobs.Identity.authorization.Principals["actor"] = policy
+			principal := jobs.Identity.names["actor"]
+			principal.Roles = append(principal.Roles, "reader")
+			jobs.Identity.names["actor"] = principal
+			jobs.Controls.Index = &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}}}}
+			model := &stubModelClient{response: ModelResponse{OutputText: `{"answer":"answer","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}
+			deep := DefaultDeepAnswersConfig()
+			deep.Enabled = true
+			cache := DefaultExactAnswerCacheConfig()
+			cache.Enabled = stage == "get_exact" || stage == "put_exact"
+			hot := DefaultHotWorkingMemoryConfig()
+			hot.Enabled = stage == "get_hot" || stage == "put_hot"
+			e := AnswerEndpoint{Jobs: jobs, Client: model, Store: failingAnswers{stage}, Deep: deep, Cache: cache, Hot: hot}
+			server := umcp.NewServer("x")
+			_ = server.Tools.Register(umcp.Tool{Name: "a", Parameters: []umcp.Parameter{{Name: "question", Types: []umcp.ParamType{umcp.StringParam}}}, Call: e.Call})
+			response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"a","arguments":{"question":"What target?"}}}`), umcp.RequestContext{Principal: "actor"})
+			if err != nil || response == nil {
+				t.Fatal(response, err)
+			}
+		})
+	}
+}
+
 func TestAnswerCallDeepCacheEndToEnd(t *testing.T) {
 	jobs, revision := jobsTest(t)
 	policy := jobs.Identity.authorization.Principals["actor"]
@@ -114,6 +176,44 @@ func TestAnswerCallDeepCacheEndToEnd(t *testing.T) {
 	}
 }
 
+func TestAnswerCallHotUnknownFallsBackDeep(t *testing.T) {
+	jobs, revision := jobsTest(t)
+	policy := jobs.Identity.authorization.Principals["actor"]
+	policy.Roles = append(policy.Roles, "reader")
+	jobs.Identity.authorization.Principals["actor"] = policy
+	principal := jobs.Identity.names["actor"]
+	principal.Roles = append(principal.Roles, "reader")
+	jobs.Identity.names["actor"] = principal
+	jobs.Controls.Index = &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}}}}
+	store := AnswerStore{DB: jobs.Controls.Queue.Proposals.DB}
+	_ = store.Migrate(context.Background())
+	scope := ScopeFingerprint("actor", policy.Roles, policy.ReadPrefixes, nil)
+	_ = store.PutHotChanged(context.Background(), scope, []string{"12345678"}, 10)
+	model := &sequenceModelClient{responses: []ModelResponse{{OutputText: `{"answer":"UNKNOWN","citations":[]}`}, {OutputText: `{"answer":"deep","citations":[{"id":"12345678","path":"/a.md","revision":"` + revision + `"}]}`}}}
+	hot := DefaultHotWorkingMemoryConfig()
+	hot.Enabled = true
+	deep := DefaultDeepAnswersConfig()
+	deep.Enabled = true
+	e := AnswerEndpoint{Jobs: jobs, Client: model, Store: store, Hot: hot, Deep: deep}
+	server := umcp.NewServer("x")
+	_ = server.Tools.Register(umcp.Tool{Name: "a", Parameters: []umcp.Parameter{{Name: "question", Types: []umcp.ParamType{umcp.StringParam}}}, Call: e.Call})
+	response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"a","arguments":{"question":"What target?"}}}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response == nil || model.calls != 2 {
+		t.Fatalf("response=%#v err=%v calls=%d", response, err, model.calls)
+	}
+}
+
+type sequenceModelClient struct {
+	responses []ModelResponse
+	calls     int
+}
+
+func (s *sequenceModelClient) Complete(context.Context, ModelRequest) (ModelResponse, error) {
+	r := s.responses[s.calls]
+	s.calls++
+	return r, nil
+}
+
 func TestAnswerCallHotEndToEnd(t *testing.T) {
 	jobs, revision := jobsTest(t)
 	policy := jobs.Identity.authorization.Principals["actor"]
@@ -141,6 +241,41 @@ func TestAnswerCallHotEndToEnd(t *testing.T) {
 	}
 }
 
+func TestAnswerHotFailureBranches(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}}
+	hot := DefaultHotWorkingMemoryConfig()
+	deep := DefaultDeepAnswersConfig()
+	closed, _ := answerStoreTest(t)
+	_ = closed.DB.Close()
+	e := AnswerEndpoint{Store: closed, Hot: hot, Deep: deep, Client: &stubModelClient{}}
+	if _, err := e.hot(context.Background(), controls, policy, "q", "q", "summary", "scope", ProfileQuestion("q"), revision); err == nil {
+		t.Fatal("store")
+	}
+	store, _ := answerStoreTest(t)
+	e.Store = store
+	if record, err := e.hot(context.Background(), controls, policy, "q", "q", "summary", "scope", ProfileQuestion("q"), revision); err != nil || record != nil {
+		t.Fatal(record, err)
+	}
+	if err := store.PutHotChanged(context.Background(), "scope", []string{"missing"}, 10); err != nil {
+		t.Fatal(err)
+	}
+	if record, err := e.hot(context.Background(), controls, policy, "q", "q", "summary", "scope", ProfileQuestion("q"), revision); err != nil || record != nil {
+		t.Fatal(record, err)
+	}
+	if err := store.PutHotChanged(context.Background(), "model", []string{"12345678"}, 10); err != nil {
+		t.Fatal(err)
+	}
+	for name, model := range map[string]*stubModelClient{"provider": {err: errors.New("provider")}, "parse": {response: ModelResponse{OutputText: "bad"}}} {
+		t.Run(name, func(t *testing.T) {
+			e.Client = model
+			if _, err := e.hot(context.Background(), controls, policy, "q", "q", "summary", "model", ProfileQuestion("q"), revision); err == nil {
+				t.Fatal(name)
+			}
+		})
+	}
+}
+
 func TestAnswerDeepFailureBranches(t *testing.T) {
 	controls, _, _ := realApplyTest(t)
 	deep := DefaultDeepAnswersConfig()
@@ -159,6 +294,19 @@ func TestAnswerDeepFailureBranches(t *testing.T) {
 	index.page = derived.SearchPage{RepoRevision: "rev", Results: []derived.SearchResult{{Path: "/missing.md", Status: "active"}}}
 	if _, err := e.deep(context.Background(), controls, policy, "q", "summary", "scope", ProfileQuestion("q")); err == nil {
 		t.Fatal("read")
+	}
+	index.page = derived.SearchPage{RepoRevision: "rev", Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active"}}}
+	e.Client = &stubModelClient{err: errors.New("model")}
+	if _, err := e.deep(context.Background(), controls, policy, "What target?", "summary", "scope", ProfileQuestion("What target?")); err == nil {
+		t.Fatal("model")
+	}
+	e.Client = &stubModelClient{response: ModelResponse{OutputText: "bad"}}
+	if _, err := e.deep(context.Background(), controls, policy, "What target?", "summary", "scope", ProfileQuestion("What target?")); err == nil {
+		t.Fatal("parse")
+	}
+	index.err = errors.New("graph")
+	if _, err := e.deep(context.Background(), controls, policy, "Which service is linked?", "summary", "scope", ProfileQuestion("Which service is linked?")); err == nil {
+		t.Fatal("graph")
 	}
 }
 

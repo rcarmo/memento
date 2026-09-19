@@ -16,7 +16,7 @@ import (
 type AnswerEndpoint struct {
 	Jobs   *Jobs
 	Client ModelClient
-	Store  AnswerStore
+	Store  AnswerPersistence
 	Deep   DeepAnswersConfig
 	Cache  ExactAnswerCacheConfig
 	Hot    HotWorkingMemoryConfig

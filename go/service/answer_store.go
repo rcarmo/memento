@@ -47,6 +47,14 @@ type DeepAnswerResult struct {
 	DurationMS   int
 	Usage        map[string]int
 }
+type AnswerPersistence interface {
+	GetExact(context.Context, string) (*AnswerRecord, error)
+	PutExact(context.Context, string, string, string, string, string, AnswerRecord, []string, []string, int, int) error
+	GetHotContext(context.Context, string, string, string, string) ([]string, *AnswerRecord, error)
+	PutHot(context.Context, string, string, string, string, AnswerRecord, []string, int, int) error
+	InsertTrace(context.Context, string, string, string, string, DeepAnswerResult, int, int) (string, error)
+}
+
 type AnswerStore struct {
 	DB  *sql.DB
 	Now func() time.Time
