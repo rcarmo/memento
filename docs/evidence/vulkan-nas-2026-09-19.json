@@ -1,0 +1,92 @@
+{
+  "date": "2026-09-19",
+  "issue": 39,
+  "result": "BLOCKED: tested Intel Vulkan ICDs cannot initialise on current NAS kernel",
+  "candidate_commit": "ae3883840b6d2815b0a8728b5077952b1ceced1b",
+  "candidate_executed": false,
+  "host": {
+    "kernel": "4.4.302+",
+    "gpu_pci": "8086:5a85",
+    "driver": "i915",
+    "render_node": "/dev/dri/renderD128",
+    "render_mode": "0660",
+    "render_group": 937
+  },
+  "probe": {
+    "image": "sha256:74132defe387df722a638326ba6c300db1475471d6c2e19036fbb04674500f3c",
+    "user": "65532:65532",
+    "supplementary_groups": [
+      "937"
+    ],
+    "memory_limit": 536870912,
+    "memory_swap_limit": 536870912,
+    "network": "none",
+    "read_only_root": true,
+    "cap_drop": [
+      "ALL"
+    ],
+    "security_opt": [
+      "no-new-privileges"
+    ],
+    "privileged": false,
+    "cpuset": "3",
+    "cpu_shares": 128,
+    "mounts": [],
+    "started": "2026-09-19T08:39:37.700616966Z",
+    "finished": "2026-09-19T08:39:40.016398065Z",
+    "wrapper_exit": 0,
+    "oom_killed": false
+  },
+  "software": {
+    "loader": "1.4.341.0-1",
+    "mesa": "26.0.3-1ubuntu1",
+    "tools": "1.4.341.0+dfsg1-1"
+  },
+  "icds": [
+    {
+      "name": "intel",
+      "exit": 1,
+      "error": "kernel missing exec capture support (VK_ERROR_INITIALIZATION_FAILED)"
+    },
+    {
+      "name": "intel_hasvk",
+      "exit": 1,
+      "error": "Failed to detect any valid GPUs; ERROR_INITIALIZATION_FAILED"
+    }
+  ],
+  "preservation": {
+    "checked_at": "2026-09-19T08:41:37.769Z",
+    "same_container": true,
+    "same_image": true,
+    "same_host_config": true,
+    "same_mounts_by_destination": true,
+    "same_started_at": true,
+    "healthy": true,
+    "restarts": 0,
+    "remaining_probe_containers": 0,
+    "not_tested": [
+      "database/proposal/vector contents (not touched by probe)",
+      "GTE parity/inference",
+      "warm reuse",
+      "512MiB inference suitability"
+    ],
+    "note": "Only disposable device-access/Vulkan-enumeration containers created. No production configuration/volume/data writes. Mount arrays normalised by destination before comparison.",
+    "same_container_config": true,
+    "container_config_sha256": "fd07ec278f3d7dce8e7244c99243caed9f6c4e3017297d3719836e577423b5e6"
+  },
+  "limits": [
+    "Only hardware adapter enumeration performed; no GTE inference or parity/warm benchmarks.",
+    "Wrapper exit 0 does not mean GPU success; both vulkaninfo commands exited 1.",
+    "512MiB bounded enumeration does not establish inference suitability.",
+    "No host changes, production mounts or permission bypass; only disposable render-node/group grant.",
+    "Result scoped to tested Mesa/kernel combination, not every possible driver stack."
+  ],
+  "source_sha256": {
+    "gate.log": "db507f7a374cb1fda5475a1ed23569006a556e95b7e4b83fefc744dba063011b",
+    "gate-state.json": "7c0a5d16815dfcc026296b6edc71ee323ebc431e4afab3b29b7a9550b9df5fb8",
+    "access-result.json": "795b07431543b8b60d9ff176f91564962957744048f8cbec157184bf775c8ab8",
+    "preservation-check.json": "1191f6debeb4fcf13fceaead54c5454ab050c4c4d1aa796f6ef538429cbefc99",
+    "embeddings-status-after.json": "b4d835e8854352f2df97a28081bb7237c0b9d03fecddbd74ec4d59457ee9cccb",
+    "anonymous-volume-cleanup.json": "28b28b44335935ab362e7f842b01f1bb4c05b162fa72ebb9c2799645cfae8d11"
+  }
+}
