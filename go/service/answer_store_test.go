@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"path/filepath"
 	"testing"
 	"time"
@@ -99,6 +100,58 @@ func TestAnswerStoreHotIsolationInvalidationAndPruning(t *testing.T) {
 		t.Fatalf("invalidated=%#v err=%v", record, err)
 	}
 }
+func TestAnswerStoreErrorAndUtilityBranches(t *testing.T) {
+	ctx := context.Background()
+	if (AnswerStore{}).now().IsZero() {
+		t.Fatal("default clock")
+	}
+	if truncateRunes("ééé", 2) != "éé" || truncateRunes("ok", 3) != "ok" {
+		t.Fatal("truncate")
+	}
+	s, _ := answerStoreTest(t)
+	if got, err := s.GetExact(ctx, "missing"); err != nil || got != nil {
+		t.Fatalf("miss=%#v err=%v", got, err)
+	}
+	if _, err := s.DB.Exec(`INSERT INTO answer_cache VALUES('bad','s','r','q','m','{','[]','[]','2026','2099','2026')`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.GetExact(ctx, "bad"); err == nil {
+		t.Fatal("corrupt cache accepted")
+	}
+	if err := s.InvalidateHot(ctx, nil); err != nil {
+		t.Fatal(err)
+	}
+	rollback := errors.New("rollback")
+	if err := withAnswerTx(ctx, s.DB, func(*sql.Tx) error { return rollback }); !errors.Is(err, rollback) {
+		t.Fatal(err)
+	}
+	db := s.DB
+	if err := db.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := withAnswerTx(ctx, db, func(*sql.Tx) error { return nil }); err == nil {
+		t.Fatal("closed begin")
+	}
+	if _, err := s.GetExact(ctx, "x"); err == nil {
+		t.Fatal("closed exact")
+	}
+	if _, _, err := s.GetHotContext(ctx, "s", "q", "m", "r"); err == nil {
+		t.Fatal("closed hot")
+	}
+	if err := s.PutHotChanged(ctx, "s", []string{"x"}, 1); err == nil {
+		t.Fatal("closed changed")
+	}
+	if err := s.PutHot(ctx, "s", "q", "m", "r", answerRecord("a"), nil, 1, 1); err == nil {
+		t.Fatal("closed put hot")
+	}
+	if err := s.InvalidateHot(ctx, map[string]bool{"x": true}); err == nil {
+		t.Fatal("closed invalidate")
+	}
+	if _, err := s.InsertTrace(ctx, "p", "s", "q", "r", DeepAnswerResult{Record: answerRecord("a")}, 1, 1); err == nil {
+		t.Fatal("closed trace")
+	}
+}
+
 func TestAnswerStoreTraceRetention(t *testing.T) {
 	ctx := context.Background()
 	s, now := answerStoreTest(t)

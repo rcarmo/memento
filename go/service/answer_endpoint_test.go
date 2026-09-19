@@ -6,6 +6,7 @@ import (
 
 	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/derived"
+	"github.com/rcarmo/memento/go/umcp"
 )
 
 type answerIndex struct {
@@ -24,6 +25,49 @@ func (i *answerIndex) Graph(_ context.Context, _ access.EffectivePolicy, _ strin
 	i.graphCalls = append(i.graphCalls, options)
 	return i.graph, i.err
 }
+func TestAnswerCallArgumentAndRoleGuards(t *testing.T) {
+	e := &AnswerEndpoint{}
+	if _, err := e.Call(context.Background(), map[string]any{}); err == nil || err.Error() != "question must be a string" {
+		t.Fatalf("question=%v", err)
+	}
+	if _, err := e.Call(context.Background(), map[string]any{"question": "q", "answer_mode": 1}); err == nil || err.Error() != "answer_mode must be a string" {
+		t.Fatalf("mode=%v", err)
+	}
+	if _, err := e.Call(context.Background(), map[string]any{"question": " \n "}); err == nil || err.Error() != "question must not be empty" {
+		t.Fatalf("empty=%v", err)
+	}
+	jobs, _ := jobsTest(t)
+	e.Jobs = jobs
+	server := umcp.NewServer("answer-guard")
+	if err := server.Tools.Register(umcp.Tool{Name: "answer", Parameters: []umcp.Parameter{{Name: "question", Types: []umcp.ParamType{umcp.StringParam}}}, Call: e.Call}); err != nil {
+		t.Fatal(err)
+	}
+	response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"answer","arguments":{"question":"q"}}}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response == nil {
+		t.Fatalf("response=%#v err=%v", response, err)
+	}
+	// jobsTest actor has proposer/curator but no reader; the service returns a
+	// forbidden failure envelope before touching repository/model dependencies.
+	if response.Error == nil {
+		t.Fatal("expected output validation failure after forbidden envelope")
+	}
+}
+
+func TestAnswerHelperBranches(t *testing.T) {
+	p := QueryProfile{TemporalIntent: "historical"}
+	concepts := []AnswerReadConcept{{ID: "old", Supersedes: []string{"prior"}}, {ID: "prior"}, {ID: "old"}}
+	if got := filterSuperseded(p, concepts); len(got) != 2 {
+		t.Fatalf("historical=%#v", got)
+	}
+	p.TemporalIntent = "neutral"
+	if got := filterSuperseded(p, concepts); len(got) != 1 || got[0].ID != "old" {
+		t.Fatalf("current=%#v", got)
+	}
+	if hasTerm([]string{"one"}, "two") || !hasTerm([]string{"one"}, "two", "one") {
+		t.Fatal("hasTerm")
+	}
+}
+
 func TestAnswerDeepModelAndAbstention(t *testing.T) {
 	controls, _, revision := realApplyTest(t)
 	index := &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{ConceptID: "12345678", Path: "/a.md", Title: "Title", Status: "active", Score: 1}}}}

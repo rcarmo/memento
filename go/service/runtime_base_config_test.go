@@ -94,6 +94,15 @@ func TestIntelligentTiersModelsOff(t *testing.T) {
 	if c.ValidateModelsOff() == nil {
 		t.Fatal("needle")
 	}
+	for name, tier := range map[string]IntelligentTiersConfig{
+		"semantic": {SemanticSearch: []byte(`{"extra":1}`)}, "deep": {DeepAnswers: []byte(`{"extra":1}`)},
+		"cache": {ExactAnswerCache: []byte(`{"extra":1}`)}, "hot": {HotWorkingMemory: []byte(`{"extra":1}`)},
+		"proposal": {ModelProposals: []byte(`{"extra":1}`)}, "provider": {ModelProviderSlots: []byte(`{"extra":1}`)},
+	} {
+		if tier.ValidateModelsOff() == nil {
+			t.Fatal(name)
+		}
+	}
 }
 func TestRuntimeTopLevelValidation(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "config.json")

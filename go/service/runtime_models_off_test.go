@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -87,6 +88,17 @@ func TestBuildConfiguredIntelligentRuntime(t *testing.T) {
 	}
 	if !names["memory_propose_freeform"] || !names["memory_propose_update"] || !names["memory_answer"] || names["memory_route"] {
 		t.Fatalf("tools=%v", names)
+	}
+	for question, source := range map[string]string{"What is the password?": "policy_abstention", "What is this?": "disabled"} {
+		body := `{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"memory_answer","arguments":{"question":` + strconv.Quote(question) + `}}}`
+		answer, callErr := server.Process(ctx, []byte(body), umcp.RequestContext{Principal: "actor"})
+		if callErr != nil || answer.Error != nil {
+			t.Fatalf("answer=%#v err=%v", answer, callErr)
+		}
+		structured := jsonNormal(answer.Result).(map[string]any)["structuredContent"].(map[string]any)
+		if structured["data"].(map[string]any)["answer_source"] != source {
+			t.Fatalf("source=%#v", structured)
+		}
 	}
 	var table string
 	if err = runtime.DB.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='answer_cache'`).Scan(&table); err != nil || table != "answer_cache" {
