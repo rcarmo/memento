@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -88,6 +90,8 @@ func TestValidateModelProposalDraft(t *testing.T) {
 		{"invalid path", func(d *DreamProposalDraft) { d.Changes[0]["path"] = "relative.md" }, "absolute"},
 		{"body limit", func(d *DreamProposalDraft) { limits.MaxBodyChars = 1 }, "body exceeds"},
 		{"diff limit", func(d *DreamProposalDraft) { limits.MaxDiffChars = 1 }, "diff exceeds"},
+		{"preview failure", func(d *DreamProposalDraft) { d.Changes[0]["path"] = "/missing.md"; d.Changes[0]["kind"] = "patch" }, "does not exist"},
+		{"secret", func(d *DreamProposalDraft) { d.Changes[0]["body"] = "ghp_12345678901234567890" }, "secret"},
 		{"reciprocal acl", func(d *DreamProposalDraft) {
 			d.ReciprocalLinks = []map[string]any{{"source_path": "/denied/a.md", "target_path": "/a.md", "justification": "x"}}
 		}, "cannot write"},
@@ -146,6 +150,36 @@ func TestModelProposalEndpointStoresAuthenticatedProposal(t *testing.T) {
 	}
 }
 
+func TestModelProposalRoleAndEmptyContext(t *testing.T) {
+	jobs, _ := jobsTest(t)
+	config := DefaultModelProposalsConfig()
+	config.Enabled = true
+	e := ModelProposalEndpoint{Jobs: jobs, Client: &stubModelClient{}, Config: config}
+	server := umcp.NewServer("x")
+	_ = server.Tools.Register(umcp.Tool{Name: "p", Parameters: []umcp.Parameter{{Name: "instruction", Types: []umcp.ParamType{umcp.StringParam}}}, Call: e.Update})
+	policy := jobs.Identity.authorization.Principals["actor"]
+	policy.Roles = []string{"reader"}
+	jobs.Identity.authorization.Principals["actor"] = policy
+	principal := jobs.Identity.names["actor"]
+	principal.Roles = []string{"reader"}
+	jobs.Identity.names["actor"] = principal
+	response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"p","arguments":{"instruction":"x"}}}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response == nil {
+		t.Fatal(response, err)
+	}
+	policy.Roles = []string{"proposer"}
+	jobs.Identity.authorization.Principals["actor"] = policy
+	principal.Roles = []string{"proposer"}
+	jobs.Identity.names["actor"] = principal
+	if err = os.Remove(filepath.Join(jobs.Controls.Queue.Paths.CurrentDir, "a.md")); err != nil {
+		t.Fatal(err)
+	}
+	response, err = server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"p","arguments":{"instruction":"x"}}}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response == nil {
+		t.Fatal(response, err)
+	}
+}
+
 func TestModelProposalCallFailures(t *testing.T) {
 	jobs, revision := jobsTest(t)
 	config := DefaultModelProposalsConfig()
@@ -170,6 +204,29 @@ func TestModelProposalCallFailures(t *testing.T) {
 	_, _ = server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"p","arguments":{"instruction":"x","target_hint":"/a.md"}}}`), umcp.RequestContext{Principal: "actor"})
 }
 
+func TestConsultModelProposalRepositoryFailuresAndLimit(t *testing.T) {
+	controls, _, revision := realApplyTest(t)
+	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}}
+	path := "/missing.md"
+	if _, _, err := consultModelProposalContext(context.Background(), controls, policy, &path, proposalTestLimits()); err == nil {
+		t.Fatal("missing target")
+	}
+	index := &answerIndex{page: derived.SearchPage{RepoRevision: revision, Results: []derived.SearchResult{{Path: "/a.md"}, {Path: "/missing.md"}}}}
+	controls.Index = index
+	limits := proposalTestLimits()
+	limits.MaxConsultedConcepts = 1
+	got, _, err := consultModelProposalContext(context.Background(), controls, policy, nil, limits)
+	if err != nil || len(got) != 1 {
+		t.Fatal(got, err)
+	}
+	bad := controls.Queue.Paths
+	bad.BareDir = filepath.Join(t.TempDir(), "missing.git")
+	controls.Queue.Paths = bad
+	if _, _, err = consultModelProposalContext(context.Background(), controls, policy, nil, limits); err == nil {
+		t.Fatal("revision")
+	}
+}
+
 func TestConsultModelProposalSearchBranches(t *testing.T) {
 	controls, _, revision := realApplyTest(t)
 	policy := access.EffectivePolicy{ReadPrefixes: []string{"/"}, WritePrefixes: []string{"/"}}
@@ -179,6 +236,7 @@ func TestConsultModelProposalSearchBranches(t *testing.T) {
 	if err != nil || gotRevision != revision || len(got) != 1 {
 		t.Fatalf("got=%#v rev=%s err=%v", got, gotRevision, err)
 	}
+	index.page.Results=[]derived.SearchResult{{Path:"/missing.md"}};if _,_,err=consultModelProposalContext(context.Background(),controls,policy,nil,proposalTestLimits());err==nil{t.Fatal("search result read")}
 	index.err = errors.New("search")
 	if _, _, err = consultModelProposalContext(context.Background(), controls, policy, nil, proposalTestLimits()); err == nil {
 		t.Fatal("search error")
