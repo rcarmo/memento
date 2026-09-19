@@ -28,7 +28,7 @@ On shared or low-power hosts, enable progressive generation instead of a full st
 }
 ```
 
-The worker derives one missing or stale path at a time from `derived.sqlite`; no separate queue needs recovery. It waits through startup grace, recent interactive traffic, sampled CPU utilization from `/proc/stat` and pacing, then launches one short-lived embedding subprocess at low CPU priority with native thread pools restricted to one thread. Manual selected/visible/full refresh requests enter the same worker and receive priority without bypassing the gates. Transaction updates enqueue only changed concept Markdown paths; asset manifests, ZIPs and repository metadata never enter the embedding queue. A permanently failed priority path is removed so it cannot block later work. Transient SQLite busy/locked errors preserve selected and full requests and retry after a one-second, interruptible wait. The same handling covers queue polling; a temporary database lock cannot terminate the worker.
+The worker derives one missing or stale path at a time from `derived.sqlite`; no separate queue needs recovery. It waits through startup grace, recent interactive traffic, sampled CPU utilization from `/proc/stat` and pacing, then, by default, launches one short-lived embedding subprocess at low CPU priority with native thread pools restricted to one thread. Manual selected/visible/full refresh requests enter the same worker and receive priority without bypassing the gates. Transaction updates enqueue only changed concept Markdown paths; asset manifests, ZIPs and repository metadata never enter the embedding queue. A permanently failed priority path is removed so it cannot block later work. Transient SQLite busy/locked errors preserve selected and full requests and retry after a one-second, interruptible wait. The same handling covers queue polling; a temporary database lock cannot terminate the worker.
 
 Ready embeddings persist in `/var/lib/memento/derived.sqlite`. Container replacement therefore resumes from existing progress. Derived rebuilds retain embeddings whose concept text hash and model metadata remain valid, delete rows for removed concepts and enqueue only changed, missing or model-stale records. A degraded row is not retried forever in the background; changing its content/model marks it stale, and an operator can explicitly prioritize it with manual refresh. `/graph/api/v1/embeddings/status` reports `alive`, `running`, `pending`, `pause_reason`, `current_path`, `last_error` and `completed`. `completed` counts successful jobs since restart, not stored vectors; a full-refresh job can contain several embeddings. Status reads use in-memory worker state and do not query SQLite. `database-busy` identifies a contention retry. A stopped worker reports `alive: false`, `available: false` and an error instead of looking idle; new refresh requests are rejected until the service is recovered. The graph sidebar polls this status every 15 seconds while visible.
 
@@ -41,6 +41,10 @@ For an ETA, measure completion or ready-row changes over time. The configured 30
 * `memento-ffi`: stable C ABI loaded from Python with `ctypes`.
 * `memento-sqlite-vector`: loadable SQLite extension exposing `vector_cosine`, `vector_dimensions` and `vector_is_valid`.
 * `memento-embed`: framed subprocess fallback for process isolation.
+
+## Optional process reuse
+
+`intelligent_tiers.semantic_search.worker_idle_seconds` defaults to `0`, reclaiming each subprocess after its request. On POSIX, a positive value up to 3600 keeps one worker for serial requests until idle expiry, failure, close or bounded recycling after 256 requests. It works with CPU as well as Vulkan/auto and does not change embedding identity or progressive pacing. Retained memory lasts longer; this setting does not coordinate GPU reservations. See [warm-worker behaviour and limits](vulkan-embeddings.md#optional-warm-worker) before opting in.
 
 ## Optional Vulkan pre-test
 

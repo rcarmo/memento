@@ -1,6 +1,6 @@
 # Vulkan embedding pre-test
 
-The optional Vulkan backend runs Memento's existing FP32 GTE1 model. It shares the CPU tokenizer, token limits, input embedding construction, attention masks, mean pooling and L2 normalisation. No GGUF conversion, replacement model or quantisation is used. CPU remains the default; this backend needs Intel pre-testing before deployment.
+The optional Vulkan backend runs Memento's existing FP32 GTE1 model. It shares the CPU tokenizer, token limits, input embedding construction, attention masks, mean pooling and L2 normalisation. No GGUF conversion, replacement model or quantisation is used. CPU remains the default. Cold-request parity and timings have been checked on one Intel Iris Xe; warm reuse and production deployment need separate qualification.
 
 [Documentation index](README.md) · [Semantic search](semantic-search.md)
 
@@ -54,7 +54,23 @@ Its existing framed stdin/stdout protocol remains intact. Response headers add b
 
 The Python subprocess client bounds the whole call with its existing timeout. A recoverable auto worker error can retry once on CPU within the remaining deadline; a spent deadline returns an error. The client remembers a failed GPU attempt and uses CPU on subsequent requests during that process lifetime. Explicit Vulkan errors never trigger that fallback. Driver hangs/crashes are contained by the subprocess boundary, not recoverable by an in-process Rust timer.
 
-Startup and each fresh worker include adapter/pipeline setup and a short same-model self-test. A long-lived benchmark can measure warm inference separately, but the production-shaped cold-process benchmark is the rollout baseline. There is no resident GPU service or automatic driver/container reconfiguration.
+Startup and each fresh worker include adapter/pipeline setup and a short same-model self-test. Cold processes remain the default. Optional idle-capped reuse retains that initialisation across calls; it does not add a resident GPU service or automatic driver/container reconfiguration.
+
+## Optional warm worker
+
+Set `intelligent_tiers.semantic_search.worker_idle_seconds` above zero to reuse one subprocess per client. The default is `0` (start and reclaim a worker per call); valid values are finite seconds from 0 to 3600. Positive values require subprocess mode and a POSIX runtime. The setting works with CPU, Vulkan or auto; it does not change the model, vectors or backend revision.
+
+Reuse retains the model mapping, device/queue, compiled pipelines and completed startup self-test. It does **not** retain every layer's GPU weights or eliminate per-layer uploads/temporary buffers. No dummy inference is sent to keep the worker alive. One worker serves requests serially, including concurrent foreground and background callers.
+
+The request deadline covers lock wait, pipe writes/reads and a possible whole-batch CPU fallback. Cancellation is checked during I/O and queue wait. Responses are bounded to a 64 KiB header allowance plus the expected vector bytes, matched to unique request IDs, and validated for shape, backend and finite values. Stderr is drained during requests with at most 8 KiB retained internally; it is never returned as a warm-worker diagnostic. Failure discards the process before retry; explicit Vulkan never silently falls back.
+
+Idle expiry, cancellation, protocol failure, timeout and `close()` kill the owned process group and reap the child. Cleanup has a separate bounded one-second reap allowance after the request deadline; a process stuck in an uninterruptible kernel operation can still fail that cleanup. Calls after warm-client close are rejected. A child is recycled before its 257th request even under continuous traffic. An expiry callback is tied to both the process generation and idle token, so an old callback cannot kill a reused/replacement worker. Runtime shutdown already stops the refresh scheduler before closing this client.
+
+The Python client's `worker_status` snapshot reports the owned PID (not a live health probe), generation, starts, completed calls, active state, monotonic idle deadline and closed state. This is not a new public MCP/status API. OS process creation itself cannot be interrupted by the pipe deadline, and cancellation callbacks must return promptly.
+
+A 120-second idle lifetime is a candidate experiment, not a recommended production default. It spans the existing 30-second progressive pacing, but actual request gaps and idle memory must be measured. The CPU-only lifecycle tests use disposable protocol fakes; they establish reuse, framing and cleanup behaviour, not GPU memory reclamation or warm performance.
+
+There is no automatic GPU reservation or inference-priority integration. On a shared device, do not enable reuse without an agreed allocation/window; blocking new requests alone does not free an idle worker's allocations. Never evict another service's weights to make room. The current local primary server must remain resident, and hardware measurements require Rui's explicit isolated maintenance-window approval.
 
 ## Service configuration for a disposable instance
 
@@ -71,7 +87,8 @@ Use a separate test repository/index and the newly built worker. Current release
       "backend": "vulkan",
       "vulkan_device": "Intel",
       "max_batch_size": 1,
-      "worker_timeout_seconds": 120
+      "worker_timeout_seconds": 120,
+      "worker_idle_seconds": 0
     }
   }
 }
@@ -125,4 +142,6 @@ Final three-run cold-process medians, including model load, Vulkan initialisatio
 
 The separate warm-engine comparison reached maximum absolute error below 1.6e-7. Raw cold-process parity/timing samples are in [the local report](evidence/vulkan-rtx3060-pretest.json). Results are specific to this host/build; they are not Intel or DiskStation measurements. Short requests lose to GPU startup overhead, while longer inputs benefit. Existing progressive pacing remains unchanged.
 
-Sigma has not been contacted or deployed to by this implementation task. The older production DiskStation still needs a separate device/driver compatibility probe before any GPU trial there.
+Sigma completed one authorised cold benchmark campaign on Intel Iris Xe (RPL-P), Mesa 26.1.5: 12 explicit Vulkan samples passed, maximum error `1.4901161193847656e-7`; median CPU/Vulkan ratios were 1.630 for medium and 5.074 for token-limit inputs. Short and mixed-batch inputs were slower. The original archive and all 38 internal checksums were checked on receipt; the monitor summary has a documented off-by-one (101 claimed samples, 100 retained records). Vector payloads were not retained for independent parity recomputation. Details are linked from [PR #36](https://github.com/rcarmo/memento/pull/36#issuecomment-5736430906).
+
+Gemma was resident but idle during those observations. Concurrent inference, warm-idle retention and NAS 512 MiB operation remain unqualified. No further GPU test or deployment accompanies the worker-lifecycle changes in [#37](https://github.com/rcarmo/memento/issues/37). The older production DiskStation still needs separately authorised device/driver compatibility qualification.

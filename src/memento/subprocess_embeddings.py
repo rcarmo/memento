@@ -7,10 +7,13 @@ import os
 import struct
 import subprocess
 import time
+import uuid
 from collections.abc import Callable, Sequence
+from contextlib import nullcontext
 from pathlib import Path
 from typing import Any, Protocol
 
+from memento.framed_worker import FramedWorker
 from memento.semantic import EmbeddingClient, EmbeddingModelInfo, SemanticSearchError
 
 
@@ -23,7 +26,7 @@ def _run_process(command: list[str], **kwargs: Any) -> subprocess.CompletedProce
 
 
 class SubprocessEmbeddingClient(EmbeddingClient):
-    """Run one framed memento-embed worker per request so model RAM is reclaimed."""
+    """Use cold workers by default, or opt into serial, idle-capped process reuse."""
 
     def __init__(
         self,
@@ -38,8 +41,14 @@ class SubprocessEmbeddingClient(EmbeddingClient):
         threads: int = 1,
         backend: str = "cpu",
         vulkan_device: str | None = None,
+        idle_seconds: float = 0.0,
         process_runner: ProcessRunner | None = None,
     ) -> None:
+        if not math.isfinite(idle_seconds) or not 0 <= idle_seconds <= 3600:
+            raise ValueError("idle_seconds must be finite and between 0 and 3600")
+        if idle_seconds and process_runner is not None:
+            raise ValueError("process_runner is only supported for cold workers")
+        self._warm = FramedWorker(idle_seconds) if idle_seconds else None
         self._worker_path = Path(worker_path)
         self._model_path = Path(model_path)
         self._dimensions = dimensions
@@ -59,6 +68,14 @@ class SubprocessEmbeddingClient(EmbeddingClient):
         if backend != "cpu":
             # Isolate experimental CPU/GPU vectors from the established CPU index.
             self._revision += ":gte1-fp32-vulkan-v1"
+
+    @property
+    def worker_status(self) -> dict[str, object]:
+        return self._warm.status if self._warm else {"reuse": False}
+
+    def close(self) -> None:
+        if self._warm is not None:
+            self._warm.close()
 
     def model_info(self) -> EmbeddingModelInfo:
         return EmbeddingModelInfo(
@@ -85,50 +102,62 @@ class SubprocessEmbeddingClient(EmbeddingClient):
             raise SemanticSearchError("embedding input exceeds configured character limit")
         if cancelled is not None and cancelled():
             raise SemanticSearchError("embedding cancelled")
-        request = {
-            "method": "embed_batch",
-            "id": "batch",
-            "texts": list(texts),
-        }
+        deadline = time.monotonic() + self._timeout_seconds
+        request_id = uuid.uuid4().hex if self._warm else "batch"
+        request = {"method": "embed_batch", "id": request_id, "texts": list(texts)}
         payload = json.dumps(request, separators=(",", ":")).encode("utf-8")
+        if len(payload) > 4 * 1024 * 1024:
+            raise SemanticSearchError("embedding request exceeds frame limit")
         wire = struct.pack("<I", len(payload)) + payload
+        session = self._warm.session(deadline, cancelled) if self._warm else nullcontext()
+        with session:
+            header, raw = self._embed_wire(wire, request_id, len(texts), deadline, cancelled)
+            backend_info = header.get("backend")
+            if isinstance(backend_info, dict):
+                self.last_backend = backend_info
+                if self._backend == "auto" and backend_info.get("fallback_reason"):
+                    self._gpu_disabled_reason = str(backend_info["fallback_reason"])[:300]
+                if self._gpu_disabled_reason:
+                    self.last_backend = {
+                        **backend_info,
+                        "requested": self._backend,
+                        "fallback_reason": self._gpu_disabled_reason,
+                    }
+            values = struct.unpack(f"<{len(texts) * self._dimensions}f", raw)
+            return tuple(
+                tuple(values[i * self._dimensions : (i + 1) * self._dimensions])
+                for i in range(len(texts))
+            )
+
+    def _embed_wire(
+        self,
+        wire: bytes,
+        request_id: str,
+        count: int,
+        deadline: float,
+        cancelled: Callable[[], bool] | None,
+    ) -> tuple[dict[str, Any], bytes]:
         selected = "cpu" if self._gpu_disabled_reason else self._backend
-        started = time.monotonic()
         try:
-            header, raw = self._call_worker(wire, selected, self._timeout_seconds, len(texts))
+            return self._call_worker(wire, selected, deadline, count, request_id, cancelled)
         except SemanticSearchError as exc:
+            if self._warm is not None:
+                self._warm.discard()
             if self._backend != "auto" or selected == "cpu":
                 raise
             self._gpu_disabled_reason = str(exc)[:300]
-            remaining = self._timeout_seconds - (time.monotonic() - started)
-            if remaining <= 0 or (cancelled is not None and cancelled()):
+            if time.monotonic() >= deadline or (cancelled is not None and cancelled()):
                 raise
-            header, raw = self._call_worker(wire, "cpu", remaining, len(texts))
-        backend_info = header.get("backend")
-        if self._backend != "cpu" and not isinstance(backend_info, dict):
-            raise SemanticSearchError(
-                "Vulkan worker omitted backend diagnostics; use the matching binary"
-            )
-        if isinstance(backend_info, dict):
-            self.last_backend = backend_info
-            if self._backend == "vulkan" and backend_info.get("selected") != "vulkan":
-                raise SemanticSearchError("explicit Vulkan request did not use Vulkan")
-            if self._backend == "auto" and backend_info.get("fallback_reason"):
-                self._gpu_disabled_reason = str(backend_info["fallback_reason"])[:300]
-            if self._gpu_disabled_reason:
-                self.last_backend = {
-                    **backend_info,
-                    "requested": self._backend,
-                    "fallback_reason": self._gpu_disabled_reason,
-                }
-        values = struct.unpack(f"<{len(texts) * self._dimensions}f", raw)
-        return tuple(
-            tuple(values[i * self._dimensions : (i + 1) * self._dimensions])
-            for i in range(len(texts))
-        )
+            return self._call_worker(wire, "cpu", deadline, count, request_id, cancelled)
 
     def _call_worker(
-        self, wire: bytes, backend: str, timeout: float, expected_count: int
+        self,
+        wire: bytes,
+        backend: str,
+        deadline: float,
+        expected_count: int,
+        request_id: str,
+        cancelled: Callable[[], bool] | None,
     ) -> tuple[dict[str, Any], bytes]:
         try:
             command = [str(self._worker_path), str(self._model_path)]
@@ -146,22 +175,52 @@ class SubprocessEmbeddingClient(EmbeddingClient):
                 "MKL_NUM_THREADS",
             ):
                 environment[name] = str(self._threads)
-            completed = self._process_runner(
-                command,
-                input=wire,
-                capture_output=True,
-                timeout=timeout,
-                check=False,
-                env=environment,
-            )
+            if self._warm is not None:
+                output = self._warm.exchange(
+                    command,
+                    environment,
+                    wire,
+                    deadline=deadline,
+                    cancelled=cancelled,
+                    max_response=65536 + expected_count * self._dimensions * 4,
+                )
+            else:
+                completed = self._process_runner(
+                    command,
+                    input=wire,
+                    capture_output=True,
+                    timeout=max(0.0, deadline - time.monotonic()),
+                    check=False,
+                    env=environment,
+                )
+                if completed.returncode != 0:
+                    stderr = completed.stderr.decode("utf-8", errors="replace").strip()
+                    raise SemanticSearchError(
+                        f"embedding worker exited {completed.returncode}: {stderr}"
+                    )
+                output = completed.stdout
         except (OSError, subprocess.TimeoutExpired) as exc:
             raise SemanticSearchError(f"embedding worker failed: {exc}") from exc
-        if completed.returncode != 0:
-            stderr = completed.stderr.decode("utf-8", errors="replace").strip()
-            raise SemanticSearchError(f"embedding worker exited {completed.returncode}: {stderr}")
-        header, raw = _decode_response(completed.stdout)
-        if not header.get("ok"):
-            raise SemanticSearchError(str(header.get("error") or "embedding worker error"))
+        header, raw = _decode_response(output)
+        if header.get("ok") is not True:
+            # Warm errors may contain input text; never retain it in diagnostics.
+            message = "embedding worker error" if self._warm else str(header.get("error"))
+            raise SemanticSearchError(message)
+        if self._warm and (header.get("id") != request_id or header.get("method") != "embed_batch"):
+            raise SemanticSearchError("embedding worker response ID or method mismatch")
+        backend_info = header.get("backend")
+        if self._backend != "cpu" and not isinstance(backend_info, dict):
+            raise SemanticSearchError(
+                "Vulkan worker omitted backend diagnostics; use the matching binary"
+            )
+        if isinstance(backend_info, dict):
+            selected = backend_info.get("selected")
+            if self._backend == "vulkan" and selected != "vulkan":
+                raise SemanticSearchError("explicit Vulkan request did not use Vulkan")
+            if backend == "cpu" and selected != "cpu":
+                raise SemanticSearchError("CPU request did not use CPU")
+            if backend == "auto" and selected not in ("cpu", "vulkan"):
+                raise SemanticSearchError("embedding worker reported an invalid backend")
         dimensions, count = header.get("dimensions"), header.get("count")
         if (
             type(dimensions) is not int
