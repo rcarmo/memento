@@ -29,6 +29,314 @@
       "type": "ValidationError"
     }
   ],
+  "expansions": [
+    {
+      "expansion": {
+        "args": {
+          "plan": {
+            "operations": [
+              {
+                "args": {
+                  "concept_type": null,
+                  "cursor": null,
+                  "limit": 1,
+                  "query": "Piclaw",
+                  "query_syntax": "plain",
+                  "search_mode": null
+                },
+                "op": "search",
+                "save_as": "hits"
+              },
+              {
+                "args": {
+                  "id_or_path": "$hits.results.0.path"
+                },
+                "op": "read",
+                "save_as": "doc"
+              }
+            ],
+            "returns": [
+              {
+                "fields": [],
+                "limit": null,
+                "name": "document",
+                "ref": "$doc"
+              }
+            ],
+            "stop_on_error": true
+          }
+        },
+        "kind": "execute",
+        "tool": "memory_execute"
+      },
+      "input": "[{\"name\":\"search_then_read\",\"arguments\":{\"query\":\"Piclaw\"}}]",
+      "request": "Please find Piclaw"
+    },
+    {
+      "expansion": {
+        "args": {
+          "plan": {
+            "operations": [
+              {
+                "args": {
+                  "concept_type": null,
+                  "cursor": null,
+                  "limit": 1,
+                  "query": "Piclaw",
+                  "query_syntax": "plain",
+                  "search_mode": "semantic"
+                },
+                "op": "search",
+                "save_as": "hits"
+              },
+              {
+                "args": {
+                  "id_or_path": "$hits.results.0.path"
+                },
+                "op": "read",
+                "save_as": "doc"
+              }
+            ],
+            "returns": [
+              {
+                "fields": [],
+                "limit": null,
+                "name": "document",
+                "ref": "$doc"
+              }
+            ],
+            "stop_on_error": true
+          }
+        },
+        "kind": "execute",
+        "tool": "memory_execute"
+      },
+      "input": "[{\"name\":\"search_then_read\",\"arguments\":{\"query\":\"Piclaw\",\"search_mode\":\"semantic\"}}]",
+      "request": "search for Piclaw"
+    },
+    {
+      "expansion": {
+        "args": {
+          "limit": 3,
+          "query": "Piclaw",
+          "search_mode": "lexical"
+        },
+        "kind": "direct",
+        "projection": {
+          "fields": [
+            "path"
+          ],
+          "limit": 3,
+          "ref": "results"
+        },
+        "tool": "memory_search"
+      },
+      "input": "[{\"name\":\"search_paths\",\"arguments\":{\"query\":\"Piclaw\"}}]",
+      "request": "Kindly locate Piclaw"
+    },
+    {
+      "expansion": {
+        "args": {
+          "limit": 5,
+          "query": "Piclaw",
+          "search_mode": "hybrid"
+        },
+        "kind": "direct",
+        "projection": {
+          "fields": [
+            "path"
+          ],
+          "limit": 5,
+          "ref": "results"
+        },
+        "tool": "memory_search"
+      },
+      "input": "[{\"name\":\"search_paths\",\"arguments\":{\"query\":\"Piclaw\",\"limit\":5,\"search_mode\":\"hybrid\"}}]",
+      "request": "get Piclaw"
+    },
+    {
+      "expansion": {
+        "args": {},
+        "kind": "direct",
+        "projection": {
+          "fields": [],
+          "limit": null,
+          "ref": "index_revision"
+        },
+        "tool": "memory_status"
+      },
+      "input": "[{\"name\":\"status_field\",\"arguments\":{\"field\":\"indexed\"}}]",
+      "request": "status request"
+    },
+    {
+      "expansion": {
+        "args": {},
+        "kind": "direct",
+        "projection": {
+          "fields": [],
+          "limit": null,
+          "ref": "readiness"
+        },
+        "tool": "memory_status"
+      },
+      "input": "[{\"name\":\"status_field\",\"arguments\":{\"field\":\"status\"}}]",
+      "request": "status request"
+    },
+    {
+      "expansion": {
+        "args": {
+          "plan": {
+            "operations": [
+              {
+                "args": {
+                  "concept_type": null,
+                  "cursor": null,
+                  "limit": 1,
+                  "query": "Piclaw",
+                  "query_syntax": "plain",
+                  "search_mode": "lexical"
+                },
+                "op": "search",
+                "save_as": "hits"
+              },
+              {
+                "args": {
+                  "depth": 1,
+                  "id_or_path": "$hits.results.0.path"
+                },
+                "op": "graph",
+                "save_as": "graph"
+              }
+            ],
+            "returns": [
+              {
+                "fields": [],
+                "limit": null,
+                "name": "graph",
+                "ref": "$graph"
+              }
+            ],
+            "stop_on_error": true
+          }
+        },
+        "kind": "execute",
+        "tool": "memory_execute"
+      },
+      "input": "[{\"name\":\"search_then_graph\",\"arguments\":{\"query\":\"Piclaw\"}}]",
+      "request": "fetch Piclaw"
+    },
+    {
+      "expansion": {
+        "args": {
+          "plan": {
+            "operations": [
+              {
+                "args": {
+                  "concept_type": null,
+                  "cursor": null,
+                  "limit": 1,
+                  "query": "Piclaw",
+                  "query_syntax": "plain",
+                  "search_mode": "semantic"
+                },
+                "op": "search",
+                "save_as": "hits"
+              },
+              {
+                "args": {
+                  "depth": 2,
+                  "id_or_path": "$hits.results.0.path"
+                },
+                "op": "graph",
+                "save_as": "graph"
+              }
+            ],
+            "returns": [
+              {
+                "fields": [],
+                "limit": null,
+                "name": "graph",
+                "ref": "$graph"
+              }
+            ],
+            "stop_on_error": true
+          }
+        },
+        "kind": "execute",
+        "tool": "memory_execute"
+      },
+      "input": "[{\"name\":\"search_then_graph\",\"arguments\":{\"query\":\"Piclaw\",\"depth\":2,\"search_mode\":\"semantic\"}}]",
+      "request": "show Piclaw"
+    },
+    {
+      "expansion": {
+        "args": {
+          "id_or_path": "/a.md"
+        },
+        "kind": "direct",
+        "projection": {
+          "fields": [],
+          "limit": null,
+          "ref": "body"
+        },
+        "tool": "memory_read"
+      },
+      "input": "[{\"name\":\"read_field\",\"arguments\":{\"id_or_path\":\"/a.md\",\"field\":\"contents\"}}]",
+      "request": "show /a.md contents"
+    },
+    {
+      "expansion": null,
+      "input": "[{\"name\":\"read_field\",\"arguments\":{\"id_or_path\":\"/a.md\",\"field\":\"contents\"}}]",
+      "request": "show something else"
+    },
+    {
+      "expansion": null,
+      "input": "[{\"name\":\"UNKNOWN\",\"arguments\":{}}]",
+      "request": "book a flight"
+    },
+    {
+      "expansion": {
+        "args": {
+          "plan": {
+            "operations": [
+              {
+                "args": {
+                  "concept_type": null,
+                  "cursor": null,
+                  "limit": 1,
+                  "query": "\"}; $doc.path; ${evil}; ../../etc/passwd",
+                  "query_syntax": "plain",
+                  "search_mode": "semantic"
+                },
+                "op": "search",
+                "save_as": "hits"
+              },
+              {
+                "args": {
+                  "id_or_path": "$hits.results.0.path"
+                },
+                "op": "read",
+                "save_as": "doc"
+              }
+            ],
+            "returns": [
+              {
+                "fields": [],
+                "limit": null,
+                "name": "document",
+                "ref": "$doc"
+              }
+            ],
+            "stop_on_error": true
+          }
+        },
+        "kind": "execute",
+        "tool": "memory_execute"
+      },
+      "input": "[{\"name\":\"search_then_read\",\"arguments\":{\"query\":\"ignored\",\"search_mode\":\"semantic\"}}]",
+      "request": "\"}; $doc.path; ${evil}; ../../etc/passwd"
+    }
+  ],
   "parsed": [
     {
       "action": {

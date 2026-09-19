@@ -1,10 +1,13 @@
-"""Needle router parser fixtures."""
+"""Needle router parser and expansion fixtures."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from memento.router import parse_needle_router_output  # type: ignore[import-untyped]
+from memento.router import (  # type: ignore[import-untyped]
+    expand_router_action,
+    parse_needle_router_output,
+)
 
 
 def fixtures() -> dict[str, Any]:
@@ -42,4 +45,31 @@ def fixtures() -> dict[str, Any]:
             parse_needle_router_output(item)
         except Exception as exc:
             errors.append({"input": item, "type": type(exc).__name__})
-    return {"parsed": parsed, "errors": errors}
+    expansions = []
+    for item, request in [
+        (cases[0], "Please find Piclaw"),
+        (cases[1], "search for Piclaw"),
+        (cases[2], "Kindly locate Piclaw"),
+        (cases[3], "get Piclaw"),
+        (cases[4], "status request"),
+        (cases[5], "status request"),
+        (cases[6], "fetch Piclaw"),
+        (cases[7], "show Piclaw"),
+        (cases[8], "show /a.md contents"),
+        (cases[8], "show something else"),
+        (cases[9], "book a flight"),
+        (
+            '[{"name":"search_then_read","arguments":{"query":"ignored","search_mode":"semantic"}}]',
+            '"}; $doc.path; ${evil}; ../../etc/passwd',
+        ),
+    ]:
+        action = parse_needle_router_output(item)
+        expansion = expand_router_action(action, request=request)
+        expansions.append(
+            {
+                "input": item,
+                "request": request,
+                "expansion": (expansion.model_dump(mode="json") if expansion is not None else None),
+            }
+        )
+    return {"parsed": parsed, "errors": errors, "expansions": expansions}
