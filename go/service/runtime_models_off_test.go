@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/rcarmo/memento/go/access"
+	"github.com/rcarmo/memento/go/derived"
 	"github.com/rcarmo/memento/go/execute"
 	"github.com/rcarmo/memento/go/graphdebug"
 	"github.com/rcarmo/memento/go/umcp"
@@ -160,6 +161,31 @@ func TestBuildManagedModelsOffRuntime(t *testing.T) {
 	principal, err = runtime.Jobs.Identity.AuthenticateHeaders(ctx, map[string]string{"authorization": "Bearer sandbox-token"})
 	if err != nil || principal == nil {
 		t.Fatal(principal, err)
+	}
+}
+
+func TestModelsOffRuntimeSemanticWorker(t *testing.T) {
+	ctx := context.Background()
+	var config RuntimeConfig
+	config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
+	worker := derived.NewSemanticWorker(adapterIndex{}, adapterClient{}, derived.SemanticRefreshConfig{})
+	options := ModelsOffRuntimeOptions{Surface: "standard", Tokens: []BearerPrincipal{}, Graph: GraphHTTPConfig{Enabled: true, RoutePrefix: "/graph", Cluster: graphdebug.ClusterOptions{RefreshMaxPaths: 10}, Overview: graphdebug.OverviewOptions{DirectNodeLimit: 10, EdgeLimit: 10}}, SemanticWorker: worker}
+	runtime, _, err := BuildModelsOffRuntime(ctx, config, options)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if runtime.GraphRefresh == nil || runtime.SemanticWorker != worker {
+		t.Fatal(runtime)
+	}
+	response, err := runtime.HTTPHooks.Route(ctx, "POST", "/graph/api/v1/embeddings/refresh", nil, []byte(`{"scope":"full","confirm_full":true}`), "")
+	if err != nil || response.Status != 202 {
+		t.Fatal(response, err)
+	}
+	if err = runtime.Close(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if worker.State().Alive {
+		t.Fatal("worker alive")
 	}
 }
 

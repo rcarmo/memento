@@ -6,6 +6,8 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/rcarmo/memento/go/derived"
+	"github.com/rcarmo/memento/go/graphdebug"
 	"github.com/rcarmo/memento/go/repository"
 	"github.com/rcarmo/memento/go/umcp"
 )
@@ -14,12 +16,14 @@ import (
 // shielded requests before closing background components, SQLite, and finally
 // the process-wide writer lease.
 type Runtime struct {
-	Paths     RuntimePaths
-	Jobs      *Jobs
-	DB        *sql.DB
-	Lease     *repository.WriterLease
-	HTTPHooks umcp.HTTPHooks
-	Closers   []func() error
+	Paths          RuntimePaths
+	Jobs           *Jobs
+	SemanticWorker *derived.SemanticWorker
+	GraphRefresh   *graphdebug.RefreshCoordinator
+	DB             *sql.DB
+	Lease          *repository.WriterLease
+	HTTPHooks      umcp.HTTPHooks
+	Closers        []func() error
 
 	mu     sync.Mutex
 	closed bool

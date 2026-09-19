@@ -21,12 +21,13 @@ import (
 )
 
 type ModelsOffRuntimeOptions struct {
-	Surface       string
-	Limits        execute.Limits
-	BootstrapSeed string
-	Tokens        []BearerPrincipal
-	Graph         GraphHTTPConfig
-	Needle        NeedleRouterConfig
+	Surface        string
+	Limits         execute.Limits
+	BootstrapSeed  string
+	Tokens         []BearerPrincipal
+	Graph          GraphHTTPConfig
+	Needle         NeedleRouterConfig
+	SemanticWorker *derived.SemanticWorker
 }
 type modelsOffBuildOps struct {
 	storage             func(context.Context, RuntimeConfig, string) (*Runtime, error)
@@ -196,7 +197,15 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	runtime.Jobs = jobs
 	runtime.HTTPHooks = identity.HTTPHooks()
 	stagingHTTP := StagingHTTP{Store: staging, Authenticate: identity.AuthenticateHeaders}
-	graphHTTP := GraphHTTP{Config: options.Graph, Snapshots: graphdebug.NewSnapshotService(paths.Repository.CurrentDir, paths.DerivedDB, paths.ControlDB), Policies: &GraphPolicyDirectory{Static: config.Authorization, Managed: graphManaged}}
+	snapshotService := graphdebug.NewSnapshotService(paths.Repository.CurrentDir, paths.DerivedDB, paths.ControlDB)
+	var coordinator *graphdebug.RefreshCoordinator
+	if options.SemanticWorker != nil {
+		runtime.SemanticWorker = options.SemanticWorker
+		runtime.Closers = append(runtime.Closers, func() error { options.SemanticWorker.Close(); return nil })
+		coordinator = &graphdebug.RefreshCoordinator{Service: snapshotService, Worker: SemanticRefreshAdapter{options.SemanticWorker}, RepositoryRoot: paths.Repository.CurrentDir, RefreshMaxPaths: options.Graph.Cluster.RefreshMaxPaths, DirectNodeLimit: options.Graph.Overview.DirectNodeLimit, EdgeLimit: options.Graph.Overview.EdgeLimit}
+		runtime.GraphRefresh = coordinator
+	}
+	graphHTTP := GraphHTTP{Config: options.Graph, Snapshots: snapshotService, Refresh: coordinator, Policies: &GraphPolicyDirectory{Static: config.Authorization, Managed: graphManaged}}
 	runtime.HTTPHooks.Route = func(ctx context.Context, method, path string, headers map[string]string, body []byte, peer string) (*umcp.HTTPResponse, error) {
 		response, routeErr := stagingHTTP.Handle(ctx, method, path, headers, body, peer)
 		if response != nil || routeErr != nil {
