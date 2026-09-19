@@ -52,6 +52,14 @@ The test container and imported test image were removed from the NAS afterwards.
 
 No host installation, driver replacement, live deployment, reserved local GPU work or Sigma retest occurred. Build and transfer artefacts remain local for reproduction.
 
+## Go-port handoff
+
+Rui requested retaining this route for the Go port. The verified component is the container userspace stack and NAS device access, independent of the language of the eventual client. The [exact test Dockerfile](nas-bookworm-pretest.Dockerfile) is retained with this report. It pins the base image but used the Bookworm package repositories at build time; its package versions are recorded above, not locked by that Dockerfile. A release recipe must lock or snapshot the full dependency set and recheck security updates rather than assuming a later rebuild is byte-identical.
+
+Use the same GTE1 bytes, tokenisation, FP32 computation and pooling for comparisons. A Go process may reuse the framed Rust worker if that fits the port, or qualify its own backend against the same reference; this result does not choose the Go architecture or prove Go-backend compatibility. Preserve CPU default, explicit hardware selection/software-adapter rejection, fail-closed Vulkan, bounded whole-batch auto fallback and experimental embedding identity.
+
+Device group 937 is specific to this NAS and must be discovered on other hosts. A Go image needs the Vulkan loader/Intel ICD and their coherent userspace dependencies, not Python merely to use Vulkan; Python here runs the reference test. Repeat parity, startup/warm timing and full-service memory checks with the actual Go build. Do not enable Vulkan by default based on enumeration alone: every cold GPU case was slower, and 390.172 MiB is the standalone test peak, not a Go-service memory budget.
+
 ## What changes next
 
 There is now a verified container-only compatibility route, so a host upgrade is not required to demonstrate NAS hardware GTE support. The original Mesa 26 message also needs care: its source uses the same capture-support error for capture and timeline-fence checks; the earlier line 119 matches the upstream timeline check. Older Mesa retains optional paths for those capabilities.
