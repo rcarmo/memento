@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 
 	"github.com/rcarmo/memento/go/control"
 	"github.com/rcarmo/memento/go/derived"
@@ -25,6 +27,54 @@ func defaultRuntimeStatusOps() runtimeStatusOps {
 // StatusSnapshot returns the process-level operational status used by the CLI.
 func (r *Runtime) StatusSnapshot(ctx context.Context, schemaVersion int) (map[string]any, error) {
 	return r.statusSnapshot(ctx, schemaVersion, defaultRuntimeStatusOps())
+}
+
+type runtimeRebuildOps struct {
+	revision func(repository.GitRepositoryPaths) (string, error)
+	rebuild  func(context.Context, *derived.Index, string, string) error
+	temp     func(string, string) (string, error)
+	parity   func(context.Context, *derived.Index, *derived.Index, string) (derived.ParityReport, error)
+	remove   func(string) error
+}
+
+func defaultRuntimeRebuildOps() runtimeRebuildOps {
+	return runtimeRebuildOps{repository.GetMainRevision, func(ctx context.Context, index *derived.Index, root, revision string) error {
+		return index.Rebuild(ctx, root, revision)
+	}, os.MkdirTemp, func(ctx context.Context, index, clean *derived.Index, revision string) (derived.ParityReport, error) {
+		return index.ParityCheck(ctx, clean, revision)
+	}, os.RemoveAll}
+}
+
+// RebuildIndex rebuilds the live index and verifies it against a clean rebuild.
+func (r *Runtime) RebuildIndex(ctx context.Context) (map[string]any, error) {
+	return r.rebuildIndex(ctx, defaultRuntimeRebuildOps())
+}
+func (r *Runtime) rebuildIndex(ctx context.Context, ops runtimeRebuildOps) (map[string]any, error) {
+	revision, err := ops.revision(r.Paths.Repository)
+	if err != nil {
+		return nil, err
+	}
+	index := &derived.Index{Path: r.Paths.DerivedDB}
+	if err = ops.rebuild(ctx, index, r.Paths.Repository.CurrentDir, revision); err != nil {
+		return nil, err
+	}
+	temp, err := ops.temp(r.Paths.Root, "parity-")
+	if err != nil {
+		return nil, err
+	}
+	defer ops.remove(temp)
+	clean := &derived.Index{Path: filepath.Join(temp, "derived.sqlite")}
+	if err = ops.rebuild(ctx, clean, r.Paths.Repository.CurrentDir, revision); err != nil {
+		return nil, err
+	}
+	report, err := ops.parity(ctx, index, clean, revision)
+	if err != nil {
+		return nil, err
+	}
+	if r.SemanticWorker != nil {
+		r.SemanticWorker.Enqueue(r.Paths.Repository.CurrentDir, revision, nil, true)
+	}
+	return map[string]any{"repo_revision": revision, "index_revision": report.CurrentRevision, "parity_matches": report.Matches, "parity_details": report.Details}, nil
 }
 func (r *Runtime) statusSnapshot(ctx context.Context, schemaVersion int, ops runtimeStatusOps) (map[string]any, error) {
 	revision, err := ops.revision(r.Paths.Repository)

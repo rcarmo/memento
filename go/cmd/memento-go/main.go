@@ -35,7 +35,7 @@ func hasFlag(args []string, name string) bool {
 }
 func usage(stderr io.Writer) {
 	fmt.Fprintln(stderr, "usage: memento-go --config PATH serve [uMCP transport options]")
-	fmt.Fprintln(stderr, "       memento-go --config PATH status")
+	fmt.Fprintln(stderr, "       memento-go --config PATH status|rebuild-index")
 	fmt.Fprintln(stderr, "       memento-go version")
 }
 func runContext(ctx context.Context, args []string, input io.Reader, out, stderr io.Writer) int {
@@ -43,7 +43,7 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(out, version)
 		return 0
 	}
-	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status") || (args[2] == "status" && len(args) != 3) {
+	if len(args) < 3 || args[0] != "--config" || args[1] == "" || (args[2] != "serve" && args[2] != "status" && args[2] != "rebuild-index") || (args[2] != "serve" && len(args) != 3) {
 		usage(stderr)
 		return 2
 	}
@@ -68,8 +68,14 @@ func runContext(ctx context.Context, args []string, input io.Reader, out, stderr
 		fmt.Fprintln(stderr, "memento-go:", err)
 		return 1
 	}
-	if args[2] == "status" {
-		payload, statusErr := runtime.StatusSnapshot(ctx, config.SchemaVersion)
+	if args[2] == "status" || args[2] == "rebuild-index" {
+		var payload map[string]any
+		var statusErr error
+		if args[2] == "status" {
+			payload, statusErr = runtime.StatusSnapshot(ctx, config.SchemaVersion)
+		} else {
+			payload, statusErr = runtime.RebuildIndex(ctx)
+		}
 		closeErr := runtime.Close(context.Background())
 		if statusErr == nil {
 			encoder := json.NewEncoder(out)

@@ -9,6 +9,7 @@ import (
 	"github.com/rcarmo/memento/go/umcp"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -92,6 +93,28 @@ func TestRunStatus(t *testing.T) {
 	runtime.Closers = []func() error{func() error { return errors.New("close") }}
 	if code := runContext(context.Background(), []string{"--config", "x", "status"}, nil, io.Discard, &stderr); code != 1 {
 		t.Fatal(code)
+	}
+}
+func TestRunRebuildIndex(t *testing.T) {
+	oldLoad, oldBuild := loadConfig, buildRuntime
+	t.Cleanup(func() { loadConfig, buildRuntime = oldLoad, oldBuild })
+	runtime, server := stubRuntime(t)
+	loadConfig = func(string) (service.RuntimeConfig, error) { return service.RuntimeConfig{}, nil }
+	buildRuntime = func(context.Context, service.RuntimeConfig, service.ModelsOffRuntimeOptions) (*service.Runtime, *umcp.Server, error) {
+		return runtime, server, nil
+	}
+	var out, stderr bytes.Buffer
+	if code := runContext(context.Background(), []string{"--config", "x", "rebuild-index"}, nil, &out, &stderr); code != 0 || stderr.Len() != 0 {
+		t.Fatal(code, out.String(), stderr.String())
+	}
+	var payload map[string]any
+	if err := json.Unmarshal(out.Bytes(), &payload); err != nil || payload["parity_matches"] != true {
+		t.Fatal(payload, err)
+	}
+	runtime, server = stubRuntime(t)
+	runtime.Paths.Repository.BareDir = filepath.Join(t.TempDir(), "missing")
+	if code := runContext(context.Background(), []string{"--config", "x", "rebuild-index"}, nil, io.Discard, &stderr); code != 1 {
+		t.Fatal(code, stderr.String())
 	}
 }
 func TestDefaultRunServer(t *testing.T) {
