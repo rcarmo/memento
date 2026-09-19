@@ -15,11 +15,12 @@ memento-go-$VERSION-linux-$ARCH/
 memento-go-$VERSION-linux-$ARCH/VERSION
 memento-go-$VERSION-linux-$ARCH/memento-embed-go
 memento-go-$VERSION-linux-$ARCH/memento-go
+memento-go-$VERSION-linux-$ARCH/memento-skill-import-go
 EOF
   tar -tzf "$ARCHIVE" > "$TMP/list-$ARCH"
   diff -u "$EXPECTED" "$TMP/list-$ARCH"
   tar -xzf "$ARCHIVE" -C "$TMP"
-  for NAME in memento-go memento-embed-go; do
+  for NAME in memento-go memento-embed-go memento-skill-import-go; do
     BIN="$TMP/memento-go-$VERSION-linux-$ARCH/$NAME"
     file "$BIN" | grep -q 'statically linked'
     if readelf -d "$BIN" 2>/dev/null | grep -q NEEDED; then echo "$BIN has dynamic dependencies" >&2; exit 1; fi

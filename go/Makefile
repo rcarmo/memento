@@ -63,6 +63,7 @@ corpus-test:
 build:
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-go ./cmd/memento-go
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-embed-go ./cmd/memento-embed-go
+	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-skill-import-go ./cmd/memento-skill-import-go
 race:
 	# The Go race detector needs cgo in the test toolchain, not the shipped runtime.
 	CGO_ENABLED=1 $(GO) test -race ./...
@@ -70,6 +71,7 @@ install: build
 	install -d "$(DESTDIR)$(PREFIX)/bin"
 	install -m 0755 ../build/go/memento-go "$(DESTDIR)$(PREFIX)/bin/memento-go"
 	install -m 0755 ../build/go/memento-embed-go "$(DESTDIR)$(PREFIX)/bin/memento-embed-go"
+	install -m 0755 ../build/go/memento-skill-import-go "$(DESTDIR)$(PREFIX)/bin/memento-skill-import-go"
 release:
 	GO="$(GO)" VERSION="$(VERSION)" ./tools/release.sh
 release-check: release
@@ -79,6 +81,8 @@ cross:
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-go-linux-arm64 ./cmd/memento-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-embed-go-linux-amd64 ./cmd/memento-embed-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-embed-go-linux-arm64 ./cmd/memento-embed-go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-skill-import-go-linux-amd64 ./cmd/memento-skill-import-go
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-skill-import-go-linux-arm64 ./cmd/memento-skill-import-go
 oracle:
 	@test -n "$(UMCP_REFERENCE)" || (echo 'Set UMCP_REFERENCE to the pinned uMCP checkout'; exit 1)
 	$(ORACLE_PYTHON) oracle/export.py --umcp "$(UMCP_REFERENCE)"
