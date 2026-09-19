@@ -20,6 +20,10 @@ The Rust implementation under `rust/` includes code derived from and validated a
 
 `memento-ffi` exposes the same Rust embedding and vector functionality through a stable C ABI, and keeps the same attribution chain intact.
 
+## Go SIMD kernels
+
+The opt-in Go SIMD dot/AXPY substrate under `go/internal/simd` is informed by the MIT-licensed [`rcarmo/go-gte`](https://github.com/rcarmo/go-gte) assembly design and retains scalar correctness fallbacks. Memento adds baseline amd64 SSE2, runtime-gated AVX2, and ARM64 NEON variants plus explicit runtime selection and differential tests. The upstream MIT licence is retained in the repository's existing attribution chain; these kernels are not enabled for model inference until scalar/corpus parity and architecture benchmarks pass.
+
 ## GTE-small model
 
 The repository vendors the FP32 `gte-small.gtemodel` generated from [`thenlper/gte-small`](https://huggingface.co/thenlper/gte-small) through the `rcarmo/go-gte` conversion tooling. The file is `models/gte/gte-small.gtemodel`, is about 128 MB, and has SHA-256 `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`.
