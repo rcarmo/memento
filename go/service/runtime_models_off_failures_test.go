@@ -4,6 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+
 	"github.com/rcarmo/memento/go/access"
 	"github.com/rcarmo/memento/go/assets"
 	"github.com/rcarmo/memento/go/derived"
@@ -11,15 +16,12 @@ import (
 	"github.com/rcarmo/memento/go/needle"
 	"github.com/rcarmo/memento/go/repository"
 	"github.com/rcarmo/memento/go/umcp"
-	"path/filepath"
-	"strings"
-	"testing"
 )
 
 func TestBuildModelsOffComponentFailures(t *testing.T) {
 	ctx := context.Background()
 	boom := errors.New("boom")
-	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "legacy-detect", "legacy-revision", "legacy-migrate", "metadata", "register", "access-open", "access-bootstrap", "access-register", "needle-model", "needle-tokenizer", "needle-router", "needle-build", "needle-register", "semantic-load"} {
+	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "legacy-detect", "legacy-revision", "legacy-migrate", "legacy-skill-revision", "legacy-skill-migrate", "legacy-stat", "legacy-materialize", "legacy-final-revision", "metadata", "register", "access-open", "access-bootstrap", "access-register", "needle-model", "needle-tokenizer", "needle-router", "needle-build", "needle-register", "semantic-load"} {
 		t.Run(stage, func(t *testing.T) {
 			var config RuntimeConfig
 			config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
@@ -47,17 +49,29 @@ func TestBuildModelsOffComponentFailures(t *testing.T) {
 				ops.needsLegacyMigration = func(string) (bool, error) { return false, boom }
 			case "legacy-revision":
 				ops.needsLegacyMigration = func(string) (bool, error) { return true, nil }
-				calls := 0
-				ops.revision = func(repository.GitRepositoryPaths) (string, error) {
-					calls++
-					if calls > 1 {
-						return "", boom
-					}
-					return "revision", nil
-				}
+				ops.revision = func(repository.GitRepositoryPaths) (string, error) { return "", boom }
 			case "legacy-migrate":
 				ops.needsLegacyMigration = func(string) (bool, error) { return true, nil }
 				ops.migrateLegacy = func(string, string) ([]string, error) { return nil, boom }
+			case "legacy-skill-revision":
+				ops.needsLegacyMigration = func(string) (bool, error) { return false, nil }
+				ops.migrateLegacySkills = func(string) ([]string, error) { return nil, nil }
+				ops.stat = func(string) (os.FileInfo, error) { return os.Stat(config.Repository.RootPath) }
+				ops.revision = func(repository.GitRepositoryPaths) (string, error) { return "", boom }
+			case "legacy-skill-migrate":
+				ops.needsLegacyMigration = func(string) (bool, error) { return false, nil }
+				ops.stat = func(string) (os.FileInfo, error) { return os.Stat(config.Repository.RootPath) }
+				ops.migrateLegacySkills = func(string) ([]string, error) { return nil, boom }
+			case "legacy-stat":
+				ops.needsLegacyMigration = func(string) (bool, error) { return false, nil }
+				ops.stat = func(string) (os.FileInfo, error) { return nil, boom }
+			case "legacy-materialize":
+				ops.materialize = func(context.Context, repository.GitRepositoryPaths, string) (repository.MaterializedCheckout, error) {
+					return repository.MaterializedCheckout{}, boom
+				}
+			case "legacy-final-revision":
+				ops.needsLegacyMigration = func(string) (bool, error) { return false, nil }
+				ops.revision = func(repository.GitRepositoryPaths) (string, error) { return "", boom }
 			case "metadata":
 				ops.metadata = func(string) (*ModelsOffMetadata, error) { return nil, boom }
 			case "register":

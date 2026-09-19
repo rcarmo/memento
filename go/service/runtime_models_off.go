@@ -44,6 +44,9 @@ type modelsOffBuildOps struct {
 	recover              func(context.Context, *repository.TransactionManager) ([]repository.RecoveryRecord, error)
 	needsLegacyMigration func(string) (bool, error)
 	migrateLegacy        func(string, string) ([]string, error)
+	migrateLegacySkills  func(string) ([]string, error)
+	stat                 func(string) (os.FileInfo, error)
+	materialize          func(context.Context, repository.GitRepositoryPaths, string) (repository.MaterializedCheckout, error)
 	metadata             func(string) (*ModelsOffMetadata, error)
 	register             func(*Jobs, *umcp.Server, string, execute.Limits) error
 	openAccess           func(context.Context, *sql.DB, string) (*access.Store, error)
@@ -66,7 +69,7 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 		return i.Rebuild(ctx, root, revision)
 	}, func(ctx context.Context, s *assets.StagingStore) (int64, error) { return s.Expire(ctx) }, func(ctx context.Context, m *repository.TransactionManager) ([]repository.RecoveryRecord, error) {
 		return m.RecoverStartup(ctx)
-	}, repository.RepositoryNeedsLegacyBlobMigration, repository.MigrateLegacyBlobsToGit, NewModelsOffMetadata, func(j *Jobs, s *umcp.Server, surface string, limits execute.Limits) error {
+	}, repository.RepositoryNeedsLegacyBlobMigration, repository.MigrateLegacyBlobsToGit, MigrateLegacySkillPacks, os.Stat, repository.MaterializeCurrentCheckout, NewModelsOffMetadata, func(j *Jobs, s *umcp.Server, surface string, limits execute.Limits) error {
 		return j.RegisterModelsOffServer(s, surface, limits, nil)
 	}, access.OpenStore, func(ctx context.Context, s *access.Store, p []access.ConfiguredPrincipal, t map[string]string) error {
 		return s.Bootstrap(ctx, p, t)
@@ -94,13 +97,57 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		}
 	}()
 	paths := runtime.Paths
-	revision, err := ops.revision(paths.Repository)
+	var revision string
+	index := &derived.Index{Path: paths.DerivedDB, DeferEmbeddings: options.Semantic.Enabled, MaxInputChars: options.Semantic.MaxInputChars}
+	manager := repository.TransactionManager{Paths: paths.Repository, Operations: control.Operations{DB: runtime.DB}, DerivedUpdate: func(ctx context.Context, root, revision string, changed []string) error {
+		if len(changed) == 0 {
+			return index.Rebuild(ctx, root, revision)
+		}
+		return index.UpdatePaths(ctx, root, revision, changed)
+	}}
+	recoveryManager := repository.TransactionManager{Paths: paths.Repository, Operations: control.Operations{DB: runtime.DB}}
+	if _, err = ops.recover(ctx, &recoveryManager); err != nil {
+		return nil, nil, err
+	}
+	needsMigration, err := ops.needsLegacyMigration(paths.Repository.CurrentDir)
 	if err != nil {
 		return nil, nil, err
 	}
-	index := &derived.Index{Path: paths.DerivedDB, DeferEmbeddings: options.Semantic.Enabled, MaxInputChars: options.Semantic.MaxInputChars}
+	migrationManager := repository.TransactionManager{Paths: paths.Repository, Operations: control.Operations{DB: runtime.DB}}
+	if needsMigration {
+		revision, err = ops.revision(paths.Repository)
+		if err != nil {
+			return nil, nil, err
+		}
+		request := repository.TransactionRequest{Operation: control.OperationRequest{OpID: "migrate-legacy-blobs-to-git-v1", Principal: "memento-migration", IdempotencyKey: "migrate-legacy-blobs-to-git-v1", ToolName: "internal_legacy_blob_migration", RequestJSON: `{"base_revision":"` + revision + `"}`}, ExpectedRevision: revision, CommitMessage: "memory: migrate legacy assets to ordinary Git blobs", AuthorName: "Rui Carmo", AuthorEmail: "rui.carmo@gmail.com"}
+		if _, err = migrationManager.Apply(ctx, request, func(_ context.Context, worktree string) ([]string, error) {
+			return ops.migrateLegacy(worktree, filepath.Join(paths.Repository.BareDir, "lfs", "objects"))
+		}); err != nil {
+			return nil, nil, err
+		}
+	}
+	legacySkills := filepath.Join(paths.Repository.CurrentDir, "skills", ".versions")
+	if info, statErr := ops.stat(legacySkills); statErr == nil && info.IsDir() {
+		revision, err = ops.revision(paths.Repository)
+		if err != nil {
+			return nil, nil, err
+		}
+		request := repository.TransactionRequest{Operation: control.OperationRequest{OpID: "migrate-generic-asset-packs-v1", Principal: "memento-migration", IdempotencyKey: "migrate-generic-asset-packs-v1", ToolName: "internal_asset_migration", RequestJSON: `{"base_revision":"` + revision + `"}`}, ExpectedRevision: revision, CommitMessage: "memory: migrate skills to generic assets", AuthorName: "Rui Carmo", AuthorEmail: "rui.carmo@gmail.com"}
+		if _, err = migrationManager.Apply(ctx, request, func(_ context.Context, worktree string) ([]string, error) { return ops.migrateLegacySkills(worktree) }); err != nil {
+			return nil, nil, err
+		}
+	} else if statErr != nil && !errors.Is(statErr, os.ErrNotExist) {
+		return nil, nil, statErr
+	}
+	revision, err = ops.revision(paths.Repository)
+	if err != nil {
+		return nil, nil, err
+	}
+	if _, err = ops.materialize(ctx, paths.Repository, revision); err != nil {
+		return nil, nil, err
+	}
 	state, stateErr := ops.state(ctx, index)
-	if stateErr != nil || state.IndexRevision == "" {
+	if stateErr != nil || state.IndexRevision != revision {
 		if err = ops.rebuild(ctx, index, paths.Repository.CurrentDir, revision); err != nil {
 			return nil, nil, err
 		}
@@ -108,31 +155,6 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	staging := &assets.StagingStore{DB: runtime.DB, Random: rand.Reader}
 	if _, err = ops.expire(ctx, staging); err != nil {
 		return nil, nil, err
-	}
-	manager := repository.TransactionManager{Paths: paths.Repository, Operations: control.Operations{DB: runtime.DB}, DerivedUpdate: func(ctx context.Context, root, revision string, changed []string) error {
-		if len(changed) == 0 {
-			return index.Rebuild(ctx, root, revision)
-		}
-		return index.UpdatePaths(ctx, root, revision, changed)
-	}}
-	if _, err = ops.recover(ctx, &manager); err != nil {
-		return nil, nil, err
-	}
-	needsMigration, err := ops.needsLegacyMigration(paths.Repository.CurrentDir)
-	if err != nil {
-		return nil, nil, err
-	}
-	if needsMigration {
-		revision, err = ops.revision(paths.Repository)
-		if err != nil {
-			return nil, nil, err
-		}
-		request := repository.TransactionRequest{Operation: control.OperationRequest{OpID: "migrate-legacy-blobs-to-git-v1", Principal: "memento-migration", IdempotencyKey: "migrate-legacy-blobs-to-git-v1", ToolName: "internal_legacy_blob_migration", RequestJSON: `{"base_revision":"` + revision + `"}`}, ExpectedRevision: revision, CommitMessage: "memory: migrate legacy assets to ordinary Git blobs", AuthorName: "Rui Carmo", AuthorEmail: "rui.carmo@gmail.com"}
-		if _, err = manager.Apply(ctx, request, func(_ context.Context, worktree string) ([]string, error) {
-			return ops.migrateLegacy(worktree, filepath.Join(paths.Repository.BareDir, "lfs", "objects"))
-		}); err != nil {
-			return nil, nil, err
-		}
 	}
 	tokens := options.Tokens
 	var managed *access.Store
