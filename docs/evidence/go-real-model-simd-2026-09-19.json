@@ -1,0 +1,58 @@
+{
+  "date": "2026-09-19",
+  "assets": {
+    "gte_sha256": "06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171",
+    "needle_sha256": "fc9978c1d3817031a3f9ea00832cd8177290b25ff734b178cb9bcba0b894bb0b",
+    "needle_tokenizer_sha256": "0823f5b9133c68a8140addc5d7a425fa9119c4c8cb4a550363b4bffa4ba1c8c7"
+  },
+  "x86_64": {
+    "host": "sandbox",
+    "cpu": "12th Gen Intel(R) Core(TM) i7-12700",
+    "go": "go1.26.3 linux/amd64",
+    "full_gates": {
+      "gte_cases": "5/5",
+      "needle_generation_cases": "5/5",
+      "needle_tensors": 31,
+      "needle_vocabulary_pieces": 8192,
+      "needle_token_decodes": 8192,
+      "needle_corpus_exact": "360/360"
+    },
+    "backend_seconds": {
+      "scalar": {"gte": 0.87, "needle": 18.25, "wall": 18.49},
+      "sse2": {"gte": 0.33, "needle": 18.00, "wall": 18.12},
+      "auto": {"gte": 0.27, "needle": 17.84, "wall": 17.94}
+    }
+  },
+  "arm64": {
+    "host": "orangepi6plus.local",
+    "cpu": "CIX P1 CD8160; 4 Cortex-A520 + 8 Cortex-A720",
+    "go": "go1.26.0 linux/arm64 via GOTOOLCHAIN=auto",
+    "backend_selection": "auto selected neon",
+    "kernel_benchmark_ns_per_op": {
+      "scalar_samples": [153.8, 165.2, 163.9],
+      "neon_auto_samples": [85.47, 88.83, 85.50]
+    },
+    "real_model_seconds": {
+      "scalar": {"gte": 1.207, "needle": 26.125, "wall": 26.808},
+      "neon": {"gte": 0.561, "needle": 27.292, "wall": 27.639},
+      "auto": {"gte": 0.580, "needle": 27.450, "wall": 27.738}
+    },
+    "real_model_parity": {
+      "gte_scalar_neon_auto": "5/5 each; existing 1e-5 maximum-absolute-error gate",
+      "needle_scalar_neon_auto": "5/5 exact generated outputs each",
+      "needle_corpus_neon": "360/360 exact Rust output/error matches; 2001.84 seconds test time, 2002 seconds measured wall time"
+    },
+    "defect_and_fix": {
+      "observed": "the original NEON dot reduction produced max_abs up to 0.455 for GTE and caused Needle generation to exceed 512 tokens",
+      "root_cause": "manual vector-lane extraction/reduction in native_arm64.s",
+      "fix": "replace lane moves with two native FADDP horizontal reductions",
+      "regression": "deterministic pseudo-random lengths 4, 5, 127, 384 and 385 plus in-place AXPY aliasing"
+    }
+  },
+  "commands": [
+    "make -C go model-test corpus-test",
+    "MEMENTO_SIMD={scalar,sse2,auto} CGO_ENABLED=0 go test ./gte ./needle -run 'TestReal(GTEModel|NeedleGeneration)$' -count=1",
+    "MEMENTO_SIMD={scalar,neon,auto} CGO_ENABLED=0 go test ./gte ./needle -run 'TestReal(GTEModel|NeedleGeneration)$' -count=1",
+    "MEMENTO_SIMD=neon NEEDLE_FULL_CORPUS=1 CGO_ENABLED=0 go test ./needle -run TestRealNeedleCorpus -count=1 -timeout=60m"
+  ]
+}

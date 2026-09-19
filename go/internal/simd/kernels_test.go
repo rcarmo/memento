@@ -88,6 +88,36 @@ func TestKernelsAgainstScalar(t *testing.T) {
 		}
 	}
 }
+func TestKernelsDeterministicRandomAndAliasing(t *testing.T) {
+	caps := Detect()
+	seed := uint32(0x9e3779b9)
+	next := func() float32 { seed = seed*1664525 + 1013904223; return float32(int32(seed)) / float32(math.MaxInt32) }
+	for _, n := range []int{4, 5, 127, 384, 385} {
+		a, b := make([]float32, n), make([]float32, n)
+		for i := range a {
+			a[i], b[i] = next(), next()
+		}
+		want := dotScalar(a, b)
+		for _, backend := range caps.Available {
+			got, err := Dot(backend, a, b)
+			if err != nil || math.Abs(float64(got-want)) > 1e-4*math.Max(1, math.Abs(float64(want))) {
+				t.Fatalf("dot n=%d backend=%s want=%g got=%g err=%v", n, backend, want, got, err)
+			}
+			alias := append([]float32{}, a...)
+			expected := append([]float32{}, a...)
+			axpyScalar(.37, expected, expected)
+			if err = AXPY(backend, .37, alias, alias); err != nil {
+				t.Fatal(err)
+			}
+			for i := range alias {
+				if math.Float32bits(alias[i]) != math.Float32bits(expected[i]) {
+					t.Fatalf("alias n=%d backend=%s i=%d want=%g got=%g", n, backend, i, expected[i], alias[i])
+				}
+			}
+		}
+	}
+}
+
 func TestEngineKernels(t *testing.T) {
 	engine, err := New("scalar")
 	if err != nil {

@@ -15,17 +15,11 @@ neon_dot_loop:
  SUB $4,R2,R2
  B neon_dot_loop
 neon_dot_reduce:
+ // Pairwise horizontal reduction avoids Go-assembler lane-move ambiguity.
+ WORD $0x6e20d400 // FADDP V0.S4,V0.S4,V0.S4
+ WORD $0x2e20d400 // FADDP V0.S2,V0.S2,V0.S2
  VMOV V0.S[0],R3
  FMOVS R3,F0
- VMOV V0.S[1],R3
- FMOVS R3,F1
- FADDS F1,F0,F0
- VMOV V0.S[2],R3
- FMOVS R3,F1
- FADDS F1,F0,F0
- VMOV V0.S[3],R3
- FMOVS R3,F1
- FADDS F1,F0,F0
 neon_dot_tail:
  CMP $0,R2
  BEQ neon_dot_done
