@@ -19,7 +19,7 @@ import (
 func TestBuildModelsOffComponentFailures(t *testing.T) {
 	ctx := context.Background()
 	boom := errors.New("boom")
-	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "metadata", "register", "access-open", "access-bootstrap", "access-register", "needle-model", "needle-tokenizer", "needle-router", "needle-build", "needle-register", "semantic-load"} {
+	for _, stage := range []string{"revision", "state-rebuild", "rebuild", "expire", "recover", "legacy-detect", "legacy-revision", "legacy-migrate", "metadata", "register", "access-open", "access-bootstrap", "access-register", "needle-model", "needle-tokenizer", "needle-router", "needle-build", "needle-register", "semantic-load"} {
 		t.Run(stage, func(t *testing.T) {
 			var config RuntimeConfig
 			config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
@@ -43,6 +43,21 @@ func TestBuildModelsOffComponentFailures(t *testing.T) {
 				ops.recover = func(context.Context, *repository.TransactionManager) ([]repository.RecoveryRecord, error) {
 					return nil, boom
 				}
+			case "legacy-detect":
+				ops.needsLegacyMigration = func(string) (bool, error) { return false, boom }
+			case "legacy-revision":
+				ops.needsLegacyMigration = func(string) (bool, error) { return true, nil }
+				calls := 0
+				ops.revision = func(repository.GitRepositoryPaths) (string, error) {
+					calls++
+					if calls > 1 {
+						return "", boom
+					}
+					return "revision", nil
+				}
+			case "legacy-migrate":
+				ops.needsLegacyMigration = func(string) (bool, error) { return true, nil }
+				ops.migrateLegacy = func(string, string) ([]string, error) { return nil, boom }
 			case "metadata":
 				ops.metadata = func(string) (*ModelsOffMetadata, error) { return nil, boom }
 			case "register":
