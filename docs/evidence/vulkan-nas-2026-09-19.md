@@ -2,6 +2,8 @@
 
 The DiskStation's Intel GPU is present and accessible through a mapped render node, but Mesa 26.0.3 cannot initialise hardware Vulkan on its current `4.4.302+` kernel. The Intel driver reports **kernel missing exec capture support**. No GTE inference ran: the prerequisite adapter-enumeration gate failed.
 
+**Later result:** the [Bookworm/Mesa 22 test](vulkan-nas-bookworm-2026-09-19.md) passed hardware enumeration and all four GTE parity cases on the same kernel, without host changes. The failure below remains valid for Mesa 26 only. Source inspection also found that Mesa 26 uses the same error text for capture and timeline-fence checks; the logged line 119 matches the upstream timeline check, so the earlier message does not prove capture alone was missing.
+
 This answers the first stage of [#39](https://github.com/rcarmo/memento/issues/39), after Rui requested execution on 2026-09-19. It is an unsupported tested driver/kernel combination, not proof that the GPU could never support Vulkan with another stack. No driver replacement, host upgrade or production deployment was attempted.
 
 ## Candidate and target
@@ -56,4 +58,4 @@ The checked results and source-file hashes are in [the machine-readable report](
 
 ## Remaining work
 
-Keep CPU on this NAS. An alternative supported driver/kernel combination would need a separately reviewed, non-invasive qualification path before retrying. Do not downgrade drivers or modify the host merely to bypass this result. Until a hardware adapter initialises, GTE parity, useful speedup, warm memory retention/release and production-cap suitability remain blocked.
+The subsequent container-only Mesa 22 test resolves adapter initialisation and GTE parity without changing the host. CPU is still faster in every measured cold case. Warm performance, memory retention/release and full-service production-cap suitability remain open; see the newer report rather than treating this initial failure as a universal kernel blocker.

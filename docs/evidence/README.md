@@ -14,7 +14,7 @@ Graph evidence includes the 2,000-node fixture performance record and a DiskStat
 
 ## Vulkan qualification
 
-[`vulkan-nas-2026-09-19.md`](vulkan-nas-2026-09-19.md) records the NAS device-access and hardware-adapter gate: Intel GPU present, but Mesa 26.0.3 rejects the current kernel's missing exec-capture support. No GTE inference ran and production stayed unchanged. The linked JSON preserves test bounds, command outcomes and cleanup checks.
+[`vulkan-nas-bookworm-2026-09-19.md`](vulkan-nas-bookworm-2026-09-19.md) records successful hardware GTE parity on the NAS using container-only Mesa 22.3.6: four cases pass within a standalone 512 MiB cap, but cold Vulkan is slower than CPU. Production stayed unchanged. This follows the [Mesa 26 adapter failure](vulkan-nas-2026-09-19.md); its error text is shared by capture and timeline-fence checks. Both reports link machine-readable results and preserve their different scopes.
 
 ## Release and deployment evidence
 
