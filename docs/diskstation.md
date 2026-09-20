@@ -51,17 +51,17 @@ No DiskStation deployment is performed by GitHub Actions. Release automation bui
 
 ## Go replacement contract
 
-The verified `v1.0.0` image keeps the same image repository, mounts, UID/GID, port, `/mcp`, graph/admin routes, bearer tokens and JSON configuration. It opens the existing Git and SQLite state directly. The automated contract drill starts a disposable volume with the pinned `0.5.9` image, opens it with the Go image, and reopens it with `0.5.9` while requiring identical repository and index revisions. This validates rollback format compatibility; replacing the live DiskStation container remains an operator action.
+The verified `v1.0.0` image keeps the same image repository, mounts, UID/GID, port, `/mcp`, graph/admin routes, bearer tokens and JSON configuration. It opens the existing Git and SQLite state directly. The automated contract drill starts a disposable volume with the pinned `0.5.9` image, opens it with the Go image, and reopens it with `0.5.9` while requiring identical repository and index revisions. The live replacement additionally preserved those revisions across deployment and restart; the old image, model volume and verified timestamped backup remain available for rollback.
 
 The NAS is CPU-only by explicit decision. Do not package, map or enable Vulkan devices for this profile, and do not repeat NAS Vulkan tests unless that decision changes.
 
 ## Current release
 
-The latest recorded trusted-LAN deployment runs `ghcr.io/rcarmo/memento:0.5.9` from immutable OCI index `sha256:bebc0a3eaf935a5b4f07c3e060fd8e22a11dacff90cd55532ec04306c30e81bc`. The 2026-09-17 replacement preserved repository revision `7f2fb6d6b184dedd2e1a5d8d79f83a5e9ff25a71`, all 440 proposal records, all 462 proposal assets and every ready embedding captured before shutdown. The repaired semantic worker resumed queued computation and reported live progress. The complete record is [`docs/evidence/release-0.5.9.md`](evidence/release-0.5.9.md).
+The trusted-LAN deployment runs pure-Go `v1.0.0` from immutable OCI index `sha256:132c782718b9a4a5b041a558d2fa747dab7564ba1bcb65d5230c5a64b386ce5c`. The 2026-09-20 replacement preserved repository/index/embedding revision `130cb3e506f08ffb9bf8cc973949bfa02bf064b9`, 257 visible concepts, 52 unresolved proposals and all managed principals. Semantic search is ready, and Needle uses the mapped short-lived Go worker. The complete backup, deployment, model, restart, memory and rollback-readiness record is [`docs/evidence/release-1.0.0.md`](evidence/release-1.0.0.md). The previous `0.5.9` deployment record remains at [`docs/evidence/release-0.5.9.md`](evidence/release-0.5.9.md).
 
 The existing production configuration has not yet opted into `authorization.protected_read_prefixes`; enabling the example's `/work/`, `/personal/` and `/infrastructure/` mask requires an explicit migration of broad-reader grants. Production deliberately omits `memory_answer`: the compact answer tool is disabled and no provider slots are configured. Release tests cover protected namespace policy, the versioned evidence contract and secret-first abstention, but the DiskStation check does not claim those disabled paths as live acceptance.
 
-Docker inspection still reports `PidsLimit: null` despite the template's `pids_limit: 128`; operators must resolve that Synology/Compose discrepancy before treating the limit as enforced. The `v1.0.0` Go image has passed local amd64/ARM64, no-AVX, 512 MiB and old->Go->old rollback contracts, but no live DiskStation replacement is claimed here.
+Docker inspection still reports `PidsLimit: null` despite the template's `pids_limit: 128`; operators must resolve that Synology/Compose discrepancy before treating the limit as enforced. The live `v1.0.0` image has passed native amd64/ARM64, no-AVX, 512 MiB, old->Go->old rollback, target backup, restart and authenticated model checks.
 
 ## Progressive embeddings
 

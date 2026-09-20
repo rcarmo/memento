@@ -4,7 +4,7 @@ The state boundaries used by backup and recovery are recorded in [ADR 0003](deci
 
 Memento runs as a single authoritative writer. The daemon is the normal live interface. The local maintenance CLI is for offline or otherwise exclusive operator work.
 
-This document covers Docker, Compose, systemd and reverse-proxy deployments. The DiskStation container profile is the live shape, currently pinned to `0.5.9`; the generic Compose, systemd and reverse-proxy files are `v1.0.0` reference configurations.
+This document covers Docker, Compose, systemd and reverse-proxy deployments. The DiskStation container profile is the live shape, pinned to the immutable `v1.0.0` image digest; the generic Compose, systemd and reverse-proxy files are reference configurations.
 
 ## Operator decisions
 
@@ -170,7 +170,7 @@ Timer safety, as the files exist today:
 ## Deployment references
 
 * [`Dockerfile`](../Dockerfile) publishes the tested non-root amd64/arm64 image. The operator-managed DiskStation deployment pins a release tag and persists `/var/lib/memento`.
-* [`deploy/diskstation.compose.yaml`](../deploy/diskstation.compose.yaml) is the live trusted-LAN profile; [`docs/diskstation.md`](diskstation.md) records its J3455 limits and update process. The latest live-state record is [`0.5.9`](evidence/release-0.5.9.md); the earlier [`0.3.26` acceptance record](evidence/release-0.3.26.md) retains the persistent-session/SSE checks and unresolved production PIDs-limit discrepancy.
+* [`deploy/diskstation.compose.yaml`](../deploy/diskstation.compose.yaml) is the live trusted-LAN profile; [`docs/diskstation.md`](diskstation.md) records its J3455 limits and update process. The latest live-state record is [`v1.0.0`](evidence/release-1.0.0.md); the earlier [`0.5.9` record](evidence/release-0.5.9.md) preserves the previous implementation baseline, and [`0.3.26`](evidence/release-0.3.26.md) retains the persistent-session/SSE checks and unresolved production PIDs-limit discrepancy.
 * [`compose.example.yaml`](../compose.example.yaml) is the local packaging reference.
 * [`deploy/systemd/`](../deploy/systemd/) contains lease-aware static-binary reference units that still need an operator-run parity exercise.
 * [`deploy/nginx/memento.conf`](../deploy/nginx/memento.conf) is a reverse-proxy reference for `/mcp`, `/admin`, `/graph` and asset staging. It preserves bearer/session headers, disables buffering for SSE and permits the configured 72 MiB request ceiling. TLS, origin policy and deployment-specific authentication remain operator responsibilities.

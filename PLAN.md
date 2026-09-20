@@ -42,7 +42,7 @@ The end-to-end pure-Go replacement is complete and verified on `main`. [Port ind
 * Non-root multi-architecture container with read-only root and one writable state mount
 * Structured logs, metrics, health/readiness, graceful drain and recovery
 * GHCR release pipeline for amd64 and arm64, including Westmere scalar inference
-* Healthy immutable `0.5.9` Portainer deployment on the Intel J3455 DiskStation, with preserved Git/control/derived state and resumed semantic-worker progress recorded in [`docs/evidence/release-0.5.9.md`](docs/evidence/release-0.5.9.md); the earlier persistent POST/SSE acceptance remains in [`docs/evidence/release-0.3.26.md`](docs/evidence/release-0.3.26.md)
+* Healthy immutable pure-Go `v1.0.0` Portainer deployment on the Intel J3455 DiskStation, with verified external backup, preserved Git/control/derived state, ready semantic search and mapped Needle subprocess routing recorded in [`docs/evidence/release-1.0.0.md`](docs/evidence/release-1.0.0.md); the previous implementation record remains in [`docs/evidence/release-0.5.9.md`](docs/evidence/release-0.5.9.md)
 
 ### Visual Memory Debugger
 

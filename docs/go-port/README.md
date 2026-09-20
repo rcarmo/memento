@@ -60,4 +60,4 @@ Historical reference validation ran Ruff, strict mypy, 442 Python tests, graph/b
 
 The baseline preserves observable wire, storage, security and model behaviour within idiomatic typed Go APIs. The parity matrix calls out narrower Python-only coercions, engine-specific diagnostics, hostile out-of-band filesystem changes and power-loss testing separately; the removed C ABIs are explicitly outside the CGO-free release contract. Those do not add hidden runtime dependencies or placeholder handlers.
 
-No live deployment is implied by the branch. The `v1.0.0` image and archives have passed local and CI contracts; production replacement remains an operator decision with backup, smoke and rollback checks from the ordinary release process.
+The `v1.0.0` image and archives passed local and CI contracts, and the immutable image is now live on the DiskStation after target backup, smoke, restart and rollback-readiness checks. The [deployment record](../evidence/release-1.0.0.md) contains the exact digest, preserved revisions and resource measurements.
