@@ -2,6 +2,9 @@
 
 **Status:** accepted, implemented behind an opt-in flag
 **Date:** 2026-07-18
+**Amended:** 2026-09-19
+
+> The accepted shallow-routing boundary is unchanged in `v1.0.0`; the shipped runtime is now the pure-Go NDL1/SentencePiece implementation. Rust C ABI and Python wrapper details below are retained as historical acceptance evidence.
 
 ## Question
 
@@ -13,7 +16,7 @@ Memento uses the fine-tuned Needle checkpoint only as an optional, embedded shal
 
 Memento keeps its deterministic core, GTE-small retrieval and existing optional model-provider boundary unchanged. Needle can classify six shallow actions, but it cannot author mutations, authoritative paths or nested `memory_execute` plans. Every model result crosses strict schema validation and ordinary service authorisation; invalid output and `UNKNOWN` abstain without invoking an operation.
 
-The first idea -- having Needle route and emit bounded full `memory_execute` plans directly -- did not clear the bar. The later shallow-router design did, and now runs through a dependency-light pure-Rust NDL1 runtime exposed by a bounded C ABI and Python wrapper. Proposal and Dream drafting remain outside this decision.
+The first idea -- having Needle route and emit bounded full `memory_execute` plans directly -- did not clear the bar. The later shallow-router design did. It was first accepted through a dependency-light Rust NDL1 runtime and now ships through the pure-Go NDL1/SentencePiece runtime. Proposal and Dream drafting remain outside this decision.
 
 ## What was tested
 
@@ -67,7 +70,7 @@ Needle is small at the model level -- 26.3 million parameters and a 53 MB checkp
 * JAX compilation dominated the first call and peak RSS reached 1.2 GB during repeated evaluation.
 * The repository does not provide a stable C ABI, Cactus binding or embedded artefact manifest.
 
-At this experiment stage, a production candidate needed either a split inference-only package or a verified embedded library path with pinned local assets, no telemetry or download code, bounded cancellation and explicit AMD64 and ARM64 evidence. The later NDL1 Rust runtime described under [Embedded runtime acceptance](#embedded-runtime-acceptance) replaced this Python/JAX path.
+At this experiment stage, a production candidate needed either a split inference-only package or a verified embedded library path with pinned local assets, no telemetry or download code, bounded cancellation and explicit AMD64 and ARM64 evidence. The later NDL1 Rust runtime described under [Historical embedded-runtime acceptance](#historical-embedded-runtime-acceptance) replaced this Python/JAX path.
 
 ## Why the rejected full-plan approach failed
 
@@ -90,7 +93,7 @@ Two leakage-resistant checks remained below threshold:
 
 Peak RSS on the CUDA/JAX evaluation path was about 2.29 GB and median unseen-holdout latency was 0.626 s. The fine-tuned checkpoint is not shipped because it fails the safety and plan-validity gates.
 
-Evidence is under [`docs/evidence/needle/`](../evidence/needle/). The deterministic corpus generator is `tools/experiments/needle/generate_corpus.py`.
+Evidence is under [`docs/evidence/needle/`](../evidence/needle/). The removed Python training/oracle tree contained the deterministic corpus generator; its outputs, source revisions and digests remain in the evidence and checked-in Go parity fixtures.
 
 A later follow-up may repeat fine-tuning with strict family-separated train/validation files, stronger hard negatives and grammar-constrained nested plans. The minimum held-out set should cover:
 
@@ -145,20 +148,20 @@ Argument exact match remained 54.17%, which confirms the intended boundary: Need
 
 The passing checkpoint and family-separated corpora are pinned in the `training-assets-v1` release. The checkpoint SHA-256 is `969bf020dce5075e8043ec88386d2ffd192297d307f34bcddbd435156ba205a8`.
 
-## Embedded runtime acceptance
+## Historical embedded-runtime acceptance
 
-The exact passing checkpoint was converted to the deterministic NDL1 format and implemented in pure Rust with scalar kernels plus runtime-selected AVX2/FMA and ARM64 NEON paths. The repository now contains:
+The exact passing checkpoint was converted to the deterministic NDL1 format and first implemented in pure Rust with scalar kernels plus runtime-selected AVX2/FMA and ARM64 NEON paths. The historical implementation contained:
 
 * a hashed NDL1 loader and pinned SentencePiece tokenizer;
 * constrained generation with scalar/SIMD decision parity on all 360 untouched cases;
 * a dedicated C ABI and Python wrapper with lifecycle, bounded-output and cooperative-cancellation tests;
 * deterministic expansion and strict argument normalisation in the ordinary Memento service;
 * release-container packaging with local model artefacts; and
-* a clean-volume MCP SDK smoke that discovered the opt-in `memory_route` tool and executed a routed read through the Rust runtime.
+* a clean-volume MCP SDK smoke that discovered the opt-in `memory_route` tool and executed a routed read through that runtime.
 
 On 2026-07-18, the release binary pinned to one logical CPU of an Intel Core i7-12700 processed all 360 held-out requests serially with 510.8 ms p50, 554.6 ms p95, 1.95 requests/s and 163.4 MiB peak RSS. Cold process start, model/tokenizer load and one request took 669 ms. CPU frequency and host contention were not fixed, so these numbers apply to that run. The full report is in `docs/evidence/needle/rust-router-single-core-i7-12700.json`.
 
-Portable and NEON paths cover ARM64, but no ARM64 latency measurements are included. Runtime/model mismatches, malformed artefacts and invalid output stop the request.
+The current Go runtime loads the same NDL1/tokenizer assets directly, passes all five real generation cases and 360/360 corpus outputs on amd64 and ARM64 (including NEON), and rejects runtime/model mismatches, malformed artefacts and invalid output. Current measurements are recorded in the Go-port SIMD documentation.
 
 ## Consequences
 

@@ -2,7 +2,7 @@
 
 **Status:** current-state debugger implemented and deployed on the trusted-LAN DiskStation; revision playback deferred
 **Decision:** [ADR 0011](decisions/0011-embed-a-gated-visual-memory-debugger.md)
-**Current deployment:** [`0.3.26` release and deployment evidence](evidence/release-0.3.26.md)
+**Current deployment:** [`0.5.9` release and deployment evidence](evidence/release-0.5.9.md)
 **Latest graph-specific acceptance:** [`0.3.25` live graph checks](evidence/release-0.3.25.md)
 
 The visual debugger is a built-in `/graph` view for understanding how Memento creates, links and maintains shared memory. This document records the implemented API, rendering, validation and release details, then collects the deferred history features at the end.
@@ -15,7 +15,7 @@ The graph may read Git knowledge, operation/proposal records and derived indexes
 
 Explicit Markdown links are relationship data. Semantic similarity is a derived overlay. APIs and exports omit bearer tokens, token environment names, raw embedding vectors and asset bodies. Overview responses contain no Markdown body; detail previews are sanitised and bounded.
 
-The browser application uses committed Three.js and Preact ES modules. Bun verifies and refreshes those files and runs browser checks. Release assets remain native modules rather than a committed bundle.
+The browser application uses committed Three.js and Preact ES modules. Their manifest records pinned source URLs and digests; Go tests verify every embedded asset and licence file. Release assets remain native modules rather than a generated bundle.
 
 ## Boundary And Configuration
 
@@ -148,21 +148,22 @@ Ten expansion/collapse cycles must not show unbounded heap growth.
 
 ## Packaging And Release
 
-The wheel, source archive and container include application modules, vendor files, the manifest and licences. Packaging tests load every asset through `importlib.resources`; runtime needs no network access.
+The static Go binary embeds the application modules, vendor files, manifest and licences; runtime needs no network access for the debugger. Go tests load every embedded asset and verify the checked-in manifest.
 
 Before release:
 
 ```text
-make check
-make coverage
-make build-wheel
-make install-wheel
-make diff-check
+make quality
+make performance
+make model-test
+make corpus-test
+make release-check MEMENTO_VERSION=1.0.0 SOURCE_DATE_EPOCH=0
+make go-container-contract MEMENTO_VERSION=1.0.0
 ```
 
-The release pipeline runs Python 3.12-3.14, the Rust workspace, Needle's 360-case parity set, GTE parity, browser module/vendor checks, amd64/arm64 image builds and the Westmere no-AVX smoke. The full Playwright project is a local pre-release and visual-regression gate rather than a GitHub Actions step.
+The release pipeline runs the complete Go audit, Needle's 360-case parity set on ARM64, GTE/Needle real-model and allocation gates, native amd64/arm64 image builds and the Westmere no-AVX smoke. Historical Playwright screenshots and interaction results remain under `docs/evidence/graph/`; current static serving and API contracts are exercised through Go tests, while a target browser pass remains an operator release check.
 
-A tagged candidate is pulled through Portainer and applied to stack 111 without moving the previous tag. Operator validation checks unauthenticated `/graph`, authenticated MCP, response/render timings, RSS, restart behaviour and selected/visible embedding refresh. Local Chromium/Firefox/WebKit/tablet runs cover the interaction matrix; the graph stays enabled only on the agreed trusted LAN.
+A tagged release is pulled through Portainer without moving the previous tag. Operator validation checks unauthenticated `/graph`, authenticated MCP, response/render timings, RSS, restart behaviour and selected/visible embedding refresh. The graph stays enabled only on the agreed trusted LAN.
 
 ## Deferred
 

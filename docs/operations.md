@@ -4,22 +4,22 @@ The state boundaries used by backup and recovery are recorded in [ADR 0003](deci
 
 Memento runs as a single authoritative writer. The daemon is the normal live interface. The local maintenance CLI is for offline or otherwise exclusive operator work.
 
-This document covers Docker, Compose, systemd and reverse-proxy deployments. The DiskStation container profile is live; the generic Compose, systemd and reverse-proxy files remain reference configurations.
+This document covers Docker, Compose, systemd and reverse-proxy deployments. The DiskStation container profile is the live shape, currently pinned to `0.5.9`; the generic Compose, systemd and reverse-proxy files are `v1.0.0` reference configurations.
 
 ## Operator decisions
 
 * Start from [`examples/config.v1.json`](../examples/config.v1.json). It is the versioned baseline, and the safest place to diff local changes against.
 * Set `MEMENTO_ADMIN_MASTER_KEY` and the configured bootstrap/recovery principal tokens before first managed-access startup. The example imports `MEMENTO_TOKEN_SANDBOX_BOOTSTRAP` and `MEMENTO_TOKEN_WORK_AGENT_BOOTSTRAP`; managed control-database principals become authoritative afterwards.
 * Set remote provider credentials only through environment variables named by each endpoint's `api_key_env` field. Do not place secrets in JSON.
-* Semantic search path overrides are optional. Use `MEMENTO_FFI_LIBRARY`, `MEMENTO_SQLITE_VECTOR_EXTENSION` and `MEMENTO_GTE_MODEL` only when JSON does not already set those paths.
+* Semantic model path overrides are optional. `MEMENTO_GTE_MODEL`, `MEMENTO_NEEDLE_MODEL` and `MEMENTO_NEEDLE_TOKENIZER` override the release defaults. Legacy FFI and SQLite-extension fields remain accepted in schema-version-2 JSON but the Go runtime does not load them.
 * `memory_answer` is discoverable only when both `mcp.compact_answer_enabled` and `intelligent_tiers.deep_answers.enabled` are true. Enabling the compact tool without the deep-answer tier does not expose a half-configured answer path.
 * Allow query fallback across trust boundaries only when a slot explicitly sets `allow_cross_trust_boundary: true`. Proposal and Dream fallback stay off by default for a reason.
 
 ## CLI
 
-The released Python entry point is `memento`; the Go candidate uses `memento-go`. They share the same operational command families:
+The release entry point is `memento-go`:
 
-* `COMMAND --config CONFIG serve`
+* `COMMAND --config CONFIG serve --http [uMCP transport options]`
 * `COMMAND --config CONFIG status [--format json|prometheus|graphite] [--graphite-prefix PREFIX]`
 * `COMMAND --config CONFIG audit [--path /bundle/path.md]`
 * `COMMAND --config CONFIG rebuild-index`
@@ -28,7 +28,7 @@ The released Python entry point is `memento`; the Go candidate uses `memento-go`
 * `COMMAND --config CONFIG rotate-master-key`
 * `COMMAND --config CONFIG dream [--mode disabled|report_only|propose]`
 
-Use the binary that belongs to the selected release; do not mix maintenance commands from one implementation with a running daemon from the other.
+The previous `0.5.9` image used the `memento` entry point. Use the binary supplied by the selected image or archive; do not run either implementation's maintenance command against state held by a live daemon.
 
 ## Live vs offline operator use
 
@@ -65,7 +65,7 @@ Accepted asset ZIPs are ordinary blobs inside the canonical bare repository. Exi
 
 Asset submissions should use `attach_asset_pack.zip_base64` when the complete JSON request fits the MCP ceiling. Piclaw agents use `memory_asset_stage_begin`, raw ZIP upload with the one-time `X-Memento-Upload-Ticket`, and `memory_asset_stage_status` only for larger packs or deliberate raw binary HTTP upload. Clients that already manage bearer authentication may use `POST /assets/staging` directly. `mcp.max_request_bytes` defaults to 72 MiB, while decoded ZIP content is capped at 50 MiB and inspected before storage. Reverse proxies must allow the staging body size and preserve `Authorization`, `Idempotency-Key`, `X-Memento-Asset-Kind`, `X-Memento-Asset-Version` and `X-Memento-Upload-Ticket` headers.
 
-Memento returns recalled ZIPs but does not install them. For skill packs, `memento-skill-import` imports into `.pi/skills/<name>/` and fails if that destination exists.
+Memento returns recalled ZIPs but does not install them. For skill packs, `memento-skill-import-go` imports into `.pi/skills/<name>/` and fails if that destination exists.
 
 ## Backups
 
@@ -91,7 +91,7 @@ Treat the command as replacing the entire state root, not as merging files into 
 ## Upgrades
 
 1. Stop the service and create a backup outside `repository.root_path`.
-2. Install the new wheel or container image.
+2. Install the new container image or static release archive.
 3. Start Memento and check `memory_status`.
 4. Run `rebuild-index` offline only if the lexical/graph index is stale or quarantined. Routine image upgrades preserve `derived.sqlite`; a rebuild reuses compatible embeddings and progressively regenerates only gaps.
 
@@ -111,7 +111,7 @@ Restore verifies checksums, restores the bare repository and control database to
 
 ## Shutdown behaviour
 
-`serve` installs SIGINT and SIGTERM handlers, drains requests, closes the server when a compatible `shutdown`, `aclose` or `close` method exists, and releases both the SQLite control connection and the writer lease on every exit path. That recovery sequencing matters more than a fast stop.
+`serve` installs SIGINT and SIGTERM handlers, cancels the transport, drains admitted work, closes runtime components in reverse order and releases both SQLite connections and the writer lease on every exit path. That recovery sequencing matters more than a fast stop.
 
 ## Worktree housekeeping
 
@@ -126,7 +126,7 @@ The measured local add+remove cost remains below roughly 211 ms at 10,000 small 
 Minimal local setup:
 
 ```bash
-cd /workspace/projects/memento
+cd /workspace/projects/memento-go
 cp examples/memento.env.example .env
 # Edit .env and replace both placeholder bearer tokens.
 docker compose -f compose.example.yaml up --build
@@ -134,24 +134,27 @@ docker compose -f compose.example.yaml up --build
 
 Notes:
 
-* The image bakes in the vendored `gte-small.gtemodel` plus the Rust semantic libraries and exports the matching default environment variables.
-* Semantic search still stays disabled unless the config enables it.
+* The image includes the pinned GTE and Needle model artefacts plus three static Go executables. It contains no Python, Rust, shell, Git executable, CGo library or native SQLite extension.
+* Semantic search and Needle routing stay disabled unless the config enables them.
 * The compose file does not mount a backup destination. If you want offline backups, mount a host path outside the state volume and run them only while the service is stopped.
 
 ## systemd reference
 
-[`deploy/systemd/`](../deploy/systemd/) contains hardened reference units for an installed virtualenv layout.
+[`deploy/systemd/`](../deploy/systemd/) contains hardened reference units for static binaries installed under `/usr/local/bin`.
 
 Typical installation steps:
 
 ```bash
-sudo install -d -m 0755 /opt/memento /etc/memento /var/lib/memento
+sudo install -d -m 0755 /etc/memento /var/lib/memento
+# After extracting the matching release archive:
+sudo install -m 0755 memento-go /usr/local/bin/memento-go
 sudo cp examples/config.v1.json /etc/memento/config.json
 sudo cp deploy/systemd/memento.service /etc/systemd/system/
 sudo cp deploy/systemd/memento-audit.service /etc/systemd/system/
 sudo cp deploy/systemd/memento-audit.timer /etc/systemd/system/
 sudo cp deploy/systemd/memento-backup.service /etc/systemd/system/
 sudo cp deploy/systemd/memento-backup.timer /etc/systemd/system/
+sudo chown -R memento:memento /var/lib/memento
 sudo systemctl daemon-reload
 sudo systemctl enable --now memento.service
 ```
@@ -167,10 +170,10 @@ Timer safety, as the files exist today:
 ## Deployment references
 
 * [`Dockerfile`](../Dockerfile) publishes the tested non-root amd64/arm64 image. The operator-managed DiskStation deployment pins a release tag and persists `/var/lib/memento`.
-* [`deploy/diskstation.compose.yaml`](../deploy/diskstation.compose.yaml) is the live trusted-LAN profile; [`docs/diskstation.md`](diskstation.md) records its J3455 limits and update process. The [`0.3.26` acceptance record](evidence/release-0.3.26.md) includes the current persistent-session and SSE checks, preserved derived state and unresolved production PIDs-limit discrepancy.
+* [`deploy/diskstation.compose.yaml`](../deploy/diskstation.compose.yaml) is the live trusted-LAN profile; [`docs/diskstation.md`](diskstation.md) records its J3455 limits and update process. The latest live-state record is [`0.5.9`](evidence/release-0.5.9.md); the earlier [`0.3.26` acceptance record](evidence/release-0.3.26.md) retains the persistent-session/SSE checks and unresolved production PIDs-limit discrepancy.
 * [`compose.example.yaml`](../compose.example.yaml) is the local packaging reference.
-* [`deploy/systemd/`](../deploy/systemd/) contains lease-aware reference units that still need an operator-run parity exercise.
-* [`deploy/nginx/memento.conf`](../deploy/nginx/memento.conf) is a reverse-proxy reference. TLS and deployment-specific authentication remain operator responsibilities.
+* [`deploy/systemd/`](../deploy/systemd/) contains lease-aware static-binary reference units that still need an operator-run parity exercise.
+* [`deploy/nginx/memento.conf`](../deploy/nginx/memento.conf) is a reverse-proxy reference for `/mcp`, `/admin`, `/graph` and asset staging. It preserves bearer/session headers, disables buffering for SSE and permits the configured 72 MiB request ceiling. TLS, origin policy and deployment-specific authentication remain operator responsibilities.
 
 ## Access operations
 

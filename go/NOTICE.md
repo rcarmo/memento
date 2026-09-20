@@ -16,7 +16,7 @@ Scalar vector functions are ported from Memento's MIT-licensed Rust vector libra
 
 ## Git storage dependencies
 
-Packed/loose Git object and reference decoding uses MIT-licensed go-git v5.16.3 and go-billy v5.6.2. Main publication uses Memento's own Git-compatible lock-file CAS; it does not use the dependency's advisory-lock ref writer. No Git subprocess is used by the Go runtime. Dependency versions and transitive licence sources remain recorded in `go.mod`/`go.sum` and the Go module cache; final distribution licence bundling is a packaging gate.
+Packed/loose Git object and reference decoding uses MIT-licensed go-git v5.19.2 and go-billy v5.9.0. Main publication uses Memento's own Git-compatible lock-file CAS; it does not use the dependency's advisory-lock ref writer. No Git subprocess is used by the Go runtime. Dependency versions and transitive licence sources remain recorded in `go.mod`/`go.sum` and the Go module cache; final distribution licence bundling is a packaging gate.
 
 ## SQLite control storage
 
@@ -24,7 +24,7 @@ Control databases use `modernc.org/sqlite v1.38.2` (BSD-3-Clause wrapper, genera
 
 ## Managed access cryptography
 
-Access-key wrapping uses Go's standard AES-GCM and HMAC/SHA-256 plus BSD-licensed `golang.org/x/crypto/scrypt v0.37.0`, matching the Python cryptography reference's persisted format. All crypto fixtures use explicitly synthetic keys/tokens. Runtime secrets remain caller-supplied and are never committed.
+Access-key wrapping uses Go's standard AES-GCM and HMAC/SHA-256 plus BSD-licensed `golang.org/x/crypto/scrypt v0.53.0`, matching the Python cryptography reference's persisted format. All crypto fixtures use explicitly synthetic keys/tokens. Runtime secrets remain caller-supplied and are never committed.
 
 ## Asset MIME table
 

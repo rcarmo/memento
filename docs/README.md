@@ -49,10 +49,10 @@ The [`go` branch port index](go-port/README.md) documents the completed CGO-free
 | Configure embeddings and progressive refresh | [Semantic search](semantic-search.md) |
 | Inspect links, assets, proposals and visibility in the trusted graph UI | [Graph debugger](graph-explorer-plan.md) |
 | Build, publish or deploy a release | [Release process](release.md) |
-| Check recorded deployment and benchmark results | [Validation reports](evidence/README.md) |
+| Check v1 validation, recorded deployments and benchmarks | [Validation reports](evidence/README.md) |
 
 ## Model development and project records
 
 * [Needle evidence](evidence/needle/README.md) contains retained router corpus, training and performance records.
 * [Attribution](attribution.md) lists third-party code, models and licences.
-* [Delivery plan](../PLAN.md) tracks implementation work; [releases](https://github.com/rcarmo/memento/releases) identify published versions.
+* [Delivery plan](../PLAN.md) records completed scope and the remaining operator-owned deployment work; [releases](https://github.com/rcarmo/memento/releases) identify published versions.

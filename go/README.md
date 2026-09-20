@@ -1,6 +1,6 @@
 # Pure-Go Memento module
 
-This directory is a standalone Go module for the pure-Go Memento port. It builds with `CGO_ENABLED=0`; Python and Rust are test-oracle tools, not runtime dependencies.
+This directory is the standalone Go module for Memento `v1.0.0`. It builds with `CGO_ENABLED=0`; the runtime and ordinary verification do not require Python or Rust.
 
 The module is the verified `v1.0.0` replacement on branch `go`; production deployment remains an operator release action. [`../docs/go-port/parity.md`](../docs/go-port/parity.md) records matched behaviour, explicit typed-boundary differences and deferred non-baseline work.
 
@@ -25,22 +25,23 @@ Dependencies point towards lower-level storage/protocol packages; commands depen
 
 ## Test and generated data
 
-`testdata/parity` contains checked-in synthetic/public differential fixtures shared by several packages. Large files live there instead of package source directories so they are never linked into runtime binaries unless a package explicitly embeds a compact generated table.
+`testdata/parity` contains the checked-in synthetic/public differential fixtures used by package tests. The removed Python/Rust reference harness generated those fixtures before the pure-Go cutover; they are immutable compatibility records on this branch and production commands do not import or execute either language.
 
-`oracle` contains test-only Python and Rust fixture generators. Production commands do not import or execute them. Generated runtime tables sit beside their consuming package and use `//go:embed`; provenance and regeneration checks live in `testdata/parity/baseline.json` and `oracle/export.py`.
+Generated runtime tables sit beside their consuming package and use `//go:embed`. Fixture provenance and reference revisions live in `testdata/parity/baseline.json`. Recreate or update fixtures on a dedicated reference branch, then review the imported data separately.
 
 Build artefacts go to `../build/go`, outside this module tree.
 
 ## Checks
 
 ```bash
+make quality
+make performance GTE_MODEL_PATH=../models/gte/gte-small.gtemodel NEEDLE_MODEL_PATH=../models/needle/memento-router.ndl NEEDLE_TOKENIZER_PATH=../models/needle/needle.model
+make model-test GTE_MODEL_PATH=../models/gte/gte-small.gtemodel NEEDLE_MODEL_PATH=../models/needle/memento-router.ndl NEEDLE_TOKENIZER_PATH=../models/needle/needle.model
 make audit
-make release-check
-make release VERSION=0.5.9-go1 SOURCE_DATE_EPOCH=0
-make release-check VERSION=0.5.9-go1 SOURCE_DATE_EPOCH=0
+make release-check VERSION=1.0.0 SOURCE_DATE_EPOCH=0
 make install DESTDIR=/tmp/package-root PREFIX=/usr/local
 ```
 
 Release archives contain static stripped `linux/amd64` (`GOAMD64=v1`) and `linux/arm64` binaries for all three commands, a version marker and a sorted SHA-256 manifest. `release-check` validates archive layout, architecture, absence of ELF dynamic dependencies, checksums and the native `version` smoke test. Fixed source epochs, sorted tar entries, numeric ownership, `-trimpath` and disabled VCS metadata make identical source/toolchain inputs byte-reproducible.
 
-`make layout-check` additionally verifies module tidiness, package discovery, command placement and that no Go source leaks into the module root. The repository-level gates remain mandatory before a port slice is committed.
+`make quality` also verifies that every package containing production Go code exposes at least one fuzz target. The root and nested uMCP modules currently provide 54 targets and the audit runs each for 10,000 deterministic executions. `make layout-check` verifies module tidiness, package discovery, command placement and that no Go source leaks into the module root. Repository-level model, performance, container and release gates remain mandatory for release work.

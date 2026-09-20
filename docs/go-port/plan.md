@@ -40,10 +40,10 @@ Scalar service/model parity and CPU SIMD optimisation are complete. GPU work rem
 
 Retain the verified NAS Vulkan container recipe from [`vulkan-nas-bookworm-2026-09-19.md`](../evidence/vulkan-nas-bookworm-2026-09-19.md) as historical compatibility evidence. Same-process warm measurements remained slower than CPU, and Rui selected CPU-only NAS operation including the Go replacement. Do not package, enable or retest NAS Vulkan without an explicit reversal. Other hardware can be evaluated separately if authorised.
 
-## Preparation decisions
+## Final implementation decisions
 
-The user wants the full service and inference stack, not a hybrid “Go wrappers around native inference” runtime. Existing browser assets are kept. Runtime core operations should be CGO-free and self-contained; packaging references/tests may use the original languages. No feature deletion or new wire protocol is assumed.
+The complete service and inference stack is pure Go rather than a wrapper around native inference. Existing browser assets are embedded unchanged. Runtime commands are CGO-free and self-contained; the model-preparation script is build tooling only. No client-visible feature or wire protocol was deleted.
 
-Supported deployment architectures must at least include baseline linux/amd64 (including the J3455) and linux/arm64. Other platforms supported by the source need inventory and test runners before the final support matrix is signed off. CPU/scalar correctness is the priority; lower initial throughput is acceptable for development, but memory bounds and cancellation remain functional requirements.
+Supported release architectures are baseline linux/amd64 (including the J3455) and linux/arm64. modernc SQLite, pure-Go Git/object handling and the in-tree SentencePiece implementation passed the compatibility experiments and are the shipped choices. Scalar correctness remains the oracle, with runtime SIMD selected only after real-model and corpus gates.
 
-The initial dependency-free module proves only the testing approach. SQLite, Git and SentencePiece choices remain open until compatibility experiments pass. No production migration or release is part of branch preparation. “100% correctness” is the objective of the contract/test matrix; it is not a claim that a coverage percentage proves absence of bugs.
+No live production migration or release was part of branch preparation. Strict statement coverage, fuzzing and the compatibility matrix are regression tools, not claims that software is free of defects.

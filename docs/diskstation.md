@@ -8,7 +8,7 @@ Before publishing any NAS candidate, the release workflow runs the amd64 image u
 
 * SSE2/SSE4.2 are visible;
 * AVX2 and FMA are not visible;
-* the Go candidate selects `backend=sse2`;
+* the Go runtime selects `backend=sse2`;
 * GTE-small loads and produces a 384-value embedding;
 * the fine-tuned Needle router loads and produces one valid shallow action.
 
@@ -51,21 +51,21 @@ No DiskStation deployment is performed by GitHub Actions. Release automation bui
 
 ## Go replacement contract
 
-The planned `v1.0.0` image keeps the same image repository, mounts, UID/GID, port, `/mcp`, graph/admin routes, bearer tokens and JSON configuration. It opens the existing Git and SQLite state directly. A local contract drill starts a disposable volume with the pinned `0.5.9` image, opens it with the Go image, and reopens it with `0.5.9` while requiring identical repository and index revisions. This validates rollback format compatibility; final production replacement remains an operator action.
+The verified `v1.0.0` image keeps the same image repository, mounts, UID/GID, port, `/mcp`, graph/admin routes, bearer tokens and JSON configuration. It opens the existing Git and SQLite state directly. The automated contract drill starts a disposable volume with the pinned `0.5.9` image, opens it with the Go image, and reopens it with `0.5.9` while requiring identical repository and index revisions. This validates rollback format compatibility; replacing the live DiskStation container remains an operator action.
 
 The NAS is CPU-only by explicit decision. Do not package, map or enable Vulkan devices for this profile, and do not repeat NAS Vulkan tests unless that decision changes.
 
 ## Current release
 
-The trusted-LAN service runs `ghcr.io/rcarmo/memento:0.3.26` from the immutable multi-architecture manifest `sha256:1187a06938a845f70d0449419900ba00daa25feeee29f2b7bebf76e96dd9174e`. The 2026-08-28 acceptance check found the replacement container healthy, non-root, read-only, capability-free and free of restarts or OOM kills. Memento advertised version `0.3.26` and its exact supported capabilities; the compact reader exposed 10 direct tools, 100 sequential requests reused one TCP connection and MCP session, a replacement POST connection resumed that session, and a subscribed resource notification arrived over SSE. Abrupt SSE replacement succeeded after keepalive cleanup, and deleting the session closed its active stream. The complete record is [`docs/evidence/release-0.3.26.md`](evidence/release-0.3.26.md).
+The latest recorded trusted-LAN deployment runs `ghcr.io/rcarmo/memento:0.5.9` from immutable OCI index `sha256:bebc0a3eaf935a5b4f07c3e060fd8e22a11dacff90cd55532ec04306c30e81bc`. The 2026-09-17 replacement preserved repository revision `7f2fb6d6b184dedd2e1a5d8d79f83a5e9ff25a71`, all 440 proposal records, all 462 proposal assets and every ready embedding captured before shutdown. The repaired semantic worker resumed queued computation and reported live progress. The complete record is [`docs/evidence/release-0.5.9.md`](evidence/release-0.5.9.md).
 
 The existing production configuration has not yet opted into `authorization.protected_read_prefixes`; enabling the example's `/work/`, `/personal/` and `/infrastructure/` mask requires an explicit migration of broad-reader grants. Production deliberately omits `memory_answer`: the compact answer tool is disabled and no provider slots are configured. Release tests cover protected namespace policy, the versioned evidence contract and secret-first abstention, but the DiskStation check does not claim those disabled paths as live acceptance.
 
-Docker inspection still reports `PidsLimit: null` despite the template's `pids_limit: 128`; operators must resolve that Synology/Compose discrepancy before treating the limit as enforced. Read-only checks immediately before and after the `0.3.26` replacement both found 172 concepts and 172 ready embeddings, with repository, lexical-index and embedding revisions in agreement. The replacement preserved that state without scheduling or forcing a refresh.
+Docker inspection still reports `PidsLimit: null` despite the template's `pids_limit: 128`; operators must resolve that Synology/Compose discrepancy before treating the limit as enforced. The `v1.0.0` Go image has passed local amd64/ARM64, no-AVX, 512 MiB and old->Go->old rollback contracts, but no live DiskStation replacement is claimed here.
 
 ## Progressive embeddings
 
-The DiskStation profile uses one low-priority concept every 30 seconds after a two-minute startup grace and 15 seconds of interactive idle time. Work pauses when sampled CPU utilization exceeds 75% over a 15-second window. Linux I/O wait is treated as idle, so normal NAS storage load does not block progress. `nice 15` and single-thread native pool variables keep inference subordinate to MCP and storage workloads. The `/volume1/docker/memento/state:/var/lib/memento` mount preserves `derived.sqlite` and completed vectors across image upgrades.
+The DiskStation profile uses one low-priority concept every 30 seconds after a two-minute startup grace and 15 seconds of interactive idle time. Work pauses when sampled CPU utilization exceeds 75% over a 15-second window. Linux I/O wait is treated as idle, so normal NAS storage load does not block progress. The Go service starts each embedding worker with `nice 15`; the worker itself does not create Python/Rust/BLAS thread pools. The `/volume1/docker/memento/state:/var/lib/memento` mount preserves `derived.sqlite` and completed vectors across image upgrades.
 
 Do not delete `derived.sqlite` during routine releases. A deliberate rebuild reuses unchanged embeddings and schedules only stale or missing paths. The original live `v0.3.12` exercise preserved 99 ready rows through an image update/rebuild, then progressively completed six queued paths with no errors until repository, index and embedding revisions matched. Later image replacements use the same persisted state and gated worker path.
 

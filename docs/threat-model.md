@@ -17,9 +17,9 @@ client tool input (untrusted)
 * Path traversal: reject absolute paths, `..`, symlink components and unsafe targets.
 * Reserved-file overwrite: reject direct writes to generated files such as `index.md` and root `log.md`.
 * Special-file abuse: reject writes to device files, FIFOs and non-regular existing targets.
-* Malformed frontmatter: parse with `python-frontmatter`, then validate with strict Pydantic models.
+* Malformed frontmatter: parse bounded JSON/YAML in pure Go, then validate the strict concept schema.
 * Schema confusion: reject unknown frontmatter keys and out-of-vocabulary `type` values.
-* Markdown rewrite corruption: use `markdown-it-py` token structure instead of regular expressions.
+* Markdown rewrite corruption: use Goldmark's parsed Markdown structure instead of regular expressions.
 * Link integrity drift: audit broken links and duplicate IDs on every repository scan.
 * Authorisation bypass: take principal identity from trusted request context, never from tool arguments.
 * Answer-tier scope bypass: bind cache, retrieval, graph expansion, concept reads, model context and returned evidence to the same authorization fingerprint.
@@ -31,7 +31,7 @@ client tool input (untrusted)
 
 ## Current mitigations
 
-* Strict Pydantic v2 models cover config, principals, envelopes and concept frontmatter.
+* Strict Go decoders and validators cover config, principals, envelopes and concept frontmatter; YAML aliases and expansion depth are bounded.
 * Principal bearer tokens resolve through authenticated request context. Bootstrap/recovery tokens come from configured `token_env` variables; managed credentials are checked against HMAC verifiers in `control.sqlite` without retaining bearer plaintext.
 * `ruamel.yaml` keeps deterministic serialisation under control.
 * Reserved-path enforcement happens before filesystem writes.

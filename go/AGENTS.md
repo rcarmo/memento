@@ -28,7 +28,7 @@ This subtree is the verified end-to-end pure-Go `v1.0.0` replacement. Production
 
 * Prefer table-driven public-behaviour tests, deterministic clocks/randomness and small fakes. Test malformed input, cancellation, authorisation, stale state, replay, partial failure and recovery.
 * Every implemented statement must be covered. Zero uncovered statements is necessary, not sufficient: include explicit error and concurrency assertions.
-* Add or extend fuzz targets for parsers, framing, coercion, path handling and persisted untrusted data. `make fuzz` discovers every `func Fuzz*` target automatically; new targets must not require Makefile edits.
+* Add or extend fuzz targets for parsers, framing, coercion, path handling and persisted untrusted data. Every package with production Go code must expose at least one meaningful target; `make quality` enforces that rule and `make fuzz` discovers every `func Fuzz*` target automatically.
 * Keep tests offline and repeatable. Model-dependent tests use digest-pinned public fixtures through `make model-test` or `make corpus-test`.
 * Do not change compatibility fixtures by hand. Regeneration belongs on the historical reference branch; review any imported fixture update separately.
 * Runtime code must cross-build for Linux amd64 and arm64. The race detector may use CGo in its test toolchain; shipped binaries may not.

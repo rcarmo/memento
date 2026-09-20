@@ -1,6 +1,6 @@
 # Pinned upstream test crosswalk
 
-The parent CI runs all 254 tests from `rcarmo/umcp@30cce7dfe08c6ee63de235f7d81754ba286dafbb`. Go coverage is grouped by observable behavior rather than Python class identity:
+Before the reference tree was removed, the parent compatibility workflow ran all 254 tests from `rcarmo/umcp@30cce7dfe08c6ee63de235f7d81754ba286dafbb`. The retained crosswalk groups Go coverage by observable behaviour rather than Python class identity:
 
 | Upstream tests | Go tests |
 | --- | --- |

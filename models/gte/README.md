@@ -1,6 +1,6 @@
 # GTE-small model artefact
 
-`gte-small.gtemodel` is an approximately 128 MB FP32 artefact generated from the upstream `thenlper/gte-small` model for the pure-Rust runtime.
+`gte-small.gtemodel` is an approximately 128 MB FP32 artefact generated from the upstream `thenlper/gte-small` model. The same GTE1 bytes used by the previous Rust runtime are loaded directly by the pure-Go `v1.0.0` embedder.
 
 The binary is deliberately not stored in Git. A clean checkout contains only [`../runtime-models.json`](../runtime-models.json). Prepare the pinned, SHA-256-verified runtime release asset with:
 

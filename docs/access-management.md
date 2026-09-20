@@ -187,7 +187,7 @@ Master-key rotation is deliberately not a web or MCP operation. Run an explicit 
 ```bash
 MEMENTO_ADMIN_PREVIOUS_MASTER_KEY='old value' \
 MEMENTO_ADMIN_MASTER_KEY='new strong value' \
-memento --config /etc/memento/config.json rotate-master-key
+memento-go --config /etc/memento/config.json rotate-master-key
 ```
 
 Then start the normal service with only `MEMENTO_ADMIN_MASTER_KEY`. The command re-encrypts the verifier key atomically; principal credentials remain valid.

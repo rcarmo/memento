@@ -32,7 +32,7 @@ Needle runtime files are release-hosted and verified through `models/runtime-mod
 python3 tools/prepare_runtime_models.py
 ```
 
-That prerequisite applies both to the fine-tuned checkpoint and to the family-separated train/validation/test corpora.
+That command prepares only the three runtime files. The separately pinned `training-assets-v1` release contains the family-separated train/validation/test corpora for anyone reproducing the historical training study.
 
 ## Release records
 

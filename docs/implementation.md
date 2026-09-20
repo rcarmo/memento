@@ -2,7 +2,7 @@
 
 Memento separates shared facts from an agent's chats, reminders and local maintenance state. I wrote it for independent Piclaw instances such as Smith and Flint, but any authenticated MCP client can use the same read, proposal, curation and asset contracts.
 
-Memento has two implementations over the same Git-backed Markdown repository, `control.sqlite` operational state and rebuildable search/graph indexes: the released Python/Rust daemon and the verified CGO-free Go replacement candidate on branch `go`. Both keep read, proposal and curation tools independent from optional model features.
+Memento `v1.0.0` is a CGO-free Go service over a Git-backed Markdown repository, `control.sqlite` operational state and rebuildable search/graph indexes. The previous Python/Rust `0.5.9` image remains the rollback reference for the shared on-disk and client contracts; it is not part of the current runtime.
 
 The request and state transitions are collected in [Memento transition diagrams](diagrams.md). Accepted architecture decisions are indexed under [`docs/decisions/`](decisions/README.md).
 
@@ -274,7 +274,7 @@ Search modes are exact:
 * `semantic`
 * `hybrid`
 
-Lexical search uses weighted FTS5 fields. Semantic search uses GTE-small when enabled and ready: the released Python service loads the Rust runtime, while the Go candidate runs the original scalar Go algorithm with validated SIMD dispatch. Hybrid search uses deterministic reciprocal-rank fusion. If semantic components are degraded or unavailable, Memento reports warnings and falls back safely instead of blocking the repository. Progressive mode derives missing/stale paths from persisted rows and processes one concept through the same worker used by manual refresh.
+Lexical search uses weighted FTS5 fields. Semantic search uses the pure-Go GTE-small runtime when enabled and ready, with validated AVX2/SSE2/NEON/scalar dispatch. Hybrid search uses deterministic reciprocal-rank fusion. If semantic components are degraded or unavailable, Memento reports warnings and falls back safely instead of blocking the repository. Progressive mode derives missing/stale paths from persisted rows and processes one concept through the same worker used by manual refresh.
 
 ### Implemented limits
 
@@ -474,7 +474,7 @@ For every accepted commit-capable mutation:
 9. validate schema, paths, links and invariants
 10. stage exact changed paths only
 11. create the Git commit
-12. publish with compare-and-swap: `git update-ref refs/heads/main <new_rev> <base_rev>`
+12. publish `refs/heads/main` with the pure-Go Git-compatible lock/rename compare-and-swap
 13. mark conflict if compare-and-swap fails
 14. advance the materialised checkout
 15. update derived indexes
@@ -697,7 +697,7 @@ Fallback applies to one model generation step, not to the whole agent run.
 
 ### Needle shallow router
 
-The passing shallow-action checkpoint is opt-in behind `intelligent_tiers.needle_router.enabled`; it remains disabled by default. The released Python daemon uses the embedded Rust runtime and C ABI. The Go candidate loads the same NDL1 model and SentencePiece tokenizer directly, with bounded output and cooperative cancellation.
+The passing shallow-action checkpoint is opt-in behind `intelligent_tiers.needle_router.enabled`; it remains disabled by default. The Go runtime loads the NDL1 model and SentencePiece tokenizer directly, with bounded output, cooperative cancellation and validated SIMD dispatch. The previous Python service used the same model through its Rust C ABI, which remains useful only as historical parity evidence.
 
 The full-plan attempt failed its gates. The shallow router passes all 360 held-out cases, scalar/SIMD parity, FFI lifecycle and cancellation tests, and a clean-container MCP SDK smoke. The Go runtime also passes 360/360 exact output/error comparisons under NEON on `orangepi6plus.local`; performance and the corrected horizontal reduction are recorded in [`docs/evidence/go-real-model-simd-2026-09-19.json`](evidence/go-real-model-simd-2026-09-19.json). It can classify only fixed shallow actions. Deterministic code derives search text from the original request, accepts an exact read reference only when it appears verbatim in that request, validates fixed enums, and applies the normal service authorisation boundary.
 
@@ -716,11 +716,11 @@ Treat MCP arguments, Markdown, frontmatter, links, retrieved text, model output 
 
 ## Validation and deployment state
 
-The repository, transaction, proposal, indexing, MCP, model, access-management, debugger, backup and restore paths are covered by local tests. CI runs the same Python 3.12-3.14 quality, coverage, wheel-install, Rust and container/model checks on `main` and pull requests. Release tags run their own non-cancelling validation before publishing native amd64/arm64 images and exercising the amd64 image under a Westmere CPU model.
+The repository, transaction, proposal, indexing, MCP, model, access-management, debugger, backup and restore paths are covered by strict 100% statement coverage, race checks and package-wide fuzzing. CI runs the complete Go audit, native amd64/ARM64 real-model and allocation gates, the 360-case Needle corpus on ARM64, and the replacement-container contract on amd64. Release tags publish static archives and native multi-architecture images after their own non-cancelling validation and a Westmere no-AVX smoke.
 
-The operator-managed DiskStation deployment serves authenticated MCP clients from the pinned multi-architecture container, persists Git/control/derived state, exposes the trusted-LAN graph debugger and has exercised distinct managed principals, namespace filtering, curator proposal review/apply (including same-principal authorship), asset publication/retrieval and container replacement. Published releases carry immutable OCI digests and BuildKit provenance attestations.
+The operator-managed DiskStation deployment serves authenticated MCP clients from the pinned `0.5.9` multi-architecture container, persists Git/control/derived state, exposes the trusted-LAN graph debugger and has exercised distinct managed principals, namespace filtering, curator proposal review/apply (including same-principal authorship), asset publication/retrieval and container replacement. The `v1.0.0` Go image has passed disposable old->Go->old rollback and 512 MiB contracts; replacing the live service remains an operator action. Published Go releases carry immutable OCI digests, BuildKit provenance attestations and an SPDX JSON SBOM.
 
-Remaining operational gaps are collected in [`PLAN.md`](../PLAN.md): enforcement of the requested production PIDs limit, a clean-host production restore drill, an attached SBOM and TLS before any exposure beyond the trusted LAN. The systemd units and reverse-proxy example remain reference configurations rather than claims of production parity.
+Remaining operational gaps are collected in [`PLAN.md`](../PLAN.md): enforcement of the requested production PIDs limit, a clean-host production restore drill and TLS before any exposure beyond the trusted LAN. The systemd units and reverse-proxy example remain reference configurations rather than claims of production parity.
 
 ## Dynamic access plane
 

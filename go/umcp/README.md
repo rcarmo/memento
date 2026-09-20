@@ -15,8 +15,10 @@ Run independently:
 ```sh
 make check
 make race
-make fuzz
+make fuzz FUZZ_COUNT=10000x
 ```
+
+The module and example command expose 14 fuzz targets. The parent quality gate also rejects any production Go package without a target.
 
 Module path: `github.com/rcarmo/memento/go/umcp`.
 

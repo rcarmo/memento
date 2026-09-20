@@ -4,17 +4,19 @@
 
 **Date:** 2026-07-19
 
-**Amended:** 2026-07-31
+**Amended:** 2026-09-19
+
+> `v1.0.0` preserves the subprocess isolation and progressive scheduling decision with the static pure-Go `memento-embed-go` worker. mmap/FFI-specific implementation details below describe the superseded Python/Rust runtime.
 
 ## Decision
 
-Memento runs GTE embedding inference in a separate `memento-embed` process by default. Path-loaded GTE1 model weights use a read-only memory mapping where the file layout, alignment and host byte order permit direct access; byte-loaded fixtures and incompatible layouts retain owned storage.
+Memento runs GTE embedding inference in a separate worker process by default. The current image exposes that compatibility path as `/usr/local/bin/memento-embed` (an alias of `memento-embed-go`). Path-loaded GTE1 model weights use a read-only memory mapping where the file layout, alignment and host byte order permit direct access; byte-loaded fixtures and incompatible layouts retain owned storage.
 
 Concept embedding is asynchronous. Canonical Git writes and the lexical and graph indexes advance without waiting for GTE. The generic worker supports batches bounded by `semantic_search.max_batch_size`. The amended DiskStation profile derives pending paths from persisted `derived.sqlite` state and runs one concept per short-lived worker at `nice 15`, with one native thread, startup/interactive/pacing gates and sampled CPU-utilization load shedding.
 
 Semantic revision state records any lag between the repository and its embeddings. Semantic and hybrid searches do not treat stale rows as current; they fall back to lexical results with an explicit warning until the worker catches up.
 
-Query embeddings use the same subprocess boundary. Deployments may explicitly select the in-process FFI client where repeated low-latency semantic queries matter more than idle memory, but this is not the DiskStation default.
+Query embeddings use the same subprocess boundary. Deployments may explicitly select the pure-Go in-process client where repeated low-latency semantic queries matter more than idle memory, but this is not the DiskStation default.
 
 ## Why
 
@@ -39,7 +41,7 @@ Batches amortise model startup and remain useful on hosts with spare CPU. Live D
 ## Alternatives considered
 
 * **Keep GTE loaded in the service:** rejected as the default because its idle anonymous memory competes with Needle, SQLite and the Python service on the NAS.
-* **Close and reopen an in-process FFI handle:** rejected as the memory-release mechanism because the allocator may retain decoded weights and scratch arenas.
+* **Close and reopen an in-process model handle:** rejected as the memory-release mechanism because the allocator may retain decoded weights and scratch arenas.
 * **Map the file but copy every tensor into vectors:** rejected for path-loaded production models because it preserves most of the anonymous-memory cost. It remains the safe fallback for incompatible input layouts.
 * **Start one worker for every concept:** originally rejected as the universal default; adopted for the constrained DiskStation progressive profile after deployment evidence showed that predictable low contention mattered more than batch throughput.
 * **Block each canonical write until embeddings finish:** rejected because a local inference failure must not hold up Git, FTS5 or graph updates.

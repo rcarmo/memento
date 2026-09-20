@@ -1,12 +1,17 @@
 # Release
 
+This page starts with the current pure-Go release procedure. Version-specific sections below preserve the checks and compatibility notes for earlier Python/Rust releases; they are history, not instructions for building `v1.0.0`.
+
 `v1.0.0` changes the implementation behind `ghcr.io/rcarmo/memento` from Python/Rust to pure Go while preserving the client and persisted-state contracts. It is a major release because implementation-specific commands and environment variables are removed, not because MCP clients, mounted configuration or state require migration.
 
 ## Local release checklist
 
-* `make -C go audit`
-* `make -C go release-check VERSION=1.0.0 SOURCE_DATE_EPOCH=<epoch>`
 * `python3 tools/prepare_runtime_models.py`
+* `make -C go audit`
+* `make performance`
+* `make model-test`
+* `make corpus-test`
+* `make release-check MEMENTO_VERSION=1.0.0 SOURCE_DATE_EPOCH=<epoch>`
 * `make go-container-contract MEMENTO_VERSION=1.0.0`
 * inspect the generated amd64/arm64 archives, image metadata and SHA-256 manifests
 * use a disposable copy of production state for final target-host acceptance; do not modify the live volume during release qualification
@@ -27,7 +32,7 @@ The NAS release is CPU-only by explicit operator decision. Retained [Mesa 22 Vul
 
 ## CI and publication
 
-The `go` branch CI runs the complete Go audit plus a replacement-container contract. The release workflow reuses the main branch's model workflow unchanged: derive the cache key from `models/runtime-models.json`, restore or download the pinned `model-assets-v1` bundle, verify the archive and each file digest, upload the three files once, and feed that artifact to both native image builders.
+The `go` branch CI runs the complete Go audit plus real-model/allocation gates on native amd64 and ARM64 runners, the 360-case Needle corpus on ARM64, and the replacement-container contract on amd64. The final pre-release result is recorded in [`docs/evidence/go-v1-validation-2026-09-19.md`](evidence/go-v1-validation-2026-09-19.md). The release workflow derives the cache key from `models/runtime-models.json`, restores or downloads the pinned `model-assets-v1` bundle, verifies the archive and each file digest, uploads the three files once, and feeds that artifact to both native image builders.
 
 A stable `v1.0.0` tag publishes native `linux/amd64` and `linux/arm64` manifests to the existing GHCR repository, assembles the multi-architecture index, attests its provenance, generates an SPDX JSON SBOM, attaches that SBOM to the GitHub release and tags the index as `1.0.0`, `1.0`, `1` and `latest`. Release cleanup retains five application releases while protecting fresh digest-first child manifests.
 
@@ -35,7 +40,7 @@ A stable `v1.0.0` tag publishes native `linux/amd64` and `linux/arm64` manifests
 
 Workflow checkouts require only ordinary Git. A single model-preparation job derives a cache key from `models/runtime-models.json`, restores the three runtime image artefacts (GTE model, Needle NDL and tokenizer) from the Actions cache, or downloads the pinned `model-assets-v1` GitHub Release bundle on a cache miss. The archive and every extracted file are SHA-256 checked against the committed manifest before being uploaded once as a one-day uncompressed Actions artifact. Native image builders consume that artifact. Training JSONL, vocabulary and Python checkpoint files are never downloaded by CI or release jobs.
 
-Real GTE and Needle model coverage runs against the built container. Pointer-aware library tests skip unavailable models in matrix jobs rather than accidentally parsing pointer text. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the pointer change.
+Real GTE and Needle model coverage runs on native amd64 and ARM64 CI hosts using the exact assets later copied into the image; the amd64 replacement-container contract then exercises semantic subprocess readiness and Needle routing inside the built image. Updating a runtime model requires publishing the matching pointer-keyed release bundle before merging the manifest change.
 
 ## Embedding worker recovery for 0.5.9
 
@@ -137,9 +142,9 @@ Memento's integration tests cover its advertised server identity and capability 
 
 Release validation covers pointer-only/rebuild reuse, restart-derived pending work, model-revision invalidation, manual priority, startup and interactive idle gates, `/proc/stat` CPU sampling with I/O wait treated as idle, pacing, `nice` command construction, and one-thread native environments. The operator-run DiskStation deployment preserves `/var/lib/memento`, then checks status and graph revision fields including `pause_reason`, `current_path` and `completed`.
 
-## Remaining provenance limits
+## Provenance and software bill of materials
 
-Base-image manifests and GitHub Actions are pinned. SBOM attachment remains a future release improvement; BuildKit provenance attestations are included in the OCI index.
+Base-image manifests and GitHub Actions are pinned. The release workflow attaches BuildKit provenance to the OCI index, generates an SPDX JSON SBOM from the published multi-architecture image and includes that SBOM in the GitHub release.
 
 ## Access-management release checks
 

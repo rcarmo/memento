@@ -28,8 +28,8 @@ The old `ffi_library_path` and `sqlite_extension_path` fields remain accepted in
       "enabled": true,
       "worker_mode": "subprocess",
       "worker_path": "/usr/local/bin/memento-embed",
-      "ffi_library_path": "/usr/local/lib/memento/libmemento_ffi.so",
-      "sqlite_extension_path": "/usr/local/lib/memento/libmemento_sqlite_vector.so",
+      "ffi_library_path": null,
+      "sqlite_extension_path": null,
       "model_path": "/usr/local/share/memento/models/gte-small.gtemodel",
       "model_id": "rust-gte",
       "dimensions": 384,
@@ -50,7 +50,7 @@ The old `ffi_library_path` and `sqlite_extension_path` fields remain accepted in
 }
 ```
 
-The model identifier is retained for compatibility with existing persisted rows. The vendored model SHA-256 is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; changing model identity or digest marks old embeddings stale.
+The legacy FFI fields and `model_id` value are retained so the mounted production configuration and persisted embedding rows do not need migration. The Go runtime ignores the FFI paths. The vendored model SHA-256 is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; changing model identity or digest marks old embeddings stale.
 
 ## Search modes
 
@@ -79,4 +79,4 @@ make performance
 make go-container-contract MEMENTO_VERSION=1.0.0
 ```
 
-The performance gate enforces allocation and byte ceilings for the semantic scorer, tokenizer lookups, SIMD kernels and real GTE inference. The container gate verifies the pure-Go subprocess path under the DiskStation read-only/512 MiB contract, authenticated semantic readiness, and old-image → Go → old-image state compatibility. Wall-clock figures are recorded as evidence but not used as cross-runner CI gates.
+The performance gate enforces zero-allocation semantic scoring, tokenizer lookups and SIMD dot products; real GTE is capped at 2 allocations and 2,400 bytes per operation. Real Needle generation is capped at 900 allocations and 1.9 MB after immutable constraint caching and request-local encoder/decoder workspace reuse. The container gate verifies the pure-Go subprocess path under the DiskStation read-only/512 MiB contract, authenticated semantic readiness, and old-image -> Go -> old-image state compatibility. Wall-clock figures are recorded as evidence but not used as cross-runner CI gates.

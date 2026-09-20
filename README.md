@@ -63,7 +63,7 @@ Model setup and search behaviour are documented in [`docs/semantic-search.md`](d
 
 A concept can include an immutable versioned asset pack as an ordinary Git blob. The Markdown remains searchable while diagrams, templates, datasets or a complete agent skill travel in an attached ZIP. Packs that fit the configured MCP request ceiling use `attach_asset_pack.zip_base64`, keeping proposal creation inside MCP. Larger packs can use `memory_asset_stage_begin`/`memory_asset_stage_status`; the begin call returns a one-time raw-upload ticket so the upload command does not need the principal's bearer token.
 
-Skill concepts live under `/skills/`, have the `skill` tag and match the ZIP-root `SKILL.md` byte-for-byte. Reviewers check the generated manifest and digest before approval; clients verify accepted bytes through [`memory_asset_get` manifest, file and archive-range views](docs/accepted-assets.md). Large ZIPs are downloaded in chunks pinned to their version and digest. `memento-skill-import` validates a recalled pack before placing it in a workspace. Memento does not install or execute recalled skills on behalf of a client.
+Skill concepts live under `/skills/`, have the `skill` tag and match the ZIP-root `SKILL.md` byte-for-byte. Reviewers check the generated manifest and digest before approval; clients verify accepted bytes through [`memory_asset_get` manifest, file and archive-range views](docs/accepted-assets.md). Large ZIPs are downloaded in chunks pinned to their version and digest. `memento-skill-import-go` validates a recalled pack before placing it in a workspace. Memento does not install or execute recalled skills on behalf of a client.
 
 The repository also ships an Agent Skills package at [`.agents/skills/memento/SKILL.md`](.agents/skills/memento/SKILL.md). It gives Pi, Piclaw and Codex agents a compact workflow for search, reads, inventory, manifest comparison, proposals, curation, namespaces, assets and retry reconciliation.
 
@@ -77,14 +77,17 @@ The debugger is disabled by default and unauthenticated when enabled. It is mean
 
 ## Running It
 
-Memento supports Python 3.12-3.14 and ships as a non-root multi-architecture container. Start with [`examples/config.v1.json`](examples/config.v1.json), set `MEMENTO_ADMIN_MASTER_KEY`, then use [`docs/operations.md`](docs/operations.md) for deployment, health checks, backup and recovery. [`docs/access-management.md`](docs/access-management.md) covers the dedicated admin/curator profile split, Piclaw and Pi MCP configuration, `/admin`, direct MCP access tools, one-time credentials and explicit container master-key rotation.
+Memento ships as a non-root, pure-Go multi-architecture container. Start with [`examples/config.v1.json`](examples/config.v1.json), set `MEMENTO_ADMIN_MASTER_KEY`, then use [`docs/operations.md`](docs/operations.md) for deployment, health checks, backup and recovery. [`docs/access-management.md`](docs/access-management.md) covers the dedicated admin/curator profile split, Piclaw and Pi MCP configuration, `/admin`, direct MCP access tools, one-time credentials and explicit container master-key rotation.
 
-The `go` branch prepares the pure-Go `v1.0.0` replacement for `ghcr.io/rcarmo/memento`. It builds static amd64-v1 and arm64 binaries and a non-root distroless image:
+The `go` branch is the verified `v1.0.0` replacement for `ghcr.io/rcarmo/memento`. It builds static amd64-v1 and arm64 binaries and a non-root distroless image:
 
 ```bash
-make -C go audit
-make -C go release-check VERSION=1.0.0
 python3 tools/prepare_runtime_models.py
+make quality
+make performance
+make model-test
+make corpus-test
+make release-check MEMENTO_VERSION=1.0.0 SOURCE_DATE_EPOCH=0
 make go-container-contract MEMENTO_VERSION=1.0.0
 ```
 
@@ -105,7 +108,7 @@ The [documentation index](docs/README.md) groups setup, agent tasks, contracts, 
 
 ## Credits
 
-[`rcarmo/umcp`][umcp] supplies the MCP server, Streamable HTTP transport and request context. Memento's Rust semantic-search runtime was validated against [`rcarmo/go-gte`][go-gte], using the [`thenlper/gte-small`][gte-small] weights. The shallow router is fine-tuned from [`cactus-compute/needle`][needle].
+Memento's standalone Go uMCP module implements the protocol behaviour pinned from [`rcarmo/umcp`][umcp]. The pure-Go semantic runtime uses the [`thenlper/gte-small`][gte-small] weights and retains algorithmic/fixture provenance from [`rcarmo/go-gte`][go-gte]. The shallow router is fine-tuned from [`cactus-compute/needle`][needle].
 
 Memento is MIT licensed. Third-party models, code and vendored browser libraries are listed in [`docs/attribution.md`](docs/attribution.md).
 

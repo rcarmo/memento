@@ -15,11 +15,11 @@ The NAS target is CPU-only. Do not package or enable Vulkan for NAS without an e
 
 ## Layout
 
-- `go/` — all product runtime and tests.
-- `go/umcp/` — reusable standalone uMCP module; no Memento imports.
-- `deploy/` — container deployment examples.
-- `models/runtime-models.json` and `tools/prepare_runtime_models.py` — CI-only model bundle retrieval and digest verification. Python is allowed here only as build tooling and is never shipped.
-- `docs/evidence/` and `go/testdata/parity/` — retained immutable acceptance evidence and generated fixtures.
+- `go/` -- all product runtime and tests.
+- `go/umcp/` -- reusable standalone uMCP module; no Memento imports.
+- `deploy/` -- container deployment examples.
+- `models/runtime-models.json` and `tools/prepare_runtime_models.py` -- CI-only model bundle retrieval and digest verification. Python is allowed here only as build tooling and is never shipped.
+- `docs/evidence/` and `go/testdata/parity/` -- retained immutable acceptance evidence and generated fixtures.
 
 ## Required gates
 
@@ -30,10 +30,12 @@ make -C go quality
 make -C go audit
 make performance
 make model-test
+make corpus-test
+make release-check MEMENTO_VERSION=1.0.0 SOURCE_DATE_EPOCH=0
 make go-container-contract MEMENTO_VERSION=1.0.0
 ```
 
-Every production statement must remain covered. Run formatting, vet, pinned Staticcheck, govulncheck, race, fuzz, cross-build and release checks before pushing.
+Every production statement must remain covered, and every package containing production Go code must retain at least one meaningful fuzz target. Run formatting, vet, pinned Staticcheck, govulncheck, race, fuzz, cross-build and release checks before pushing.
 
 Performance work must be profile-led. Preserve pprof evidence under ignored `build/go/profiles/` during investigation, minimize allocations in hot paths, and update `go/tools/performance-budgets.json` only with measured evidence. CI enforces allocation/byte ceilings; do not add flaky wall-clock gates across heterogeneous runners.
 

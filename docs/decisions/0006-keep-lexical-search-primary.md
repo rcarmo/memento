@@ -2,12 +2,15 @@
 
 **Status:** accepted  
 **Date:** 2026-07-18
+**Amended:** 2026-09-19
+
+> `v1.0.0` keeps lexical search primary but replaces the Rust/C ABI/SQLite-extension implementation described below with pure-Go GTE inference and cosine ranking over persisted float32 blobs.
 
 ## Decision
 
 Memento always builds lexical and graph indexes from Markdown. Local GTE-small embeddings may add semantic or hybrid ranking, but they do not replace lexical search or become canonical state.
 
-The semantic runtime uses the vendored FP32 model under `models/gte/`, a Rust inference implementation, a C ABI and a SQLite vector extension. If any semantic component is unavailable, queries use lexical search and accepted writes continue.
+The semantic runtime uses the pinned FP32 model under `models/gte/`, pure-Go inference and pure-Go cosine scoring over `derived.sqlite`. If any semantic component is unavailable, queries use lexical search and accepted writes continue.
 
 ## Why
 
@@ -21,7 +24,7 @@ Keeping semantic data derived also makes model replacement straightforward: chan
 * Embeddings include model, dimension, content hash and repository revision.
 * Namespace filtering happens before semantic ranking so hidden concepts do not affect scores.
 * Hybrid search combines authorised lexical and semantic candidates with reciprocal-rank fusion.
-* The release image includes the GTE model and Rust libraries; semantic search stays off until `intelligent_tiers.semantic_search.enabled` is set.
+* The release image includes the GTE model and static Go embedding worker; semantic search stays off until `intelligent_tiers.semantic_search.enabled` is set.
 * ARM64 and AMD64 use the same model format with platform-specific SIMD paths.
 
 ## Alternatives considered

@@ -2,6 +2,9 @@
 
 **Status:** accepted  
 **Date:** 2026-07-19
+**Amended:** 2026-09-19
+
+> The measurements and Rust-specific kernel layout below record the earlier implementation. `v1.0.0` keeps the decision's output-parity and baseline-CPU constraints, but uses pure-Go scalar/SSE2/AVX2/NEON projection kernels plus reusable GTE/Needle workspaces rather than the removed Rust tiled runtime.
 
 ## Decision
 
@@ -26,9 +29,9 @@ The kernel structure follows the practical lesson in Justine Tunney's [CPU matri
 
 Keeping each model's existing weight layout avoids a second copy of the 128 MB GTE model or the roughly 53 MB Needle model. This matters on the DiskStation target, where mmap-backed GTE loading and short-lived workers are intended to reduce idle memory rather than trade it for repacked weights.
 
-## Validation
+## Historical validation
 
-The native AMD64 implementation passed:
+The earlier native AMD64 implementation passed:
 
 * the independent Go GTE embedding fixture within `1e-4` per component;
 * batched-versus-individual GTE parity for varied sequence lengths, empty input and batch tails;
@@ -62,7 +65,7 @@ These are local measurements, not DiskStation estimates. The release pipeline mu
 * Needle retains a distinct matrix-vector path for autoregressive single-token decoding.
 * Floating-point accumulation order differs between scalar and SIMD implementations. Release gates compare final embeddings and routing decisions rather than requiring bit-identical intermediate tensors.
 * The kernels use model-native layouts and do not allocate transposed or packed copies at model load.
-* New projection layouts belong in `memento-vector`; model crates should not grow private SIMD implementations.
+* In `v1.0.0`, shared vector operations belong in `go/internal/simd`; model packages keep layout-specific projection loops and request-local workspaces without private architecture dispatch.
 
 ## Alternatives considered
 

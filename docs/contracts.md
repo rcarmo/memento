@@ -163,7 +163,7 @@ Returned data includes:
 * `mcp.execute_limits`
 * `mcp.execute_only_operations`
 
-When `intelligent_tiers.needle_router.enabled=true` and the Rust router is loaded, compact discovery may also expose `memory_route`, which classifies a shallow read request into one deterministic router action or abstains with `UNKNOWN`.
+When `intelligent_tiers.needle_router.enabled=true` and the pure-Go NDL1 router is loaded, compact discovery may also expose `memory_route`, which classifies a shallow read request into one deterministic router action or abstains with `UNKNOWN`.
 
 `goals` is filtered to the visible direct tools for the active surface and answer setting. `mcp.execute_only_operations` lists workflow operations that are available through `memory_execute` but not exposed as direct tools on that surface.
 
@@ -310,6 +310,7 @@ Successful `memory_search` returns:
   * `snippet`
 * `next_cursor`
 
+<a id="memory-read-list-inventory-graph-audit"></a>
 ## `memory_read`, `memory_list`, `memory_inventory`, `memory_graph`, `memory_audit`
 
 ### `memory_read`
