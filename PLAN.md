@@ -15,7 +15,7 @@ The end-to-end pure-Go replacement on branch `go` is complete and verified. [Por
 * Mutations carry an expected revision and idempotency key, run through the writer lease and update the readable checkout and indexes before returning.
 * Search filters by the caller's namespace before ranking.
 * Models may route, retrieve, answer or draft proposals. Service code checks their output and performs any resulting operation.
-* `make quality`, `make performance`, `make model-test`, `make corpus-test`, `make release-check`, the container contract and `git diff --check` are required before release. CI also runs the full Go audit, multi-architecture builds and the no-AVX image check.
+* `make quality`, `make audit`, `make performance`, `make model-test`, `make corpus-test`, `make release-check`, the container contract and `git diff --check` are required before release. `make audit` is model-independent; `make performance` runs the pinned real-model allocation gates after model preparation. CI also runs native multi-architecture model jobs and the no-AVX image check.
 
 ## Available Today
 

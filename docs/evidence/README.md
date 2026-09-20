@@ -12,7 +12,7 @@ The historical Python 3.14 local container rebuild produced image ID `sha256:2b5
 
 Graph evidence includes the 2,000-node fixture performance record and a DiskStation browser capture under [`graph/`](graph/). The real-target MCP benchmark is [`diskstation-memory-benchmark-2026-07-19.json`](diskstation-memory-benchmark-2026-07-19.json).
 
-Go-port records include the [final pure-Go v1.0.0 validation](go-v1-validation-2026-09-19.md), [Go/Python 1,000-concept benchmark](go-python-models-off-benchmark-2026-09-19.json), [x86-64 and ARM64 scalar/SIMD model results](go-real-model-simd-2026-09-19.json), and the retained [NAS Bookworm Vulkan route](vulkan-nas-bookworm-2026-09-19.md). The Vulkan report belongs to the separate Rust/wgpu experiment: it preserves a working dependency recipe but does not claim Go parity, warm benefit or full-service memory suitability.
+Go-port records include the [final pure-Go v1.0.0 validation](go-v1-validation-2026-09-19.md), [Go/Python 1,000-concept benchmark](go-python-models-off-benchmark-2026-09-19.json), [x86-64 and ARM64 scalar/SIMD model results](go-real-model-simd-2026-09-19.json), and the retained [NAS Bookworm Vulkan route](vulkan-nas-bookworm-2026-09-19.md). The final validation covers the root module, five-command static archives, mapped Needle worker/sidecar, model-independent audit split, native amd64/ARM64 CI and container RSS. The Vulkan report belongs to the separate Rust/wgpu experiment: it preserves a working dependency recipe but does not claim Go parity, warm benefit or full-service memory suitability.
 
 ## Release and deployment evidence
 

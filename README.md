@@ -84,6 +84,7 @@ The `go` branch is the verified `v1.0.0` replacement for `ghcr.io/rcarmo/memento
 ```bash
 python3 tools/prepare_runtime_models.py
 make quality
+make audit
 make performance
 make model-test
 make corpus-test
@@ -91,7 +92,7 @@ make release-check MEMENTO_VERSION=1.0.0 SOURCE_DATE_EPOCH=0
 make go-container-contract MEMENTO_VERSION=1.0.0
 ```
 
-`memento-go` is the native daemon and maintenance CLI, `memento-embed-go` is the framed GTE worker, and `memento-skill-import-go` installs recalled skill packs. The image preserves the existing `/etc/memento/config.json`, `/var/lib/memento`, `/models`, port 8000, `/mcp`, graph/admin routes, authentication and response contracts. Existing repository and SQLite formats are opened directly and remain readable by the previous `0.5.9` image for rollback. Python/Rust executables and libraries are not retained as runtime compatibility shims.
+`memento-go` is the native daemon and maintenance CLI. `memento-embed-go` handles framed GTE requests; `memento-needle-go` handles one mapped Needle route per process; `memento-needle-model-go` builds the deterministic FP32 sidecar; and `memento-skill-import-go` installs recalled skill packs. The image also exposes `memento-embed` as the compatibility name expected by existing configuration. It preserves `/etc/memento/config.json`, `/var/lib/memento`, `/models`, port 8000, `/mcp`, graph/admin routes, authentication and response contracts. Existing repository and SQLite formats are opened directly and remain readable by the previous `0.5.9` image for rollback. Python/Rust executables and libraries are not retained as runtime compatibility shims.
 
 The DiskStation profile and its J3455 baseline constraints are in [`docs/diskstation.md`](docs/diskstation.md).
 

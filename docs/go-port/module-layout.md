@@ -35,13 +35,13 @@ Build artefacts go under ignored `build/`.
 
 ```bash
 make quality
+make audit
 make performance
 make model-test
-make audit
 make release-check MEMENTO_VERSION=1.0.0 SOURCE_DATE_EPOCH=0
 make install DESTDIR=/tmp/package-root PREFIX=/usr/local
 ```
 
 Release archives contain stripped static `linux/amd64` (`GOAMD64=v1`) and `linux/arm64` binaries for all five commands. `release-check` validates archive layout, architecture, absent ELF dynamic dependencies, checksums and native version output. The OCI build uses the converter to generate and verify the architecture-independent FP32 Needle sidecar once from the pinned NDL asset, avoiding duplicate 105 MB copies in both binary archives.
 
-`make quality` also verifies that every production package has a meaningful fuzz target. `make layout-check` verifies module tidiness, package discovery, command placement, the absence of root-level Go source, and removal of the legacy `go/` subtree.
+`make quality` also verifies that every production package has a meaningful fuzz target. `make audit` adds race, fuzz, model-independent allocation and cross-build checks; `make performance` adds pinned real-model benchmarks. `make layout-check` verifies module tidiness, package discovery, command placement, the absence of root-level Go source, and removal of the legacy `go/` subtree.

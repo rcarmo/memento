@@ -28,7 +28,7 @@ Reference updates are explicit: review the upstream delta, update the pin and re
 
 `cmd/memento-go` is the CGO-free daemon and maintenance CLI. It owns authenticated uMCP transports, managed access, repository/control/derived state, proposals and direct mutations, execute plans, assets, backup/restore, audit/status/rebuild, Dream, semantic search, cited answers, model-assisted proposals and Needle routing.
 
-`cmd/memento-embed-go` implements the framed embedding-worker protocol with the pure-Go GTE runtime. `cmd/memento-skill-import-go` validates and atomically installs recalled skill packs.
+`cmd/memento-embed-go` implements the framed embedding-worker protocol with the pure-Go GTE runtime. `cmd/memento-needle-go` maps the release-generated FP32 sidecar and handles one bounded framed route per process; `cmd/memento-needle-model-go` validates NDL1 input and creates that sidecar. `cmd/memento-skill-import-go` validates and atomically installs recalled skill packs.
 
 The nested `umcp` module has no Memento dependency. It covers dynamic tools/resources/prompts, completion/logging/notifications, cancellation/progress, stdio, file, TCP, legacy SSE and Streamable HTTP. All 254 pinned upstream Python tests and 22 differential fixture families pass.
 
@@ -44,6 +44,7 @@ The baseline is accepted only when all of these pass:
 
 ```sh
 make quality
+make audit
 make performance
 make model-test
 make corpus-test

@@ -10,14 +10,15 @@ The `v1.0.0` image uses only:
 
 * `internal/gte` for GTE1 parsing, WordPiece tokenization and FP32 inference;
 * `internal/simd` for AVX2/SSE2/NEON/scalar vector operations;
-* `memento-embed-go` for the existing framed process-isolation protocol;
+* `memento-embed-go` for the existing framed GTE process-isolation protocol;
+* `memento-needle-go` and a release-generated `.nfp32` sidecar for mapped one-route Needle workers;
 * pure-Go SQLite access and cosine scoring over little-endian float32 blobs.
 
 There is no Python, Rust, CGo, C ABI, native SQLite extension or external model runtime in the image.
 
 For low-memory NAS operation, semantic `worker_mode: "subprocess"` invokes the static Go worker at `/usr/local/bin/memento-embed` once per request, then releases model memory when the process exits. Needle uses the same lifecycle with `/usr/local/bin/memento-needle-go`, but maps a release-generated FP32 sidecar read-only so it does not repeat NDL1 parsing or BF16 expansion. Explicit `worker_mode: "in_process"` remains available for diagnostics and separately qualified hosts.
 
-The old `ffi_library_path` and `sqlite_extension_path` fields remain accepted in schema-version-2 configuration so the production file can be mounted unchanged. Go does not load or require those paths. `MEMENTO_GTE_MODEL` remains a meaningful model-path override; `MEMENTO_SIMD` selects `auto`, `scalar`, `sse2`, `avx2` or `neon` where available.
+The old `ffi_library_path` and `sqlite_extension_path` fields remain accepted in schema-version-2 configuration so the production file can be mounted unchanged. Go does not load or require those paths. `MEMENTO_GTE_MODEL` overrides the GTE asset. `MEMENTO_NEEDLE_MODEL`, `MEMENTO_NEEDLE_FP32_MODEL`, `MEMENTO_NEEDLE_TOKENIZER` and `MEMENTO_NEEDLE_WORKER` override the corresponding Needle paths. `MEMENTO_SIMD` selects `auto`, `scalar`, `sse2`, `avx2` or `neon` where available.
 
 ## Configuration
 
@@ -50,7 +51,7 @@ The old `ffi_library_path` and `sqlite_extension_path` fields remain accepted in
 }
 ```
 
-The legacy FFI fields and `model_id` value are retained so the mounted production configuration and persisted embedding rows do not need migration. The Go runtime ignores the FFI paths. The vendored model SHA-256 is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; changing model identity or digest marks old embeddings stale.
+The legacy FFI fields and `model_id` value are retained so the mounted production configuration and persisted embedding rows do not need migration. The Go runtime ignores the FFI paths. The pinned GTE model SHA-256 is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`; changing model identity or digest marks old embeddings stale.
 
 ## Search modes
 

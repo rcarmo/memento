@@ -18,7 +18,7 @@ This page starts with the current pure-Go release procedure. Version-specific se
 
 ## Packaging notes
 
-The OCI image is built with pinned Go and distroless Debian 12 base manifests. Its runtime contains three static executables, the release-prepared GTE/Needle assets and no shell, Python, Rust libraries, CGo dependencies or Git executable. It runs as UID/GID 65532 with the existing read-only-root and `/var/lib/memento` volume contract. `memento-go` is PID 1 and handles SIGINT/SIGTERM directly; its native `healthcheck` subcommand replaces the Python socket probe.
+The OCI image is built with pinned Go and distroless Debian 12 base manifests. Its runtime contains five static Go executables--the daemon, GTE worker, Needle worker, Needle sidecar converter and skill importer--plus the `memento-embed` compatibility alias and release-prepared model assets. It contains no shell, Python, Rust libraries, CGo dependencies or Git executable. The converter runs while the image is built; normal routing consumes the generated sidecar through the short-lived Needle worker. The image runs as UID/GID 65532 with the existing read-only-root and `/var/lib/memento` volume contract. `memento-go` is PID 1 and handles SIGINT/SIGTERM directly; its native `healthcheck` subcommand replaces the Python socket probe.
 
 The image and static archives target amd64-v1 and arm64. Automatic inference dispatch is AVX2 -> SSE2 -> NEON -> scalar, and the amd64 image is checked under a no-AVX Westmere CPU model. See [ADR 0008](decisions/0008-build-for-baseline-cpus.md).
 
@@ -32,7 +32,7 @@ The NAS release is CPU-only by explicit operator decision. Retained [Mesa 22 Vul
 
 ## CI and publication
 
-The `go` branch CI runs the complete Go audit plus real-model/allocation gates on native amd64 and ARM64 runners, the 360-case Needle corpus on ARM64, and the replacement-container contract on amd64. The final pre-release result is recorded in [`docs/evidence/go-v1-validation-2026-09-19.md`](evidence/go-v1-validation-2026-09-19.md). The release workflow derives the cache key from `models/runtime-models.json`, restores or downloads the pinned `model-assets-v1` bundle, verifies the archive and each file digest, uploads the three files once, and feeds that artifact to both native image builders.
+The `go` branch CI runs the complete model-independent Go audit plus real-model/allocation gates on native amd64 and ARM64 runners, the 360-case Needle corpus on ARM64, and the replacement-container contract on amd64. The final pre-release result is recorded in [`docs/evidence/go-v1-validation-2026-09-19.md`](evidence/go-v1-validation-2026-09-19.md). The release workflow derives the cache key from `models/runtime-models.json`, restores or downloads the pinned `model-assets-v1` bundle, verifies the archive and each file digest, uploads the three source files once, and feeds that artifact to both native image builders. Each image build creates and verifies its architecture-independent FP32 Needle sidecar from the pinned NDL file.
 
 A stable `v1.0.0` tag publishes native `linux/amd64` and `linux/arm64` manifests to the existing GHCR repository, assembles the multi-architecture index, attests its provenance, generates an SPDX JSON SBOM, attaches that SBOM to the GitHub release and tags the index as `1.0.0`, `1.0`, `1` and `latest`. Release cleanup retains five application releases while protecting fresh digest-first child manifests.
 

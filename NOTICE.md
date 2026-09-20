@@ -4,15 +4,15 @@ This Go port is part of Memento, MIT licensed; see the repository LICENSE.
 
 `umcp/shared.go` ports behaviour and helper logic from Rui Carmo's MIT-licensed uMCP (`umcp_shared.py`, reference commit recorded in `testdata/parity/baseline.json`). The original uMCP notice is retained below.
 
-Scalar vector functions are ported from Memento's MIT-licensed Rust vector library, which attributes its original embedding/vector implementation to `rcarmo/go-gte`. See `docs/attribution.md` in the repository for the full model and code provenance. `gte/` restores model layout, tokenizer and scalar transformer algorithms from `rcarmo/go-gte` at `d2ffa3a5aaf7be72b178970f48c835c0d8fda5bf`, originally derived from antirez/gte-pure-C. It retains Memento's Unicode/bounds/cancellation behaviour. Memento's separately reviewed SSE2, AVX2 and NEON kernels are informed by the upstream assembly design; no BLAS or fast-math runtime is imported. No model weights are committed in this subtree. Model provenance and redistribution terms remain in the repository attribution and runtime-model manifest.
+Scalar vector functions are ported from Memento's MIT-licensed Rust vector library, which attributes its original embedding/vector implementation to `rcarmo/go-gte`. See `docs/attribution.md` in the repository for the full model and code provenance. `internal/gte/` restores model layout, tokenizer and scalar transformer algorithms from `rcarmo/go-gte` at `d2ffa3a5aaf7be72b178970f48c835c0d8fda5bf`, originally derived from antirez/gte-pure-C. It retains Memento's Unicode/bounds/cancellation behaviour. Memento's separately reviewed SSE2, AVX2 and NEON kernels are informed by the upstream assembly design; no BLAS or fast-math runtime is imported. No model weights are committed in this subtree. Model provenance and redistribution terms remain in the repository attribution and runtime-model manifest.
 
 ## Concept frontmatter (MIT)
 
-`repository/frontmatter.go` and `repository/serialize.go` adapt detection, resolver and scalar-emission rules from python-frontmatter 1.3.0, PyYAML 6.0.3 and ruamel.yaml 0.18.17. Their MIT notices are retained under `repository/licenses/`. Changes use the pure-Go `go.yaml.in/yaml/v3 v3.0.4` node parser with PyYAML-compatible resolution and a focused metadata emitter. Pydantic 2.13.5/core 2.46.5 remain differential-test references only; no Python library is used at runtime.
+`internal/repository/frontmatter.go` and `internal/repository/serialize.go` adapt detection, resolver and scalar-emission rules from python-frontmatter 1.3.0, PyYAML 6.0.3 and ruamel.yaml 0.18.17. Their MIT notices are retained under `internal/repository/licenses/`. Changes use the pure-Go `go.yaml.in/yaml/v3 v3.0.4` node parser with PyYAML-compatible resolution and a focused metadata emitter. Pydantic 2.13.5/core 2.46.5 remain differential-test references only; no Python library is used at runtime.
 
 ## Markdown links (MIT)
 
-`repository/links.go` adapts link validation and URI normalisation rules from markdown-it-py 3.0.0, markdown-it and mdurl 0.1.2, using Goldmark v1.7.16 for pure-Go CommonMark parsing and `golang.org/x/net/idna` for hostname conversion. The Python/project MIT notices are retained under `repository/licenses/`. Source extraction and rename logic comes from Memento; the parser/URI edge compatibility limits are tracked in the parity matrix.
+`internal/repository/links.go` adapts link validation and URI normalisation rules from markdown-it-py 3.0.0, markdown-it and mdurl 0.1.2, using Goldmark v1.7.16 for pure-Go CommonMark parsing and `golang.org/x/net/idna` for hostname conversion. The Python/project MIT notices are retained under `internal/repository/licenses/`. Source extraction and rename logic comes from Memento; the parser/URI edge compatibility limits are tracked in the parity matrix.
 
 ## Git storage dependencies
 
@@ -28,11 +28,11 @@ Access-key wrapping uses Go's standard AES-GCM and HMAC/SHA-256 plus BSD-license
 
 ## Asset MIME table
 
-`assets/mime.json` captures Python mimetypes' lookup data plus the oracle host's Debian `media-types` table (public domain). The fixture records interpreter and source-file hashes; the copied media-types notice is in `assets/licenses/media-types.txt`. ZIP parsing uses the Go standard library (including bzip2), with Memento's MIT-licensed validation rules ported directly.
+`internal/assets/mime.json` captures Python mimetypes' lookup data plus the oracle host's Debian `media-types` table (public domain). The fixture records interpreter and source-file hashes; the copied media-types notice is in `internal/assets/licenses/media-types.txt`. ZIP parsing uses the Go standard library (including bzip2), with Memento's MIT-licensed validation rules ported directly.
 
 ## SentencePiece port (Apache-2.0)
 
-`sentencepiece/` is a modified Go port of the inference algorithms in [sentencepiece-rust 0.1.1](https://github.com/VoiceLessQ/sentencepiece-rust), itself based on Google's SentencePiece and Darts-clone read-side algorithms. The original Apache-2.0 licence is retained at `sentencepiece/licenses/Apache-2.0.txt`; this derived package is distributed under those terms, not relicensed as MIT by the repository's general notice.
+`internal/sentencepiece/` is a modified Go port of the inference algorithms in [sentencepiece-rust 0.1.1](https://github.com/VoiceLessQ/sentencepiece-rust), itself based on Google's SentencePiece and Darts-clone read-side algorithms. The original Apache-2.0 licence is retained at `internal/sentencepiece/licenses/Apache-2.0.txt`; this derived package is distributed under those terms, not relicensed as MIT by the repository's general notice.
 
 Changes: Go protobuf/model reader, float32 BPE/Unigram and normaliser loops, explicit owned-return/context handling, and Go differential/fuzz tests. The reference's known user-defined normaliser-prefix limitation is preserved rather than silently replaced by a different tokenizer. No C++ wrapper, CGo or training runtime is imported.
 

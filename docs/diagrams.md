@@ -26,7 +26,7 @@ Git owns knowledge. The control database owns durable operation state. Derived i
 
 ## Model and storage architecture
 
-Memento uses small specialist models behind deterministic boundaries. GTE-small embeds concepts for semantic retrieval, and Needle classifies shallow read requests. The `v1.0.0` service runs both models directly in pure Go; optional completion-model slots handle answer synthesis, proposal drafting and Dream drafts, but never own policy or persistence.
+Memento uses small specialist models behind deterministic boundaries. GTE-small embeds concepts for semantic retrieval, and Needle classifies shallow read requests. The `v1.0.0` service runs both models through pure-Go implementations; subprocess mode keeps their large weights outside the daemon heap. Optional completion-model slots handle answer synthesis, proposal drafting and Dream drafts, but never own policy or persistence.
 
 ```mermaid
 flowchart LR
@@ -34,9 +34,9 @@ flowchart LR
     auth --> surface[Compact or full MCP surface]
     surface --> deterministic[Deterministic service methods]
 
-    subgraph localModels[Local embedded models]
-        needle[Needle shallow router<br/>26M params / pure Go]
-        gte[GTE-small embedder<br/>384d / pure Go]
+    subgraph localModels[Local pure-Go model workers]
+        needle[Needle shallow router<br/>26M params / mapped sidecar]
+        gte[GTE-small embedder<br/>384d / short-lived worker]
     end
 
     subgraph optionalModels[Optional completion-model slots]
@@ -66,7 +66,7 @@ flowchart LR
     dream -. strict draft .-> deterministic
 ```
 
-Needle and GTE run locally with vendored artefacts. Completion slots can also be local; cross-boundary fallback is opt-in per slot. Deterministic code validates every model result.
+Needle and GTE run locally with digest-pinned release artefacts. Completion slots can also be local; cross-boundary fallback is opt-in per slot. Deterministic code validates every model result.
 
 ## Compact MCP request routing
 
@@ -140,7 +140,7 @@ stateDiagram-v2
     Disabled --> GoPort: corrected runtime available
 ```
 
-The current repository state is `Enabled` when `intelligent_tiers.needle_router.enabled` is true. The default remains disabled so deployments opt into the extra model load explicitly.
+The current repository state is `Enabled` when `intelligent_tiers.needle_router.enabled` is true. The default remains disabled so deployments opt into the extra subprocess and mapped model explicitly; `worker_mode: "in_process"` is retained for diagnostics and qualified hosts.
 
 ## Needle shallow router action boundary
 

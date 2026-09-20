@@ -1,21 +1,21 @@
 # Pure-Go v1.0.0 validation
 
-This report records the final pre-release validation of the pure-Go Memento replacement on branch `go`. It covers commit `0e1f528eac1403883c56864cfa40f9f8c8de7b08`; no production deployment was performed.
+This report records the final pre-release validation of the pure-Go Memento replacement on branch `go`. It began at commit `0e1f528eac1403883c56864cfa40f9f8c8de7b08` and was extended through the mapped Needle worker, root-module migration and model-independent audit split at `21a625483daa027abc16e1fd7d50ce4fa6e88d08`; no production deployment was performed.
 
 ## CI result
 
-GitHub Actions run [35476773451](https://github.com/rcarmo/memento/actions/runs/35476773451) completed successfully:
+GitHub Actions run [35505613418](https://github.com/rcarmo/memento/actions/runs/35505613418) completed successfully after the root-module migration:
 
-* the pure-Go quality and allocation job passed;
+* the pure-Go quality job passed with model-independent allocation checks and no downloaded model assets;
 * the pinned runtime-model bundle was restored and verified;
 * native amd64 model and replacement-container checks passed;
 * native ARM64 model, allocation and 360-case Needle corpus checks passed.
 
-The previous ARM64 GTE byte-accounting failure was resolved by retaining the strict two-allocation ceiling while setting the cross-architecture byte ceiling to 2,400 bytes per operation. No ARM-specific inference path was added.
+The native model jobs separately ran the pinned real-model allocation gates. The previous ARM64 GTE byte-accounting failure was resolved by retaining the strict two-allocation ceiling while setting the cross-architecture byte ceiling to 2,400 bytes per operation. No ARM-specific inference path was added.
 
 ## Quality and fuzzing
 
-`make quality` reports zero uncovered production statements in the root module and 100% statement coverage in the standalone uMCP module. Vet, pinned Staticcheck and static builds pass.
+`make quality` reports zero uncovered production statements in the root module and 100% statement coverage in the standalone uMCP module. Vet, pinned Staticcheck and static builds pass. `make audit` adds govulncheck, race, all fuzz targets, model-independent allocation gates and cross-builds; `make performance` adds real GTE and Needle benchmarks after model preparation.
 
 Every package containing production Go code must expose at least one useful fuzz target. The root module has 45 targets and uMCP has 14, including its example command. All 59 passed 10,000 deterministic executions per target. The race detector passes both modules, and govulncheck reports zero reachable vulnerabilities.
 

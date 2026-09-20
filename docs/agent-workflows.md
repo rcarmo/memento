@@ -51,7 +51,7 @@ sequenceDiagram
     end
 ```
 
-Memento treats caller-local paths as labels and never opens them. A timestamp-based `likely_newer` result is a comparison hint; inspect the content before replacing a concept. Use `asset_metadata` when you need accepted versions, digests and skill/body parity without retrieving ZIP bytes. See [inventory and manifest contracts](contracts.md#memory-read-list-inventory-graph-audit).
+Memento treats caller-local paths as labels and never opens them. A timestamp-based `likely_newer` result is a comparison hint; inspect the content before replacing a concept. Use `asset_metadata` when you need accepted versions, digests and skill/body parity without retrieving ZIP bytes. See [inventory and manifest contracts](contracts.md#memory_read-memory_list-memory_inventory-memory_graph-memory_audit).
 
 ## Chain operations with saved results
 

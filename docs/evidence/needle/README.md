@@ -22,10 +22,12 @@ The directory also contains records from the free GPU fine-tuning run:
 
 The first full-plan checkpoint is not committed because it does not pass the integration thresholds. The later shallow-router experiment is recorded in the `router-v2-*` files and passes the untouched family-separated AMD64 routing/abstention gate after a targeted hard-negative continuation.
 
-The passing checkpoint and family-separated corpora are pinned in the `training-assets-v1` release. The pure-Rust runtime files are pinned in `models/runtime-models.json`. Prepare runtime files with:
+The passing checkpoint and family-separated corpora are pinned in the `training-assets-v1` release. The current pure-Go runtime files are pinned in `models/runtime-models.json`. Prepare them with:
 
 ```bash
 python3 tools/prepare_runtime_models.py
 ```
 
-The embedded Rust runtime is enabled with `intelligent_tiers.needle_router.enabled` and is off by default. The NDL1 loader, SentencePiece tokenizer, generator, C ABI and Python wrapper use local artefacts, bounded output and cooperative cancellation. AMD64 parity and MCP/container tests passed. ARM64 uses the portable/NEON paths, but this repository does not yet include ARM64 performance measurements.
+Needle is enabled with `intelligent_tiers.needle_router.enabled` and remains off by default. Release images convert the pinned NDL1 weights into a deterministic little-endian FP32 sidecar. The default `subprocess` mode starts `memento-needle-go`, maps that sidecar read-only, loads the pinned SentencePiece tokenizer, returns one bounded framed response and exits. Explicit `in_process` mode loads NDL1 directly for diagnostics and parity work. The historical Rust C ABI and Python wrapper remain reference material only.
+
+Native amd64 and ARM64 model gates pass, including all 360 held-out outputs/errors under NEON. Current CPU, allocation and mapped-worker measurements are recorded in [`../go-real-model-simd-2026-09-19.json`](../go-real-model-simd-2026-09-19.json) and the [final Go validation report](../go-v1-validation-2026-09-19.md).

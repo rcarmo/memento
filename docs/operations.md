@@ -11,7 +11,7 @@ This document covers Docker, Compose, systemd and reverse-proxy deployments. The
 * Start from [`examples/config.v1.json`](../examples/config.v1.json). It is the versioned baseline, and the safest place to diff local changes against.
 * Set `MEMENTO_ADMIN_MASTER_KEY` and the configured bootstrap/recovery principal tokens before first managed-access startup. The example imports `MEMENTO_TOKEN_SANDBOX_BOOTSTRAP` and `MEMENTO_TOKEN_WORK_AGENT_BOOTSTRAP`; managed control-database principals become authoritative afterwards.
 * Set remote provider credentials only through environment variables named by each endpoint's `api_key_env` field. Do not place secrets in JSON.
-* Semantic model path overrides are optional. `MEMENTO_GTE_MODEL`, `MEMENTO_NEEDLE_MODEL` and `MEMENTO_NEEDLE_TOKENIZER` override the release defaults. Legacy FFI and SQLite-extension fields remain accepted in schema-version-2 JSON but the Go runtime does not load them.
+* Semantic model path overrides are optional. `MEMENTO_GTE_MODEL`, `MEMENTO_NEEDLE_MODEL`, `MEMENTO_NEEDLE_FP32_MODEL`, `MEMENTO_NEEDLE_TOKENIZER` and `MEMENTO_NEEDLE_WORKER` override the release defaults. Legacy FFI and SQLite-extension fields remain accepted in schema-version-2 JSON but the Go runtime does not load them.
 * `memory_answer` is discoverable only when both `mcp.compact_answer_enabled` and `intelligent_tiers.deep_answers.enabled` are true. Enabling the compact tool without the deep-answer tier does not expose a half-configured answer path.
 * Allow query fallback across trust boundaries only when a slot explicitly sets `allow_cross_trust_boundary: true`. Proposal and Dream fallback stay off by default for a reason.
 
@@ -134,7 +134,7 @@ docker compose -f compose.example.yaml up --build
 
 Notes:
 
-* The image includes the pinned GTE and Needle model artefacts plus three static Go executables. It contains no Python, Rust, shell, Git executable, CGo library or native SQLite extension.
+* The image includes the pinned GTE and Needle model artefacts, the generated FP32 Needle sidecar, five static Go executables and the `memento-embed` compatibility alias. It contains no Python, Rust, shell, Git executable, CGo library or native SQLite extension.
 * Semantic search and Needle routing stay disabled unless the config enables them.
 * The compose file does not mount a backup destination. If you want offline backups, mount a host path outside the state volume and run them only while the service is stopped.
 

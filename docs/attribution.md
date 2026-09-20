@@ -18,7 +18,7 @@ The retained NAS compatibility recipe uses the ARM-proprietary/Mesa userspace de
 
 ## GTE-small model
 
-The repository vendors the FP32 `gte-small.gtemodel` generated from [`thenlper/gte-small`](https://huggingface.co/thenlper/gte-small) through the `rcarmo/go-gte` conversion tooling. The file is `models/gte/gte-small.gtemodel`, is about 128 MB, and has SHA-256 `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`.
+The release model bundle contains the FP32 `gte-small.gtemodel` generated from [`thenlper/gte-small`](https://huggingface.co/thenlper/gte-small) through the `rcarmo/go-gte` conversion tooling. A clean checkout fetches it to `models/gte/gte-small.gtemodel` through the pinned runtime-model manifest rather than storing the 128 MB binary in Git. Its SHA-256 is `06d049fc4f67208665b05d840cc307c04d46770654a8fe25afb040f360abf171`.
 
 Runtime code is MIT licensed. The model artefact follows the upstream model card and repository licensing terms; release manifests must retain its source and digest.
 
