@@ -214,6 +214,12 @@ function App() {
   async function selectNode(node) {
     const request = ++selectionRequest.current;
     selectionAbort.current?.abort();
+    selectionAbort.current = null;
+    if (!node) {
+      setSelected(null);
+      setDetail(null);
+      return;
+    }
     const controller = new AbortController();
     selectionAbort.current = controller;
     setSelected(node);

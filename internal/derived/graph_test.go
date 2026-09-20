@@ -85,6 +85,7 @@ func TestGraphReference(t *testing.T) {
 	}
 	for _, c := range fixture.Statuses {
 		got, err := s.Status(ctx, c.Policy)
+		c.Expected.State.LinkResolutionVersion = LinkResolutionVersion
 		if err != nil || !reflect.DeepEqual(got, c.Expected) {
 			t.Fatal(got, c.Expected, err)
 		}
@@ -100,6 +101,7 @@ func TestGraphReference(t *testing.T) {
 		}
 	}
 	for _, c := range fixture.Waits {
+		c.Expected.LinkResolutionVersion = LinkResolutionVersion
 		if err := s.SetRepoRevision(ctx, c.State.RepoRevision); err != nil {
 			t.Fatal(err)
 		}

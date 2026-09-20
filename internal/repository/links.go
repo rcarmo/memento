@@ -2,7 +2,9 @@ package repository
 
 import (
 	"fmt"
+	"path"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -26,6 +28,39 @@ var uriScheme = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9+.-]*:`)
 
 func IsExternalLink(href string) bool {
 	return strings.HasPrefix(href, "//") || uriScheme.MatchString(href)
+}
+
+// ResolveLinkPath canonicalizes an internal Markdown link against its source
+// concept. Anchor-only links resolve to the source concept itself.
+func ResolveLinkPath(sourcePath, href string) (string, bool) {
+	if IsExternalLink(href) {
+		return "", false
+	}
+	linkPath, _, _ := strings.Cut(href, "#")
+	if linkPath == "" {
+		return sourcePath, true
+	}
+	if strings.HasPrefix(linkPath, "/") {
+		return path.Clean(linkPath), true
+	}
+	return path.Join(path.Dir(sourcePath), linkPath), true
+}
+
+// ResolveAssetLinkPath returns the manifest-relative target for links that can
+// refer to a file in the source concept's accepted asset pack.
+func ResolveAssetLinkPath(href string) (string, bool) {
+	if IsExternalLink(href) {
+		return "", false
+	}
+	linkPath, _, _ := strings.Cut(href, "#")
+	if linkPath == "" || strings.HasPrefix(linkPath, "/") {
+		return "", false
+	}
+	target := path.Clean(linkPath)
+	if target == "." || target == ".." || strings.HasPrefix(target, "../") {
+		return "", false
+	}
+	return strings.TrimPrefix(target, "./"), true
 }
 
 func markdownSource(content string) []byte {
@@ -240,24 +275,96 @@ func ExtractStructuralLinks(content string) []MarkdownLink {
 	return links
 }
 func RewriteLinksForRename(content, oldPath, newPath string) RenameRewriteResult {
-	original := content
+	return RewriteLinksForRenameFrom(content, "", oldPath, newPath)
+}
+
+func RewriteLinksForRenameFrom(content, sourcePath, oldPath, newPath string) RenameRewriteResult {
 	if oldPath == "" {
 		return RenameRewriteResult{Content: content}
 	}
-	_, destinations := parsedLinks(content)
-	positions := []int{}
-	for start := 0; start < len(content); {
-		index := strings.Index(content[start:], oldPath)
-		if index < 0 {
-			break
+	return rewriteLinkDestinations(content, func(href string) string {
+		return rewriteHrefFrom(href, sourcePath, oldPath, newPath)
+	})
+}
+
+// RebaseRelativeLinks preserves a moved concept's internal link targets.
+func RebaseRelativeLinks(content, oldSourcePath, newSourcePath string, localResources ...map[string]bool) RenameRewriteResult {
+	return rewriteLinkDestinations(content, func(href string) string {
+		if resource, ok := ResolveAssetLinkPath(href); ok {
+			for _, resources := range localResources {
+				if resources[resource] {
+					return href // Attached files move with their owning concept.
+				}
+			}
 		}
-		position := start + index
-		positions = append(positions, position)
-		start = position + len(oldPath)
+		linkPath, anchor, hasAnchor := strings.Cut(href, "#")
+		if linkPath == "" || strings.HasPrefix(linkPath, "/") || IsExternalLink(href) {
+			return href
+		}
+		target, _ := ResolveLinkPath(oldSourcePath, href)
+		replacement := relativeLinkPath(path.Dir(newSourcePath), target)
+		if hasAnchor {
+			return replacement + "#" + anchor
+		}
+		return replacement
+	})
+}
+
+func rewriteLinkDestinations(content string, rewrite func(string) string) RenameRewriteResult {
+	original := content
+	_, destinations := parsedLinks(content)
+	type replacement struct {
+		start         int
+		before, after string
 	}
-	for i := len(positions) - 1; i >= 0; i-- {
-		position := positions[i]
-		candidate := content[:position] + newPath + content[position+len(oldPath):]
+	replacements := []replacement{}
+	changes := map[string]string{}
+	for _, href := range destinations {
+		if after := rewrite(href); after != href {
+			changes[href] = after
+		}
+	}
+	for before, after := range changes {
+		forms := [][2]string{{before, after}}
+		beforePath, beforeAnchor, beforeHasAnchor := strings.Cut(before, "#")
+		afterPath, afterAnchor, afterHasAnchor := strings.Cut(after, "#")
+		if beforeHasAnchor && afterHasAnchor && beforeAnchor == afterAnchor && beforePath != afterPath {
+			// Replacing only the path preserves entity/escape spelling inside
+			// the fragment; parsed destination checks still reject prose/code.
+			forms = append(forms, [2]string{beforePath, afterPath})
+		}
+		// Goldmark normalizes spaces and other bytes in destinations. Search the
+		// decoded form as well so angle-bracket destinations retain their source
+		// spelling while the parsed href remains canonical.
+		if rawBefore, rawAfter := normaliseLinkText(before), normaliseLinkText(after); rawBefore != before {
+			forms = append(forms, [2]string{rawBefore, rawAfter})
+		}
+		for _, form := range forms {
+			for start := 0; start < len(content); {
+				index := strings.Index(content[start:], form[0])
+				if index < 0 {
+					break
+				}
+				position := start + index
+				replacements = append(replacements, replacement{position, form[0], form[1]})
+				start = position + len(form[0])
+			}
+		}
+	}
+	sort.Slice(replacements, func(i, j int) bool {
+		if replacements[i].start == replacements[j].start {
+			return len(replacements[i].before) > len(replacements[j].before)
+		}
+		return replacements[i].start > replacements[j].start
+	})
+	boundary := len(content)
+	for _, item := range replacements {
+		// Destinations may be prefixes of one another or have both encoded and
+		// decoded source spellings. Never apply overlapping source edits twice.
+		if item.start+len(item.before) > boundary {
+			continue
+		}
+		candidate := content[:item.start] + item.after + content[item.start+len(item.before):]
 		_, updated := parsedLinks(candidate)
 		if len(updated) != len(destinations) {
 			continue
@@ -267,7 +374,7 @@ func RewriteLinksForRename(content, oldPath, newPath string) RenameRewriteResult
 		for j, before := range destinations {
 			if before != updated[j] {
 				differences = true
-				if rewriteHref(before, oldPath, newPath) != updated[j] {
+				if rewrite(before) != updated[j] {
 					valid = false
 					break
 				}
@@ -276,17 +383,50 @@ func RewriteLinksForRename(content, oldPath, newPath string) RenameRewriteResult
 		if differences && valid {
 			content = candidate
 			destinations = updated
+			boundary = item.start
 		}
 	}
 	return RenameRewriteResult{Content: content, Changed: content != original}
 }
-func rewriteHref(href, oldPath, newPath string) string {
-	path, anchor, hasAnchor := strings.Cut(href, "#")
-	if !strings.HasPrefix(path, "/") || path != oldPath {
+func rewriteHrefFrom(href, sourcePath, oldPath, newPath string) string {
+	linkPath, anchor, hasAnchor := strings.Cut(href, "#")
+	resolved, internal := ResolveLinkPath(sourcePath, href)
+	if !internal || resolved != oldPath || linkPath == "" {
 		return href
 	}
-	if hasAnchor {
-		return newPath + "#" + anchor
+	replacement := newPath
+	if !strings.HasPrefix(linkPath, "/") {
+		replacement = relativeLinkPath(path.Dir(sourcePath), newPath)
 	}
-	return newPath
+	if hasAnchor {
+		return replacement + "#" + anchor
+	}
+	return replacement
+}
+
+func relativeLinkPath(fromDir, target string) string {
+	fromDir = strings.Trim(fromDir, "/")
+	if fromDir == "." {
+		fromDir = ""
+	}
+	from := strings.Split(fromDir, "/")
+	to := strings.Split(strings.Trim(target, "/"), "/")
+	if len(from) == 1 && from[0] == "" {
+		from = nil
+	}
+	if len(to) == 1 && to[0] == "" {
+		to = nil
+	}
+	for len(from) > 0 && len(to) > 0 && from[0] == to[0] {
+		from, to = from[1:], to[1:]
+	}
+	parts := make([]string, 0, len(from)+len(to))
+	for range from {
+		parts = append(parts, "..")
+	}
+	parts = append(parts, to...)
+	if len(parts) == 0 {
+		return "."
+	}
+	return strings.Join(parts, "/")
 }

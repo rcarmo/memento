@@ -22,6 +22,9 @@ import (
 
 const SchemaVersion = "2"
 
+// LinkResolutionVersion changes only disposable derived data, not SQLite DDL.
+const LinkResolutionVersion = "relative-assets-1"
+
 type CorruptionError struct{ Message string }
 
 func (e *CorruptionError) Error() string { return e.Message }
@@ -165,7 +168,11 @@ func (s ContentStore) Rebuild(ctx context.Context, root, revision string) error 
 				return err
 			}
 		}
-		if err := recomputeLinks(ctx, conn, revision); err != nil {
+		assetPaths, err := assetPathsForBundle(root, bundle)
+		if err != nil {
+			return err
+		}
+		if err := recomputeLinksWithAssets(ctx, conn, revision, assetPaths); err != nil {
 			return err
 		}
 		if err := recomputeMetrics(ctx, conn); err != nil {
@@ -250,7 +257,11 @@ func (s ContentStore) UpdatePaths(ctx context.Context, root, revision string, pa
 		if _, err := conn.ExecContext(ctx, "UPDATE concepts SET repo_revision=?", revision); err != nil {
 			return err
 		}
-		if err := recomputeLinks(ctx, conn, revision); err != nil {
+		assetPaths, err := assetPathsForConceptRows(ctx, root, conn)
+		if err != nil {
+			return err
+		}
+		if err := recomputeLinksWithAssets(ctx, conn, revision, assetPaths); err != nil {
 			return err
 		}
 		if err := recomputeMetrics(ctx, conn); err != nil {
@@ -287,6 +298,9 @@ func commitEntry(ctx context.Context, conn executor) error {
 	return err
 }
 func finishContent(ctx context.Context, conn executor, revision string) error {
+	if err := setState(ctx, conn, "link_resolution_version", LinkResolutionVersion); err != nil {
+		return err
+	}
 	if err := setState(ctx, conn, "index_revision", revision); err != nil {
 		return err
 	}

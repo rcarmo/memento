@@ -48,6 +48,16 @@ func (j *Jobs) RegisterProposalTools(server *umcp.Server, notify ProposalNotifie
 	return registerProposalTools(server, j.callProposalTool, notify, proposalToolDefinitions)
 }
 func registerProposalTools(server *umcp.Server, call func(context.Context, string, map[string]any) (any, error), notify ProposalNotifier, raw []byte) error {
+	return registerProposalToolsWithDiscovery(server, call, notify, raw, true)
+}
+
+// registerAdditionalProposalTools adds tools to an already composed server.
+// ToolRegistry.Register appends new tools to explicit discovery order; resetting
+// that order here would hide the base surface when optional endpoints are added.
+func registerAdditionalProposalTools(server *umcp.Server, call func(context.Context, string, map[string]any) (any, error), notify ProposalNotifier, raw []byte) error {
+	return registerProposalToolsWithDiscovery(server, call, notify, raw, false)
+}
+func registerProposalToolsWithDiscovery(server *umcp.Server, call func(context.Context, string, map[string]any) (any, error), notify ProposalNotifier, raw []byte, replaceDiscovery bool) error {
 	var definitions []proposalToolDefinition
 	decoder := json.NewDecoder(bytes.NewReader(raw))
 	decoder.UseNumber()
@@ -97,6 +107,9 @@ func registerProposalTools(server *umcp.Server, call func(context.Context, strin
 	names := make([]string, len(metadata))
 	for index, item := range metadata {
 		names[index] = item.Identity[0]
+	}
+	if !replaceDiscovery {
+		return nil
 	}
 	return server.Tools.SetDiscoveryOrder(names)
 }

@@ -141,11 +141,6 @@
             "message": "broken link to /missing.md"
           },
           {
-            "bundle_path": "/a.md",
-            "code": "broken_link",
-            "message": "broken link to //host/a"
-          },
-          {
             "bundle_path": "/lower.md",
             "code": "broken_link",
             "message": "broken link to /hidden.md"
@@ -195,11 +190,6 @@
             "bundle_path": "/a.md",
             "code": "broken_link",
             "message": "broken link to /missing.md"
-          },
-          {
-            "bundle_path": "/a.md",
-            "code": "broken_link",
-            "message": "broken link to //host/a"
           },
           {
             "bundle_path": "/nested/b.md",
@@ -252,11 +242,6 @@
             "message": "broken link to /missing.md"
           },
           {
-            "bundle_path": "/a.md",
-            "code": "broken_link",
-            "message": "broken link to //host/a"
-          },
-          {
             "bundle_path": "/nested/b.md",
             "code": "broken_link",
             "message": "broken link to /missing.md"
@@ -299,11 +284,6 @@
             "bundle_path": "/a.md",
             "code": "broken_link",
             "message": "broken link to /missing.md"
-          },
-          {
-            "bundle_path": "/a.md",
-            "code": "broken_link",
-            "message": "broken link to //host/a"
           },
           {
             "bundle_path": "/lower.md",
@@ -357,11 +337,6 @@
             "message": "broken link to /missing.md"
           },
           {
-            "bundle_path": "/a.md",
-            "code": "broken_link",
-            "message": "broken link to //host/a"
-          },
-          {
             "bundle_path": "/nested/b.md",
             "code": "broken_link",
             "message": "broken link to /missing.md"
@@ -410,11 +385,6 @@
             "bundle_path": "/a.md",
             "code": "broken_link",
             "message": "broken link to /missing.md"
-          },
-          {
-            "bundle_path": "/a.md",
-            "code": "broken_link",
-            "message": "broken link to //host/a"
           },
           {
             "bundle_path": "/nested/b.md",
@@ -474,11 +444,6 @@
             "bundle_path": "/a.md",
             "code": "broken_link",
             "message": "broken link to /missing.md"
-          },
-          {
-            "bundle_path": "/a.md",
-            "code": "broken_link",
-            "message": "broken link to //host/a"
           },
           {
             "bundle_path": "/nested/b.md",

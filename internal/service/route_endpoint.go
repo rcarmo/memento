@@ -164,7 +164,7 @@ func (e RouteEndpoint) register(server *umcp.Server, source []byte) error {
 	for _, definition := range definitions {
 		if definition.Name == "memory_route" {
 			raw, _ := json.Marshal([]proposalToolDefinition{definition})
-			return registerProposalTools(server, func(ctx context.Context, _ string, args map[string]any) (any, error) { return e.Call(ctx, args) }, nil, raw)
+			return registerAdditionalProposalTools(server, func(ctx context.Context, _ string, args map[string]any) (any, error) { return e.Call(ctx, args) }, nil, raw)
 		}
 	}
 	return errors.New("route tool definition is unavailable")

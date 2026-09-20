@@ -159,6 +159,12 @@ func TestLifecycleReference(t *testing.T) {
 					state[row["key"].(string)] = value
 				}
 				db.Close()
+				if version, ok := state["link_resolution_version"]; ok {
+					if version != LinkResolutionVersion {
+						t.Fatal(version)
+					}
+					delete(state, "link_resolution_version")
+				}
 				if !reflect.DeepEqual(state, c.FinalState) {
 					t.Fatal(state, c.FinalState)
 				}

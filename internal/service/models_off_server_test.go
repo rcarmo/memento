@@ -25,8 +25,8 @@ func TestModelsOffServer(t *testing.T) {
 			found = true
 		}
 	}
-	if !found {
-		t.Fatal("execute undiscoverable")
+	if found {
+		t.Fatal("execute should be callable but hidden on standard surface")
 	}
 	call, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"memory_execute","arguments":{"operations":[]}}}`), umcp.RequestContext{Principal: "actor"})
 	if err != nil || call.Error != nil {
@@ -45,11 +45,11 @@ func TestModelsOffServerGuards(t *testing.T) {
 	if err := bad.RegisterModelsOffServer(umcp.NewServer("x"), "standard", endpointLimits(), nil); err == nil {
 		t.Fatal("endpoint")
 	}
-	old := auditToolDefinitions
-	auditToolDefinitions = []byte("{")
+	old := catalogToolDefinitions
+	catalogToolDefinitions = []byte("{")
 	if err := j.RegisterModelsOffServer(umcp.NewServer("x"), "standard", endpointLimits(), nil); err == nil {
 		t.Fatal("tools")
 	}
-	auditToolDefinitions = old
+	catalogToolDefinitions = old
 	_ = json.Number("0")
 }

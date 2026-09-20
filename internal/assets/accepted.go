@@ -336,6 +336,54 @@ func loadAssetMetadata(root, conceptID, kind, version string, ops acceptedIO) (m
 	defer source.Close()
 	return readAssetMetadata(source)
 }
+
+// AcceptedAssetPaths returns every manifest-relative file in the latest
+// accepted version of each asset kind attached to a concept.
+func AcceptedAssetPaths(root, conceptID string) (map[string]bool, error) {
+	paths := map[string]bool{}
+	kinds, err := ListAssetKinds(root, conceptID)
+	if err != nil {
+		return nil, err
+	}
+	for _, kind := range kinds {
+		version, err := ResolveAssetVersion(root, conceptID, kind, nil)
+		if err != nil {
+			return nil, err
+		}
+		metadata, err := LoadAssetMetadata(root, conceptID, kind, version)
+		if err != nil {
+			return nil, err
+		}
+		if metadata["concept_id"] != conceptID || metadata["asset_kind"] != kind || metadata["version"] != version {
+			return nil, invalid("asset metadata identity mismatch")
+		}
+		digest, ok := metadata["zip_sha256"].(string)
+		if !ok {
+			return nil, invalid("asset metadata has an invalid zip_sha256")
+		}
+		raw, _ := json.Marshal(metadata["manifest"]) // Loaded JSON has no unsupported Go values.
+		manifest, err := ParseManifest(string(raw))
+		if err != nil {
+			return nil, err
+		}
+		if err = CheckedManifest(manifest, digest); err != nil {
+			return nil, err
+		}
+		_, archive, _ := AssetVersionPaths(conceptID, kind, version) // Already validated during metadata loading.
+		info, err := os.Lstat(filepath.Join(root, archive[1:]))
+		if err != nil {
+			return nil, err
+		}
+		if !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
+			return nil, invalid("asset ZIP must be a regular file")
+		}
+		for _, entry := range manifest.Entries {
+			paths[entry.Path] = true
+		}
+	}
+	return paths, nil
+}
+
 func readAssetMetadata(source io.Reader) (map[string]any, error) {
 	raw, err := io.ReadAll(io.LimitReader(source, MaxMetadataBytes+1))
 	if err != nil {

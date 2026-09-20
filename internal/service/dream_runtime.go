@@ -91,7 +91,11 @@ func (r *Runtime) runDream(ctx context.Context, mode string, now time.Time, ops 
 	if previous != nil {
 		prior = *previous
 	}
-	detections := DetectDreamSignals(bundle, revision, prior, changed, r.Dream.Scanner)
+	assetPaths, err := acceptedBundleAssets(bundle)
+	if err != nil {
+		return nil, failed(err)
+	}
+	detections := detectDreamSignals(bundle, revision, prior, changed, r.Dream.Scanner, assetPaths)
 	if len(detections) > r.Dream.Budgets.MaxSignalsPerRun {
 		detections = detections[:r.Dream.Budgets.MaxSignalsPerRun]
 	}

@@ -78,9 +78,7 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 	}, access.OpenStore, func(ctx context.Context, s *access.Store, p []access.ConfiguredPrincipal, t map[string]string) error {
 		return s.Bootstrap(ctx, p, t)
 	}, os.LookupEnv, func(j *Jobs, s *umcp.Server) error { return j.RegisterAccessTools(s) }, needle.Load, needle.LoadTokenizer, needle.NewRouter, nil, func(j *Jobs, s *umcp.Server, surface string, limits execute.Limits, inference NeedleRouteInference) error {
-		catalog, _ := NewCatalog(CatalogConfig{Surface: surface, RouteEnabled: true})
-		endpoint, _ := NewExecuteEndpoint(j, catalog, limits)
-		return (RouteEndpoint{Jobs: j, Router: inference, Execute: endpoint}).Register(s)
+		return j.registerModelsOffServer(s, surface, limits, nil, inference)
 	}, func(ctx context.Context, runtime *Runtime, jobs *Jobs, server *umcp.Server, options ModelsOffRuntimeOptions, inference NeedleRouteInference) error {
 		answers := AnswerStore{DB: runtime.DB}
 		if err := answers.Migrate(ctx); err != nil {
@@ -169,7 +167,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		return nil, nil, err
 	}
 	state, stateErr := ops.state(ctx, index)
-	if stateErr != nil || state.IndexRevision != revision {
+	if stateErr != nil || state.IndexRevision != revision || state.LinkResolutionVersion != derived.LinkResolutionVersion {
 		if err = ops.rebuild(ctx, index, paths.Repository.CurrentDir, revision); err != nil {
 			return nil, nil, err
 		}

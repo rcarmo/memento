@@ -1,20 +1,21 @@
 package graphdebug
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/rcarmo/memento/internal/repository"
+)
 
 func externalLink(target string) bool {
-	lower := strings.ToLower(strings.TrimSpace(target))
-	for _, prefix := range []string{"http://", "https://", "mailto:", "tel:", "data:"} {
-		if strings.HasPrefix(lower, prefix) {
-			return true
-		}
-	}
-	return false
+	return repository.IsExternalLink(strings.TrimSpace(target))
 }
 func ScopedNodes(nodes []Node, edges []Edge) []Node {
 	inbound, outbound, broken := map[string]int{}, map[string]int{}, map[string]int{}
 	for _, edge := range edges {
 		if edge.Kind != "explicit" || externalLink(edge.RawTarget) {
+			continue
+		}
+		if edge.Resolution == "asset" {
 			continue
 		}
 		if edge.Target == nil || edge.Resolution != "resolved" {

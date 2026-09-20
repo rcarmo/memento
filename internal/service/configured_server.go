@@ -51,6 +51,11 @@ func (j *Jobs) RegisterConfiguredServer(server *umcp.Server, options ConfiguredS
 	if err = catalog.Register(server, handlers, options.Notify); err != nil {
 		return err
 	}
+	// Help and catalog resources must describe this exact registered surface,
+	// including enabled model features, not the startup metadata defaults.
+	if j.Controls.Metadata != nil {
+		j.Controls.Metadata.Catalog = catalog
+	}
 	if options.ManagedAccess {
 		return j.RegisterAccessTools(server)
 	}

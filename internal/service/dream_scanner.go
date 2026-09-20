@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/rcarmo/memento/internal/assets"
 	"github.com/rcarmo/memento/internal/control"
 	"github.com/rcarmo/memento/internal/repository"
 	"golang.org/x/text/cases"
@@ -11,7 +12,22 @@ import (
 	"unicode/utf8"
 )
 
+func acceptedBundleAssets(bundle repository.RepositoryBundle) (map[string]map[string]bool, error) {
+	assetPaths := map[string]map[string]bool{}
+	for _, entry := range bundle.Entries {
+		paths, err := assets.AcceptedAssetPaths(bundle.Root, entry.Document.Frontmatter.ID)
+		if err != nil {
+			return nil, err
+		}
+		assetPaths[entry.Document.Frontmatter.ID] = paths
+	}
+	return assetPaths, nil
+}
+
 func DetectDreamSignals(bundle repository.RepositoryBundle, revision, previous string, changed map[string]bool, config DreamScannerConfig) []control.DetectedSignal {
+	return detectDreamSignals(bundle, revision, previous, changed, config, nil)
+}
+func detectDreamSignals(bundle repository.RepositoryBundle, revision, previous string, changed map[string]bool, config DreamScannerConfig, assetPaths map[string]map[string]bool) []control.DetectedSignal {
 	entries := map[string]repository.BundleEntry{}
 	inbound := map[string]int{}
 	for _, entry := range bundle.Entries {
@@ -21,12 +37,16 @@ func DetectDreamSignals(bundle repository.RepositoryBundle, revision, previous s
 	out := []control.DetectedSignal{}
 	for _, entry := range bundle.Entries {
 		for _, link := range repository.ExtractStructuralLinks(entry.Document.Body) {
-			if !strings.HasPrefix(link.Href, "/") {
+			target, internal := repository.ResolveLinkPath(entry.BundlePath, link.Href)
+			if !internal {
 				continue
 			}
-			target, _, _ := strings.Cut(link.Href, "#")
 			if _, ok := entries[target]; ok {
 				inbound[target]++
+				continue
+			}
+			assetPath, candidate := repository.ResolveAssetLinkPath(link.Href)
+			if candidate && assetPaths[entry.Document.Frontmatter.ID][assetPath] {
 				continue
 			}
 			out = append(out, control.DetectedSignal{SignalType: "broken_link", EntityRefs: []string{entry.BundlePath, target}, Severity: "medium", DedupeKey: "broken_link|" + entry.BundlePath + "|" + target, Evidence: map[string]any{"source_path": entry.BundlePath, "target_path": target}})

@@ -1,7 +1,9 @@
 package service
 
 import (
+	"encoding/json"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -20,7 +22,7 @@ func ExpandRouterAction(action RouterAction, request string) map[string]any {
 	query := derivedSearchQuery(request)
 	switch action.Action {
 	case "search_then_read":
-		search := map[string]any{"query": query, "limit": 1, "query_syntax": "plain", "search_mode": nil, "concept_type": nil, "cursor": nil}
+		search := map[string]any{"query": query, "limit": json.Number("1"), "query_syntax": "plain", "search_mode": nil, "concept_type": nil, "cursor": nil}
 		if action.SearchMode != "" {
 			search["search_mode"] = action.SearchMode
 		}
@@ -31,7 +33,7 @@ func ExpandRouterAction(action RouterAction, request string) map[string]any {
 	case "status_field":
 		return map[string]any{"kind": "direct", "tool": "memory_status", "args": map[string]any{}, "projection": map[string]any{"ref": statusProjections[action.Field], "fields": []any{}, "limit": nil}}
 	case "search_then_graph":
-		plan := map[string]any{"operations": []any{map[string]any{"op": "search", "args": map[string]any{"query": query, "limit": 1, "search_mode": action.SearchMode, "query_syntax": "plain", "concept_type": nil, "cursor": nil}, "save_as": "hits"}, map[string]any{"op": "graph", "args": map[string]any{"id_or_path": "$hits.results.0.path", "depth": action.Depth}, "save_as": "graph"}}, "returns": []any{map[string]any{"name": "graph", "ref": "$graph", "fields": []any{}, "limit": nil}}, "stop_on_error": true}
+		plan := map[string]any{"operations": []any{map[string]any{"op": "search", "args": map[string]any{"query": query, "limit": json.Number("1"), "search_mode": action.SearchMode, "query_syntax": "plain", "concept_type": nil, "cursor": nil}, "save_as": "hits"}, map[string]any{"op": "graph", "args": map[string]any{"id_or_path": "$hits.results.0.path", "depth": json.Number(strconv.Itoa(action.Depth))}, "save_as": "graph"}}, "returns": []any{map[string]any{"name": "graph", "ref": "$graph", "fields": []any{}, "limit": nil}}, "stop_on_error": true}
 		return map[string]any{"kind": "execute", "tool": "memory_execute", "args": map[string]any{"plan": plan}}
 	case "read_field":
 		if !strings.Contains(request, action.IDOrPath) {

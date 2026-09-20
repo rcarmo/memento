@@ -156,6 +156,18 @@ func TestContentReference(t *testing.T) {
 				t.Fatal(sequence.Defer, step.Action, step.Revision, err, step.ErrorType)
 			}
 			got := snapshot(t, s.DB)
+			// The post-v1 link resolver adds a disposable-data version marker;
+			// retain the captured state fixture without unrelated metadata churn.
+			stateRows := got["index_state"].([]map[string]any)
+			for i, row := range stateRows {
+				if row["key"] == "link_resolution_version" {
+					if row["value"] != LinkResolutionVersion {
+						t.Fatal(row)
+					}
+					got["index_state"] = append(stateRows[:i], stateRows[i+1:]...)
+					break
+				}
+			}
 			if !reflect.DeepEqual(normal(got), step.Snapshot) {
 				for table, want := range step.Snapshot {
 					if !reflect.DeepEqual(normal(got[table]), want) {

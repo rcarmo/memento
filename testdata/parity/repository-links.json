@@ -1736,8 +1736,8 @@
     },
     {
       "expected": {
-        "changed": false,
-        "content": "[x](relative.md)"
+        "changed": true,
+        "content": "[x](new.md)"
       },
       "input": "[x](relative.md)",
       "new": "new.md",

@@ -9,11 +9,12 @@ import (
 )
 
 type IndexState struct {
-	RepoRevision   string  `json:"repo_revision"`
-	IndexRevision  string  `json:"index_revision"`
-	SchemaVersion  string  `json:"schema_version"`
-	Status         string  `json:"status"`
-	QuarantinePath *string `json:"quarantine_path"`
+	RepoRevision          string  `json:"repo_revision"`
+	IndexRevision         string  `json:"index_revision"`
+	SchemaVersion         string  `json:"schema_version"`
+	Status                string  `json:"status"`
+	QuarantinePath        *string `json:"quarantine_path"`
+	LinkResolutionVersion string  `json:"-"`
 }
 type StatusSnapshot struct {
 	State           IndexState `json:"state"`
@@ -49,6 +50,13 @@ func readState(ctx context.Context, db executor) (IndexState, error) {
 	}
 	var err error
 	state.QuarantinePath, err = getState(ctx, db, "quarantine_path")
+	if err != nil {
+		return state, err
+	}
+	linkVersion, err := getState(ctx, db, "link_resolution_version")
+	if linkVersion != nil {
+		state.LinkResolutionVersion = *linkVersion
+	}
 	return state, err
 }
 func (s ContentStore) Status(ctx context.Context, policy access.EffectivePolicy) (StatusSnapshot, error) {

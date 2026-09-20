@@ -7,14 +7,19 @@ import (
 	"github.com/rcarmo/memento/umcp"
 )
 
-// RegisterModelsOffServer composes the verified 29-tool development surface and
-// memory_execute. Optional intelligent-tier tools are registered by their
-// runtime owners only after model construction succeeds.
+// RegisterModelsOffServer uses the same catalogue as intelligent-tier startup.
+// Disabled optional handlers remain callable and report their disabled state;
+// discovery is selected by the configured surface, not by registration order.
 func (j *Jobs) RegisterModelsOffServer(server *umcp.Server, surface string, limits execute.Limits, notify ProposalNotifier) error {
+	return j.registerModelsOffServer(server, surface, limits, notify, nil)
+}
+
+func (j *Jobs) registerModelsOffServer(server *umcp.Server, surface string, limits execute.Limits, notify ProposalNotifier, inference NeedleRouteInference) error {
 	if server == nil {
 		return errors.New("models-off server requires a uMCP server")
 	}
-	catalog, err := NewCatalog(CatalogConfig{Surface: surface})
+	catalogConfig := CatalogConfig{Surface: surface, RouteEnabled: inference != nil}
+	catalog, err := NewCatalog(catalogConfig)
 	if err != nil {
 		return err
 	}
@@ -22,8 +27,14 @@ func (j *Jobs) RegisterModelsOffServer(server *umcp.Server, surface string, limi
 	if err != nil {
 		return err
 	}
-	if err = j.RegisterAuditTools(server, notify); err != nil {
-		return err
-	}
-	return endpoint.Register(server)
+	answer := &AnswerEndpoint{Jobs: j}
+	proposals := &ModelProposalEndpoint{Jobs: j}
+	route := RouteEndpoint{Jobs: j, Router: inference, Execute: endpoint}
+	return j.RegisterConfiguredServer(server, ConfiguredServerOptions{
+		Catalog: catalogConfig, Limits: limits, Notify: notify,
+		ModelHandlers: map[string]CatalogHandler{
+			"memory_answer": answer.Call, "memory_route": route.Call,
+			"memory_propose_freeform": proposals.Freeform, "memory_propose_update": proposals.Update,
+		},
+	})
 }

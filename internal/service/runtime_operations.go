@@ -34,7 +34,15 @@ func StaticAuditPrincipals(config access.AuthorizationConfig) func(context.Conte
 	}
 }
 func (r *Runtime) AuditRepository(ctx context.Context, path *string) (map[string]any, error) {
-	report, err := repository.AuditRepository(r.Paths.Repository.CurrentDir, nil)
+	bundle, err := repository.ScanBundle(r.Paths.Repository.CurrentDir, repository.BundleFilter{})
+	if err != nil {
+		return nil, err
+	}
+	assetPaths, err := acceptedBundleAssets(bundle)
+	if err != nil {
+		return nil, err
+	}
+	report, err := repository.AuditBundleWithAssets(bundle, nil, assetPaths)
 	if err != nil {
 		return nil, err
 	}

@@ -49,6 +49,11 @@ vuln: $(GOVULNCHECK)
 	CGO_ENABLED=0 $(GOVULNCHECK) ./...
 test:
 	CGO_ENABLED=0 $(GO) test ./...
+.PHONY: mcp-contract
+# Focused startup/wire contracts plus the standalone transport contract suite.
+mcp-contract:
+	CGO_ENABLED=0 $(GO) test ./internal/service -run '^TestMCPContract' -count=1
+	$(MAKE) -C umcp test
 umcp-check:
 	$(MAKE) -C umcp check
 coverage:

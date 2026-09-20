@@ -107,6 +107,14 @@ The deterministic core uses these machine-readable error classes:
 * `queue_full`
 * `temporarily_read_only`
 
+## Markdown link resolution
+
+Relative Markdown destinations resolve against the source concept's directory; `#fragment` resolves to that concept. Repository-absolute paths remain supported. URI schemes and protocol-relative `//host/path` destinations are external.
+
+A concept target takes precedence over an identically named attached resource. Otherwise, a relative destination can resolve to a file in the latest accepted version of one of that concept's asset kinds. Indexing validates the accepted manifest and requires a regular ZIP file, but does not unpack or rehash archives. Asset references retain their raw targets and anchors, have no target concept ID, and use `resolution_state=asset`. They do not add graph connectivity or broken-link diagnostics. Missing resources remain broken; malformed accepted metadata stops classification rather than generating misleading Dream repair signals.
+
+Rename updates inbound relative links, rebases ordinary outbound links, and keeps attached resource references local. Fragments retain their source spelling. Startup rebuilds legacy derived link classifications once using an internal version marker, without changing the SQLite schema or canonical Markdown.
+
 ## Discovery, surfaces and catalog resources
 
 Memento supports two discovery patterns:
@@ -121,10 +129,12 @@ Configured `mcp.tool_surface` controls regular memory-tool discovery. When manag
 | Surface | Exposed direct tools |
 |---|---|
 | `compact` | core help/status/search/read/inventory/execute, asset staging begin/status and `memory_asset_get`, plus optional `memory_answer` and `memory_route` (**9** to **11**) |
-| `standard` | the **23** direct compatibility tools, including inventory, staging, generic asset retrieval and pruning |
-| `read_only` | the **10** discovery, concept-read and asset-read tools; no upload ticket tools |
-| `curator` | compact tools plus ordinary proposal lifecycle and asset pruning; direct create/patch/rename remain execute-only (**14**, each optional `memory_answer` or `memory_route` adds one, **16** with both) |
-| `admin` | the **24**-tool full direct memory surface, including `memory_execute`, plus optional `memory_route` (**25**); managed administrators additionally receive the role-filtered `access_*` family |
+| `standard` | **27–29** direct tools, including inventory, staging, retrieval and pruning; the two model-assisted proposal tools are optional |
+| `read_only` | **9** discovery, concept-read and asset-read tools; no upload ticket tools |
+| `curator` | **21–23** compact and proposal-lifecycle tools; optional answer/routing; create/patch/rename remain execute-only |
+| `admin` | **28–31** direct memory tools, including execute; optional routing and model-assisted proposals; managed administrators additionally receive `access_*` |
+
+Models-off and intelligent-tier startup use the same catalogue. Enabling routing must not replace base discovery, and help, catalogue and `tools/list` must agree. Hidden operations retain their normal authorisation checks; discovery is not an access-control boundary. The `standard`, `read_only` and `admin` surfaces retain a callable disabled-answer response without a configured answer model. `make mcp-contract` tests all five surfaces with routing and model-assisted features independently enabled or disabled.
 
 ### Catalog resources
 

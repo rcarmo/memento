@@ -69,6 +69,55 @@ func TestMarkdownLinkHelpers(t *testing.T) {
 	if got := RewriteLinksForRename("content", "", "new"); got.Changed || got.Content != "content" {
 		t.Fatal(got)
 	}
+	for _, tc := range []struct {
+		source, href, want string
+		internal           bool
+	}{
+		{"/folder/source.md", "target.md", "/folder/target.md", true},
+		{"/folder/source.md", "../target.md#part", "/target.md", true},
+		{"/folder/source.md", "#part", "/folder/source.md", true},
+		{"/folder/source.md", "/target.md", "/target.md", true},
+		{"/folder/source.md", "https://example.org", "", false},
+		{"/folder/source.md", "//example.org", "", false},
+	} {
+		got, internal := ResolveLinkPath(tc.source, tc.href)
+		if got != tc.want || internal != tc.internal {
+			t.Fatal(tc, got, internal)
+		}
+	}
+	for _, tc := range []struct {
+		href, want string
+		valid      bool
+	}{
+		{"references/guide.md#part", "references/guide.md", true},
+		{"./scripts/run.sh", "scripts/run.sh", true},
+		{"../guide.md", "", false},
+		{"/guide.md", "", false},
+		{"#part", "", false},
+		{"https://example.org", "", false},
+	} {
+		got, valid := ResolveAssetLinkPath(tc.href)
+		if got != tc.want || valid != tc.valid {
+			t.Fatal(tc, got, valid)
+		}
+	}
+	for _, tc := range []struct {
+		content, source, oldPath, newPath, want string
+	}{
+		{"[same](target.md#part)", "/folder/source.md", "/folder/target.md", "/folder/renamed.md", "[same](renamed.md#part)"},
+		{"[cross](target.md)", "/folder/source.md", "/folder/target.md", "/other/renamed.md", "[cross](../other/renamed.md)"},
+		{"[self](#part)", "/folder/source.md", "/folder/source.md", "/other/source.md", "[self](#part)"},
+		{"[angle](<target.md#space here>)", "/folder/source.md", "/folder/target.md", "/other/renamed.md", "[angle](<../other/renamed.md#space here>)"},
+	} {
+		got := RewriteLinksForRenameFrom(tc.content, tc.source, tc.oldPath, tc.newPath)
+		if !got.Changed && got.Content != tc.content || got.Content != tc.want {
+			t.Fatal(tc, got)
+		}
+	}
+	rebased := RebaseRelativeLinks("[same](target.md) [up](../root.md#x) [absolute](/fixed.md)", "/folder/source.md", "/other/source.md")
+	if !rebased.Changed || rebased.Content != "[same](../folder/target.md) [up](../root.md#x) [absolute](/fixed.md)" {
+		t.Fatal(rebased)
+	}
 	node := ast.NewLink()
 	node.AppendChild(node, ast.NewString([]byte("a &amp; b")))
 	if got := linkText(node, nil); got != "a & b" {

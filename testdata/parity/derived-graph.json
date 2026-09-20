@@ -16,7 +16,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [],
@@ -44,7 +45,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [],
@@ -72,7 +74,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [
@@ -138,7 +141,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [
@@ -222,7 +226,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [
@@ -453,7 +458,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -465,7 +470,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -498,7 +503,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -528,7 +533,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -579,7 +584,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -609,7 +614,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -888,7 +893,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [],
@@ -917,7 +923,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [],
@@ -946,7 +953,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [
@@ -1022,7 +1030,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [
@@ -1116,7 +1125,8 @@
       "expected": {
         "broken_targets": [
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [
@@ -1364,7 +1374,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -1376,7 +1386,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -1410,7 +1420,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -1449,7 +1459,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -1501,7 +1511,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -1540,7 +1550,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -1831,7 +1841,8 @@
         "broken_targets": [
           "/private/missing.md",
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [],
@@ -1860,7 +1871,8 @@
         "broken_targets": [
           "/private/missing.md",
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [],
@@ -1889,7 +1901,8 @@
         "broken_targets": [
           "/private/missing.md",
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [
@@ -1983,7 +1996,8 @@
         "broken_targets": [
           "/private/missing.md",
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [
@@ -2104,7 +2118,8 @@
         "broken_targets": [
           "/private/missing.md",
           "/public/missing.md",
-          "/public/missing.md#anchor"
+          "/public/missing.md#anchor",
+          "foo"
         ],
         "center_id": "a",
         "inbound": [
@@ -2276,7 +2291,7 @@
         "center_id": "p",
         "inbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -2288,7 +2303,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -2330,7 +2345,7 @@
         "center_id": "p",
         "inbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -2369,7 +2384,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -2429,7 +2444,7 @@
         "center_id": "p",
         "inbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -2468,7 +2483,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -2578,7 +2593,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -2590,7 +2605,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -2623,7 +2638,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -2671,7 +2686,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -2731,7 +2746,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -2779,7 +2794,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -2941,7 +2956,7 @@
             "title": "p"
           },
           {
-            "broken_link_count": 3,
+            "broken_link_count": 4,
             "concept_id": "a",
             "depth": 2,
             "direction": "inbound",
@@ -2987,549 +3002,554 @@
             "title": "p"
           },
           {
+            "broken_link_count": 4,
+            "concept_id": "a",
+            "depth": 2,
+            "direction": "inbound",
+            "orphan_flag": false,
+            "path": "/public/a.md",
+            "title": "a"
+          }
+        ],
+        "index_revision": "r1",
+        "outbound": [],
+        "repo_revision": "r1"
+      },
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "missing",
+      "depth": -1,
+      "error": "'missing'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "missing",
+      "depth": 0,
+      "error": "'missing'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "missing",
+      "depth": 1,
+      "error": "'missing'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "missing",
+      "depth": 2,
+      "error": "'missing'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "missing",
+      "depth": 3,
+      "error": "'missing'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "admin",
+        "protected_read_prefixes": [
+          "/private/"
+        ],
+        "read_prefixes": [
+          "/"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "a",
+      "depth": -1,
+      "expected": {
+        "broken_targets": [
+          "/public/missing.md",
+          "/public/missing.md#anchor",
+          "foo"
+        ],
+        "center_id": "a",
+        "inbound": [],
+        "index_revision": "r1",
+        "outbound": [],
+        "repo_revision": "r1"
+      },
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "a",
+      "depth": 0,
+      "expected": {
+        "broken_targets": [
+          "/public/missing.md",
+          "/public/missing.md#anchor",
+          "foo"
+        ],
+        "center_id": "a",
+        "inbound": [],
+        "index_revision": "r1",
+        "outbound": [],
+        "repo_revision": "r1"
+      },
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "a",
+      "depth": 1,
+      "expected": {
+        "broken_targets": [
+          "/public/missing.md",
+          "/public/missing.md#anchor",
+          "foo"
+        ],
+        "center_id": "a",
+        "inbound": [
+          {
+            "broken_link_count": 0,
+            "concept_id": "c",
+            "depth": 1,
+            "direction": "inbound",
+            "orphan_flag": false,
+            "path": "/public/c.md",
+            "title": "c"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "d",
+            "depth": 1,
+            "direction": "inbound",
+            "orphan_flag": false,
+            "path": "/public/d.md",
+            "title": "d"
+          }
+        ],
+        "index_revision": "r1",
+        "outbound": [
+          {
+            "broken_link_count": 0,
+            "concept_id": "b",
+            "depth": 1,
+            "direction": "outbound",
+            "orphan_flag": false,
+            "path": "/public/b.md",
+            "title": "b"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "c",
+            "depth": 1,
+            "direction": "outbound",
+            "orphan_flag": false,
+            "path": "/public/c.md",
+            "title": "c"
+          }
+        ],
+        "repo_revision": "r1"
+      },
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "a",
+      "depth": 2,
+      "expected": {
+        "broken_targets": [
+          "/public/missing.md",
+          "/public/missing.md#anchor",
+          "foo"
+        ],
+        "center_id": "a",
+        "inbound": [
+          {
+            "broken_link_count": 0,
+            "concept_id": "c",
+            "depth": 1,
+            "direction": "inbound",
+            "orphan_flag": false,
+            "path": "/public/c.md",
+            "title": "c"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "d",
+            "depth": 1,
+            "direction": "inbound",
+            "orphan_flag": false,
+            "path": "/public/d.md",
+            "title": "d"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "b",
+            "depth": 2,
+            "direction": "inbound",
+            "orphan_flag": false,
+            "path": "/public/b.md",
+            "title": "b"
+          }
+        ],
+        "index_revision": "r1",
+        "outbound": [
+          {
+            "broken_link_count": 0,
+            "concept_id": "b",
+            "depth": 1,
+            "direction": "outbound",
+            "orphan_flag": false,
+            "path": "/public/b.md",
+            "title": "b"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "c",
+            "depth": 1,
+            "direction": "outbound",
+            "orphan_flag": false,
+            "path": "/public/c.md",
+            "title": "c"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "d",
+            "depth": 2,
+            "direction": "outbound",
+            "orphan_flag": false,
+            "path": "/public/d.md",
+            "title": "d"
+          }
+        ],
+        "repo_revision": "r1"
+      },
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "a",
+      "depth": 3,
+      "expected": {
+        "broken_targets": [
+          "/public/missing.md",
+          "/public/missing.md#anchor",
+          "foo"
+        ],
+        "center_id": "a",
+        "inbound": [
+          {
+            "broken_link_count": 0,
+            "concept_id": "c",
+            "depth": 1,
+            "direction": "inbound",
+            "orphan_flag": false,
+            "path": "/public/c.md",
+            "title": "c"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "d",
+            "depth": 1,
+            "direction": "inbound",
+            "orphan_flag": false,
+            "path": "/public/d.md",
+            "title": "d"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "b",
+            "depth": 2,
+            "direction": "inbound",
+            "orphan_flag": false,
+            "path": "/public/b.md",
+            "title": "b"
+          }
+        ],
+        "index_revision": "r1",
+        "outbound": [
+          {
+            "broken_link_count": 0,
+            "concept_id": "b",
+            "depth": 1,
+            "direction": "outbound",
+            "orphan_flag": false,
+            "path": "/public/b.md",
+            "title": "b"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "c",
+            "depth": 1,
+            "direction": "outbound",
+            "orphan_flag": false,
+            "path": "/public/c.md",
+            "title": "c"
+          },
+          {
+            "broken_link_count": 0,
+            "concept_id": "d",
+            "depth": 2,
+            "direction": "outbound",
+            "orphan_flag": false,
+            "path": "/public/d.md",
+            "title": "d"
+          }
+        ],
+        "repo_revision": "r1"
+      },
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "p",
+      "depth": -1,
+      "error": "'p'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "p",
+      "depth": 0,
+      "error": "'p'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "p",
+      "depth": 1,
+      "error": "'p'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "p",
+      "depth": 2,
+      "error": "'p'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "p",
+      "depth": 3,
+      "error": "'p'",
+      "error_type": "KeyError",
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "t",
+      "depth": -1,
+      "expected": {
+        "broken_targets": [],
+        "center_id": "t",
+        "inbound": [],
+        "index_revision": "r1",
+        "outbound": [],
+        "repo_revision": "r1"
+      },
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "t",
+      "depth": 0,
+      "expected": {
+        "broken_targets": [],
+        "center_id": "t",
+        "inbound": [],
+        "index_revision": "r1",
+        "outbound": [],
+        "repo_revision": "r1"
+      },
+      "policy": {
+        "principal": "limited",
+        "protected_read_prefixes": [],
+        "read_prefixes": [
+          "/public/"
+        ],
+        "roles": [
+          "reader"
+        ],
+        "write_prefixes": []
+      }
+    },
+    {
+      "center": "t",
+      "depth": 1,
+      "expected": {
+        "broken_targets": [],
+        "center_id": "t",
+        "inbound": [
+          {
             "broken_link_count": 3,
             "concept_id": "a",
-            "depth": 2,
-            "direction": "inbound",
-            "orphan_flag": false,
-            "path": "/public/a.md",
-            "title": "a"
-          }
-        ],
-        "index_revision": "r1",
-        "outbound": [],
-        "repo_revision": "r1"
-      },
-      "policy": {
-        "principal": "admin",
-        "protected_read_prefixes": [
-          "/private/"
-        ],
-        "read_prefixes": [
-          "/"
-        ],
-        "roles": [
-          "admin"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "missing",
-      "depth": -1,
-      "error": "'missing'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "admin",
-        "protected_read_prefixes": [
-          "/private/"
-        ],
-        "read_prefixes": [
-          "/"
-        ],
-        "roles": [
-          "admin"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "missing",
-      "depth": 0,
-      "error": "'missing'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "admin",
-        "protected_read_prefixes": [
-          "/private/"
-        ],
-        "read_prefixes": [
-          "/"
-        ],
-        "roles": [
-          "admin"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "missing",
-      "depth": 1,
-      "error": "'missing'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "admin",
-        "protected_read_prefixes": [
-          "/private/"
-        ],
-        "read_prefixes": [
-          "/"
-        ],
-        "roles": [
-          "admin"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "missing",
-      "depth": 2,
-      "error": "'missing'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "admin",
-        "protected_read_prefixes": [
-          "/private/"
-        ],
-        "read_prefixes": [
-          "/"
-        ],
-        "roles": [
-          "admin"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "missing",
-      "depth": 3,
-      "error": "'missing'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "admin",
-        "protected_read_prefixes": [
-          "/private/"
-        ],
-        "read_prefixes": [
-          "/"
-        ],
-        "roles": [
-          "admin"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "a",
-      "depth": -1,
-      "expected": {
-        "broken_targets": [
-          "/public/missing.md",
-          "/public/missing.md#anchor"
-        ],
-        "center_id": "a",
-        "inbound": [],
-        "index_revision": "r1",
-        "outbound": [],
-        "repo_revision": "r1"
-      },
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "a",
-      "depth": 0,
-      "expected": {
-        "broken_targets": [
-          "/public/missing.md",
-          "/public/missing.md#anchor"
-        ],
-        "center_id": "a",
-        "inbound": [],
-        "index_revision": "r1",
-        "outbound": [],
-        "repo_revision": "r1"
-      },
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "a",
-      "depth": 1,
-      "expected": {
-        "broken_targets": [
-          "/public/missing.md",
-          "/public/missing.md#anchor"
-        ],
-        "center_id": "a",
-        "inbound": [
-          {
-            "broken_link_count": 0,
-            "concept_id": "c",
-            "depth": 1,
-            "direction": "inbound",
-            "orphan_flag": false,
-            "path": "/public/c.md",
-            "title": "c"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "d",
-            "depth": 1,
-            "direction": "inbound",
-            "orphan_flag": false,
-            "path": "/public/d.md",
-            "title": "d"
-          }
-        ],
-        "index_revision": "r1",
-        "outbound": [
-          {
-            "broken_link_count": 0,
-            "concept_id": "b",
-            "depth": 1,
-            "direction": "outbound",
-            "orphan_flag": false,
-            "path": "/public/b.md",
-            "title": "b"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "c",
-            "depth": 1,
-            "direction": "outbound",
-            "orphan_flag": false,
-            "path": "/public/c.md",
-            "title": "c"
-          }
-        ],
-        "repo_revision": "r1"
-      },
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "a",
-      "depth": 2,
-      "expected": {
-        "broken_targets": [
-          "/public/missing.md",
-          "/public/missing.md#anchor"
-        ],
-        "center_id": "a",
-        "inbound": [
-          {
-            "broken_link_count": 0,
-            "concept_id": "c",
-            "depth": 1,
-            "direction": "inbound",
-            "orphan_flag": false,
-            "path": "/public/c.md",
-            "title": "c"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "d",
-            "depth": 1,
-            "direction": "inbound",
-            "orphan_flag": false,
-            "path": "/public/d.md",
-            "title": "d"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "b",
-            "depth": 2,
-            "direction": "inbound",
-            "orphan_flag": false,
-            "path": "/public/b.md",
-            "title": "b"
-          }
-        ],
-        "index_revision": "r1",
-        "outbound": [
-          {
-            "broken_link_count": 0,
-            "concept_id": "b",
-            "depth": 1,
-            "direction": "outbound",
-            "orphan_flag": false,
-            "path": "/public/b.md",
-            "title": "b"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "c",
-            "depth": 1,
-            "direction": "outbound",
-            "orphan_flag": false,
-            "path": "/public/c.md",
-            "title": "c"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "d",
-            "depth": 2,
-            "direction": "outbound",
-            "orphan_flag": false,
-            "path": "/public/d.md",
-            "title": "d"
-          }
-        ],
-        "repo_revision": "r1"
-      },
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "a",
-      "depth": 3,
-      "expected": {
-        "broken_targets": [
-          "/public/missing.md",
-          "/public/missing.md#anchor"
-        ],
-        "center_id": "a",
-        "inbound": [
-          {
-            "broken_link_count": 0,
-            "concept_id": "c",
-            "depth": 1,
-            "direction": "inbound",
-            "orphan_flag": false,
-            "path": "/public/c.md",
-            "title": "c"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "d",
-            "depth": 1,
-            "direction": "inbound",
-            "orphan_flag": false,
-            "path": "/public/d.md",
-            "title": "d"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "b",
-            "depth": 2,
-            "direction": "inbound",
-            "orphan_flag": false,
-            "path": "/public/b.md",
-            "title": "b"
-          }
-        ],
-        "index_revision": "r1",
-        "outbound": [
-          {
-            "broken_link_count": 0,
-            "concept_id": "b",
-            "depth": 1,
-            "direction": "outbound",
-            "orphan_flag": false,
-            "path": "/public/b.md",
-            "title": "b"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "c",
-            "depth": 1,
-            "direction": "outbound",
-            "orphan_flag": false,
-            "path": "/public/c.md",
-            "title": "c"
-          },
-          {
-            "broken_link_count": 0,
-            "concept_id": "d",
-            "depth": 2,
-            "direction": "outbound",
-            "orphan_flag": false,
-            "path": "/public/d.md",
-            "title": "d"
-          }
-        ],
-        "repo_revision": "r1"
-      },
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "p",
-      "depth": -1,
-      "error": "'p'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "p",
-      "depth": 0,
-      "error": "'p'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "p",
-      "depth": 1,
-      "error": "'p'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "p",
-      "depth": 2,
-      "error": "'p'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "p",
-      "depth": 3,
-      "error": "'p'",
-      "error_type": "KeyError",
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "t",
-      "depth": -1,
-      "expected": {
-        "broken_targets": [],
-        "center_id": "t",
-        "inbound": [],
-        "index_revision": "r1",
-        "outbound": [],
-        "repo_revision": "r1"
-      },
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "t",
-      "depth": 0,
-      "expected": {
-        "broken_targets": [],
-        "center_id": "t",
-        "inbound": [],
-        "index_revision": "r1",
-        "outbound": [],
-        "repo_revision": "r1"
-      },
-      "policy": {
-        "principal": "limited",
-        "protected_read_prefixes": [],
-        "read_prefixes": [
-          "/public/"
-        ],
-        "roles": [
-          "reader"
-        ],
-        "write_prefixes": []
-      }
-    },
-    {
-      "center": "t",
-      "depth": 1,
-      "expected": {
-        "broken_targets": [],
-        "center_id": "t",
-        "inbound": [
-          {
-            "broken_link_count": 2,
-            "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
             "orphan_flag": false,
@@ -3540,7 +3560,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -3571,7 +3591,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -3601,7 +3621,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -3650,7 +3670,7 @@
         "center_id": "t",
         "inbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "inbound",
@@ -3680,7 +3700,7 @@
         "index_revision": "r1",
         "outbound": [
           {
-            "broken_link_count": 2,
+            "broken_link_count": 3,
             "concept_id": "a",
             "depth": 1,
             "direction": "outbound",
@@ -3939,7 +3959,7 @@
         "concept_id": "a",
         "inbound_degree": 6,
         "orphan_flag": false,
-        "outbound_degree": 10
+        "outbound_degree": 11
       },
       "id": "a"
     },

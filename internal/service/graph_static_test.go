@@ -29,10 +29,23 @@ func TestGraphStaticAssets(t *testing.T) {
 		"setDetail({ node, loading: true })",
 		"selectionAbort.current?.abort()",
 		"request !== selectionRequest.current",
+		"if (!node)",
+		"setSelected(null)",
+		"setDetail(null)",
 		`data-testid": "inspector-loading"`,
 	} {
 		if !strings.Contains(app, required) {
 			t.Fatal("missing optimistic inspector behavior", required)
+		}
+	}
+	graphScene := string(graphStaticResponse("graph-scene.js", "/graph").Body)
+	for _, required := range []string{
+		"this.selectedId=null",
+		"this.callbacks.select?.(null)",
+		"this.drawHalos();this.drawSelectedEdges()",
+	} {
+		if !strings.Contains(graphScene, required) {
+			t.Fatal("missing empty-canvas deselection behavior", required)
 		}
 	}
 }

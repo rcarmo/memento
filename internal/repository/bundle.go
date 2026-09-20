@@ -38,6 +38,7 @@ type RepositoryAudit struct {
 }
 
 func (a RepositoryAudit) OK() bool { return len(a.Issues) == 0 }
+
 func (b RepositoryBundle) Get(bundlePath string) (BundleEntry, error) {
 	for _, entry := range b.Entries {
 		if entry.BundlePath == bundlePath {
@@ -239,7 +240,16 @@ func AuditRepository(root string, includePath func(string) bool) (RepositoryAudi
 	}
 	return auditBundle(bundle, includePath)
 }
+
+// AuditBundleWithAssets classifies links to accepted manifest files as valid
+// non-concept references. The service loads manifests before calling the audit.
+func AuditBundleWithAssets(bundle RepositoryBundle, includePath func(string) bool, assetPaths map[string]map[string]bool) (RepositoryAudit, error) {
+	return auditBundleWithAssets(bundle, includePath, assetPaths)
+}
 func auditBundle(bundle RepositoryBundle, includePath func(string) bool) (RepositoryAudit, error) {
+	return auditBundleWithAssets(bundle, includePath, nil)
+}
+func auditBundleWithAssets(bundle RepositoryBundle, includePath func(string) bool, assetPaths map[string]map[string]bool) (RepositoryAudit, error) {
 	issues := []AuditIssue{}
 	seen := map[string]string{}
 	paths := map[string]bool{}
@@ -254,16 +264,15 @@ func auditBundle(bundle RepositoryBundle, includePath func(string) bool) (Reposi
 			seen[id] = entry.BundlePath
 		}
 		for _, link := range ExtractStructuralLinks(entry.Document.Body) {
-			if !strings.HasPrefix(link.Href, "/") {
+			target, internal := ResolveLinkPath(entry.BundlePath, link.Href)
+			if !internal || IsReservedBundlePath(target) || (includePath != nil && !includePath(target)) {
 				continue
 			}
-			target, _, _ := strings.Cut(link.Href, "#")
-			if IsReservedBundlePath(target) || (includePath != nil && !includePath(target)) {
+			assetPath, assetCandidate := ResolveAssetLinkPath(link.Href)
+			if paths[target] || assetCandidate && assetPaths[id][assetPath] {
 				continue
 			}
-			if !paths[target] {
-				issues = append(issues, AuditIssue{BundlePath: entry.BundlePath, Code: "broken_link", Message: "broken link to " + target})
-			}
+			issues = append(issues, AuditIssue{BundlePath: entry.BundlePath, Code: "broken_link", Message: "broken link to " + target})
 		}
 		// Serializer guarantees a final newline by construction. The Python audit's
 		// unreachable missing-newline branch needs no fabricated Go error path.

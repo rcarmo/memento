@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/rcarmo/memento/internal/access"
+	"github.com/rcarmo/memento/internal/assets"
 	"github.com/rcarmo/memento/internal/control"
 	"github.com/rcarmo/memento/internal/repository"
 )
@@ -256,7 +257,7 @@ func (m WorktreeMutator) rename(root string, change ProposalChange, actor string
 		if err != nil {
 			return nil, err
 		}
-		rewritten := repository.RewriteLinksForRename(candidate.Document.Body, oldPath, newPath)
+		rewritten := repository.RewriteLinksForRenameFrom(candidate.Document.Body, path, oldPath, newPath)
 		if rewritten.Changed {
 			if _, err = access.AuthorizePath(policy, path, "write"); err != nil {
 				return nil, err
@@ -265,6 +266,23 @@ func (m WorktreeMutator) rename(root string, change ProposalChange, actor string
 			rewrites = append(rewrites, rewrite{path, candidate.Document})
 		}
 	}
+	resources, err := assets.AcceptedAssetPaths(root, entry.Document.Frontmatter.ID)
+	if err != nil {
+		return nil, err
+	}
+	// A real concept target wins over a same-spelled attached resource, matching
+	// derived resolution. Only resource-only links remain local after a move.
+	for resource := range resources {
+		target, _ := repository.ResolveLinkPath(oldPath, resource)
+		for _, candidate := range paths {
+			if candidate == target {
+				delete(resources, resource)
+			}
+		}
+	}
+	rebased := repository.RebaseRelativeLinks(entry.Document.Body, oldPath, newPath, resources)
+	rewrittenSelf := repository.RewriteLinksForRenameFrom(rebased.Content, newPath, oldPath, newPath)
+	entry.Document.Body = rewrittenSelf.Content
 	entry.Document.Frontmatter.UpdatedAt = m.now()
 	entry.Document.Frontmatter.UpdatedBy = actor
 	if err = ops.mkdir(root, mutationParent(newPath)); err != nil {

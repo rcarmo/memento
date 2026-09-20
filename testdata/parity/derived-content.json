@@ -592,11 +592,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 3,
+                "broken_link_count": 2,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -689,7 +689,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -697,10 +697,10 @@
                 "last_checked_revision": "r1",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -916,11 +916,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 3,
+                "broken_link_count": 2,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -1013,7 +1013,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -1021,10 +1021,10 @@
                 "last_checked_revision": "r1",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -1228,11 +1228,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 3,
+                "broken_link_count": 2,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -1325,7 +1325,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -1333,10 +1333,10 @@
                 "last_checked_revision": "r2",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -1534,11 +1534,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 5,
+                "broken_link_count": 4,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -1631,7 +1631,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -1639,10 +1639,10 @@
                 "last_checked_revision": "r3",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -1818,11 +1818,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 5,
+                "broken_link_count": 4,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -1908,7 +1908,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -1916,10 +1916,10 @@
                 "last_checked_revision": "r4",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -2623,11 +2623,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 6,
+                "broken_link_count": 5,
                 "concept_id": "a",
-                "inbound_degree": 0,
+                "inbound_degree": 1,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 1,
@@ -2713,7 +2713,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -2721,10 +2721,10 @@
                 "last_checked_revision": "r9",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/duplicate.md"
               },
               {
                 "anchor": null,
@@ -2900,11 +2900,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 3,
+                "broken_link_count": 2,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -2997,7 +2997,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -3005,10 +3005,10 @@
                 "last_checked_revision": "r1",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -3224,11 +3224,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 3,
+                "broken_link_count": 2,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -3321,7 +3321,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -3329,10 +3329,10 @@
                 "last_checked_revision": "r1",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -3536,11 +3536,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 3,
+                "broken_link_count": 2,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -3633,7 +3633,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -3641,10 +3641,10 @@
                 "last_checked_revision": "r2",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -3842,11 +3842,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 5,
+                "broken_link_count": 4,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -3939,7 +3939,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -3947,10 +3947,10 @@
                 "last_checked_revision": "r3",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -4126,11 +4126,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 5,
+                "broken_link_count": 4,
                 "concept_id": "a",
-                "inbound_degree": 2,
+                "inbound_degree": 3,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 0,
@@ -4216,7 +4216,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -4224,10 +4224,10 @@
                 "last_checked_revision": "r4",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/a.md"
               },
               {
                 "anchor": null,
@@ -4931,11 +4931,11 @@
             ],
             "graph_metrics": [
               {
-                "broken_link_count": 6,
+                "broken_link_count": 5,
                 "concept_id": "a",
-                "inbound_degree": 0,
+                "inbound_degree": 1,
                 "orphan_flag": 0,
-                "outbound_degree": 4
+                "outbound_degree": 6
               },
               {
                 "broken_link_count": 1,
@@ -5021,7 +5021,7 @@
                 "resolution_state": "broken",
                 "source_id": "a",
                 "target_id": null,
-                "target_path": null
+                "target_path": "/foo"
               },
               {
                 "anchor": "local",
@@ -5029,10 +5029,10 @@
                 "last_checked_revision": "r9",
                 "link_kind": "markdown",
                 "raw_target": "#local",
-                "resolution_state": "broken",
+                "resolution_state": "resolved",
                 "source_id": "a",
-                "target_id": null,
-                "target_path": null
+                "target_id": "a",
+                "target_path": "/duplicate.md"
               },
               {
                 "anchor": null,
