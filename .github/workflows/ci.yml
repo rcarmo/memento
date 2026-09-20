@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    branches: [go]
+    branches: [main]
   pull_request:
 
 concurrency:

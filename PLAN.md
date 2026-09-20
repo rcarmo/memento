@@ -7,7 +7,7 @@ Memento's repository, transaction, MCP, proposal, search, model, debugger and co
 
 ## Pure Go replacement branch
 
-The end-to-end pure-Go replacement on branch `go` is complete and verified. [Port index](docs/go-port/README.md), [parity matrix](docs/go-port/parity.md), [test gates](docs/go-port/testing.md) and [SIMD results](docs/go-port/simd.md) record the accepted boundaries. The daemon, standalone uMCP module, storage/recovery, GTE, Needle, intelligent service handlers and release tooling build with `CGO_ENABLED=0`; checked-in fixtures preserve the pinned Python/Rust oracle results without retaining either runtime. Production replacement is still a separately authorised release operation.
+The end-to-end pure-Go replacement is complete and verified on `main`. [Port index](docs/go-port/README.md), [parity matrix](docs/go-port/parity.md), [test gates](docs/go-port/testing.md) and [SIMD results](docs/go-port/simd.md) record the accepted boundaries. The daemon, standalone uMCP module, storage/recovery, GTE, Needle, intelligent service handlers and release tooling build with `CGO_ENABLED=0`; checked-in fixtures preserve the pinned Python/Rust oracle results without retaining either runtime. Production replacement is still a separately authorised release operation.
 
 ## Working Rules
 

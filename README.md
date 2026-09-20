@@ -79,7 +79,7 @@ The debugger is disabled by default and unauthenticated when enabled. It is mean
 
 Memento ships as a non-root, pure-Go multi-architecture container. Start with [`examples/config.v1.json`](examples/config.v1.json), set `MEMENTO_ADMIN_MASTER_KEY`, then use [`docs/operations.md`](docs/operations.md) for deployment, health checks, backup and recovery. [`docs/access-management.md`](docs/access-management.md) covers the dedicated admin/curator profile split, Piclaw and Pi MCP configuration, `/admin`, direct MCP access tools, one-time credentials and explicit container master-key rotation.
 
-The `go` branch is the verified `v1.0.0` replacement for `ghcr.io/rcarmo/memento`. It builds static amd64-v1 and arm64 binaries and a non-root distroless image:
+The `main` branch is the verified pure-Go `v1.0.0` implementation for `ghcr.io/rcarmo/memento`. It builds static amd64-v1 and arm64 binaries and a non-root distroless image:
 
 ```bash
 python3 tools/prepare_runtime_models.py

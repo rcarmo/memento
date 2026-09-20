@@ -4,7 +4,7 @@ Use the workflow guides for agent tasks, the contracts for exact arguments and t
 
 ## Pure-Go replacement
 
-The [`go` branch port index](go-port/README.md) documents the completed CGO-free daemon, standalone uMCP module, storage/recovery implementation, GTE/Needle runtimes, SIMD results, allocation budgets and strict quality gates. The release image contains only static Go executables and model/data assets.
+The [pure-Go port index](go-port/README.md) documents the completed CGO-free daemon, standalone uMCP module, storage/recovery implementation, GTE/Needle runtimes, SIMD results, allocation budgets and strict quality gates. The release image contains only static Go executables and model/data assets.
 
 ## Connect a client
 

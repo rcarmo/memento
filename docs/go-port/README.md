@@ -1,6 +1,6 @@
 # Pure Go port
 
-The `go` branch contains the verified pure-Go Memento `v1.0.0` replacement: the service daemon, standalone uMCP module, Git/SQLite persistence and recovery, GTE, Needle, operational commands and release tooling. Runtime binaries build with `CGO_ENABLED=0` and do not require Python, Rust, C inference, native SQLite extensions or external Git commands for core operation.
+The `main` branch contains the verified pure-Go Memento `v1.0.0` implementation: the service daemon, standalone uMCP module, Git/SQLite persistence and recovery, GTE, Needle, operational commands and release tooling. Runtime binaries build with `CGO_ENABLED=0` and do not require Python, Rust, C inference, native SQLite extensions or external Git commands for core operation.
 
 Checked-in fixtures and retained reports preserve the Python, Rust and pinned upstream uMCP reference results. The generator/runtime trees themselves were removed from this branch after parity was established. The separate Vulkan experiment remains outside the accepted baseline.
 
