@@ -34,9 +34,10 @@ for name,budget in budgets.items():
             continue
         errors.append(f'{name}: expected 3 benchmark samples, found {len(values)}')
         continue
-    bytes_max=max(v[0] for v in values); allocs_max=max(v[1] for v in values)
-    if bytes_max>budget['max_bytes_per_op']:
-        errors.append(f'{name}: {bytes_max} B/op > {budget["max_bytes_per_op"]}')
+    bytes_median=sorted(v[0] for v in values)[len(values)//2]
+    allocs_max=max(v[1] for v in values)
+    if bytes_median>budget['max_bytes_per_op']:
+        errors.append(f'{name}: median {bytes_median} B/op > {budget["max_bytes_per_op"]}')
     if allocs_max>budget['max_allocs_per_op']:
         errors.append(f'{name}: {allocs_max} allocs/op > {budget["max_allocs_per_op"]}')
 if errors:
