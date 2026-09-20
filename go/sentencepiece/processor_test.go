@@ -363,6 +363,21 @@ func FuzzProcessor(f *testing.F) {
 	})
 }
 
+func TestTypedBPEAgenda(t *testing.T) {
+	queue := agenda{}
+	for _, value := range []pair{{score: 1, left: 4}, {score: 2, left: 5}, {score: 2, left: 1}, {score: -1, left: 0}} {
+		queue.push(value)
+	}
+	for _, want := range []pair{{score: 2, left: 1}, {score: 2, left: 5}, {score: 1, left: 4}, {score: -1, left: 0}} {
+		if got := queue.pop(); got.score != want.score || got.left != want.left {
+			t.Fatalf("got %#v, want %#v", got, want)
+		}
+	}
+	if len(queue) != 0 {
+		t.Fatal(queue)
+	}
+}
+
 func TestMinScoreNonfinite(t *testing.T) {
 	p, err := FromBytes(protoModel([]Piece{{"x", float32(math.Inf(-1)), Normal}}, BPE, false))
 	if err != nil || p.minScore != 0 {

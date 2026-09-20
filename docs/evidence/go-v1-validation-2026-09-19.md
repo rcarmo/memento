@@ -30,17 +30,19 @@ The enforced allocation ceilings are:
 | semantic cosine over 384 values | 0 | 0 |
 | Needle vocabulary lookup | 0 | 0 |
 | selected SIMD dot product | 0 | 0 |
+| selected SIMD row-dot projection | 0 | 0 |
+| selected SIMD row-AXPY projection | 0 | 0 |
 | real GTE embedding | 2 | 2,400 |
 | lexical search over 100 concepts | 875 | 43,500 |
-| real Needle generation | 900 | 1,900,000 |
+| real Needle generation | 350 | 1,800,000 |
 
-Local real-Needle runs after constraint-template caching and request-local workspace reuse measured 758--759 allocations/op, about 1.78 MB/op and 78--81 ms/op. These wall-clock figures describe the local Intel i7-12700 host and are not cross-runner release thresholds.
+A later profile-led pass added fused row kernels, a register-tiled AVX2 projection path, request-local rune buffers for constrained decoding and a typed SentencePiece BPE heap. Real Needle generation fell from 758--759 to 307 allocations/op in ordinary repeated benchmark runs; allocation profiling measured 183 allocations/op. Local latency was typically 59--74 ms/op. GTE retained 2 allocations/op, and its 384-row fused dot microkernel measured roughly 5--7 microseconds on the Intel i7-12700. The exact 360-case Needle corpus completed in 387.4 seconds on that host, down from the retained 1,408.8-second scalar baseline. These wall-clock figures describe that host and are not cross-runner release thresholds.
 
 ## Packaging and rollback
 
 The release check builds reproducible, stripped, static linux/amd64-v1 and linux/arm64 archives containing `memento-go`, `memento-embed-go` and `memento-skill-import-go`. Archive layout, SHA-256 manifests, ELF architecture, absent dynamic dependencies and native version output pass.
 
-The replacement image is distroless, runs as UID/GID 65532 and contains no shell, Python, Rust library, CGo dependency, native SQLite extension or Git executable. Repeated container-contract runs passed under the read-only 512 MiB profile with approximately 171.4--171.6 MiB idle RSS.
+The replacement image is distroless, runs as UID/GID 65532 and contains no shell, Python, Rust library, CGo dependency, native SQLite extension or Git executable. Repeated container-contract runs passed under the read-only 512 MiB profile with approximately 171.4--171.7 MiB idle RSS.
 
 A disposable volume was created with the pinned `0.5.9` image, opened by `v1.0.0`, then reopened by `0.5.9` with repository and index revisions intact. The final `service_version: 0.5.9` line in that test belongs to the deliberate rollback leg, not the Go image.
 

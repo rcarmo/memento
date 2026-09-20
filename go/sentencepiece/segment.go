@@ -1,9 +1,6 @@
 package sentencepiece
 
-import (
-	"container/heap"
-	"math"
-)
+import "math"
 
 type symbol struct{ start, length, previous, next int }
 type pair struct {
@@ -20,9 +17,40 @@ func (a agenda) Less(i, j int) bool {
 	}
 	return left > right
 }
-func (a agenda) Swap(i, j int)   { a[i], a[j] = a[j], a[i] }
-func (a *agenda) Push(value any) { *a = append(*a, value.(pair)) }
-func (a *agenda) Pop() any       { old := *a; last := old[len(old)-1]; *a = old[:len(old)-1]; return last }
+func (a agenda) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a *agenda) push(value pair) {
+	*a = append(*a, value)
+	for child := len(*a) - 1; child > 0; {
+		parent := (child - 1) / 2
+		if !a.Less(child, parent) {
+			break
+		}
+		a.Swap(parent, child)
+		child = parent
+	}
+}
+func (a *agenda) pop() pair {
+	last := len(*a) - 1
+	a.Swap(0, last)
+	for parent := 0; ; {
+		left := parent*2 + 1
+		if left >= last {
+			break
+		}
+		child := left
+		if right := left + 1; right < last && a.Less(right, left) {
+			child = right
+		}
+		if !a.Less(child, parent) {
+			break
+		}
+		a.Swap(parent, child)
+		parent = child
+	}
+	value := (*a)[last]
+	*a = (*a)[:last]
+	return value
+}
 
 // Rust f32::total_cmp order, including signed zero and NaNs.
 func floatOrder(value float32) int32 {
@@ -50,14 +78,14 @@ func (p *Processor) bpe(text []byte) []span {
 		start := symbols[left].start
 		size := symbols[left].length + symbols[right].length
 		if id, ok := p.ids[string(text[start:start+size])]; ok && id != p.model.unk {
-			heap.Push(&queue, pair{p.model.pieces[id].Score, left, right, size})
+			queue.push(pair{p.model.pieces[id].Score, left, right, size})
 		}
 	}
 	for i := 0; i < len(symbols)-1; i++ {
 		add(i, i+1)
 	}
 	for len(queue) > 0 {
-		top := heap.Pop(&queue).(pair)
+		top := queue.pop()
 		left, right := &symbols[top.left], &symbols[top.right]
 		if left.length == 0 || right.length == 0 {
 			continue

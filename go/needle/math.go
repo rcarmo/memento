@@ -83,13 +83,13 @@ func projectInto(result, input []float32, in, out int, kernel []float32, engine 
 	clear(result)
 	for r := 0; r < rows; r++ {
 		row := result[r*out : (r+1)*out]
-		for i := 0; i < in; i++ {
-			value := input[r*in+i]
+		coefficients := input[r*in : (r+1)*in]
+		if engine != nil {
+			_ = engine.AXPYRows(coefficients, kernel, row)
+			continue
+		}
+		for i, value := range coefficients {
 			weights := kernel[i*out : (i+1)*out]
-			if engine != nil {
-				_ = engine.AXPY(value, weights, row)
-				continue
-			}
 			for j := 0; j < out; j++ {
 				row[j] = float32(row[j] + float32(value*weights[j]))
 			}

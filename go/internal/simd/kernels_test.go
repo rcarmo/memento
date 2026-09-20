@@ -3,6 +3,7 @@ package simd
 import (
 	"math"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -118,6 +119,57 @@ func TestKernelsDeterministicRandomAndAliasing(t *testing.T) {
 	}
 }
 
+func TestFusedKernelsMatchPrimitiveComposition(t *testing.T) {
+	seed := uint32(0x9e3779b9)
+	next := func() float32 { seed = seed*1664525 + 1013904223; return float32(int32(seed)) / float32(math.MaxInt32) }
+	for _, rows := range []int{0, 1, 2, 3, 4, 5, 9} {
+		for _, columns := range []int{0, 1, 3, 4, 7, 8, 15, 16, 31, 32, 257, 384, 385} {
+			input, coefficients := make([]float32, columns), make([]float32, rows)
+			matrix := make([]float32, rows*columns)
+			for i := range input {
+				input[i] = next()
+			}
+			for i := range coefficients {
+				coefficients[i] = next()
+			}
+			for i := range matrix {
+				matrix[i] = next()
+			}
+			for _, backend := range Detect().Available {
+				engine := Engine{backend: backend}
+				wantDots, gotDots := make([]float32, rows), make([]float32, rows)
+				for row := range wantDots {
+					wantDots[row], _ = engine.Dot(input, matrix[row*columns:(row+1)*columns])
+				}
+				if err := engine.DotRows(input, matrix, gotDots); err != nil {
+					t.Fatal(err)
+				}
+				for i := range wantDots {
+					if math.Float32bits(wantDots[i]) != math.Float32bits(gotDots[i]) {
+						t.Fatalf("dot rows=%d cols=%d backend=%s row=%d want=%g got=%g", rows, columns, backend, i, wantDots[i], gotDots[i])
+					}
+				}
+				wantAXPY, gotAXPY := make([]float32, columns), make([]float32, columns)
+				for i := range wantAXPY {
+					wantAXPY[i] = next()
+				}
+				copy(gotAXPY, wantAXPY)
+				for row, coefficient := range coefficients {
+					_ = engine.AXPY(coefficient, matrix[row*columns:(row+1)*columns], wantAXPY)
+				}
+				if err := engine.AXPYRows(coefficients, matrix, gotAXPY); err != nil {
+					t.Fatal(err)
+				}
+				for i := range wantAXPY {
+					if math.Float32bits(wantAXPY[i]) != math.Float32bits(gotAXPY[i]) {
+						t.Fatalf("axpy rows=%d cols=%d backend=%s col=%d want=%g got=%g", rows, columns, backend, i, wantAXPY[i], gotAXPY[i])
+					}
+				}
+			}
+		}
+	}
+}
+
 func TestEngineKernels(t *testing.T) {
 	engine, err := New("scalar")
 	if err != nil {
@@ -130,6 +182,13 @@ func TestEngineKernels(t *testing.T) {
 	if err = engine.AXPY(2, []float32{3}, out); err != nil || out[0] != 7 {
 		t.Fatal(out, err)
 	}
+	dots := make([]float32, 2)
+	if err = engine.DotRows([]float32{2}, []float32{3, 4}, dots); err != nil || !reflect.DeepEqual(dots, []float32{6, 8}) {
+		t.Fatal(dots, err)
+	}
+	if err = engine.AXPYRows([]float32{2, 3}, []float32{4, 5}, out); err != nil || out[0] != 30 {
+		t.Fatal(out, err)
+	}
 	if _, err = New("bad"); err == nil {
 		t.Fatal("new")
 	}
@@ -139,6 +198,12 @@ func TestEngineKernels(t *testing.T) {
 	}
 	if err = bad.AXPY(1, nil, nil); err == nil {
 		t.Fatal("axpy")
+	}
+	if err = bad.DotRows(nil, nil, nil); err == nil {
+		t.Fatal("dot rows")
+	}
+	if err = bad.AXPYRows(nil, nil, nil); err == nil {
+		t.Fatal("axpy rows")
 	}
 	native := Engine{backend: Detect().Available[len(Detect().Available)-1]}
 	if native.backend != Scalar {
@@ -163,6 +228,12 @@ func TestKernelFailures(t *testing.T) {
 	}
 	if err := AXPY(Scalar, 1, []float32{1}, nil); err == nil {
 		t.Fatal("axpy dimensions")
+	}
+	if err := DotRows(Scalar, []float32{1}, []float32{1}, make([]float32, 2)); err == nil {
+		t.Fatal("dot rows dimensions")
+	}
+	if err := AXPYRows(Scalar, []float32{1}, []float32{1}, make([]float32, 2)); err == nil {
+		t.Fatal("axpy rows dimensions")
 	}
 	for _, backend := range []Backend{SSE2, AVX2, NEON} {
 		available := false
@@ -203,6 +274,37 @@ func benchmarkDotBackend(b *testing.B, backend Backend) {
 	b.ResetTimer()
 	for range b.N {
 		_, _ = engine.Dot(x, y)
+	}
+}
+func BenchmarkDotRowsSelected(b *testing.B) {
+	engine, _ := New("auto")
+	input, matrix, output := make([]float32, 384), make([]float32, 384*384), make([]float32, 384)
+	for i := range input {
+		input[i] = float32(i%17-8) / 9
+	}
+	for i := range matrix {
+		matrix[i] = float32(i%23-11) / 13
+	}
+	b.ReportAllocs()
+	b.ResetTimer()
+	for range b.N {
+		_ = engine.DotRows(input, matrix, output)
+	}
+}
+func BenchmarkAXPYRowsSelected(b *testing.B) {
+	engine, _ := New("auto")
+	coefficients, matrix, output := make([]float32, 384), make([]float32, 384*384), make([]float32, 384)
+	for i := range coefficients {
+		coefficients[i] = float32(i%17-8) / 9
+	}
+	for i := range matrix {
+		matrix[i] = float32(i%23-11) / 13
+	}
+	b.ReportAllocs()
+	b.ResetTimer()
+	for range b.N {
+		clear(output)
+		_ = engine.AXPYRows(coefficients, matrix, output)
 	}
 }
 func BenchmarkDotSelected(b *testing.B) {

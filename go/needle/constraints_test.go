@@ -84,11 +84,11 @@ func TestConstraintTrieAndMachine(t *testing.T) {
 	if c.allowed() != nil {
 		t.Fatal("unknown params trie")
 	}
-	c.machine = stateMachine{state: inName, constrained: "missing"}
+	c.machine = stateMachine{state: inName, constrained: []rune("missing")}
 	if c.allowed() != nil {
 		t.Fatal("unknown prefix")
 	}
-	c.machine = stateMachine{state: inName, constrained: "a"}
+	c.machine = stateMachine{state: inName, constrained: []rune("a")}
 	c.template.strings = append(c.template.strings, `"done`)
 	if ids := c.allowed(); len(ids) != 1 || ids[0] != len(c.template.strings)-1 {
 		t.Fatal(ids)

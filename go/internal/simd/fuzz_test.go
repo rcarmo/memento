@@ -56,6 +56,50 @@ func FuzzKernels(f *testing.F) {
 	})
 }
 
+func FuzzFusedKernels(f *testing.F) {
+	f.Add([]byte{0, 0, 128, 63}, []byte{0, 0, 0, 64}, uint8(1), uint8(1))
+	f.Add([]byte{}, []byte{}, uint8(0), uint8(0))
+	f.Fuzz(func(t *testing.T, inputRaw, matrixRaw []byte, rowsRaw, columnsRaw uint8) {
+		rows, columns := int(rowsRaw%9), int(columnsRaw%33)
+		if rows*columns > len(matrixRaw)/4 || columns > len(inputRaw)/4 {
+			return
+		}
+		input := fuzzFloats(inputRaw)[:columns]
+		matrix := fuzzFloats(matrixRaw)[:rows*columns]
+		coefficients := append([]float32{}, input[:min(rows, len(input))]...)
+		for len(coefficients) < rows {
+			coefficients = append(coefficients, float32(len(coefficients)+1)/7)
+		}
+		for _, backend := range Detect().Available {
+			engine := Engine{backend: backend}
+			wantDots, gotDots := make([]float32, rows), make([]float32, rows)
+			for row := range wantDots {
+				wantDots[row], _ = engine.Dot(input, matrix[row*columns:(row+1)*columns])
+			}
+			if err := engine.DotRows(input, matrix, gotDots); err != nil {
+				t.Fatal(err)
+			}
+			for i := range wantDots {
+				if math.Float32bits(wantDots[i]) != math.Float32bits(gotDots[i]) {
+					t.Fatalf("dot rows mismatch for %s", backend)
+				}
+			}
+			wantAXPY, gotAXPY := make([]float32, columns), make([]float32, columns)
+			for row, coefficient := range coefficients {
+				_ = engine.AXPY(coefficient, matrix[row*columns:(row+1)*columns], wantAXPY)
+			}
+			if err := engine.AXPYRows(coefficients, matrix, gotAXPY); err != nil {
+				t.Fatal(err)
+			}
+			for i := range wantAXPY {
+				if math.Float32bits(wantAXPY[i]) != math.Float32bits(gotAXPY[i]) {
+					t.Fatalf("axpy rows mismatch for %s", backend)
+				}
+			}
+		}
+	})
+}
+
 func FuzzBackendSelection(f *testing.F) {
 	for _, value := range []string{"", "auto", "scalar", " SSE2 ", "avx2", "neon", "bad", "\x00"} {
 		f.Add(value)

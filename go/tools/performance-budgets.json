@@ -13,6 +13,14 @@
       "max_allocs_per_op": 0,
       "max_bytes_per_op": 0
     },
+    "BenchmarkDotRowsSelected": {
+      "max_allocs_per_op": 0,
+      "max_bytes_per_op": 0
+    },
+    "BenchmarkAXPYRowsSelected": {
+      "max_allocs_per_op": 0,
+      "max_bytes_per_op": 0
+    },
     "BenchmarkRealGTEEmbed": {
       "max_allocs_per_op": 2,
       "max_bytes_per_op": 2400
@@ -22,8 +30,8 @@
       "max_bytes_per_op": 43500
     },
     "BenchmarkRealNeedleGenerate": {
-      "max_allocs_per_op": 900,
-      "max_bytes_per_op": 1900000
+      "max_allocs_per_op": 350,
+      "max_bytes_per_op": 1800000
     }
   }
 }

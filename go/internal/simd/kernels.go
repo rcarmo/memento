@@ -55,6 +55,40 @@ func (e Engine) AXPY(alpha float32, values, output []float32) error {
 	}
 }
 
+// DotRows computes one dot product per contiguous matrix row into output.
+func (e Engine) DotRows(input, matrix, output []float32) error {
+	if !matrixShape(len(input), len(output), len(matrix)) {
+		return fmt.Errorf("matrix dimension mismatch: %d x %d != %d", len(output), len(input), len(matrix))
+	}
+	switch e.backend {
+	case Scalar:
+		dotRowsScalar(input, matrix, output)
+		return nil
+	case SSE2, AVX2, NEON:
+		dotRowsNative(e.backend, input, matrix, output)
+		return nil
+	default:
+		return fmt.Errorf("unknown SIMD backend %q", e.backend)
+	}
+}
+
+// AXPYRows accumulates each coefficient times its contiguous matrix row into output.
+func (e Engine) AXPYRows(coefficients, matrix, output []float32) error {
+	if !matrixShape(len(output), len(coefficients), len(matrix)) {
+		return fmt.Errorf("matrix dimension mismatch: %d x %d != %d", len(coefficients), len(output), len(matrix))
+	}
+	switch e.backend {
+	case Scalar:
+		axpyRowsScalar(coefficients, matrix, output)
+		return nil
+	case SSE2, AVX2, NEON:
+		axpyRowsNative(e.backend, coefficients, matrix, output)
+		return nil
+	default:
+		return fmt.Errorf("unknown SIMD backend %q", e.backend)
+	}
+}
+
 type Capabilities struct {
 	Architecture        string `json:"architecture"`
 	SSE2, AVX2FMA, NEON bool
@@ -103,6 +137,26 @@ func AXPY(backend Backend, alpha float32, values, output []float32) error {
 	}
 	return engine.AXPY(alpha, values, output)
 }
+func DotRows(backend Backend, input, matrix, output []float32) error {
+	engine, err := New(string(backend))
+	if err != nil {
+		return err
+	}
+	return engine.DotRows(input, matrix, output)
+}
+func AXPYRows(backend Backend, coefficients, matrix, output []float32) error {
+	engine, err := New(string(backend))
+	if err != nil {
+		return err
+	}
+	return engine.AXPYRows(coefficients, matrix, output)
+}
+func matrixShape(columns, rows, size int) bool {
+	if columns == 0 || rows == 0 {
+		return size == 0
+	}
+	return size/columns == rows && size%columns == 0
+}
 func dotScalar(a, b []float32) float32 {
 	var sum float32
 	for i, v := range a {
@@ -113,5 +167,15 @@ func dotScalar(a, b []float32) float32 {
 func axpyScalar(alpha float32, x, y []float32) {
 	for i, v := range x {
 		y[i] = float32(y[i] + float32(alpha*v))
+	}
+}
+func dotRowsScalar(input, matrix, output []float32) {
+	for row := range output {
+		output[row] = dotScalar(input, matrix[row*len(input):(row+1)*len(input)])
+	}
+}
+func axpyRowsScalar(coefficients, matrix, output []float32) {
+	for row, coefficient := range coefficients {
+		axpyScalar(coefficient, matrix[row*len(output):(row+1)*len(output)], output)
 	}
 }

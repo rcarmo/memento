@@ -1,7 +1,6 @@
 package needle
 
 import (
-	"strings"
 	"unicode"
 	"unicode/utf8"
 )
@@ -55,10 +54,11 @@ const (
 )
 
 type stateMachine struct {
-	state                                jsonState
-	buffer, constrained, currentFunction string
-	inArguments, inString, escaped       bool
-	argumentsDepth, nesting              int
+	state                          jsonState
+	buffer, constrained            []rune
+	currentFunction                string
+	inArguments, inString, escaped bool
+	argumentsDepth, nesting        int
 }
 
 func (s *stateMachine) feed(text string) {
@@ -70,17 +70,17 @@ func (s *stateMachine) feedRune(ch rune) {
 	if s.state == inName || s.state == inArgKey {
 		if ch == '"' {
 			if s.state == inName {
-				s.currentFunction = s.constrained
+				s.currentFunction = string(s.constrained)
 			}
-			s.constrained = ""
+			s.constrained = s.constrained[:0]
 			s.state = free
 		} else {
-			s.constrained += string(ch)
+			s.constrained = append(s.constrained, ch)
 		}
-		s.buffer += string(ch)
+		s.buffer = append(s.buffer, ch)
 		return
 	}
-	s.buffer += string(ch)
+	s.buffer = append(s.buffer, ch)
 	if s.inString {
 		if s.escaped {
 			s.escaped = false
@@ -105,25 +105,40 @@ func (s *stateMachine) feedRune(ch rune) {
 		}
 		return
 	}
-	if strings.HasSuffix(s.buffer, `"name":"`) && !s.inArguments {
+	if runeSuffix(s.buffer, `"name":"`) && !s.inArguments {
 		s.state = inName
 		return
 	}
-	if strings.HasSuffix(s.buffer, `"arguments":{`) {
+	if runeSuffix(s.buffer, `"arguments":{`) {
 		s.inArguments = true
 		s.argumentsDepth = s.nesting
 		return
 	}
-	if s.inArguments && s.nesting == s.argumentsDepth && (strings.HasSuffix(s.buffer, `{"`) || strings.HasSuffix(s.buffer, `,"`)) {
+	if s.inArguments && s.nesting == s.argumentsDepth && (runeSuffix(s.buffer, `{"`) || runeSuffix(s.buffer, `,"`)) {
 		s.state = inArgKey
 		return
 	}
 	if ch == '"' {
-		prefix := strings.TrimRightFunc(strings.TrimSuffix(s.buffer, `"`), unicode.IsSpace)
-		if strings.HasSuffix(prefix, ":") {
+		index := len(s.buffer) - 2
+		for index >= 0 && unicode.IsSpace(s.buffer[index]) {
+			index--
+		}
+		if index >= 0 && s.buffer[index] == ':' {
 			s.inString = true
 		}
 	}
+}
+func runeSuffix(buffer []rune, suffix string) bool {
+	runes := []rune(suffix)
+	if len(runes) > len(buffer) {
+		return false
+	}
+	for index := range runes {
+		if buffer[len(buffer)-len(runes)+index] != runes[index] {
+			return false
+		}
+	}
+	return true
 }
 
 type constraintTemplate struct {
@@ -190,7 +205,7 @@ func (c *constraints) allowedInto(allowed []int) []int {
 			return nil
 		}
 	}
-	node := root.node(c.machine.constrained)
+	node := root.node(string(c.machine.constrained))
 	if node == nil {
 		return nil
 	}

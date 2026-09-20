@@ -9,7 +9,7 @@ mkdir -p "$(dirname "$OUT")"
   cd "$ROOT"
   CGO_ENABLED=0 go test -run '^$' -bench 'Benchmark(SemanticBlobCosine384|SearchLexical100)$' -benchmem -benchtime=2s -count=3 ./derived
   CGO_ENABLED=0 go test -run '^$' -bench 'BenchmarkTokenizerVocabularyLookups' -benchmem -count=3 ./needle
-  CGO_ENABLED=0 go test -run '^$' -bench 'BenchmarkDotSelected' -benchmem -count=3 ./internal/simd
+  CGO_ENABLED=0 go test -run '^$' -bench 'Benchmark(DotSelected|DotRowsSelected|AXPYRowsSelected)$' -benchmem -count=3 ./internal/simd
   if test -n "${GTE_MODEL_PATH:-}"; then
     CGO_ENABLED=0 GTE_MODEL_PATH="$GTE_MODEL_PATH" go test -run '^$' -bench 'BenchmarkRealGTEEmbed' -benchmem -benchtime=2s -count=3 ./gte
   fi

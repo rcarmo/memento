@@ -114,20 +114,25 @@ func linearInto(x, w, b []float32, rows, in, out int, engine *msimd.Engine, targ
 	}
 	y := target
 	for row := 0; row < rows; row++ {
+		result := y[row*out : (row+1)*out]
+		if engine != nil {
+			_ = engine.DotRows(x[row*in:(row+1)*in], w, result)
+			if b != nil {
+				for col := range result {
+					result[col] = float32(b[col] + result[col])
+				}
+			}
+			continue
+		}
 		for col := 0; col < out; col++ {
 			var sum float32
 			if b != nil {
 				sum = b[col]
 			}
-			if engine != nil {
-				dot, _ := engine.Dot(x[row*in:(row+1)*in], w[col*in:(col+1)*in])
-				sum = float32(sum + dot)
-			} else {
-				for k := 0; k < in; k++ {
-					sum = float32(sum + float32(x[row*in+k]*w[col*in+k]))
-				}
+			for k := 0; k < in; k++ {
+				sum = float32(sum + float32(x[row*in+k]*w[col*in+k]))
 			}
-			y[row*out+col] = sum
+			result[col] = sum
 		}
 	}
 	return y
