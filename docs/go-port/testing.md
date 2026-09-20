@@ -12,6 +12,12 @@ The root module follows the standard `cmd/<binary>`, `internal/` and module-leve
 
 Scalar remains the oracle/fallback; model constructors default to staggered auto dispatch (AVX2 -> SSE2 -> NEON -> scalar), with `MEMENTO_SIMD=scalar` forcing exact-order execution. SIMD tests cover runtime capability selection, unavailable/invalid backends, every tail length, bounded dot reduction drift, bit-exact AXPY, persistent Engine dispatch, GTE projection tolerance, Needle attention/argmax decisions, loader/runtime environment wiring, amd64 baseline/SSE2/AVX2 assembly, ARM64 NEON cross-assembly and gated real-model GTE/Needle comparisons. Local and real-model benchmarks are documented in [simd.md](simd.md). Automatic dispatch is enabled after x86-64 scalar/SSE2/AVX2 and ARM64 scalar/NEON model gates, including the 360-case exact Needle corpus.
 
+## Python behavior parity gate
+
+`make python-parity` verifies the complete pinned Python inventories and logically grouped Gherkin features. The [behavior audit](python-behavior-audit.md) separates Memento's 490 executed Python cases from uMCP's 254 executed upstream cases. The [public surface matrix](python-surface-matrix.md) lists every tool, resource, template, prompt, MCP method, auxiliary HTTP operation and CLI command with four canonical role outcomes.
+
+The manifests pin source-file hashes and real Go test declarations. `go test ./...` executes those tests; the manifest test rejects catalogue/access-tool drift, missing rows, unknown evidence statuses, absent feature domains and missing success/role/failure scenarios. Regenerate feature layout with `node tools/generate-python-parity-features.mjs` after an intentional manifest change.
+
 ## MCP startup and wire contracts
 
 `make mcp-contract` runs the production-startup contract suite and the standalone uMCP tests. The startup matrix covers 20 combinations: five surfaces, routing on/off, and model-assisted features on/off. Only inference is stubbed; repository storage, authentication, catalogue registration, schemas, dispatch, execute plans and envelopes use the production implementations.

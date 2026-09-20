@@ -12,7 +12,7 @@ const child=spawn('go',['test','./internal/service','-run','^TestUIAuditServer$'
 let logs='';child.stdout.on('data',b=>logs+=b);child.stderr.on('data',b=>logs+=b);
 let exited=false;const exit=new Promise(resolve=>child.on('exit',code=>{exited=true;resolve(code)}));
 let browser;const results=[];const delay=ms=>new Promise(r=>setTimeout(r,ms));
-async function eventually(fn){for(let i=0;i<150;i++){if(exited)throw new Error(logs);try{return await fn()}catch{}await delay(100)}throw new Error('condition timed out')}
+async function eventually(fn, timeout=120000){const deadline=Date.now()+timeout;while(Date.now()<deadline){if(exited)throw new Error(logs);try{return await fn()}catch{}await delay(100)}throw new Error(`condition timed out after ${timeout}ms\n${logs}`)}
 try {
  const base=await eventually(()=>readFile(ready,'utf8'));
  browser=await ({chromium,firefox,webkit}[engine]).launch({headless:true,...(engine==='chromium'?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE||undefined,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']}:{})});

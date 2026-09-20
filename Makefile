@@ -26,7 +26,7 @@ $(GOVULNCHECK):
 	@mkdir -p $(TOOLS_DIR)
 	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 check: quality
-quality: format-check layout-check fuzz-coverage vet lint test graph-test coverage umcp-check build
+quality: format-check layout-check fuzz-coverage vet lint test graph-test python-parity coverage umcp-check build
 audit-fast: quality vuln
 audit: audit-fast race fuzz performance-core cross
 format:
@@ -49,7 +49,9 @@ vuln: $(GOVULNCHECK)
 	CGO_ENABLED=0 $(GOVULNCHECK) ./...
 test:
 	CGO_ENABLED=0 $(GO) test ./...
-.PHONY: mcp-contract graph-test ui-test
+.PHONY: mcp-contract graph-test ui-test python-parity
+python-parity:
+	CGO_ENABLED=0 $(GO) test ./tools -run '^TestPython.*ParityManifest$$' -count=1
 # Install pinned browser tooling with: cd tools/browser && npm ci && npx playwright install chromium
 ui-test:
 	node tools/browser/audit.mjs
