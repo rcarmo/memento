@@ -25,7 +25,7 @@ type scoredTarget struct {
 }
 
 func selectSemantic(vectors map[string]semanticVector, revisions Revisions, config SemanticConfig, limit int) []Edge {
-	if limit <= 0 || len(vectors) < 2 || len(vectors) > config.NodeLimit || revisions.Embedding == nil || *revisions.Embedding != revisions.Repository {
+	if limit <= 0 || len(vectors) < 2 || len(vectors) > config.NodeLimit || revisions.Embedding == nil || (*revisions.Embedding != revisions.Repository && *revisions.Embedding != "partial") {
 		return []Edge{}
 	}
 	ids := make([]string, 0, len(vectors))
@@ -37,6 +37,9 @@ func selectSemantic(vectors map[string]semanticVector, revisions Revisions, conf
 	sets := map[string]map[string]bool{}
 	for _, source := range ids {
 		a := vectors[source]
+		if a.revision != revisions.Repository {
+			continue
+		}
 		candidates := []scoredTarget{}
 		for _, target := range ids {
 			if target == source {
@@ -134,7 +137,7 @@ func fmtFloat(value float64, places int) string {
 	return sign + integerText(whole) + "." + strings.Repeat("0", places-len(integerText(fraction))) + integerText(fraction)
 }
 func (s *SnapshotService) SemanticEdges(ctx context.Context, nodes []Node, revisions Revisions, config SemanticConfig, limit int) ([]Edge, error) {
-	if limit <= 0 || len(nodes) < 2 || len(nodes) > config.NodeLimit || revisions.Embedding == nil || *revisions.Embedding != revisions.Repository {
+	if limit <= 0 || len(nodes) < 2 || len(nodes) > config.NodeLimit || revisions.Embedding == nil || (*revisions.Embedding != revisions.Repository && *revisions.Embedding != "partial") {
 		return []Edge{}, nil
 	}
 	db, err := s.open(ctx, s.DerivedDBPath)
@@ -147,10 +150,11 @@ func (s *SnapshotService) SemanticEdges(ctx context.Context, nodes []Node, revis
 		ids[i] = node.ID
 	}
 	sort.Strings(ids)
-	query := "SELECT concept_id,embedding_blob,embedding_norm,model_id,embedding_revision FROM concept_embeddings WHERE status='ready' AND concept_id IN (" + strings.TrimSuffix(strings.Repeat("?,", len(ids)), ",") + ") ORDER BY concept_id"
-	args := make([]any, len(ids))
+	query := "SELECT concept_id,embedding_blob,embedding_norm,model_id,embedding_revision FROM concept_embeddings WHERE status='ready' AND embedding_revision=? AND concept_id IN (" + strings.TrimSuffix(strings.Repeat("?,", len(ids)), ",") + ") ORDER BY concept_id"
+	args := make([]any, len(ids)+1)
+	args[0] = revisions.Repository
 	for i, id := range ids {
-		args[i] = id
+		args[i+1] = id
 	}
 	rows, err := db.QueryContext(ctx, query, args...)
 	if err != nil {

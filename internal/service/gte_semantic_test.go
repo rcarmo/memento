@@ -31,7 +31,7 @@ func (s gteSemanticStub) EmbedBatch([]string, gte.BatchOptions, gte.Checkpoint) 
 	return s.batch, s.err
 }
 func TestGTESemanticClientMethods(t *testing.T) {
-	client := &GTESemanticClient{Model: gteSemanticStub{dim: 2, vector: []float32{1, 2}, batch: [][]float32{{1, 2}}}, Info: derived.SemanticModelInfo{ModelID: "m"}, MaxBatch: 2, MaxInputBytes: 10}
+	client := &GTESemanticClient{Model: gteSemanticStub{dim: 2, vector: []float32{1, 2}, batch: [][]float32{{1, 2}}}, Info: derived.SemanticModelInfo{ModelID: "m"}, MaxBatch: 2, MaxInputChars: 10}
 	if client.ModelInfo().ModelID != "m" {
 		t.Fatal(client.ModelInfo())
 	}
@@ -76,7 +76,7 @@ func TestGTESemanticClientErrors(t *testing.T) {
 	if _, err := client.EmbedBatch(nil); err == nil {
 		t.Fatal("nil batch")
 	}
-	client = &GTESemanticClient{Model: gteSemanticStub{dim: 2}, MaxInputBytes: 1}
+	client = &GTESemanticClient{Model: gteSemanticStub{dim: 2}, MaxInputChars: 1}
 	if _, err := client.Embed("xx"); err == nil {
 		t.Fatal("limit")
 	}
@@ -93,5 +93,20 @@ func TestGTESemanticClientErrors(t *testing.T) {
 	client, err := loadGTESemanticClient("x", "m", 2, 1, 1, func(string) ([]byte, error) { return []byte("x"), nil }, func([]byte) (gteSemanticModel, error) { return gteSemanticStub{dim: 2}, nil })
 	if err != nil || client.Info.Revision == "" {
 		t.Fatal(client, err)
+	}
+}
+
+func TestGTESemanticCharacterLimit(t *testing.T) {
+	client := &GTESemanticClient{Model: gteSemanticStub{dim: 2, vector: []float32{1, 0}, batch: [][]float32{{1, 0}}}, MaxInputChars: 2, MaxBatch: 1}
+	for _, text := range []string{"ab", "界😀"} {
+		if _, err := client.Embed(text); err != nil {
+			t.Fatal(text, err)
+		}
+		if _, err := client.EmbedBatch([]string{text}); err != nil {
+			t.Fatal(text, err)
+		}
+	}
+	if _, err := client.EmbedBatch([]string{"界😀x"}); err == nil {
+		t.Fatal("over character limit")
 	}
 }

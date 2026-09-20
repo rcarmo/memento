@@ -58,6 +58,15 @@ export function semanticDisplayEdges(edges, selectedId, enabled, threshold, neig
   }
   return edges.filter((edge) => edge.kind !== "semantic_similarity" || keep.has(edge.id));
 }
+export function semanticLayerStatus(graph, threshold, enabled) {
+  if (!graph) return "Loading semantic layer…";
+  const edges = (graph.mode === "aggregated" ? graph.cluster_edges : graph.edges) || [];
+  const count = edges.filter(edge => edge.kind === "semantic_similarity" && (edge.similarity || 0) >= threshold).length;
+  const partial = graph.revisions?.embedding === "partial" ? " Embeddings are incomplete; current ready vectors are used." : "";
+  if (!enabled) return `Semantic layer hidden · ${count} links above the selected threshold.${partial}`;
+  if (!count) return `No semantic links above the selected threshold in this view. Lower the threshold or check embedding status and view limits.${partial}`;
+  return `${count} semantic links available above the selected threshold.${partial}`;
+}
 const simulatedRefreshWarning = "Embedding refresh is disabled while simulating visibility.";
 
 function normalizePrincipals(payload) {
@@ -133,6 +142,7 @@ function App() {
   const [perf, setPerf] = useState({});
   const [timing, setTiming] = useState({});
   const [refresh, setRefresh] = useState(null);
+  const refreshRef = useRef(null);
   const [includePreview, setIncludePreview] = useState(false);
   const [principals, setPrincipals] = useState([]);
   const [simulatedPrincipal, setSimulatedPrincipal] = useState("");
@@ -191,7 +201,12 @@ function App() {
   async function loadRefreshStatus() {
     try {
       const { payload } = await graphApi.refreshStatus();
+      const previous = refreshRef.current;
+      refreshRef.current = payload;
       setRefresh(payload);
+      if (previous && (previous.completed !== payload.completed || previous.embedding_revision !== payload.embedding_revision)) {
+        await load();
+      }
     } catch (e) {
       setRefresh({ available: false, last_error: e.message });
     }
@@ -342,7 +357,7 @@ function App() {
 
   useEffect(() => { scene.current?.setSemanticAlpha(semanticAlpha); }, [semanticAlpha]);
 
-  useEffect(redrawFiltered, [filtered, sizeMetric, forces, semanticEnabled, semanticThreshold, semanticNeighbours]);
+  useEffect(redrawFiltered, [filtered, sizeMetric, forces, semanticEnabled, semanticThreshold, semanticNeighbours, selected?.id]);
 
   useEffect(() => {
     if (graph && !availableSizeMetrics(graph).includes(sizeMetric)) setSizeMetric("combined_bytes");
@@ -587,6 +602,7 @@ function App() {
           }),
         ]),
         h("small", {}, "Semantic edges participate in layout only while this layer is enabled."),
+        h("small", { class: "selection-detail", "data-testid": "semantic-layer-status" }, semanticLayerStatus(graph, semanticThreshold, semanticEnabled)),
         refresh && h("small", { class: "selection-detail", "data-testid": "embedding-worker-status" },
           refresh.alive === false
             ? `Embedding worker unavailable: ${refresh.last_error || "stopped or not configured"}`

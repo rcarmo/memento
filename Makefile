@@ -26,7 +26,7 @@ $(GOVULNCHECK):
 	@mkdir -p $(TOOLS_DIR)
 	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 check: quality
-quality: format-check layout-check fuzz-coverage vet lint test coverage umcp-check build
+quality: format-check layout-check fuzz-coverage vet lint test graph-test coverage umcp-check build
 audit-fast: quality vuln
 audit: audit-fast race fuzz performance-core cross
 format:
@@ -49,7 +49,9 @@ vuln: $(GOVULNCHECK)
 	CGO_ENABLED=0 $(GOVULNCHECK) ./...
 test:
 	CGO_ENABLED=0 $(GO) test ./...
-.PHONY: mcp-contract
+.PHONY: mcp-contract graph-test
+graph-test:
+	node --test tools/graph-semantic.test.mjs
 # Focused startup/wire contracts plus the standalone transport contract suite.
 mcp-contract:
 	CGO_ENABLED=0 $(GO) test ./internal/service -run '^TestMCPContract' -count=1

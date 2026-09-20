@@ -267,7 +267,9 @@ Current payload fields:
   * `embedding_revision`
   * `sqlite_vector_enabled`
 
-Direct graph snapshots include deterministic, non-canonical `semantic_similarity` edges only when embedding and repository revisions match. Each edge contains cosine `similarity`, `model_id` and `embedding_revision`, never the vector. Server generation uses a configurable candidate floor and bounded top-k/global limits; aggregate-first views omit semantic edges until expansion.
+Direct graph snapshots include deterministic, non-canonical `semantic_similarity` edges from ready embeddings at the current repository revision. A `partial` aggregate embedding revision does not suppress valid pairs; stale, failed and missing rows are excluded. Each edge contains cosine `similarity`, `model_id` and `embedding_revision`, never the vector. Server generation uses a configurable candidate floor and bounded top-k/global limits; aggregate-first views omit semantic edges until expansion.
+
+The semantic-layer status reports available edges and incomplete embeddings; completed refresh jobs reload the snapshot. The configured `max_input_chars` limit counts Unicode characters in both in-process and subprocess service adapters, matching refresh truncation. The low-level GTE byte-limit API is unchanged.
 
 Operational HTTP status at `/graph/api/v1/embeddings/status` additionally reports worker `running`, `pending`, `pause_reason`, `current_path`, `completed`, queued scope/path count, repository revision and last error. Pause reasons include `startup`, `interactive`, `cpu-sampling`, `cpu` and `pacing`.
 

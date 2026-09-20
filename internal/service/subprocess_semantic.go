@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"time"
+	"unicode/utf8"
 
 	"github.com/rcarmo/memento/internal/derived"
 	"github.com/rcarmo/memento/internal/embedding"
@@ -21,7 +22,7 @@ import (
 type subprocessSemanticClient struct {
 	WorkerPath, ModelPath   string
 	Info                    derived.SemanticModelInfo
-	MaxBatch, MaxInputBytes int
+	MaxBatch, MaxInputChars int
 	Timeout                 time.Duration
 	command                 func(context.Context, string, ...string) *exec.Cmd
 	run                     func(context.Context, []byte) ([]byte, []byte, error)
@@ -44,7 +45,7 @@ func LoadSubprocessSemanticClient(config SemanticSearchConfig) (*subprocessSeman
 			Revision:   revision,
 		},
 		MaxBatch:      config.MaxBatchSize,
-		MaxInputBytes: config.MaxInputChars,
+		MaxInputChars: config.MaxInputChars,
 		Timeout:       time.Duration(config.WorkerTimeoutSeconds * float64(time.Second)),
 		command:       exec.CommandContext,
 	}, nil
@@ -80,7 +81,7 @@ func (c *subprocessSemanticClient) EmbedBatch(texts []string) ([][]float32, erro
 		return nil, fmt.Errorf("embedding batch has %d items; maximum is %d", len(texts), c.MaxBatch)
 	}
 	for _, text := range texts {
-		if len(text) > c.MaxInputBytes {
+		if utf8.RuneCountInString(text) > c.MaxInputChars {
 			return nil, errors.New("embedding input exceeds configured character limit")
 		}
 	}

@@ -85,7 +85,7 @@ func TestLoadSubprocessSemanticClient(t *testing.T) {
 }
 
 func TestSubprocessSemanticLimits(t *testing.T) {
-	client := subprocessSemanticClient{Info: derived.SemanticModelInfo{ModelID: "m", Dimensions: 2}, MaxBatch: 1, MaxInputBytes: 2, Timeout: time.Second}
+	client := subprocessSemanticClient{Info: derived.SemanticModelInfo{ModelID: "m", Dimensions: 2}, MaxBatch: 1, MaxInputChars: 2, Timeout: time.Second}
 	if values, err := client.EmbedBatch(nil); err != nil || len(values) != 0 {
 		t.Fatal(values, err)
 	}
@@ -95,7 +95,7 @@ func TestSubprocessSemanticLimits(t *testing.T) {
 	if _, err := client.EmbedBatch([]string{"abc"}); err == nil {
 		t.Fatal("input")
 	}
-	client.MaxInputBytes = 10
+	client.MaxInputChars = 10
 	client.run = func(context.Context, []byte) ([]byte, []byte, error) {
 		return subprocessFrame(t, 1, 2, []float32{1, 2}), nil, nil
 	}
@@ -127,7 +127,7 @@ func TestSubprocessSemanticExecPath(t *testing.T) {
 	if err := os.WriteFile(worker, []byte("#!/bin/sh\nexit 7\n"), 0700); err != nil {
 		t.Fatal(err)
 	}
-	client := subprocessSemanticClient{WorkerPath: worker, ModelPath: "model", Info: derived.SemanticModelInfo{Dimensions: 1}, MaxBatch: 1, MaxInputBytes: 10, Timeout: time.Second, command: exec.CommandContext}
+	client := subprocessSemanticClient{WorkerPath: worker, ModelPath: "model", Info: derived.SemanticModelInfo{Dimensions: 1}, MaxBatch: 1, MaxInputChars: 10, Timeout: time.Second, command: exec.CommandContext}
 	if _, err := client.Embed("x"); err == nil {
 		t.Fatal("worker failure")
 	}
@@ -177,5 +177,24 @@ func TestDecodeEmbeddingResponseFailures(t *testing.T) {
 	}
 	if _, err := decodeEmbeddingResponse(wire, 1, 1); err == nil {
 		t.Fatal("invalid json")
+	}
+}
+
+func TestSubprocessSemanticCharacterLimit(t *testing.T) {
+	raw := subprocessFrame(t, 1, 2, []float32{1, 0})
+	output := filepath.Join(t.TempDir(), "frame")
+	if err := os.WriteFile(output, raw, 0600); err != nil {
+		t.Fatal(err)
+	}
+	client := subprocessSemanticClient{Info: derived.SemanticModelInfo{Dimensions: 2}, MaxBatch: 1, MaxInputChars: 2, Timeout: time.Second,
+		command: func(ctx context.Context, _ string, _ ...string) *exec.Cmd {
+			return exec.CommandContext(ctx, "cat", output)
+		},
+	}
+	if _, err := client.Embed("界😀"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.Embed("界😀x"); err == nil {
+		t.Fatal("over character limit")
 	}
 }
