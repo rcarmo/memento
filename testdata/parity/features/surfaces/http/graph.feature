@@ -1,473 +1,578 @@
 Feature: http/graph
 
   Each operation has a success contract, four canonical role outcomes, and a failure contract.
+  Stable row tags link behavior to validation data without exposing implementation details.
 
   Rule: http endpoint workflow
 
-    @surface-87701b11921b @go_TestGraphHTTPStatic
-    Scenario: GET /graph preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-87701b11921b
+    Scenario: GET /graph succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network
       When an authorized client invokes GET /graph
-      Then the response matches embedded HTML
+      Then the response exposes HTTP 200, Content-Type text/html, embedded graph debugger
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-87701b11921b_role_reader @go_TestGraphHTTPStatic
+    @surface-87701b11921b_role_reader
     Scenario: GET /graph as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-87701b11921b_role_proposer @go_TestGraphHTTPStatic
+    @surface-87701b11921b_role_proposer
     Scenario: GET /graph as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-87701b11921b_role_curator @go_TestGraphHTTPStatic
+    @surface-87701b11921b_role_curator
     Scenario: GET /graph as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-87701b11921b_role_admin @go_TestGraphHTTPStatic
+    @surface-87701b11921b_role_admin
     Scenario: GET /graph as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-87701b11921b_failure @go_TestGraphHTTPStatic
-    Scenario: GET /graph preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-87701b11921b_failure
+    Scenario: GET /graph rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-7841b06d34c9 @go_TestGraphStaticAssets
-    Scenario: GET /graph/assets/{asset} preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-7841b06d34c9
+    Scenario: GET /graph/assets/{asset} succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network
       When an authorized client invokes GET /graph/assets/{asset}
-      Then the response matches embedded JS/CSS/vendor
+      Then the response exposes HTTP 200, asset MIME type, Cache-Control no-store, nosniff
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-7841b06d34c9_role_reader @go_TestGraphStaticAssets
+    @surface-7841b06d34c9_role_reader
     Scenario: GET /graph/assets/{asset} as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph/assets/{asset}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-7841b06d34c9_role_proposer @go_TestGraphStaticAssets
+    @surface-7841b06d34c9_role_proposer
     Scenario: GET /graph/assets/{asset} as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph/assets/{asset}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-7841b06d34c9_role_curator @go_TestGraphStaticAssets
+    @surface-7841b06d34c9_role_curator
     Scenario: GET /graph/assets/{asset} as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph/assets/{asset}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-7841b06d34c9_role_admin @go_TestGraphStaticAssets
+    @surface-7841b06d34c9_role_admin
     Scenario: GET /graph/assets/{asset} as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph/assets/{asset}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-7841b06d34c9_failure @go_TestGraphStaticAssets
-    Scenario: GET /graph/assets/{asset} preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-7841b06d34c9_failure
+    Scenario: GET /graph/assets/{asset} rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph/assets/{asset}
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-56754c9cb122 @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/status preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-56754c9cb122
+    Scenario: GET /graph/api/v1/status succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network
       When an authorized client invokes GET /graph/api/v1/status
-      Then the response matches graph enabled/status
+      Then the response exposes HTTP 200, enabled, route_prefix, schema_version, warning
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-56754c9cb122_role_reader @go_TestGraphHTTPThroughUMCP
+    @surface-56754c9cb122_role_reader
     Scenario: GET /graph/api/v1/status as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph/api/v1/status
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-56754c9cb122_role_proposer @go_TestGraphHTTPThroughUMCP
+    @surface-56754c9cb122_role_proposer
     Scenario: GET /graph/api/v1/status as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph/api/v1/status
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-56754c9cb122_role_curator @go_TestGraphHTTPThroughUMCP
+    @surface-56754c9cb122_role_curator
     Scenario: GET /graph/api/v1/status as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph/api/v1/status
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-56754c9cb122_role_admin @go_TestGraphHTTPThroughUMCP
+    @surface-56754c9cb122_role_admin
     Scenario: GET /graph/api/v1/status as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph/api/v1/status
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-56754c9cb122_failure @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/status preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-56754c9cb122_failure
+    Scenario: GET /graph/api/v1/status rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph/api/v1/status
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-77ca624d98cc @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/principals preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-77ca624d98cc
+    Scenario: GET /graph/api/v1/principals succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network
       When an authorized client invokes GET /graph/api/v1/principals
-      Then the response matches simulation policy list
+      Then the response exposes HTTP 200, principals[].name, roles[], read_prefixes[], write_prefixes[], protected_read_prefixes[]
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-77ca624d98cc_role_reader @go_TestGraphHTTPThroughUMCP
+    @surface-77ca624d98cc_role_reader
     Scenario: GET /graph/api/v1/principals as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph/api/v1/principals
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-77ca624d98cc_role_proposer @go_TestGraphHTTPThroughUMCP
+    @surface-77ca624d98cc_role_proposer
     Scenario: GET /graph/api/v1/principals as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph/api/v1/principals
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-77ca624d98cc_role_curator @go_TestGraphHTTPThroughUMCP
+    @surface-77ca624d98cc_role_curator
     Scenario: GET /graph/api/v1/principals as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph/api/v1/principals
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-77ca624d98cc_role_admin @go_TestGraphHTTPThroughUMCP
+    @surface-77ca624d98cc_role_admin
     Scenario: GET /graph/api/v1/principals as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph/api/v1/principals
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-77ca624d98cc_failure @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/principals preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-77ca624d98cc_failure
+    Scenario: GET /graph/api/v1/principals rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph/api/v1/principals
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-9c590b85aa90 @go_TestOverviewFixture
-    Scenario: GET /graph/api/v1/overview preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-9c590b85aa90
+    Scenario: GET /graph/api/v1/overview succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network/simulated policy
       When an authorized client invokes GET /graph/api/v1/overview
-      Then the response matches bounded graph snapshot
+      Then the response exposes HTTP 200, mode, nodes[] or clusters[], edges[] or cluster_edges[], diagnostics[], revisions, truncated
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-9c590b85aa90_role_reader @go_TestOverviewFixture
+    @surface-9c590b85aa90_role_reader
     Scenario: GET /graph/api/v1/overview as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph/api/v1/overview
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-9c590b85aa90_role_proposer @go_TestOverviewFixture
+    @surface-9c590b85aa90_role_proposer
     Scenario: GET /graph/api/v1/overview as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph/api/v1/overview
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-9c590b85aa90_role_curator @go_TestOverviewFixture
+    @surface-9c590b85aa90_role_curator
     Scenario: GET /graph/api/v1/overview as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph/api/v1/overview
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-9c590b85aa90_role_admin @go_TestOverviewFixture
+    @surface-9c590b85aa90_role_admin
     Scenario: GET /graph/api/v1/overview as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph/api/v1/overview
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-9c590b85aa90_failure @go_TestOverviewFixture
-    Scenario: GET /graph/api/v1/overview preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-9c590b85aa90_failure
+    Scenario: GET /graph/api/v1/overview rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph/api/v1/overview
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-36b7cee1143b @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/embeddings/status preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-36b7cee1143b
+    Scenario: GET /graph/api/v1/embeddings/status succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network
       When an authorized client invokes GET /graph/api/v1/embeddings/status
-      Then the response matches worker status
+      Then the response exposes HTTP 200, available, alive, running, pending, pause_reason, completed, repository_revision, embedding_revision, last_error
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-36b7cee1143b_role_reader @go_TestGraphHTTPThroughUMCP
+    @surface-36b7cee1143b_role_reader
     Scenario: GET /graph/api/v1/embeddings/status as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph/api/v1/embeddings/status
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-36b7cee1143b_role_proposer @go_TestGraphHTTPThroughUMCP
+    @surface-36b7cee1143b_role_proposer
     Scenario: GET /graph/api/v1/embeddings/status as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph/api/v1/embeddings/status
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-36b7cee1143b_role_curator @go_TestGraphHTTPThroughUMCP
+    @surface-36b7cee1143b_role_curator
     Scenario: GET /graph/api/v1/embeddings/status as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph/api/v1/embeddings/status
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-36b7cee1143b_role_admin @go_TestGraphHTTPThroughUMCP
+    @surface-36b7cee1143b_role_admin
     Scenario: GET /graph/api/v1/embeddings/status as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph/api/v1/embeddings/status
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-36b7cee1143b_failure @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/embeddings/status preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-36b7cee1143b_failure
+    Scenario: GET /graph/api/v1/embeddings/status rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph/api/v1/embeddings/status
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-8b2f29ba0ef9 @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
-    Scenario: POST /graph/api/v1/embeddings/refresh preserves the Python success contract
-      Given the Python request contract POST request with route-specific JSON/headers
+    @surface-8b2f29ba0ef9
+    Scenario: POST /graph/api/v1/embeddings/refresh succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope full diagnostic only
       When an authorized client invokes POST /graph/api/v1/embeddings/refresh
-      Then the response matches 202 worker status
+      Then the response exposes HTTP 202, worker state, queued scope/path count
+      And side effects are queues or persists the endpoint-specific staging, refresh, access, or session transition
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-8b2f29ba0ef9_role_reader @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
+    @surface-8b2f29ba0ef9_role_reader
     Scenario: POST /graph/api/v1/embeddings/refresh as reader
       Given the canonical reader profile
       When that principal discovers or invokes POST /graph/api/v1/embeddings/refresh
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400
 
-    @surface-8b2f29ba0ef9_role_proposer @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
+    @surface-8b2f29ba0ef9_role_proposer
     Scenario: POST /graph/api/v1/embeddings/refresh as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes POST /graph/api/v1/embeddings/refresh
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400
 
-    @surface-8b2f29ba0ef9_role_curator @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
+    @surface-8b2f29ba0ef9_role_curator
     Scenario: POST /graph/api/v1/embeddings/refresh as curator
       Given the canonical curator profile
       When that principal discovers or invokes POST /graph/api/v1/embeddings/refresh
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400
 
-    @surface-8b2f29ba0ef9_role_admin @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
+    @surface-8b2f29ba0ef9_role_admin
     Scenario: POST /graph/api/v1/embeddings/refresh as admin
       Given the canonical admin profile
       When that principal discovers or invokes POST /graph/api/v1/embeddings/refresh
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400
 
-    @surface-8b2f29ba0ef9_failure @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
-    Scenario: POST /graph/api/v1/embeddings/refresh preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-8b2f29ba0ef9_failure
+    Scenario: POST /graph/api/v1/embeddings/refresh rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes POST /graph/api/v1/embeddings/refresh
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply queues or persists the endpoint-specific staging, refresh, access, or session transition
 
-    @surface-03d8b8c261e0 @go_TestGraphHTTPThroughUMCP
-    Scenario: POST /graph/api/v1/search preserves the Python success contract
-      Given the Python request contract POST request with route-specific JSON/headers
+    @surface-03d8b8c261e0
+    Scenario: POST /graph/api/v1/search succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network/simulated policy
       When an authorized client invokes POST /graph/api/v1/search
-      Then the response matches scoped search results
+      Then the response exposes HTTP 200, results[], results[].id, results[].path, results[].title, results[].tags, results[].snippet
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-03d8b8c261e0_role_reader @go_TestGraphHTTPThroughUMCP
+    @surface-03d8b8c261e0_role_reader
     Scenario: POST /graph/api/v1/search as reader
       Given the canonical reader profile
       When that principal discovers or invokes POST /graph/api/v1/search
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-03d8b8c261e0_role_proposer @go_TestGraphHTTPThroughUMCP
+    @surface-03d8b8c261e0_role_proposer
     Scenario: POST /graph/api/v1/search as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes POST /graph/api/v1/search
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-03d8b8c261e0_role_curator @go_TestGraphHTTPThroughUMCP
+    @surface-03d8b8c261e0_role_curator
     Scenario: POST /graph/api/v1/search as curator
       Given the canonical curator profile
       When that principal discovers or invokes POST /graph/api/v1/search
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-03d8b8c261e0_role_admin @go_TestGraphHTTPThroughUMCP
+    @surface-03d8b8c261e0_role_admin
     Scenario: POST /graph/api/v1/search as admin
       Given the canonical admin profile
       When that principal discovers or invokes POST /graph/api/v1/search
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-03d8b8c261e0_failure @go_TestGraphHTTPThroughUMCP
-    Scenario: POST /graph/api/v1/search preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-03d8b8c261e0_failure
+    Scenario: POST /graph/api/v1/search rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes POST /graph/api/v1/search
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-a98c056ba8ec @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/clusters/{id} preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-a98c056ba8ec
+    Scenario: GET /graph/api/v1/clusters/{id} succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network/simulated policy
       When an authorized client invokes GET /graph/api/v1/clusters/{id}
-      Then the response matches cluster expansion
+      Then the response exposes HTTP 200, nodes[], edges[], truncated
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-a98c056ba8ec_role_reader @go_TestGraphHTTPThroughUMCP
+    @surface-a98c056ba8ec_role_reader
     Scenario: GET /graph/api/v1/clusters/{id} as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph/api/v1/clusters/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-a98c056ba8ec_role_proposer @go_TestGraphHTTPThroughUMCP
+    @surface-a98c056ba8ec_role_proposer
     Scenario: GET /graph/api/v1/clusters/{id} as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph/api/v1/clusters/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-a98c056ba8ec_role_curator @go_TestGraphHTTPThroughUMCP
+    @surface-a98c056ba8ec_role_curator
     Scenario: GET /graph/api/v1/clusters/{id} as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph/api/v1/clusters/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-a98c056ba8ec_role_admin @go_TestGraphHTTPThroughUMCP
+    @surface-a98c056ba8ec_role_admin
     Scenario: GET /graph/api/v1/clusters/{id} as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph/api/v1/clusters/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-a98c056ba8ec_failure @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/clusters/{id} preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-a98c056ba8ec_failure
+    Scenario: GET /graph/api/v1/clusters/{id} rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph/api/v1/clusters/{id}
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-859546743957 @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/memories/{id} preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-859546743957
+    Scenario: GET /graph/api/v1/memories/{id} succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network/simulated policy
       When an authorized client invokes GET /graph/api/v1/memories/{id}
-      Then the response matches detail/links/assets/proposals
+      Then the response exposes HTTP 200, node, preview, inbound[], outbound[], assets[], proposals[]
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-859546743957_role_reader @go_TestGraphHTTPThroughUMCP
+    @surface-859546743957_role_reader
     Scenario: GET /graph/api/v1/memories/{id} as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph/api/v1/memories/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-859546743957_role_proposer @go_TestGraphHTTPThroughUMCP
+    @surface-859546743957_role_proposer
     Scenario: GET /graph/api/v1/memories/{id} as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph/api/v1/memories/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-859546743957_role_curator @go_TestGraphHTTPThroughUMCP
+    @surface-859546743957_role_curator
     Scenario: GET /graph/api/v1/memories/{id} as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph/api/v1/memories/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-859546743957_role_admin @go_TestGraphHTTPThroughUMCP
+    @surface-859546743957_role_admin
     Scenario: GET /graph/api/v1/memories/{id} as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph/api/v1/memories/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-859546743957_failure @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/memories/{id} preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-859546743957_failure
+    Scenario: GET /graph/api/v1/memories/{id} rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph/api/v1/memories/{id}
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-12fd0752fde9 @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/neighbourhood/{id} preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-12fd0752fde9
+    Scenario: GET /graph/api/v1/neighbourhood/{id} succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network/simulated policy
       When an authorized client invokes GET /graph/api/v1/neighbourhood/{id}
-      Then the response matches bounded neighbourhood
+      Then the response exposes HTTP 200, center_id, nodes[], edges[], revisions, truncated
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-12fd0752fde9_role_reader @go_TestGraphHTTPThroughUMCP
+    @surface-12fd0752fde9_role_reader
     Scenario: GET /graph/api/v1/neighbourhood/{id} as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph/api/v1/neighbourhood/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-12fd0752fde9_role_proposer @go_TestGraphHTTPThroughUMCP
+    @surface-12fd0752fde9_role_proposer
     Scenario: GET /graph/api/v1/neighbourhood/{id} as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph/api/v1/neighbourhood/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-12fd0752fde9_role_curator @go_TestGraphHTTPThroughUMCP
+    @surface-12fd0752fde9_role_curator
     Scenario: GET /graph/api/v1/neighbourhood/{id} as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph/api/v1/neighbourhood/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-12fd0752fde9_role_admin @go_TestGraphHTTPThroughUMCP
+    @surface-12fd0752fde9_role_admin
     Scenario: GET /graph/api/v1/neighbourhood/{id} as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph/api/v1/neighbourhood/{id}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-12fd0752fde9_failure @go_TestGraphHTTPThroughUMCP
-    Scenario: GET /graph/api/v1/neighbourhood/{id} preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-12fd0752fde9_failure
+    Scenario: GET /graph/api/v1/neighbourhood/{id} rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph/api/v1/neighbourhood/{id}
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-b0340ab6792a @go_TestGraphHTTPStatic
-    Scenario: GET /graph/api/v1/assets/{path} preserves the Python success contract
-      Given the Python request contract GET request with route-specific JSON/headers
+    @surface-b0340ab6792a
+    Scenario: GET /graph/api/v1/assets/{path} succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network
       When an authorized client invokes GET /graph/api/v1/assets/{path}
-      Then the response matches static asset
+      Then the response exposes HTTP 200, static asset bytes, asset MIME type
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-b0340ab6792a_role_reader @go_TestGraphHTTPStatic
+    @surface-b0340ab6792a_role_reader
     Scenario: GET /graph/api/v1/assets/{path} as reader
       Given the canonical reader profile
       When that principal discovers or invokes GET /graph/api/v1/assets/{path}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-b0340ab6792a_role_proposer @go_TestGraphHTTPStatic
+    @surface-b0340ab6792a_role_proposer
     Scenario: GET /graph/api/v1/assets/{path} as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes GET /graph/api/v1/assets/{path}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-b0340ab6792a_role_curator @go_TestGraphHTTPStatic
+    @surface-b0340ab6792a_role_curator
     Scenario: GET /graph/api/v1/assets/{path} as curator
       Given the canonical curator profile
       When that principal discovers or invokes GET /graph/api/v1/assets/{path}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-b0340ab6792a_role_admin @go_TestGraphHTTPStatic
+    @surface-b0340ab6792a_role_admin
     Scenario: GET /graph/api/v1/assets/{path} as admin
       Given the canonical admin profile
       When that principal discovers or invokes GET /graph/api/v1/assets/{path}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-b0340ab6792a_failure @go_TestGraphHTTPStatic
-    Scenario: GET /graph/api/v1/assets/{path} preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-b0340ab6792a_failure
+    Scenario: GET /graph/api/v1/assets/{path} rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes GET /graph/api/v1/assets/{path}
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none
 
-    @surface-3baee52bbbef @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
-    Scenario: POST /graph/api/v1/export/{json|svg} preserves the Python success contract
-      Given the Python request contract POST request with route-specific JSON/headers
+    @surface-3baee52bbbef
+    Scenario: POST /graph/api/v1/export/{json|svg} succeeds with its declared contract
+      Given required arguments no required arguments
+      And optional arguments no optional arguments
+      And declared defaults no declared defaults
+      And policy scope trusted network/simulated policy
       When an authorized client invokes POST /graph/api/v1/export/{json|svg}
-      Then the response matches bounded export
+      Then the response exposes HTTP 200, JSON schema/nodes/edges/settings/revisions or SVG bytes
+      And side effects are none
+      And idempotency is not_applicable
+      And pagination or range behavior is none
 
-    @surface-3baee52bbbef_role_reader @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
+    @surface-3baee52bbbef_role_reader
     Scenario: POST /graph/api/v1/export/{json|svg} as reader
       Given the canonical reader profile
       When that principal discovers or invokes POST /graph/api/v1/export/{json|svg}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-3baee52bbbef_role_proposer @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
+    @surface-3baee52bbbef_role_proposer
     Scenario: POST /graph/api/v1/export/{json|svg} as proposer
       Given the canonical proposer profile
       When that principal discovers or invokes POST /graph/api/v1/export/{json|svg}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-3baee52bbbef_role_curator @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
+    @surface-3baee52bbbef_role_curator
     Scenario: POST /graph/api/v1/export/{json|svg} as curator
       Given the canonical curator profile
       When that principal discovers or invokes POST /graph/api/v1/export/{json|svg}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-3baee52bbbef_role_admin @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
+    @surface-3baee52bbbef_role_admin
     Scenario: POST /graph/api/v1/export/{json|svg} as admin
       Given the canonical admin profile
       When that principal discovers or invokes POST /graph/api/v1/export/{json|svg}
-      Then the Python outcome is route_available_with_route_specific_policy
+      Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
-    @surface-3baee52bbbef_failure @go_TestGraphHTTPExport @go_TestGraphHTTPRefresh
-    Scenario: POST /graph/api/v1/export/{json|svg} preserves Python validation and failure behavior
-      Given malformed, missing, out-of-scope, or unavailable inputs
+    @surface-3baee52bbbef_failure
+    Scenario: POST /graph/api/v1/export/{json|svg} rejects invalid or conflicting requests
+      Given required arguments no required arguments and declared defaults no declared defaults
+      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs
       When the client invokes POST /graph/api/v1/export/{json|svg}
-      Then 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      Then one of the specified failures is 400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable
+      And failed pre-publication calls do not apply none

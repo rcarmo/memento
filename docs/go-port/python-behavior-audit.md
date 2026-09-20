@@ -42,7 +42,29 @@ Public-surface features under `testdata/parity/features/surfaces/` group MCP dis
 
 The independent uMCP features under `umcp/testdata/features/` group schema/tools/coercion, resources/prompts/completion, discovery/notifications/progress, context/errors, Streamable HTTP/sessions and transports/integrated servers.
 
-`tools/generate-python-parity-features.mjs` regenerates this layout and rejects unassigned or multiply assigned rows. The Go gates reject missing logical directories, missing/duplicate scenario IDs, untagged scenarios, absent Given/When/Then clauses, missing Go test functions, changed source hashes, catalogue drift and access-tool drift.
+`tools/generate-python-parity-features.mjs` regenerates this layout and rejects unassigned or multiply assigned rows. Gherkin contains only domain behavior and stable row IDs. Python test filenames, Go test names, source paths, helper calls and implementation-specific tags remain in the JSON evidence manifests, not in feature prose. The Go gates reject their reintroduction, as well as missing logical directories, missing/duplicate scenario IDs, untagged scenarios, absent Given/When/Then clauses, missing Go test functions, changed source hashes, catalogue drift and access-tool drift.
+
+## Native-Go final validation
+
+`make python-parity` runs `go test ./...` in the root module and the nested uMCP module. It does not invoke Python, pytest, Node, Bun, npm, npx or uv. A Makefile contract test rejects those commands in the target. The gate was executed successfully with all seven interpreter/package-manager commands replaced by failing shims.
+
+Python and JavaScript are used only to regenerate or review versioned oracle artifacts. Ordinary CI consumes committed JSON/feature fixtures through Go tests.
+
+## Executable validation data
+
+The capture can now drive Go validation rather than only document coverage:
+
+| Validation level | Surface rows | Meaning |
+|---|---:|---|
+| Exact JSON-RPC replay | 29 | 75 deduplicated Python requests and expected responses replay through `TestPythonCapturedToolReplayCases` |
+| Exact MCP protocol fixture | 18 | Pinned uMCP payload/framing/session/resource/prompt fixtures consumed by Go uMCP tests |
+| Executable stateful fixture | 48 | Repository/control/index/filesystem fixture family with a Go adapter and post-state/envelope comparator |
+| Structured behavior specification | 6 | Python request/assertion capture plus Go adapter; serializable setup-state capture remains to be added |
+| Go extension test | 1 | Native `healthcheck`, which has no Python command equivalent |
+
+`testdata/parity/python-tool-replay-cases.json` contains the 75 exact replay cases for 29 tools. `TestPythonCapturedToolReplayCases` invokes Go for every request and compares complete JSON-RPC responses, normalizing only JSON object order inside text content. `testdata/parity/python-stateful-case-families.json` indexes 1,367 cases across 30 stateful/structured families. Twenty-six families have executable neutral setup/expected-state fixtures. Four families—answer, model proposals, admin HTTP and runtime CLI—currently retain structured Python behavior specifications mapped to Go tests; they are not represented as exact serialized state fixtures.
+
+The six structured surface rows are `memory_answer`, `memory_propose_freeform`, `memory_propose_update`, `serve`, `dream` and `rotate-master-key`. The audit does not label those as exact replay parity. Their Gherkin scenarios contain the captured contracts and can be converted to neutral setup fixtures without changing row IDs.
 
 ## Evidence levels
 
@@ -55,7 +77,7 @@ The manifest does not label every Python node as one-to-one differential coverag
 
 uMCP has stronger direct cross-language evidence: 22 source-generated fixture families in addition to its 254-node test crosswalk.
 
-A mapped domain suite proves that the corresponding Go tests exist and execute under `go test ./...`; it does not by itself prove exact one-to-one assertion equivalence. The generated behavior summary and Gherkin scenario preserve the original Python assertions so reviewers can strengthen individual rows with dedicated fixtures without losing inventory coverage.
+A mapped domain suite proves that the corresponding Go tests exist and execute under `go test ./...`; it does not by itself prove exact one-to-one assertion equivalence. The JSON behavior summary preserves the original Python assertions. Implementation-neutral Gherkin describes the expected domain outcome. Reviewers can add dedicated neutral fixtures without changing the stable row ID or losing inventory coverage.
 
 ## Reviewed behavior changes
 

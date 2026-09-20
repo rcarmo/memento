@@ -118,6 +118,11 @@ func TestPythonFunctionalManifest(t *testing.T) {
 		if !strings.Contains(text, "Feature:") || !strings.Contains(text, "Given ") || !strings.Contains(text, "When ") || !strings.Contains(text, "Then ") {
 			t.Fatal(file)
 		}
+		for _, forbidden := range []string{"@go_", "@python_", "test_", ".py", "Behavior captured from", "pinned Python", "Go uMCP"} {
+			if strings.Contains(text, forbidden) {
+				t.Fatal("implementation reference in behavior feature", file, forbidden)
+			}
+		}
 		for _, line := range strings.Split(text, "\n") {
 			line = strings.TrimSpace(line)
 			if strings.HasPrefix(line, "@umcp-") {

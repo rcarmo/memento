@@ -40,16 +40,51 @@ type surfaceManifest struct {
 	PythonCommit  string         `json:"python_commit"`
 	Counts        map[string]int `json:"counts"`
 	Rows          []struct {
-		RowID    string         `json:"row_id"`
-		Category string         `json:"category"`
-		Name     string         `json:"name"`
-		Status   string         `json:"status"`
-		Roles    []string       `json:"roles"`
-		GoTests  []parityGoTest `json:"go_tests"`
+		RowID              string            `json:"row_id"`
+		Category           string            `json:"category"`
+		Name               string            `json:"name"`
+		Status             string            `json:"status"`
+		Roles              []string          `json:"roles"`
+		GoTests            []parityGoTest    `json:"go_tests"`
+		RequiredArguments  []string          `json:"required_arguments"`
+		OptionalArguments  []string          `json:"optional_arguments"`
+		Defaults           map[string]any    `json:"defaults"`
+		SuccessEnvelope    []string          `json:"success_envelope"`
+		SuccessFields      []string          `json:"success_fields"`
+		ErrorContract      []string          `json:"error_contract"`
+		SideEffects        string            `json:"side_effects"`
+		Idempotency        string            `json:"idempotency"`
+		Pagination         string            `json:"pagination"`
+		PolicyScope        string            `json:"policy_scope"`
+		BehaviorProvenance []string          `json:"behavior_provenance"`
+		ProfileOutcomes    map[string]string `json:"profile_outcomes"`
+		ValidationLevel    string            `json:"validation_level"`
+		ValidationCases    []string          `json:"validation_cases"`
 	} `json:"rows"`
 }
 
 var goTestDeclaration = regexp.MustCompile(`(?m)^func (Test[A-Za-z0-9_]+)\(`)
+
+func TestFinalPythonParityTargetIsNativeGo(t *testing.T) {
+	root := parityRoot(t)
+	raw, err := os.ReadFile(filepath.Join(root, "Makefile"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	match := regexp.MustCompile(`(?m)^python-parity:\n((?:\t[^\n]*\n)+)`).FindSubmatch(raw)
+	if len(match) != 2 {
+		t.Fatal("python-parity target is absent")
+	}
+	commands := string(match[1])
+	for _, forbidden := range []string{"python", "pytest", "node", "bun", "npm", "uv ", "npx"} {
+		if strings.Contains(strings.ToLower(commands), forbidden) {
+			t.Fatal("final parity target invokes non-Go runtime", forbidden, commands)
+		}
+	}
+	if !strings.Contains(commands, "$(GO) test ./...") || !strings.Contains(commands, "$(MAKE) -C umcp test") {
+		t.Fatal("final parity target does not run both Go modules", commands)
+	}
+}
 
 func parityRoot(t *testing.T) string {
 	t.Helper()
@@ -148,8 +183,19 @@ func TestPythonPublicSurfaceParityManifest(t *testing.T) {
 	ids, names := map[string]bool{}, map[string]bool{}
 	for _, row := range manifest.Rows {
 		key := row.Category + "\x00" + row.Name
-		if row.RowID == "" || ids[row.RowID] || names[key] || len(row.Roles) == 0 || len(row.GoTests) == 0 || (row.Status != "mapped" && row.Status != "go_extension") {
-			t.Fatal("invalid surface row", row.Category, row.Name)
+		if row.RowID == "" || ids[row.RowID] || names[key] || len(row.Roles) == 0 || len(row.GoTests) == 0 || len(row.SuccessFields) == 0 || len(row.ErrorContract) == 0 || len(row.BehaviorProvenance) < 3 || row.SideEffects == "" || row.Idempotency == "" || row.Pagination == "" || row.PolicyScope == "" || len(row.ProfileOutcomes) != 4 || len(row.ValidationCases) == 0 || (row.ValidationLevel != "exact_jsonrpc_replay" && row.ValidationLevel != "exact_protocol_fixture" && row.ValidationLevel != "stateful_fixture" && row.ValidationLevel != "structured_behavior_spec" && row.ValidationLevel != "go_extension_test") || (row.Status != "mapped" && row.Status != "go_extension") {
+			t.Fatal("invalid detailed surface row", row.Category, row.Name)
+		}
+		for _, value := range append(append(append([]string{}, row.SuccessFields...), row.ErrorContract...), row.BehaviorProvenance...) {
+			lower := strings.ToLower(strings.TrimSpace(value))
+			if lower == "" || lower == "none" || strings.Contains(lower, "route-specific") || lower == "unknown" || strings.Contains(lower, "unknown behavior") || strings.Contains(lower, "todo") {
+				t.Fatal("generic placeholder in surface row", row.Category, row.Name, value)
+			}
+		}
+		for _, profile := range []string{"reader", "proposer", "curator", "admin"} {
+			if strings.TrimSpace(row.ProfileOutcomes[profile]) == "" || strings.Contains(strings.ToLower(row.ProfileOutcomes[profile]), "route-specific") {
+				t.Fatal("missing detailed profile outcome", row.Category, row.Name, profile)
+			}
 		}
 		ids[row.RowID], names[key] = true, true
 		for _, item := range row.GoTests {
@@ -168,8 +214,10 @@ func TestPythonPublicSurfaceParityManifest(t *testing.T) {
 			}
 		}
 	}
+	assertValidationCaseReferences(t, root, manifest)
 	assertExactSurfaceSets(t, manifest)
 	assertCatalogSurface(t, root, names)
+	assertSurfaceSchemas(t, root, manifest)
 	assertAccessToolSurface(t, root, names)
 }
 
@@ -213,6 +261,11 @@ func readFeatureTags(t *testing.T, directory string) map[string]int {
 		if !strings.Contains(text, "Feature:") || !strings.Contains(text, "Scenario:") || !strings.Contains(text, "Given ") || !strings.Contains(text, "When ") || !strings.Contains(text, "Then ") {
 			t.Fatal("invalid feature", file)
 		}
+		for _, forbidden := range []string{"@go_", "@python_", "test_", ".py", "Behavior captured from", "pinned Python", "Go uMCP"} {
+			if strings.Contains(text, forbidden) {
+				t.Fatal("implementation reference in behavior feature", file, forbidden)
+			}
+		}
 		lines := strings.Split(text, "\n")
 		pending := []string{}
 		for _, line := range lines {
@@ -234,6 +287,57 @@ func readFeatureTags(t *testing.T, directory string) map[string]int {
 		}
 	}
 	return tags
+}
+func assertValidationCaseReferences(t *testing.T, root string, manifest surfaceManifest) {
+	t.Helper()
+	var replay struct {
+		Cases []struct {
+			CaseID string `json:"case_id"`
+		} `json:"cases"`
+	}
+	readParityJSON(t, root, "python-tool-replay-cases.json", &replay)
+	rpc := map[string]bool{}
+	for _, item := range replay.Cases {
+		rpc[item.CaseID] = true
+	}
+	var stateful struct {
+		Families []struct {
+			FamilyID        string `json:"family_id"`
+			ValidationLevel string `json:"validation_level"`
+		} `json:"families"`
+	}
+	readParityJSON(t, root, "python-stateful-case-families.json", &stateful)
+	families := map[string]string{}
+	for _, item := range stateful.Families {
+		families[item.FamilyID] = item.ValidationLevel
+	}
+	for _, row := range manifest.Rows {
+		for _, ref := range row.ValidationCases {
+			switch {
+			case strings.HasPrefix(ref, "rpc-"):
+				if !rpc[ref] {
+					t.Fatal("unknown RPC validation case", row.Name, ref)
+				}
+			case strings.HasPrefix(ref, "stateful:"):
+				id := strings.TrimPrefix(ref, "stateful:")
+				if families[id] != "executable_stateful_fixture" {
+					t.Fatal("non-executable stateful reference", row.Name, ref, families[id])
+				}
+			case strings.HasPrefix(ref, "behavior:"):
+				id := strings.TrimPrefix(ref, "behavior:")
+				if families[id] != "structured_behavior_spec" {
+					t.Fatal("invalid behavior specification reference", row.Name, ref, families[id])
+				}
+			case strings.HasPrefix(ref, "umcp:"):
+			case strings.HasPrefix(ref, "go:"):
+				if row.ValidationLevel != "go_extension_test" {
+					t.Fatal("Go-only validation reference on Python surface", row.Name, ref)
+				}
+			default:
+				t.Fatal("unknown validation reference", row.Name, ref)
+			}
+		}
+	}
 }
 func assertExactSurfaceSets(t *testing.T, manifest surfaceManifest) {
 	t.Helper()
@@ -297,6 +401,94 @@ func assertCatalogSurface(t *testing.T, root string, names map[string]bool) {
 			t.Fatal("catalog surface missing from Python matrix", key)
 		}
 	}
+}
+func assertSurfaceSchemas(t *testing.T, root string, manifest surfaceManifest) {
+	t.Helper()
+	byName := map[string]surfaceManifestRow{}
+	for _, row := range manifest.Rows {
+		byName[row.Name] = surfaceManifestRow{Required: row.RequiredArguments, Optional: row.OptionalArguments, Defaults: row.Defaults}
+	}
+	var catalog struct {
+		Operations []struct {
+			ToolName string   `json:"tool_name"`
+			Roles    []string `json:"roles"`
+		} `json:"operations"`
+		Contracts map[string]struct {
+			ToolName    string `json:"tool_name"`
+			InputSchema struct {
+				Required   []string                   `json:"required"`
+				Properties map[string]json.RawMessage `json:"properties"`
+			} `json:"input_schema"`
+		} `json:"contracts"`
+	}
+	raw, err := os.ReadFile(filepath.Join(root, "internal", "service", "catalog_data.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = json.Unmarshal(raw, &catalog); err != nil {
+		t.Fatal(err)
+	}
+	roles := map[string][]string{}
+	for _, op := range catalog.Operations {
+		roles[op.ToolName] = op.Roles
+	}
+	for _, contract := range catalog.Contracts {
+		row, ok := byName[contract.ToolName]
+		if !ok {
+			continue
+		}
+		required := append([]string{}, contract.InputSchema.Required...)
+		sort.Strings(required)
+		actual := append([]string{}, row.Required...)
+		sort.Strings(actual)
+		if fmt.Sprint(required) != fmt.Sprint(actual) {
+			t.Fatal("required argument drift", contract.ToolName, actual, required)
+		}
+		optional := []string{}
+		for name := range contract.InputSchema.Properties {
+			if !containsString(required, name) {
+				optional = append(optional, name)
+			}
+		}
+		sort.Strings(optional)
+		actual = append([]string{}, row.Optional...)
+		sort.Strings(actual)
+		if fmt.Sprint(optional) != fmt.Sprint(actual) {
+			t.Fatal("optional argument drift", contract.ToolName, actual, optional)
+		}
+	}
+	for name, wantRoles := range roles {
+		rowFound := false
+		for _, row := range manifest.Rows {
+			if row.Name == name {
+				rowFound = true
+				actual := append([]string{}, row.Roles...)
+				sort.Strings(actual)
+				want := append([]string{}, wantRoles...)
+				sort.Strings(want)
+				if fmt.Sprint(actual) != fmt.Sprint(want) {
+					t.Fatal("role drift", name, actual, want)
+				}
+			}
+		}
+		if !rowFound {
+			t.Fatal("tool role row absent", name)
+		}
+	}
+}
+
+type surfaceManifestRow struct {
+	Required, Optional []string
+	Defaults           map[string]any
+}
+
+func containsString(values []string, target string) bool {
+	for _, value := range values {
+		if value == target {
+			return true
+		}
+	}
+	return false
 }
 func assertAccessToolSurface(t *testing.T, root string, names map[string]bool) {
 	t.Helper()

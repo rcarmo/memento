@@ -56,7 +56,47 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "workflows[]",
+        "resources[]",
+        "tool_surface",
+        "limits"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-e0c17b99dd59f90a"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -112,7 +152,57 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "service_version",
+        "schema_version",
+        "principal",
+        "roles[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "visible_concepts",
+        "proposal_backlog",
+        "readiness",
+        "features",
+        "limits"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Unrecognized parameter(s): principal"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-a3c15e0ff741f1d9",
+        "rpc-ae4c7cf2fa93a6b7"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -226,7 +316,75 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "query"
+      ],
+      "optional_arguments": [
+        "concept_type",
+        "cursor",
+        "limit",
+        "query_syntax",
+        "search_mode"
+      ],
+      "defaults": {
+        "concept_type": null,
+        "cursor": null,
+        "limit": 20,
+        "query_syntax": "plain",
+        "search_mode": null
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "search_mode",
+        "query_syntax",
+        "results[]",
+        "results[].id",
+        "results[].path",
+        "results[].title",
+        "results[].score",
+        "results[].snippet",
+        "next_cursor"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "bounded limit plus policy/filter/revision-bound cursor; next_cursor is null/omitted at end",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-617af935902f9b5d",
+        "rpc-aff8a59f16cc3504"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -290,7 +448,56 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "id_or_path"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "path",
+        "frontmatter",
+        "body"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-1e37b858548d81b8"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -350,7 +557,60 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [
+        "path_prefix"
+      ],
+      "defaults": {
+        "path_prefix": "/"
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "results[]",
+        "results[].id",
+        "results[].path",
+        "results[].title",
+        "next_cursor"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "bounded limit plus policy/filter/revision-bound cursor; next_cursor is null/omitted at end",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-7c0e53c8466ce32b"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -462,7 +722,79 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [
+        "cursor",
+        "fields",
+        "limit",
+        "path_prefix"
+      ],
+      "defaults": {
+        "cursor": null,
+        "fields": [
+          "path",
+          "id",
+          "title",
+          "status",
+          "type",
+          "tags",
+          "created_at",
+          "updated_at",
+          "updated_by",
+          "body_sha256",
+          "body_bytes",
+          "assets"
+        ],
+        "limit": 50,
+        "path_prefix": "/"
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "path_prefix",
+        "fields[]",
+        "results[]",
+        "next_cursor"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Unrecognized parameter(s): principal"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "bounded limit plus policy/filter/revision-bound cursor; next_cursor is null/omitted at end",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-097a4a4d3e8f9b4a",
+        "rpc-844d2a2f59065827",
+        "rpc-b2105d47f5809d3a",
+        "rpc-cc794bc2304c6231",
+        "rpc-d716bc037893505e",
+        "rpc-ffb6ec197068e7c0"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -628,7 +960,70 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "items"
+      ],
+      "optional_arguments": [
+        "include_asset_metadata",
+        "match",
+        "path_prefix"
+      ],
+      "defaults": {
+        "include_asset_metadata": false,
+        "match": null,
+        "path_prefix": "/"
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "path_prefix",
+        "matching[]",
+        "differing[]",
+        "local_only[]",
+        "memento_only[]",
+        "matching_count",
+        "differing_count",
+        "local_only_count",
+        "memento_only_count"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'path_prefix' is missing",
+        "observed JSON-RPC -32602: Required parameter 'items' is missing"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-45c148794fcc0cec",
+        "rpc-baafe543364be189",
+        "rpc-bad16c373a78597d",
+        "rpc-dc98edb56fad9007",
+        "rpc-fbb55e46ccfc5bd1"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -768,7 +1163,74 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [
+        "asset_kind",
+        "cursor",
+        "file_limit",
+        "id_or_path",
+        "include_files",
+        "limit",
+        "path_prefix",
+        "version",
+        "version_limit"
+      ],
+      "defaults": {
+        "asset_kind": null,
+        "cursor": null,
+        "file_limit": 50,
+        "id_or_path": null,
+        "include_files": false,
+        "limit": 20,
+        "path_prefix": null,
+        "version": null,
+        "version_limit": 5
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "results[]",
+        "results[].concept_id",
+        "results[].concept_path",
+        "results[].asset_kinds",
+        "next_cursor"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Unrecognized parameter(s): principal"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "bounded limit plus policy/filter/revision-bound cursor; next_cursor is null/omitted at end",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-0eb3bfe0271c840f",
+        "rpc-1719d068cccad4a4",
+        "rpc-58eaf0ab92d4b2f4",
+        "rpc-5af12c0a34cad816",
+        "rpc-ea02478bf772cf96"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -835,7 +1297,63 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "id_or_path"
+      ],
+      "optional_arguments": [
+        "depth"
+      ],
+      "defaults": {
+        "depth": 1
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "center_id",
+        "inbound[]",
+        "outbound[]",
+        "broken_links[]",
+        "repo_revision",
+        "index_revision"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-59fb2b038e74685d"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -947,7 +1465,64 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [
+        "cursor",
+        "limit",
+        "path",
+        "rule",
+        "severity"
+      ],
+      "defaults": {
+        "cursor": null,
+        "limit": 50,
+        "path": null,
+        "rule": null,
+        "severity": null
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "ok",
+        "issues[]",
+        "issues[].code",
+        "issues[].path",
+        "graph",
+        "next_cursor"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Unrecognized parameter(s): principal"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "bounded limit plus policy/filter/revision-bound cursor; next_cursor is null/omitted at end",
+      "policy_scope": "proposer role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-b2d594e62f444cd6",
+        "rpc-f208e20f62f971c0",
+        "rpc-f79bca86fecdc284",
+        "rpc-ff6734ad39eaf6a4"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1011,7 +1586,52 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "question"
+      ],
+      "optional_arguments": [
+        "answer_mode"
+      ],
+      "defaults": {
+        "answer_mode": "summary"
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "answer",
+        "citations[]",
+        "mode",
+        "model_attempts[]",
+        "warnings[]"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "structured_behavior_spec",
+      "validation_cases": [
+        "behavior:memory_answer"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1073,7 +1693,52 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "request"
+      ],
+      "optional_arguments": [
+        "execute"
+      ],
+      "defaults": {
+        "execute": true
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "action",
+        "tool",
+        "args",
+        "projection",
+        "result"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:model_route"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1431,7 +2096,67 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "intent",
+        "base_revision",
+        "changes"
+      ],
+      "optional_arguments": [
+        "rationale"
+      ],
+      "defaults": {
+        "rationale": null
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposal_id",
+        "status",
+        "intent",
+        "base_revision",
+        "changes[]"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Unrecognized parameter(s): principal"
+      ],
+      "side_effects": "creates or updates durable proposal/review state without publishing canonical Git unless apply is called",
+      "idempotency": "proposal lifecycle constraints prevent invalid repeats",
+      "pagination": "none",
+      "policy_scope": "proposer role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture proposal-tools.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-4c48426fdab9215b",
+        "rpc-b201c80ab85485ff"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1511,7 +2236,53 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "content"
+      ],
+      "optional_arguments": [
+        "intent",
+        "suggested_path"
+      ],
+      "defaults": {
+        "intent": null,
+        "suggested_path": null
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposal_id",
+        "status",
+        "model_attempts[]",
+        "citations[]"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "creates or updates durable proposal/review state without publishing canonical Git unless apply is called",
+      "idempotency": "proposal lifecycle constraints prevent invalid repeats",
+      "pagination": "none",
+      "policy_scope": "proposer role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "structured_behavior_spec",
+      "validation_cases": [
+        "behavior:model_proposals"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1579,7 +2350,51 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "instruction"
+      ],
+      "optional_arguments": [
+        "target_hint"
+      ],
+      "defaults": {
+        "target_hint": null
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposal_id",
+        "status",
+        "model_attempts[]",
+        "citations[]"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "creates or updates durable proposal/review state without publishing canonical Git unless apply is called",
+      "idempotency": "proposal lifecycle constraints prevent invalid repeats",
+      "pagination": "none",
+      "policy_scope": "proposer role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "structured_behavior_spec",
+      "validation_cases": [
+        "behavior:model_proposals"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1645,7 +2460,65 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "proposal_id"
+      ],
+      "optional_arguments": [
+        "view"
+      ],
+      "defaults": {
+        "view": "detailed"
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposal",
+        "history[]",
+        "preview",
+        "assets[]"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'proposal_id' is missing"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "proposer role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture proposal-tools.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-688bfaff0c63c4d6",
+        "rpc-7cd51b82686d4016",
+        "rpc-d8caf304e86412cd"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1726,7 +2599,64 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [
+        "cursor",
+        "limit",
+        "status"
+      ],
+      "defaults": {
+        "cursor": null,
+        "limit": 50,
+        "status": null
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposals[]",
+        "next_cursor"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "bounded limit plus policy/filter/revision-bound cursor; next_cursor is null/omitted at end",
+      "policy_scope": "proposer role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture proposal-tools.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-2335f6b7fece26c7",
+        "rpc-3d71af215dd34ead",
+        "rpc-a460226fccd82db7"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1794,7 +2724,69 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "proposal_id",
+        "asset_id"
+      ],
+      "optional_arguments": [
+        "file_path",
+        "limit",
+        "offset"
+      ],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposal_id",
+        "asset_id",
+        "file_path",
+        "offset",
+        "returned_bytes",
+        "total_bytes",
+        "truncated",
+        "next_offset",
+        "content_sha256",
+        "content"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "bounded byte offset/limit; response reports total/returned/truncated and next_offset",
+      "policy_scope": "proposer role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture proposal-tools.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-4c35d129b0a5fb83"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1863,7 +2855,60 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "proposal_id",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposal_id",
+        "status",
+        "base_revision",
+        "conflicts[]"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "creates or updates durable proposal/review state without publishing canonical Git unless apply is called",
+      "idempotency": "required key with replay protection",
+      "pagination": "none",
+      "policy_scope": "proposer or curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture proposal-tools.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-372dc73206de1e4b"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1932,7 +2977,63 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "proposal_id",
+        "selected_change_indexes",
+        "expected_revision"
+      ],
+      "optional_arguments": [
+        "intent",
+        "rationale"
+      ],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposal_id",
+        "status",
+        "selected_change_indexes[]",
+        "preview"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "creates or updates durable proposal/review state without publishing canonical Git unless apply is called",
+      "idempotency": "proposal lifecycle constraints prevent invalid repeats",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture proposal-tools.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-8e1502f6d2210199"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -1991,7 +3092,61 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [
+        "idempotency_key",
+        "operation_id"
+      ],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "operation_id",
+        "state",
+        "safe_to_retry",
+        "result",
+        "error"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "proposer or curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture proposal-tools.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-6f228c3dcab0c4b4",
+        "rpc-81581bb9d30ca4d5"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2079,7 +3234,65 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "proposal_id",
+        "decision"
+      ],
+      "optional_arguments": [
+        "comment",
+        "idempotency_key"
+      ],
+      "defaults": {
+        "comment": null,
+        "idempotency_key": null
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposal_id",
+        "status",
+        "reviewed_by",
+        "review_comment"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "creates or updates durable proposal/review state without publishing canonical Git unless apply is called",
+      "idempotency": "proposal lifecycle constraints prevent invalid repeats",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture proposal-tools.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-c59943a3d26e0c37"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2146,7 +3359,61 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "proposal_id",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "proposal_id",
+        "status",
+        "operation_id",
+        "repo_revision",
+        "changed_paths[]"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "publishes a Git/control operation and updates derived state after commit",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture proposal-tools.json",
+        "Python-generated parity fixture read-tools.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-8b2def54b7dc8f82"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2214,7 +3481,64 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "asset_kind",
+        "version",
+        "idempotency_key"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "idempotency_key",
+        "upload_ticket",
+        "upload_url",
+        "expires_at",
+        "state"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'asset_kind' is missing",
+        "observed JSON-RPC -32602: Unrecognized parameter(s): principal"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "proposer role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-12128da0c80dde8b",
+        "rpc-2d1c664b83551279",
+        "rpc-86dd80b29073d317",
+        "rpc-b13931e4bf4e0326"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2272,7 +3596,59 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "idempotency_key"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "idempotency_key",
+        "state",
+        "staged_asset_id",
+        "expires_at"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'idempotency_key' is missing"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "proposer role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture staging-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-a38c2c5a5b4004a0",
+        "rpc-b673a3d6aa16ed9f",
+        "rpc-db53155be3466138"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2403,7 +3779,80 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "id_or_path",
+        "asset_kind"
+      ],
+      "optional_arguments": [
+        "expected_sha256",
+        "file_path",
+        "limit",
+        "offset",
+        "version",
+        "view"
+      ],
+      "defaults": {
+        "expected_sha256": null,
+        "file_path": null,
+        "limit": null,
+        "offset": 0,
+        "version": null,
+        "view": "archive"
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "concept_id",
+        "concept_path",
+        "asset_kind",
+        "version",
+        "versions[]",
+        "zip_sha256",
+        "manifest",
+        "file",
+        "archive",
+        "next_offset"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'id_or_path' is missing"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "bounded byte offset/limit; response reports total/returned/truncated and next_offset",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-29a63c5ae06c3c03",
+        "rpc-67da3a442b0d86cf",
+        "rpc-738c8ba72ffb0cd3",
+        "rpc-f4c428e901e5546b"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2480,7 +3929,68 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "id_or_path",
+        "asset_kind",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "optional_arguments": [
+        "keep"
+      ],
+      "defaults": {
+        "keep": 5
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "concept_id",
+        "asset_kind",
+        "removed_versions[]",
+        "kept_versions[]",
+        "repo_revision",
+        "operation_id"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'id_or_path' is missing"
+      ],
+      "side_effects": "publishes a Git/control operation and updates derived state after commit",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture asset-tool-dispatch.json",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-43d293c4bc7e637f",
+        "rpc-880d61c3afc974d9",
+        "rpc-c63025a6a10294ec",
+        "rpc-d2718a758fd99933"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2589,7 +4099,71 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "path",
+        "concept_type",
+        "title",
+        "body",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "optional_arguments": [
+        "aliases",
+        "description",
+        "tags"
+      ],
+      "defaults": {
+        "aliases": [],
+        "description": null,
+        "tags": []
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "path",
+        "id",
+        "repo_revision",
+        "changed_paths[]",
+        "operation_id"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'path' is missing"
+      ],
+      "side_effects": "publishes a Git/control operation and updates derived state after commit",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-62ef8d76dd71b384",
+        "rpc-89862555b93dec5f",
+        "rpc-d1d575704feffb04"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2733,7 +4307,74 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "optional_arguments": [
+        "aliases",
+        "body",
+        "description",
+        "status",
+        "tags",
+        "title"
+      ],
+      "defaults": {
+        "aliases": null,
+        "body": null,
+        "description": null,
+        "status": null,
+        "tags": null,
+        "title": null
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "path",
+        "id",
+        "repo_revision",
+        "changed_paths[]",
+        "operation_id"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'path' is missing"
+      ],
+      "side_effects": "publishes a Git/control operation and updates derived state after commit",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-1e588c096cf1e407",
+        "rpc-2d98b8dc91313a2c",
+        "rpc-cbd3cb143c3fad8a"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2800,7 +4441,58 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "path",
+        "trash_path",
+        "repo_revision",
+        "changed_paths[]",
+        "operation_id"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'path' is missing"
+      ],
+      "side_effects": "publishes a Git/control operation and updates derived state after commit",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-1e2d81e22edc7c93",
+        "rpc-da3838fe5a062013"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2867,7 +4559,58 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "path",
+        "restored_path",
+        "repo_revision",
+        "changed_paths[]",
+        "operation_id"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'path' is missing"
+      ],
+      "side_effects": "publishes a Git/control operation and updates derived state after commit",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-9c79be27b833ac1c",
+        "rpc-e275626e837badd9"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -2939,7 +4682,64 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "optional_arguments": [
+        "confirm"
+      ],
+      "defaults": {
+        "confirm": false
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "path",
+        "repo_revision",
+        "changed_paths[]",
+        "operation_id"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'path' is missing"
+      ],
+      "side_effects": "publishes a Git/control operation and updates derived state after commit",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-052977563a40ff64",
+        "rpc-47e1804f4de928cb",
+        "rpc-5e8623318e3e81be",
+        "rpc-6e53b5d5621fec9c",
+        "rpc-9eea917ebdf115ea"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -3010,7 +4810,60 @@
         "proposer": "hidden_and_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "path",
+        "new_path",
+        "expected_revision",
+        "idempotency_key"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "path",
+        "new_path",
+        "repo_revision",
+        "changed_paths[]",
+        "operation_id"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted",
+        "observed JSON-RPC -32602: Required parameter 'path' is missing"
+      ],
+      "side_effects": "publishes a Git/control operation and updates derived state after commit",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "curator role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations",
+        "Python-generated parity fixture audit-tool-dispatch.json",
+        "Python-generated parity fixture inventory-tool-dispatch.json",
+        "Python-generated parity fixture manifest-tool-dispatch.json",
+        "Python-generated parity fixture metadata-tool-dispatch.json",
+        "Python-generated parity fixture mutation-tool-dispatch.json",
+        "Python-generated parity fixture status-tool-dispatch.json",
+        "Python-generated parity fixture trash-tool-dispatch.json"
+      ],
+      "validation_level": "exact_jsonrpc_replay",
+      "validation_cases": [
+        "rpc-5d1940d083f45fcd",
+        "rpc-b3c964218e5e6438"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -11263,7 +13116,55 @@
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [
+        "operations",
+        "plan",
+        "returns",
+        "stop_on_error"
+      ],
+      "defaults": {
+        "returns": [],
+        "stop_on_error": true
+      },
+      "success_envelope": [
+        "status",
+        "data",
+        "warnings[]",
+        "next_tools[]",
+        "repo_revision",
+        "index_revision",
+        "index_stale",
+        "operation_id"
+      ],
+      "success_fields": [
+        "steps[]",
+        "steps[].operation",
+        "steps[].status",
+        "returns",
+        "repo_revision",
+        "operation_id"
+      ],
+      "error_contract": [
+        "validation_error: schema/domain validation",
+        "forbidden: required role or namespace grant absent",
+        "not_found/conflict/idempotency_conflict where defined",
+        "unexpected internal failures are transport-redacted"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "reader role plus operation-specific visible/read/write namespace checks",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:memory_execute"
+      ]
     },
     {
       "category": "mcp_resource",
@@ -11297,7 +13198,30 @@
         "proposer": "read_or_get",
         "curator": "read_or_get",
         "admin": "read_or_get"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "uri/name/description metadata or deterministic prompt/resource content declared by the Python registry"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:memory://catalog"
+      ]
     },
     {
       "category": "mcp_resource",
@@ -11331,7 +13255,30 @@
         "proposer": "read_or_get",
         "curator": "read_or_get",
         "admin": "read_or_get"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "uri/name/description metadata or deterministic prompt/resource content declared by the Python registry"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:memory://help"
+      ]
     },
     {
       "category": "mcp_resource",
@@ -11365,7 +13312,30 @@
         "proposer": "read_or_get",
         "curator": "read_or_get",
         "admin": "read_or_get"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "uri/name/description metadata or deterministic prompt/resource content declared by the Python registry"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:memory://status"
+      ]
     },
     {
       "category": "mcp_resource_template",
@@ -11399,7 +13369,30 @@
         "proposer": "read_or_get",
         "curator": "read_or_get",
         "admin": "read_or_get"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "uri/name/description metadata or deterministic prompt/resource content declared by the Python registry"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:memory://catalog/{operation}"
+      ]
     },
     {
       "category": "mcp_resource_template",
@@ -11433,7 +13426,30 @@
         "proposer": "read_or_get",
         "curator": "read_or_get",
         "admin": "read_or_get"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "uri/name/description metadata or deterministic prompt/resource content declared by the Python registry"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:memory://workflow/{goal}"
+      ]
     },
     {
       "category": "mcp_prompt",
@@ -11479,7 +13495,34 @@
         "proposer": "read_or_get",
         "curator": "read_or_get",
         "admin": "read_or_get"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [
+        "asset_kind",
+        "target_path",
+        "version"
+      ],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "uri/name/description metadata or deterministic prompt/resource content declared by the Python registry"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:publish_asset_pack"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11506,7 +13549,34 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "protocolVersion",
+        "serverInfo.name",
+        "serverInfo.version",
+        "capabilities",
+        "instructions"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:initialize"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11533,7 +13603,34 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "tools[]",
+        "tools[].name",
+        "tools[].description",
+        "tools[].inputSchema",
+        "nextCursor"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:tools/list"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11560,7 +13657,32 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "content[]",
+        "structuredContent",
+        "isError"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:tools/call"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11587,7 +13709,31 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "resources[]",
+        "nextCursor"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:resources/list"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11614,7 +13760,31 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "resourceTemplates[]",
+        "nextCursor"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:resources/templates/list"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11641,7 +13811,33 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "contents[]",
+        "contents[].uri",
+        "contents[].mimeType",
+        "contents[].text or blob"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:resources/read"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11668,7 +13864,30 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "empty JSON-RPC result; later notifications/resources/updated"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:resources/subscribe"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11695,7 +13914,30 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "empty JSON-RPC result"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:resources/unsubscribe"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11722,7 +13964,31 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "prompts[]",
+        "nextCursor"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:prompts/list"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11749,7 +14015,33 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "description",
+        "messages[]",
+        "messages[].role",
+        "messages[].content"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:prompts/get"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11776,7 +14068,32 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "completion.values[]",
+        "completion.total",
+        "completion.hasMore"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:completion/complete"
+      ]
     },
     {
       "category": "mcp_protocol",
@@ -11803,7 +14120,30 @@
         "proposer": "available_after_successful_initialize_and_authentication",
         "curator": "available_after_successful_initialize_and_authentication",
         "admin": "available_after_successful_initialize_and_authentication"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "empty JSON-RPC result; later notifications/message"
+      ],
+      "error_contract": [
+        "JSON-RPC protocol/invalid-params/method-not-found/internal error as observed"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "authenticated session/principal where transport requires it",
+      "behavior_provenance": [
+        "pinned Python uMCP tests",
+        "source-generated uMCP parity fixtures",
+        "Go uMCP mapped tests"
+      ],
+      "validation_level": "exact_protocol_fixture",
+      "validation_cases": [
+        "umcp:logging/setLevel"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -11826,11 +14166,37 @@
       "status": "mapped",
       "row_id": "surface-e2485ab26cbb",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "HTTP 200 static no-store/nosniff response when managed access is configured",
+        "proposer": "HTTP 200 static no-store/nosniff response when managed access is configured",
+        "curator": "HTTP 200 static no-store/nosniff response when managed access is configured",
+        "admin": "HTTP 200 static no-store/nosniff response when managed access is configured"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "Content-Type text/html",
+        "Cache-Control no-store",
+        "X-Content-Type-Options nosniff"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "none",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -11853,11 +14219,37 @@
       "status": "mapped",
       "row_id": "surface-2c59ca52a630",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "HTTP 200 static no-store/nosniff response when managed access is configured",
+        "proposer": "HTTP 200 static no-store/nosniff response when managed access is configured",
+        "curator": "HTTP 200 static no-store/nosniff response when managed access is configured",
+        "admin": "HTTP 200 static no-store/nosniff response when managed access is configured"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "Content-Type text/javascript",
+        "Cache-Control no-store",
+        "X-Content-Type-Options nosniff"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "none",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -11880,11 +14272,43 @@
       "status": "mapped",
       "row_id": "surface-527a5f06b0d9",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "principals[]",
+        "principals[].name",
+        "roles[]",
+        "read_prefixes[]",
+        "write_prefixes[]",
+        "enabled",
+        "revoked",
+        "deleted",
+        "warnings[]"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -11907,11 +14331,39 @@
       "status": "mapped",
       "row_id": "surface-9308312ce583",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "events[0:50]",
+        "events[].action",
+        "events[].actor",
+        "events[].target",
+        "events[].created_at"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -11934,11 +14386,36 @@
       "status": "mapped",
       "row_id": "surface-a7495156c5e1",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 201",
+        "principal",
+        "credential returned once"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -11961,11 +14438,35 @@
       "status": "mapped",
       "row_id": "surface-30b7e1ddfa50",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "principal"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -11988,11 +14489,35 @@
       "status": "mapped",
       "row_id": "surface-4c5e4a822549",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "principal"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12015,11 +14540,35 @@
       "status": "mapped",
       "row_id": "surface-c45eccf925c8",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "principal.enabled=false"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12042,11 +14591,35 @@
       "status": "mapped",
       "row_id": "surface-f8177e84f7ee",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "principal.enabled=true"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12069,11 +14642,36 @@
       "status": "mapped",
       "row_id": "surface-907e8a310559",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "name",
+        "credential returned once"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12096,11 +14694,35 @@
       "status": "mapped",
       "row_id": "surface-72ace281970a",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "principal.revoked=true"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12123,11 +14745,35 @@
       "status": "mapped",
       "row_id": "surface-43af9f6a33f7",
       "profile_outcomes": {
-        "reader": "http_401",
-        "proposer": "http_401",
-        "curator": "http_401",
-        "admin": "allowed"
-      }
+        "reader": "HTTP 401 admin bearer credential required",
+        "proposer": "HTTP 401 admin bearer credential required",
+        "curator": "HTTP 401 admin bearer credential required",
+        "admin": "authenticated HTTP 200/201 operation"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "principal.deleted=true"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "admin",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12150,11 +14796,38 @@
       "status": "mapped",
       "row_id": "surface-29d4cebf9364",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "upload ticket authenticates the bounded application/zip request; ordinary bearer role is not used here",
+        "proposer": "upload ticket authenticates the bounded application/zip request; ordinary bearer role is not used here",
+        "curator": "upload ticket authenticates the bounded application/zip request; ordinary bearer role is not used here",
+        "admin": "upload ticket authenticates the bounded application/zip request; ordinary bearer role is not used here"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 201 new or 200 exact replay",
+        "staged_asset_id",
+        "state",
+        "sha256",
+        "size_bytes"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "one-time upload ticket",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:staging_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12177,11 +14850,39 @@
       "status": "mapped",
       "row_id": "surface-a2ae439ee3df",
       "profile_outcomes": {
-        "reader": "http_401_or_403",
-        "proposer": "allowed_or_owner_scoped",
-        "curator": "allowed_or_owner_scoped",
-        "admin": "allowed_or_owner_scoped"
-      }
+        "reader": "HTTP 401/403 proposer role required",
+        "proposer": "authenticated proposer-scoped staging response",
+        "curator": "authenticated proposer-scoped staging response",
+        "admin": "authenticated proposer-scoped staging response"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 201 new or 200 exact replay",
+        "idempotency_key",
+        "upload_ticket",
+        "upload_url",
+        "expires_at",
+        "state"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "proposer",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:staging_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12204,11 +14905,40 @@
       "status": "mapped",
       "row_id": "surface-ea179a4b618b",
       "profile_outcomes": {
-        "reader": "http_401_or_403",
-        "proposer": "allowed_or_owner_scoped",
-        "curator": "allowed_or_owner_scoped",
-        "admin": "allowed_or_owner_scoped"
-      }
+        "reader": "HTTP 401/403 unless the principal owns the staged asset",
+        "proposer": "owner-scoped staged asset status",
+        "curator": "owner-scoped staged asset status",
+        "admin": "owner-scoped staged asset status"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "staged_asset_id",
+        "state",
+        "owner",
+        "asset_kind",
+        "version",
+        "expires_at"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "owner",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:staging_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12231,11 +14961,36 @@
       "status": "mapped",
       "row_id": "surface-87701b11921b",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "Content-Type text/html",
+        "embedded graph debugger"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12258,11 +15013,37 @@
       "status": "mapped",
       "row_id": "surface-7841b06d34c9",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "asset MIME type",
+        "Cache-Control no-store",
+        "nosniff"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12285,11 +15066,38 @@
       "status": "mapped",
       "row_id": "surface-56754c9cb122",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "enabled",
+        "route_prefix",
+        "schema_version",
+        "warning"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12312,11 +15120,39 @@
       "status": "mapped",
       "row_id": "surface-77ca624d98cc",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "principals[].name",
+        "roles[]",
+        "read_prefixes[]",
+        "write_prefixes[]",
+        "protected_read_prefixes[]"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12339,11 +15175,40 @@
       "status": "mapped",
       "row_id": "surface-9c590b85aa90",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "mode",
+        "nodes[] or clusters[]",
+        "edges[] or cluster_edges[]",
+        "diagnostics[]",
+        "revisions",
+        "truncated"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network/simulated policy",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12366,11 +15231,43 @@
       "status": "mapped",
       "row_id": "surface-36b7cee1143b",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "available",
+        "alive",
+        "running",
+        "pending",
+        "pause_reason",
+        "completed",
+        "repository_revision",
+        "embedding_revision",
+        "last_error"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12398,11 +15295,36 @@
       "status": "mapped",
       "row_id": "surface-8b2f29ba0ef9",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400",
+        "proposer": "HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400",
+        "curator": "HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400",
+        "admin": "HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 202",
+        "worker state",
+        "queued scope/path count"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "full diagnostic only",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12425,11 +15347,40 @@
       "status": "mapped",
       "row_id": "surface-03d8b8c261e0",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "results[]",
+        "results[].id",
+        "results[].path",
+        "results[].title",
+        "results[].tags",
+        "results[].snippet"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network/simulated policy",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12452,11 +15403,37 @@
       "status": "mapped",
       "row_id": "surface-a98c056ba8ec",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "nodes[]",
+        "edges[]",
+        "truncated"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network/simulated policy",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12479,11 +15456,40 @@
       "status": "mapped",
       "row_id": "surface-859546743957",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "node",
+        "preview",
+        "inbound[]",
+        "outbound[]",
+        "assets[]",
+        "proposals[]"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network/simulated policy",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12506,11 +15512,39 @@
       "status": "mapped",
       "row_id": "surface-12fd0752fde9",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "center_id",
+        "nodes[]",
+        "edges[]",
+        "revisions",
+        "truncated"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network/simulated policy",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12533,11 +15567,36 @@
       "status": "mapped",
       "row_id": "surface-b0340ab6792a",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "static asset bytes",
+        "asset MIME type"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12565,11 +15624,35 @@
       "status": "mapped",
       "row_id": "surface-3baee52bbbef",
       "profile_outcomes": {
-        "reader": "route_available_with_route_specific_policy",
-        "proposer": "route_available_with_route_specific_policy",
-        "curator": "route_available_with_route_specific_policy",
-        "admin": "route_available_with_route_specific_policy"
-      }
+        "reader": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "proposer": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "curator": "trusted-network route; optional simulated principal applies that profile read policy before output",
+        "admin": "trusted-network route; optional simulated principal applies that profile read policy before output"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "JSON schema/nodes/edges/settings/revisions or SVG bytes"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "trusted network/simulated policy",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:graph_http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12592,11 +15675,36 @@
       "status": "mapped",
       "row_id": "surface-cdbe1d5b6a22",
       "profile_outcomes": {
-        "reader": "route_specific_authentication_and_policy",
-        "proposer": "route_specific_authentication_and_policy",
-        "curator": "route_specific_authentication_and_policy",
-        "admin": "route_specific_authentication_and_policy"
-      }
+        "reader": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy",
+        "proposer": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy",
+        "curator": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy",
+        "admin": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200/202 or SSE according to JSON-RPC request kind",
+        "Mcp-Session-Id after initialize",
+        "MCP JSON-RPC response"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "queues or persists the endpoint-specific staging, refresh, access, or session transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "bearer principal",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "umcp:http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12619,11 +15727,35 @@
       "status": "mapped",
       "row_id": "surface-9bb9207af645",
       "profile_outcomes": {
-        "reader": "route_specific_authentication_and_policy",
-        "proposer": "route_specific_authentication_and_policy",
-        "curator": "route_specific_authentication_and_policy",
-        "admin": "route_specific_authentication_and_policy"
-      }
+        "reader": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy",
+        "proposer": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy",
+        "curator": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy",
+        "admin": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200 text/event-stream",
+        "session-bound SSE events"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "bound session",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "umcp:http"
+      ]
     },
     {
       "category": "http_endpoint",
@@ -12646,11 +15778,35 @@
       "status": "mapped",
       "row_id": "surface-8297b7f3e421",
       "profile_outcomes": {
-        "reader": "route_specific_authentication_and_policy",
-        "proposer": "route_specific_authentication_and_policy",
-        "curator": "route_specific_authentication_and_policy",
-        "admin": "route_specific_authentication_and_policy"
-      }
+        "reader": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy",
+        "proposer": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy",
+        "curator": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy",
+        "admin": "bearer-authenticated MCP transport; called tool applies the profile role and namespace policy"
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "HTTP 200",
+        "session removed"
+      ],
+      "error_contract": [
+        "400 validation, 401 auth, 403 policy where applicable, 404 unknown, 405 method, 413/415 upload bounds, 503 unavailable"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "bound session",
+      "behavior_provenance": [
+        "Python HTTP handler source",
+        "Python HTTP functional tests",
+        "Go mapped HTTP tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "umcp:http"
+      ]
     },
     {
       "category": "cli",
@@ -12687,7 +15843,32 @@
         "proposer": "local_operator_not_role_scoped",
         "curator": "local_operator_not_role_scoped",
         "admin": "local_operator_not_role_scoped"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "listener address/endpoint",
+        "ordered shutdown on signal"
+      ],
+      "error_contract": [
+        "usage error exits 2",
+        "runtime/configuration failure exits 1"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "local operator filesystem/configuration permissions",
+      "behavior_provenance": [
+        "Python CLI parser/dispatcher",
+        "Python CLI functional tests",
+        "Go command tests"
+      ],
+      "validation_level": "structured_behavior_spec",
+      "validation_cases": [
+        "behavior:runtime_cli"
+      ]
     },
     {
       "category": "cli",
@@ -12724,7 +15905,33 @@
         "proposer": "local_operator_not_role_scoped",
         "curator": "local_operator_not_role_scoped",
         "admin": "local_operator_not_role_scoped"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "ok",
+        "issues[]",
+        "warnings[]"
+      ],
+      "error_contract": [
+        "usage error exits 2",
+        "runtime/configuration failure exits 1"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "local operator filesystem/configuration permissions",
+      "behavior_provenance": [
+        "Python CLI parser/dispatcher",
+        "Python CLI functional tests",
+        "Go command tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:service_audit"
+      ]
     },
     {
       "category": "cli",
@@ -12761,7 +15968,34 @@
         "proposer": "local_operator_not_role_scoped",
         "curator": "local_operator_not_role_scoped",
         "admin": "local_operator_not_role_scoped"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "repo_revision",
+        "index_revision",
+        "parity_matches",
+        "parity_details"
+      ],
+      "error_contract": [
+        "usage error exits 2",
+        "runtime/configuration failure exits 1"
+      ],
+      "side_effects": "performs the named bounded filesystem, database, index, scheduler, or key-rotation transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "local operator filesystem/configuration permissions",
+      "behavior_provenance": [
+        "Python CLI parser/dispatcher",
+        "Python CLI functional tests",
+        "Go command tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:semantic_refresh"
+      ]
     },
     {
       "category": "cli",
@@ -12798,7 +16032,32 @@
         "proposer": "local_operator_not_role_scoped",
         "curator": "local_operator_not_role_scoped",
         "admin": "local_operator_not_role_scoped"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "archive path",
+        "manifest/checksums"
+      ],
+      "error_contract": [
+        "usage error exits 2",
+        "runtime/configuration failure exits 1"
+      ],
+      "side_effects": "performs the named bounded filesystem, database, index, scheduler, or key-rotation transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "local operator filesystem/configuration permissions",
+      "behavior_provenance": [
+        "Python CLI parser/dispatcher",
+        "Python CLI functional tests",
+        "Go command tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:worktree_mutations"
+      ]
     },
     {
       "category": "cli",
@@ -12835,7 +16094,32 @@
         "proposer": "local_operator_not_role_scoped",
         "curator": "local_operator_not_role_scoped",
         "admin": "local_operator_not_role_scoped"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "restored repository/control/derived state",
+        "revision"
+      ],
+      "error_contract": [
+        "usage error exits 2",
+        "runtime/configuration failure exits 1"
+      ],
+      "side_effects": "performs the named bounded filesystem, database, index, scheduler, or key-rotation transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "local operator filesystem/configuration permissions",
+      "behavior_provenance": [
+        "Python CLI parser/dispatcher",
+        "Python CLI functional tests",
+        "Go command tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:worktree_mutations"
+      ]
     },
     {
       "category": "cli",
@@ -12872,7 +16156,37 @@
         "proposer": "local_operator_not_role_scoped",
         "curator": "local_operator_not_role_scoped",
         "admin": "local_operator_not_role_scoped"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "service_version",
+        "schema_version",
+        "repo_revision",
+        "index_revision",
+        "readiness",
+        "visible_concepts",
+        "proposal_backlog"
+      ],
+      "error_contract": [
+        "usage error exits 2",
+        "runtime/configuration failure exits 1"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "local operator filesystem/configuration permissions",
+      "behavior_provenance": [
+        "Python CLI parser/dispatcher",
+        "Python CLI functional tests",
+        "Go command tests"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:service_status"
+      ]
     },
     {
       "category": "cli",
@@ -12909,7 +16223,36 @@
         "proposer": "local_operator_not_role_scoped",
         "curator": "local_operator_not_role_scoped",
         "admin": "local_operator_not_role_scoped"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "state",
+        "run_id",
+        "signals_detected",
+        "actionable_signals",
+        "proposals_created",
+        "model_attempts"
+      ],
+      "error_contract": [
+        "usage error exits 2",
+        "runtime/configuration failure exits 1"
+      ],
+      "side_effects": "performs the named bounded filesystem, database, index, scheduler, or key-rotation transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "local operator filesystem/configuration permissions",
+      "behavior_provenance": [
+        "Python CLI parser/dispatcher",
+        "Python CLI functional tests",
+        "Go command tests"
+      ],
+      "validation_level": "structured_behavior_spec",
+      "validation_cases": [
+        "behavior:memory_answer"
+      ]
     },
     {
       "category": "cli",
@@ -12946,7 +16289,32 @@
         "proposer": "local_operator_not_role_scoped",
         "curator": "local_operator_not_role_scoped",
         "admin": "local_operator_not_role_scoped"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "rewrapped verifier count",
+        "control DB path"
+      ],
+      "error_contract": [
+        "usage error exits 2",
+        "runtime/configuration failure exits 1"
+      ],
+      "side_effects": "performs the named bounded filesystem, database, index, scheduler, or key-rotation transition",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "local operator filesystem/configuration permissions",
+      "behavior_provenance": [
+        "Python CLI parser/dispatcher",
+        "Python CLI functional tests",
+        "Go command tests"
+      ],
+      "validation_level": "structured_behavior_spec",
+      "validation_cases": [
+        "behavior:runtime_cli"
+      ]
     },
     {
       "category": "cli",
@@ -12973,7 +16341,31 @@
         "proposer": "local_operator_not_role_scoped",
         "curator": "local_operator_not_role_scoped",
         "admin": "local_operator_not_role_scoped"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "exit 0 when TCP service accepts connection"
+      ],
+      "error_contract": [
+        "usage error exits 2",
+        "runtime/configuration failure exits 1"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "local operator filesystem/configuration permissions",
+      "behavior_provenance": [
+        "Python CLI parser/dispatcher",
+        "Python CLI functional tests",
+        "Go command tests"
+      ],
+      "validation_level": "go_extension_test",
+      "validation_cases": [
+        "behavior:runtime_cli"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13024,7 +16416,39 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "principals[]",
+        "principals[].name",
+        "principals[].roles",
+        "principals[].read_prefixes",
+        "principals[].write_prefixes",
+        "principals[].enabled",
+        "principals[].revoked",
+        "principals[].deleted"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13081,7 +16505,38 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [],
+      "optional_arguments": [
+        "limit"
+      ],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "events[]",
+        "events[].action",
+        "events[].actor",
+        "events[].target",
+        "events[].created_at"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "none",
+      "idempotency": "not_applicable",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13187,7 +16642,39 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "name",
+        "roles",
+        "read_prefixes",
+        "write_prefixes",
+        "idempotency_key"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "principal",
+        "credential"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "updates managed principal/credential state and appends access audit event",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13287,7 +16774,37 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "name",
+        "roles",
+        "read_prefixes",
+        "write_prefixes"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "principal"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "updates managed principal/credential state and appends access audit event",
+      "idempotency": "operation-specific lifecycle guard",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13357,7 +16874,35 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "name",
+        "new_name"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "principal"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "updates managed principal/credential state and appends access audit event",
+      "idempotency": "operation-specific lifecycle guard",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13419,7 +16964,34 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "name"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "principal"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "updates managed principal/credential state and appends access audit event",
+      "idempotency": "operation-specific lifecycle guard",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13481,7 +17053,34 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "name"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "principal"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "updates managed principal/credential state and appends access audit event",
+      "idempotency": "operation-specific lifecycle guard",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13549,7 +17148,36 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "name",
+        "idempotency_key"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "name",
+        "credential"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "updates managed principal/credential state and appends access audit event",
+      "idempotency": "required key; exact replay returns prior result; changed payload conflicts",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13611,7 +17239,34 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "name"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "principal"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "updates managed principal/credential state and appends access audit event",
+      "idempotency": "operation-specific lifecycle guard",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     },
     {
       "category": "mcp_tool",
@@ -13673,7 +17328,34 @@
         "proposer": "hidden_and_forbidden",
         "curator": "hidden_and_forbidden",
         "admin": "discover_and_call"
-      }
+      },
+      "required_arguments": [
+        "name"
+      ],
+      "optional_arguments": [],
+      "defaults": {},
+      "success_envelope": [],
+      "success_fields": [
+        "principal"
+      ],
+      "error_contract": [
+        "forbidden: explicit admin role required",
+        "validation_error: malformed arguments or invalid lifecycle transition"
+      ],
+      "side_effects": "updates managed principal/credential state and appends access audit event",
+      "idempotency": "operation-specific lifecycle guard",
+      "pagination": "none",
+      "policy_scope": "explicit admin role; managed identity is re-resolved for every request",
+      "behavior_provenance": [
+        "Python registry input schema",
+        "Python functional pytest",
+        "Go mapped test declarations"
+      ],
+      "validation_level": "stateful_fixture",
+      "validation_cases": [
+        "stateful:access_lifecycle",
+        "behavior:admin_http"
+      ]
     }
   ],
   "counts": {

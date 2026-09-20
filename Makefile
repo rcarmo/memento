@@ -50,8 +50,10 @@ vuln: $(GOVULNCHECK)
 test:
 	CGO_ENABLED=0 $(GO) test ./...
 .PHONY: mcp-contract graph-test ui-test python-parity
+# Native-Go final parity gate. JavaScript/Python tools only regenerate oracle artifacts.
 python-parity:
-	CGO_ENABLED=0 $(GO) test ./tools -run '^TestPython.*ParityManifest$$' -count=1
+	CGO_ENABLED=0 $(GO) test ./... -count=1
+	$(MAKE) -C umcp test
 # Install pinned browser tooling with: cd tools/browser && npm ci && npx playwright install chromium
 ui-test:
 	node tools/browser/audit.mjs

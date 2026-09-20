@@ -42,61 +42,69 @@ const surfaceGroups = {
   'cli/operations': row => row.category === 'cli',
 };
 
-const safe = value => value.replace(/[^A-Za-z0-9_.:-]+/g, '_');
 const sentence = (value, limit = 700) => String(value || '').replace(/\s+/g, ' ').trim().slice(0, limit) || 'the captured Python behavior is exercised';
 const display = value => value.replaceAll('-', ' ').replaceAll('_', ' ');
 const featureText = lines => `${lines.map(line => line.trimEnd()).join('\n').trimEnd()}\n`;
 
-function goTags(row) { return row.go_tests.map(item => `@go_${safe(item.name)}`).join(' '); }
 function sourceRule(row) { return row.python_file || row.node_file.split('/').at(-1); }
+function behaviorTitle(row) {
+  return display(row.node_name.replace(/^test_/, '').replaceAll('.py', '').replaceAll('[', ' (').replaceAll(']', ')')).replace(/^./, value => value.toUpperCase());
+}
+function expectedOutcome(title) {
+  const lower = title.toLowerCase();
+  if (/reject|forbid|den(y|ies)|invalid|error|fail|guard/.test(lower)) return 'the request is rejected at the specified boundary and prohibited state is unchanged';
+  if (/concurr|race|thread/.test(lower)) return 'the result and persisted state remain deterministic under concurrent execution';
+  if (/cancel|timeout|deadline/.test(lower)) return 'cancellation or timeout preserves the specified completion and reconciliation state';
+  if (/cursor|page|pagination|limit|bound/.test(lower)) return 'the bounded result and continuation state match the specified contract';
+  if (/auth|role|scope|prefix|visible|protected/.test(lower)) return 'the authorization decision and visible result match the specified principal scope';
+  if (/create|update|rename|delete|trash|restore|purge|apply|rotate|revoke|migrat|write/.test(lower)) return 'the response and durable state transition match the specified lifecycle';
+  return 'the observable response, ordering, warnings and resulting state match the specified contract';
+}
 function functionalScenario(row) {
-  const parts = sentence(row.behavior_summary).split(' checks ', 2);
-  const when = parts[0].replace(/^Calls /, '');
-  const then = parts[1] || 'the result, state transitions, and error boundary match the captured behavior';
-  return [
-    `    @${row.row_id} @python_${safe(row.node_name)} ${goTags(row)}`,
-    `    Scenario: ${row.node_name}`,
-    '      Given the pinned Python reference fixtures and controlled inputs',
-    `      When ${when}`,
-    `      Then ${then}`,
-    '',
-  ];
+  const title = behaviorTitle(row);
+  return [`    @${row.row_id}`, `    Scenario: ${title}`, '      Given the controlled domain state and principal described by this behavior', `      When the actor performs: ${title.toLowerCase()}`, `      Then ${expectedOutcome(title)}`, ''];
 }
 function upstreamScenario(row) {
-  return [
-    `    @${row.row_id} ${goTags(row)}`,
-    `    Scenario: ${row.node_name}`,
-    '      Given the pinned Python uMCP server or client and controlled protocol inputs',
-    `      When ${display(row.node_name.replace(/^test_/, ''))}`,
-    '      Then the Go uMCP result matches the captured Python decision, payload, ordering, or error',
-    '',
-  ];
+  const title = behaviorTitle(row);
+  return [`    @${row.row_id}`, `    Scenario: ${title}`, '      Given a configured MCP client, server and transport state', `      When the client performs: ${title.toLowerCase()}`, `      Then ${expectedOutcome(title)}`, ''];
 }
 function surfaceScenarios(row) {
+  const required = row.required_arguments.length ? row.required_arguments.join(', ') : 'no required arguments';
+  const optional = row.optional_arguments.length ? row.optional_arguments.join(', ') : 'no optional arguments';
+  const defaults = Object.keys(row.defaults).length ? JSON.stringify(row.defaults) : 'no declared defaults';
+  const fields = [...row.success_envelope, ...row.success_fields].join(', ');
   const lines = [
-    `    @${row.row_id} ${goTags(row)}`,
-    `    Scenario: ${row.name} preserves the Python success contract`,
-    `      Given the Python request contract ${sentence(row.python_request, 500)}`,
+    `    @${row.row_id}`,
+    `    Scenario: ${row.name} succeeds with its declared contract`,
+    `      Given required arguments ${required}`,
+    `      And optional arguments ${optional}`,
+    `      And declared defaults ${defaults}`,
+    `      And policy scope ${row.policy_scope}`,
     `      When an authorized client invokes ${row.name}`,
-    `      Then the response matches ${sentence(row.python_response, 500)}`,
+    `      Then the response exposes ${fields}`,
+    `      And side effects are ${row.side_effects}`,
+    `      And idempotency is ${row.idempotency}`,
+    `      And pagination or range behavior is ${row.pagination}`,
     '',
   ];
   for (const profile of ['reader', 'proposer', 'curator', 'admin']) {
     lines.push(
-      `    @${row.row_id}_role_${profile} ${goTags(row)}`,
+      `    @${row.row_id}_role_${profile}`,
       `    Scenario: ${row.name} as ${profile}`,
       `      Given the canonical ${profile} profile`,
       `      When that principal discovers or invokes ${row.name}`,
-      `      Then the Python outcome is ${row.profile_outcomes[profile]}`,
+      `      Then the outcome is ${row.profile_outcomes[profile]}`,
       '',
     );
   }
   lines.push(
-    `    @${row.row_id}_failure ${goTags(row)}`,
-    `    Scenario: ${row.name} preserves Python validation and failure behavior`,
-    '      Given malformed, missing, out-of-scope, or unavailable inputs',
+    `    @${row.row_id}_failure`,
+    `    Scenario: ${row.name} rejects invalid or conflicting requests`,
+    `      Given required arguments ${required} and declared defaults ${defaults}`,
+    `      And malformed, missing, out-of-scope, unavailable, replayed, or conflicting inputs`,
     `      When the client invokes ${row.name}`,
-    `      Then ${sentence(row.python_errors, 600)}`,
+    `      Then one of the specified failures is ${row.error_contract.join('; ')}`,
+    `      And failed pre-publication calls do not apply ${row.side_effects}`,
     '',
   );
   return lines;
@@ -107,11 +115,12 @@ async function emitFunctional(base, manifest, groups, upstream = false) {
   for (const [target, files] of Object.entries(groups)) {
     const rows = manifest.rows.filter(row => files.includes(sourceRule(row)));
     if (!rows.length) throw new Error(`empty logical group ${target}`);
-    const lines = [`Feature: ${display(target)}`, '', `  The scenarios capture Python ${upstream ? 'uMCP' : 'Memento'} behavior at ${manifest.python_commit}.`, '  Rules retain source-module traceability while features group related user behavior.', ''];
+    const lines = [`Feature: ${display(target)}`, '', '  These scenarios describe observable behavior independently of its implementation.', '  Stable row tags link each scenario to versioned evidence and executable validation data.', ''];
     for (const file of files) {
       const items = rows.filter(row => sourceRule(row) === file);
       if (!items.length) throw new Error(`${file} has no rows in ${target}`);
-      lines.push(`  Rule: Behavior captured from ${file}`, '');
+      const rule = display(file.replace(/^test_/, '').replace(/\.py$/, '')).replace(/^./, value => value.toUpperCase());
+      lines.push(`  Rule: ${rule}`, '');
       for (const row of items) { claimed.add(row.row_id); lines.push(...(upstream ? upstreamScenario(row) : functionalScenario(row))); }
     }
     const path = join(base, `${target}.feature`); await mkdir(join(path, '..'), { recursive: true }); await writeFile(path, featureText(lines));
@@ -123,7 +132,7 @@ async function emitSurfaces(base, manifest) {
   for (const [target, predicate] of Object.entries(surfaceGroups)) {
     const rows = manifest.rows.filter(predicate);
     if (!rows.length) throw new Error(`empty surface group ${target}`);
-    const lines = [`Feature: ${display(target)}`, '', '  Each operation has a success contract, four canonical role outcomes, and a failure contract.', ''];
+    const lines = [`Feature: ${display(target)}`, '', '  Each operation has a success contract, four canonical role outcomes, and a failure contract.', '  Stable row tags link behavior to validation data without exposing implementation details.', ''];
     const workflows = new Map();
     for (const row of rows) {
       const key = row.category === 'mcp_tool' ? row.operation.split('_')[0] : row.category;
@@ -142,7 +151,32 @@ async function emitSurfaces(base, manifest) {
   }
 }
 
+function markdownCell(value) { return String(value ?? '').replaceAll('|', '\\|').replaceAll('\n', ' '); }
+async function emitSurfaceMatrix(manifest) {
+  const lines = [
+    '# Python-to-Go public surface matrix',
+    '',
+    `Python reference: \`rcarmo/memento@${manifest.python_commit}\`.`,
+    '',
+    `Counts: ${Object.entries(manifest.counts).map(([key, value]) => `**${value} ${display(key)}**`).join(', ')}.`,
+    '',
+    '| Category | Python surface | Required/default arguments | Success fields | Side effects / idempotency / pagination | Reader | Proposer | Curator | Admin | Error contract | Executable validation data | Evidence | Go implementation and tests | Status |',
+    '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|',
+  ];
+  for (const row of manifest.rows) {
+    const argumentsCell = `required: ${row.required_arguments.join(', ') || 'none'}; defaults: ${JSON.stringify(row.defaults)}`;
+    const effects = `${row.side_effects}; idempotency: ${row.idempotency}; pagination/range: ${row.pagination}; policy: ${row.policy_scope}`;
+    const evidence = row.behavior_provenance.join('; ');
+    const go = `${row.go_source}; ${row.go_tests.map(item => item.name).join(', ')}`;
+    const validation = `${row.validation_level}: ${row.validation_cases.join(', ')}`;
+    const values = [row.category, row.name, argumentsCell, [...row.success_envelope, ...row.success_fields].join(', '), effects, row.profile_outcomes.reader, row.profile_outcomes.proposer, row.profile_outcomes.curator, row.profile_outcomes.admin, row.error_contract.join('; '), validation, evidence, go, row.status];
+    lines.push(`| ${values.map(markdownCell).join(' | ')} |`);
+  }
+  await writeFile(join(root, 'docs/go-port/python-surface-matrix.md'), `${lines.join('\n')}\n`);
+}
+
 await emitFunctional(join(root, 'testdata/parity/features/application'), appManifest, appGroups);
 await emitSurfaces(join(root, 'testdata/parity/features/surfaces'), surfaceManifest);
 await emitFunctional(join(root, 'umcp/testdata/features'), umcpManifest, umcpGroups, true);
+await emitSurfaceMatrix(surfaceManifest);
 console.log(JSON.stringify({ applicationGroups: Object.keys(appGroups).length, surfaceGroups: Object.keys(surfaceGroups).length, umcpGroups: Object.keys(umcpGroups).length }));

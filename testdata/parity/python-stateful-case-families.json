@@ -1,0 +1,591 @@
+{
+  "schema_version": 1,
+  "python_commit": "7f29e8b003557f0105f47ed353b7f65a33619456",
+  "families": [
+    {
+      "family_id": "service_reads",
+      "source_fixture": "service-reads.json",
+      "case_selector": "cases",
+      "case_count": 78,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "concepts",
+        "policy",
+        "request",
+        "expected envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/read_test.go",
+        "name": "TestReadServiceReference"
+      }
+    },
+    {
+      "family_id": "inventory",
+      "source_fixture": "inventory.json",
+      "case_selector": "cases",
+      "case_count": 146,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "repository tree",
+        "policy",
+        "projection",
+        "cursor",
+        "expected envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/inventory_test.go",
+        "name": "TestInventoryReference"
+      }
+    },
+    {
+      "family_id": "compare_manifest",
+      "source_fixture": "compare-manifest.json",
+      "case_selector": "cases",
+      "case_count": 52,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "repository tree",
+        "policy",
+        "manifest items",
+        "expected envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/compare_manifest_test.go",
+        "name": "TestCompareManifestReference"
+      }
+    },
+    {
+      "family_id": "asset_metadata",
+      "source_fixture": "asset-metadata.json",
+      "case_selector": "cases",
+      "case_count": 68,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "accepted assets",
+        "policy",
+        "query",
+        "budget",
+        "expected envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/asset_metadata_test.go",
+        "name": "TestAssetMetadataReference"
+      }
+    },
+    {
+      "family_id": "service_audit",
+      "source_fixture": "service-audit.json",
+      "case_selector": "cases",
+      "case_count": 560,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "repository issues",
+        "graph diagnostics",
+        "policy",
+        "cursor",
+        "expected envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/audit_test.go",
+        "name": "TestAuditReference"
+      }
+    },
+    {
+      "family_id": "service_status",
+      "source_fixture": "service-status.json",
+      "case_selector": "cases",
+      "case_count": 36,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "index state",
+        "proposal rows",
+        "policy",
+        "feature configuration",
+        "expected envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/status_test.go",
+        "name": "TestStatusReference"
+      }
+    },
+    {
+      "family_id": "staging_tools",
+      "source_fixture": "staging-tools.json",
+      "case_selector": "cases",
+      "case_count": 21,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "staging database",
+        "principal",
+        "clock",
+        "request",
+        "expected envelope/state"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/staging_tools_test.go",
+        "name": "TestStagingToolReference"
+      }
+    },
+    {
+      "family_id": "proposal_apply",
+      "source_fixture": "proposal-apply.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 18,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "proposal/control state",
+        "repository revision",
+        "policy",
+        "request",
+        "expected state/envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/proposal_apply_test.go",
+        "name": "TestProposalApplyReference"
+      }
+    },
+    {
+      "family_id": "proposal_rebase",
+      "source_fixture": "proposal-rebase.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 27,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "proposal/control state",
+        "repository bases",
+        "policy",
+        "request",
+        "expected state/envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/proposal_rebase_test.go",
+        "name": "TestProposalRebaseReference"
+      }
+    },
+    {
+      "family_id": "proposal_review",
+      "source_fixture": "proposal-review.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 56,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "proposal/control state",
+        "policy",
+        "decision",
+        "expected history/state"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/proposal_review_test.go",
+        "name": "TestProposalReviewReference"
+      }
+    },
+    {
+      "family_id": "proposal_revise",
+      "source_fixture": "proposal-revise.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 25,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "proposal/assets",
+        "repository revision",
+        "selection",
+        "expected proposal/preview"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/proposal_revise_test.go",
+        "name": "TestProposalReviseReference"
+      }
+    },
+    {
+      "family_id": "proposal_get",
+      "source_fixture": "proposal-get.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 21,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "proposal/assets/history",
+        "principal policy",
+        "view",
+        "expected envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/proposal_get_test.go",
+        "name": "TestProposalGetReference"
+      }
+    },
+    {
+      "family_id": "proposal_list",
+      "source_fixture": "proposal-list.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 17,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "proposal rows",
+        "principal policy",
+        "cursor",
+        "expected page"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/proposal_list_test.go",
+        "name": "TestProposalListReference"
+      }
+    },
+    {
+      "family_id": "operation_get",
+      "source_fixture": "operation-get.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 24,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "operation rows",
+        "worker activity",
+        "principal",
+        "expected retry/reconcile envelope"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/operation_get_test.go",
+        "name": "TestOperationGetReference"
+      }
+    },
+    {
+      "family_id": "direct_mutations",
+      "source_fixture": "direct-mutations.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 20,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "repository tree",
+        "policy",
+        "revision",
+        "idempotency record",
+        "expected Git/control/index delta"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/direct_mutations_test.go",
+        "name": "TestDirectMutationReference"
+      }
+    },
+    {
+      "family_id": "trash_mutations",
+      "source_fixture": "trash-mutations.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 31,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "repository/trash tree",
+        "assets",
+        "policy",
+        "revision",
+        "confirmation",
+        "expected delta"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/trash_mutations_test.go",
+        "name": "TestTrashMutationReference"
+      }
+    },
+    {
+      "family_id": "asset_prune",
+      "source_fixture": "asset-prune.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 29,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "accepted assets",
+        "proposal references",
+        "policy",
+        "revision",
+        "idempotency",
+        "expected removed/retained state"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/asset_prune_test.go",
+        "name": "TestAssetPruneReference"
+      }
+    },
+    {
+      "family_id": "graph_snapshot",
+      "source_fixture": "graph-snapshot-foundation.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 14,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "derived/control databases",
+        "policy",
+        "graph options",
+        "expected snapshot/detail/export"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/graphdebug",
+        "file": "internal/graphdebug/overview_test.go",
+        "name": "TestOverviewFixture"
+      }
+    },
+    {
+      "family_id": "semantic_refresh",
+      "source_fixture": "derived-content.json",
+      "case_selector": "sequences",
+      "case_count": 2,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "repository concepts",
+        "embedding rows",
+        "model client",
+        "revision",
+        "expected embedding/index state"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/derived",
+        "file": "internal/derived/content_test.go",
+        "name": "TestContentReference"
+      }
+    },
+    {
+      "family_id": "worktree_mutations",
+      "source_fixture": "worktree-mutations.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 27,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "worktree files",
+        "policy",
+        "actor/clock",
+        "change",
+        "expected exact files"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/worktree_mutations_test.go",
+        "name": "TestWorktreeMutationReference"
+      }
+    },
+    {
+      "family_id": "asset_retrieval",
+      "source_fixture": "asset-retrieval.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 7,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "accepted metadata/ZIP bytes",
+        "policy",
+        "range",
+        "expected bytes/errors"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/assets",
+        "file": "internal/assets/retrieval_test.go",
+        "name": "TestAssetRetrievalReference"
+      }
+    },
+    {
+      "family_id": "memory_answer",
+      "source_fixture": "python-functional-manifest.json",
+      "case_selector": "rows:node_file=test_memory_answer.py",
+      "case_count": 30,
+      "validation_level": "structured_behavior_spec",
+      "state_dimensions": [
+        "repository/index/evidence/model/cache fixtures referenced by Python test rows",
+        "principal policy",
+        "request",
+        "expected answer/citations/cache behavior"
+      ],
+      "comparator": "Python assertion/request specification mapped to Go adapter; serializable setup capture pending",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/answer_endpoint_test.go",
+        "name": "TestAnswerCallDeepCacheEndToEnd"
+      }
+    },
+    {
+      "family_id": "model_route",
+      "source_fixture": "router.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 3,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "router model output",
+        "catalog actions",
+        "request",
+        "expected direct/execute plan"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/router_expand_test.go",
+        "name": "TestRouterExpansionFixture"
+      }
+    },
+    {
+      "family_id": "memory_execute",
+      "source_fixture": "execute-runner.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 11,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "plan",
+        "operation dispatcher results",
+        "limits/deadline",
+        "expected steps/returns/reconciliation"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/execute",
+        "file": "internal/execute/runner_test.go",
+        "name": "TestRunnerReference"
+      }
+    },
+    {
+      "family_id": "model_proposals",
+      "source_fixture": "python-functional-manifest.json",
+      "case_selector": "rows:behavior=model_proposals",
+      "case_count": 5,
+      "validation_level": "structured_behavior_spec",
+      "state_dimensions": [
+        "signals/concepts/provider output",
+        "policy/budgets",
+        "request",
+        "expected proposal/model attempts"
+      ],
+      "comparator": "Python assertion/request specification mapped to Go adapter; serializable setup capture pending",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/model_proposal_endpoint_test.go",
+        "name": "TestModelProposalEndpointStoresAuthenticatedProposal"
+      }
+    },
+    {
+      "family_id": "access_lifecycle",
+      "source_fixture": "access-store.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 6,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "managed principals/credentials/audit rows",
+        "master key/randomness",
+        "mutation",
+        "expected lifecycle state"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/access",
+        "file": "internal/access/access_test.go",
+        "name": "TestManagedAccessReference"
+      }
+    },
+    {
+      "family_id": "admin_http",
+      "source_fixture": "python-functional-manifest.json",
+      "case_selector": "rows:node_file=test_admin_http.py",
+      "case_count": 2,
+      "validation_level": "structured_behavior_spec",
+      "state_dimensions": [
+        "managed access store",
+        "bearer profile",
+        "HTTP request",
+        "expected status/body/state"
+      ],
+      "comparator": "Python assertion/request specification mapped to Go adapter; serializable setup capture pending",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/admin_http_test.go",
+        "name": "TestAdminHTTPHandleCRUDAndActivity"
+      }
+    },
+    {
+      "family_id": "graph_http",
+      "source_fixture": "graph-snapshot-foundation.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 14,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "snapshot service",
+        "simulated policy",
+        "HTTP request",
+        "expected status/body"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/graph_http_test.go",
+        "name": "TestGraphHTTPThroughUMCP"
+      }
+    },
+    {
+      "family_id": "staging_http",
+      "source_fixture": "staging-http.json",
+      "case_selector": "top-level array/object entries",
+      "case_count": 3,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "staging store/ticket",
+        "bearer/ticket headers",
+        "request bytes",
+        "expected status/body/state"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/staging_http_test.go",
+        "name": "TestStagingHTTPReference"
+      }
+    },
+    {
+      "family_id": "runtime_cli",
+      "source_fixture": "python-functional-manifest.json",
+      "case_selector": "rows:runtime_cli",
+      "case_count": 14,
+      "validation_level": "structured_behavior_spec",
+      "state_dimensions": [
+        "configuration/environment",
+        "command arguments",
+        "runtime dependencies",
+        "expected output/exit/state"
+      ],
+      "comparator": "Python assertion/request specification mapped to Go adapter; serializable setup capture pending",
+      "go_adapter": {
+        "package": "./cmd/memento-go",
+        "file": "cmd/memento-go/main_test.go",
+        "name": "TestRunServe"
+      }
+    }
+  ],
+  "total_cases": 1367
+}
