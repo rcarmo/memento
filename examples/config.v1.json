@@ -104,9 +104,6 @@
     },
     "semantic_search": {
       "enabled": false,
-      "worker_mode": "subprocess",
-      "worker_path": "/usr/local/bin/memento-embed",
-      "worker_timeout_seconds": 300,
       "ffi_library_path": null,
       "sqlite_extension_path": null,
       "model_path": null,
@@ -119,10 +116,6 @@
     },
     "needle_router": {
       "enabled": false,
-      "worker_mode": "subprocess",
-      "worker_path": "/usr/local/bin/memento-needle-go",
-      "worker_timeout_seconds": 10,
-      "fp32_model_path": "/usr/local/share/memento/models/memento-router.nfp32",
       "ffi_library_path": "/usr/local/lib/memento/libmemento_needle_ffi.so",
       "model_path": "/usr/local/share/memento/models/memento-router.ndl",
       "tokenizer_path": "/usr/local/share/memento/models/needle.model"
