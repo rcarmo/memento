@@ -34,7 +34,8 @@ release:
 	$(MAKE) -C go release VERSION="$(MEMENTO_VERSION)" SOURCE_DATE_EPOCH="$(SOURCE_DATE_EPOCH)"
 
 release-check:
-	$(MAKE) -C go release-check VERSION="$(MEMENTO_VERSION)" SOURCE_DATE_EPOCH="$(SOURCE_DATE_EPOCH)"
+	$(MAKE) -C go release-check VERSION="$(MEMENTO_VERSION)" SOURCE_DATE_EPOCH="$(SOURCE_DATE_EPOCH)" \
+		NEEDLE_MODEL_PATH="$(abspath models/needle/memento-router.ndl)"
 
 go-container-build:
 	docker build --build-arg VERSION="$(MEMENTO_VERSION)" --build-arg COMMIT="$$(git rev-parse HEAD)" --build-arg BUILD_DATE="$$(date -u +'%Y-%m-%dT%H:%M:%SZ')" -t memento-go:contract .

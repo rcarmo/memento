@@ -5,5 +5,5 @@ type RuntimeCapabilities struct {
 	SemanticModelID                 string
 	SemanticDimensions              int
 	NeedleEnabled, NeedleLoaded     bool
-	NeedleModelPath                 string
+	NeedleModelPath, NeedleRuntime  string
 }

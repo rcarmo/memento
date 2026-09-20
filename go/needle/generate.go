@@ -11,8 +11,9 @@ import (
 
 // GenerationOptions mirrors the source's explicit generation bounds/mode.
 type GenerationOptions struct {
-	MaxGenerated, MaxEncoded int
-	Constrained              bool
+	MaxGenerated int  `json:"max_generated"`
+	MaxEncoded   int  `json:"max_encoded"`
+	Constrained  bool `json:"constrained"`
 }
 
 // DefaultGenerationOptions returns the pinned runtime's values.

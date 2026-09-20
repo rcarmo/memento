@@ -61,7 +61,7 @@ model-test:
 	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(GO) test ./gte -run TestRealGTEModel -count=1 -v
 	@test -n "$(NEEDLE_MODEL_PATH)" || (echo 'Set NEEDLE_MODEL_PATH to the digest-pinned NDL1 model'; exit 1)
 	@test -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Set NEEDLE_TOKENIZER_PATH to the pinned SentencePiece model'; exit 1)
-	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./needle -run 'TestRealNeedle(Model|Tokenizer|Generation)' -count=1 -v -timeout=10m
+	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./needle -run 'TestRealNeedle(Model|Tokenizer|Generation|MappedGeneration)' -count=1 -v -timeout=10m
 simd-test:
 	CGO_ENABLED=0 GOAMD64=v1 $(GO) build -o ../build/go/memento-simd-check ./cmd/memento-simd-check
 	GODEBUG=cpu.avx=off,cpu.avx2=off,cpu.fma=off ../build/go/memento-simd-check | grep -E '^arch=amd64 backend=sse2 sse2=true avx2_fma=false '
@@ -71,6 +71,8 @@ corpus-test:
 build:
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-go ./cmd/memento-go
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-embed-go ./cmd/memento-embed-go
+	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-needle-go ./cmd/memento-needle-go
+	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-needle-model-go ./cmd/memento-needle-model-go
 	CGO_ENABLED=0 $(GO) build -o ../build/go/memento-skill-import-go ./cmd/memento-skill-import-go
 race:
 	# The Go race detector needs cgo in the test toolchain, not the shipped runtime.
@@ -80,6 +82,8 @@ install: build
 	install -d "$(DESTDIR)$(PREFIX)/bin"
 	install -m 0755 ../build/go/memento-go "$(DESTDIR)$(PREFIX)/bin/memento-go"
 	install -m 0755 ../build/go/memento-embed-go "$(DESTDIR)$(PREFIX)/bin/memento-embed-go"
+	install -m 0755 ../build/go/memento-needle-go "$(DESTDIR)$(PREFIX)/bin/memento-needle-go"
+	install -m 0755 ../build/go/memento-needle-model-go "$(DESTDIR)$(PREFIX)/bin/memento-needle-model-go"
 	install -m 0755 ../build/go/memento-skill-import-go "$(DESTDIR)$(PREFIX)/bin/memento-skill-import-go"
 release:
 	GO="$(GO)" VERSION="$(VERSION)" ./tools/release.sh
@@ -91,6 +95,10 @@ cross: simd-test
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-go-linux-arm64 ./cmd/memento-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-embed-go-linux-amd64 ./cmd/memento-embed-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-embed-go-linux-arm64 ./cmd/memento-embed-go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-needle-go-linux-amd64 ./cmd/memento-needle-go
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-needle-go-linux-arm64 ./cmd/memento-needle-go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-needle-model-go-linux-amd64 ./cmd/memento-needle-model-go
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-needle-model-go-linux-arm64 ./cmd/memento-needle-model-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOAMD64=v1 $(GO) build -o ../build/go/memento-skill-import-go-linux-amd64 ./cmd/memento-skill-import-go
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build -o ../build/go/memento-skill-import-go-linux-arm64 ./cmd/memento-skill-import-go
 clean:

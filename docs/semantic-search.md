@@ -15,7 +15,7 @@ The `v1.0.0` image uses only:
 
 There is no Python, Rust, CGo, C ABI, native SQLite extension or external model runtime in the image.
 
-For low-memory NAS operation, `worker_mode: "subprocess"` invokes the static Go worker at `/usr/local/bin/memento-embed` once per request, then releases model memory when the process exits. `worker_mode: "in_process"` is available for separately qualified hosts that prefer lower latency and can retain the model in the daemon.
+For low-memory NAS operation, semantic `worker_mode: "subprocess"` invokes the static Go worker at `/usr/local/bin/memento-embed` once per request, then releases model memory when the process exits. Needle uses the same lifecycle with `/usr/local/bin/memento-needle-go`, but maps a release-generated FP32 sidecar read-only so it does not repeat NDL1 parsing or BF16 expansion. Explicit `worker_mode: "in_process"` remains available for diagnostics and separately qualified hosts.
 
 The old `ffi_library_path` and `sqlite_extension_path` fields remain accepted in schema-version-2 configuration so the production file can be mounted unchanged. Go does not load or require those paths. `MEMENTO_GTE_MODEL` remains a meaningful model-path override; `MEMENTO_SIMD` selects `auto`, `scalar`, `sse2`, `avx2` or `neon` where available.
 
@@ -79,4 +79,4 @@ make performance
 make go-container-contract MEMENTO_VERSION=1.0.0
 ```
 
-The performance gate enforces zero-allocation semantic scoring, tokenizer lookups and SIMD dot products; real GTE is capped at 2 allocations and 2,400 bytes per operation. Real Needle generation is capped at 900 allocations and 1.9 MB after immutable constraint caching and request-local encoder/decoder workspace reuse. The container gate verifies the pure-Go subprocess path under the DiskStation read-only/512 MiB contract, authenticated semantic readiness, and old-image -> Go -> old-image state compatibility. Wall-clock figures are recorded as evidence but not used as cross-runner CI gates.
+The performance gate enforces zero-allocation semantic scoring, tokenizer lookups and SIMD dot products; real GTE is capped at 2 allocations and 2,400 bytes per operation. In-process real Needle generation is capped at 400 allocations and 1.8 MB after immutable constraint caching, request-local workspace reuse and typed BPE queues. Mapped one-shot routing adds about 5--6 ms of setup on the measured amd64 host and completes in roughly 79--93 ms. The container gate verifies the pure-Go subprocess path under the DiskStation read-only/512 MiB contract, authenticated semantic readiness, and old-image -> Go -> old-image state compatibility. Wall-clock figures are recorded as evidence but not used as cross-runner CI gates.

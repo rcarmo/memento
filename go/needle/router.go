@@ -40,7 +40,9 @@ type Router struct {
 // NewRouter checks all model tensor names/shapes before inference. Invalid head
 // geometry fails cleanly rather than reproducing the source's division panic.
 func NewRouter(model *Model) (*Router, error) {
-	c := model.Config()
+	return newRouter(model.Config(), model.TensorFloat32)
+}
+func newRouter(c Config, tensor func(string, []uint32) ([]float32, error)) (*Router, error) {
 	if c.DModel == 0 || c.Heads == 0 || c.KVHeads == 0 || c.DModel%c.Heads != 0 || c.Heads%c.KVHeads != 0 || c.MaxSequence == 0 {
 		return nil, invalid("invalid attention geometry")
 	}
@@ -60,7 +62,7 @@ func NewRouter(model *Model) (*Router, error) {
 		if loadErr != nil {
 			return nil
 		}
-		v, err := model.TensorFloat32(name, shape)
+		v, err := tensor(name, shape)
 		if err != nil {
 			loadErr = err
 		}

@@ -150,7 +150,7 @@ func (c *ProposalControls) statusWithList(ctx context.Context, actor ProposalAct
 	}
 	var needleRuntime any = nil
 	if capabilities.NeedleLoaded {
-		needleRuntime = "go-scalar"
+		needleRuntime = capabilities.NeedleRuntime
 	}
 	needlePath := capabilities.NeedleModelPath
 	if needlePath == "" {

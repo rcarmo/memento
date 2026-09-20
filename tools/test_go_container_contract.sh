@@ -114,7 +114,24 @@ HTTP_CODE=$(curl -sS -o "$BODY" -w '%{http_code}' \
     --data '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"memory_status","arguments":{}}}' \
     "http://127.0.0.1:$PORT/mcp")
 test "$HTTP_CODE" = 200
-jq -e --arg version "$VERSION" '.result.structuredContent.data.service_version == $version' "$BODY" >/dev/null
+jq -e --arg version "$VERSION" '.result.structuredContent.data.service_version == $version and .result.structuredContent.data.readiness.needle_router.runtime == "go-mmap-subprocess"' "$BODY" >/dev/null
+
+# Exercise a real mapped Needle route. The worker must map the pre-expanded FP32
+# sidecar, return the same MCP payload, and exit before the idle memory sample.
+HTTP_CODE=$(curl -sS -o "$BODY" -w '%{http_code}' \
+    -H 'Authorization: Bearer contract-workspace-token' \
+    -H 'Content-Type: application/json' \
+    -H 'Mcp-Protocol-Version: 2025-03-26' \
+    -H "Mcp-Session-Id: $SESSION" \
+    --data '{"jsonrpc":"2.0","id":25,"method":"tools/call","params":{"name":"memory_route","arguments":{"request":"show status","execute":false}}}' \
+    "http://127.0.0.1:$PORT/mcp")
+test "$HTTP_CODE" = 200
+jq -e '.result.structuredContent.status == "success" and .result.structuredContent.data.action.action == "status_field"' "$BODY" >/dev/null
+sleep 1
+if docker top "$CONTAINER" | grep -q '[m]emento-needle'; then
+    echo "short-lived Needle worker remained resident" >&2
+    exit 1
+fi
 
 # Exercise real pure-Go query embedding through the configured short-lived
 # worker. An empty repository still requires model load, tokenization, inference,
@@ -141,18 +158,24 @@ test "$GRAPH_CODE" = 200
 grep -q '<!doctype html>' "$BODY"
 
 docker inspect "$CONTAINER" --format '{{.State.OOMKilled}} {{.RestartCount}}' | grep -q '^false 0$'
+DAEMON_PID=$(docker inspect "$CONTAINER" --format '{{.State.Pid}}')
+DAEMON_RSS_KIB=$(awk '/^VmRSS:/ {print $2}' "/proc/$DAEMON_PID/status")
 MEMORY_BYTES=$(docker stats --no-stream --format '{{.MemUsage}}' "$CONTAINER" | awk '{print $1}')
-python3 - "$MEMORY_BYTES" <<'PY'
+python3 - "$MEMORY_BYTES" "$DAEMON_RSS_KIB" <<'PY'
 import re, sys
 value=sys.argv[1]
+rss_kib=int(sys.argv[2])
 match=re.fullmatch(r'([0-9.]+)([KMG]iB)',value)
 if not match:
     raise SystemExit(f'unrecognised memory value: {value}')
 scale={'KiB':1/1024,'MiB':1,'GiB':1024}[match.group(2)]
 mib=float(match.group(1))*scale
+rss_mib=rss_kib/1024
 if mib > 500:
     raise SystemExit(f'idle container memory {mib:.1f} MiB exceeds 500 MiB budget')
-print(f'idle container memory: {mib:.1f} MiB')
+if rss_mib > 80:
+    raise SystemExit(f'idle daemon RSS {rss_mib:.1f} MiB exceeds 80 MiB budget')
+print(f'idle container memory: {mib:.1f} MiB; daemon RSS: {rss_mib:.1f} MiB')
 PY
 docker rm -f "$CONTAINER" >/dev/null
 

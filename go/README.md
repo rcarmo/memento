@@ -8,6 +8,8 @@ The module is the verified `v1.0.0` replacement on branch `go`; production deplo
 
 * `cmd/memento-go` runs the pure-Go service daemon and operational status, rebuild, audit, backup/restore, key-rotation and Dream commands. Model-backed modes require their configured provider slots and fail closed otherwise.
 * `cmd/memento-embed-go` exposes pure-Go GTE inference through Memento's framed embedding-worker protocol, using automatic AVX2/SSE2/NEON/scalar dispatch unless overridden.
+* `cmd/memento-needle-model-go` converts validated NDL1 weights into the deterministic mapped FP32 release sidecar.
+* `cmd/memento-needle-go` maps that sidecar read-only and serves one or more bounded framed routing requests.
 * `cmd/memento-skill-import-go` validates and atomically imports recalled skill packs into a workspace.
 
 Command packages contain process concerns only. Reusable code belongs in library packages.
@@ -42,6 +44,6 @@ make release-check VERSION=1.0.0 SOURCE_DATE_EPOCH=0
 make install DESTDIR=/tmp/package-root PREFIX=/usr/local
 ```
 
-Release archives contain static stripped `linux/amd64` (`GOAMD64=v1`) and `linux/arm64` binaries for all three commands, a version marker and a sorted SHA-256 manifest. `release-check` validates archive layout, architecture, absence of ELF dynamic dependencies, checksums and the native `version` smoke test. Fixed source epochs, sorted tar entries, numeric ownership, `-trimpath` and disabled VCS metadata make identical source/toolchain inputs byte-reproducible.
+Release archives contain static stripped `linux/amd64` (`GOAMD64=v1`) and `linux/arm64` binaries for all five commands, a version marker and a sorted SHA-256 manifest. `release-check` validates archive layout, architecture, absence of ELF dynamic dependencies, checksums and the native `version` smoke test. Fixed source epochs, sorted tar entries, numeric ownership, `-trimpath` and disabled VCS metadata make identical source/toolchain inputs byte-reproducible.
 
 `make quality` also verifies that every package containing production Go code exposes at least one fuzz target. The root and nested uMCP modules currently provide 54 targets and the audit runs each for 10,000 deterministic executions. `make layout-check` verifies module tidiness, package discovery, command placement and that no Go source leaks into the module root. Repository-level model, performance, container and release gates remain mandatory for release work.

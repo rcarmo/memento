@@ -2,9 +2,9 @@
 
 **Status:** accepted, implemented behind an opt-in flag
 **Date:** 2026-07-18
-**Amended:** 2026-09-19
+**Amended:** 2026-09-20
 
-> The accepted shallow-routing boundary is unchanged in `v1.0.0`; the shipped runtime is now the pure-Go NDL1/SentencePiece implementation. Rust C ABI and Python wrapper details below are retained as historical acceptance evidence.
+> The accepted shallow-routing boundary is unchanged in `v1.0.0`; the shipped runtime is now the pure-Go NDL1/SentencePiece implementation. Release builds create a deterministic FP32 sidecar, and production routing uses a short-lived Go subprocess with read-only mapped weights. Rust C ABI and Python wrapper details below are retained as historical acceptance evidence.
 
 ## Question
 
@@ -16,7 +16,7 @@ Memento uses the fine-tuned Needle checkpoint only as an optional, embedded shal
 
 Memento keeps its deterministic core, GTE-small retrieval and existing optional model-provider boundary unchanged. Needle can classify six shallow actions, but it cannot author mutations, authoritative paths or nested `memory_execute` plans. Every model result crosses strict schema validation and ordinary service authorisation; invalid output and `UNKNOWN` abstain without invoking an operation.
 
-The first idea -- having Needle route and emit bounded full `memory_execute` plans directly -- did not clear the bar. The later shallow-router design did. It was first accepted through a dependency-light Rust NDL1 runtime and now ships through the pure-Go NDL1/SentencePiece runtime. Proposal and Dream drafting remain outside this decision.
+The first idea -- having Needle route and emit bounded full `memory_execute` plans directly -- did not clear the bar. The later shallow-router design did. It was first accepted through a dependency-light Rust NDL1 runtime and now ships through a static pure-Go worker. A release-time converter validates NDL1 once and writes architecture-independent little-endian FP32 tensors; each request maps those tensors read-only, generates one framed result and exits. This retains SIMD throughput while moving model pages from the daemon heap into reclaimable page cache. Explicit in-process NDL1 loading remains a diagnostic/parity mode. Proposal and Dream drafting remain outside this decision.
 
 ## What was tested
 

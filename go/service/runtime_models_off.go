@@ -59,9 +59,9 @@ type modelsOffBuildOps struct {
 	loadNeedleModel      func(string) (*needle.Model, error)
 	loadNeedleTokenizer  func(string) (*needle.Tokenizer, error)
 	newNeedleRouter      func(*needle.Model) (*needle.Router, error)
-	buildRoute           func(NeedleRouterConfig) (RouteInference, *needle.Tokenizer, error)
-	registerRoute        func(*Jobs, *umcp.Server, string, execute.Limits, RouteInference, *needle.Tokenizer) error
-	registerConfigured   func(context.Context, *Runtime, *Jobs, *umcp.Server, ModelsOffRuntimeOptions, RouteInference, *needle.Tokenizer) error
+	buildRoute           func(NeedleRouterConfig) (NeedleRouteInference, error)
+	registerRoute        func(*Jobs, *umcp.Server, string, execute.Limits, NeedleRouteInference) error
+	registerConfigured   func(context.Context, *Runtime, *Jobs, *umcp.Server, ModelsOffRuntimeOptions, NeedleRouteInference) error
 	loadSemantic         func(string, string, int, int, int) (*GTESemanticClient, error)
 	buildSemantic        func(SemanticSearchConfig) (derived.SemanticClient, error)
 	newSemanticWorker    func(derived.SemanticRefreshIndex, derived.SemanticClient, derived.SemanticRefreshConfig) *derived.SemanticWorker
@@ -77,11 +77,11 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 		return j.RegisterModelsOffServer(s, surface, limits, nil)
 	}, access.OpenStore, func(ctx context.Context, s *access.Store, p []access.ConfiguredPrincipal, t map[string]string) error {
 		return s.Bootstrap(ctx, p, t)
-	}, os.LookupEnv, func(j *Jobs, s *umcp.Server) error { return j.RegisterAccessTools(s) }, needle.Load, needle.LoadTokenizer, needle.NewRouter, nil, func(j *Jobs, s *umcp.Server, surface string, limits execute.Limits, inference RouteInference, tokenizer *needle.Tokenizer) error {
+	}, os.LookupEnv, func(j *Jobs, s *umcp.Server) error { return j.RegisterAccessTools(s) }, needle.Load, needle.LoadTokenizer, needle.NewRouter, nil, func(j *Jobs, s *umcp.Server, surface string, limits execute.Limits, inference NeedleRouteInference) error {
 		catalog, _ := NewCatalog(CatalogConfig{Surface: surface, RouteEnabled: true})
 		endpoint, _ := NewExecuteEndpoint(j, catalog, limits)
-		return (RouteEndpoint{Jobs: j, Router: inference, Tokenizer: tokenizer, Execute: endpoint}).Register(s)
-	}, func(ctx context.Context, runtime *Runtime, jobs *Jobs, server *umcp.Server, options ModelsOffRuntimeOptions, inference RouteInference, tokenizer *needle.Tokenizer) error {
+		return (RouteEndpoint{Jobs: j, Router: inference, Execute: endpoint}).Register(s)
+	}, func(ctx context.Context, runtime *Runtime, jobs *Jobs, server *umcp.Server, options ModelsOffRuntimeOptions, inference NeedleRouteInference) error {
 		answers := AnswerStore{DB: runtime.DB}
 		if err := answers.Migrate(ctx); err != nil {
 			return err
@@ -97,7 +97,7 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 		}
 		answer := &AnswerEndpoint{Jobs: jobs, Client: options.ModelClient, Store: answers, Deep: options.DeepAnswers, Cache: options.ExactCache, Hot: options.HotMemory}
 		proposals := &ModelProposalEndpoint{Jobs: jobs, Client: options.ModelClient, Config: options.ModelProposals, Timeout: time.Duration(options.DeepAnswers.Limits.MaxTimeSeconds * float64(time.Second))}
-		route := RouteEndpoint{Jobs: jobs, Router: inference, Tokenizer: tokenizer, Execute: executeEndpoint}
+		route := RouteEndpoint{Jobs: jobs, Router: inference, Execute: executeEndpoint}
 		return jobs.RegisterConfiguredServer(server, ConfiguredServerOptions{Catalog: catalogConfig, Limits: options.Limits, ModelHandlers: map[string]CatalogHandler{"memory_answer": answer.Call, "memory_route": route.Call, "memory_propose_freeform": proposals.Freeform, "memory_propose_update": proposals.Update}})
 	}, LoadGTESemanticClient, nil, derived.NewSemanticWorker, derived.NewProgressiveSemanticWorker}
 }
@@ -228,7 +228,11 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	if options.Needle.Enabled {
 		metadata.Catalog, _ = NewCatalog(CatalogConfig{Surface: options.Surface, RouteEnabled: true})
 	}
-	capabilities := RuntimeCapabilities{SemanticEnabled: options.Semantic.Enabled, SemanticModelID: options.Semantic.ModelID, SemanticDimensions: options.Semantic.Dimensions, NeedleEnabled: options.Needle.Enabled, NeedleModelPath: options.Needle.ModelPath}
+	needlePath, needleRuntime := options.Needle.ModelPath, "go-scalar"
+	if options.Needle.WorkerMode == "subprocess" {
+		needlePath, needleRuntime = options.Needle.FP32ModelPath, "go-mmap-subprocess"
+	}
+	capabilities := RuntimeCapabilities{SemanticEnabled: options.Semantic.Enabled, SemanticModelID: options.Semantic.ModelID, SemanticDimensions: options.Semantic.Dimensions, NeedleEnabled: options.Needle.Enabled, NeedleModelPath: needlePath, NeedleRuntime: needleRuntime}
 	controls := &ProposalControls{Queue: ProposalQueue{Proposals: control.Proposals{DB: runtime.DB}, Paths: paths.Repository}, Random: rand.Reader, DerivedIndexPath: paths.DerivedDB, Staging: staging, MaxConceptBytes: config.Limits.MaxConceptBytes, Index: index, DefaultSearchMode: "lexical", Metadata: metadata, RuntimeCapabilities: capabilities, DerivedUpdate: manager.DerivedUpdate}
 	jobs := &Jobs{Controls: controls, Identity: identity, DBPath: paths.ControlDB}
 	if options.Semantic.Enabled && options.SemanticWorker == nil {
@@ -275,48 +279,46 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 			return nil, nil, err
 		}
 	}
-	var routeInference RouteInference
-	var routeTokenizer *needle.Tokenizer
+	var routeInference NeedleRouteInference
 	if options.Needle.Enabled {
 		resolved := options.Needle.Resolved(ops.lookupEnv)
-		var tokenizer *needle.Tokenizer
 		var loadErr error
 		if ops.buildRoute != nil {
-			routeInference, tokenizer, loadErr = ops.buildRoute(resolved)
-			if loadErr != nil {
-				return nil, nil, loadErr
-			}
+			routeInference, loadErr = ops.buildRoute(resolved)
+		} else if resolved.WorkerMode == "subprocess" {
+			routeInference, loadErr = LoadSubprocessNeedleClient(resolved)
 		} else {
 			model, modelErr := ops.loadNeedleModel(resolved.ModelPath)
 			loadErr = modelErr
-			if loadErr != nil {
-				return nil, nil, loadErr
-			}
-			tokenizer, loadErr = ops.loadNeedleTokenizer(resolved.TokenizerPath)
-			if loadErr != nil {
-				return nil, nil, loadErr
-			}
-			router, loadErr := ops.newNeedleRouter(model)
-			if loadErr != nil {
-				return nil, nil, loadErr
-			}
-			if value, _ := ops.lookupEnv("MEMENTO_SIMD"); strings.TrimSpace(value) != "" {
-				if loadErr = router.SetSIMD(value); loadErr != nil {
-					return nil, nil, loadErr
+			if loadErr == nil {
+				var tokenizer *needle.Tokenizer
+				tokenizer, loadErr = ops.loadNeedleTokenizer(resolved.TokenizerPath)
+				if loadErr == nil {
+					var router *needle.Router
+					router, loadErr = ops.newNeedleRouter(model)
+					if loadErr == nil {
+						if value, _ := ops.lookupEnv("MEMENTO_SIMD"); strings.TrimSpace(value) != "" {
+							loadErr = router.SetSIMD(value)
+						}
+						if loadErr == nil {
+							routeInference = inProcessNeedleClient{Router: router, Tokenizer: tokenizer}
+						}
+					}
 				}
 			}
-			routeInference = router
+		}
+		if loadErr != nil {
+			return nil, nil, loadErr
 		}
 		controls.RuntimeCapabilities.NeedleLoaded = true
-		routeTokenizer = tokenizer
 		if !configured {
-			if err = ops.registerRoute(jobs, server, options.Surface, options.Limits, routeInference, tokenizer); err != nil {
+			if err = ops.registerRoute(jobs, server, options.Surface, options.Limits, routeInference); err != nil {
 				return nil, nil, err
 			}
 		}
 	}
 	if configured {
-		if err = ops.registerConfigured(ctx, runtime, jobs, server, options, routeInference, routeTokenizer); err != nil {
+		if err = ops.registerConfigured(ctx, runtime, jobs, server, options, routeInference); err != nil {
 			return nil, nil, err
 		}
 	}

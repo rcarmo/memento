@@ -31,7 +31,7 @@ func TestRuntimeCapabilitiesStatus(t *testing.T) {
 	controls.Metadata, _ = NewModelsOffMetadata("standard")
 	revision, _ := repository.GetMainRevision(controls.Queue.Paths)
 	controls.Index = capabilityIndex{embedding: revision}
-	controls.RuntimeCapabilities = RuntimeCapabilities{SemanticEnabled: true, SemanticLoaded: true, SemanticModelID: "m", SemanticDimensions: 2, NeedleEnabled: true, NeedleLoaded: true, NeedleModelPath: "/needle"}
+	controls.RuntimeCapabilities = RuntimeCapabilities{SemanticEnabled: true, SemanticLoaded: true, SemanticModelID: "m", SemanticDimensions: 2, NeedleEnabled: true, NeedleLoaded: true, NeedleModelPath: "/needle", NeedleRuntime: "go-mmap-subprocess"}
 	data, _, err := controls.Status(context.Background(), ProposalActor{Policy: access.EffectivePolicy{Principal: "actor", ReadPrefixes: []string{"/"}}})
 	if err != nil {
 		t.Fatal(err)
@@ -40,7 +40,7 @@ func TestRuntimeCapabilitiesStatus(t *testing.T) {
 	readiness := data["readiness"].(map[string]any)
 	semantic := readiness["semantic_search"].(map[string]any)
 	needle := readiness["needle_router"].(map[string]any)
-	if features["semantic_search"] != true || features["needle_router"] != true || semantic["ready"] != true || semantic["model_id"] != "m" || needle["runtime"] != "go-scalar" || needle["model_path"] != "/needle" {
+	if features["semantic_search"] != true || features["needle_router"] != true || semantic["ready"] != true || semantic["model_id"] != "m" || needle["runtime"] != "go-mmap-subprocess" || needle["model_path"] != "/needle" {
 		t.Fatal(data)
 	}
 	controls.Index = capabilityIndex{embedding: "partial"}

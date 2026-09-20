@@ -20,19 +20,19 @@ func TestDefaultConfiguredRegistrationFailures(t *testing.T) {
 	closed, _ := answerStoreTest(t)
 	_ = closed.DB.Close()
 	runtime.DB = closed.DB
-	if err := ops.registerConfigured(ctx, runtime, jobs, server, options, nil, nil); err == nil {
+	if err := ops.registerConfigured(ctx, runtime, jobs, server, options, nil); err == nil {
 		t.Fatal("migrate")
 	}
 	runtime.DB = jobs.Controls.Queue.Proposals.DB
 	options.Surface = "bad"
-	if err := ops.registerConfigured(ctx, runtime, jobs, umcp.NewServer("x"), options, nil, nil); err == nil {
+	if err := ops.registerConfigured(ctx, runtime, jobs, umcp.NewServer("x"), options, nil); err == nil {
 		t.Fatal("catalog")
 	}
 	options.Surface = "standard"
 	old := executeFactory
 	t.Cleanup(func() { executeFactory = old })
 	executeFactory = func(execute.Limits) (*execute.Factory, error) { return nil, errors.New("endpoint") }
-	if err := ops.registerConfigured(ctx, runtime, jobs, umcp.NewServer(filepath.Base(t.TempDir())), options, nil, nil); err == nil {
+	if err := ops.registerConfigured(ctx, runtime, jobs, umcp.NewServer(filepath.Base(t.TempDir())), options, nil); err == nil {
 		t.Fatal("endpoint")
 	}
 }

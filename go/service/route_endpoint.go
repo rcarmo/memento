@@ -14,13 +14,9 @@ import (
 
 const CanonicalShallowToolsJSON = `[{"name":"search_then_read","description":"Search for the best matching concept, then read it.","parameters":{"query":{"type":"string","required":true},"search_mode":{"type":"string","required":false}}},{"name":"search_paths","description":"Search concepts and return matching paths.","parameters":{"query":{"type":"string","required":true},"limit":{"type":"number","required":false},"search_mode":{"type":"string","required":false}}},{"name":"status_field","description":"Return one service status field.","parameters":{"field":{"type":"string","required":true}}},{"name":"search_then_graph","description":"Search for a concept, then inspect its graph neighborhood.","parameters":{"query":{"type":"string","required":true},"depth":{"type":"number","required":false},"search_mode":{"type":"string","required":false}}},{"name":"read_field","description":"Read an exact path or concept id and return one field.","parameters":{"id_or_path":{"type":"string","required":true},"field":{"type":"string","required":true}}},{"name":"UNKNOWN","description":"Use for unsupported, unsafe, ambiguous, external or insufficiently identified requests.","parameters":{}}]`
 
-type RouteInference interface {
-	Generate(*needle.Tokenizer, string, string, needle.GenerationOptions, needle.Checkpoint) (string, error)
-}
 type RouteEndpoint struct {
 	Jobs       *Jobs
-	Router     RouteInference
-	Tokenizer  *needle.Tokenizer
+	Router     NeedleRouteInference
 	Execute    *ExecuteEndpoint
 	dispatchFn func(context.Context, map[string]any) (any, error)
 	adaptFn    func(any, *RouteProjection) (map[string]any, SuccessOptions, error)
@@ -46,14 +42,14 @@ func (e RouteEndpoint) Call(ctx context.Context, args map[string]any) (any, erro
 	if utf8.RuneCountInString(request) > 200 {
 		return e.failure(errors.New("request must be at most 200 characters"))
 	}
-	if e.Router == nil || e.Tokenizer == nil {
+	if e.Router == nil {
 		return e.failure(errors.New("needle router is not loaded"))
 	}
 	if _, err := e.Jobs.Identity.Context(ctx); err != nil {
 		return nil, err
 	}
 	generated, err := e.Jobs.Workers.Call(ctx, "memory_route", func(work context.Context) (any, error) {
-		return e.Router.Generate(e.Tokenizer, request, CanonicalShallowToolsJSON, needle.DefaultGenerationOptions(), func(string) error { return work.Err() })
+		return e.Router.Generate(work, request, CanonicalShallowToolsJSON, needle.DefaultGenerationOptions())
 	})
 	if err != nil {
 		return nil, err

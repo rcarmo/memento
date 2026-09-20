@@ -175,7 +175,7 @@ func (r *Runtime) statusSnapshot(ctx context.Context, schemaVersion int, ops run
 	}
 	var needleRuntime any = nil
 	if capabilities.NeedleLoaded {
-		needleRuntime = "go-scalar"
+		needleRuntime = capabilities.NeedleRuntime
 	}
 	r.mu.Lock()
 	closed := r.closed

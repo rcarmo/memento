@@ -87,10 +87,12 @@ func TestBuildModelsOffComponentFailures(t *testing.T) {
 			case "needle-model":
 				options.Needle = DefaultNeedleRouterConfig()
 				options.Needle.Enabled = true
+				options.Needle.WorkerMode = "in_process"
 				ops.loadNeedleModel = func(string) (*needle.Model, error) { return nil, boom }
 			case "needle-tokenizer":
 				options.Needle = DefaultNeedleRouterConfig()
 				options.Needle.Enabled = true
+				options.Needle.WorkerMode = "in_process"
 				ops.loadNeedleModel = func(string) (*needle.Model, error) { return &needle.Model{}, nil }
 				ops.loadNeedleTokenizer = func(string) (*needle.Tokenizer, error) { return nil, boom }
 			case "semantic-load":
@@ -108,19 +110,16 @@ func TestBuildModelsOffComponentFailures(t *testing.T) {
 			case "needle-register":
 				options.Needle = DefaultNeedleRouterConfig()
 				options.Needle.Enabled = true
-				ops.buildRoute = func(NeedleRouterConfig) (RouteInference, *needle.Tokenizer, error) {
-					return &routeInferenceStub{}, &needle.Tokenizer{}, nil
-				}
-				ops.registerRoute = func(*Jobs, *umcp.Server, string, execute.Limits, RouteInference, *needle.Tokenizer) error {
-					return boom
-				}
+				ops.buildRoute = func(NeedleRouterConfig) (NeedleRouteInference, error) { return &routeInferenceStub{}, nil }
+				ops.registerRoute = func(*Jobs, *umcp.Server, string, execute.Limits, NeedleRouteInference) error { return boom }
 			case "needle-build":
 				options.Needle = DefaultNeedleRouterConfig()
 				options.Needle.Enabled = true
-				ops.buildRoute = func(NeedleRouterConfig) (RouteInference, *needle.Tokenizer, error) { return nil, nil, boom }
+				ops.buildRoute = func(NeedleRouterConfig) (NeedleRouteInference, error) { return nil, boom }
 			case "needle-router":
 				options.Needle = DefaultNeedleRouterConfig()
 				options.Needle.Enabled = true
+				options.Needle.WorkerMode = "in_process"
 				ops.newNeedleRouter = func(*needle.Model) (*needle.Router, error) { return nil, boom }
 				ops.loadNeedleTokenizer = func(string) (*needle.Tokenizer, error) { return &needle.Tokenizer{}, nil }
 				ops.loadNeedleModel = func(string) (*needle.Model, error) { return &needle.Model{}, nil }
@@ -128,7 +127,7 @@ func TestBuildModelsOffComponentFailures(t *testing.T) {
 				options.DeepAnswers = DefaultDeepAnswersConfig()
 				options.DeepAnswers.Enabled = true
 				options.ModelClient = &stubModelClient{}
-				ops.registerConfigured = func(context.Context, *Runtime, *Jobs, *umcp.Server, ModelsOffRuntimeOptions, RouteInference, *needle.Tokenizer) error {
+				ops.registerConfigured = func(context.Context, *Runtime, *Jobs, *umcp.Server, ModelsOffRuntimeOptions, NeedleRouteInference) error {
 					return boom
 				}
 			case "access-register":

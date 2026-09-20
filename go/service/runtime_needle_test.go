@@ -17,13 +17,14 @@ func TestBuildNeedleRealConstructionBoundaries(t *testing.T) {
 	config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
 	options := ModelsOffRuntimeOptions{Surface: "compact", Tokens: []BearerPrincipal{}, Needle: DefaultNeedleRouterConfig()}
 	options.Needle.Enabled = true
+	options.Needle.WorkerMode = "in_process"
 	ops := defaultModelsOffBuildOps()
 	ops.loadNeedleModel = func(string) (*needle.Model, error) { return &needle.Model{}, nil }
 	ops.loadNeedleTokenizer = func(string) (*needle.Tokenizer, error) { return &needle.Tokenizer{}, nil }
 	ops.newNeedleRouter = func(*needle.Model) (*needle.Router, error) { return &needle.Router{}, nil }
 	called := false
-	ops.registerRoute = func(_ *Jobs, _ *umcp.Server, _ string, _ execute.Limits, inference RouteInference, tokenizer *needle.Tokenizer) error {
-		called = inference != nil && tokenizer != nil
+	ops.registerRoute = func(_ *Jobs, _ *umcp.Server, _ string, _ execute.Limits, inference NeedleRouteInference) error {
+		called = inference != nil
 		return nil
 	}
 	runtime, _, err := buildModelsOffRuntime(ctx, config, options, ops)
@@ -44,6 +45,7 @@ func TestBuildNeedleSIMDConfiguration(t *testing.T) {
 			config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
 			options := ModelsOffRuntimeOptions{Surface: "compact", Tokens: []BearerPrincipal{}, Needle: DefaultNeedleRouterConfig()}
 			options.Needle.Enabled = true
+			options.Needle.WorkerMode = "in_process"
 			ops := defaultModelsOffBuildOps()
 			ops.loadNeedleModel = func(string) (*needle.Model, error) { return &needle.Model{}, nil }
 			ops.loadNeedleTokenizer = func(string) (*needle.Tokenizer, error) { return &needle.Tokenizer{}, nil }
@@ -54,7 +56,7 @@ func TestBuildNeedleSIMDConfiguration(t *testing.T) {
 				}
 				return "", false
 			}
-			ops.registerRoute = func(*Jobs, *umcp.Server, string, execute.Limits, RouteInference, *needle.Tokenizer) error { return nil }
+			ops.registerRoute = func(*Jobs, *umcp.Server, string, execute.Limits, NeedleRouteInference) error { return nil }
 			runtime, _, err := buildModelsOffRuntime(ctx, config, options, ops)
 			if runtime != nil {
 				_ = runtime.Close(ctx)
@@ -65,6 +67,27 @@ func TestBuildNeedleSIMDConfiguration(t *testing.T) {
 		})
 	}
 }
+func TestBuildNeedleSubprocessBoundary(t *testing.T) {
+	ctx := context.Background()
+	var config RuntimeConfig
+	config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
+	options := ModelsOffRuntimeOptions{Surface: "compact", Tokens: []BearerPrincipal{}, Needle: DefaultNeedleRouterConfig()}
+	options.Needle.Enabled = true
+	path, _, _ := preparedNeedleSidecar(t)
+	options.Needle.FP32ModelPath = path
+	ops := defaultModelsOffBuildOps()
+	called := false
+	ops.registerRoute = func(_ *Jobs, _ *umcp.Server, _ string, _ execute.Limits, inference NeedleRouteInference) error {
+		called = inference != nil
+		return nil
+	}
+	runtime, _, err := buildModelsOffRuntime(ctx, config, options, ops)
+	if err != nil || !called {
+		t.Fatal(runtime, called, err)
+	}
+	_ = runtime.Close(ctx)
+}
+
 func TestBuildNeedleEnabledRuntime(t *testing.T) {
 	ctx := context.Background()
 	var config RuntimeConfig
@@ -74,11 +97,11 @@ func TestBuildNeedleEnabledRuntime(t *testing.T) {
 	options.Needle.Enabled = true
 	ops := defaultModelsOffBuildOps()
 	stub := &routeInferenceStub{output: `[{"name":"UNKNOWN","arguments":{}}]`}
-	ops.buildRoute = func(c NeedleRouterConfig) (RouteInference, *needle.Tokenizer, error) {
+	ops.buildRoute = func(c NeedleRouterConfig) (NeedleRouteInference, error) {
 		if c.ModelPath != options.Needle.ModelPath {
 			t.Fatal(c)
 		}
-		return stub, &needle.Tokenizer{}, nil
+		return stub, nil
 	}
 	runtime, server, err := buildModelsOffRuntime(ctx, config, options, ops)
 	if err != nil {

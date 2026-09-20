@@ -184,7 +184,7 @@ func TestRuntimeStatusSnapshotEnabled(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	runtime.Jobs.Controls.RuntimeCapabilities = RuntimeCapabilities{SemanticEnabled: true, SemanticLoaded: true, SemanticModelID: "m", SemanticDimensions: 2, NeedleEnabled: true, NeedleLoaded: true, NeedleModelPath: "/n"}
+	runtime.Jobs.Controls.RuntimeCapabilities = RuntimeCapabilities{SemanticEnabled: true, SemanticLoaded: true, SemanticModelID: "m", SemanticDimensions: 2, NeedleEnabled: true, NeedleLoaded: true, NeedleModelPath: "/n", NeedleRuntime: "go-mmap-subprocess"}
 	runtime.SemanticWorker = derived.NewSemanticWorker(nil, nil, derived.SemanticRefreshConfig{})
 	snapshot, err := runtime.StatusSnapshot(ctx, 2)
 	if err != nil {
@@ -192,7 +192,7 @@ func TestRuntimeStatusSnapshotEnabled(t *testing.T) {
 	}
 	semantic := snapshot["semantic_search"].(map[string]any)
 	needle := snapshot["needle_router"].(map[string]any)
-	if semantic["model_id"] != "m" || semantic["dimensions"] != 2 || semantic["worker"] == nil || needle["runtime"] != "go-scalar" {
+	if semantic["model_id"] != "m" || semantic["dimensions"] != 2 || semantic["worker"] == nil || needle["runtime"] != "go-mmap-subprocess" {
 		t.Fatal(snapshot)
 	}
 	runtime.SemanticWorker.Close()

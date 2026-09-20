@@ -17,12 +17,10 @@ type routeInferenceStub struct {
 	query, tools string
 }
 
-func (s *routeInferenceStub) Generate(_ *needle.Tokenizer, query, tools string, _ needle.GenerationOptions, cp needle.Checkpoint) (string, error) {
+func (s *routeInferenceStub) Generate(ctx context.Context, query, tools string, _ needle.GenerationOptions) (string, error) {
 	s.query, s.tools = query, tools
-	if cp != nil {
-		if err := cp("test"); err != nil {
-			return "", err
-		}
+	if err := ctx.Err(); err != nil {
+		return "", err
 	}
 	return s.output, s.err
 }
@@ -31,7 +29,7 @@ func routeEndpointTest(t *testing.T, output string) (RouteEndpoint, *routeInfere
 	jobs, _ := jobsTest(t)
 	jobs.Controls.Metadata, _ = NewModelsOffMetadata("standard")
 	stub := &routeInferenceStub{output: output}
-	return RouteEndpoint{Jobs: jobs, Router: stub, Tokenizer: &needle.Tokenizer{}}, stub
+	return RouteEndpoint{Jobs: jobs, Router: stub}, stub
 }
 func routeCall(t *testing.T, endpoint RouteEndpoint, args map[string]any) (*umcp.Response, error) {
 	t.Helper()

@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -35,6 +36,43 @@ func BenchmarkRealNeedleGenerate(b *testing.B) {
 	for range b.N {
 		if _, err = router.Generate(tokenizer, "show status", tools, DefaultGenerationOptions(), nil); err != nil {
 			b.Fatal(err)
+		}
+	}
+}
+
+func TestRealNeedleMappedGeneration(t *testing.T) {
+	path, tokenizerPath := os.Getenv("NEEDLE_MODEL_PATH"), os.Getenv("NEEDLE_TOKENIZER_PATH")
+	if path == "" || tokenizerPath == "" {
+		t.Skip("set pinned model/tokenizer paths")
+	}
+	destination := filepath.Join(t.TempDir(), "memento-router.nfp32")
+	if err := PrepareFP32(path, destination); err != nil {
+		t.Fatal(err)
+	}
+	router, err := LoadMappedRouter(destination)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer router.Close()
+	tokenizer, err := LoadTokenizer(tokenizerPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile("../testdata/parity/needle-generation.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var ref struct {
+		Tools string `json:"tools_json"`
+		Cases []struct{ Query, Output string }
+	}
+	if err = json.Unmarshal(raw, &ref); err != nil {
+		t.Fatal(err)
+	}
+	for _, fixture := range ref.Cases {
+		got, generateErr := router.Generate(tokenizer, fixture.Query, ref.Tools, DefaultGenerationOptions(), nil)
+		if generateErr != nil || got != fixture.Output {
+			t.Fatalf("%q: got %q (%v), want %q", fixture.Query, got, generateErr, fixture.Output)
 		}
 	}
 }
@@ -165,14 +203,15 @@ func TestRealNeedleCorpus(t *testing.T) {
 	if hex.EncodeToString(hash[:]) != ref.ModelSHA {
 		t.Fatal("wrong model")
 	}
-	model, err := FromBytes(data)
+	sidecar := filepath.Join(t.TempDir(), "memento-router.nfp32")
+	if err = PrepareFP32(path, sidecar); err != nil {
+		t.Fatal(err)
+	}
+	router, err := LoadMappedRouter(sidecar)
 	if err != nil {
 		t.Fatal(err)
 	}
-	router, err := NewRouter(model)
-	if err != nil {
-		t.Fatal(err)
-	}
+	defer router.Close()
 	tokenizer, err := LoadTokenizer(tokenizerPath)
 	if err != nil {
 		t.Fatal(err)
