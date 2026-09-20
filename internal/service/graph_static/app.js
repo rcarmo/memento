@@ -110,6 +110,8 @@ function principalDetail(principal) {
 function App() {
   const canvas = useRef(null);
   const selectNodeRef = useRef(null);
+  const selectionRequest = useRef(0);
+  const selectionAbort = useRef(null);
   const [includeTrash, setIncludeTrash] = useState(false);
   const scene = useRef(null);
   const exportDialog = useRef(null);
@@ -210,11 +212,17 @@ function App() {
 
   selectNodeRef.current = selectNode;
   async function selectNode(node) {
+    const request = ++selectionRequest.current;
+    selectionAbort.current?.abort();
+    const controller = new AbortController();
+    selectionAbort.current = controller;
     setSelected(node);
+    setDetail({ node, loading: true });
     scene.current?.focus(node);
     try {
       if (node.member_count) {
-        const { payload } = await graphApi.cluster(node.id);
+        const { payload } = await graphApi.cluster(node.id, { signal: controller.signal });
+        if (request !== selectionRequest.current) return;
         const expanded = {
           ...graphRef.current,
           mode: "direct",
@@ -226,11 +234,14 @@ function App() {
         draw(expanded);
         setDetail({ cluster: true, ...payload });
       } else {
-        const { payload } = await graphApi.detail(node.id);
+        const { payload } = await graphApi.detail(node.id, { signal: controller.signal });
+        if (request !== selectionRequest.current) return;
         setDetail(payload);
       }
     } catch (e) {
-      setError(e.message);
+      if (e.name !== "AbortError" && request === selectionRequest.current) setError(e.message);
+    } finally {
+      if (request === selectionRequest.current) selectionAbort.current = null;
     }
   }
 
@@ -333,6 +344,9 @@ function App() {
 
   async function changeView(name) {
     const next = typeof name === "string" ? name.trim() : "";
+    selectionRequest.current += 1;
+    selectionAbort.current?.abort();
+    selectionAbort.current = null;
     setSelected(null);
     setDetail(null);
     setQuery("");
@@ -818,9 +832,10 @@ function Inspector({ detail, selected, semanticEdges, referenceNodes = [], onTag
     ),
     detail.preview && h("pre", { class: "preview" }, detail.preview),
     node.path?.startsWith("/trash/") && h("p", {}, "Trashed. Restore or permanently delete through authenticated memory tools. Git history is retained."),
+    detail.loading && h("p", { class: "selection-detail", "data-testid": "inspector-loading" }, "Loading relationships, assets and proposals…"),
     members,
     h("h3", {}, "Explicit links"),
-    h("p", {}, `${inbound?.length || 0} inbound / ${outbound?.length || 0} outbound`),
+    detail.loading ? h("p", {}, "Loading…") : h("p", {}, `${inbound?.length || 0} inbound / ${outbound?.length || 0} outbound`),
     h("div", { class: "link-lists" }, [
       inbound?.length
         ? h("div", {}, [
@@ -851,8 +866,12 @@ function Inspector({ detail, selected, semanticEdges, referenceNodes = [], onTag
         )
       : h("p", {}, "No semantic neighbours above the current threshold."),
     h("h3", {}, "Assets / proposals"),
-    detail.assets?.length ? h("ul", {}, detail.assets.map(assetLine)) : h("p", {}, "No assets."),
-    detail.proposals?.length ? h("ul", {}, detail.proposals.map(proposalLine)) : h("p", {}, "No proposals."),
+    detail.loading
+      ? h("p", {}, "Loading…")
+      : detail.assets?.length ? h("ul", {}, detail.assets.map(assetLine)) : h("p", {}, "No assets."),
+    detail.loading
+      ? null
+      : detail.proposals?.length ? h("ul", {}, detail.proposals.map(proposalLine)) : h("p", {}, "No proposals."),
   ]);
 }
 

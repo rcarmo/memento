@@ -24,6 +24,17 @@ func TestGraphStaticAssets(t *testing.T) {
 			t.Fatal(name, response)
 		}
 	}
+	app := string(graphStaticResponse("app.js", "/graph").Body)
+	for _, required := range []string{
+		"setDetail({ node, loading: true })",
+		"selectionAbort.current?.abort()",
+		"request !== selectionRequest.current",
+		`data-testid": "inspector-loading"`,
+	} {
+		if !strings.Contains(app, required) {
+			t.Fatal("missing optimistic inspector behavior", required)
+		}
+	}
 }
 func TestGraphHTTPStatic(t *testing.T) {
 	h := graphHandler(&graphSnapshotsStub{})

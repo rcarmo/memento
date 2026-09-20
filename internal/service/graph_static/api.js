@@ -54,10 +54,10 @@ export const graphApi = {
     simulatedPrincipal = typeof name === "string" ? name.trim() : "";
   },
   overview: () => request("/overview"),
-  detail: (id) => request(`/memories/${encodeURIComponent(id)}`),
+  detail: (id, options = {}) => request(`/memories/${encodeURIComponent(id)}`, options),
   neighbourhood: (id) => request(`/neighbourhood/${encodeURIComponent(id)}`),
   search: (query) => request("/search", { method: "POST", body: JSON.stringify({ query }) }),
-  cluster: (id) => request(`/clusters/${encodeURIComponent(id)}`),
+  cluster: (id, options = {}) => request(`/clusters/${encodeURIComponent(id)}`, options),
   refreshStatus: () => request("/embeddings/status"),
   refresh: (scope, conceptIds = [], confirmFull = false) =>
     request("/embeddings/refresh", {

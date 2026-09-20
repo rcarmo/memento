@@ -55,7 +55,7 @@ coverage:
 	@mkdir -p build
 	CGO_ENABLED=0 $(GO) test -coverpkg="$$( $(GO) list ./... | paste -sd, - )" -covermode=atomic -coverprofile=build/coverage.out ./...
 	$(GO) tool cover -func=build/coverage.out
-	@awk 'NR>1 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' build/coverage.out
+	@awk 'NR>1 && $$2>0 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' build/coverage.out
 fuzz:
 	GO="$(GO)" FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}" ./tools/run-fuzz.sh
 	$(MAKE) -C umcp fuzz FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}"
