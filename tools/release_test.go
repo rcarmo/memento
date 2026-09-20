@@ -8,6 +8,20 @@ import (
 	"testing"
 )
 
+func TestDockerfileUsesBuildKitTargetArchitecture(t *testing.T) {
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw, err := os.ReadFile(filepath.Join(root, "Dockerfile"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(raw, []byte("ARG TARGETARCH=")) || !bytes.Contains(raw, []byte("ARG TARGETARCH\n")) {
+		t.Fatal("Dockerfile must use BuildKit's automatic TARGETARCH without an amd64 default")
+	}
+}
+
 func TestReleaseScripts(t *testing.T) {
 	root, err := filepath.Abs("..")
 	if err != nil {
