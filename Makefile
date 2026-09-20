@@ -15,9 +15,9 @@ GTE_MODEL_PATH ?= $(abspath models/gte/gte-small.gtemodel)
 NEEDLE_MODEL_PATH ?= $(abspath models/needle/memento-router.ndl)
 NEEDLE_TOKENIZER_PATH ?= $(abspath models/needle/needle.model)
 
-.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check fuzz-coverage build race cross release release-check install coverage fuzz performance model-test simd-test corpus-test go-container-build go-container-contract clean
+.PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check fuzz-coverage build race cross release release-check install coverage fuzz performance performance-core model-test simd-test corpus-test go-container-build go-container-contract clean
 help:
-	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz, performance-allocation and cross-build gates' 'tools       install pinned static-analysis tools under build/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install all host binaries under DESTDIR/PREFIX/bin'
+	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz, model-independent performance and cross-build gates' 'performance run allocation gates including pinned real models' 'performance-core run model-independent allocation gates' 'tools       install pinned static-analysis tools under build/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install all host binaries under DESTDIR/PREFIX/bin'
 tools: $(STATICCHECK) $(GOVULNCHECK)
 $(STATICCHECK):
 	@mkdir -p $(TOOLS_DIR)
@@ -28,7 +28,7 @@ $(GOVULNCHECK):
 check: quality
 quality: format-check layout-check fuzz-coverage vet lint test coverage umcp-check build
 audit-fast: quality vuln
-audit: audit-fast race fuzz performance cross
+audit: audit-fast race fuzz performance-core cross
 format:
 	gofmt -w $$(find cmd internal tools -name '*.go')
 format-check:
@@ -59,6 +59,8 @@ coverage:
 fuzz:
 	GO="$(GO)" FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}" ./tools/run-fuzz.sh
 	$(MAKE) -C umcp fuzz FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}"
+performance-core:
+	GTE_MODEL_PATH= NEEDLE_MODEL_PATH= NEEDLE_TOKENIZER_PATH= ./tools/check-performance.sh
 performance:
 	GTE_MODEL_PATH="$(GTE_MODEL_PATH)" NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" ./tools/check-performance.sh
 model-test:

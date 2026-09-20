@@ -14,7 +14,7 @@ Scalar remains the oracle/fallback; model constructors default to staggered auto
 
 ## Quality workflow
 
-The root Go module exposes reproducible quality tiers through `Makefile`: `quality` runs format/layout checks, a package-level fuzz coverage audit, vet, pinned Staticcheck, tests, zero-uncovered coverage and pure-Go builds; `audit-fast` adds strict `govulncheck`; `audit` adds race, every discovered fuzz target and Linux amd64/arm64 cross-builds. Every package containing production Go code in the root and nested uMCP modules must expose at least one meaningful fuzz target; the audit fails when a new runtime package lacks one. Tools install under `build/tools`. Go 1.26.6 is the minimum secure toolchain because earlier Go 1.26 releases have reachable standard-library vulnerabilities.
+The root Go module exposes reproducible quality tiers through `Makefile`: `quality` runs format/layout checks, a package-level fuzz coverage audit, vet, pinned Staticcheck, tests, zero-uncovered coverage and pure-Go builds; `audit-fast` adds strict `govulncheck`; `audit` adds race, every discovered fuzz target, model-independent allocation gates and Linux amd64/arm64 cross-builds. `make performance` adds the pinned real GTE and Needle allocation gates and therefore runs only after model artefacts are prepared. Every package containing production Go code in the root and nested uMCP modules must expose at least one meaningful fuzz target; the audit fails when a new runtime package lacks one. Tools install under `build/tools`. Go 1.26.6 is the minimum secure toolchain because earlier Go 1.26 releases have reachable standard-library vulnerabilities.
 
 ## Coverage is a gate, not a completion claim
 
