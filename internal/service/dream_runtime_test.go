@@ -170,7 +170,7 @@ func TestDreamRunSuccessAndFailures(t *testing.T) {
 		if _, err = runtime.runDream(ctx, "report_only", now, ops); !errors.Is(err, boom) {
 			t.Fatal(stage, err)
 		}
-		postClaim := stage == "previous" || stage == "diff" || stage == "upsert" || stage == "actionable"
+		postClaim := stage == "previous" || stage == "diff" || stage == "upsert" || stage == "actionable" || stage == "finish" || stage == "state" || stage == "list"
 		if postClaim && !failed {
 			t.Fatal(stage, "not failed")
 		}

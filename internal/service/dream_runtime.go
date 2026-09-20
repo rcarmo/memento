@@ -68,9 +68,11 @@ func (r *Runtime) runDream(ctx context.Context, mode string, now time.Time, ops 
 	if !claim.Created {
 		return map[string]any{"ok": true, "mode": mode, "state": "skipped_duplicate_window", "repo_revision": revision, "window_key": window, "run_id": claim.Record.RunID}, nil
 	}
+	proposalCount := 0
+	var modelChain []control.ModelAttempt
 	failed := func(cause error) error {
 		message := cause.Error()
-		_, finishErr := ops.finish(ctx, claim.Record.RunID, "failed", &revision, 0, 0, nil, &message)
+		_, finishErr := ops.finish(ctx, claim.Record.RunID, "failed", &revision, 0, proposalCount, modelChain, &message)
 		return errors.Join(cause, finishErr)
 	}
 	previous, err := ops.previous(ctx, r.DB, "last_dream_revision")
@@ -107,9 +109,10 @@ func (r *Runtime) runDream(ctx context.Context, mode string, now time.Time, ops 
 	if err != nil {
 		return nil, failed(err)
 	}
-	proposalCount := 0
-	var modelChain []control.ModelAttempt
-	if mode == "propose" {
+	if mode == "propose" && len(actionable) > 0 {
+		if len(actionable) > r.Dream.Budgets.MaxModelProposalsPerRun {
+			actionable = actionable[:r.Dream.Budgets.MaxModelProposalsPerRun]
+		}
 		remaining := time.Duration(r.Dream.Budgets.MaxRuntimeSeconds*float64(time.Second)) - time.Since(started)
 		proposalCount, modelChain, err = r.generateDreamProposal(ctx, actionable, revision, remaining, now)
 		if err != nil {
@@ -117,14 +120,14 @@ func (r *Runtime) runDream(ctx context.Context, mode string, now time.Time, ops 
 		}
 	}
 	if _, err = ops.finish(ctx, claim.Record.RunID, "succeeded", &revision, len(signals), proposalCount, modelChain, nil); err != nil {
-		return nil, err
+		return nil, failed(err)
 	}
 	if err = ops.setState(ctx, r.DB, "last_dream_revision", revision); err != nil {
-		return nil, err
+		return nil, failed(err)
 	}
 	all, err := ops.list(ctx)
 	if err != nil {
-		return nil, err
+		return nil, failed(err)
 	}
 	payload := []any{}
 	for _, signal := range all {

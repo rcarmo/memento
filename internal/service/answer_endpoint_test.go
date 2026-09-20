@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
@@ -103,6 +104,29 @@ func (i *answerIndex) Graph(_ context.Context, _ access.EffectivePolicy, _ strin
 	i.graphCalls = append(i.graphCalls, options)
 	return i.graph, i.err
 }
+func TestAnswerAllowsProposerOnlyPrincipal(t *testing.T) {
+	jobs, _ := jobsTest(t)
+	jobs.Controls.Metadata, _ = NewModelsOffMetadata("standard")
+	handlers := modelHandlers()
+	handlers["memory_answer"] = (&AnswerEndpoint{Jobs: jobs}).Call
+	server := umcp.NewServer("answer-policy-order")
+	if err := jobs.RegisterConfiguredServer(server, ConfiguredServerOptions{Catalog: CatalogConfig{Surface: "standard", AnswerEnabled: true}, Limits: endpointLimits(), ModelHandlers: handlers}); err != nil {
+		t.Fatal(err)
+	}
+	response, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"memory_answer","arguments":{"question":"What is the target?"}}}`), umcp.RequestContext{Principal: "actor"})
+	if err != nil || response == nil {
+		t.Fatal(response, err)
+	}
+	raw, marshalErr := json.Marshal(response)
+	if marshalErr != nil {
+		t.Fatal(marshalErr)
+	}
+	text := string(raw)
+	if !strings.Contains(text, `"status":"success"`) || !strings.Contains(text, `"answer_source":"disabled"`) || strings.Contains(text, "forbidden") {
+		t.Fatalf("response=%s", text)
+	}
+}
+
 func TestAnswerCallArgumentAndRoleGuards(t *testing.T) {
 	e := &AnswerEndpoint{}
 	if _, err := e.Call(context.Background(), map[string]any{}); err == nil || err.Error() != "question must be a string" {
@@ -124,10 +148,10 @@ func TestAnswerCallArgumentAndRoleGuards(t *testing.T) {
 	if err != nil || response == nil {
 		t.Fatalf("response=%#v err=%v", response, err)
 	}
-	// jobsTest actor has proposer/curator but no reader; the service returns a
-	// forbidden failure envelope before touching repository/model dependencies.
+	// The bare test tool has no generated output schema. The proposer-only actor
+	// reaches the endpoint, and the bare registration then rejects its envelope.
 	if response.Error == nil {
-		t.Fatal("expected output validation failure after forbidden envelope")
+		t.Fatal("expected output validation failure after endpoint completion")
 	}
 }
 

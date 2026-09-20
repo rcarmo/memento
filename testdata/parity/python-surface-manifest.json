@@ -1628,9 +1628,9 @@
         "Python functional pytest",
         "Go mapped test declarations"
       ],
-      "validation_level": "structured_behavior_spec",
+      "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:memory_answer"
+        "stateful:memory_answer"
       ]
     },
     {
@@ -2279,9 +2279,9 @@
         "Python functional pytest",
         "Go mapped test declarations"
       ],
-      "validation_level": "structured_behavior_spec",
+      "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:model_proposals"
+        "stateful:model_proposals"
       ]
     },
     {
@@ -2391,9 +2391,9 @@
         "Python functional pytest",
         "Go mapped test declarations"
       ],
-      "validation_level": "structured_behavior_spec",
+      "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:model_proposals"
+        "stateful:model_proposals"
       ]
     },
     {
@@ -14195,7 +14195,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14248,7 +14248,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14307,7 +14307,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14362,7 +14362,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14414,7 +14414,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14465,7 +14465,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14516,7 +14516,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14567,7 +14567,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14618,7 +14618,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14670,7 +14670,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14721,7 +14721,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -14772,7 +14772,7 @@
       ],
       "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -15865,9 +15865,9 @@
         "Python CLI functional tests",
         "Go command tests"
       ],
-      "validation_level": "structured_behavior_spec",
+      "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:runtime_cli"
+        "stateful:runtime_cli"
       ]
     },
     {
@@ -16249,9 +16249,9 @@
         "Python CLI functional tests",
         "Go command tests"
       ],
-      "validation_level": "structured_behavior_spec",
+      "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:memory_answer"
+        "stateful:dream_runtime"
       ]
     },
     {
@@ -16311,9 +16311,9 @@
         "Python CLI functional tests",
         "Go command tests"
       ],
-      "validation_level": "structured_behavior_spec",
+      "validation_level": "stateful_fixture",
       "validation_cases": [
-        "behavior:runtime_cli"
+        "stateful:runtime_cli"
       ]
     },
     {
@@ -16364,7 +16364,7 @@
       ],
       "validation_level": "go_extension_test",
       "validation_cases": [
-        "behavior:runtime_cli"
+        "stateful:runtime_cli"
       ]
     },
     {
@@ -16447,7 +16447,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -16535,7 +16535,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -16673,7 +16673,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -16803,7 +16803,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -16901,7 +16901,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -16990,7 +16990,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -17079,7 +17079,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -17176,7 +17176,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -17265,7 +17265,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     },
     {
@@ -17354,7 +17354,7 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:access_lifecycle",
-        "behavior:admin_http"
+        "stateful:admin_http"
       ]
     }
   ],

@@ -35,7 +35,7 @@ func TestPythonStatefulCaseFamilies(t *testing.T) {
 	if err = json.Unmarshal(raw, &manifest); err != nil {
 		t.Fatal(err)
 	}
-	if manifest.SchemaVersion != 1 || manifest.PythonCommit != "7f29e8b003557f0105f47ed353b7f65a33619456" || len(manifest.Families) != 30 || manifest.TotalCases != 1367 {
+	if manifest.SchemaVersion != 1 || manifest.PythonCommit != "7f29e8b003557f0105f47ed353b7f65a33619456" || len(manifest.Families) != 31 || manifest.TotalCases != 1339 {
 		t.Fatal(manifest.SchemaVersion, manifest.PythonCommit, len(manifest.Families), manifest.TotalCases)
 	}
 	ids, total := map[string]bool{}, 0
@@ -84,6 +84,38 @@ func countCapturedCases(t *testing.T, raw []byte, selector string) int {
 		count := 0
 		for _, rawRow := range object["rows"].([]any) {
 			if strings.HasPrefix(rawRow.(map[string]any)["node_name"].(string), "test_model_proposals_") {
+				count++
+			}
+		}
+		return count
+	}
+	if strings.HasPrefix(selector, "cases:surface=") {
+		object := value.(map[string]any)
+		target := strings.TrimPrefix(selector, "cases:surface=")
+		count := 0
+		for _, rawCase := range object["cases"].([]any) {
+			surface := rawCase.(map[string]any)["surface"].(string)
+			if surface == target || (target == "model_proposals" && (surface == "memory_propose_freeform" || surface == "memory_propose_update")) {
+				count++
+			}
+		}
+		return count
+	}
+	if selector == "cases:adapter=cli" {
+		object := value.(map[string]any)
+		count := 0
+		for _, rawCase := range object["cases"].([]any) {
+			if strings.HasPrefix(rawCase.(map[string]any)["adapter"].(string), "cli_") {
+				count++
+			}
+		}
+		return count
+	}
+	if selector == "cases:adapter=admin_http" {
+		object := value.(map[string]any)
+		count := 0
+		for _, rawCase := range object["cases"].([]any) {
+			if rawCase.(map[string]any)["adapter"] == "admin_http" {
 				count++
 			}
 		}

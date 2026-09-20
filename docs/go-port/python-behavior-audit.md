@@ -58,13 +58,10 @@ The capture can now drive Go validation rather than only document coverage:
 |---|---:|---|
 | Exact JSON-RPC replay | 29 | 75 deduplicated Python requests and expected responses replay through `TestPythonCapturedToolReplayCases` |
 | Exact MCP protocol fixture | 18 | Pinned uMCP payload/framing/session/resource/prompt fixtures consumed by Go uMCP tests |
-| Executable stateful fixture | 48 | Repository/control/index/filesystem fixture family with a Go adapter and post-state/envelope comparator |
-| Structured behavior specification | 6 | Python request/assertion capture plus Go adapter; serializable setup-state capture remains to be added |
+| Executable stateful fixture | 54 | Repository/control/index/filesystem fixture family with a Go adapter and post-state/envelope comparator |
 | Go extension test | 1 | Native `healthcheck`, which has no Python command equivalent |
 
-`testdata/parity/python-tool-replay-cases.json` contains the 75 exact replay cases for 29 tools. `TestPythonCapturedToolReplayCases` invokes Go for every request and compares complete JSON-RPC responses, normalizing only JSON object order inside text content. `testdata/parity/python-stateful-case-families.json` indexes 1,367 cases across 30 stateful/structured families. Twenty-six families have executable neutral setup/expected-state fixtures. Four families—answer, model proposals, admin HTTP and runtime CLI—currently retain structured Python behavior specifications mapped to Go tests; they are not represented as exact serialized state fixtures.
-
-The six structured surface rows are `memory_answer`, `memory_propose_freeform`, `memory_propose_update`, `serve`, `dream` and `rotate-master-key`. The audit does not label those as exact replay parity. Their Gherkin scenarios contain the captured contracts and can be converted to neutral setup fixtures without changing row IDs.
+`testdata/parity/python-tool-replay-cases.json` contains the 75 exact replay cases for 29 tools. `TestPythonCapturedToolReplayCases` invokes Go for every request and compares complete JSON-RPC responses, normalizing only JSON object order inside text content. `testdata/parity/python-stateful-case-families.json` indexes 1,339 cases across 31 executable stateful families. `testdata/parity/python-structured-surface-cases.json` adds 23 neutral setup/request/expected/state-delta cases for answer, model proposals, Dream, serve, master-key rotation and all 12 admin HTTP routes. Native Go service and CLI tests consume those cases directly. No public surface remains coverage-only or structured-only.
 
 ## Evidence levels
 
@@ -78,6 +75,23 @@ The manifest does not label every Python node as one-to-one differential coverag
 uMCP has stronger direct cross-language evidence: 22 source-generated fixture families in addition to its 254-node test crosswalk.
 
 A mapped domain suite proves that the corresponding Go tests exist and execute under `go test ./...`; it does not by itself prove exact one-to-one assertion equivalence. The JSON behavior summary preserves the original Python assertions. Implementation-neutral Gherkin describes the expected domain outcome. Reviewers can add dedicated neutral fixtures without changing the stable row ID or losing inventory coverage.
+
+## Go defects corrected by the detailed audit
+
+The executable second pass found and fixed observable Go divergences rather than merely documenting them:
+
+* `memory_answer` no longer requires a Python-absent reader role; proposer-only authenticated principals remain namespace-scoped and receive the deterministic disabled answer when intelligent answering is off;
+* expected answer/model-proposal domain failures use service envelopes instead of generic JSON-RPC internal errors;
+* model-proposal authorization precedes disabled-feature disclosure;
+* unauthorized absolute target hints remain search hints instead of failing the call immediately;
+* proposal context uses Python-compatible normalized FTS5 queries, strict lexical freshness, bounded depth-one eventual graph expansion and source-specific evidence revisions;
+* model requests now carry the full Python prompt safety contract and `tool_version` metadata;
+* stored model proposals retain consulted concepts, contradictions, reciprocal links and target hints, while refreshing the base revision after model completion;
+* citation validation matches Python's ID/path/revision contract rather than imposing an extra title check;
+* answer/model-proposal retrieval and model calls no longer hold the repository transaction lock;
+* Dream skips model work with no actionable signals, caps actionable inputs, preserves proposal/model-attempt state during failure reconciliation and marks post-generation failures consistently.
+
+Each correction has a native Go regression and retained neutral setup/request/expected/state-delta evidence.
 
 ## Reviewed behavior changes
 

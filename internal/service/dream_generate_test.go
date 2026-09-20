@@ -16,10 +16,14 @@ type stubModelClient struct {
 	response ModelResponse
 	err      error
 	requests []ModelRequest
+	hook     func()
 }
 
 func (s *stubModelClient) Complete(_ context.Context, r ModelRequest) (ModelResponse, error) {
 	s.requests = append(s.requests, r)
+	if s.hook != nil {
+		s.hook()
+	}
 	return s.response, s.err
 }
 func writeDreamConcept(t *testing.T, root, path, id, title, body string) {
@@ -160,6 +164,20 @@ func TestDreamGenerateFailures(t *testing.T) {
 		t.Fatal("storage")
 	}
 }
+func TestDreamRunProposeSkipsEmptyActionableSet(t *testing.T) {
+	ctx, runtime, revision := configuredDreamRuntime(t)
+	defer runtime.Close(ctx)
+	model := &stubModelClient{err: errors.New("must not run")}
+	runtime.ModelClient = model
+	ops := dreamOps()
+	ops.revision = func(repository.GitRepositoryPaths) (string, error) { return revision, nil }
+	ops.actionable = func(context.Context) ([]control.DreamSignal, error) { return nil, nil }
+	payload, err := runtime.runDream(ctx, "propose", time.Unix(21600, 0), ops)
+	if err != nil || payload["proposal_count"] != 0 || len(model.requests) != 0 {
+		t.Fatal(payload, len(model.requests), err)
+	}
+}
+
 func TestDreamRunProposeOrchestration(t *testing.T) {
 	ctx, runtime, revision := configuredDreamRuntime(t)
 	defer runtime.Close(ctx)
@@ -171,8 +189,10 @@ func TestDreamRunProposeOrchestration(t *testing.T) {
 	ops.scan = func(string, repository.BundleFilter) (repository.RepositoryBundle, error) {
 		return repository.ScanBundle(runtime.Paths.Repository.CurrentDir, repository.BundleFilter{})
 	}
+	runtime.Dream.Budgets.MaxModelProposalsPerRun = 1
+	discarded := control.DreamSignal{DedupeKey: "discarded", SignalType: "orphan", EntityRefs: []string{"/missing.md"}, EvidenceJSON: `{}`}
 	ops.actionable = func(context.Context) ([]control.DreamSignal, error) {
-		return []control.DreamSignal{{DedupeKey: "key", SignalType: "orphan", EntityRefs: []string{"/a.md"}, EvidenceJSON: `{}`}}, nil
+		return []control.DreamSignal{{DedupeKey: "key", SignalType: "orphan", EntityRefs: []string{"/a.md"}, EvidenceJSON: `{}`}, discarded}, nil
 	}
 	var proposals int
 	var chain []control.ModelAttempt
@@ -184,7 +204,7 @@ func TestDreamRunProposeOrchestration(t *testing.T) {
 		return control.SchedulerRunRecord{}, nil
 	}
 	payload, err := runtime.runDream(ctx, "propose", time.Unix(21600, 0), ops)
-	if err != nil || payload["proposal_count"] != 1 || proposals != 1 || len(chain) != 1 {
+	if err != nil || payload["proposal_count"] != 1 || payload["actionable_signal_count"] != 1 || proposals != 1 || len(chain) != 1 {
 		t.Fatal(payload, proposals, chain, err)
 	}
 }

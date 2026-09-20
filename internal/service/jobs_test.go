@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"testing"
+	"time"
 
 	"github.com/rcarmo/memento/internal/access"
 	"github.com/rcarmo/memento/internal/control"
@@ -124,6 +125,40 @@ func TestManagedJobUsesLivePolicy(t *testing.T) {
 	}}}
 	if response, err := dispatcher.Process(ctx, []byte(`{"jsonrpc":"2.0","id":1,"method":"job"}`), umcp.RequestContext{Principal: "actor", SessionID: "session"}); err != nil || response.Error != nil {
 		t.Fatal(response, err)
+	}
+}
+
+func TestModelBackedReadsDoNotHoldRepositoryTransactionLock(t *testing.T) {
+	for _, method := range []string{"memory_answer", "memory_propose_freeform", "memory_propose_update"} {
+		t.Run(method, func(t *testing.T) {
+			j, _ := jobsTest(t)
+			ctx := context.Background()
+			locked, release := make(chan struct{}), make(chan struct{})
+			lockDone := make(chan error, 1)
+			go func() {
+				lockDone <- repository.WithTransactionLock(ctx, j.Controls.Queue.Paths, func() error { close(locked); <-release; return nil })
+			}()
+			<-locked
+			finished := make(chan error, 1)
+			go func() {
+				_, err := j.run(ctx, access.Principal{Name: "actor", Roles: []string{"proposer", "curator"}}, nil, method, func(context.Context, *ProposalControls, ProposalActor) (map[string]any, SuccessOptions, error) {
+					return map[string]any{"ok": true}, SuccessOptions{}, nil
+				}, control.Connect)
+				finished <- err
+			}()
+			select {
+			case err := <-finished:
+				if err != nil {
+					t.Fatal(err)
+				}
+			case <-time.After(time.Second):
+				t.Fatal("model-backed read waited for repository transaction lock")
+			}
+			close(release)
+			if err := <-lockDone; err != nil {
+				t.Fatal(err)
+			}
+		})
 	}
 }
 

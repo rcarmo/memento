@@ -22,6 +22,9 @@ func (c *ProposalControls) Propose(ctx context.Context, actor ProposalActor, int
 	return result, err
 }
 func (c *ProposalControls) propose(ctx context.Context, actor ProposalActor, intent, base string, changes []any, rationale *string, repo proposalRepository) (map[string]any, error) {
+	return c.proposeWithMetadata(ctx, actor, intent, base, changes, rationale, nil, repo)
+}
+func (c *ProposalControls) proposeWithMetadata(ctx context.Context, actor ProposalActor, intent, base string, changes []any, rationale *string, metadata map[string]any, repo proposalRepository) (map[string]any, error) {
 	if err := access.RequireRole(actor.Policy, "proposer"); err != nil {
 		return nil, err
 	}
@@ -56,10 +59,16 @@ func (c *ProposalControls) propose(ctx context.Context, actor ProposalActor, int
 	for _, change := range normalized {
 		stored = append(stored, map[string]any(change))
 	}
+	patch := map[string]any{"changes": stored, "archival_impact": impact}
+	for key, value := range metadata {
+		if key != "changes" && key != "archival_impact" {
+			patch[key] = value
+		}
+	}
 	var record control.ProposalRecord
 	err = control.WithTransaction(ctx, c.Queue.Proposals.DB, func(tx *sql.Tx) error {
 		var err error
-		record, err = c.Queue.Proposals.CreateInTx(ctx, tx, control.ProposalRequest{ProposalID: id, AuthorPrincipal: actor.Policy.Principal, ClientInstanceID: actor.ClientInstanceID, BaseRevision: base, Intent: intent, Rationale: rationale, Patch: map[string]any{"changes": stored, "archival_impact": impact}, Assets: prepared.Assets})
+		record, err = c.Queue.Proposals.CreateInTx(ctx, tx, control.ProposalRequest{ProposalID: id, AuthorPrincipal: actor.Policy.Principal, ClientInstanceID: actor.ClientInstanceID, BaseRevision: base, Intent: intent, Rationale: rationale, Patch: patch, Assets: prepared.Assets})
 		if err != nil {
 			return err
 		}

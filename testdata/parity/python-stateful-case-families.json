@@ -417,21 +417,21 @@
     },
     {
       "family_id": "memory_answer",
-      "source_fixture": "python-functional-manifest.json",
-      "case_selector": "rows:node_file=test_memory_answer.py",
-      "case_count": 30,
-      "validation_level": "structured_behavior_spec",
+      "source_fixture": "python-structured-surface-cases.json",
+      "case_selector": "cases:surface=memory_answer",
+      "case_count": 2,
+      "validation_level": "executable_stateful_fixture",
       "state_dimensions": [
-        "repository/index/evidence/model/cache fixtures referenced by Python test rows",
-        "principal policy",
-        "request",
-        "expected answer/citations/cache behavior"
+        "repository/index/model/cache setup",
+        "principal roles and request",
+        "expected answer/error envelope",
+        "expected model/repository delta"
       ],
-      "comparator": "Python assertion/request specification mapped to Go adapter; serializable setup capture pending",
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
       "go_adapter": {
         "package": "./internal/service",
-        "file": "internal/service/answer_endpoint_test.go",
-        "name": "TestAnswerCallDeepCacheEndToEnd"
+        "file": "internal/service/python_structured_surface_cases_test.go",
+        "name": "TestPythonStructuredServiceSurfaceCases"
       }
     },
     {
@@ -474,21 +474,21 @@
     },
     {
       "family_id": "model_proposals",
-      "source_fixture": "python-functional-manifest.json",
-      "case_selector": "rows:behavior=model_proposals",
-      "case_count": 5,
-      "validation_level": "structured_behavior_spec",
+      "source_fixture": "python-structured-surface-cases.json",
+      "case_selector": "cases:surface=model_proposals",
+      "case_count": 4,
+      "validation_level": "executable_stateful_fixture",
       "state_dimensions": [
-        "signals/concepts/provider output",
-        "policy/budgets",
-        "request",
-        "expected proposal/model attempts"
+        "repository/index/graph/model setup",
+        "principal roles and request",
+        "expected proposal/error envelope",
+        "expected durable patch and repository delta"
       ],
-      "comparator": "Python assertion/request specification mapped to Go adapter; serializable setup capture pending",
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
       "go_adapter": {
         "package": "./internal/service",
-        "file": "internal/service/model_proposal_endpoint_test.go",
-        "name": "TestModelProposalEndpointStoresAuthenticatedProposal"
+        "file": "internal/service/python_structured_surface_cases_test.go",
+        "name": "TestPythonStructuredServiceSurfaceCases"
       }
     },
     {
@@ -512,21 +512,21 @@
     },
     {
       "family_id": "admin_http",
-      "source_fixture": "python-functional-manifest.json",
-      "case_selector": "rows:node_file=test_admin_http.py",
-      "case_count": 2,
-      "validation_level": "structured_behavior_spec",
+      "source_fixture": "python-structured-surface-cases.json",
+      "case_selector": "cases:adapter=admin_http",
+      "case_count": 12,
+      "validation_level": "executable_stateful_fixture",
       "state_dimensions": [
-        "managed access store",
-        "bearer profile",
-        "HTTP request",
-        "expected status/body/state"
+        "managed access store and credentials",
+        "HTTP request/authentication",
+        "expected status/headers/body",
+        "expected principal/credential/activity delta"
       ],
-      "comparator": "Python assertion/request specification mapped to Go adapter; serializable setup capture pending",
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
       "go_adapter": {
         "package": "./internal/service",
         "file": "internal/service/admin_http_test.go",
-        "name": "TestAdminHTTPHandleCRUDAndActivity"
+        "name": "TestPythonStructuredAdminHTTPSurfaceCases"
       }
     },
     {
@@ -568,24 +568,43 @@
       }
     },
     {
+      "family_id": "dream_runtime",
+      "source_fixture": "python-structured-surface-cases.json",
+      "case_selector": "cases:surface=dream",
+      "case_count": 3,
+      "validation_level": "executable_stateful_fixture",
+      "state_dimensions": [
+        "Dream configuration/signal/model setup",
+        "requested mode",
+        "expected scheduler/result envelope",
+        "expected model/proposal state delta"
+      ],
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
+      "go_adapter": {
+        "package": "./internal/service",
+        "file": "internal/service/python_structured_surface_cases_test.go",
+        "name": "TestPythonStructuredServiceSurfaceCases"
+      }
+    },
+    {
       "family_id": "runtime_cli",
-      "source_fixture": "python-functional-manifest.json",
-      "case_selector": "rows:runtime_cli",
-      "case_count": 14,
-      "validation_level": "structured_behavior_spec",
+      "source_fixture": "python-structured-surface-cases.json",
+      "case_selector": "cases:adapter=cli",
+      "case_count": 2,
+      "validation_level": "executable_stateful_fixture",
       "state_dimensions": [
         "configuration/environment",
         "command arguments",
-        "runtime dependencies",
-        "expected output/exit/state"
+        "expected output/exit",
+        "expected runtime/key state delta"
       ],
-      "comparator": "Python assertion/request specification mapped to Go adapter; serializable setup capture pending",
+      "comparator": "fixture-specific exact normalized envelope and/or post-state comparator",
       "go_adapter": {
         "package": "./cmd/memento-go",
-        "file": "cmd/memento-go/main_test.go",
-        "name": "TestRunServe"
+        "file": "cmd/memento-go/python_structured_cli_cases_test.go",
+        "name": "TestPythonStructuredCLISurfaceCases"
       }
     }
   ],
-  "total_cases": 1367
+  "total_cases": 1339
 }

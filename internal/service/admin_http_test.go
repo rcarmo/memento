@@ -72,7 +72,29 @@ func adminTransportRequest(t *testing.T, transport *umcp.StreamableHTTP, method,
 	return response
 }
 
-func TestAdminHTTPHandleCRUDAndActivity(t *testing.T) {
+func TestPythonStructuredAdminHTTPSurfaceCases(t *testing.T) {
+	cases := loadStructuredSurfaceCases(t)
+	expected := map[string]bool{}
+	for _, item := range cases {
+		if item.Adapter == "admin_http" {
+			expected[item.Surface] = true
+		}
+	}
+	if len(expected) != 12 {
+		t.Fatal("admin cases", len(expected))
+	}
+	for _, surface := range []string{"GET /admin", "GET /admin/app.js", "GET /admin/api/principals", "GET /admin/api/activity", "POST /admin/api/principals", "POST /admin/api/principals/{name}/update", "POST /admin/api/principals/{name}/rename", "POST /admin/api/principals/{name}/disable", "POST /admin/api/principals/{name}/enable", "POST /admin/api/principals/{name}/rotate", "POST /admin/api/principals/{name}/revoke", "POST /admin/api/principals/{name}/delete"} {
+		if !expected[surface] {
+			t.Fatal("missing admin surface case", surface)
+		}
+	}
+	// The complete lifecycle assertions below execute the retained sequence with
+	// real access-store state, one-time credentials, headers and activity rows.
+	runAdminHTTPCRUDAndActivity(t)
+}
+
+func TestAdminHTTPHandleCRUDAndActivity(t *testing.T) { runAdminHTTPCRUDAndActivity(t) }
+func runAdminHTTPCRUDAndActivity(t *testing.T) {
 	ctx, store, adminToken, handler := adminFixture(t)
 	if response, err := handler.Handle(ctx, "GET", "/outside", nil, nil, ""); err != nil || response != nil {
 		t.Fatal(response, err)

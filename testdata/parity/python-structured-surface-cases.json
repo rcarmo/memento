@@ -1,0 +1,601 @@
+{
+  "schema_version": 1,
+  "python_commit": "7f29e8b003557f0105f47ed353b7f65a33619456",
+  "cases": [
+    {
+      "case_id": "answer-proposer-only-disabled",
+      "surface": "memory_answer",
+      "adapter": "service_jsonrpc",
+      "setup": {
+        "principal_roles": [
+          "proposer",
+          "curator"
+        ],
+        "deep_answers": false,
+        "hot_memory": false,
+        "exact_cache": false
+      },
+      "request": {
+        "question": "What is the target?"
+      },
+      "expected": {
+        "status": "success",
+        "answer": "UNKNOWN",
+        "answer_source": "disabled",
+        "confidence": "low",
+        "unresolved": [
+          "memory_answer is disabled"
+        ],
+        "citations": [],
+        "evidence": null,
+        "trace_id": null,
+        "model_chain": []
+      },
+      "state_delta": {
+        "model_calls": 0,
+        "repository_changes": 0
+      }
+    },
+    {
+      "case_id": "answer-empty-question",
+      "surface": "memory_answer",
+      "adapter": "service_call",
+      "setup": {
+        "principal_roles": [
+          "proposer",
+          "curator"
+        ]
+      },
+      "request": {
+        "question": "  \n "
+      },
+      "expected": {
+        "status": "error",
+        "error_class": "validation_error",
+        "message": "question must not be empty"
+      },
+      "state_delta": {
+        "model_calls": 0,
+        "repository_changes": 0
+      }
+    },
+    {
+      "case_id": "proposal-unauthorized-before-disabled",
+      "surface": "memory_propose_freeform",
+      "adapter": "service_jsonrpc",
+      "setup": {
+        "principal_roles": [
+          "reader"
+        ],
+        "model_proposals": false
+      },
+      "request": {
+        "content": "New fact"
+      },
+      "expected": {
+        "status": "error",
+        "error_class": "forbidden",
+        "message_not_contains": "model-assisted proposals are disabled"
+      },
+      "state_delta": {
+        "proposals_created": 0,
+        "repository_changes": 0
+      }
+    },
+    {
+      "case_id": "proposal-authorized-disabled",
+      "surface": "memory_propose_freeform",
+      "adapter": "service_call",
+      "setup": {
+        "principal_roles": [
+          "proposer"
+        ],
+        "model_proposals": false
+      },
+      "request": {
+        "content": "New fact"
+      },
+      "expected": {
+        "status": "error",
+        "error_class": "validation_error",
+        "message": "model-assisted proposals are disabled"
+      },
+      "state_delta": {
+        "proposals_created": 0,
+        "repository_changes": 0
+      }
+    },
+    {
+      "case_id": "proposal-update-authorized-disabled",
+      "surface": "memory_propose_update",
+      "adapter": "service_call",
+      "setup": {
+        "principal_roles": [
+          "proposer"
+        ],
+        "model_proposals": false
+      },
+      "request": {
+        "instruction": "Refresh it",
+        "target_hint": "Piclaw"
+      },
+      "expected": {
+        "status": "error",
+        "error_class": "validation_error",
+        "message": "model-assisted proposals are disabled"
+      },
+      "state_delta": {
+        "proposals_created": 0,
+        "repository_changes": 0
+      }
+    },
+    {
+      "case_id": "proposal-context-and-storage",
+      "surface": "memory_propose_update",
+      "adapter": "model_proposal_state",
+      "setup": {
+        "principal_roles": [
+          "proposer"
+        ],
+        "target_hint": "Piclaw",
+        "strict_search": true,
+        "graph_depth": 1
+      },
+      "request": {
+        "instruction": "Refresh it",
+        "target_hint": "Piclaw"
+      },
+      "expected": {
+        "search_syntax": "fts5",
+        "search_query": "\"piclaw\"",
+        "metadata_fields": [
+          "prompt_version",
+          "tool_version",
+          "model_policy_revision"
+        ],
+        "stored_patch_fields": [
+          "changes",
+          "consulted_concepts",
+          "contradictions",
+          "reciprocal_links",
+          "target_hint"
+        ]
+      },
+      "state_delta": {
+        "proposals_created": 1,
+        "repository_changes": 0,
+        "proposal_status": "submitted"
+      }
+    },
+    {
+      "case_id": "dream-disabled",
+      "surface": "dream",
+      "adapter": "dream_state",
+      "setup": {
+        "mode": "disabled"
+      },
+      "request": {
+        "mode": "disabled"
+      },
+      "expected": {
+        "ok": true,
+        "mode": "disabled",
+        "state": "disabled"
+      },
+      "state_delta": {
+        "scheduler_runs": 0,
+        "model_calls": 0,
+        "proposals_created": 0
+      }
+    },
+    {
+      "case_id": "dream-empty-actionable",
+      "surface": "dream",
+      "adapter": "dream_state",
+      "setup": {
+        "mode": "propose",
+        "actionable_signals": 0
+      },
+      "request": {
+        "mode": "propose"
+      },
+      "expected": {
+        "state": "succeeded",
+        "actionable_signal_count": 0,
+        "proposal_count": 0
+      },
+      "state_delta": {
+        "scheduler_runs_succeeded": 1,
+        "model_calls": 0,
+        "proposals_created": 0
+      }
+    },
+    {
+      "case_id": "dream-actionable-cap",
+      "surface": "dream",
+      "adapter": "dream_state",
+      "setup": {
+        "mode": "propose",
+        "actionable_signals": 2,
+        "max_model_proposals_per_run": 1
+      },
+      "request": {
+        "mode": "propose"
+      },
+      "expected": {
+        "state": "succeeded",
+        "actionable_signal_count": 1,
+        "proposal_count": 1
+      },
+      "state_delta": {
+        "scheduler_runs_succeeded": 1,
+        "model_calls": 1,
+        "proposals_created": 1
+      }
+    },
+    {
+      "case_id": "serve-default-http",
+      "surface": "serve",
+      "adapter": "cli_serve",
+      "setup": {
+        "max_request_bytes": 4194304,
+        "allowed_origins": []
+      },
+      "request": {
+        "arguments": [
+          "--config",
+          "fixture.json",
+          "serve"
+        ]
+      },
+      "expected": {
+        "exit_code": 0,
+        "transport_arguments": [
+          "--http",
+          "--host",
+          "127.0.0.1",
+          "--port",
+          "8000",
+          "--endpoint",
+          "/mcp",
+          "--max-request-bytes",
+          "4194304"
+        ]
+      },
+      "state_delta": {
+        "runtime_closed": true
+      }
+    },
+    {
+      "case_id": "rotate-master-key-success",
+      "surface": "rotate-master-key",
+      "adapter": "cli_rotate_master_key",
+      "setup": {
+        "previous_key": "old",
+        "new_key": "new",
+        "verifier_initialized": true
+      },
+      "request": {
+        "arguments": [
+          "--config",
+          "fixture.json",
+          "rotate-master-key"
+        ]
+      },
+      "expected": {
+        "exit_code": 0,
+        "json": {
+          "rotated": true
+        }
+      },
+      "state_delta": {
+        "new_key_opens_store": true,
+        "old_key_opens_store": false
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-static",
+      "surface": "GET /admin",
+      "request": {
+        "method": "GET",
+        "path": "/admin",
+        "authenticated": false
+      },
+      "expected": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "body_contains": "Memento Access",
+        "cache_control": "no-store",
+        "nosniff": true
+      },
+      "state_delta": {
+        "credentials_created": 0
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-script",
+      "surface": "GET /admin/app.js",
+      "request": {
+        "method": "GET",
+        "path": "/admin/app.js",
+        "authenticated": false
+      },
+      "expected": {
+        "status": 200,
+        "content_type": "text/javascript; charset=utf-8",
+        "body_contains": "/admin/api/",
+        "cache_control": "no-store",
+        "nosniff": true
+      },
+      "state_delta": {
+        "credentials_created": 0
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-principal-list",
+      "surface": "GET /admin/api/principals",
+      "request": {
+        "method": "GET",
+        "path": "/admin/api/principals",
+        "authenticated": true
+      },
+      "expected": {
+        "status": 200,
+        "body_fields": [
+          "principals"
+        ],
+        "credential_exposed": false
+      },
+      "state_delta": {
+        "principals_changed": 0
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-activity",
+      "surface": "GET /admin/api/activity",
+      "request": {
+        "method": "GET",
+        "path": "/admin/api/activity",
+        "authenticated": true
+      },
+      "expected": {
+        "status": 200,
+        "event_limit": 50,
+        "newest_first": true
+      },
+      "state_delta": {
+        "principals_changed": 0
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-principal-create",
+      "surface": "POST /admin/api/principals",
+      "request": {
+        "method": "POST",
+        "path": "/admin/api/principals",
+        "body": {
+          "name": "worker",
+          "roles": [
+            "reader"
+          ],
+          "read_prefixes": [
+            "/"
+          ],
+          "write_prefixes": []
+        }
+      },
+      "expected": {
+        "status": 201,
+        "body_fields": [
+          "principal",
+          "credential"
+        ],
+        "warning_contains": "explicit read prefixes"
+      },
+      "state_delta": {
+        "principal": "worker",
+        "enabled": true,
+        "credential_authenticates": true
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-principal-update",
+      "surface": "POST /admin/api/principals/{name}/update",
+      "request": {
+        "method": "POST",
+        "path": "/admin/api/principals/worker/update",
+        "body": {
+          "roles": [
+            "reader",
+            "proposer"
+          ],
+          "read_prefixes": [
+            "/private/",
+            "/work/"
+          ],
+          "write_prefixes": [
+            "/work/"
+          ]
+        }
+      },
+      "expected": {
+        "status": 200,
+        "body_fields": [
+          "principal"
+        ]
+      },
+      "state_delta": {
+        "roles": [
+          "reader",
+          "proposer"
+        ],
+        "write_prefixes": [
+          "/work/"
+        ]
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-principal-rename",
+      "surface": "POST /admin/api/principals/{name}/rename",
+      "request": {
+        "method": "POST",
+        "path": "/admin/api/principals/worker/rename",
+        "body": {
+          "new_name": "worker-two"
+        }
+      },
+      "expected": {
+        "status": 200,
+        "principal_name": "worker-two"
+      },
+      "state_delta": {
+        "old_credential_authenticates_as": "worker-two"
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-principal-disable",
+      "surface": "POST /admin/api/principals/{name}/disable",
+      "request": {
+        "method": "POST",
+        "path": "/admin/api/principals/worker-two/disable",
+        "body": {}
+      },
+      "expected": {
+        "status": 200,
+        "enabled": false
+      },
+      "state_delta": {
+        "credential_authenticates": false
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-principal-enable",
+      "surface": "POST /admin/api/principals/{name}/enable",
+      "request": {
+        "method": "POST",
+        "path": "/admin/api/principals/worker-two/enable",
+        "body": {}
+      },
+      "expected": {
+        "status": 200,
+        "enabled": true
+      },
+      "state_delta": {
+        "credential_authenticates": true
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-credential-rotate",
+      "surface": "POST /admin/api/principals/{name}/rotate",
+      "request": {
+        "method": "POST",
+        "path": "/admin/api/principals/worker-two/rotate",
+        "body": {}
+      },
+      "expected": {
+        "status": 200,
+        "body_fields": [
+          "name",
+          "credential"
+        ]
+      },
+      "state_delta": {
+        "old_credential_authenticates": false,
+        "new_credential_authenticates": true
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-principal-revoke",
+      "surface": "POST /admin/api/principals/{name}/revoke",
+      "request": {
+        "method": "POST",
+        "path": "/admin/api/principals/worker-two/revoke",
+        "body": {}
+      },
+      "expected": {
+        "status": 200,
+        "enabled": false,
+        "revoked": true
+      },
+      "state_delta": {
+        "credential_authenticates": false
+      }
+    },
+    {
+      "adapter": "admin_http",
+      "setup": {
+        "admin": "root",
+        "target": "worker"
+      },
+      "case_id": "admin-principal-delete",
+      "surface": "POST /admin/api/principals/{name}/delete",
+      "request": {
+        "method": "POST",
+        "path": "/admin/api/principals/worker-two/delete",
+        "body": {}
+      },
+      "expected": {
+        "status": 200,
+        "deleted": true
+      },
+      "state_delta": {
+        "credential_authenticates": false
+      }
+    }
+  ]
+}

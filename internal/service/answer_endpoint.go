@@ -35,13 +35,13 @@ func (e *AnswerEndpoint) Call(ctx context.Context, args map[string]any) (any, er
 			return nil, errors.New("answer_mode must be a string")
 		}
 	}
-	normalized := NormalizeQuestion(question)
-	if normalized == "" {
-		return nil, errors.New("question must not be empty")
+	if e.Jobs == nil && NormalizeQuestion(question) == "" {
+		return nil, &Error{"validation_error", "question must not be empty"}
 	}
 	return e.Jobs.callWithPolicy(ctx, "memory_answer", true, func(work context.Context, c *ProposalControls, actor ProposalActor) (map[string]any, SuccessOptions, error) {
-		if err := access.RequireRole(actor.Policy, "reader"); err != nil {
-			return nil, SuccessOptions{}, err
+		normalized := NormalizeQuestion(question)
+		if normalized == "" {
+			return nil, SuccessOptions{}, &Error{"validation_error", "question must not be empty"}
 		}
 		revision, err := repository.GetMainRevision(c.Queue.Paths)
 		if err != nil {
