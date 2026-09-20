@@ -20,7 +20,7 @@ env:
 jobs:
   validate-tag:
     name: Validate release tag
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       prerelease: ${{ steps.version.outputs.prerelease }}
     steps:
@@ -42,14 +42,14 @@ jobs:
   quality:
     name: Validate pure-Go runtime
     needs: validate-tag
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.1
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version: '1.26.6'
           cache-dependency-path: |
@@ -64,7 +64,7 @@ jobs:
   runtime-models:
     name: Prepare cached runtime models
     needs: validate-tag
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.1
@@ -191,7 +191,7 @@ jobs:
   compatibility-amd64:
     name: Test amd64 image without AVX
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: read
@@ -200,7 +200,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.1
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version: '1.26.6'
           cache-dependency-path: go.sum
@@ -263,7 +263,7 @@ jobs:
   publish:
     name: Publish multi-architecture image
     needs: [validate-tag, build, compatibility-amd64]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
@@ -329,7 +329,7 @@ jobs:
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Attest image provenance
-        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
         with:
           subject-name: ${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.inspect.outputs.digest }}
@@ -352,7 +352,7 @@ jobs:
   release:
     name: Publish GitHub release
     needs: [validate-tag, publish]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
@@ -383,7 +383,7 @@ jobs:
     name: Retain five releases, runs, and images
     needs: release
     if: always() && needs.release.result == 'success'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       actions: write
       contents: write
