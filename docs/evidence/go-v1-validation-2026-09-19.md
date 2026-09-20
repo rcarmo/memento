@@ -34,9 +34,9 @@ The enforced allocation ceilings are:
 | selected SIMD row-AXPY projection | 0 | 0 |
 | real GTE embedding | 2 | 2,400 |
 | lexical search over 100 concepts | 875 | 43,500 |
-| real Needle generation | 350 | 1,800,000 |
+| real Needle generation | 400 | 1,800,000 |
 
-A later profile-led pass added fused row kernels, a register-tiled AVX2 projection path, request-local rune buffers for constrained decoding and a typed SentencePiece BPE heap. Real Needle generation fell from 758--759 to 307 allocations/op in ordinary repeated benchmark runs; allocation profiling measured 183 allocations/op. Local latency was typically 59--74 ms/op. GTE retained 2 allocations/op, and its 384-row fused dot microkernel measured roughly 5--7 microseconds on the Intel i7-12700. The exact 360-case Needle corpus completed in 387.4 seconds on that host, down from the retained 1,408.8-second scalar baseline. These wall-clock figures describe that host and are not cross-runner release thresholds.
+A later profile-led pass added fused row kernels, a register-tiled AVX2 projection path, request-local rune buffers for constrained decoding and a typed SentencePiece BPE heap. Real Needle generation fell from 758--759 to 307--388 allocations/op across repeated benchmark runs; native ARM64 measured 388 allocations/op, so the portable gate is 400. Allocation profiling on amd64 measured 183 allocations/op. Local latency was typically 59--74 ms/op. GTE retained 2 allocations/op, and its 384-row fused dot microkernel measured roughly 5--7 microseconds on the Intel i7-12700. The exact 360-case Needle corpus completed in 387.4 seconds on that host, down from the retained 1,408.8-second scalar baseline. These wall-clock figures describe that host and are not cross-runner release thresholds.
 
 ## Packaging and rollback
 

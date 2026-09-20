@@ -364,6 +364,14 @@ func FuzzProcessor(f *testing.F) {
 }
 
 func TestTypedBPEAgenda(t *testing.T) {
+	self := agenda{{score: 2, left: 0}}
+	if self.Less(0, 0) {
+		t.Fatal("self ordering")
+	}
+	ordered := agenda{{score: 1}, {score: 2}}
+	if ordered.Less(0, 1) {
+		t.Fatal("lower score sorted first")
+	}
 	queue := agenda{}
 	for _, value := range []pair{{score: 1, left: 4}, {score: 2, left: 5}, {score: 2, left: 1}, {score: -1, left: 0}} {
 		queue.push(value)

@@ -9,7 +9,6 @@ type pair struct {
 }
 type agenda []pair
 
-func (a agenda) Len() int { return len(a) }
 func (a agenda) Less(i, j int) bool {
 	left, right := floatOrder(a[i].score), floatOrder(a[j].score)
 	if left == right {

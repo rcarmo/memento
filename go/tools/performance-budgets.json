@@ -30,7 +30,7 @@
       "max_bytes_per_op": 43500
     },
     "BenchmarkRealNeedleGenerate": {
-      "max_allocs_per_op": 350,
+      "max_allocs_per_op": 400,
       "max_bytes_per_op": 1800000
     }
   }

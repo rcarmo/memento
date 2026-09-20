@@ -235,6 +235,12 @@ func TestKernelFailures(t *testing.T) {
 	if err := AXPYRows(Scalar, []float32{1}, []float32{1}, make([]float32, 2)); err == nil {
 		t.Fatal("axpy rows dimensions")
 	}
+	if err := DotRows(Backend("bad"), nil, nil, nil); err == nil {
+		t.Fatal("dot rows backend")
+	}
+	if err := AXPYRows(Backend("bad"), nil, nil, nil); err == nil {
+		t.Fatal("axpy rows backend")
+	}
 	for _, backend := range []Backend{SSE2, AVX2, NEON} {
 		available := false
 		for _, candidate := range Detect().Available {
