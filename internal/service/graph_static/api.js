@@ -53,10 +53,10 @@ export const graphApi = {
   setSimulatedPrincipal: (name) => {
     simulatedPrincipal = typeof name === "string" ? name.trim() : "";
   },
-  overview: () => request("/overview"),
+  overview: (options = {}) => request("/overview", options),
   detail: (id, options = {}) => request(`/memories/${encodeURIComponent(id)}`, options),
-  neighbourhood: (id) => request(`/neighbourhood/${encodeURIComponent(id)}`),
-  search: (query) => request("/search", { method: "POST", body: JSON.stringify({ query }) }),
+  neighbourhood: (id, options = {}) => request(`/neighbourhood/${encodeURIComponent(id)}`, options),
+  search: (query, options = {}) => request("/search", { ...options, method: "POST", body: JSON.stringify({ query }) }),
   cluster: (id, options = {}) => request(`/clusters/${encodeURIComponent(id)}`, options),
   refreshStatus: () => request("/embeddings/status"),
   refresh: (scope, conceptIds = [], confirmFull = false) =>

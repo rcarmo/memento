@@ -28,6 +28,23 @@ jobs:
             go.sum
             umcp/go.sum
       - run: make audit
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22'
+      - name: Install pinned browser audit dependencies
+        run: |
+          npm ci --prefix tools/browser
+          cd tools/browser && npx playwright install --with-deps chromium webkit
+      - name: Audit graph and admin UI against isolated Go runtime
+        run: |
+          make ui-test
+          UI_BROWSER=webkit make ui-test
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: ui-audit-results
+          path: build/ui-audit
+          retention-days: 7
 
   runtime-models:
     name: Prepare cached runtime models

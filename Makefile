@@ -49,7 +49,10 @@ vuln: $(GOVULNCHECK)
 	CGO_ENABLED=0 $(GOVULNCHECK) ./...
 test:
 	CGO_ENABLED=0 $(GO) test ./...
-.PHONY: mcp-contract graph-test
+.PHONY: mcp-contract graph-test ui-test
+# Install pinned browser tooling with: cd tools/browser && npm ci && npx playwright install chromium
+ui-test:
+	node tools/browser/audit.mjs
 graph-test:
 	node --test tools/graph-semantic.test.mjs
 # Focused startup/wire contracts plus the standalone transport contract suite.

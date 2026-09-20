@@ -356,8 +356,16 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		runtime.GraphRefresh = coordinator
 	}
 	graphHTTP := GraphHTTP{Config: options.Graph, Snapshots: snapshotService, Refresh: coordinator, Policies: &GraphPolicyDirectory{Static: config.Authorization, Managed: graphManaged}}
+	adminHTTP := AdminHTTP{ProtectedReadPrefixes: config.Authorization.ProtectedReadPrefixes}
+	if managed != nil {
+		adminHTTP.Store = managed
+	}
 	runtime.HTTPHooks.Route = func(ctx context.Context, method, path string, headers map[string]string, body []byte, peer string) (*umcp.HTTPResponse, error) {
 		response, routeErr := stagingHTTP.Handle(ctx, method, path, headers, body, peer)
+		if response != nil || routeErr != nil {
+			return response, routeErr
+		}
+		response, routeErr = adminHTTP.Handle(ctx, method, path, headers, body, peer)
 		if response != nil || routeErr != nil {
 			return response, routeErr
 		}

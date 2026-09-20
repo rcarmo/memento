@@ -140,6 +140,9 @@ func TestModelsOffRuntimeHTTPHooks(t *testing.T) {
 		_ = response.Body.Close()
 		return response.StatusCode
 	}
+	if status := request("GET", "/admin", "", nil); status != 503 {
+		t.Fatal(status)
+	}
 	if status := request("GET", "/graph/api/v1/status", "", nil); status != 200 {
 		t.Fatal(status)
 	}
@@ -190,6 +193,10 @@ func TestBuildManagedModelsOffRuntime(t *testing.T) {
 	principals, listErr := runtime.AuditPrincipals(ctx)
 	if listErr != nil || len(principals) != 1 || principals[0].Name != "sandbox" {
 		t.Fatal(principals, listErr)
+	}
+	adminResponse, err := runtime.HTTPHooks.Route(ctx, "GET", "/admin", nil, nil, "")
+	if err != nil || adminResponse.Status != 200 || !bytes.Contains(adminResponse.Body, []byte("Memento Access")) {
+		t.Fatal(adminResponse, err)
 	}
 	graphResponse, err := runtime.HTTPHooks.Route(ctx, "GET", "/graph/api/v1/principals", nil, nil, "")
 	if err != nil || graphResponse.Status != 200 || !bytes.Contains(graphResponse.Body, []byte(`"sandbox"`)) {

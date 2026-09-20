@@ -1,0 +1,7 @@
+{
+  "name": "memento-ui-audit",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node audit.mjs" },
+  "devDependencies": { "playwright": "1.61.0" }
+}

@@ -20,6 +20,12 @@ The suite compares exact tool sets with help and catalogue resources, checks pag
 
 Relative-link tests intentionally amend the historical Python expectations for source-relative targets, fragment-only self links, protocol-relative external URLs and rename self-links. Other fixture values are unchanged. Integration tests compare index, audit, Dream and move behaviour, including latest accepted asset manifests, missing files and corrupt metadata. Startup tests remove the derived resolver marker at an unchanged Git revision and require reclassification; SQLite DDL remains at version 2.
 
+## Browser UI audit
+
+`make ui-test` starts a disposable Go runtime and drives its graph and admin pages with pinned Playwright tooling. Run `npm ci` and `npx playwright install --with-deps chromium webkit` under `tools/browser` first; `UI_BROWSER=webkit make ui-test` selects WebKit. CI runs both and uploads `build/ui-audit` reports. Firefox is optional and reports graph cases as not run if WebGL2 is unavailable.
+
+The [UI audit report](../evidence/ui-audit-2026-09-20.md) records the missing admin surface, inherited interaction bugs, fixes, real-versus-intercepted endpoint coverage and remaining limits. Browser checks supplement Go coverage; neither static asset tests nor 100% Go statement coverage establishes browser functionality.
+
 ## Quality workflow
 
 The root Go module exposes reproducible quality tiers through `Makefile`: `quality` runs format/layout checks, a package-level fuzz coverage audit, vet, pinned Staticcheck, tests, zero-uncovered coverage and pure-Go builds; `audit-fast` adds strict `govulncheck`; `audit` adds race, every discovered fuzz target, model-independent allocation gates and Linux amd64/arm64 cross-builds. `make performance` adds the pinned real GTE and Needle allocation gates and therefore runs only after model artefacts are prepared. Each benchmark runs three times: the byte ceiling applies to the median sample, which filters one-off runtime accounting noise, while the allocation-count ceiling applies to the maximum sample. Every package containing production Go code in the root and nested uMCP modules must expose at least one meaningful fuzz target; the audit fails when a new runtime package lacks one. Tools install under `build/tools`. Go 1.26.6 is the minimum secure toolchain because earlier Go 1.26 releases have reachable standard-library vulnerabilities.

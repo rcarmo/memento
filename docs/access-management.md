@@ -40,6 +40,10 @@ The web form's **Administrator** preset includes curator roles and shared conten
 
 ## Web UI
 
+The Go runtime serves `/admin`, `/admin/`, `/admin/app.js` and the `/admin/api/*` operations from the same endpoint as MCP. Without a managed access store these routes return 503; API reads and writes require an explicit administrator bearer. Responses are `no-store` and `nosniff`. Activity is bounded to the latest 50 events, matching the Python UI contract.
+
+Lock clears page content and credential text, and ignores outstanding replies from the previous session. Closing the credential dialog, including Escape, clears the displayed secret. The [browser audit](evidence/ui-audit-2026-09-20.md) exercises this boundary against a disposable Go instance.
+
 Open `/admin`. Enter the `sandbox` bearer credential. The browser:
 
 * keeps it only in JavaScript memory for the current tab;

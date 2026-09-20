@@ -121,6 +121,11 @@ function App() {
   const selectNodeRef = useRef(null);
   const selectionRequest = useRef(0);
   const selectionAbort = useRef(null);
+  const overviewRequest = useRef(0);
+  const overviewAbort = useRef(null);
+  const viewEpoch = useRef(0);
+  const searchAbort = useRef(null);
+  const refreshLoader = useRef(null);
   const [includeTrash, setIncludeTrash] = useState(false);
   const scene = useRef(null);
   const exportDialog = useRef(null);
@@ -143,7 +148,6 @@ function App() {
   const [timing, setTiming] = useState({});
   const [refresh, setRefresh] = useState(null);
   const refreshRef = useRef(null);
-  const [includePreview, setIncludePreview] = useState(false);
   const [principals, setPrincipals] = useState([]);
   const [simulatedPrincipal, setSimulatedPrincipal] = useState("");
 
@@ -162,7 +166,10 @@ function App() {
     }
     return () => {
       delete window.__mementoGraphScene;
-      scene.current?.worker?.terminate();
+      selectionAbort.current?.abort();
+      overviewAbort.current?.abort();
+      searchAbort.current?.abort();
+      scene.current?.dispose();
     };
   }, []);
 
@@ -177,15 +184,49 @@ function App() {
   }
 
   async function load() {
+    const request = ++overviewRequest.current;
+    overviewAbort.current?.abort();
+    const controller = new AbortController();
+    overviewAbort.current = controller;
     try {
-      const { payload, elapsed, bytes } = await graphApi.overview();
+      const { payload, elapsed, bytes } = await graphApi.overview({ signal: controller.signal });
+      if (request !== overviewRequest.current) return;
       setTiming({ fetch: elapsed, bytes });
       graphRef.current = payload;
       setGraph(payload);
-      draw(payload);
+      setError(null);
     } catch (e) {
-      setError(e.message);
+      if (e.name !== "AbortError" && request === overviewRequest.current) setError(e.message);
     }
+  }
+
+  function clearSelection() {
+    selectionRequest.current += 1;
+    selectionAbort.current?.abort();
+    selectionAbort.current = null;
+    setSelected(null);
+    setDetail(null);
+    if (scene.current) {
+      scene.current.selectedId = null;
+      scene.current.drawHalos();
+      scene.current.drawSelectedEdges();
+    }
+  }
+
+  function resetView() {
+    viewEpoch.current += 1;
+    clearSelection();
+    searchAbort.current?.abort();
+    setQuery("");
+    setSearchResults([]);
+    setSearching(false);
+    setType("all");
+    setError(null);
+  }
+
+  async function showOverview() {
+    resetView();
+    await load();
   }
 
   useEffect(() => {
@@ -193,36 +234,30 @@ function App() {
     const timer = setInterval(async () => {
       if (document.hidden || inFlight) return;
       inFlight = true;
-      try { await loadRefreshStatus(); } finally { inFlight = false; }
+      try { await refreshLoader.current?.(); } finally { inFlight = false; }
     }, 15000);
     return () => clearInterval(timer);
   }, []);
 
+  refreshLoader.current = loadRefreshStatus;
   async function loadRefreshStatus() {
+    const epoch = viewEpoch.current;
     try {
       const { payload } = await graphApi.refreshStatus();
+      if (epoch !== viewEpoch.current) return;
       const previous = refreshRef.current;
       refreshRef.current = payload;
       setRefresh(payload);
       if (previous && (previous.completed !== payload.completed || previous.embedding_revision !== payload.embedding_revision)) {
-        await load();
+        if (selected?.member_count) await selectNode(selected);
+        else {
+          await load();
+          if (selected) await selectNode(selected);
+        }
       }
     } catch (e) {
       setRefresh({ available: false, last_error: e.message });
     }
-  }
-
-  function draw(payload) {
-    const aggregated = payload.mode === "aggregated";
-    const nodes = aggregated ? payload.clusters : payload.nodes;
-    const edges = aggregated
-      ? payload.cluster_edges.map((edge) => ({ ...edge, kind: edge.kind || "explicit" }))
-      : payload.edges;
-    scene.current?.setGraph(
-      nodes,
-      semanticDisplayEdges(edges, selected?.id, semanticEnabled, semanticThreshold, semanticNeighbours),
-      { sizeMetric: effectiveSizeMetric(payload, sizeMetric), forces, semanticAlpha, clusters: payload.clusters || [] },
-    );
   }
 
   selectNodeRef.current = selectNode;
@@ -252,7 +287,7 @@ function App() {
         };
         graphRef.current = expanded;
         setGraph(expanded);
-        draw(expanded);
+
         setDetail({ cluster: true, ...payload });
       } else {
         const { payload } = await graphApi.detail(node.id, { signal: controller.signal });
@@ -260,7 +295,10 @@ function App() {
         setDetail(payload);
       }
     } catch (e) {
-      if (e.name !== "AbortError" && request === selectionRequest.current) setError(e.message);
+      if (e.name !== "AbortError" && request === selectionRequest.current) {
+        setError(e.message);
+        setDetail({ node, error: e.message });
+      }
     } finally {
       if (request === selectionRequest.current) selectionAbort.current = null;
     }
@@ -268,11 +306,17 @@ function App() {
 
   async function openMemory(id) {
     if (!id) return;
+    const request = ++selectionRequest.current;
+    selectionAbort.current?.abort();
+    const controller = new AbortController();
+    selectionAbort.current = controller;
     try {
-      const { payload } = await graphApi.detail(id);
-      const present = graph?.mode === "direct" && graph.nodes?.some((node) => node.id === id);
+      const { payload } = await graphApi.detail(id, { signal: controller.signal });
+      if (request !== selectionRequest.current) return;
+      const present = graphRef.current?.mode === "direct" && graphRef.current.nodes?.some((node) => node.id === id);
       if (!present) {
-        const { payload: hood } = await graphApi.neighbourhood(id);
+        const { payload: hood } = await graphApi.neighbourhood(id, { signal: controller.signal });
+        if (request !== selectionRequest.current) return;
         const revealed = {
           ...graph,
           mode: "direct",
@@ -283,7 +327,7 @@ function App() {
         };
         graphRef.current = revealed;
         setGraph(revealed);
-        draw(revealed);
+
       }
       setQuery("");
       setSearchResults([]);
@@ -292,7 +336,9 @@ function App() {
       setDetail(payload);
       scene.current?.focus(payload.node);
     } catch (e) {
-      setError(e.message);
+      if (e.name !== "AbortError" && request === selectionRequest.current) setError(e.message);
+    } finally {
+      if (request === selectionRequest.current) selectionAbort.current = null;
     }
   }
 
@@ -304,19 +350,24 @@ function App() {
       return;
     }
     let cancelled = false;
+    const epoch = viewEpoch.current;
+    const controller = new AbortController();
+    searchAbort.current?.abort();
+    searchAbort.current = controller;
     setSearching(true);
     const timer = setTimeout(async () => {
       try {
-        const { payload } = await graphApi.search(value);
-        if (!cancelled) setSearchResults(payload.results || []);
+        const { payload } = await graphApi.search(value, { signal: controller.signal });
+        if (!cancelled && epoch === viewEpoch.current) setSearchResults(payload.results || []);
       } catch (e) {
-        if (!cancelled) setError(e.message);
+        if (!cancelled && epoch === viewEpoch.current && e.name !== "AbortError") setError(e.message);
       } finally {
-        if (!cancelled) setSearching(false);
+        if (!cancelled && epoch === viewEpoch.current) setSearching(false);
       }
     }, 250);
     return () => {
       cancelled = true;
+      controller.abort();
       clearTimeout(timer);
     };
   }, [query]);
@@ -365,16 +416,10 @@ function App() {
 
   async function changeView(name) {
     const next = typeof name === "string" ? name.trim() : "";
-    selectionRequest.current += 1;
-    selectionAbort.current?.abort();
-    selectionAbort.current = null;
-    setSelected(null);
-    setDetail(null);
-    setQuery("");
-    setSearchResults([]);
-    setSearching(false);
-    scene.current && (scene.current.selectedId = null);
-    scene.current?.drawHalos?.();
+    resetView();
+    graphRef.current = null;
+    setGraph(null);
+    scene.current?.setGraph([], []);
     setSimulatedPrincipal(next);
     graphApi.setSimulatedPrincipal(next);
     await Promise.all([load(), loadRefreshStatus()]);
@@ -416,7 +461,6 @@ function App() {
         type,
         sizeMetric: effectiveSizeMetric(graph, sizeMetric),
         forces,
-        include_preview: includePreview,
         semantic_enabled: semanticEnabled,
         semantic_alpha: semanticAlpha,
         semantic_threshold: semanticThreshold,
@@ -428,7 +472,9 @@ function App() {
         const blob = format === "svg"
           ? await graphApi.exportSvg(exportIds(), settings)
           : await graphApi.exportJson(exportIds(), settings);
-        download(`memento-graph.${format}`, URL.createObjectURL(blob));
+        const url = URL.createObjectURL(blob);
+        download(`memento-graph.${format}`, url);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
       exportDialog.current?.close();
     } catch (e) {
@@ -493,8 +539,8 @@ function App() {
         { class: `warning${simulatedPrincipal ? " simulated" : ""}` },
         simulatedPrincipal ? simulatedWarning : "Unauthenticated -- trusted networks only",
       ),
-      h("button", { onClick: load }, "Overview"),
-      h("label", { class: "check" }, [h("input", { type: "checkbox", checked: includeTrash, onChange: (event) => { const value=event.currentTarget.checked; setIncludeTrash(value); graphApi.setIncludeTrash(value); load(); } }), "Show Trash"]),
+      h("button", { onClick: showOverview }, "Overview"),
+      h("label", { class: "check" }, [h("input", { type: "checkbox", checked: includeTrash, onChange: (event) => { const value=event.currentTarget.checked; setIncludeTrash(value); graphApi.setIncludeTrash(value); showOverview(); } }), "Show Trash"]),
     ]),
     h("aside", { class: "controls" }, [
       h("label", { class: "search-control" }, [
@@ -659,7 +705,7 @@ function App() {
         h(
           "button",
           {
-            disabled: Boolean(simulatedPrincipal || refresh?.available === false),
+            disabled: Boolean(simulatedPrincipal || refresh?.available === false || graph?.mode === "aggregated" || !filtered.length),
             onClick: () => refreshEmbedding("visible"),
             title: refreshDisabledTitle,
           },
@@ -719,14 +765,7 @@ function App() {
               h("small", {}, "Nodes, edges, settings and revisions"),
             ]),
           ]),
-          h("label", { class: "check" }, [
-            h("input", {
-              type: "checkbox",
-              checked: includePreview,
-              onChange: (event) => setIncludePreview(event.currentTarget.checked),
-            }),
-            "Include bounded preview where allowed",
-          ]),
+          h("p", {}, "SVG/JSON exports contain explicit concept links and metadata, not previews or semantic vectors."),
         ]),
       ),
       h("dl", { class: "perf" }, [
@@ -854,6 +893,7 @@ function Inspector({ detail, selected, semanticEdges, referenceNodes = [], onTag
     ),
     detail.preview && h("pre", { class: "preview" }, detail.preview),
     node.path?.startsWith("/trash/") && h("p", {}, "Trashed. Restore or permanently delete through authenticated memory tools. Git history is retained."),
+    detail.error && h("p", { role: "alert", "data-testid": "inspector-error" }, detail.error),
     detail.loading && h("p", { class: "selection-detail", "data-testid": "inspector-loading" }, "Loading relationships, assets and proposals…"),
     members,
     h("h3", {}, "Explicit links"),

@@ -34,6 +34,7 @@ rust/target/
 
 # Browser test dependencies and output
 /node_modules/
+/tools/browser/node_modules/
 /test-results/
 /playwright-report/
 /go/oracle/rust-vector/target/
