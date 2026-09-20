@@ -87,6 +87,9 @@ func parseHealthcheckArgs(args []string) (string, time.Duration, error) {
 			return "", 0, errors.New("invalid healthcheck arguments")
 		}
 		if args[0] == "--address" {
+			if strings.TrimSpace(args[1]) == "" {
+				return "", 0, errors.New("invalid healthcheck address")
+			}
 			address = args[1]
 		} else {
 			parsed, err := time.ParseDuration(args[1])

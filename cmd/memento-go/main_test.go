@@ -51,7 +51,7 @@ func TestRunSyntax(t *testing.T) {
 	if code := runContext(context.Background(), []string{"healthcheck", "--address", listener.Addr().String(), "--timeout", "1ms"}, nil, io.Discard, &stderr); code != 1 {
 		t.Fatal(code)
 	}
-	for _, args := range [][]string{{"healthcheck", "--bad", "x"}, {"healthcheck", "--timeout", "bad"}, {"healthcheck", "--timeout", "0s"}, {"healthcheck", "--address"}} {
+	for _, args := range [][]string{{"healthcheck", "--bad", "x"}, {"healthcheck", "--timeout", "bad"}, {"healthcheck", "--timeout", "0s"}, {"healthcheck", "--address"}, {"healthcheck", "--address", ""}, {"healthcheck", "--address", " \t"}} {
 		if code := runContext(context.Background(), args, nil, io.Discard, io.Discard); code != 2 {
 			t.Fatal(args, code)
 		}

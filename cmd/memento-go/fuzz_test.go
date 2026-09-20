@@ -33,7 +33,7 @@ func FuzzEnvironmentFile(f *testing.F) {
 }
 
 func FuzzHealthcheckArgs(f *testing.F) {
-	for _, raw := range []string{"", "--address\x00127.0.0.1:1\x00--timeout\x001ms", "--timeout\x000s", "--bad\x00x", "--address"} {
+	for _, raw := range []string{"", "--address\x00127.0.0.1:1\x00--timeout\x001ms", "--address\x00", "--address\x00 \t", "--timeout\x000s", "--bad\x00x", "--address"} {
 		f.Add(raw)
 	}
 	f.Fuzz(func(t *testing.T, raw string) {
