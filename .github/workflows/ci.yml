@@ -25,9 +25,9 @@ jobs:
         with:
           go-version: '1.26.6'
           cache-dependency-path: |
-            go/go.sum
-            go/umcp/go.sum
-      - run: make -C go audit
+            go.sum
+            umcp/go.sum
+      - run: make audit
 
   runtime-models:
     name: Prepare cached runtime models

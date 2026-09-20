@@ -8,8 +8,8 @@ Semantic search is optional and rebuildable. FTS5 remains the default because it
 
 The `v1.0.0` image uses only:
 
-* `go/gte` for GTE1 parsing, WordPiece tokenization and FP32 inference;
-* `go/internal/simd` for AVX2/SSE2/NEON/scalar vector operations;
+* `internal/gte` for GTE1 parsing, WordPiece tokenization and FP32 inference;
+* `internal/simd` for AVX2/SSE2/NEON/scalar vector operations;
 * `memento-embed-go` for the existing framed process-isolation protocol;
 * pure-Go SQLite access and cosine scoring over little-endian float32 blobs.
 

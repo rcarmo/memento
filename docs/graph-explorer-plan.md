@@ -100,7 +100,7 @@ Selected and visible refreshes accept bounded concept IDs. Full refresh requires
 
 ## Browser Application
 
-Files under `go/service/graph_static/` are embedded browser-native modules. `vendor/manifest.json` records versions, sources, licences and SHA-256 digests; Go embedding tests verify that every required asset is present and non-empty.
+Files under `internal/service/graph_static/` are embedded browser-native modules. `vendor/manifest.json` records versions, sources, licences and SHA-256 digests; Go embedding tests verify that every required asset is present and non-empty.
 
 Three.js provides:
 

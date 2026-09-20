@@ -17,7 +17,7 @@ The previous ARM64 GTE byte-accounting failure was resolved by retaining the str
 
 `make quality` reports zero uncovered production statements in the root module and 100% statement coverage in the standalone uMCP module. Vet, pinned Staticcheck and static builds pass.
 
-Every package containing production Go code must expose at least one useful fuzz target. The root module has 40 targets and uMCP has 14, including its example command. All 54 passed 10,000 deterministic executions per target. The race detector passes both modules, and govulncheck reports zero reachable vulnerabilities.
+Every package containing production Go code must expose at least one useful fuzz target. The root module has 45 targets and uMCP has 14, including its example command. All 59 passed 10,000 deterministic executions per target. The race detector passes both modules, and govulncheck reports zero reachable vulnerabilities.
 
 ## Models and allocation budgets
 
@@ -40,11 +40,11 @@ A later profile-led pass added fused row kernels, a register-tiled AVX2 projecti
 
 ## Packaging and rollback
 
-The release check builds reproducible, stripped, static linux/amd64-v1 and linux/arm64 archives containing `memento-go`, `memento-embed-go` and `memento-skill-import-go`. Archive layout, SHA-256 manifests, ELF architecture, absent dynamic dependencies and native version output pass.
+The release check builds reproducible, stripped, static linux/amd64-v1 and linux/arm64 archives containing `memento-go`, `memento-embed-go`, `memento-needle-go`, `memento-needle-model-go` and `memento-skill-import-go`. Archive layout, SHA-256 manifests, ELF architecture, absent dynamic dependencies and native version output pass. The OCI build generates the architecture-independent FP32 sidecar once from the pinned NDL model rather than duplicating it in each binary archive.
 
 The replacement image is distroless, runs as UID/GID 65532 and contains no shell, Python, Rust library, CGo dependency, native SQLite extension or Git executable. The release build deterministically expands the 51 MB NDL1 Needle model into a 105,265,860-byte, architecture-independent, little-endian FP32 sidecar. Each route runs in a short-lived static Go worker that maps the sidecar read-only and exits after its framed response. On the Intel i7-12700, mapped startup took about 5--6 ms and complete one-shot routes took 79--93 ms, compared with 131--134 ms just to read and expand NDL1 and 190--204 ms for the former one-shot path.
 
-The updated container contract separately measures Docker's cgroup working set and the daemon process RSS after real Needle and GTE subprocess requests. It measured 38.4 MiB cgroup usage and 52.3 MiB daemon RSS, with neither worker left resident. Earlier 171.4--171.7 MiB `docker stats` observations were cgroup working-set figures after model activity, not daemon RSS, and included reclaimable file cache.
+The updated container contract separately measures Docker's cgroup working set and the daemon process RSS after real Needle and GTE subprocess requests. Repeated rebuilt-image runs measured 38.4--39.1 MiB cgroup usage and 52.3--52.9 MiB daemon RSS, with neither worker left resident. Earlier 171.4--171.7 MiB `docker stats` observations were cgroup working-set figures after model activity, not daemon RSS, and included reclaimable file cache.
 
 A disposable volume was created with the pinned `0.5.9` image, opened by `v1.0.0`, then reopened by `0.5.9` with repository and index revisions intact. The final `service_version: 0.5.9` line in that test belongs to the deliberate rollback leg, not the Go image.
 

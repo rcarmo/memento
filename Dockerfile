@@ -2,11 +2,14 @@ FROM golang:1.26.6-bookworm@sha256:116d58cbd88c1297624acc6e967a060012422bacf9930
 
 ARG TARGETARCH=amd64
 ARG VERSION=dev
-WORKDIR /src/go
-COPY go/go.mod go/go.sum ./
-COPY go/umcp/go.mod go/umcp/go.sum ./umcp/
+WORKDIR /src
+COPY go.mod go.sum ./
+COPY umcp/go.mod umcp/go.sum ./umcp/
 RUN go mod download
-COPY go ./
+COPY cmd ./cmd
+COPY internal ./internal
+COPY umcp ./umcp
+COPY tools ./tools
 COPY models/needle/memento-router.ndl /src/models/needle/memento-router.ndl
 RUN case "$TARGETARCH" in \
         amd64) export GOAMD64=v1 ;; \
@@ -14,7 +17,7 @@ RUN case "$TARGETARCH" in \
         *) echo "unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
     esac \
     && CGO_ENABLED=0 GOOS=linux GOARCH="$TARGETARCH" go build -trimpath -buildvcs=false \
-        -ldflags="-s -w -X 'main.version=$VERSION' -X 'github.com/rcarmo/memento/go/service.BuildVersion=$VERSION'" \
+        -ldflags="-s -w -X 'main.version=$VERSION' -X 'github.com/rcarmo/memento/internal/service.BuildVersion=$VERSION'" \
         -o /out/memento-go ./cmd/memento-go \
     && CGO_ENABLED=0 GOOS=linux GOARCH="$TARGETARCH" go build -trimpath -buildvcs=false \
         -ldflags="-s -w" -o /out/memento-embed-go ./cmd/memento-embed-go \

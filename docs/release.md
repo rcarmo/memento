@@ -7,7 +7,7 @@ This page starts with the current pure-Go release procedure. Version-specific se
 ## Local release checklist
 
 * `python3 tools/prepare_runtime_models.py`
-* `make -C go audit`
+* `make audit`
 * `make performance`
 * `make model-test`
 * `make corpus-test`

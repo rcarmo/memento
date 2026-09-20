@@ -65,7 +65,7 @@ These are local measurements, not DiskStation estimates. The release pipeline mu
 * Needle retains a distinct matrix-vector path for autoregressive single-token decoding.
 * Floating-point accumulation order differs between scalar and SIMD implementations. Release gates compare final embeddings and routing decisions rather than requiring bit-identical intermediate tensors.
 * The kernels use model-native layouts and do not allocate transposed or packed copies at model load.
-* In `v1.0.0`, shared vector operations belong in `go/internal/simd`; model packages keep layout-specific projection loops and request-local workspaces without private architecture dispatch.
+* In `v1.0.0`, shared vector operations belong in `internal/simd`; model packages keep layout-specific projection loops and request-local workspaces without private architecture dispatch.
 
 ## Alternatives considered
 

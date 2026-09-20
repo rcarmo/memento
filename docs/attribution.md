@@ -2,15 +2,15 @@
 
 ## Visual memory debugger
 
-The optional visual debugger vendors [Three.js](https://threejs.org/) 0.180.0 and [Preact](https://preactjs.com/) 10.27.2, including Preact Hooks, under their MIT licences. Exact source URLs and SHA-256 digests are recorded in `go/service/graph_static/vendor/manifest.json`; the combined licence text is embedded beside the browser modules in `LICENSES.md`.
+The optional visual debugger vendors [Three.js](https://threejs.org/) 0.180.0 and [Preact](https://preactjs.com/) 10.27.2, including Preact Hooks, under their MIT licences. Exact source URLs and SHA-256 digests are recorded in `internal/service/graph_static/vendor/manifest.json`; the combined licence text is embedded beside the browser modules in `LICENSES.md`.
 
 ## uMCP
 
-Memento's standalone pure-Go uMCP module under `go/umcp` implements the MCP server, session-bound Streamable HTTP transport, request context and protocol helpers. Its observable behaviour is pinned and differentially verified against [`rcarmo/umcp`](https://github.com/rcarmo/umcp) `v0.2.2` / deployed commit `9c89a708d14ae804e32aa65de10af7c02922617d`. The Python package is a test oracle only and is not shipped.
+Memento's standalone pure-Go uMCP module under `umcp` implements the MCP server, session-bound Streamable HTTP transport, request context and protocol helpers. Its observable behaviour is pinned and differentially verified against [`rcarmo/umcp`](https://github.com/rcarmo/umcp) `v0.2.2` / deployed commit `9c89a708d14ae804e32aa65de10af7c02922617d`. The Python package is a test oracle only and is not shipped.
 
 ## Go SIMD kernels
 
-The opt-in Go SIMD dot/AXPY substrate under `go/internal/simd` is informed by the MIT-licensed [`rcarmo/go-gte`](https://github.com/rcarmo/go-gte) assembly design and retains scalar correctness fallbacks. Memento adds baseline amd64 SSE2, runtime-gated AVX2, and ARM64 NEON variants plus explicit runtime selection and differential tests. The upstream MIT licence is retained in the repository's existing attribution chain. Automatic model dispatch was enabled after scalar/corpus parity and x86-64/ARM64 architecture benchmarks passed; `MEMENTO_SIMD=scalar` retains the exact-order oracle.
+The opt-in Go SIMD dot/AXPY substrate under `internal/simd` is informed by the MIT-licensed [`rcarmo/go-gte`](https://github.com/rcarmo/go-gte) assembly design and retains scalar correctness fallbacks. Memento adds baseline amd64 SSE2, runtime-gated AVX2, and ARM64 NEON variants plus explicit runtime selection and differential tests. The upstream MIT licence is retained in the repository's existing attribution chain. Automatic model dispatch was enabled after scalar/corpus parity and x86-64/ARM64 architecture benchmarks passed; `MEMENTO_SIMD=scalar` retains the exact-order oracle.
 
 ## Deferred Vulkan dependency
 

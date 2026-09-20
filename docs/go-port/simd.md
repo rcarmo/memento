@@ -1,6 +1,6 @@
 # SIMD optimisation
 
-The scalar GTE and Needle kernels remain the correctness oracle and universal fallback. Runtime default is automatic staggered dispatch: AVX2 on capable amd64, SSE2 on baseline amd64 (including DiskStation J3455), NEON on ARM64, then scalar. `go/internal/simd` provides the shared substrate selected with `MEMENTO_SIMD`:
+The scalar GTE and Needle kernels remain the correctness oracle and universal fallback. Runtime default is automatic staggered dispatch: AVX2 on capable amd64, SSE2 on baseline amd64 (including DiskStation J3455), NEON on ARM64, then scalar. `internal/simd` provides the shared substrate selected with `MEMENTO_SIMD`:
 
 * `scalar` -- universal exact-order fallback and explicit override;
 * `sse2` -- baseline amd64 path suitable for older Intel systems such as the Celeron J3455;
