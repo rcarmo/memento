@@ -1,0 +1,96 @@
+import assert from 'node:assert/strict';
+
+export async function auditDiagnostics(page) {
+  const fixture = await page.evaluate(async () => (await fetch('/graph/api/v1/overview')).json());
+  const nodes=fixture.nodes.slice(0,3).map((n,i)=>({...n,title:['Website Device Screenshots','Linked target','Other orphan'][i],orphan:i===2,explicit_in_degree:i===1?1:0,explicit_out_degree:i===0?1:0,anomaly_ids:[]}));
+  const [a,b,c]=nodes;
+  const explicit={id:'audit-link',kind:'explicit',source:a.id,target:b.id,raw_target:b.path,resolution:'resolved',canonical:true,weight:1};
+  const semantic={id:'audit-semantic',kind:'semantic_similarity',source:a.id,target:b.id,similarity:.99,canonical:false,weight:.99};
+  const broken={id:'audit-broken',rule:'broken_links',severity:'error',message:'A specific missing target.',concept_ids:[a.id],measured:{broken_link_count:1}};
+  const other={id:'audit-orphan',rule:'orphan',severity:'warning',message:'No explicit inbound or outbound links.',concept_ids:[c.id],measured:{explicit_degree:0}};
+  const snapshot={...fixture,mode:'direct',nodes,edges:[explicit,semantic],clusters:[],cluster_edges:[],memberships:[],diagnostics:[broken,broken,other],truncated:false};
+  let failDetail=false;
+  const overviewRoute=async route=>route.fulfill({json:snapshot});
+  const detailRoute=async route=>{
+    const id=decodeURIComponent(new URL(route.request().url()).pathname.split('/').pop());
+    if(failDetail&&id===a.id)return route.fulfill({status:503,json:{error:'Relationships temporarily unavailable'}});
+    const node=nodes.find(n=>n.id===id);
+    return route.fulfill({json:{schema_version:1,revisions:fixture.revisions,node,diagnostics:id===a.id?[broken]:id===c.id?[other]:[],preview:'audit node',inbound:id===b.id?[explicit]:[],outbound:id===a.id?[explicit]:[],assets:[{asset_kind:'skill',version:'1.0.2',payload_bytes:4691},{asset_kind:'skill',version:'1.0.1',payload_bytes:4548},{asset_kind:'skill',version:'1.0.0',payload_bytes:4349}],proposals:[]}});
+  };
+  await page.route('**/graph/api/v1/overview',overviewRoute);
+  await page.route('**/graph/api/v1/memories/*',detailRoute);
+  try {
+    await page.getByRole('button',{name:'Overview',exact:true}).click();
+    await page.waitForFunction(()=>window.__mementoGraphScene.nodes.length===3);
+    await page.waitForFunction(()=>document.querySelectorAll('.diagnostics li').length===2);
+    assert.equal(await page.locator('.diagnostics li').count(),2,'deduplicate diagnostic IDs');
+    await page.locator(`[data-diagnostic-id="audit-broken"] button`).click();
+    await page.waitForFunction(()=>document.querySelector('.inspector h2')?.textContent==='Website Device Screenshots');
+    await page.waitForFunction(()=>document.querySelector('[data-testid="relationship-summary"]')?.textContent.includes('1 outbound'));
+    assert.equal(await page.locator('.diagnostics li').count(),1,'selected diagnostics scoped to node');
+    assert.equal(await page.locator('[data-diagnostic-id="audit-orphan"]').count(),0,'unrelated orphan hidden');
+    assert(await page.locator('[data-testid="relationship-summary"]').textContent().then(t=>t.includes('0 inbound / 1 outbound')));
+    await page.getByLabel('Show semantic layer',{exact:true}).check();
+    await page.locator('.inspector').getByRole('button',{name:b.title,exact:true}).click();
+    await page.waitForFunction(title=>document.querySelector('.inspector h2')?.textContent===title,b.title);
+    await page.waitForFunction(id=>window.__mementoGraphScene.selectedId===id,b.id);
+    assert.equal(await page.locator('.diagnostics li').count(),0,'target has no diagnostic');
+    failDetail=true;
+    await page.evaluate(id=>{const s=window.__mementoGraphScene;s.callbacks.select(s.nodes.find(n=>n.id===id));},a.id);
+    await page.getByTestId('inspector-error').waitFor();
+    const text=await page.locator('.inspector').innerText();
+    assert(text.includes('Relationships unavailable'));
+    assert(!text.includes('0 inbound / 0 outbound'),'failure must not render empty relationships');
+    assert(!text.includes('No assets.')&&!text.includes('No proposals.'),'failure must not fabricate empty assets/proposals');
+    failDetail=false;
+    await page.getByTestId('retry-node-detail').click();
+    await page.waitForFunction(()=>!document.querySelector('[data-testid="inspector-error"]')&&document.querySelector('[data-testid="relationship-summary"]')?.textContent.includes('1 outbound'));
+    assert((await page.locator('.inspector').innerText()).indexOf('skill:1.0.2')<(await page.locator('.inspector').innerText()).indexOf('skill:1.0.0'));
+    const aligns=await page.locator('.controls button,.inspector button').evaluateAll(items=>items.map(el=>getComputedStyle(el).textAlign));
+    assert(aligns.every(a=>a==='left'),'sidebar buttons left aligned');
+    await page.getByRole('button',{name:'Show current view diagnostics'}).click();
+    await page.waitForFunction(()=>document.querySelectorAll('.diagnostics li').length===2);
+    await page.locator('[data-diagnostic-id="audit-orphan"] button').focus();
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(title=>document.querySelector('.inspector h2')?.textContent===title,c.title);
+    const remote={...a,id:'off-graph',title:'Off-graph memory',path:'/off-graph.md'};
+    const remoteDetail=async route=>route.fulfill({json:{node:remote,revisions:fixture.revisions,diagnostics:[],inbound:[],outbound:[],assets:[],proposals:[]}});
+    let failHood=true, hoodCalls=0;
+    const remoteHood=async route=>{hoodCalls++;return failHood?route.fulfill({status:503,json:{error:'neighbourhood offline'}}):route.fulfill({json:{nodes:[remote],edges:[],diagnostics:[],revisions:fixture.revisions}});};
+    const search=async route=>route.fulfill({json:{results:[remote]}});
+    await page.route('**/graph/api/v1/memories/off-graph',remoteDetail);
+    await page.route('**/graph/api/v1/neighbourhood/off-graph',remoteHood);
+    await page.route('**/graph/api/v1/search',search);
+    await page.getByPlaceholder('title, tags, full text').fill('Off-graph');
+    await page.locator('.search-results button').click();
+    await page.getByTestId('neighbourhood-error').waitFor();
+    assert.equal(await page.locator('.inspector h2').textContent(),'Off-graph memory');
+    assert.equal(await page.getByTestId('inspector-error').count(),0,'detail success preserved');
+    assert.equal(await page.locator('.diagnostics li').count(),0,'old diagnostics not retained');
+    // Background embedding progress must retry the failed neighbourhood,
+    // not replace it with detail-only success and remove the error banner.
+    const refresh = await page.evaluate(async()=> (await fetch('/graph/api/v1/embeddings/status')).json());
+    const refreshRoute=route=>route.fulfill({json:{...refresh,completed:(refresh.completed||0)+1,embedding_revision:'diagnostic-poll-regression'}});
+    await page.route('**/graph/api/v1/embeddings/status',refreshRoute);
+    const initialCalls=hoodCalls;
+    const polled=page.waitForResponse(r=>r.url().endsWith('/neighbourhood/off-graph'));
+    await page.clock.fastForward(15001);
+    await polled;
+    await page.getByTestId('neighbourhood-error').waitFor();
+    assert(hoodCalls>initialCalls,'poll retries neighbourhood');
+    assert.equal(await page.getByTestId('inspector-error').count(),0);
+    await page.unroute('**/graph/api/v1/embeddings/status',refreshRoute);
+    failHood=false;
+    await page.getByTestId('retry-node-detail').click();
+    await page.getByTestId('neighbourhood-error').waitFor({state:'hidden'});
+    await page.waitForFunction(()=>window.__mementoGraphScene.selectedId==='off-graph');
+    await page.unroute('**/graph/api/v1/memories/off-graph',remoteDetail);
+    await page.unroute('**/graph/api/v1/neighbourhood/off-graph',remoteHood);
+    await page.unroute('**/graph/api/v1/search',search);
+  } finally {
+    await page.unroute('**/graph/api/v1/overview',overviewRoute);
+    await page.unroute('**/graph/api/v1/memories/*',detailRoute);
+    await page.getByRole('button',{name:'Overview',exact:true}).click();
+    await page.waitForFunction(()=>window.__mementoGraphScene.nodes.length===120);
+  }
+}

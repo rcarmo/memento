@@ -6,17 +6,20 @@ import (
 )
 
 type ClusterExpansion struct {
-	SchemaVersion  int       `json:"schema_version"`
-	Revisions      Revisions `json:"revisions"`
-	ClusterID      string    `json:"cluster_id"`
-	ParentPosition Position  `json:"parent_position"`
-	Nodes          []Node    `json:"nodes"`
-	Edges          []Edge    `json:"edges"`
-	NextCursor     *string   `json:"next_cursor"`
+	SchemaVersion  int          `json:"schema_version"`
+	Revisions      Revisions    `json:"revisions"`
+	ClusterID      string       `json:"cluster_id"`
+	ParentPosition Position     `json:"parent_position"`
+	Nodes          []Node       `json:"nodes"`
+	Edges          []Edge       `json:"edges"`
+	NextCursor     *string      `json:"next_cursor"`
+	Truncated      bool         `json:"truncated,omitempty"`
+	Diagnostics    []Diagnostic `json:"diagnostics"`
 }
 type ClusterOptions struct {
 	Cursor, RefreshMaxPaths, EdgeLimit, ExpansionNodeLimit, ClusterLimit int
 	Semantic                                                             SemanticConfig
+	IncludeTrash                                                         bool
 }
 
 func (s *SnapshotService) ExpandCluster(ctx context.Context, clusterID string, policy *access.EffectivePolicy, o ClusterOptions) (ClusterExpansion, error) {
@@ -28,26 +31,31 @@ func (s *SnapshotService) ExpandCluster(ctx context.Context, clusterID string, p
 	if err != nil {
 		return empty, err
 	}
-	nodes, err := s.Nodes(ctx, nil, o.RefreshMaxPaths, policy, true)
+	nodes, err := s.Nodes(ctx, nil, o.RefreshMaxPaths+1, policy, o.IncludeTrash)
 	if err != nil {
 		return empty, err
+	}
+	nodeTruncated := len(nodes) > o.RefreshMaxPaths
+	if nodeTruncated {
+		nodes = nodes[:o.RefreshMaxPaths]
 	}
 	ids := make([]string, len(nodes))
 	for i, node := range nodes {
 		ids[i] = node.ID
 	}
-	explicit, err := s.ExplicitEdges(ctx, ids, nil, nil, o.EdgeLimit, policy)
+	explicit, err := s.completeExplicitEdges(ctx, ids, nil, nil, policy)
 	if err != nil {
 		return empty, err
 	}
 	nodes = ScopedNodes(nodes, explicit)
-	semantic, err := s.SemanticEdges(ctx, nodes, revisions, o.Semantic, o.EdgeLimit-len(explicit))
+	displayExplicit, edgeTruncated := truncateExplicitEdges(explicit, o.EdgeLimit)
+	semantic, err := s.SemanticEdges(ctx, nodes, revisions, o.Semantic, o.EdgeLimit-len(displayExplicit))
 	if err != nil {
 		return empty, err
 	}
-	edges := append(append([]Edge{}, explicit...), semantic...)
-	edges = append(edges, OverlayEdges(nodes, revisions.Repository, o.EdgeLimit-len(edges))...)
-	layout := AggregateLayout(nodes, edges, revisions.Repository, o.ClusterLimit)
+	layoutEdges := append(append([]Edge{}, explicit...), semantic...)
+	layoutEdges = append(layoutEdges, OverlayEdges(nodes, revisions.Repository, o.EdgeLimit-len(displayExplicit)-len(semantic))...)
+	layout := AggregateLayout(nodes, layoutEdges, revisions.Repository, o.ClusterLimit)
 	members := map[string]bool{}
 	for _, pair := range layout.Memberships {
 		if pair[1] == clusterID {
@@ -83,10 +91,19 @@ func (s *SnapshotService) ExpandCluster(ctx context.Context, clusterID string, p
 		visible[node.ID] = true
 	}
 	pageEdges := []Edge{}
-	for _, edge := range edges {
+	for _, edge := range displayExplicit {
 		if edge.Target != nil && visible[edge.Source] && visible[*edge.Target] {
 			pageEdges = append(pageEdges, edge)
 		}
 	}
-	return ClusterExpansion{1, revisions, clusterID, cluster.CoarsePosition, page, pageEdges, next}, nil
+	for _, edge := range semantic {
+		if edge.Target != nil && visible[edge.Source] && visible[*edge.Target] {
+			pageEdges = append(pageEdges, edge)
+		}
+	}
+	diagnostics, err := s.scopedDiagnostics(ctx, nodes, explicit, revisions, page)
+	if err != nil {
+		return empty, err
+	}
+	return ClusterExpansion{1, revisions, clusterID, cluster.CoarsePosition, page, pageEdges, next, next != nil || edgeTruncated || nodeTruncated, diagnostics}, nil
 }

@@ -2,8 +2,8 @@
 
 **Status:** current-state debugger implemented and deployed on the trusted-LAN DiskStation; revision playback deferred
 **Decision:** [ADR 0011](decisions/0011-embed-a-gated-visual-memory-debugger.md)
-**Current deployment:** [`0.5.9` release and deployment evidence](evidence/release-0.5.9.md)
-**Latest graph-specific acceptance:** [`0.3.25` live graph checks](evidence/release-0.3.25.md)
+**Current deployment:** Go v1.0.5 on the trusted-LAN DiskStation
+**Latest graph-specific acceptance:** [Diagnostics/UI audit and local regression results](evidence/diagnostics-ui-audit-2026-09-21.md) (combined fix awaiting deployment)
 
 The visual debugger is a built-in `/graph` view for understanding how Memento creates, links and maintains shared memory. This document records the implemented API, rendering, validation and release details, then collects the deferred history features at the end.
 
@@ -82,7 +82,9 @@ Cluster names are projected over the graph. Force controls expose strength, repu
 
 ### Diagnostics
 
-Each diagnostic has a stable ID, severity, rule, concept IDs, explanation, measured values and thresholds. There is no combined mystery score.
+Each diagnostic has a stable ID, severity, rule, concept IDs, explanation, measured values and thresholds. The sidebar names its scope: selected node, selected cluster or current filtered view. Entries are deduplicated by ID and contain node-navigation buttons. Findings spanning a larger snapshot label their clipped target list. Detail, cluster and neighbourhood responses supply fresh scoped diagnostics.
+
+Explicit orphan/degree and broken-link calculations use the permitted explicit link set before display edge limits. Accepted asset links and external URLs are excluded from broken/orphan connectivity; semantic overlays do not establish explicit connectivity. Truncated displays are marked. Failed relationship requests show unavailable data with retry, not empty counts. Successful node detail remains available when only neighbourhood loading fails. Asset versions are grouped by kind and newest semantic version first, before applying the summary limit. Sidebar controls and inspector content are left aligned.
 
 The initial rules cover:
 

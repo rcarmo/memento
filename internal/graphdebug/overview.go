@@ -62,6 +62,36 @@ type OverviewOptions struct {
 	ClusterLimit    int
 }
 
+func unlimitedEdgeLimit() int { return int(^uint(0) >> 1) }
+
+func (s *SnapshotService) completeExplicitEdges(ctx context.Context, ids []string, sourceID, targetID *string, policy *access.EffectivePolicy) ([]Edge, error) {
+	return s.ExplicitEdges(ctx, ids, sourceID, targetID, unlimitedEdgeLimit(), policy)
+}
+
+func truncateExplicitEdges(edges []Edge, limit int) ([]Edge, bool) {
+	if limit <= 0 {
+		return []Edge{}, len(edges) > 0
+	}
+	if len(edges) > limit {
+		return append([]Edge{}, edges[:limit]...), true
+	}
+	return append([]Edge{}, edges...), false
+}
+
+func filterExplicitEdges(edges []Edge, include map[string]bool) []Edge {
+	result := make([]Edge, 0, len(edges))
+	for _, edge := range edges {
+		if !include[edge.Source] {
+			continue
+		}
+		if edge.Target != nil && !include[*edge.Target] {
+			continue
+		}
+		result = append(result, edge)
+	}
+	return result
+}
+
 func (s *SnapshotService) Overview(ctx context.Context, policy *access.EffectivePolicy, options OverviewOptions) (Overview, error) {
 	empty := Overview{}
 	revisions, err := s.Revisions(ctx)
@@ -72,63 +102,72 @@ func (s *SnapshotService) Overview(ctx context.Context, policy *access.Effective
 	if err != nil {
 		return empty, err
 	}
-	truncated := len(nodes) > options.DirectNodeLimit
-	if truncated {
+	nodeTruncated := len(nodes) > options.DirectNodeLimit
+	truncated := nodeTruncated
+	if nodeTruncated {
 		nodes = nodes[:options.DirectNodeLimit]
 	}
 	ids := make([]string, len(nodes))
 	for i, node := range nodes {
 		ids[i] = node.ID
 	}
-	edges, err := s.ExplicitEdges(ctx, ids, nil, nil, options.EdgeLimit, policy)
+	explicit, err := s.completeExplicitEdges(ctx, ids, nil, nil, policy)
 	if err != nil {
 		return empty, err
 	}
-	nodes = ScopedNodes(nodes, edges)
+	nodes = ScopedNodes(nodes, explicit)
 	hashes, err := s.ContentHashes(ctx, ids)
 	if err != nil {
 		return empty, err
 	}
-	diagnostics := DiagnoseGraph(nodes, edges, revisions, hashes)
+	diagnostics := DiagnoseGraph(nodes, explicit, revisions, hashes)
 	nodes = ApplyDiagnosticIDs(nodes, diagnostics)
+	displayExplicit, edgeTruncated := truncateExplicitEdges(explicit, options.EdgeLimit)
+	truncated = truncated || edgeTruncated
 	semantic := []Edge{}
 	if options.Semantic.NodeLimit > 0 {
-		semantic, err = s.SemanticEdges(ctx, nodes, revisions, options.Semantic, options.EdgeLimit-len(edges))
+		semantic, err = s.SemanticEdges(ctx, nodes, revisions, options.Semantic, options.EdgeLimit-len(displayExplicit))
 		if err != nil {
 			return empty, err
 		}
 	}
-	overlays := OverlayEdges(nodes, revisions.Repository, options.EdgeLimit-len(edges)-len(semantic))
-	allEdges := append(append(append([]Edge{}, edges...), semantic...), overlays...)
-	metricNodes, metricEdges := nodes, edges
+	overlays := OverlayEdges(nodes, revisions.Repository, options.EdgeLimit-len(displayExplicit)-len(semantic))
+	allEdges := append(append(append([]Edge{}, displayExplicit...), semantic...), overlays...)
+	metricNodes, metricEdges := nodes, explicit
 	var layout *Layout
-	if truncated || sparseOverview(nodes, edges) {
+	if nodeTruncated || sparseOverview(nodes, explicit) {
 		maximum := options.RefreshMaxPaths
 		if maximum <= 0 {
 			maximum = 2000
 		}
-		allNodes, loadErr := s.Nodes(ctx, nil, maximum, policy, options.IncludeTrash)
+		allNodes, loadErr := s.Nodes(ctx, nil, maximum+1, policy, options.IncludeTrash)
 		if loadErr != nil {
 			return empty, loadErr
+		}
+		if len(allNodes) > maximum {
+			allNodes = allNodes[:maximum]
+			truncated = true
 		}
 		allIDs := make([]string, len(allNodes))
 		for i, node := range allNodes {
 			allIDs[i] = node.ID
 		}
-		allExplicit, loadErr := s.ExplicitEdges(ctx, allIDs, nil, nil, options.EdgeLimit, policy)
+		allExplicit, loadErr := s.completeExplicitEdges(ctx, allIDs, nil, nil, policy)
 		if loadErr != nil {
 			return empty, loadErr
 		}
 		allNodes = ScopedNodes(allNodes, allExplicit)
+		displayAllExplicit, allEdgeTruncated := truncateExplicitEdges(allExplicit, options.EdgeLimit)
+		truncated = truncated || allEdgeTruncated
 		allSemantic := []Edge{}
 		if options.Semantic.NodeLimit > 0 {
-			allSemantic, loadErr = s.SemanticEdges(ctx, allNodes, revisions, options.Semantic, options.EdgeLimit-len(allExplicit))
+			allSemantic, loadErr = s.SemanticEdges(ctx, allNodes, revisions, options.Semantic, options.EdgeLimit-len(displayAllExplicit))
 			if loadErr != nil {
 				return empty, loadErr
 			}
 		}
-		allEdges := append(append([]Edge{}, allExplicit...), allSemantic...)
-		allEdges = append(allEdges, OverlayEdges(allNodes, revisions.Repository, options.EdgeLimit-len(allEdges))...)
+		layoutEdges := append(append([]Edge{}, allExplicit...), allSemantic...)
+		layoutEdges = append(layoutEdges, OverlayEdges(allNodes, revisions.Repository, options.EdgeLimit-len(displayAllExplicit)-len(allSemantic))...)
 		allHashes, loadErr := s.ContentHashes(ctx, allIDs)
 		if loadErr != nil {
 			return empty, loadErr
@@ -138,7 +177,7 @@ func (s *SnapshotService) Overview(ctx context.Context, policy *access.Effective
 		if clusterLimit <= 0 {
 			clusterLimit = 500
 		}
-		value := AggregateLayout(allNodes, allEdges, revisions.Repository, clusterLimit)
+		value := AggregateLayout(allNodes, layoutEdges, revisions.Repository, clusterLimit)
 		layout = &value
 		metricNodes, metricEdges = allNodes, allExplicit
 	}
@@ -151,7 +190,10 @@ func (s *SnapshotService) Overview(ctx context.Context, policy *access.Effective
 		}
 	}
 	for _, edge := range metricEdges {
-		if !externalLink(edge.RawTarget) && (edge.Target == nil || edge.Resolution != "resolved") {
+		if edge.Kind != "explicit" || externalLink(edge.RawTarget) || edge.Resolution == "asset" {
+			continue
+		}
+		if edge.Target == nil || edge.Resolution != "resolved" {
 			metrics.BrokenEdges++
 		}
 	}

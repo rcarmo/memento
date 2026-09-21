@@ -29,8 +29,18 @@ func TestClusterExpansionFixture(t *testing.T) {
 	if math.Abs(a.X-b.X) > 1e-14 || math.Abs(a.Y-b.Y) > 1e-14 || math.Abs(a.Z-b.Z) > 1e-14 {
 		t.Fatal(a, b)
 	}
+	// Truncation is now explicit; remaining fields retain the reference contract.
+	if !got.Truncated {
+		t.Fatal("pagination must report incomplete display")
+	}
+	got.Truncated = false
 	got.ParentPosition = Position{}
 	fixture.Expansion.ParentPosition = Position{}
+	// Diagnostics are additive and tested by TestFreshSelectionDiagnostics.
+	if len(got.Diagnostics) == 0 {
+		t.Fatal("missing scoped diagnostics")
+	}
+	got.Diagnostics = nil
 	ga, _ := json.Marshal(got)
 	fa, _ := json.Marshal(fixture.Expansion)
 	if string(ga) != string(fa) {

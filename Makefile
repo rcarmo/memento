@@ -54,9 +54,31 @@ test:
 python-parity:
 	CGO_ENABLED=0 $(GO) test ./... -count=1
 	$(MAKE) -C umcp test
-# Install pinned browser tooling with: cd tools/browser && npm ci && npx playwright install chromium
-ui-test:
-	node tools/browser/audit.mjs
+# Setup: make ui-setup; repeatability gate: make ui-test UI_REPEAT=2
+.PHONY: ui-setup ui-unit ui-lifecycle ux-check ui-test
+UI_BROWSERS ?= chromium webkit
+UI_REPEAT ?= 1
+# Override with UI_BROWSER=chromium for a focused run. CI uses both.
+ui-setup:
+	npm ci --prefix tools/browser
+	cd tools/browser && npx --no-install playwright install $(UI_INSTALL_FLAGS) $(UI_BROWSERS)
+
+ux-check:
+	CGO_ENABLED=0 $(GO) test ./tools -run '^TestUXFeatureInventory$$' -count=1
+
+ui-unit:
+	node --test tools/browser/diagnostics-unit.test.mjs
+
+ui-lifecycle:
+	node --test tools/browser/lifecycle.test.mjs
+
+ui-test: ux-check ui-unit ui-lifecycle
+	@set -eu; for iteration in $$(seq 1 $(UI_REPEAT)); do \
+		for browser in $(if $(UI_BROWSER),$(UI_BROWSER),$(UI_BROWSERS)); do \
+			echo "UI audit $$browser ($$iteration/$(UI_REPEAT))"; \
+			UI_BROWSER=$$browser node tools/browser/audit.mjs; \
+		done; \
+	done
 graph-test:
 	node --test tools/graph-semantic.test.mjs
 # Focused startup/wire contracts plus the standalone transport contract suite.

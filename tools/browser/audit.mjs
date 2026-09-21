@@ -1,23 +1,59 @@
 import { chromium, firefox, webkit } from 'playwright';
 import { spawn } from 'node:child_process';
-import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { auditDiagnostics } from './diagnostics-audit.mjs';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const engine=process.env.UI_BROWSER||'chromium';
-const output=path.join(root,'build/ui-audit',engine);await mkdir(output,{recursive:true});
-const ready=path.join(output,'ready');await rm(ready,{force:true});await rm(ready+'.stop',{force:true});
-const child=spawn('go',['test','./internal/service','-run','^TestUIAuditServer$','-count=1','-v','-timeout=14m'],{cwd:root,env:{...process.env,MEMENTO_UI_AUDIT_READY:ready},stdio:['ignore','pipe','pipe']});
+if (!['chromium','webkit','firefox'].includes(engine)) throw new Error('UI_BROWSER must be chromium, webkit or firefox');
+const parent=path.join(root,'build/ui-audit',engine);await mkdir(parent,{recursive:true});
+// Readiness files, exports, logs and screenshots belong to this invocation only.
+const output=await mkdtemp(path.join(parent,'run-'));
+const ready=path.join(output,'ready');
+const child=spawn('go',['test','./internal/service','-run','^TestUIAuditServer$','-count=1','-v','-timeout=14m'],{cwd:root,env:{...process.env,CGO_ENABLED:'0',GOTOOLCHAIN:'go1.26.6',MEMENTO_UI_AUDIT_READY:ready},detached:process.platform!=='win32',stdio:['ignore','pipe','pipe']});
 let logs='';child.stdout.on('data',b=>logs+=b);child.stderr.on('data',b=>logs+=b);
-let exited=false;const exit=new Promise(resolve=>child.on('exit',code=>{exited=true;resolve(code)}));
-let browser;const results=[];const delay=ms=>new Promise(r=>setTimeout(r,ms));
+let exited=false;const exit=new Promise(resolve=>{child.on('error',error=>{logs+=error.stack;exited=true;resolve(-1)});child.on('exit',code=>{exited=true;resolve(code)})});
+let browser,base,webgl2,stopping;const results=[];const delay=ms=>new Promise(r=>setTimeout(r,ms));
+const terminate=signal=>{try{if(process.platform==='win32')child.kill(signal);else process.kill(-child.pid,signal)}catch(error){if(error.code!=='ESRCH')throw error}};
+async function shutdown(){
+ if(stopping)return stopping;
+ stopping=(async()=>{
+  await browser?.close().catch(()=>{});
+  await writeFile(ready+'.stop','stop');
+  let timer;
+  const code=await Promise.race([exit,new Promise(resolve=>{timer=setTimeout(()=>{terminate('SIGTERM');resolve(-1)},10000)})]);clearTimeout(timer);
+  if(code===-1&&!exited){await delay(500);terminate('SIGKILL')}
+  await writeFile(path.join(output,'server.log'),logs);
+  await rm(ready,{force:true});await rm(ready+'.stop',{force:true});
+  if(code!==0){console.error(logs);process.exitCode=1}
+ })();return stopping;
+}
+for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{process.exitCode=signal==='SIGINT'?130:143;void shutdown()});
 async function eventually(fn, timeout=120000){const deadline=Date.now()+timeout;while(Date.now()<deadline){if(exited)throw new Error(logs);try{return await fn()}catch{}await delay(100)}throw new Error(`condition timed out after ${timeout}ms\n${logs}`)}
 try {
- const base=await eventually(()=>readFile(ready,'utf8'));
- browser=await ({chromium,firefox,webkit}[engine]).launch({headless:true,...(engine==='chromium'?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE||undefined,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']}:{})});
- const probe=await browser.newPage();const webgl2=await probe.evaluate(()=>!!document.createElement('canvas').getContext('webgl2'));await probe.close();
- async function check(name,fn){if(!webgl2&&!/WebGL unavailable|real admin authentication|admin buttons/.test(name)){results.push({name,status:'not_run',reason:`${engine} headless environment has no WebGL2`});return}const context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));try{await fn(page,context);assert.deepEqual(errors,[]);results.push({name,status:'passed'});console.log('PASS',name)}catch(e){results.push({name,status:'failed',error:e.stack});await writeFile(path.join(output,`failure-${results.length}.txt`),await page.locator('body').innerText()).catch(()=>{});await page.screenshot({path:path.join(output,`failure-${results.length}.png`)}).catch(()=>{});console.error('FAIL',name,e.message)}finally{await context.close()}}
+ base=await eventually(()=>readFile(ready,'utf8'));
+ browser=await ({chromium,firefox,webkit}[engine]).launch({headless:true,...(engine==='chromium'?{args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']}:{})});
+ const lock=await readFile(path.join(root,'tools/browser/package-lock.json'));
+ await writeFile(path.join(output,'environment.json'),JSON.stringify({engine,browserVersion:browser.version(),node:process.version,platform:process.platform,arch:process.arch,goToolchain:'go1.26.6',lockSHA256:createHash('sha256').update(lock).digest('hex')},null,2));
+ const probe=await browser.newPage();webgl2=await probe.evaluate(()=>!!document.createElement('canvas').getContext('webgl2'));await probe.close();
+ // Chromium/WebKit are required gates. Firefox is explicitly fallback/admin only.
+ if(!webgl2&&engine!=='firefox')throw new Error(engine+' requires WebGL2; graph cases must not silently skip');
+ async function check(name,fn){
+  if(stopping)throw new Error('Browser audit interrupted');
+  if(!webgl2&&!/WebGL unavailable|real admin authentication|admin buttons/.test(name)){results.push({name,status:'not_run',reason:engine+' headless environment has no WebGL2'});return}
+  const context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true,locale:'en-GB',timezoneId:'UTC',colorScheme:'dark'});
+  await context.tracing.start({screenshots:true,snapshots:true,sources:true});
+  const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  let testTimer;
+  try{await Promise.race([fn(page,context),new Promise((_,reject)=>{testTimer=setTimeout(()=>reject(new Error('Browser case exceeded 90 seconds')),90000)})]);assert.deepEqual(errors,[]);results.push({name,status:'passed'});console.log('PASS',name);await context.tracing.stop()}
+  catch(e){results.push({name,status:'failed',error:e.stack});await page.locator('body').innerText().then(text=>writeFile(path.join(output,'failure-'+results.length+'.txt'),text)).catch(()=>{});await page.screenshot({path:path.join(output,'failure-'+results.length+'.png')}).catch(()=>{});await context.tracing.stop({path:path.join(output,'failure-'+results.length+'-trace.zip')}).catch(()=>{});console.error('FAIL',name,e.message)}
+  finally{clearTimeout(testTimer);await context.close().catch(()=>{})}
+ }
+ // Wait for rendering tasks without assuming a machine-dependent delay.
+ const rendered=page=>page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
  const graph=async(page)=>{await page.goto(base+'/graph');await page.waitForFunction(()=>window.__mementoGraphScene?.nodes.length===120)};
  const scene=async(page,fn)=>page.evaluate(fn);
  const nodes=async page=>scene(page,()=>window.__mementoGraphScene.nodes.length);
@@ -57,7 +93,7 @@ try {
    if(format==='SVG')assert.match(data.toString(),/<svg/);
    if(format==='PNG')assert.equal(data.subarray(1,4).toString(),'PNG');
   }
-  await page.waitForTimeout(1100);assert.equal(await page.evaluate(()=>window.auditURLs.length-window.auditRevoked.length),0);
+  await page.waitForFunction(()=>window.auditURLs.length===window.auditRevoked.length);
  });
  await check('aggregated cluster expansion, member navigation and disabled aggregate actions',async(page)=>{
   const cluster={id:'cluster:test',label:'Test cluster',namespace:'/projects/',member_count:2,type_counts:[['project',2]],combined_bytes:250,coarse_position:{x:0,y:0,z:0}};
@@ -70,7 +106,7 @@ try {
  await check('large graph Points picking/hover and pinch/cancel never selects',async(page)=>{
   await graph(page);await stop(page);
   await page.evaluate(()=>{const s=window.__mementoGraphScene;const template=s.nodes[0];const nodes=Array.from({length:1001},(_,i)=>({...template,id:'large-'+i,title:'Large '+i,namespace:'',coarse_position:{x:i?30+i:0,y:0,z:0}}));s.setGraph(nodes,[],{forces:{repulsion:0,explicit:0}});s.worker.postMessage({type:'stop'});s.layoutId++;s.yaw=0;s.pitch=0;s.distance=16;s.target.set(0,0,0)});
-  await page.waitForTimeout(100);const box=await page.locator('canvas').boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.locator('.node-label').waitFor({state:'visible'});assert.equal(await page.locator('.node-label').innerText(),'Large 0');
+  await rendered(page);const box=await page.locator('canvas').boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.locator('.node-label').waitFor({state:'visible'});assert.equal(await page.locator('.node-label').innerText(),'Large 0');
   // Replace selection callback only for gesture isolation; picking still uses real Three raycasts.
   await page.evaluate(()=>{const s=window.__mementoGraphScene;s.callbacks.select=n=>{window.auditPicked=n?.id;window.auditPicks=(window.auditPicks||0)+1}});
   await page.mouse.click(box.x+box.width/2,box.y+box.height/2);assert.equal(await page.evaluate(()=>window.auditPicked),'large-0');
@@ -82,13 +118,14 @@ try {
   await page.route('**/graph/api/v1/memories/*',async r=>{await held;await r.fulfill({status:404,json:{error:'fixture missing'}}).catch(()=>{})});
   await select(page);await page.getByTestId('inspector-loading').waitFor();release();await page.getByTestId('inspector-error').waitFor();await page.getByTestId('inspector-loading').waitFor({state:'hidden'});
   await page.unroute('**/graph/api/v1/memories/*');let release2;const held2=new Promise(r=>release2=r);
-  await page.route('**/graph/api/v1/memories/*',async r=>{await held2;await r.continue().catch(()=>{})});
-  await page.getByPlaceholder('title, tags, full text').fill('Node 003');await page.locator('.search-results button').first().click();await page.getByRole('button',{name:'Overview',exact:true}).click();release2();await page.waitForTimeout(250);await page.locator('.inspector h2').waitFor({state:'hidden'});
+  let started2,finished2;const requested2=new Promise(r=>started2=r),handled2=new Promise(r=>finished2=r);
+  await page.route('**/graph/api/v1/memories/*',async r=>{started2();await held2;await r.continue().catch(()=>{});finished2()});
+  await page.getByPlaceholder('title, tags, full text').fill('Node 003');await page.locator('.search-results button').first().click();await requested2;await page.getByRole('button',{name:'Overview',exact:true}).click();release2();await handled2;await rendered(page);await page.locator('.inspector h2').waitFor({state:'hidden'});
  });
  await check('slow overview cannot overwrite principal simulation',async(page)=>{
-  let first=true,release;const held=new Promise(r=>release=r);
-  await page.route('**/graph/api/v1/overview',async r=>{if(first){first=false;await held;await r.fulfill({json:{mode:'direct',nodes:[fixtureNode('LEAK')],edges:[],clusters:[],diagnostics:[],revisions:{}}}).catch(()=>{})}else await r.continue()});
-  await page.goto(base+'/graph');await page.getByLabel('View as',{exact:false}).selectOption('projects-reader');await waitNodes(page,40);release();await page.waitForTimeout(250);assert.equal(await nodes(page),40);assert.equal(await page.locator('.toast-error').count(),0);
+  let first=true,release,finished;const held=new Promise(r=>release=r),handled=new Promise(r=>finished=r);
+  await page.route('**/graph/api/v1/overview',async r=>{if(first){first=false;await held;await r.fulfill({json:{mode:'direct',nodes:[fixtureNode('LEAK')],edges:[],clusters:[],diagnostics:[],revisions:{}}}).catch(()=>{});finished()}else await r.continue()});
+  await page.goto(base+'/graph');await page.getByLabel('View as',{exact:false}).selectOption('projects-reader');await waitNodes(page,40);release();await handled;await rendered(page);assert.equal(await nodes(page),40);assert.equal(await page.locator('.toast-error').count(),0);
  });
  await check('refresh selected/visible/full confirmation and error handling',async(page)=>{
   await page.route('**/graph/api/v1/embeddings/status',r=>r.fulfill({json:{available:true,alive:true,completed:0}}));const requests=[];
@@ -105,7 +142,7 @@ try {
   const box=await page.locator('canvas').boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.click(box.x+box.width/2,box.y+box.height/2);assert.equal(await page.locator('.node-label').isVisible(),false);
   await page.getByRole('button',{name:'Export current graph'}).click();for(const name of ['JSON','SVG'])assert.equal(await page.locator('.format-grid button').filter({hasText:name}).isDisabled(),true);
  });
- await check('scene disposal stops animation and removes overlay DOM',async(page)=>{await graph(page);await page.evaluate(()=>window.__mementoGraphScene.dispose());assert.equal(await page.locator('.node-label,.cluster-label').count(),0);const frame=await scene(page,()=>window.__mementoGraphScene.lastFrame);await page.waitForTimeout(100);assert.equal(await scene(page,()=>window.__mementoGraphScene.lastFrame),frame)});
+ await check('scene disposal stops animation and removes overlay DOM',async(page)=>{await graph(page);await page.evaluate(()=>window.__mementoGraphScene.dispose());assert.equal(await page.locator('.node-label,.cluster-label').count(),0);const frame=await scene(page,()=>window.__mementoGraphScene.lastFrame);await rendered(page);assert.equal(await scene(page,()=>window.__mementoGraphScene.lastFrame),frame)});
  await check('WebGL unavailable produces a visible diagnostic',async(page)=>{await page.addInitScript(()=>{const get=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){return type==='webgl2'?null:get.call(this,type,...args)}});await page.goto(base+'/graph');await page.locator('.toast-error').filter({hasText:'WebGL2 is unavailable'}).waitFor()});
  await check('real admin authentication, principal lifecycle, credential secrecy and activity',async(page)=>{
   await page.goto(base+'/admin');await page.locator('#token').fill('ui-reader-token');await page.locator('#login').click();await page.locator('#loginError').filter({hasText:'admin bearer credential required'}).waitFor();
@@ -133,28 +170,32 @@ try {
   await page.getByRole('button',{name:'Principals',exact:true}).click();
   const card=()=>page.locator('#content article').filter({has:page.locator('strong').filter({hasText:/^ui-buttons$/})});await card().waitFor();
   for(const action of ['Disable','Enable']){page.once('dialog',d=>d.accept());await card().getByRole('button',{name:action,exact:true}).click();await card().getByRole('button',{name:action==='Disable'?'Enable':'Disable',exact:true}).waitFor()}
-  const prompts=['reader','/projects/',''];const onPrompt=async d=>d.accept(prompts.shift());page.on('dialog',onPrompt);await card().getByRole('button',{name:'Edit access'}).click();await page.waitForTimeout(200);page.off('dialog',onPrompt);assert.equal(prompts.length,0);
+  const prompts=['reader','/projects/',''];const onPrompt=async d=>d.accept(prompts.shift());page.on('dialog',onPrompt);const updated=page.waitForResponse(r=>r.url().endsWith('/admin/api/principals/ui-buttons/update')&&r.request().method()==='POST');await card().getByRole('button',{name:'Edit access'}).click();assert.equal((await updated).status(),200);page.off('dialog',onPrompt);assert.equal(prompts.length,0);
   await page.route('**/admin/api/principals/ui-buttons/rotate',r=>r.fulfill({status:400,json:{error:'fixture rotate blocked'}}));page.once('dialog',d=>d.accept());await card().getByRole('button',{name:'Rotate credential'}).click();await page.locator('#actionError').filter({hasText:'fixture rotate blocked'}).waitFor();await page.unroute('**/admin/api/principals/ui-buttons/rotate');
   page.once('dialog',d=>d.accept());await card().getByRole('button',{name:'Rotate credential'}).click();await page.locator('#secret').waitFor({state:'visible'});assert.notEqual(await page.locator('#secretValue').innerText(),secret);await page.locator('#closeSecret').click();
   const renameDialogs=d=>d.accept(d.type()==='prompt'?'ui-renamed':undefined);page.on('dialog',renameDialogs);await card().getByRole('button',{name:'Rename',exact:true}).click();await page.locator('#content strong').filter({hasText:/^ui-renamed$/}).waitFor();page.off('dialog',renameDialogs);
-  let release;const held=new Promise(r=>release=r);await page.route('**/admin/api/activity',async r=>{await held;await r.continue().catch(()=>{})});await page.getByRole('button',{name:'Activity',exact:true}).click();await page.locator('#lock').click();release();await page.waitForTimeout(200);assert.equal(await page.locator('#content').innerText(),'');assert.equal(await page.locator('#secretValue').innerText(),'');
+  let release,finished,started;const held=new Promise(r=>release=r),handled=new Promise(r=>finished=r),requested=new Promise(r=>started=r);await page.route('**/admin/api/activity',async r=>{started();await held;await r.continue().catch(()=>{});finished()});await page.getByRole('button',{name:'Activity',exact:true}).click();await requested;await page.locator('#lock').click();release();await handled;await rendered(page);assert.equal(await page.locator('#content').innerText(),'');assert.equal(await page.locator('#secretValue').innerText(),'');
  });
  await check('search reply cannot repopulate results after changing principal',async(page)=>{
-  await graph(page);let release;const held=new Promise(r=>release=r);let started;const requested=new Promise(r=>started=r);
-  await page.route('**/graph/api/v1/search',async r=>{started();await held;await r.fulfill({json:{results:[{id:'private',path:'/private/leak.md',title:'Private leak'}]}}).catch(()=>{})});
-  await page.getByPlaceholder('title, tags, full text').fill('private');await requested;await page.getByLabel('View as',{exact:false}).selectOption('projects-reader');await waitNodes(page,40);release();await page.waitForTimeout(200);assert.equal(await page.locator('.search-results').count(),0);
+  await graph(page);let release;const held=new Promise(r=>release=r);let started,finished;const requested=new Promise(r=>started=r),handled=new Promise(r=>finished=r);
+  await page.route('**/graph/api/v1/search',async r=>{started();await held;await r.fulfill({json:{results:[{id:'private',path:'/private/leak.md',title:'Private leak'}]}}).catch(()=>{});finished()});
+  await page.getByPlaceholder('title, tags, full text').fill('private');await requested;await page.getByLabel('View as',{exact:false}).selectOption('projects-reader');await waitNodes(page,40);release();await handled;await rendered(page);assert.equal(await page.locator('.search-results').count(),0);
  });
  await check('refresh completion preserves semantic and filter settings',async(page)=>{
+  await page.clock.install();
   let completed=0;await page.route('**/graph/api/v1/embeddings/status',r=>r.fulfill({json:{available:true,alive:true,completed,embedding_revision:'partial'}}));
   await graph(page);await page.getByLabel('Show semantic layer',{exact:true}).check();await page.locator('.controls label').filter({hasText:/^Type/}).locator('select').selectOption('skill');await waitNodes(page,40);completed=1;
-  const reload=page.waitForResponse(r=>r.url().endsWith('/api/v1/overview'),{timeout:20000});await reload;await waitNodes(page,40);assert.equal(await page.getByLabel('Show semantic layer',{exact:true}).isChecked(),true);await page.waitForFunction(()=>window.__mementoGraphScene.edges.some(e=>e.kind==='semantic_similarity'));
+  const reload=page.waitForResponse(r=>r.url().endsWith('/api/v1/overview'));await page.clock.fastForward(15001);await reload;await waitNodes(page,40);assert.equal(await page.getByLabel('Show semantic layer',{exact:true}).isChecked(),true);await page.waitForFunction(()=>window.__mementoGraphScene.edges.some(e=>e.kind==='semantic_similarity'));
  });
+ await check('diagnostic scope, target navigation, retry, versions and alignment',async(page)=>{await page.clock.install();await graph(page);await auditDiagnostics(page)});
  await check('API failure, retry and error dismissal',async(page)=>{
   await page.route('**/graph/api/v1/overview',r=>r.fulfill({status:500,json:{error:'snapshot offline'}}));await page.goto(base+'/graph');await page.locator('.toast-error').filter({hasText:'snapshot offline'}).waitFor();await page.locator('.toast-error').click();assert.equal(await page.locator('.toast-error').count(),0);await page.unroute('**/graph/api/v1/overview');await page.getByRole('button',{name:'Overview',exact:true}).click();await waitNodes(page,120);
  });
- await writeFile(path.join(output,'results.json'),JSON.stringify({engine,webgl2,base,results},null,2));
  console.log(JSON.stringify({passed:results.filter(r=>r.status==='passed').length,failed:results.filter(r=>r.status==='failed').length,notRun:results.filter(r=>r.status==='not_run').length}));
  if(results.some(r=>r.status==='failed'))process.exitCode=1;
-}finally{
- await browser?.close();await writeFile(ready+'.stop','stop');const code=await Promise.race([exit,delay(10000).then(()=>{child.kill('SIGTERM');return -1})]);await writeFile(path.join(output,'server.log'),logs);if(code!==0){console.error(logs);process.exitCode=1}
+ }catch(error){results.push({name:'audit setup/runtime',status:'failed',error:error.stack});console.error(error);process.exitCode=1}
+finally{
+ await shutdown();
+ await writeFile(path.join(output,'results.json'),JSON.stringify({engine,webgl2,base,results},null,2));
+ console.log('UI artifacts: '+path.relative(root,output));
 }

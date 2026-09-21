@@ -7,7 +7,7 @@ import (
 )
 
 func TestClusterExpansionFailureStages(t *testing.T) {
-	for _, failure := range []int{1, 2, 3, 4} {
+	for _, failure := range []int{1, 2, 3, 4, 5} {
 		root, path := nodeDB(t)
 		s := NewSnapshotService(root, path, emptyControlDB(t))
 		base := s.open

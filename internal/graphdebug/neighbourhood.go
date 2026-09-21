@@ -7,15 +7,18 @@ import (
 )
 
 type Neighbourhood struct {
-	SchemaVersion int       `json:"schema_version"`
-	Revisions     Revisions `json:"revisions"`
-	CenterID      string    `json:"center_id"`
-	Nodes         []Node    `json:"nodes"`
-	Edges         []Edge    `json:"edges"`
-	Depth         int       `json:"depth"`
+	SchemaVersion int          `json:"schema_version"`
+	Revisions     Revisions    `json:"revisions"`
+	CenterID      string       `json:"center_id"`
+	Nodes         []Node       `json:"nodes"`
+	Edges         []Edge       `json:"edges"`
+	Depth         int          `json:"depth"`
+	Truncated     bool         `json:"truncated,omitempty"`
+	Diagnostics   []Diagnostic `json:"diagnostics"`
 }
 type NeighbourhoodOptions struct {
 	Depth, EdgeLimit, SemanticNodeLimit, SemanticEdgeLimit, ExpansionNodeLimit int
+	IncludeTrash                                                               bool
 	Semantic                                                                   SemanticConfig
 }
 
@@ -24,7 +27,7 @@ func (s *SnapshotService) Neighbourhood(ctx context.Context, conceptID string, p
 	if o.Depth != 1 {
 		return empty, &SnapshotError{"MVP neighbourhood depth must be 1"}
 	}
-	center, err := s.Nodes(ctx, []string{conceptID}, 1, policy, false)
+	center, err := s.Nodes(ctx, []string{conceptID}, 1, policy, o.IncludeTrash)
 	if err != nil {
 		return empty, err
 	}
@@ -35,15 +38,28 @@ func (s *SnapshotService) Neighbourhood(ctx context.Context, conceptID string, p
 	if err != nil {
 		return empty, err
 	}
-	visible, err := s.Nodes(ctx, nil, o.SemanticNodeLimit, policy, false)
+	visible, err := s.Nodes(ctx, nil, o.SemanticNodeLimit+1, policy, o.IncludeTrash)
 	if err != nil {
 		return empty, err
+	}
+	scopeTruncated := len(visible) > o.SemanticNodeLimit
+	if scopeTruncated {
+		visible = visible[:o.SemanticNodeLimit]
+	}
+	foundCenter := false
+	for _, node := range visible {
+		if node.ID == conceptID {
+			foundCenter = true
+		}
+	}
+	if !foundCenter {
+		visible = append(visible, center[0])
 	}
 	visibleIDs := make([]string, len(visible))
 	for i, node := range visible {
 		visibleIDs[i] = node.ID
 	}
-	explicit, err := s.ExplicitEdges(ctx, visibleIDs, nil, nil, o.EdgeLimit, policy)
+	explicit, err := s.completeExplicitEdges(ctx, visibleIDs, nil, nil, policy)
 	if err != nil {
 		return empty, err
 	}
@@ -65,13 +81,17 @@ func (s *SnapshotService) Neighbourhood(ctx context.Context, conceptID string, p
 	}
 	ids := make([]string, 0, len(neighbors))
 	for id := range neighbors {
-		ids = append(ids, id)
+		if id != conceptID {
+			ids = append(ids, id)
+		}
 	}
 	sort.Strings(ids)
-	if len(ids) > o.ExpansionNodeLimit {
+	ids = append([]string{conceptID}, ids...)
+	nodeTruncated := len(ids) > o.ExpansionNodeLimit
+	if nodeTruncated {
 		ids = ids[:o.ExpansionNodeLimit]
 	}
-	nodes, err := s.Nodes(ctx, ids, o.ExpansionNodeLimit, policy, false)
+	nodes, err := s.Nodes(ctx, ids, o.ExpansionNodeLimit, policy, o.IncludeTrash)
 	if err != nil {
 		return empty, err
 	}
@@ -81,15 +101,18 @@ func (s *SnapshotService) Neighbourhood(ctx context.Context, conceptID string, p
 		included[i] = node.ID
 		include[node.ID] = true
 	}
-	edges, err := s.ExplicitEdges(ctx, included, nil, nil, o.EdgeLimit, policy)
-	if err != nil {
-		return empty, err
-	}
+	scopedExplicit := filterExplicitEdges(explicit, include)
+	displayExplicit, edgeTruncated := truncateExplicitEdges(scopedExplicit, o.EdgeLimit)
+	edges := append([]Edge{}, displayExplicit...)
 	for _, edge := range semantic {
 		if edge.Target != nil && include[edge.Source] && include[*edge.Target] {
 			edges = append(edges, edge)
 		}
 	}
-	nodes = ScopedNodes(nodes, edges)
-	return Neighbourhood{1, revisions, conceptID, nodes, edges, 1}, nil
+	nodes = ScopedNodes(nodes, explicit)
+	diagnostics, err := s.scopedDiagnostics(ctx, visible, explicit, revisions, nodes)
+	if err != nil {
+		return empty, err
+	}
+	return Neighbourhood{1, revisions, conceptID, nodes, edges, 1, nodeTruncated || edgeTruncated || scopeTruncated, diagnostics}, nil
 }

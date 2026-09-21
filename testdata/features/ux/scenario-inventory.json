@@ -1,0 +1,528 @@
+{
+  "schema_version": 1,
+  "scenarios": [
+    {
+      "id": "ux-graph-001",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Graph debugger opens with trusted-network warning and core controls",
+      "status": "automated",
+      "browser_cases": [
+        "real Go startup, filtering, metrics, semantics, forces and viewport"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_static_test.go",
+          "name": "TestGraphStaticAssets"
+        },
+        {
+          "file": "internal/service/graph_static_test.go",
+          "name": "TestGraphHTTPStatic"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md",
+        "docs/graph-explorer-plan.md"
+      ],
+      "notes": "Browser automation asserts loading, filtering, metrics, semantic controls, force reset and viewport changes."
+    },
+    {
+      "id": "ux-graph-002",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Search, tag selection and overview reset keep navigation local to the current graph",
+      "status": "automated",
+      "browser_cases": [
+        "real Go inspector, references, search, tag filtering and deselection"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPSnapshots"
+        },
+        {
+          "file": "internal/graphdebug/detail_test.go",
+          "name": "TestDetailFixture"
+        },
+        {
+          "file": "internal/graphdebug/neighbourhood_test.go",
+          "name": "TestNeighbourhoodFixture"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "Browser automation follows search results, tag filtering and overview reset through the real graph UI."
+    },
+    {
+      "id": "ux-graph-003",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Simulated principals and trash toggles rescope the visible graph and suspend refresh",
+      "status": "automated",
+      "browser_cases": [
+        "real Go visibility and trash filters, refresh disabled in simulation"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPSnapshots"
+        },
+        {
+          "file": "internal/graphdebug/reporting_limits_test.go",
+          "name": "TestClusterIncludeTrashMatchesView"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md",
+        "docs/graph-explorer-plan.md"
+      ],
+      "notes": "The graph UI and the snapshot service both enforce the scoped view and trash inclusion contract."
+    },
+    {
+      "id": "ux-graph-004",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Semantic overlays and force controls adjust the current view without discarding filters",
+      "status": "automated",
+      "browser_cases": [
+        "real Go startup, filtering, metrics, semantics, forces and viewport",
+        "refresh completion preserves semantic and filter settings"
+      ],
+      "go_tests": [],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md",
+        "internal/service/graph_static/app.js"
+      ],
+      "notes": "Current direct evidence is browser-side. No Go test currently asserts the client-state preservation path." 
+    },
+    {
+      "id": "ux-graph-005",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Aggregate clusters can expand into direct members and suppress aggregate-only actions",
+      "status": "automated",
+      "browser_cases": [
+        "aggregated cluster expansion, member navigation and disabled aggregate actions"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPSnapshots"
+        },
+        {
+          "file": "internal/graphdebug/cluster_test.go",
+          "name": "TestClusterExpansionFixture"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "The browser case covers cluster drill-down and aggregate refresh restrictions."
+    },
+    {
+      "id": "ux-graph-006",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Diagnostics stay scoped, deduplicated and navigable from the current view or selection",
+      "status": "automated",
+      "browser_cases": [
+        "diagnostic scope, target navigation, retry, versions and alignment"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/graphdebug/reporting_limits_test.go",
+          "name": "TestDiagnosticDisplayBoundsAndCentre"
+        },
+        {
+          "file": "internal/graphdebug/reporting_limits_test.go",
+          "name": "TestFreshSelectionDiagnostics"
+        },
+        {
+          "file": "internal/graphdebug/detail_test.go",
+          "name": "TestDetailFixture"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/diagnostics-ui-audit-2026-09-21.md"
+      ],
+      "notes": "Browser and Go tests both cover scoped diagnostics, selected-node drill-down and fresh target sets."
+    },
+    {
+      "id": "ux-graph-007",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Detail and neighbourhood failures stay visible, distinct from empty state, and retryable",
+      "status": "automated",
+      "browser_cases": [
+        "selection errors end loading; slow navigation cannot revive cleared inspector",
+        "diagnostic scope, target navigation, retry, versions and alignment",
+        "API failure, retry and error dismissal"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_static_test.go",
+          "name": "TestGraphStaticAssets"
+        },
+        {
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPErrors"
+        },
+        {
+          "file": "internal/graphdebug/detail_test.go",
+          "name": "TestAssetFailures"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md",
+        "docs/evidence/diagnostics-ui-audit-2026-09-21.md"
+      ],
+      "notes": "The browser cases distinguish loading, failure and retry state. The service tests cover error envelopes and supporting data failures."
+    },
+    {
+      "id": "ux-graph-008",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Slow overview, search and node replies cannot repopulate a newer view",
+      "status": "automated",
+      "browser_cases": [
+        "selection errors end loading; slow navigation cannot revive cleared inspector",
+        "slow overview cannot overwrite principal simulation",
+        "search reply cannot repopulate results after changing principal"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_static_test.go",
+          "name": "TestGraphStaticAssets"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "The stale-reply behaviour is browser-audited. The Go static-asset test only checks that the abort and request-generation code paths remain present."
+    },
+    {
+      "id": "ux-graph-009",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Embedding refresh supports selected, visible and full scopes with confirmation and worker feedback",
+      "status": "automated",
+      "browser_cases": [
+        "refresh selected/visible/full confirmation and error handling",
+        "refresh completion preserves semantic and filter settings"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPRefresh"
+        },
+        {
+          "file": "internal/graphdebug/refresh_fixture_test.go",
+          "name": "TestRefreshFixture"
+        },
+        {
+          "file": "internal/graphdebug/refresh_fixture_test.go",
+          "name": "TestRefreshErrorFixture"
+        },
+        {
+          "file": "internal/graphdebug/refresh_race_test.go",
+          "name": "TestRefreshConcurrentState"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "The browser suite asserts request scope, confirmation handling and worker-error feedback."
+    },
+    {
+      "id": "ux-graph-010",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Exports follow the current filtered view and disable bounded formats when nothing is visible",
+      "status": "automated",
+      "browser_cases": [
+        "real Go PNG SVG JSON exports, metadata boundaries and URL cleanup",
+        "empty graph supports pointer hover, click and export controls"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPExport"
+        },
+        {
+          "file": "internal/graphdebug/export_format_test.go",
+          "name": "TestExportFormatFixtures"
+        },
+        {
+          "file": "internal/graphdebug/export_format_test.go",
+          "name": "TestExportJSONGuards"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md",
+        "docs/graph-explorer-plan.md"
+      ],
+      "notes": "PNG, SVG and JSON download paths are browser-audited, with Go tests covering the server-side export contracts."
+    },
+    {
+      "id": "ux-graph-011",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Pointer, wheel and touch gestures support hover, pick and zoom without pinch misselection",
+      "status": "automated",
+      "browser_cases": [
+        "large graph Points picking/hover and pinch/cancel never selects",
+        "empty graph supports pointer hover, click and export controls"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_static_test.go",
+          "name": "TestGraphStaticAssets"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "The browser case drives real Three.js pointer behaviour. The Go static-asset test keeps the deselection branch in the embedded scene code."
+    },
+    {
+      "id": "ux-graph-012",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Empty, failed and WebGL-unavailable graph states surface clear fallback messaging",
+      "status": "automated",
+      "browser_cases": [
+        "WebGL unavailable produces a visible diagnostic",
+        "API failure, retry and error dismissal",
+        "empty graph supports pointer hover, click and export controls"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPBoundary"
+        },
+        {
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPErrors"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "WebGL fallback is browser-only. Go tests cover the degraded HTTP states that feed the UI." 
+    },
+    {
+      "id": "ux-graph-013",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "The sidebar keeps legend and live telemetry visible during graph inspection",
+      "status": "documented_only",
+      "browser_cases": [],
+      "go_tests": [],
+      "evidence_paths": [
+        "internal/service/graph_static/app.js",
+        "docs/graph-explorer-plan.md"
+      ],
+      "notes": "The sidebar legend and telemetry fields are implemented and documented, but no direct automated assertion currently checks their rendered values."
+    },
+    {
+      "id": "ux-graph-014",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Named controls and keyboard activation remain available for non-canvas navigation",
+      "status": "partial",
+      "browser_cases": [
+        "diagnostic scope, target navigation, retry, versions and alignment",
+        "real Go startup, filtering, metrics, semantics, forces and viewport",
+        "real Go PNG SVG JSON exports, metadata boundaries and URL cleanup"
+      ],
+      "go_tests": [],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md",
+        "internal/service/graph_static/app.js",
+        "internal/service/graph_static/index.html"
+      ],
+      "notes": "Browser automation uses labelled controls and keyboard activation for diagnostics. This is not a full accessibility or screen-reader audit."
+    },
+    {
+      "id": "ux-graph-015",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Re-entering the debugger does not retain stale overlay UI from a previous session",
+      "status": "automated",
+      "browser_cases": [
+        "scene disposal stops animation and removes overlay DOM"
+      ],
+      "go_tests": [],
+      "evidence_paths": [
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "Current evidence is the browser teardown case. No dedicated Go test asserts client teardown behaviour."
+    },
+    {
+      "id": "ux-admin-001",
+      "feature": "testdata/features/ux/admin/access-management.feature",
+      "title": "Opening the access manager requires an explicit administrator bearer for API actions",
+      "status": "automated",
+      "browser_cases": [
+        "real admin authentication, principal lifecycle, credential secrecy and activity"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestAdminHTTPThroughUMCP"
+        },
+        {
+          "file": "internal/service/admin_http_failures_test.go",
+          "name": "TestAdminHTTPFailures"
+        }
+      ],
+      "evidence_paths": [
+        "docs/access-management.md",
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "The browser case covers login denial and successful admin entry. Go tests cover route ownership and auth failures."
+    },
+    {
+      "id": "ux-admin-002",
+      "feature": "testdata/features/ux/admin/access-management.feature",
+      "title": "Admin bearer and one-time credentials stay in volatile tab state and are cleared on lock or close",
+      "status": "automated",
+      "browser_cases": [
+        "real admin authentication, principal lifecycle, credential secrecy and activity",
+        "admin buttons, errors, rename, rotation, copy, Escape and stale session responses"
+      ],
+      "go_tests": [],
+      "evidence_paths": [
+        "docs/access-management.md",
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "The browser suite checks lock, secret clearing, Escape handling and the absence of localStorage and sessionStorage use."
+    },
+    {
+      "id": "ux-admin-003",
+      "feature": "testdata/features/ux/admin/access-management.feature",
+      "title": "Principals view shows lifecycle state, namespace scope and server warnings",
+      "status": "partial",
+      "browser_cases": [
+        "real admin authentication, principal lifecycle, credential secrecy and activity"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestAdminHTTPHandleCRUDAndActivity"
+        }
+      ],
+      "evidence_paths": [
+        "docs/access-management.md",
+        "internal/service/admin_static/app.js"
+      ],
+      "notes": "The browser case proves the principals view renders after login. The Go test proves warning and lifecycle payloads, but no browser case checks every rendered pill." 
+    },
+    {
+      "id": "ux-admin-004",
+      "feature": "testdata/features/ux/admin/access-management.feature",
+      "title": "Create view can issue a principal from an editable preset access policy",
+      "status": "partial",
+      "browser_cases": [
+        "real admin authentication, principal lifecycle, credential secrecy and activity"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestAdminHTTPHandleCRUDAndActivity"
+        }
+      ],
+      "evidence_paths": [
+        "docs/access-management.md",
+        "internal/service/admin_static/app.js"
+      ],
+      "notes": "Browser automation exercises preset selection and create submission. It does not directly assert every live summary update in the form."
+    },
+    {
+      "id": "ux-admin-005",
+      "feature": "testdata/features/ux/admin/access-management.feature",
+      "title": "Create and rotate actions reveal a one-time credential bundle that can be copied once",
+      "status": "automated",
+      "browser_cases": [
+        "real admin authentication, principal lifecycle, credential secrecy and activity",
+        "admin buttons, errors, rename, rotation, copy, Escape and stale session responses"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestAdminHTTPHandleCRUDAndActivity"
+        }
+      ],
+      "evidence_paths": [
+        "docs/access-management.md",
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "Browser automation checks create, rotate, copy, Escape and secret clearing."
+    },
+    {
+      "id": "ux-admin-006",
+      "feature": "testdata/features/ux/admin/access-management.feature",
+      "title": "Operators can rename, enable, disable, rotate, revoke and delete principals with confirmation",
+      "status": "automated",
+      "browser_cases": [
+        "real admin authentication, principal lifecycle, credential secrecy and activity",
+        "admin buttons, errors, rename, rotation, copy, Escape and stale session responses"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestAdminHTTPHandleCRUDAndActivity"
+        },
+        {
+          "file": "internal/service/admin_http_failures_test.go",
+          "name": "TestAdminHTTPFailures"
+        }
+      ],
+      "evidence_paths": [
+        "docs/access-management.md",
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "The browser suite covers the operator flows. Go tests cover the server lifecycle contract and failure boundaries."
+    },
+    {
+      "id": "ux-admin-007",
+      "feature": "testdata/features/ux/admin/access-management.feature",
+      "title": "Activity shows recent access-management events without revealing bearer secrets",
+      "status": "automated",
+      "browser_cases": [
+        "real admin authentication, principal lifecycle, credential secrecy and activity"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestAdminHTTPHandleCRUDAndActivity"
+        }
+      ],
+      "evidence_paths": [
+        "docs/access-management.md",
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "The Go test covers the 50-event bound. The browser case checks that activity renders and does not leak the revealed secret."
+    },
+    {
+      "id": "ux-admin-008",
+      "feature": "testdata/features/ux/admin/access-management.feature",
+      "title": "Action failures are visible and stale replies from an earlier session are ignored",
+      "status": "automated",
+      "browser_cases": [
+        "admin buttons, errors, rename, rotation, copy, Escape and stale session responses",
+        "real admin authentication, principal lifecycle, credential secrecy and activity"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/service/admin_http_failures_test.go",
+          "name": "TestAdminHTTPFailures"
+        }
+      ],
+      "evidence_paths": [
+        "docs/access-management.md",
+        "docs/evidence/ui-audit-2026-09-20.md"
+      ],
+      "notes": "Browser automation covers visible action errors and stale-session protection. The Go test covers the underlying API error envelopes."
+    },
+    {
+      "id": "ux-admin-009",
+      "feature": "testdata/features/ux/admin/access-management.feature",
+      "title": "Create access preview shows effective read and write scope and admin risk warnings",
+      "status": "documented_only",
+      "browser_cases": [],
+      "go_tests": [],
+      "evidence_paths": [
+        "internal/service/admin_static/app.js",
+        "docs/access-management.md"
+      ],
+      "notes": "The live create-form summary and admin warning are implemented and documented, but no direct automated assertion currently checks the changing summary text."
+    }
+  ]
+}

@@ -6,7 +6,7 @@ import (
 )
 
 func TestGraphStaticAssets(t *testing.T) {
-	for _, name := range []string{"api.js", "app.css", "app.js", "graph-scene.js", "layout-worker.js", "vendor/LICENSES.md", "vendor/manifest.json", "vendor/preact-hooks.module.js", "vendor/preact.module.js", "vendor/three.core.min.js", "vendor/three.module.min.js"} {
+	for _, name := range []string{"api.js", "diagnostics.js", "app.css", "app.js", "graph-scene.js", "layout-worker.js", "vendor/LICENSES.md", "vendor/manifest.json", "vendor/preact-hooks.module.js", "vendor/preact.module.js", "vendor/three.core.min.js", "vendor/three.module.min.js"} {
 		response := graphStaticResponse(name, "/graph")
 		if response.Status != 200 || response.ContentType == nil {
 			t.Fatal(name, response)

@@ -31,6 +31,11 @@ func TestNeighbourhoodFixture(t *testing.T) {
 	if err = json.Unmarshal(raw, &fixture); err != nil {
 		t.Fatal(err)
 	}
+	// Diagnostics are additive and tested by TestFreshSelectionDiagnostics.
+	if len(got.Diagnostics) == 0 {
+		t.Fatal("missing scoped diagnostics")
+	}
+	got.Diagnostics = nil
 	a, _ := json.Marshal(got)
 	b, _ := json.Marshal(fixture.Neighbourhood)
 	if string(a) != string(b) {

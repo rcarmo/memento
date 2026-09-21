@@ -8,14 +8,15 @@ import (
 )
 
 type Diagnostic struct {
-	ID         string         `json:"id"`
-	Rule       string         `json:"rule"`
-	Severity   string         `json:"severity"`
-	ConceptIDs []string       `json:"concept_ids"`
-	Message    string         `json:"message"`
-	Measured   map[string]any `json:"measured"`
-	Threshold  map[string]any `json:"threshold"`
-	Derived    bool           `json:"derived"`
+	ID           string         `json:"id"`
+	Rule         string         `json:"rule"`
+	Severity     string         `json:"severity"`
+	ConceptIDs   []string       `json:"concept_ids"`
+	Message      string         `json:"message"`
+	Measured     map[string]any `json:"measured"`
+	Threshold    map[string]any `json:"threshold"`
+	Derived      bool           `json:"derived"`
+	ScopeLimited bool           `json:"scope_limited,omitempty"`
 }
 
 func diagnostic(rule, severity string, ids []string, message string, measured, threshold map[string]any, derived bool) Diagnostic {

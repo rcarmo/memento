@@ -13,7 +13,7 @@ import (
 
 func TestDetailFixture(t *testing.T) {
 	s, policy := freshFixtureService(t)
-	got, err := s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 4000, 12000, 500)
+	got, err := s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 4000, 12000, 500, DetailScope{NodeLimit: 100})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,6 +24,11 @@ func TestDetailFixture(t *testing.T) {
 	if err = json.Unmarshal(raw, &fixture); err != nil {
 		t.Fatal(err)
 	}
+	// Diagnostics are additive and tested by TestFreshSelectionDiagnostics.
+	if len(got.Diagnostics) == 0 {
+		t.Fatal("missing scoped diagnostics")
+	}
+	got.Diagnostics = nil
 	a, _ := json.Marshal(got)
 	b, _ := json.Marshal(fixture.Detail)
 	if string(a) != string(b) {
@@ -81,13 +86,13 @@ func TestAssetAndProposalBranches(t *testing.T) {
 }
 func TestDetailGuards(t *testing.T) {
 	s, policy := freshFixtureService(t)
-	if _, err := s.Detail(context.Background(), "missing", policy, 1, 10, 10); err == nil {
+	if _, err := s.Detail(context.Background(), "missing", policy, 1, 10, 10, DetailScope{NodeLimit: 100}); err == nil {
 		t.Fatal("unknown")
 	}
 	db, _ := sql.Open("sqlite", s.DerivedDBPath)
 	_, _ = db.Exec("UPDATE concepts SET path='/missing.md' WHERE id='5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d'")
 	db.Close()
-	if _, err := s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 1, 10, 10); err == nil {
+	if _, err := s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 1, 10, 10, DetailScope{NodeLimit: 100}); err == nil {
 		t.Fatal("file")
 	}
 }

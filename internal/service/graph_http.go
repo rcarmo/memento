@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/url"
 	"strings"
 
@@ -25,7 +26,7 @@ type GraphSnapshots interface {
 	Overview(context.Context, *access.EffectivePolicy, graphdebug.OverviewOptions) (graphdebug.Overview, error)
 	Search(context.Context, string, *access.EffectivePolicy) (graphdebug.SearchResults, error)
 	ExpandCluster(context.Context, string, *access.EffectivePolicy, graphdebug.ClusterOptions) (graphdebug.ClusterExpansion, error)
-	Detail(context.Context, string, *access.EffectivePolicy, int, int, int) (graphdebug.Detail, error)
+	Detail(context.Context, string, *access.EffectivePolicy, int, int, int, graphdebug.DetailScope) (graphdebug.Detail, error)
 	Neighbourhood(context.Context, string, *access.EffectivePolicy, graphdebug.NeighbourhoodOptions) (graphdebug.Neighbourhood, error)
 }
 
@@ -49,6 +50,13 @@ func graphJSON(payload any, status int) (*umcp.HTTPResponse, error) {
 }
 func graphError(message string, status int) (*umcp.HTTPResponse, error) {
 	return graphJSON(map[string]any{"error": message}, status)
+}
+func graphSnapshotError(err error) (*umcp.HTTPResponse, error) {
+	var snapshot *graphdebug.SnapshotError
+	if errors.As(err, &snapshot) {
+		return graphError(snapshot.Message, 404)
+	}
+	return graphError("Graph data temporarily unavailable; retry the request.", 503)
 }
 func graphNotFound() *umcp.HTTPResponse {
 	return &umcp.HTTPResponse{Status: 404, Headers: graphHeaders}
@@ -110,7 +118,7 @@ func (h GraphHTTP) Handle(ctx context.Context, method, path string, headers map[
 		options.IncludeTrash = headers["x-memento-include-trash"] == "true"
 		value, callErr := h.Snapshots.Overview(ctx, policy, options)
 		if callErr != nil {
-			return graphError(callErr.Error(), 404)
+			return graphSnapshotError(callErr)
 		}
 		return graphJSON(value, 200)
 	case method == "POST" && (path == prefix+"/api/v1/export/json" || path == prefix+"/api/v1/export/svg"):
@@ -215,14 +223,18 @@ func (h GraphHTTP) Handle(ctx context.Context, method, path string, headers map[
 			var callErr error
 			switch route.kind {
 			case "cluster":
-				value, callErr = h.Snapshots.ExpandCluster(ctx, id, policy, h.Config.Cluster)
+				options := h.Config.Cluster
+				options.IncludeTrash = headers["x-memento-include-trash"] == "true"
+				value, callErr = h.Snapshots.ExpandCluster(ctx, id, policy, options)
 			case "detail":
-				value, callErr = h.Snapshots.Detail(ctx, id, policy, h.Config.PreviewChars, h.Config.Overview.EdgeLimit, h.Config.SummaryLimit)
+				value, callErr = h.Snapshots.Detail(ctx, id, policy, h.Config.PreviewChars, h.Config.Overview.EdgeLimit, h.Config.SummaryLimit, graphdebug.DetailScope{NodeLimit: h.Config.Overview.RefreshMaxPaths, IncludeTrash: headers["x-memento-include-trash"] == "true"})
 			default:
-				value, callErr = h.Snapshots.Neighbourhood(ctx, id, policy, h.Config.Neighbourhood)
+				options := h.Config.Neighbourhood
+				options.IncludeTrash = headers["x-memento-include-trash"] == "true"
+				value, callErr = h.Snapshots.Neighbourhood(ctx, id, policy, options)
 			}
 			if callErr != nil {
-				return graphError(callErr.Error(), 404)
+				return graphSnapshotError(callErr)
 			}
 			return graphJSON(value, 200)
 		}

@@ -19,7 +19,7 @@ func TestDetailFailureStages(t *testing.T) {
 			}
 			return base(ctx, path)
 		}
-		if _, err := s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 1, 10, 10); err == nil {
+		if _, err := s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 1, 10, 10, DetailScope{NodeLimit: 100}); err == nil {
 			t.Fatal(failure, calls)
 		}
 	}
@@ -43,12 +43,12 @@ func TestProposalSummaryFailures(t *testing.T) {
 }
 func TestDetailPreviewAndParse(t *testing.T) {
 	s, policy := freshFixtureService(t)
-	detail, err := s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 2, 10, 10)
+	detail, err := s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 2, 10, 10, DetailScope{NodeLimit: 100})
 	if err != nil || !detail.PreviewTruncated || len([]rune(detail.Preview)) != 2 {
 		t.Fatal(detail, err)
 	}
 	_ = os.WriteFile(s.RepositoryRoot+"/a.md", []byte("bad"), 0600)
-	if _, err = s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 10, 10, 10); err == nil {
+	if _, err = s.Detail(context.Background(), "5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d", policy, 10, 10, 10, DetailScope{NodeLimit: 100}); err == nil {
 		t.Fatal("parse")
 	}
 }

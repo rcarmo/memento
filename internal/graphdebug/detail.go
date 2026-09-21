@@ -4,12 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"github.com/rcarmo/memento/internal/access"
-	"github.com/rcarmo/memento/internal/repository"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/rcarmo/memento/internal/access"
+	"github.com/rcarmo/memento/internal/assets"
+	"github.com/rcarmo/memento/internal/repository"
 )
 
 var readAssetFile = os.ReadFile
@@ -42,6 +44,8 @@ type Detail struct {
 	Inbound          []Edge            `json:"inbound"`
 	Assets           []AssetSummary    `json:"assets"`
 	Proposals        []ProposalSummary `json:"proposals"`
+	Truncated        bool              `json:"truncated,omitempty"`
+	Diagnostics      []Diagnostic      `json:"diagnostics"`
 }
 
 func (s *SnapshotService) Assets(id string, limit int) []AssetSummary {
@@ -78,9 +82,31 @@ func (s *SnapshotService) Assets(id string, limit int) []AssetSummary {
 			source = &value
 		}
 		out = append(out, AssetSummary{kind, version, info.Size(), zipBytes, source})
-		if len(out) >= limit {
-			break
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		if out[i].AssetKind != out[j].AssetKind {
+			return out[i].AssetKind < out[j].AssetKind
 		}
+		a, aErr := assets.ParseStableSemver(out[i].Version)
+		b, bErr := assets.ParseStableSemver(out[j].Version)
+		switch {
+		case aErr == nil && bErr == nil:
+			for k := range 3 {
+				if cmp := a[k].Cmp(b[k]); cmp != 0 {
+					return cmp > 0
+				}
+			}
+		case aErr == nil:
+			return true
+		case bErr == nil:
+			return false
+		case out[i].Version != out[j].Version:
+			return out[i].Version > out[j].Version
+		}
+		return false
+	})
+	if limit > 0 && len(out) > limit {
+		out = out[:limit]
 	}
 	return out
 }
@@ -126,9 +152,15 @@ func containsPath(paths []string, path string) bool {
 	}
 	return false
 }
-func (s *SnapshotService) Detail(ctx context.Context, id string, policy *access.EffectivePolicy, previewChars, edgeLimit, summaryLimit int) (Detail, error) {
+
+type DetailScope struct {
+	NodeLimit    int
+	IncludeTrash bool
+}
+
+func (s *SnapshotService) Detail(ctx context.Context, id string, policy *access.EffectivePolicy, previewChars, edgeLimit, summaryLimit int, scope DetailScope) (Detail, error) {
 	empty := Detail{}
-	nodes, err := s.Nodes(ctx, []string{id}, 1, policy, false)
+	nodes, err := s.Nodes(ctx, []string{id}, 1, policy, scope.IncludeTrash)
 	if err != nil {
 		return empty, err
 	}
@@ -152,27 +184,58 @@ func (s *SnapshotService) Detail(ctx context.Context, id string, policy *access.
 	if len(preview) > previewChars {
 		preview = preview[:previewChars]
 	}
-	visible, err := s.Nodes(ctx, nil, 100000, policy, false)
+	visible, err := s.Nodes(ctx, nil, scope.NodeLimit+1, policy, scope.IncludeTrash)
 	if err != nil {
 		return empty, err
+	}
+	scopeTruncated := len(visible) > scope.NodeLimit
+	if scopeTruncated {
+		visible = visible[:scope.NodeLimit]
+	}
+	foundCenter := false
+	for _, node := range visible {
+		if node.ID == id {
+			foundCenter = true
+		}
+	}
+	if !foundCenter {
+		visible = append(visible, nodes[0])
 	}
 	ids := make([]string, len(visible))
 	for i, node := range visible {
 		ids[i] = node.ID
 	}
-	source, target := id, id
-	outbound, err := s.ExplicitEdges(ctx, ids, &source, nil, edgeLimit, policy)
+	explicit, err := s.completeExplicitEdges(ctx, ids, nil, nil, policy)
 	if err != nil {
 		return empty, err
 	}
-	inbound, err := s.ExplicitEdges(ctx, ids, nil, &target, edgeLimit, policy)
-	if err != nil {
-		return empty, err
+	outbound := []Edge{}
+	inbound := []Edge{}
+	for _, edge := range explicit {
+		if edge.Source == id && len(outbound) < edgeLimit {
+			outbound = append(outbound, edge)
+		}
+		if edge.Target != nil && *edge.Target == id && len(inbound) < edgeLimit {
+			inbound = append(inbound, edge)
+		}
 	}
-	center := ScopedNodes(nodes, append(append([]Edge{}, outbound...), inbound...))[0]
+	center := ScopedNodes(nodes, explicit)[0]
 	proposals, err := s.Proposals(ctx, center.Path, policy, summaryLimit)
 	if err != nil {
 		return empty, err
 	}
-	return Detail{1, revisions, center, string(preview), len(body) > len(preview), outbound, inbound, s.Assets(center.ID, summaryLimit), proposals}, nil
+	totalIn, totalOut := 0, 0
+	for _, edge := range explicit {
+		if edge.Source == id {
+			totalOut++
+		}
+		if edge.Target != nil && *edge.Target == id {
+			totalIn++
+		}
+	}
+	diagnostics, err := s.scopedDiagnostics(ctx, visible, explicit, revisions, []Node{center})
+	if err != nil {
+		return empty, err
+	}
+	return Detail{1, revisions, center, string(preview), len(body) > len(preview), outbound, inbound, s.Assets(center.ID, summaryLimit), proposals, scopeTruncated || totalIn > len(inbound) || totalOut > len(outbound), diagnostics}, nil
 }

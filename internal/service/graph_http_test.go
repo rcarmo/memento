@@ -41,7 +41,7 @@ func (s *graphSnapshotsStub) ExpandCluster(_ context.Context, id string, _ *acce
 	s.id = id
 	return graphdebug.ClusterExpansion{SchemaVersion: 1, ClusterID: id}, s.err
 }
-func (s *graphSnapshotsStub) Detail(_ context.Context, id string, _ *access.EffectivePolicy, _, _, _ int) (graphdebug.Detail, error) {
+func (s *graphSnapshotsStub) Detail(_ context.Context, id string, _ *access.EffectivePolicy, _, _, _ int, _ graphdebug.DetailScope) (graphdebug.Detail, error) {
 	s.id = id
 	return graphdebug.Detail{SchemaVersion: 1, Node: graphdebug.Node{ID: id}}, s.err
 }
@@ -193,10 +193,15 @@ func TestGraphHTTPErrors(t *testing.T) {
 	h := graphHandler(stub)
 	for _, path := range []string{"/graph/api/v1/overview", "/graph/api/v1/clusters/x", "/graph/api/v1/memories/x", "/graph/api/v1/neighbourhood/x"} {
 		response, err := h.Handle(context.Background(), "GET", path, nil, nil, "")
-		if err != nil || response.Status != 404 || !strings.Contains(string(response.Body), "missing") {
+		if err != nil || response.Status != 503 || !strings.Contains(string(response.Body), "temporarily unavailable") {
 			t.Fatal(path, response, err)
 		}
 	}
+	stub.err = &graphdebug.SnapshotError{Message: "unknown memory"}
+	if response, _ := h.Handle(context.Background(), "GET", "/graph/api/v1/memories/missing", nil, nil, ""); response.Status != 404 {
+		t.Fatal(response)
+	}
+	stub.err = errors.New("missing")
 	response, err := h.Handle(context.Background(), "POST", "/graph/api/v1/search", nil, []byte(`{"query":"x"}`), "")
 	if err != nil || response.Status != 400 || !strings.Contains(string(response.Body), "missing") {
 		t.Fatal(response, err)

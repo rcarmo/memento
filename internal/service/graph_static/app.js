@@ -2,6 +2,7 @@ import { h, render } from "./vendor/preact.module.js";
 import { useEffect, useMemo, useRef, useState } from "./vendor/preact-hooks.module.js";
 import { graphApi } from "./api.js";
 import { GraphScene } from "./graph-scene.js";
+import { scopedDiagnostics, diagnosticTargets, relationshipSummary } from "./diagnostics.js";
 
 const forceDefaults = {
   explicit: 0.06,
@@ -242,26 +243,30 @@ function App() {
   refreshLoader.current = loadRefreshStatus;
   async function loadRefreshStatus() {
     const epoch = viewEpoch.current;
+    const selection = selectionRequest.current;
     try {
       const { payload } = await graphApi.refreshStatus();
       if (epoch !== viewEpoch.current) return;
       const previous = refreshRef.current;
       refreshRef.current = payload;
       setRefresh(payload);
+      if (selection !== selectionRequest.current) return;
       if (previous && (previous.completed !== payload.completed || previous.embedding_revision !== payload.embedding_revision)) {
         if (selected?.member_count) await selectNode(selected);
+        else if (selected && graphRef.current?.neighbourhoodUnavailable === selected.id) await openMemory(selected.id, false);
         else {
           await load();
-          if (selected) await selectNode(selected);
+          if (epoch === viewEpoch.current && selection === selectionRequest.current && selected) await selectNode(selected);
         }
       }
     } catch (e) {
-      setRefresh({ available: false, last_error: e.message });
+      if (epoch === viewEpoch.current) setRefresh({ available: false, last_error: e.message });
     }
   }
 
   selectNodeRef.current = selectNode;
   async function selectNode(node) {
+    if (node && graphRef.current?.neighbourhoodUnavailable === node.id) return openMemory(node.id, false);
     const request = ++selectionRequest.current;
     selectionAbort.current?.abort();
     selectionAbort.current = null;
@@ -272,7 +277,10 @@ function App() {
     }
     const controller = new AbortController();
     selectionAbort.current = controller;
+    overviewRequest.current += 1;
+    overviewAbort.current?.abort();
     setSelected(node);
+    setError(null);
     setDetail({ node, loading: true });
     scene.current?.focus(node);
     try {
@@ -284,6 +292,9 @@ function App() {
           mode: "direct",
           nodes: payload.nodes,
           edges: payload.edges,
+          revisions: payload.revisions,
+          truncated: Boolean(payload.truncated || payload.next_cursor),
+          diagnostics: payload.diagnostics || [],
         };
         graphRef.current = expanded;
         setGraph(expanded);
@@ -292,6 +303,7 @@ function App() {
       } else {
         const { payload } = await graphApi.detail(node.id, { signal: controller.signal });
         if (request !== selectionRequest.current) return;
+        setSelected(payload.node);
         setDetail(payload);
       }
     } catch (e) {
@@ -304,39 +316,64 @@ function App() {
     }
   }
 
-  async function openMemory(id) {
+  async function openMemory(id, resetFilters = true) {
     if (!id) return;
     const request = ++selectionRequest.current;
     selectionAbort.current?.abort();
     const controller = new AbortController();
     selectionAbort.current = controller;
+    overviewRequest.current += 1;
+    overviewAbort.current?.abort();
+    const node = graphRef.current?.nodes?.find(item => item.id === id) || { id, title: "Loading node…" };
+    setSelected(node);
+    setDetail({ node, loading: true });
+    setError(null);
+    if (resetFilters) {
+      setQuery("");
+      setSearchResults([]);
+      setType("all");
+    }
+    let loadedDetail;
     try {
       const { payload } = await graphApi.detail(id, { signal: controller.signal });
+      loadedDetail = payload;
       if (request !== selectionRequest.current) return;
-      const present = graphRef.current?.mode === "direct" && graphRef.current.nodes?.some((node) => node.id === id);
+      const present = graphRef.current?.mode === "direct" && graphRef.current.neighbourhoodUnavailable !== id && graphRef.current.nodes?.some((node) => node.id === id);
       if (!present) {
         const { payload: hood } = await graphApi.neighbourhood(id, { signal: controller.signal });
         if (request !== selectionRequest.current) return;
         const revealed = {
-          ...graph,
+          ...graphRef.current,
+          neighbourhoodUnavailable: null,
           mode: "direct",
           nodes: hood.nodes,
           edges: hood.edges,
           clusters: [],
           cluster_edges: [],
+          revisions: hood.revisions,
+          truncated: Boolean(hood.truncated),
+          diagnostics: hood.diagnostics || [],
         };
         graphRef.current = revealed;
         setGraph(revealed);
 
       }
-      setQuery("");
-      setSearchResults([]);
-      setType("all");
+      // Filters were cleared when navigation began. Do not erase text the
+      // user entered while the detail/neighbourhood request was in flight.
       setSelected(payload.node);
       setDetail(payload);
       scene.current?.focus(payload.node);
     } catch (e) {
-      if (e.name !== "AbortError" && request === selectionRequest.current) setError(e.message);
+      if (e.name !== "AbortError" && request === selectionRequest.current) {
+        setError(e.message);
+        if (loadedDetail) {
+          setSelected(loadedDetail.node);
+          setDetail({ ...loadedDetail, navigationError: e.message });
+          const fallback = { ...graphRef.current, neighbourhoodUnavailable: id, mode: "direct", nodes: [loadedDetail.node], edges: [], clusters: [], cluster_edges: [], memberships: [], diagnostics: loadedDetail.diagnostics || [], revisions: loadedDetail.revisions, truncated: true };
+          graphRef.current = fallback;
+          setGraph(fallback);
+        } else setDetail({ node, error: e.message });
+      }
     } finally {
       if (request === selectionRequest.current) selectionAbort.current = null;
     }
@@ -521,6 +558,9 @@ function App() {
           return { ...edge, other: graph.nodes.find((node) => node.id === otherId) };
         })
     : [];
+  const diagnosticGraph = selected && detail?.diagnostics ? { ...graph, diagnostics: detail.diagnostics } : graph;
+  const diagnostics = scopedDiagnostics(diagnosticGraph, selected, selected?.member_count && detail?.nodes ? detail.nodes : filtered);
+  const diagnosticsScope = selected ? (selected.member_count ? "Selected cluster" : "Selected node") : "Current view";
   const activePrincipal = principals.find((principal) => principal.name === simulatedPrincipal) || null;
   const refreshUnavailable = refresh?.available === false
     ? refresh.last_error || "Semantic embedding refresh is unavailable on this Memento instance."
@@ -679,16 +719,22 @@ function App() {
         ),
       ]),
       h("details", { open: true }, [
-        h("summary", {}, `Diagnostics (${graph?.diagnostics?.length || 0})`),
+        h("summary", {}, `${diagnosticsScope} diagnostics (${diagnostics.length})`),
+        diagnostics.length > 50 && h("small", {}, `Showing 50 of ${diagnostics.length} diagnostics; narrow the view or select a node.`),
+        h("small", { class: "selection-detail" }, "Orphan means no resolved concept links; semantic, external and asset links do not count."),
+        graph?.truncated && h("p", {}, "Graph display is truncated; diagnostics use the available scoped snapshot."),
+        selected && h("button", { onClick: clearSelection }, "Show current view diagnostics"),
+        selected && h("button", { onClick: showOverview }, "Return to overview diagnostics"),
         h(
           "ul",
           { class: "diagnostics" },
-          (graph?.diagnostics || []).slice(0, 50).map((diagnostic) =>
-            h(
-              "li",
-              { class: diagnostic.severity, title: JSON.stringify(diagnostic.measured) },
-              `${diagnostic.rule}: ${diagnostic.message}`,
-            ),
+          diagnostics.slice(0, 50).map((diagnostic) =>
+            h("li", { key: diagnostic.id, class: diagnostic.severity, "data-diagnostic-id": diagnostic.id, title: JSON.stringify(diagnostic.measured) }, [
+              h("span", {}, `${diagnostic.rule}: ${diagnostic.message}`),
+              diagnostic.scope_limited && h("small", {}, " Full-snapshot finding; showing only targets in this view."),
+              ...diagnosticTargets(diagnostic, graph?.nodes || []).map(target =>
+                h("button", { class: "link-button diagnostic-target", onClick: () => openMemory(target.id) }, target.label)),
+            ]),
           ),
         ),
       ]),
@@ -894,10 +940,13 @@ function Inspector({ detail, selected, semanticEdges, referenceNodes = [], onTag
     detail.preview && h("pre", { class: "preview" }, detail.preview),
     node.path?.startsWith("/trash/") && h("p", {}, "Trashed. Restore or permanently delete through authenticated memory tools. Git history is retained."),
     detail.error && h("p", { role: "alert", "data-testid": "inspector-error" }, detail.error),
+    detail.navigationError && h("p", { role: "alert", "data-testid": "neighbourhood-error" }, `Node details loaded; graph neighbourhood unavailable: ${detail.navigationError}`),
     detail.loading && h("p", { class: "selection-detail", "data-testid": "inspector-loading" }, "Loading relationships, assets and proposals…"),
     members,
+    detail.truncated && h("p", {}, "Relationship display is truncated; degree and orphan status use the complete permitted link set."),
     h("h3", {}, "Explicit links"),
-    detail.loading ? h("p", {}, "Loading…") : h("p", {}, `${inbound?.length || 0} inbound / ${outbound?.length || 0} outbound`),
+    h("p", { "data-testid": "relationship-summary" }, relationshipSummary(detail)),
+    (detail.error || detail.navigationError) && h("button", { onClick: () => onMemory(node.id), "data-testid": "retry-node-detail" }, "Retry node details"),
     h("div", { class: "link-lists" }, [
       inbound?.length
         ? h("div", {}, [
@@ -930,10 +979,10 @@ function Inspector({ detail, selected, semanticEdges, referenceNodes = [], onTag
     h("h3", {}, "Assets / proposals"),
     detail.loading
       ? h("p", {}, "Loading…")
-      : detail.assets?.length ? h("ul", {}, detail.assets.map(assetLine)) : h("p", {}, "No assets."),
+      : detail.error ? h("p", {}, "Assets unavailable.") : detail.assets?.length ? h("ul", {}, detail.assets.map(assetLine)) : h("p", {}, "No assets."),
     detail.loading
       ? null
-      : detail.proposals?.length ? h("ul", {}, detail.proposals.map(proposalLine)) : h("p", {}, "No proposals."),
+      : detail.error ? h("p", {}, "Proposals unavailable.") : detail.proposals?.length ? h("ul", {}, detail.proposals.map(proposalLine)) : h("p", {}, "No proposals."),
   ]);
 }
 
