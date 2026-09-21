@@ -19,26 +19,26 @@ Feature: mcp/direct mutations
 
     @surface-125c710ec91b_role_reader
     Scenario: memory_create as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_create
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_create
+      Then the outcome is discover_but_call_forbidden
 
     @surface-125c710ec91b_role_proposer
     Scenario: memory_create as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_create
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_create
+      Then the outcome is discover_but_call_forbidden
 
     @surface-125c710ec91b_role_curator
     Scenario: memory_create as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_create
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_create
       Then the outcome is discover_and_call
 
     @surface-125c710ec91b_role_admin
     Scenario: memory_create as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_create
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_create
       Then the outcome is discover_and_call
 
     @surface-125c710ec91b_failure
@@ -65,26 +65,26 @@ Feature: mcp/direct mutations
 
     @surface-69ad95b805dc_role_reader
     Scenario: memory_patch as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_patch
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_patch
+      Then the outcome is discover_but_call_forbidden
 
     @surface-69ad95b805dc_role_proposer
     Scenario: memory_patch as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_patch
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_patch
+      Then the outcome is discover_but_call_forbidden
 
     @surface-69ad95b805dc_role_curator
     Scenario: memory_patch as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_patch
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_patch
       Then the outcome is discover_and_call
 
     @surface-69ad95b805dc_role_admin
     Scenario: memory_patch as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_patch
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_patch
       Then the outcome is discover_and_call
 
     @surface-69ad95b805dc_failure
@@ -111,26 +111,26 @@ Feature: mcp/direct mutations
 
     @surface-4c8b7b60fd20_role_reader
     Scenario: memory_trash as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_trash
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_trash
+      Then the outcome is discover_but_call_forbidden
 
     @surface-4c8b7b60fd20_role_proposer
     Scenario: memory_trash as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_trash
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_trash
+      Then the outcome is discover_but_call_forbidden
 
     @surface-4c8b7b60fd20_role_curator
     Scenario: memory_trash as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_trash
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_trash
       Then the outcome is discover_and_call
 
     @surface-4c8b7b60fd20_role_admin
     Scenario: memory_trash as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_trash
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_trash
       Then the outcome is discover_and_call
 
     @surface-4c8b7b60fd20_failure
@@ -157,26 +157,26 @@ Feature: mcp/direct mutations
 
     @surface-51275a4cb14f_role_reader
     Scenario: memory_restore as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_restore
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_restore
+      Then the outcome is discover_but_call_forbidden
 
     @surface-51275a4cb14f_role_proposer
     Scenario: memory_restore as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_restore
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_restore
+      Then the outcome is discover_but_call_forbidden
 
     @surface-51275a4cb14f_role_curator
     Scenario: memory_restore as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_restore
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_restore
       Then the outcome is discover_and_call
 
     @surface-51275a4cb14f_role_admin
     Scenario: memory_restore as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_restore
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_restore
       Then the outcome is discover_and_call
 
     @surface-51275a4cb14f_failure
@@ -203,26 +203,26 @@ Feature: mcp/direct mutations
 
     @surface-0334d36d2465_role_reader
     Scenario: memory_purge as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_purge
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_purge
+      Then the outcome is discover_but_call_forbidden
 
     @surface-0334d36d2465_role_proposer
     Scenario: memory_purge as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_purge
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_purge
+      Then the outcome is discover_but_call_forbidden
 
     @surface-0334d36d2465_role_curator
     Scenario: memory_purge as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_purge
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_purge
       Then the outcome is discover_and_call
 
     @surface-0334d36d2465_role_admin
     Scenario: memory_purge as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_purge
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_purge
       Then the outcome is discover_and_call
 
     @surface-0334d36d2465_failure
@@ -249,26 +249,26 @@ Feature: mcp/direct mutations
 
     @surface-085fbec32750_role_reader
     Scenario: memory_rename as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_rename
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_rename
+      Then the outcome is discover_but_call_forbidden
 
     @surface-085fbec32750_role_proposer
     Scenario: memory_rename as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_rename
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_rename
+      Then the outcome is discover_but_call_forbidden
 
     @surface-085fbec32750_role_curator
     Scenario: memory_rename as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_rename
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_rename
       Then the outcome is discover_and_call
 
     @surface-085fbec32750_role_admin
     Scenario: memory_rename as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_rename
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_rename
       Then the outcome is discover_and_call
 
     @surface-085fbec32750_failure

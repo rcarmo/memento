@@ -19,26 +19,26 @@ Feature: mcp/discovery and reading
 
     @surface-c6906a04e6cb_role_reader
     Scenario: memory_help as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_help
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_help
       Then the outcome is discover_and_call
 
     @surface-c6906a04e6cb_role_proposer
     Scenario: memory_help as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_help
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_help
       Then the outcome is discover_and_call
 
     @surface-c6906a04e6cb_role_curator
     Scenario: memory_help as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_help
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_help
       Then the outcome is discover_and_call
 
     @surface-c6906a04e6cb_role_admin
     Scenario: memory_help as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_help
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_help
       Then the outcome is discover_and_call
 
     @surface-c6906a04e6cb_failure
@@ -65,26 +65,26 @@ Feature: mcp/discovery and reading
 
     @surface-213a4c43ed32_role_reader
     Scenario: memory_status as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_status
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_status
       Then the outcome is discover_and_call
 
     @surface-213a4c43ed32_role_proposer
     Scenario: memory_status as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_status
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_status
       Then the outcome is discover_and_call
 
     @surface-213a4c43ed32_role_curator
     Scenario: memory_status as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_status
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_status
       Then the outcome is discover_and_call
 
     @surface-213a4c43ed32_role_admin
     Scenario: memory_status as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_status
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_status
       Then the outcome is discover_and_call
 
     @surface-213a4c43ed32_failure
@@ -111,26 +111,26 @@ Feature: mcp/discovery and reading
 
     @surface-6c54892a4a07_role_reader
     Scenario: memory_search as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_search
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_search
       Then the outcome is discover_and_call
 
     @surface-6c54892a4a07_role_proposer
     Scenario: memory_search as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_search
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_search
       Then the outcome is discover_and_call
 
     @surface-6c54892a4a07_role_curator
     Scenario: memory_search as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_search
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_search
       Then the outcome is discover_and_call
 
     @surface-6c54892a4a07_role_admin
     Scenario: memory_search as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_search
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_search
       Then the outcome is discover_and_call
 
     @surface-6c54892a4a07_failure
@@ -157,26 +157,26 @@ Feature: mcp/discovery and reading
 
     @surface-4447ab44f238_role_reader
     Scenario: memory_read as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_read
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_read
       Then the outcome is discover_and_call
 
     @surface-4447ab44f238_role_proposer
     Scenario: memory_read as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_read
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_read
       Then the outcome is discover_and_call
 
     @surface-4447ab44f238_role_curator
     Scenario: memory_read as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_read
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_read
       Then the outcome is discover_and_call
 
     @surface-4447ab44f238_role_admin
     Scenario: memory_read as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_read
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_read
       Then the outcome is discover_and_call
 
     @surface-4447ab44f238_failure
@@ -203,26 +203,26 @@ Feature: mcp/discovery and reading
 
     @surface-729f7a949314_role_reader
     Scenario: memory_list as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_list
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_list
       Then the outcome is discover_and_call
 
     @surface-729f7a949314_role_proposer
     Scenario: memory_list as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_list
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_list
       Then the outcome is discover_and_call
 
     @surface-729f7a949314_role_curator
     Scenario: memory_list as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_list
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_list
       Then the outcome is discover_and_call
 
     @surface-729f7a949314_role_admin
     Scenario: memory_list as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_list
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_list
       Then the outcome is discover_and_call
 
     @surface-729f7a949314_failure
@@ -249,26 +249,26 @@ Feature: mcp/discovery and reading
 
     @surface-0e9b58d5dc55_role_reader
     Scenario: memory_inventory as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_inventory
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_inventory
       Then the outcome is discover_and_call
 
     @surface-0e9b58d5dc55_role_proposer
     Scenario: memory_inventory as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_inventory
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_inventory
       Then the outcome is discover_and_call
 
     @surface-0e9b58d5dc55_role_curator
     Scenario: memory_inventory as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_inventory
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_inventory
       Then the outcome is discover_and_call
 
     @surface-0e9b58d5dc55_role_admin
     Scenario: memory_inventory as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_inventory
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_inventory
       Then the outcome is discover_and_call
 
     @surface-0e9b58d5dc55_failure
@@ -295,26 +295,26 @@ Feature: mcp/discovery and reading
 
     @surface-b5cbb09a4d48_role_reader
     Scenario: memory_compare_manifest as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_compare_manifest
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_compare_manifest
       Then the outcome is discover_and_call
 
     @surface-b5cbb09a4d48_role_proposer
     Scenario: memory_compare_manifest as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_compare_manifest
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_compare_manifest
       Then the outcome is discover_and_call
 
     @surface-b5cbb09a4d48_role_curator
     Scenario: memory_compare_manifest as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_compare_manifest
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_compare_manifest
       Then the outcome is discover_and_call
 
     @surface-b5cbb09a4d48_role_admin
     Scenario: memory_compare_manifest as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_compare_manifest
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_compare_manifest
       Then the outcome is discover_and_call
 
     @surface-b5cbb09a4d48_failure
@@ -341,26 +341,26 @@ Feature: mcp/discovery and reading
 
     @surface-0f2a0410c00b_role_reader
     Scenario: memory_graph as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_graph
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_graph
       Then the outcome is discover_and_call
 
     @surface-0f2a0410c00b_role_proposer
     Scenario: memory_graph as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_graph
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_graph
       Then the outcome is discover_and_call
 
     @surface-0f2a0410c00b_role_curator
     Scenario: memory_graph as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_graph
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_graph
       Then the outcome is discover_and_call
 
     @surface-0f2a0410c00b_role_admin
     Scenario: memory_graph as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_graph
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_graph
       Then the outcome is discover_and_call
 
     @surface-0f2a0410c00b_failure

@@ -1,5 +1,6 @@
 import { readFile, writeFile, rm, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { existsSync } from 'node:fs';
 
 const root = new URL('../', import.meta.url).pathname;
 const appManifest = JSON.parse(await readFile(join(root, 'testdata/parity/python-functional-manifest.json')));
@@ -91,8 +92,8 @@ function surfaceScenarios(row) {
     lines.push(
       `    @${row.row_id}_role_${profile}`,
       `    Scenario: ${row.name} as ${profile}`,
-      `      Given the canonical ${profile} profile`,
-      `      When that principal discovers or invokes ${row.name}`,
+      `      Given ${row.category === 'mcp_tool' ? 'the operation is present on the configured tool surface and ' : ''}the canonical ${profile} profile`,
+      `      When that principal ${row.category === 'mcp_tool' ? 'lists and calls' : 'uses'} ${row.name}`,
       `      Then the outcome is ${row.profile_outcomes[profile]}`,
       '',
     );
@@ -175,8 +176,60 @@ async function emitSurfaceMatrix(manifest) {
   await writeFile(join(root, 'docs/go-port/python-surface-matrix.md'), `${lines.join('\n')}\n`);
 }
 
+const domainSources = {
+  'access': ['internal/access/authorization.go', 'internal/access/store.go'],
+  'admin http': ['internal/service/admin_http.go'],
+  'asset migration': ['internal/service/legacy_skill_migration.go'],
+  'asset pack repository': ['internal/assets/accepted.go', 'internal/assets/pack.go', 'internal/service/worktree_assets.go'],
+  'asset retrieval': ['internal/assets/retrieval.go', 'internal/service/asset_get.go'],
+  'control plane': ['internal/control/proposals.go', 'internal/service/proposal_submit.go'],
+  'cpu usage': ['internal/derived/search.go'],
+  'derived plane': ['internal/derived/index.go', 'internal/derived/content.go'],
+  'evidence': ['internal/service/answer_evidence.go'],
+  'graph debug': ['internal/graphdebug/snapshot.go'], 'graph diagnostics': ['internal/graphdebug/diagnostics.go'], 'graph export': ['internal/graphdebug/export.go'], 'graph layout': ['internal/graphdebug/layout.go'], 'graph refresh': ['internal/graphdebug/refresh.go'], 'graph snapshot': ['internal/graphdebug/snapshot.go'], 'graph vendor': ['internal/service/graph_static.go'],
+  'legacy blob migration': ['internal/service/legacy_skill_migration.go'], 'load harness': ['cmd/memento-benchmark-go/main.go'], 'memory answer': ['internal/service/answer_endpoint.go'], 'model transport': ['internal/service/model_client.go'],
+  'needle corpus': ['internal/needle/model.go'], 'needle ffi': ['internal/needle/model.go'], 'needle router generator': ['internal/needle/generate.go'], 'operations': ['internal/control/operations.go', 'internal/service/operation_get.go'],
+  'package': ['cmd/memento-go/main.go'], 'proposal assets': ['internal/service/worktree_assets.go', 'internal/service/proposal_prepare.go'], 'release deploy': ['cmd/memento-go/main.go'], 'repository core': ['internal/repository/bundle.go'],
+  'router': ['internal/service/route_endpoint.go', 'internal/service/router.go'], 'runtime models': ['internal/service/runtime_models_off.go'], 'semantic': ['internal/derived/semantic_search.go'], 'semantic deferred': ['internal/derived/semantic_worker.go'],
+  'service mcp': ['internal/service/configured_server.go', 'internal/service/proposal_tools.go'], 'skill import': ['internal/assets/skill_import.go'], 'skill packs': ['internal/assets/pack.go'], 'staged assets': ['internal/assets/staging.go', 'internal/service/staging_http.go'],
+  'subprocess embeddings': ['internal/service/subprocess_semantic.go'], 'warm subprocess embeddings': ['internal/service/subprocess_semantic.go'], 'warm worker config': ['internal/service/runtime_semantic_config.go'], 'workflows': ['cmd/memento-go/main.go'],
+};
+function checkedSources(paths, label) {
+  const unique = [...new Set(paths)];
+  for (const path of unique) if (!existsSync(join(root, path)) || path.endsWith('_test.go')) throw new Error(`missing production source for ${label}: ${path}`);
+  return unique;
+}
+function mappedProductionSources(row, fallback) {
+  const output = [];
+  for (const test of row.go_tests) {
+    const candidate = test.file.replace(/_test\.go$/, '.go');
+    if (existsSync(join(root, candidate))) output.push(candidate);
+  }
+  if (!output.length) output.push(...fallback);
+  return checkedSources(output, row.row_id);
+}
+function umcpSources(row) { return mappedProductionSources(row, ['umcp/server.go']); }
+function applicationSources(row) { return mappedProductionSources(row, domainSources[row.domain] || ['cmd/memento-go/main.go']); }
+function surfaceBindings(row) {
+  const common = { behavior_row_id: row.row_id, evidence_level: row.validation_level, validation_refs: row.validation_cases, go_tests: row.go_tests, go_sources: checkedSources(row.go_sources, row.row_id) };
+  const output = [{ ...common, scenario_id: row.row_id, scenario_kind: 'success', expected: { fields: [...row.success_envelope, ...row.success_fields], side_effects: row.side_effects, idempotency: row.idempotency, pagination: row.pagination } }];
+  for (const profile of ['reader', 'proposer', 'curator', 'admin']) output.push({ ...common, scenario_id: `${row.row_id}_role_${profile}`, scenario_kind: 'role', expected: { profile, outcome: row.profile_outcomes[profile] } });
+  output.push({ ...common, scenario_id: `${row.row_id}_failure`, scenario_kind: 'failure', expected: { errors: row.error_contract, failed_side_effects: `does not apply: ${row.side_effects}` } });
+  return output;
+}
+async function emitScenarioBindings() {
+  const bindings = [];
+  for (const row of appManifest.rows) bindings.push({ scenario_id: row.row_id, scenario_kind: 'application_behavior', behavior_row_id: row.row_id, evidence_level: row.status, python_test: row.python_test, python_source_sha256: row.python_source_sha256, validation_refs: [`python-row:${row.row_id}`], go_tests: row.go_tests, go_sources: applicationSources(row), expected: { summary: row.behavior_summary } });
+  for (const row of umcpManifest.rows) bindings.push({ scenario_id: row.row_id, scenario_kind: 'umcp_behavior', behavior_row_id: row.row_id, evidence_level: row.status, python_test: row.python_test, python_source_sha256: row.python_source_sha256, validation_refs: [`umcp-row:${row.row_id}`], go_tests: row.go_tests, go_sources: umcpSources(row), expected: { summary: row.behavior_summary } });
+  for (const row of surfaceManifest.rows) bindings.push(...surfaceBindings(row));
+  const ids = new Set(); for (const binding of bindings) { if (ids.has(binding.scenario_id)) throw new Error(`duplicate scenario binding ${binding.scenario_id}`); ids.add(binding.scenario_id); }
+  const output = { schema_version: 1, python_commit: surfaceManifest.python_commit, counts: { application: appManifest.rows.length, umcp: umcpManifest.rows.length, surface: surfaceManifest.rows.length * 6, total: bindings.length }, bindings };
+  await writeFile(join(root, 'testdata/parity/gherkin-go-bindings.json'), `${JSON.stringify(output, null, 2)}\n`);
+}
+
 await emitFunctional(join(root, 'testdata/parity/features/application'), appManifest, appGroups);
 await emitSurfaces(join(root, 'testdata/parity/features/surfaces'), surfaceManifest);
 await emitFunctional(join(root, 'umcp/testdata/features'), umcpManifest, umcpGroups, true);
 await emitSurfaceMatrix(surfaceManifest);
-console.log(JSON.stringify({ applicationGroups: Object.keys(appGroups).length, surfaceGroups: Object.keys(surfaceGroups).length, umcpGroups: Object.keys(umcpGroups).length }));
+await emitScenarioBindings();
+console.log(JSON.stringify({ applicationGroups: Object.keys(appGroups).length, surfaceGroups: Object.keys(surfaceGroups).length, umcpGroups: Object.keys(umcpGroups).length, scenarioBindings: appManifest.rows.length + umcpManifest.rows.length + surfaceManifest.rows.length * 6 }));

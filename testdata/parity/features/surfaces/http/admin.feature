@@ -20,25 +20,25 @@ Feature: http/admin
     @surface-e2485ab26cbb_role_reader
     Scenario: GET /admin as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /admin
+      When that principal uses GET /admin
       Then the outcome is HTTP 200 static no-store/nosniff response when managed access is configured
 
     @surface-e2485ab26cbb_role_proposer
     Scenario: GET /admin as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /admin
+      When that principal uses GET /admin
       Then the outcome is HTTP 200 static no-store/nosniff response when managed access is configured
 
     @surface-e2485ab26cbb_role_curator
     Scenario: GET /admin as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /admin
+      When that principal uses GET /admin
       Then the outcome is HTTP 200 static no-store/nosniff response when managed access is configured
 
     @surface-e2485ab26cbb_role_admin
     Scenario: GET /admin as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /admin
+      When that principal uses GET /admin
       Then the outcome is HTTP 200 static no-store/nosniff response when managed access is configured
 
     @surface-e2485ab26cbb_failure
@@ -64,25 +64,25 @@ Feature: http/admin
     @surface-2c59ca52a630_role_reader
     Scenario: GET /admin/app.js as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /admin/app.js
+      When that principal uses GET /admin/app.js
       Then the outcome is HTTP 200 static no-store/nosniff response when managed access is configured
 
     @surface-2c59ca52a630_role_proposer
     Scenario: GET /admin/app.js as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /admin/app.js
+      When that principal uses GET /admin/app.js
       Then the outcome is HTTP 200 static no-store/nosniff response when managed access is configured
 
     @surface-2c59ca52a630_role_curator
     Scenario: GET /admin/app.js as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /admin/app.js
+      When that principal uses GET /admin/app.js
       Then the outcome is HTTP 200 static no-store/nosniff response when managed access is configured
 
     @surface-2c59ca52a630_role_admin
     Scenario: GET /admin/app.js as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /admin/app.js
+      When that principal uses GET /admin/app.js
       Then the outcome is HTTP 200 static no-store/nosniff response when managed access is configured
 
     @surface-2c59ca52a630_failure
@@ -108,25 +108,25 @@ Feature: http/admin
     @surface-527a5f06b0d9_role_reader
     Scenario: GET /admin/api/principals as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /admin/api/principals
+      When that principal uses GET /admin/api/principals
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-527a5f06b0d9_role_proposer
     Scenario: GET /admin/api/principals as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /admin/api/principals
+      When that principal uses GET /admin/api/principals
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-527a5f06b0d9_role_curator
     Scenario: GET /admin/api/principals as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /admin/api/principals
+      When that principal uses GET /admin/api/principals
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-527a5f06b0d9_role_admin
     Scenario: GET /admin/api/principals as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /admin/api/principals
+      When that principal uses GET /admin/api/principals
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-527a5f06b0d9_failure
@@ -152,25 +152,25 @@ Feature: http/admin
     @surface-9308312ce583_role_reader
     Scenario: GET /admin/api/activity as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /admin/api/activity
+      When that principal uses GET /admin/api/activity
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-9308312ce583_role_proposer
     Scenario: GET /admin/api/activity as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /admin/api/activity
+      When that principal uses GET /admin/api/activity
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-9308312ce583_role_curator
     Scenario: GET /admin/api/activity as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /admin/api/activity
+      When that principal uses GET /admin/api/activity
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-9308312ce583_role_admin
     Scenario: GET /admin/api/activity as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /admin/api/activity
+      When that principal uses GET /admin/api/activity
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-9308312ce583_failure
@@ -196,25 +196,25 @@ Feature: http/admin
     @surface-a7495156c5e1_role_reader
     Scenario: POST /admin/api/principals as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /admin/api/principals
+      When that principal uses POST /admin/api/principals
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-a7495156c5e1_role_proposer
     Scenario: POST /admin/api/principals as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /admin/api/principals
+      When that principal uses POST /admin/api/principals
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-a7495156c5e1_role_curator
     Scenario: POST /admin/api/principals as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /admin/api/principals
+      When that principal uses POST /admin/api/principals
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-a7495156c5e1_role_admin
     Scenario: POST /admin/api/principals as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /admin/api/principals
+      When that principal uses POST /admin/api/principals
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-a7495156c5e1_failure
@@ -240,25 +240,25 @@ Feature: http/admin
     @surface-30b7e1ddfa50_role_reader
     Scenario: POST /admin/api/principals/{name}/update as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/update
+      When that principal uses POST /admin/api/principals/{name}/update
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-30b7e1ddfa50_role_proposer
     Scenario: POST /admin/api/principals/{name}/update as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/update
+      When that principal uses POST /admin/api/principals/{name}/update
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-30b7e1ddfa50_role_curator
     Scenario: POST /admin/api/principals/{name}/update as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/update
+      When that principal uses POST /admin/api/principals/{name}/update
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-30b7e1ddfa50_role_admin
     Scenario: POST /admin/api/principals/{name}/update as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/update
+      When that principal uses POST /admin/api/principals/{name}/update
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-30b7e1ddfa50_failure
@@ -284,25 +284,25 @@ Feature: http/admin
     @surface-4c5e4a822549_role_reader
     Scenario: POST /admin/api/principals/{name}/rename as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/rename
+      When that principal uses POST /admin/api/principals/{name}/rename
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-4c5e4a822549_role_proposer
     Scenario: POST /admin/api/principals/{name}/rename as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/rename
+      When that principal uses POST /admin/api/principals/{name}/rename
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-4c5e4a822549_role_curator
     Scenario: POST /admin/api/principals/{name}/rename as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/rename
+      When that principal uses POST /admin/api/principals/{name}/rename
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-4c5e4a822549_role_admin
     Scenario: POST /admin/api/principals/{name}/rename as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/rename
+      When that principal uses POST /admin/api/principals/{name}/rename
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-4c5e4a822549_failure
@@ -328,25 +328,25 @@ Feature: http/admin
     @surface-c45eccf925c8_role_reader
     Scenario: POST /admin/api/principals/{name}/disable as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/disable
+      When that principal uses POST /admin/api/principals/{name}/disable
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-c45eccf925c8_role_proposer
     Scenario: POST /admin/api/principals/{name}/disable as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/disable
+      When that principal uses POST /admin/api/principals/{name}/disable
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-c45eccf925c8_role_curator
     Scenario: POST /admin/api/principals/{name}/disable as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/disable
+      When that principal uses POST /admin/api/principals/{name}/disable
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-c45eccf925c8_role_admin
     Scenario: POST /admin/api/principals/{name}/disable as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/disable
+      When that principal uses POST /admin/api/principals/{name}/disable
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-c45eccf925c8_failure
@@ -372,25 +372,25 @@ Feature: http/admin
     @surface-f8177e84f7ee_role_reader
     Scenario: POST /admin/api/principals/{name}/enable as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/enable
+      When that principal uses POST /admin/api/principals/{name}/enable
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-f8177e84f7ee_role_proposer
     Scenario: POST /admin/api/principals/{name}/enable as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/enable
+      When that principal uses POST /admin/api/principals/{name}/enable
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-f8177e84f7ee_role_curator
     Scenario: POST /admin/api/principals/{name}/enable as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/enable
+      When that principal uses POST /admin/api/principals/{name}/enable
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-f8177e84f7ee_role_admin
     Scenario: POST /admin/api/principals/{name}/enable as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/enable
+      When that principal uses POST /admin/api/principals/{name}/enable
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-f8177e84f7ee_failure
@@ -416,25 +416,25 @@ Feature: http/admin
     @surface-907e8a310559_role_reader
     Scenario: POST /admin/api/principals/{name}/rotate as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/rotate
+      When that principal uses POST /admin/api/principals/{name}/rotate
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-907e8a310559_role_proposer
     Scenario: POST /admin/api/principals/{name}/rotate as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/rotate
+      When that principal uses POST /admin/api/principals/{name}/rotate
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-907e8a310559_role_curator
     Scenario: POST /admin/api/principals/{name}/rotate as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/rotate
+      When that principal uses POST /admin/api/principals/{name}/rotate
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-907e8a310559_role_admin
     Scenario: POST /admin/api/principals/{name}/rotate as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/rotate
+      When that principal uses POST /admin/api/principals/{name}/rotate
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-907e8a310559_failure
@@ -460,25 +460,25 @@ Feature: http/admin
     @surface-72ace281970a_role_reader
     Scenario: POST /admin/api/principals/{name}/revoke as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/revoke
+      When that principal uses POST /admin/api/principals/{name}/revoke
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-72ace281970a_role_proposer
     Scenario: POST /admin/api/principals/{name}/revoke as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/revoke
+      When that principal uses POST /admin/api/principals/{name}/revoke
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-72ace281970a_role_curator
     Scenario: POST /admin/api/principals/{name}/revoke as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/revoke
+      When that principal uses POST /admin/api/principals/{name}/revoke
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-72ace281970a_role_admin
     Scenario: POST /admin/api/principals/{name}/revoke as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/revoke
+      When that principal uses POST /admin/api/principals/{name}/revoke
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-72ace281970a_failure
@@ -504,25 +504,25 @@ Feature: http/admin
     @surface-43af9f6a33f7_role_reader
     Scenario: POST /admin/api/principals/{name}/delete as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/delete
+      When that principal uses POST /admin/api/principals/{name}/delete
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-43af9f6a33f7_role_proposer
     Scenario: POST /admin/api/principals/{name}/delete as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/delete
+      When that principal uses POST /admin/api/principals/{name}/delete
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-43af9f6a33f7_role_curator
     Scenario: POST /admin/api/principals/{name}/delete as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/delete
+      When that principal uses POST /admin/api/principals/{name}/delete
       Then the outcome is HTTP 401 admin bearer credential required
 
     @surface-43af9f6a33f7_role_admin
     Scenario: POST /admin/api/principals/{name}/delete as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /admin/api/principals/{name}/delete
+      When that principal uses POST /admin/api/principals/{name}/delete
       Then the outcome is authenticated HTTP 200/201 operation
 
     @surface-43af9f6a33f7_failure

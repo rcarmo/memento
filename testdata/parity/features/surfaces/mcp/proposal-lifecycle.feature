@@ -19,26 +19,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-b14276d52368_role_reader
     Scenario: memory_audit as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_audit
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_audit
+      Then the outcome is discover_but_call_forbidden
 
     @surface-b14276d52368_role_proposer
     Scenario: memory_audit as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_audit
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_audit
       Then the outcome is discover_and_call
 
     @surface-b14276d52368_role_curator
     Scenario: memory_audit as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_audit
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_audit
       Then the outcome is discover_and_call
 
     @surface-b14276d52368_role_admin
     Scenario: memory_audit as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_audit
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_audit
       Then the outcome is discover_and_call
 
     @surface-b14276d52368_failure
@@ -65,26 +65,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-2c384e774062_role_reader
     Scenario: memory_propose as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_propose
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_propose
+      Then the outcome is discover_but_call_forbidden
 
     @surface-2c384e774062_role_proposer
     Scenario: memory_propose as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_propose
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_propose
       Then the outcome is discover_and_call
 
     @surface-2c384e774062_role_curator
     Scenario: memory_propose as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_propose
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_propose
       Then the outcome is discover_and_call
 
     @surface-2c384e774062_role_admin
     Scenario: memory_propose as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_propose
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_propose
       Then the outcome is discover_and_call
 
     @surface-2c384e774062_failure
@@ -109,26 +109,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-831a46271491_role_reader
     Scenario: memory_propose_freeform as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_propose_freeform
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_propose_freeform
+      Then the outcome is discover_but_call_forbidden
 
     @surface-831a46271491_role_proposer
     Scenario: memory_propose_freeform as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_propose_freeform
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_propose_freeform
       Then the outcome is discover_and_call
 
     @surface-831a46271491_role_curator
     Scenario: memory_propose_freeform as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_propose_freeform
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_propose_freeform
       Then the outcome is discover_and_call
 
     @surface-831a46271491_role_admin
     Scenario: memory_propose_freeform as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_propose_freeform
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_propose_freeform
       Then the outcome is discover_and_call
 
     @surface-831a46271491_failure
@@ -153,26 +153,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-990560045406_role_reader
     Scenario: memory_propose_update as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_propose_update
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_propose_update
+      Then the outcome is discover_but_call_forbidden
 
     @surface-990560045406_role_proposer
     Scenario: memory_propose_update as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_propose_update
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_propose_update
       Then the outcome is discover_and_call
 
     @surface-990560045406_role_curator
     Scenario: memory_propose_update as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_propose_update
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_propose_update
       Then the outcome is discover_and_call
 
     @surface-990560045406_role_admin
     Scenario: memory_propose_update as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_propose_update
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_propose_update
       Then the outcome is discover_and_call
 
     @surface-990560045406_failure
@@ -199,26 +199,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-edbf396f4e8e_role_reader
     Scenario: memory_proposal_get as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_proposal_get
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_proposal_get
+      Then the outcome is discover_but_call_forbidden
 
     @surface-edbf396f4e8e_role_proposer
     Scenario: memory_proposal_get as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_proposal_get
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_proposal_get
       Then the outcome is discover_and_call
 
     @surface-edbf396f4e8e_role_curator
     Scenario: memory_proposal_get as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_proposal_get
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_proposal_get
       Then the outcome is discover_and_call
 
     @surface-edbf396f4e8e_role_admin
     Scenario: memory_proposal_get as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_proposal_get
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_proposal_get
       Then the outcome is discover_and_call
 
     @surface-edbf396f4e8e_failure
@@ -243,26 +243,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-90db0603af2c_role_reader
     Scenario: memory_proposal_list as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_proposal_list
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_proposal_list
+      Then the outcome is discover_but_call_forbidden
 
     @surface-90db0603af2c_role_proposer
     Scenario: memory_proposal_list as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_proposal_list
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_proposal_list
       Then the outcome is discover_and_call
 
     @surface-90db0603af2c_role_curator
     Scenario: memory_proposal_list as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_proposal_list
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_proposal_list
       Then the outcome is discover_and_call
 
     @surface-90db0603af2c_role_admin
     Scenario: memory_proposal_list as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_proposal_list
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_proposal_list
       Then the outcome is discover_and_call
 
     @surface-90db0603af2c_failure
@@ -287,26 +287,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-106498966aa2_role_reader
     Scenario: memory_proposal_asset_get as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_proposal_asset_get
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_proposal_asset_get
+      Then the outcome is discover_but_call_forbidden
 
     @surface-106498966aa2_role_proposer
     Scenario: memory_proposal_asset_get as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_proposal_asset_get
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_proposal_asset_get
       Then the outcome is discover_and_call
 
     @surface-106498966aa2_role_curator
     Scenario: memory_proposal_asset_get as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_proposal_asset_get
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_proposal_asset_get
       Then the outcome is discover_and_call
 
     @surface-106498966aa2_role_admin
     Scenario: memory_proposal_asset_get as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_proposal_asset_get
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_proposal_asset_get
       Then the outcome is discover_and_call
 
     @surface-106498966aa2_failure
@@ -331,26 +331,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-0b4811f722bf_role_reader
     Scenario: memory_proposal_rebase as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_proposal_rebase
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_proposal_rebase
+      Then the outcome is discover_but_call_forbidden
 
     @surface-0b4811f722bf_role_proposer
     Scenario: memory_proposal_rebase as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_proposal_rebase
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_proposal_rebase
       Then the outcome is discover_and_call
 
     @surface-0b4811f722bf_role_curator
     Scenario: memory_proposal_rebase as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_proposal_rebase
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_proposal_rebase
       Then the outcome is discover_and_call
 
     @surface-0b4811f722bf_role_admin
     Scenario: memory_proposal_rebase as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_proposal_rebase
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_proposal_rebase
       Then the outcome is discover_and_call
 
     @surface-0b4811f722bf_failure
@@ -375,26 +375,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-aa8ecc31f343_role_reader
     Scenario: memory_proposal_revise as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_proposal_revise
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_proposal_revise
+      Then the outcome is discover_but_call_forbidden
 
     @surface-aa8ecc31f343_role_proposer
     Scenario: memory_proposal_revise as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_proposal_revise
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_proposal_revise
+      Then the outcome is discover_but_call_forbidden
 
     @surface-aa8ecc31f343_role_curator
     Scenario: memory_proposal_revise as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_proposal_revise
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_proposal_revise
       Then the outcome is discover_and_call
 
     @surface-aa8ecc31f343_role_admin
     Scenario: memory_proposal_revise as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_proposal_revise
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_proposal_revise
       Then the outcome is discover_and_call
 
     @surface-aa8ecc31f343_failure
@@ -419,26 +419,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-6101c4d10fb3_role_reader
     Scenario: memory_proposal_review as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_proposal_review
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_proposal_review
+      Then the outcome is discover_but_call_forbidden
 
     @surface-6101c4d10fb3_role_proposer
     Scenario: memory_proposal_review as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_proposal_review
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_proposal_review
+      Then the outcome is discover_but_call_forbidden
 
     @surface-6101c4d10fb3_role_curator
     Scenario: memory_proposal_review as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_proposal_review
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_proposal_review
       Then the outcome is discover_and_call
 
     @surface-6101c4d10fb3_role_admin
     Scenario: memory_proposal_review as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_proposal_review
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_proposal_review
       Then the outcome is discover_and_call
 
     @surface-6101c4d10fb3_failure
@@ -463,26 +463,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-4e7107b7301d_role_reader
     Scenario: memory_proposal_apply as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_proposal_apply
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_proposal_apply
+      Then the outcome is discover_but_call_forbidden
 
     @surface-4e7107b7301d_role_proposer
     Scenario: memory_proposal_apply as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_proposal_apply
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_proposal_apply
+      Then the outcome is discover_but_call_forbidden
 
     @surface-4e7107b7301d_role_curator
     Scenario: memory_proposal_apply as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_proposal_apply
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_proposal_apply
       Then the outcome is discover_and_call
 
     @surface-4e7107b7301d_role_admin
     Scenario: memory_proposal_apply as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_proposal_apply
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_proposal_apply
       Then the outcome is discover_and_call
 
     @surface-4e7107b7301d_failure
@@ -509,26 +509,26 @@ Feature: mcp/proposal lifecycle
 
     @surface-257627a91347_role_reader
     Scenario: memory_operation_get as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_operation_get
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_operation_get
+      Then the outcome is discover_but_call_forbidden
 
     @surface-257627a91347_role_proposer
     Scenario: memory_operation_get as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_operation_get
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_operation_get
       Then the outcome is discover_and_call
 
     @surface-257627a91347_role_curator
     Scenario: memory_operation_get as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_operation_get
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_operation_get
       Then the outcome is discover_and_call
 
     @surface-257627a91347_role_admin
     Scenario: memory_operation_get as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_operation_get
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_operation_get
       Then the outcome is discover_and_call
 
     @surface-257627a91347_failure

@@ -19,26 +19,26 @@ Feature: mcp/access administration
 
     @surface-0edd0cc21aa2_role_reader
     Scenario: access_principal_list as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_principal_list
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_principal_list
       Then the outcome is hidden_and_forbidden
 
     @surface-0edd0cc21aa2_role_proposer
     Scenario: access_principal_list as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_principal_list
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_principal_list
       Then the outcome is hidden_and_forbidden
 
     @surface-0edd0cc21aa2_role_curator
     Scenario: access_principal_list as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_principal_list
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_principal_list
       Then the outcome is hidden_and_forbidden
 
     @surface-0edd0cc21aa2_role_admin
     Scenario: access_principal_list as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_principal_list
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_principal_list
       Then the outcome is discover_and_call
 
     @surface-0edd0cc21aa2_failure
@@ -63,26 +63,26 @@ Feature: mcp/access administration
 
     @surface-589e66ca921c_role_reader
     Scenario: access_principal_create as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_principal_create
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_principal_create
       Then the outcome is hidden_and_forbidden
 
     @surface-589e66ca921c_role_proposer
     Scenario: access_principal_create as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_principal_create
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_principal_create
       Then the outcome is hidden_and_forbidden
 
     @surface-589e66ca921c_role_curator
     Scenario: access_principal_create as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_principal_create
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_principal_create
       Then the outcome is hidden_and_forbidden
 
     @surface-589e66ca921c_role_admin
     Scenario: access_principal_create as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_principal_create
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_principal_create
       Then the outcome is discover_and_call
 
     @surface-589e66ca921c_failure
@@ -107,26 +107,26 @@ Feature: mcp/access administration
 
     @surface-2c7b02ad6f21_role_reader
     Scenario: access_principal_update as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_principal_update
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_principal_update
       Then the outcome is hidden_and_forbidden
 
     @surface-2c7b02ad6f21_role_proposer
     Scenario: access_principal_update as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_principal_update
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_principal_update
       Then the outcome is hidden_and_forbidden
 
     @surface-2c7b02ad6f21_role_curator
     Scenario: access_principal_update as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_principal_update
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_principal_update
       Then the outcome is hidden_and_forbidden
 
     @surface-2c7b02ad6f21_role_admin
     Scenario: access_principal_update as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_principal_update
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_principal_update
       Then the outcome is discover_and_call
 
     @surface-2c7b02ad6f21_failure
@@ -151,26 +151,26 @@ Feature: mcp/access administration
 
     @surface-313fae116d9d_role_reader
     Scenario: access_principal_rename as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_principal_rename
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_principal_rename
       Then the outcome is hidden_and_forbidden
 
     @surface-313fae116d9d_role_proposer
     Scenario: access_principal_rename as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_principal_rename
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_principal_rename
       Then the outcome is hidden_and_forbidden
 
     @surface-313fae116d9d_role_curator
     Scenario: access_principal_rename as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_principal_rename
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_principal_rename
       Then the outcome is hidden_and_forbidden
 
     @surface-313fae116d9d_role_admin
     Scenario: access_principal_rename as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_principal_rename
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_principal_rename
       Then the outcome is discover_and_call
 
     @surface-313fae116d9d_failure
@@ -195,26 +195,26 @@ Feature: mcp/access administration
 
     @surface-43df6433a536_role_reader
     Scenario: access_principal_disable as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_principal_disable
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_principal_disable
       Then the outcome is hidden_and_forbidden
 
     @surface-43df6433a536_role_proposer
     Scenario: access_principal_disable as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_principal_disable
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_principal_disable
       Then the outcome is hidden_and_forbidden
 
     @surface-43df6433a536_role_curator
     Scenario: access_principal_disable as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_principal_disable
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_principal_disable
       Then the outcome is hidden_and_forbidden
 
     @surface-43df6433a536_role_admin
     Scenario: access_principal_disable as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_principal_disable
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_principal_disable
       Then the outcome is discover_and_call
 
     @surface-43df6433a536_failure
@@ -239,26 +239,26 @@ Feature: mcp/access administration
 
     @surface-d5f2bac6e5bf_role_reader
     Scenario: access_principal_enable as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_principal_enable
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_principal_enable
       Then the outcome is hidden_and_forbidden
 
     @surface-d5f2bac6e5bf_role_proposer
     Scenario: access_principal_enable as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_principal_enable
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_principal_enable
       Then the outcome is hidden_and_forbidden
 
     @surface-d5f2bac6e5bf_role_curator
     Scenario: access_principal_enable as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_principal_enable
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_principal_enable
       Then the outcome is hidden_and_forbidden
 
     @surface-d5f2bac6e5bf_role_admin
     Scenario: access_principal_enable as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_principal_enable
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_principal_enable
       Then the outcome is discover_and_call
 
     @surface-d5f2bac6e5bf_failure
@@ -283,26 +283,26 @@ Feature: mcp/access administration
 
     @surface-6509fdd0e990_role_reader
     Scenario: access_principal_revoke as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_principal_revoke
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_principal_revoke
       Then the outcome is hidden_and_forbidden
 
     @surface-6509fdd0e990_role_proposer
     Scenario: access_principal_revoke as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_principal_revoke
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_principal_revoke
       Then the outcome is hidden_and_forbidden
 
     @surface-6509fdd0e990_role_curator
     Scenario: access_principal_revoke as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_principal_revoke
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_principal_revoke
       Then the outcome is hidden_and_forbidden
 
     @surface-6509fdd0e990_role_admin
     Scenario: access_principal_revoke as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_principal_revoke
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_principal_revoke
       Then the outcome is discover_and_call
 
     @surface-6509fdd0e990_failure
@@ -327,26 +327,26 @@ Feature: mcp/access administration
 
     @surface-bda80ecae438_role_reader
     Scenario: access_principal_delete as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_principal_delete
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_principal_delete
       Then the outcome is hidden_and_forbidden
 
     @surface-bda80ecae438_role_proposer
     Scenario: access_principal_delete as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_principal_delete
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_principal_delete
       Then the outcome is hidden_and_forbidden
 
     @surface-bda80ecae438_role_curator
     Scenario: access_principal_delete as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_principal_delete
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_principal_delete
       Then the outcome is hidden_and_forbidden
 
     @surface-bda80ecae438_role_admin
     Scenario: access_principal_delete as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_principal_delete
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_principal_delete
       Then the outcome is discover_and_call
 
     @surface-bda80ecae438_failure
@@ -373,26 +373,26 @@ Feature: mcp/access administration
 
     @surface-997d587c4243_role_reader
     Scenario: access_audit_list as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_audit_list
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_audit_list
       Then the outcome is hidden_and_forbidden
 
     @surface-997d587c4243_role_proposer
     Scenario: access_audit_list as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_audit_list
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_audit_list
       Then the outcome is hidden_and_forbidden
 
     @surface-997d587c4243_role_curator
     Scenario: access_audit_list as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_audit_list
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_audit_list
       Then the outcome is hidden_and_forbidden
 
     @surface-997d587c4243_role_admin
     Scenario: access_audit_list as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_audit_list
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_audit_list
       Then the outcome is discover_and_call
 
     @surface-997d587c4243_failure
@@ -419,26 +419,26 @@ Feature: mcp/access administration
 
     @surface-155cf88caaea_role_reader
     Scenario: access_credential_rotate as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes access_credential_rotate
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls access_credential_rotate
       Then the outcome is hidden_and_forbidden
 
     @surface-155cf88caaea_role_proposer
     Scenario: access_credential_rotate as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes access_credential_rotate
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls access_credential_rotate
       Then the outcome is hidden_and_forbidden
 
     @surface-155cf88caaea_role_curator
     Scenario: access_credential_rotate as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes access_credential_rotate
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls access_credential_rotate
       Then the outcome is hidden_and_forbidden
 
     @surface-155cf88caaea_role_admin
     Scenario: access_credential_rotate as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes access_credential_rotate
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls access_credential_rotate
       Then the outcome is discover_and_call
 
     @surface-155cf88caaea_failure

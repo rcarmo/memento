@@ -20,25 +20,25 @@ Feature: http/graph
     @surface-87701b11921b_role_reader
     Scenario: GET /graph as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph
+      When that principal uses GET /graph
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-87701b11921b_role_proposer
     Scenario: GET /graph as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph
+      When that principal uses GET /graph
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-87701b11921b_role_curator
     Scenario: GET /graph as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph
+      When that principal uses GET /graph
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-87701b11921b_role_admin
     Scenario: GET /graph as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph
+      When that principal uses GET /graph
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-87701b11921b_failure
@@ -64,25 +64,25 @@ Feature: http/graph
     @surface-7841b06d34c9_role_reader
     Scenario: GET /graph/assets/{asset} as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph/assets/{asset}
+      When that principal uses GET /graph/assets/{asset}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-7841b06d34c9_role_proposer
     Scenario: GET /graph/assets/{asset} as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph/assets/{asset}
+      When that principal uses GET /graph/assets/{asset}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-7841b06d34c9_role_curator
     Scenario: GET /graph/assets/{asset} as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph/assets/{asset}
+      When that principal uses GET /graph/assets/{asset}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-7841b06d34c9_role_admin
     Scenario: GET /graph/assets/{asset} as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph/assets/{asset}
+      When that principal uses GET /graph/assets/{asset}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-7841b06d34c9_failure
@@ -108,25 +108,25 @@ Feature: http/graph
     @surface-56754c9cb122_role_reader
     Scenario: GET /graph/api/v1/status as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph/api/v1/status
+      When that principal uses GET /graph/api/v1/status
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-56754c9cb122_role_proposer
     Scenario: GET /graph/api/v1/status as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph/api/v1/status
+      When that principal uses GET /graph/api/v1/status
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-56754c9cb122_role_curator
     Scenario: GET /graph/api/v1/status as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph/api/v1/status
+      When that principal uses GET /graph/api/v1/status
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-56754c9cb122_role_admin
     Scenario: GET /graph/api/v1/status as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph/api/v1/status
+      When that principal uses GET /graph/api/v1/status
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-56754c9cb122_failure
@@ -152,25 +152,25 @@ Feature: http/graph
     @surface-77ca624d98cc_role_reader
     Scenario: GET /graph/api/v1/principals as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph/api/v1/principals
+      When that principal uses GET /graph/api/v1/principals
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-77ca624d98cc_role_proposer
     Scenario: GET /graph/api/v1/principals as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph/api/v1/principals
+      When that principal uses GET /graph/api/v1/principals
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-77ca624d98cc_role_curator
     Scenario: GET /graph/api/v1/principals as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph/api/v1/principals
+      When that principal uses GET /graph/api/v1/principals
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-77ca624d98cc_role_admin
     Scenario: GET /graph/api/v1/principals as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph/api/v1/principals
+      When that principal uses GET /graph/api/v1/principals
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-77ca624d98cc_failure
@@ -196,25 +196,25 @@ Feature: http/graph
     @surface-9c590b85aa90_role_reader
     Scenario: GET /graph/api/v1/overview as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph/api/v1/overview
+      When that principal uses GET /graph/api/v1/overview
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-9c590b85aa90_role_proposer
     Scenario: GET /graph/api/v1/overview as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph/api/v1/overview
+      When that principal uses GET /graph/api/v1/overview
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-9c590b85aa90_role_curator
     Scenario: GET /graph/api/v1/overview as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph/api/v1/overview
+      When that principal uses GET /graph/api/v1/overview
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-9c590b85aa90_role_admin
     Scenario: GET /graph/api/v1/overview as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph/api/v1/overview
+      When that principal uses GET /graph/api/v1/overview
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-9c590b85aa90_failure
@@ -240,25 +240,25 @@ Feature: http/graph
     @surface-36b7cee1143b_role_reader
     Scenario: GET /graph/api/v1/embeddings/status as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph/api/v1/embeddings/status
+      When that principal uses GET /graph/api/v1/embeddings/status
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-36b7cee1143b_role_proposer
     Scenario: GET /graph/api/v1/embeddings/status as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph/api/v1/embeddings/status
+      When that principal uses GET /graph/api/v1/embeddings/status
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-36b7cee1143b_role_curator
     Scenario: GET /graph/api/v1/embeddings/status as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph/api/v1/embeddings/status
+      When that principal uses GET /graph/api/v1/embeddings/status
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-36b7cee1143b_role_admin
     Scenario: GET /graph/api/v1/embeddings/status as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph/api/v1/embeddings/status
+      When that principal uses GET /graph/api/v1/embeddings/status
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-36b7cee1143b_failure
@@ -284,25 +284,25 @@ Feature: http/graph
     @surface-8b2f29ba0ef9_role_reader
     Scenario: POST /graph/api/v1/embeddings/refresh as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /graph/api/v1/embeddings/refresh
+      When that principal uses POST /graph/api/v1/embeddings/refresh
       Then the outcome is HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400
 
     @surface-8b2f29ba0ef9_role_proposer
     Scenario: POST /graph/api/v1/embeddings/refresh as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /graph/api/v1/embeddings/refresh
+      When that principal uses POST /graph/api/v1/embeddings/refresh
       Then the outcome is HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400
 
     @surface-8b2f29ba0ef9_role_curator
     Scenario: POST /graph/api/v1/embeddings/refresh as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /graph/api/v1/embeddings/refresh
+      When that principal uses POST /graph/api/v1/embeddings/refresh
       Then the outcome is HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400
 
     @surface-8b2f29ba0ef9_role_admin
     Scenario: POST /graph/api/v1/embeddings/refresh as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /graph/api/v1/embeddings/refresh
+      When that principal uses POST /graph/api/v1/embeddings/refresh
       Then the outcome is HTTP 202 only in full diagnostic view; simulated-principal requests return HTTP 400
 
     @surface-8b2f29ba0ef9_failure
@@ -328,25 +328,25 @@ Feature: http/graph
     @surface-03d8b8c261e0_role_reader
     Scenario: POST /graph/api/v1/search as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /graph/api/v1/search
+      When that principal uses POST /graph/api/v1/search
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-03d8b8c261e0_role_proposer
     Scenario: POST /graph/api/v1/search as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /graph/api/v1/search
+      When that principal uses POST /graph/api/v1/search
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-03d8b8c261e0_role_curator
     Scenario: POST /graph/api/v1/search as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /graph/api/v1/search
+      When that principal uses POST /graph/api/v1/search
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-03d8b8c261e0_role_admin
     Scenario: POST /graph/api/v1/search as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /graph/api/v1/search
+      When that principal uses POST /graph/api/v1/search
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-03d8b8c261e0_failure
@@ -372,25 +372,25 @@ Feature: http/graph
     @surface-a98c056ba8ec_role_reader
     Scenario: GET /graph/api/v1/clusters/{id} as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph/api/v1/clusters/{id}
+      When that principal uses GET /graph/api/v1/clusters/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-a98c056ba8ec_role_proposer
     Scenario: GET /graph/api/v1/clusters/{id} as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph/api/v1/clusters/{id}
+      When that principal uses GET /graph/api/v1/clusters/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-a98c056ba8ec_role_curator
     Scenario: GET /graph/api/v1/clusters/{id} as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph/api/v1/clusters/{id}
+      When that principal uses GET /graph/api/v1/clusters/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-a98c056ba8ec_role_admin
     Scenario: GET /graph/api/v1/clusters/{id} as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph/api/v1/clusters/{id}
+      When that principal uses GET /graph/api/v1/clusters/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-a98c056ba8ec_failure
@@ -416,25 +416,25 @@ Feature: http/graph
     @surface-859546743957_role_reader
     Scenario: GET /graph/api/v1/memories/{id} as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph/api/v1/memories/{id}
+      When that principal uses GET /graph/api/v1/memories/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-859546743957_role_proposer
     Scenario: GET /graph/api/v1/memories/{id} as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph/api/v1/memories/{id}
+      When that principal uses GET /graph/api/v1/memories/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-859546743957_role_curator
     Scenario: GET /graph/api/v1/memories/{id} as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph/api/v1/memories/{id}
+      When that principal uses GET /graph/api/v1/memories/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-859546743957_role_admin
     Scenario: GET /graph/api/v1/memories/{id} as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph/api/v1/memories/{id}
+      When that principal uses GET /graph/api/v1/memories/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-859546743957_failure
@@ -460,25 +460,25 @@ Feature: http/graph
     @surface-12fd0752fde9_role_reader
     Scenario: GET /graph/api/v1/neighbourhood/{id} as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph/api/v1/neighbourhood/{id}
+      When that principal uses GET /graph/api/v1/neighbourhood/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-12fd0752fde9_role_proposer
     Scenario: GET /graph/api/v1/neighbourhood/{id} as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph/api/v1/neighbourhood/{id}
+      When that principal uses GET /graph/api/v1/neighbourhood/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-12fd0752fde9_role_curator
     Scenario: GET /graph/api/v1/neighbourhood/{id} as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph/api/v1/neighbourhood/{id}
+      When that principal uses GET /graph/api/v1/neighbourhood/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-12fd0752fde9_role_admin
     Scenario: GET /graph/api/v1/neighbourhood/{id} as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph/api/v1/neighbourhood/{id}
+      When that principal uses GET /graph/api/v1/neighbourhood/{id}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-12fd0752fde9_failure
@@ -504,25 +504,25 @@ Feature: http/graph
     @surface-b0340ab6792a_role_reader
     Scenario: GET /graph/api/v1/assets/{path} as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /graph/api/v1/assets/{path}
+      When that principal uses GET /graph/api/v1/assets/{path}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-b0340ab6792a_role_proposer
     Scenario: GET /graph/api/v1/assets/{path} as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /graph/api/v1/assets/{path}
+      When that principal uses GET /graph/api/v1/assets/{path}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-b0340ab6792a_role_curator
     Scenario: GET /graph/api/v1/assets/{path} as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /graph/api/v1/assets/{path}
+      When that principal uses GET /graph/api/v1/assets/{path}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-b0340ab6792a_role_admin
     Scenario: GET /graph/api/v1/assets/{path} as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /graph/api/v1/assets/{path}
+      When that principal uses GET /graph/api/v1/assets/{path}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-b0340ab6792a_failure
@@ -548,25 +548,25 @@ Feature: http/graph
     @surface-3baee52bbbef_role_reader
     Scenario: POST /graph/api/v1/export/{json|svg} as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /graph/api/v1/export/{json|svg}
+      When that principal uses POST /graph/api/v1/export/{json|svg}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-3baee52bbbef_role_proposer
     Scenario: POST /graph/api/v1/export/{json|svg} as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /graph/api/v1/export/{json|svg}
+      When that principal uses POST /graph/api/v1/export/{json|svg}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-3baee52bbbef_role_curator
     Scenario: POST /graph/api/v1/export/{json|svg} as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /graph/api/v1/export/{json|svg}
+      When that principal uses POST /graph/api/v1/export/{json|svg}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-3baee52bbbef_role_admin
     Scenario: POST /graph/api/v1/export/{json|svg} as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /graph/api/v1/export/{json|svg}
+      When that principal uses POST /graph/api/v1/export/{json|svg}
       Then the outcome is trusted-network route; optional simulated principal applies that profile read policy before output
 
     @surface-3baee52bbbef_failure

@@ -7,7 +7,7 @@
       "name": "memory_help",
       "operation": "help",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/status.go",
       "roles": [
         "reader"
       ],
@@ -42,6 +42,11 @@
           "package": "./internal/service",
           "name": "TestRegisteredModelsOffStatusHTTP",
           "file": "internal/service/status_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -96,6 +101,9 @@
       "validation_level": "exact_jsonrpc_replay",
       "validation_cases": [
         "rpc-e0c17b99dd59f90a"
+      ],
+      "go_sources": [
+        "internal/service/status.go"
       ]
     },
     {
@@ -103,7 +111,7 @@
       "name": "memory_status",
       "operation": "status",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/status.go",
       "roles": [
         "reader"
       ],
@@ -138,6 +146,11 @@
           "package": "./internal/service",
           "name": "TestRegisteredModelsOffStatusHTTP",
           "file": "internal/service/status_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -202,6 +215,9 @@
       "validation_cases": [
         "rpc-a3c15e0ff741f1d9",
         "rpc-ae4c7cf2fa93a6b7"
+      ],
+      "go_sources": [
+        "internal/service/status.go"
       ]
     },
     {
@@ -209,7 +225,7 @@
       "name": "memory_search",
       "operation": "search",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/read.go",
       "roles": [
         "reader"
       ],
@@ -302,6 +318,11 @@
           "package": "./internal/service",
           "name": "TestReadToolReference",
           "file": "internal/service/proposal_tools_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -384,6 +405,9 @@
       "validation_cases": [
         "rpc-617af935902f9b5d",
         "rpc-aff8a59f16cc3504"
+      ],
+      "go_sources": [
+        "internal/service/read.go"
       ]
     },
     {
@@ -391,7 +415,7 @@
       "name": "memory_read",
       "operation": "read",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/read.go",
       "roles": [
         "reader"
       ],
@@ -434,6 +458,11 @@
           "package": "./internal/service",
           "name": "TestReadToolReference",
           "file": "internal/service/proposal_tools_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -497,6 +526,9 @@
       "validation_level": "exact_jsonrpc_replay",
       "validation_cases": [
         "rpc-1e37b858548d81b8"
+      ],
+      "go_sources": [
+        "internal/service/read.go"
       ]
     },
     {
@@ -504,7 +536,7 @@
       "name": "memory_list",
       "operation": "list",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/read.go",
       "roles": [
         "reader"
       ],
@@ -543,6 +575,11 @@
           "package": "./internal/service",
           "name": "TestReadToolReference",
           "file": "internal/service/proposal_tools_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -610,6 +647,9 @@
       "validation_level": "exact_jsonrpc_replay",
       "validation_cases": [
         "rpc-7c0e53c8466ce32b"
+      ],
+      "go_sources": [
+        "internal/service/read.go"
       ]
     },
     {
@@ -617,7 +657,7 @@
       "name": "memory_inventory",
       "operation": "inventory",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/inventory.go",
       "roles": [
         "reader"
       ],
@@ -708,6 +748,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -794,6 +839,9 @@
         "rpc-cc794bc2304c6231",
         "rpc-d716bc037893505e",
         "rpc-ffb6ec197068e7c0"
+      ],
+      "go_sources": [
+        "internal/service/inventory.go"
       ]
     },
     {
@@ -801,7 +849,7 @@
       "name": "memory_compare_manifest",
       "operation": "compare_manifest",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/compare_manifest.go",
       "roles": [
         "reader"
       ],
@@ -946,6 +994,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -1023,6 +1076,9 @@
         "rpc-bad16c373a78597d",
         "rpc-dc98edb56fad9007",
         "rpc-fbb55e46ccfc5bd1"
+      ],
+      "go_sources": [
+        "internal/service/compare_manifest.go"
       ]
     },
     {
@@ -1030,7 +1086,7 @@
       "name": "memory_asset_metadata",
       "operation": "asset_metadata",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/asset_metadata.go",
       "roles": [
         "reader"
       ],
@@ -1149,6 +1205,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -1230,6 +1291,9 @@
         "rpc-58eaf0ab92d4b2f4",
         "rpc-5af12c0a34cad816",
         "rpc-ea02478bf772cf96"
+      ],
+      "go_sources": [
+        "internal/service/asset_metadata.go"
       ]
     },
     {
@@ -1237,7 +1301,7 @@
       "name": "memory_graph",
       "operation": "graph",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/read.go",
       "roles": [
         "reader"
       ],
@@ -1283,6 +1347,11 @@
           "package": "./internal/service",
           "name": "TestReadToolReference",
           "file": "internal/service/proposal_tools_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -1353,6 +1422,9 @@
       "validation_level": "exact_jsonrpc_replay",
       "validation_cases": [
         "rpc-59fb2b038e74685d"
+      ],
+      "go_sources": [
+        "internal/service/read.go"
       ]
     },
     {
@@ -1360,7 +1432,7 @@
       "name": "memory_audit",
       "operation": "audit",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/audit.go",
       "roles": [
         "proposer"
       ],
@@ -1451,6 +1523,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -1461,7 +1538,7 @@
       "status": "mapped",
       "row_id": "surface-b14276d52368",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -1522,6 +1599,9 @@
         "rpc-f208e20f62f971c0",
         "rpc-f79bca86fecdc284",
         "rpc-ff6734ad39eaf6a4"
+      ],
+      "go_sources": [
+        "internal/service/audit.go"
       ]
     },
     {
@@ -1529,7 +1609,7 @@
       "name": "memory_answer",
       "operation": "answer",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/answer_endpoint.go",
       "roles": [
         "reader"
       ],
@@ -1572,6 +1652,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_structured_surface_cases_test.go",
+          "name": "TestPythonStructuredServiceSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -1631,6 +1716,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:memory_answer"
+      ],
+      "go_sources": [
+        "internal/service/answer_endpoint.go"
       ]
     },
     {
@@ -1638,7 +1726,7 @@
       "name": "memory_route",
       "operation": "route",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/route_endpoint.go",
       "roles": [
         "reader"
       ],
@@ -1679,6 +1767,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/router_expand_test.go",
+          "name": "TestRouterExpansionFixture"
         }
       ],
       "role_behaviors": [
@@ -1738,6 +1831,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:model_route"
+      ],
+      "go_sources": [
+        "internal/service/route_endpoint.go"
       ]
     },
     {
@@ -1745,7 +1841,7 @@
       "name": "memory_propose",
       "operation": "propose",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/proposal_submit.go",
       "roles": [
         "proposer"
       ],
@@ -2082,6 +2178,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -2092,7 +2193,7 @@
       "status": "mapped",
       "row_id": "surface-2c384e774062",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -2156,6 +2257,9 @@
       "validation_cases": [
         "rpc-4c48426fdab9215b",
         "rpc-b201c80ab85485ff"
+      ],
+      "go_sources": [
+        "internal/service/proposal_submit.go"
       ]
     },
     {
@@ -2163,7 +2267,7 @@
       "name": "memory_propose_freeform",
       "operation": "propose_freeform",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/model_proposal_endpoint.go; internal/service/proposal_submit.go",
       "roles": [
         "proposer"
       ],
@@ -2222,6 +2326,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_structured_surface_cases_test.go",
+          "name": "TestPythonStructuredServiceSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -2232,7 +2341,7 @@
       "status": "mapped",
       "row_id": "surface-831a46271491",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -2282,6 +2391,10 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:model_proposals"
+      ],
+      "go_sources": [
+        "internal/service/model_proposal_endpoint.go",
+        "internal/service/proposal_submit.go"
       ]
     },
     {
@@ -2289,7 +2402,7 @@
       "name": "memory_propose_update",
       "operation": "propose_update",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/model_proposal_endpoint.go; internal/service/proposal_submit.go",
       "roles": [
         "proposer"
       ],
@@ -2336,6 +2449,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_structured_surface_cases_test.go",
+          "name": "TestPythonStructuredServiceSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -2346,7 +2464,7 @@
       "status": "mapped",
       "row_id": "surface-990560045406",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -2394,6 +2512,10 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:model_proposals"
+      ],
+      "go_sources": [
+        "internal/service/model_proposal_endpoint.go",
+        "internal/service/proposal_submit.go"
       ]
     },
     {
@@ -2401,7 +2523,7 @@
       "name": "memory_proposal_get",
       "operation": "proposal_get",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/proposal_get.go",
       "roles": [
         "proposer"
       ],
@@ -2446,6 +2568,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -2456,7 +2583,7 @@
       "status": "mapped",
       "row_id": "surface-edbf396f4e8e",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -2518,6 +2645,9 @@
         "rpc-688bfaff0c63c4d6",
         "rpc-7cd51b82686d4016",
         "rpc-d8caf304e86412cd"
+      ],
+      "go_sources": [
+        "internal/service/proposal_get.go"
       ]
     },
     {
@@ -2525,7 +2655,7 @@
       "name": "memory_proposal_list",
       "operation": "proposal_list",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/proposal_list.go",
       "roles": [
         "proposer"
       ],
@@ -2585,6 +2715,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -2595,7 +2730,7 @@
       "status": "mapped",
       "row_id": "surface-90db0603af2c",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -2656,6 +2791,9 @@
         "rpc-2335f6b7fece26c7",
         "rpc-3d71af215dd34ead",
         "rpc-a460226fccd82db7"
+      ],
+      "go_sources": [
+        "internal/service/proposal_list.go"
       ]
     },
     {
@@ -2663,7 +2801,7 @@
       "name": "memory_proposal_asset_get",
       "operation": "proposal_asset_get",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/proposal_get.go",
       "roles": [
         "proposer"
       ],
@@ -2710,6 +2848,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -2720,7 +2863,7 @@
       "status": "mapped",
       "row_id": "surface-106498966aa2",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -2786,6 +2929,9 @@
       "validation_level": "exact_jsonrpc_replay",
       "validation_cases": [
         "rpc-4c35d129b0a5fb83"
+      ],
+      "go_sources": [
+        "internal/service/proposal_get.go"
       ]
     },
     {
@@ -2793,7 +2939,7 @@
       "name": "memory_proposal_rebase",
       "operation": "proposal_rebase",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/proposal_rebase.go",
       "roles": [
         "proposer",
         "curator"
@@ -2838,6 +2984,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -2851,7 +3002,7 @@
       "status": "mapped",
       "row_id": "surface-0b4811f722bf",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -2908,6 +3059,9 @@
       "validation_level": "exact_jsonrpc_replay",
       "validation_cases": [
         "rpc-372dc73206de1e4b"
+      ],
+      "go_sources": [
+        "internal/service/proposal_rebase.go"
       ]
     },
     {
@@ -2915,7 +3069,7 @@
       "name": "memory_proposal_revise",
       "operation": "proposal_revise",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/proposal_revise.go",
       "roles": [
         "curator"
       ],
@@ -2963,6 +3117,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -2973,8 +3132,8 @@
       "status": "mapped",
       "row_id": "surface-aa8ecc31f343",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -3033,6 +3192,9 @@
       "validation_level": "exact_jsonrpc_replay",
       "validation_cases": [
         "rpc-8e1502f6d2210199"
+      ],
+      "go_sources": [
+        "internal/service/proposal_revise.go"
       ]
     },
     {
@@ -3040,7 +3202,7 @@
       "name": "memory_operation_get",
       "operation": "operation_get",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/operation_get.go",
       "roles": [
         "proposer",
         "curator"
@@ -3075,6 +3237,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -3088,7 +3255,7 @@
       "status": "mapped",
       "row_id": "surface-257627a91347",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -3146,6 +3313,9 @@
       "validation_cases": [
         "rpc-6f228c3dcab0c4b4",
         "rpc-81581bb9d30ca4d5"
+      ],
+      "go_sources": [
+        "internal/service/operation_get.go"
       ]
     },
     {
@@ -3153,7 +3323,7 @@
       "name": "memory_proposal_review",
       "operation": "proposal_review",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/proposal_review.go",
       "roles": [
         "curator"
       ],
@@ -3220,6 +3390,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -3230,8 +3405,8 @@
       "status": "mapped",
       "row_id": "surface-6101c4d10fb3",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -3292,6 +3467,9 @@
       "validation_level": "exact_jsonrpc_replay",
       "validation_cases": [
         "rpc-c59943a3d26e0c37"
+      ],
+      "go_sources": [
+        "internal/service/proposal_review.go"
       ]
     },
     {
@@ -3299,7 +3477,7 @@
       "name": "memory_proposal_apply",
       "operation": "proposal_apply",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/proposal_apply.go",
       "roles": [
         "curator"
       ],
@@ -3345,6 +3523,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -3355,8 +3538,8 @@
       "status": "mapped",
       "row_id": "surface-4e7107b7301d",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -3413,6 +3596,9 @@
       "validation_level": "exact_jsonrpc_replay",
       "validation_cases": [
         "rpc-8b2def54b7dc8f82"
+      ],
+      "go_sources": [
+        "internal/service/proposal_apply.go"
       ]
     },
     {
@@ -3420,7 +3606,7 @@
       "name": "memory_asset_stage_begin",
       "operation": "asset_stage_begin",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/staging_tools.go",
       "roles": [
         "proposer"
       ],
@@ -3467,6 +3653,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -3477,7 +3668,7 @@
       "status": "mapped",
       "row_id": "surface-225a9d544903",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -3538,6 +3729,9 @@
         "rpc-2d1c664b83551279",
         "rpc-86dd80b29073d317",
         "rpc-b13931e4bf4e0326"
+      ],
+      "go_sources": [
+        "internal/service/staging_tools.go"
       ]
     },
     {
@@ -3545,7 +3739,7 @@
       "name": "memory_asset_stage_status",
       "operation": "asset_stage_status",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/staging_tools.go",
       "roles": [
         "proposer"
       ],
@@ -3582,6 +3776,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -3592,7 +3791,7 @@
       "status": "mapped",
       "row_id": "surface-125cc3f7941c",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
         "proposer": "discover_and_call",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
@@ -3648,6 +3847,9 @@
         "rpc-a38c2c5a5b4004a0",
         "rpc-b673a3d6aa16ed9f",
         "rpc-db53155be3466138"
+      ],
+      "go_sources": [
+        "internal/service/staging_tools.go"
       ]
     },
     {
@@ -3655,7 +3857,7 @@
       "name": "memory_asset_get",
       "operation": "asset_get",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/asset_get.go",
       "roles": [
         "reader"
       ],
@@ -3765,6 +3967,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -3852,6 +4059,9 @@
         "rpc-67da3a442b0d86cf",
         "rpc-738c8ba72ffb0cd3",
         "rpc-f4c428e901e5546b"
+      ],
+      "go_sources": [
+        "internal/service/asset_get.go"
       ]
     },
     {
@@ -3859,7 +4069,7 @@
       "name": "memory_asset_prune",
       "operation": "asset_prune",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/asset_prune.go",
       "roles": [
         "curator"
       ],
@@ -3915,6 +4125,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -3925,8 +4140,8 @@
       "status": "mapped",
       "row_id": "surface-51bd9bde8934",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -3990,6 +4205,9 @@
         "rpc-880d61c3afc974d9",
         "rpc-c63025a6a10294ec",
         "rpc-d2718a758fd99933"
+      ],
+      "go_sources": [
+        "internal/service/asset_prune.go"
       ]
     },
     {
@@ -3997,7 +4215,7 @@
       "name": "memory_create",
       "operation": "create",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/direct_mutations.go",
       "roles": [
         "curator"
       ],
@@ -4085,6 +4303,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -4095,8 +4318,8 @@
       "status": "mapped",
       "row_id": "surface-125c710ec91b",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -4163,6 +4386,9 @@
         "rpc-62ef8d76dd71b384",
         "rpc-89862555b93dec5f",
         "rpc-d1d575704feffb04"
+      ],
+      "go_sources": [
+        "internal/service/direct_mutations.go"
       ]
     },
     {
@@ -4170,7 +4396,7 @@
       "name": "memory_patch",
       "operation": "patch",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/direct_mutations.go",
       "roles": [
         "curator"
       ],
@@ -4293,6 +4519,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -4303,8 +4534,8 @@
       "status": "mapped",
       "row_id": "surface-69ad95b805dc",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -4374,6 +4605,9 @@
         "rpc-1e588c096cf1e407",
         "rpc-2d98b8dc91313a2c",
         "rpc-cbd3cb143c3fad8a"
+      ],
+      "go_sources": [
+        "internal/service/direct_mutations.go"
       ]
     },
     {
@@ -4381,7 +4615,7 @@
       "name": "memory_trash",
       "operation": "trash",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/trash_mutations.go",
       "roles": [
         "curator"
       ],
@@ -4427,6 +4661,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -4437,8 +4676,8 @@
       "status": "mapped",
       "row_id": "surface-4c8b7b60fd20",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -4492,6 +4731,9 @@
       "validation_cases": [
         "rpc-1e2d81e22edc7c93",
         "rpc-da3838fe5a062013"
+      ],
+      "go_sources": [
+        "internal/service/trash_mutations.go"
       ]
     },
     {
@@ -4499,7 +4741,7 @@
       "name": "memory_restore",
       "operation": "restore",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/trash_mutations.go",
       "roles": [
         "curator"
       ],
@@ -4545,6 +4787,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -4555,8 +4802,8 @@
       "status": "mapped",
       "row_id": "surface-51275a4cb14f",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -4610,6 +4857,9 @@
       "validation_cases": [
         "rpc-9c79be27b833ac1c",
         "rpc-e275626e837badd9"
+      ],
+      "go_sources": [
+        "internal/service/trash_mutations.go"
       ]
     },
     {
@@ -4617,7 +4867,7 @@
       "name": "memory_purge",
       "operation": "purge",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/trash_mutations.go",
       "roles": [
         "curator"
       ],
@@ -4668,6 +4918,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -4678,8 +4933,8 @@
       "status": "mapped",
       "row_id": "surface-0334d36d2465",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -4739,6 +4994,9 @@
         "rpc-5e8623318e3e81be",
         "rpc-6e53b5d5621fec9c",
         "rpc-9eea917ebdf115ea"
+      ],
+      "go_sources": [
+        "internal/service/trash_mutations.go"
       ]
     },
     {
@@ -4746,7 +5004,7 @@
       "name": "memory_rename",
       "operation": "rename",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/direct_mutations.go",
       "roles": [
         "curator"
       ],
@@ -4796,6 +5054,11 @@
           "package": "./internal/service",
           "name": "TestConfiguredServerDispatch",
           "file": "internal/service/configured_server_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_tool_replay_test.go",
+          "name": "TestPythonCapturedToolReplayCases"
         }
       ],
       "role_behaviors": [
@@ -4806,8 +5069,8 @@
       "status": "mapped",
       "row_id": "surface-085fbec32750",
       "profile_outcomes": {
-        "reader": "hidden_and_forbidden",
-        "proposer": "hidden_and_forbidden",
+        "reader": "discover_but_call_forbidden",
+        "proposer": "discover_but_call_forbidden",
         "curator": "discover_and_call",
         "admin": "discover_and_call"
       },
@@ -4863,6 +5126,9 @@
       "validation_cases": [
         "rpc-5d1940d083f45fcd",
         "rpc-b3c964218e5e6438"
+      ],
+      "go_sources": [
+        "internal/service/direct_mutations.go"
       ]
     },
     {
@@ -4870,7 +5136,7 @@
       "name": "memory_execute",
       "operation": "execute",
       "python_source": "src/memento/mcp_registry.py",
-      "go_source": "internal/service/catalog.go; internal/service/proposal_tools.go",
+      "go_source": "internal/service/execute_endpoint.go",
       "roles": [
         "reader"
       ],
@@ -13102,6 +13368,11 @@
           "package": "./internal/service",
           "name": "TestMCPContractRoutesExecuteRealPlans",
           "file": "internal/service/mcp_contract_test.go"
+        },
+        {
+          "package": "./internal/execute",
+          "file": "internal/execute/runner_test.go",
+          "name": "TestRunnerReference"
         }
       ],
       "role_behaviors": [
@@ -13164,6 +13435,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:memory_execute"
+      ],
+      "go_sources": [
+        "internal/service/execute_endpoint.go"
       ]
     },
     {
@@ -13221,6 +13495,9 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:memory://catalog"
+      ],
+      "go_sources": [
+        "internal/service/catalog_resources.go"
       ]
     },
     {
@@ -13278,6 +13555,9 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:memory://help"
+      ],
+      "go_sources": [
+        "internal/service/catalog_resources.go"
       ]
     },
     {
@@ -13335,6 +13615,9 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:memory://status"
+      ],
+      "go_sources": [
+        "internal/service/catalog_resources.go"
       ]
     },
     {
@@ -13392,6 +13675,9 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:memory://catalog/{operation}"
+      ],
+      "go_sources": [
+        "internal/service/catalog_resources.go"
       ]
     },
     {
@@ -13449,6 +13735,9 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:memory://workflow/{goal}"
+      ],
+      "go_sources": [
+        "internal/service/catalog_resources.go"
       ]
     },
     {
@@ -13522,6 +13811,9 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:publish_asset_pack"
+      ],
+      "go_sources": [
+        "internal/service/catalog_resources.go"
       ]
     },
     {
@@ -13576,13 +13868,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:initialize"
+      ],
+      "go_sources": [
+        "umcp/server.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "tools/list",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/tools.go",
       "roles": [
         "authenticated principal"
       ],
@@ -13630,13 +13925,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:tools/list"
+      ],
+      "go_sources": [
+        "umcp/tools.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "tools/call",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/tools.go",
       "roles": [
         "authenticated principal"
       ],
@@ -13682,13 +13980,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:tools/call"
+      ],
+      "go_sources": [
+        "umcp/tools.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "resources/list",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/resources.go",
       "roles": [
         "authenticated principal"
       ],
@@ -13733,13 +14034,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:resources/list"
+      ],
+      "go_sources": [
+        "umcp/resources.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "resources/templates/list",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/resources.go",
       "roles": [
         "authenticated principal"
       ],
@@ -13784,13 +14088,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:resources/templates/list"
+      ],
+      "go_sources": [
+        "umcp/resources.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "resources/read",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/resources.go",
       "roles": [
         "authenticated principal"
       ],
@@ -13837,13 +14144,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:resources/read"
+      ],
+      "go_sources": [
+        "umcp/resources.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "resources/subscribe",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/resources.go",
       "roles": [
         "authenticated principal"
       ],
@@ -13887,13 +14197,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:resources/subscribe"
+      ],
+      "go_sources": [
+        "umcp/resources.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "resources/unsubscribe",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/resources.go",
       "roles": [
         "authenticated principal"
       ],
@@ -13937,13 +14250,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:resources/unsubscribe"
+      ],
+      "go_sources": [
+        "umcp/resources.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "prompts/list",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/prompts.go",
       "roles": [
         "authenticated principal"
       ],
@@ -13988,13 +14304,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:prompts/list"
+      ],
+      "go_sources": [
+        "umcp/prompts.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "prompts/get",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/prompts.go",
       "roles": [
         "authenticated principal"
       ],
@@ -14041,13 +14360,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:prompts/get"
+      ],
+      "go_sources": [
+        "umcp/prompts.go"
       ]
     },
     {
       "category": "mcp_protocol",
       "name": "completion/complete",
       "python_source": "pinned rcarmo/umcp",
-      "go_source": "umcp/server.go",
+      "go_source": "umcp/completion.go",
       "roles": [
         "authenticated principal"
       ],
@@ -14093,6 +14415,9 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:completion/complete"
+      ],
+      "go_sources": [
+        "umcp/completion.go"
       ]
     },
     {
@@ -14143,13 +14468,16 @@
       "validation_level": "exact_protocol_fixture",
       "validation_cases": [
         "umcp:logging/setLevel"
+      ],
+      "go_sources": [
+        "umcp/server.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /admin",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "none"
       ],
@@ -14161,6 +14489,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPThroughUMCP",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14196,13 +14529,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /admin/app.js",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "none"
       ],
@@ -14214,6 +14550,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPThroughUMCP",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14249,13 +14590,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /admin/api/principals",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14267,6 +14611,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14308,13 +14657,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /admin/api/activity",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14326,6 +14678,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14363,13 +14720,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /admin/api/principals",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14381,6 +14741,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14415,13 +14780,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /admin/api/principals/{name}/update",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14433,6 +14801,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14466,13 +14839,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /admin/api/principals/{name}/rename",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14484,6 +14860,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14517,13 +14898,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /admin/api/principals/{name}/disable",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14535,6 +14919,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14568,13 +14957,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /admin/api/principals/{name}/enable",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14586,6 +14978,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14619,13 +15016,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /admin/api/principals/{name}/rotate",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14637,6 +15037,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14671,13 +15076,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /admin/api/principals/{name}/revoke",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14689,6 +15097,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14722,13 +15135,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /admin/api/principals/{name}/delete",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/admin_http.go",
       "roles": [
         "admin"
       ],
@@ -14740,6 +15156,11 @@
           "package": "./internal/service",
           "name": "TestAdminHTTPHandleCRUDAndActivity",
           "file": "internal/service/admin_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -14773,13 +15194,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/admin_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /assets/staging/upload",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/staging_http.go",
       "roles": [
         "one-time upload ticket"
       ],
@@ -14827,13 +15251,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:staging_http"
+      ],
+      "go_sources": [
+        "internal/service/staging_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /assets/staging",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/staging_http.go",
       "roles": [
         "proposer"
       ],
@@ -14882,13 +15309,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:staging_http"
+      ],
+      "go_sources": [
+        "internal/service/staging_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /assets/staging/{id}",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/staging_http.go",
       "roles": [
         "owner"
       ],
@@ -14938,13 +15368,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:staging_http"
+      ],
+      "go_sources": [
+        "internal/service/staging_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network"
       ],
@@ -14956,6 +15389,11 @@
           "package": "./internal/service",
           "name": "TestGraphHTTPStatic",
           "file": "internal/service/graph_static_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPThroughUMCP"
         }
       ],
       "status": "mapped",
@@ -14990,13 +15428,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph/assets/{asset}",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network"
       ],
@@ -15008,6 +15449,11 @@
           "package": "./internal/service",
           "name": "TestGraphStaticAssets",
           "file": "internal/service/graph_static_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPThroughUMCP"
         }
       ],
       "status": "mapped",
@@ -15043,13 +15489,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph/api/v1/status",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network"
       ],
@@ -15097,13 +15546,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph/api/v1/principals",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network"
       ],
@@ -15152,13 +15604,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph/api/v1/overview",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network/simulated policy"
       ],
@@ -15170,6 +15625,11 @@
           "package": "./internal/graphdebug",
           "name": "TestOverviewFixture",
           "file": "internal/graphdebug/overview_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPThroughUMCP"
         }
       ],
       "status": "mapped",
@@ -15208,13 +15668,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph/api/v1/embeddings/status",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network"
       ],
@@ -15267,13 +15730,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /graph/api/v1/embeddings/refresh",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "full diagnostic only"
       ],
@@ -15290,6 +15756,11 @@
           "package": "./internal/service",
           "name": "TestGraphHTTPRefresh",
           "file": "internal/service/graph_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPThroughUMCP"
         }
       ],
       "status": "mapped",
@@ -15324,13 +15795,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /graph/api/v1/search",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network/simulated policy"
       ],
@@ -15380,13 +15854,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph/api/v1/clusters/{id}",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network/simulated policy"
       ],
@@ -15433,13 +15910,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph/api/v1/memories/{id}",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network/simulated policy"
       ],
@@ -15489,13 +15969,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph/api/v1/neighbourhood/{id}",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network/simulated policy"
       ],
@@ -15544,13 +16027,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /graph/api/v1/assets/{path}",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network"
       ],
@@ -15562,6 +16048,11 @@
           "package": "./internal/service",
           "name": "TestGraphHTTPStatic",
           "file": "internal/service/graph_static_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPThroughUMCP"
         }
       ],
       "status": "mapped",
@@ -15596,13 +16087,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /graph/api/v1/export/{json|svg}",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "internal/service/graph_http.go",
       "roles": [
         "trusted network/simulated policy"
       ],
@@ -15619,6 +16113,11 @@
           "package": "./internal/service",
           "name": "TestGraphHTTPRefresh",
           "file": "internal/service/graph_http_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/graph_http_test.go",
+          "name": "TestGraphHTTPThroughUMCP"
         }
       ],
       "status": "mapped",
@@ -15652,13 +16151,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:graph_http"
+      ],
+      "go_sources": [
+        "internal/service/graph_http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "POST /mcp",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "umcp/http.go",
       "roles": [
         "bearer principal"
       ],
@@ -15704,13 +16206,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "umcp:http"
+      ],
+      "go_sources": [
+        "umcp/http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "GET /mcp",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "umcp/http.go",
       "roles": [
         "bound session"
       ],
@@ -15755,13 +16260,16 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "umcp:http"
+      ],
+      "go_sources": [
+        "umcp/http.go"
       ]
     },
     {
       "category": "http_endpoint",
       "name": "DELETE /mcp",
       "python_source": "src/memento/admin/http.py; src/memento/staging_http.py; src/memento/graph_debug/http.py; rcarmo/umcp",
-      "go_source": "internal/service/admin_http.go; internal/service/staging_http.go; internal/service/graph_http.go; umcp/http.go",
+      "go_source": "umcp/http.go",
       "roles": [
         "bound session"
       ],
@@ -15806,6 +16314,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "umcp:http"
+      ],
+      "go_sources": [
+        "umcp/http.go"
       ]
     },
     {
@@ -15834,6 +16345,11 @@
           "package": "./cmd/memento-go",
           "name": "TestRunDream",
           "file": "cmd/memento-go/main_test.go"
+        },
+        {
+          "package": "./cmd/memento-go",
+          "file": "cmd/memento-go/python_structured_cli_cases_test.go",
+          "name": "TestPythonStructuredCLISurfaceCases"
         }
       ],
       "status": "mapped",
@@ -15868,6 +16384,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:runtime_cli"
+      ],
+      "go_sources": [
+        "cmd/memento-go/main.go"
       ]
     },
     {
@@ -15896,6 +16415,16 @@
           "package": "./cmd/memento-go",
           "name": "TestRunDream",
           "file": "cmd/memento-go/main_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/audit_test.go",
+          "name": "TestAuditReference"
+        },
+        {
+          "package": "./cmd/memento-go",
+          "file": "cmd/memento-go/main_test.go",
+          "name": "TestRunAudit"
         }
       ],
       "status": "mapped",
@@ -15931,6 +16460,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:service_audit"
+      ],
+      "go_sources": [
+        "cmd/memento-go/main.go"
       ]
     },
     {
@@ -15959,6 +16491,16 @@
           "package": "./cmd/memento-go",
           "name": "TestRunDream",
           "file": "cmd/memento-go/main_test.go"
+        },
+        {
+          "package": "./internal/derived",
+          "file": "internal/derived/content_test.go",
+          "name": "TestContentReference"
+        },
+        {
+          "package": "./cmd/memento-go",
+          "file": "cmd/memento-go/main_test.go",
+          "name": "TestRunRebuildIndex"
         }
       ],
       "status": "mapped",
@@ -15995,6 +16537,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:semantic_refresh"
+      ],
+      "go_sources": [
+        "cmd/memento-go/main.go"
       ]
     },
     {
@@ -16023,6 +16568,16 @@
           "package": "./cmd/memento-go",
           "name": "TestRunDream",
           "file": "cmd/memento-go/main_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/worktree_mutations_test.go",
+          "name": "TestWorktreeMutationReference"
+        },
+        {
+          "package": "./cmd/memento-go",
+          "file": "cmd/memento-go/main_test.go",
+          "name": "TestRunBackupRestore"
         }
       ],
       "status": "mapped",
@@ -16057,6 +16612,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:worktree_mutations"
+      ],
+      "go_sources": [
+        "cmd/memento-go/main.go"
       ]
     },
     {
@@ -16085,6 +16643,16 @@
           "package": "./cmd/memento-go",
           "name": "TestRunDream",
           "file": "cmd/memento-go/main_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/worktree_mutations_test.go",
+          "name": "TestWorktreeMutationReference"
+        },
+        {
+          "package": "./cmd/memento-go",
+          "file": "cmd/memento-go/main_test.go",
+          "name": "TestRunBackupRestore"
         }
       ],
       "status": "mapped",
@@ -16119,6 +16687,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:worktree_mutations"
+      ],
+      "go_sources": [
+        "cmd/memento-go/main.go"
       ]
     },
     {
@@ -16147,6 +16718,11 @@
           "package": "./cmd/memento-go",
           "name": "TestRunDream",
           "file": "cmd/memento-go/main_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/status_test.go",
+          "name": "TestStatusReference"
         }
       ],
       "status": "mapped",
@@ -16186,6 +16762,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:service_status"
+      ],
+      "go_sources": [
+        "cmd/memento-go/main.go"
       ]
     },
     {
@@ -16214,6 +16793,11 @@
           "package": "./cmd/memento-go",
           "name": "TestRunDream",
           "file": "cmd/memento-go/main_test.go"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/python_structured_surface_cases_test.go",
+          "name": "TestPythonStructuredServiceSurfaceCases"
         }
       ],
       "status": "mapped",
@@ -16252,6 +16836,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:dream_runtime"
+      ],
+      "go_sources": [
+        "cmd/memento-go/main.go"
       ]
     },
     {
@@ -16280,6 +16867,11 @@
           "package": "./cmd/memento-go",
           "name": "TestRunDream",
           "file": "cmd/memento-go/main_test.go"
+        },
+        {
+          "package": "./cmd/memento-go",
+          "file": "cmd/memento-go/python_structured_cli_cases_test.go",
+          "name": "TestPythonStructuredCLISurfaceCases"
         }
       ],
       "status": "mapped",
@@ -16314,6 +16906,9 @@
       "validation_level": "stateful_fixture",
       "validation_cases": [
         "stateful:runtime_cli"
+      ],
+      "go_sources": [
+        "cmd/memento-go/main.go"
       ]
     },
     {
@@ -16332,6 +16927,11 @@
           "package": "./cmd/memento-go",
           "name": "TestHealthcheckCloseFailure",
           "file": "cmd/memento-go/main_test.go"
+        },
+        {
+          "package": "./cmd/memento-go",
+          "file": "cmd/memento-go/python_structured_cli_cases_test.go",
+          "name": "TestPythonStructuredCLISurfaceCases"
         }
       ],
       "status": "go_extension",
@@ -16365,6 +16965,9 @@
       "validation_level": "go_extension_test",
       "validation_cases": [
         "stateful:runtime_cli"
+      ],
+      "go_sources": [
+        "cmd/memento-go/main.go"
       ]
     },
     {
@@ -16372,7 +16975,7 @@
       "name": "access_principal_list",
       "operation": "principal_list",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -16402,6 +17005,16 @@
           "package": "./internal/service",
           "name": "TestAccessReadToolsDiscoveryAndCalls",
           "file": "internal/service/access_tools_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -16448,6 +17061,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     },
     {
@@ -16455,7 +17072,7 @@
       "name": "access_audit_list",
       "operation": "audit_list",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -16491,6 +17108,16 @@
           "package": "./internal/service",
           "name": "TestAccessReadToolsDiscoveryAndCalls",
           "file": "internal/service/access_tools_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -16536,6 +17163,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     },
     {
@@ -16543,7 +17174,7 @@
       "name": "access_principal_create",
       "operation": "principal_create",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -16628,6 +17259,16 @@
           "package": "./internal/service",
           "name": "TestAccessMutationLifecycle",
           "file": "internal/service/access_mutations_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -16674,6 +17315,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     },
     {
@@ -16681,7 +17326,7 @@
       "name": "access_principal_update",
       "operation": "principal_update",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -16760,6 +17405,16 @@
           "package": "./internal/service",
           "name": "TestAccessMutationLifecycle",
           "file": "internal/service/access_mutations_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -16804,6 +17459,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     },
     {
@@ -16811,7 +17470,7 @@
       "name": "access_principal_rename",
       "operation": "principal_rename",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -16860,6 +17519,16 @@
           "package": "./internal/service",
           "name": "TestAccessMutationLifecycle",
           "file": "internal/service/access_mutations_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -16902,6 +17571,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     },
     {
@@ -16909,7 +17582,7 @@
       "name": "access_principal_disable",
       "operation": "principal_disable",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -16950,6 +17623,16 @@
           "package": "./internal/service",
           "name": "TestAccessMutationLifecycle",
           "file": "internal/service/access_mutations_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -16991,6 +17674,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     },
     {
@@ -16998,7 +17685,7 @@
       "name": "access_principal_enable",
       "operation": "principal_enable",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -17039,6 +17726,16 @@
           "package": "./internal/service",
           "name": "TestAccessMutationLifecycle",
           "file": "internal/service/access_mutations_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -17080,6 +17777,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     },
     {
@@ -17087,7 +17788,7 @@
       "name": "access_credential_rotate",
       "operation": "credential_rotate",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -17134,6 +17835,16 @@
           "package": "./internal/service",
           "name": "TestAccessMutationLifecycle",
           "file": "internal/service/access_mutations_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -17177,6 +17888,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     },
     {
@@ -17184,7 +17899,7 @@
       "name": "access_principal_revoke",
       "operation": "principal_revoke",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -17225,6 +17940,16 @@
           "package": "./internal/service",
           "name": "TestAccessMutationLifecycle",
           "file": "internal/service/access_mutations_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -17266,6 +17991,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     },
     {
@@ -17273,7 +18002,7 @@
       "name": "access_principal_delete",
       "operation": "principal_delete",
       "python_source": "src/memento/access.py; src/memento/server.py",
-      "go_source": "internal/service/access_tools.go; internal/service/access_mutations.go",
+      "go_source": "internal/service/access_tools.go; internal/service/access_tool_calls.go",
       "roles": [
         "admin"
       ],
@@ -17314,6 +18043,16 @@
           "package": "./internal/service",
           "name": "TestAccessMutationLifecycle",
           "file": "internal/service/access_mutations_test.go"
+        },
+        {
+          "package": "./internal/access",
+          "file": "internal/access/access_test.go",
+          "name": "TestManagedAccessReference"
+        },
+        {
+          "package": "./internal/service",
+          "file": "internal/service/admin_http_test.go",
+          "name": "TestPythonStructuredAdminHTTPSurfaceCases"
         }
       ],
       "role_behaviors": [
@@ -17355,6 +18094,10 @@
       "validation_cases": [
         "stateful:access_lifecycle",
         "stateful:admin_http"
+      ],
+      "go_sources": [
+        "internal/service/access_tools.go",
+        "internal/service/access_tool_calls.go"
       ]
     }
   ],

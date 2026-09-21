@@ -19,26 +19,26 @@ Feature: mcp/assets and staging
 
     @surface-43a98ab93c7b_role_reader
     Scenario: memory_asset_metadata as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_asset_metadata
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_asset_metadata
       Then the outcome is discover_and_call
 
     @surface-43a98ab93c7b_role_proposer
     Scenario: memory_asset_metadata as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_asset_metadata
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_asset_metadata
       Then the outcome is discover_and_call
 
     @surface-43a98ab93c7b_role_curator
     Scenario: memory_asset_metadata as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_asset_metadata
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_asset_metadata
       Then the outcome is discover_and_call
 
     @surface-43a98ab93c7b_role_admin
     Scenario: memory_asset_metadata as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_asset_metadata
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_asset_metadata
       Then the outcome is discover_and_call
 
     @surface-43a98ab93c7b_failure
@@ -63,26 +63,26 @@ Feature: mcp/assets and staging
 
     @surface-225a9d544903_role_reader
     Scenario: memory_asset_stage_begin as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_asset_stage_begin
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_asset_stage_begin
+      Then the outcome is discover_but_call_forbidden
 
     @surface-225a9d544903_role_proposer
     Scenario: memory_asset_stage_begin as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_asset_stage_begin
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_asset_stage_begin
       Then the outcome is discover_and_call
 
     @surface-225a9d544903_role_curator
     Scenario: memory_asset_stage_begin as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_asset_stage_begin
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_asset_stage_begin
       Then the outcome is discover_and_call
 
     @surface-225a9d544903_role_admin
     Scenario: memory_asset_stage_begin as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_asset_stage_begin
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_asset_stage_begin
       Then the outcome is discover_and_call
 
     @surface-225a9d544903_failure
@@ -107,26 +107,26 @@ Feature: mcp/assets and staging
 
     @surface-125cc3f7941c_role_reader
     Scenario: memory_asset_stage_status as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_asset_stage_status
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_asset_stage_status
+      Then the outcome is discover_but_call_forbidden
 
     @surface-125cc3f7941c_role_proposer
     Scenario: memory_asset_stage_status as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_asset_stage_status
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_asset_stage_status
       Then the outcome is discover_and_call
 
     @surface-125cc3f7941c_role_curator
     Scenario: memory_asset_stage_status as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_asset_stage_status
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_asset_stage_status
       Then the outcome is discover_and_call
 
     @surface-125cc3f7941c_role_admin
     Scenario: memory_asset_stage_status as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_asset_stage_status
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_asset_stage_status
       Then the outcome is discover_and_call
 
     @surface-125cc3f7941c_failure
@@ -151,26 +151,26 @@ Feature: mcp/assets and staging
 
     @surface-ae92a01f6f63_role_reader
     Scenario: memory_asset_get as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_asset_get
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_asset_get
       Then the outcome is discover_and_call
 
     @surface-ae92a01f6f63_role_proposer
     Scenario: memory_asset_get as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_asset_get
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_asset_get
       Then the outcome is discover_and_call
 
     @surface-ae92a01f6f63_role_curator
     Scenario: memory_asset_get as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_asset_get
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_asset_get
       Then the outcome is discover_and_call
 
     @surface-ae92a01f6f63_role_admin
     Scenario: memory_asset_get as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_asset_get
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_asset_get
       Then the outcome is discover_and_call
 
     @surface-ae92a01f6f63_failure
@@ -195,26 +195,26 @@ Feature: mcp/assets and staging
 
     @surface-51bd9bde8934_role_reader
     Scenario: memory_asset_prune as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_asset_prune
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_asset_prune
+      Then the outcome is discover_but_call_forbidden
 
     @surface-51bd9bde8934_role_proposer
     Scenario: memory_asset_prune as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_asset_prune
-      Then the outcome is hidden_and_forbidden
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_asset_prune
+      Then the outcome is discover_but_call_forbidden
 
     @surface-51bd9bde8934_role_curator
     Scenario: memory_asset_prune as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_asset_prune
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_asset_prune
       Then the outcome is discover_and_call
 
     @surface-51bd9bde8934_role_admin
     Scenario: memory_asset_prune as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_asset_prune
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_asset_prune
       Then the outcome is discover_and_call
 
     @surface-51bd9bde8934_failure

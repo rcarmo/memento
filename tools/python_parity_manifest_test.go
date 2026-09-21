@@ -35,6 +35,28 @@ type functionalManifest struct {
 		GoTests            []parityGoTest `json:"go_tests"`
 	} `json:"rows"`
 }
+type scenarioBindingManifest struct {
+	SchemaVersion int    `json:"schema_version"`
+	PythonCommit  string `json:"python_commit"`
+	Counts        struct {
+		Application int `json:"application"`
+		UMCP        int `json:"umcp"`
+		Surface     int `json:"surface"`
+		Total       int `json:"total"`
+	} `json:"counts"`
+	Bindings []struct {
+		ScenarioID         string         `json:"scenario_id"`
+		ScenarioKind       string         `json:"scenario_kind"`
+		BehaviorRowID      string         `json:"behavior_row_id"`
+		EvidenceLevel      string         `json:"evidence_level"`
+		PythonTest         string         `json:"python_test"`
+		PythonSourceSHA256 string         `json:"python_source_sha256"`
+		ValidationRefs     []string       `json:"validation_refs"`
+		GoTests            []parityGoTest `json:"go_tests"`
+		GoSources          []string       `json:"go_sources"`
+		Expected           map[string]any `json:"expected"`
+	} `json:"bindings"`
+}
 type surfaceManifest struct {
 	SchemaVersion int            `json:"schema_version"`
 	PythonCommit  string         `json:"python_commit"`
@@ -46,6 +68,7 @@ type surfaceManifest struct {
 		Status             string            `json:"status"`
 		Roles              []string          `json:"roles"`
 		GoTests            []parityGoTest    `json:"go_tests"`
+		GoSources          []string          `json:"go_sources"`
 		RequiredArguments  []string          `json:"required_arguments"`
 		OptionalArguments  []string          `json:"optional_arguments"`
 		Defaults           map[string]any    `json:"defaults"`
@@ -169,6 +192,104 @@ func TestPythonFunctionalParityManifest(t *testing.T) {
 	}
 }
 
+func TestGherkinScenariosBindDirectlyToGoTestsAndProduction(t *testing.T) {
+	root := parityRoot(t)
+	var manifest scenarioBindingManifest
+	readParityJSON(t, root, "gherkin-go-bindings.json", &manifest)
+	var application, upstream functionalManifest
+	var surfaces surfaceManifest
+	readParityJSON(t, root, "python-functional-manifest.json", &application)
+	raw, err := os.ReadFile(filepath.Join(root, "umcp", "testdata", "python-functional-manifest.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = json.Unmarshal(raw, &upstream); err != nil {
+		t.Fatal(err)
+	}
+	readParityJSON(t, root, "python-surface-manifest.json", &surfaces)
+	type functionalTrace struct {
+		status, test, hash string
+		tests              []parityGoTest
+	}
+	appRows, upstreamRows := map[string]functionalTrace{}, map[string]functionalTrace{}
+	for _, row := range application.Rows {
+		appRows[row.RowID] = functionalTrace{row.Status, row.PythonTest, row.PythonSourceSHA256, row.GoTests}
+	}
+	for _, row := range upstream.Rows {
+		upstreamRows[row.RowID] = functionalTrace{row.Status, row.PythonTest, row.PythonSourceSHA256, row.GoTests}
+	}
+	type surfaceTrace struct {
+		level         string
+		refs, sources []string
+		tests         []parityGoTest
+		profiles      map[string]string
+	}
+	surfaceRows := map[string]surfaceTrace{}
+	for _, row := range surfaces.Rows {
+		surfaceRows[row.RowID] = surfaceTrace{row.ValidationLevel, row.ValidationCases, row.GoSources, row.GoTests, row.ProfileOutcomes}
+	}
+	if manifest.SchemaVersion != 1 || manifest.PythonCommit != "7f29e8b003557f0105f47ed353b7f65a33619456" || manifest.Counts.Application != 396 || manifest.Counts.UMCP != 254 || manifest.Counts.Surface != 612 || manifest.Counts.Total != 1262 || len(manifest.Bindings) != 1262 {
+		t.Fatal(manifest.SchemaVersion, manifest.PythonCommit, manifest.Counts, len(manifest.Bindings))
+	}
+	tags := readFeatureTags(t, filepath.Join(root, "testdata", "parity", "features"))
+	for id, count := range scanFeatureTags(t, filepath.Join(root, "umcp", "testdata", "features")) {
+		tags[id] += count
+	}
+	bindings := map[string]bool{}
+	for _, binding := range manifest.Bindings {
+		if binding.ScenarioID == "" || binding.BehaviorRowID == "" || bindings[binding.ScenarioID] || tags[binding.ScenarioID] != 1 || len(binding.ValidationRefs) == 0 || len(binding.GoTests) == 0 || len(binding.GoSources) == 0 || len(binding.Expected) == 0 {
+			t.Fatal("invalid direct Gherkin binding", binding.ScenarioID, tags[binding.ScenarioID])
+		}
+		bindings[binding.ScenarioID] = true
+		switch binding.ScenarioKind {
+		case "application_behavior":
+			row, ok := appRows[binding.BehaviorRowID]
+			if !ok || binding.EvidenceLevel != row.status || binding.PythonTest != row.test || binding.PythonSourceSHA256 != row.hash || fmt.Sprint(binding.GoTests) != fmt.Sprint(row.tests) {
+				t.Fatal("application binding drift", binding.ScenarioID)
+			}
+		case "umcp_behavior":
+			row, ok := upstreamRows[binding.BehaviorRowID]
+			if !ok || binding.EvidenceLevel != row.status || binding.PythonTest != row.test || binding.PythonSourceSHA256 != row.hash || fmt.Sprint(binding.GoTests) != fmt.Sprint(row.tests) {
+				t.Fatal("uMCP binding drift", binding.ScenarioID)
+			}
+		case "success", "failure", "role":
+			row, ok := surfaceRows[binding.BehaviorRowID]
+			if !ok || binding.EvidenceLevel != row.level || fmt.Sprint(binding.ValidationRefs) != fmt.Sprint(row.refs) || fmt.Sprint(binding.GoTests) != fmt.Sprint(row.tests) || fmt.Sprint(binding.GoSources) != fmt.Sprint(row.sources) {
+				t.Fatal("surface binding drift", binding.ScenarioID)
+			}
+			if binding.ScenarioKind == "role" {
+				profile, _ := binding.Expected["profile"].(string)
+				outcome, _ := binding.Expected["outcome"].(string)
+				if row.profiles[profile] != outcome {
+					t.Fatal("surface role binding drift", binding.ScenarioID, profile, outcome, row.profiles[profile])
+				}
+			}
+		default:
+			t.Fatal("unknown scenario binding kind", binding.ScenarioID, binding.ScenarioKind)
+		}
+		for _, item := range binding.GoTests {
+			assertMappedGoTest(t, root, item)
+		}
+		for _, source := range binding.GoSources {
+			if strings.HasSuffix(source, "_test.go") {
+				t.Fatal("Gherkin binding points to test as production", binding.ScenarioID, source)
+			}
+			info, err := os.Stat(filepath.Join(root, source))
+			if err != nil || info.IsDir() {
+				t.Fatal("Gherkin production source is absent", binding.ScenarioID, source, err)
+			}
+		}
+	}
+	if len(tags) != 1262 || len(bindings) != len(tags) {
+		t.Fatal("Gherkin/binding cardinality", len(tags), len(bindings))
+	}
+	for id := range tags {
+		if !bindings[id] {
+			t.Fatal("Gherkin scenario lacks direct Go binding", id)
+		}
+	}
+}
+
 func TestPythonPublicSurfaceParityManifest(t *testing.T) {
 	root := parityRoot(t)
 	var manifest surfaceManifest
@@ -183,7 +304,7 @@ func TestPythonPublicSurfaceParityManifest(t *testing.T) {
 	ids, names := map[string]bool{}, map[string]bool{}
 	for _, row := range manifest.Rows {
 		key := row.Category + "\x00" + row.Name
-		if row.RowID == "" || ids[row.RowID] || names[key] || len(row.Roles) == 0 || len(row.GoTests) == 0 || len(row.SuccessFields) == 0 || len(row.ErrorContract) == 0 || len(row.BehaviorProvenance) < 3 || row.SideEffects == "" || row.Idempotency == "" || row.Pagination == "" || row.PolicyScope == "" || len(row.ProfileOutcomes) != 4 || len(row.ValidationCases) == 0 || (row.ValidationLevel != "exact_jsonrpc_replay" && row.ValidationLevel != "exact_protocol_fixture" && row.ValidationLevel != "stateful_fixture" && row.ValidationLevel != "structured_behavior_spec" && row.ValidationLevel != "go_extension_test") || (row.Status != "mapped" && row.Status != "go_extension") {
+		if row.RowID == "" || ids[row.RowID] || names[key] || len(row.Roles) == 0 || len(row.GoTests) == 0 || len(row.GoSources) == 0 || len(row.SuccessFields) == 0 || len(row.ErrorContract) == 0 || len(row.BehaviorProvenance) < 3 || row.SideEffects == "" || row.Idempotency == "" || row.Pagination == "" || row.PolicyScope == "" || len(row.ProfileOutcomes) != 4 || len(row.ValidationCases) == 0 || (row.ValidationLevel != "exact_jsonrpc_replay" && row.ValidationLevel != "exact_protocol_fixture" && row.ValidationLevel != "stateful_fixture" && row.ValidationLevel != "structured_behavior_spec" && row.ValidationLevel != "go_extension_test") || (row.Status != "mapped" && row.Status != "go_extension") {
 			t.Fatal("invalid detailed surface row", row.Category, row.Name)
 		}
 		for _, value := range append(append(append([]string{}, row.SuccessFields...), row.ErrorContract...), row.BehaviorProvenance...) {
@@ -200,6 +321,14 @@ func TestPythonPublicSurfaceParityManifest(t *testing.T) {
 		ids[row.RowID], names[key] = true, true
 		for _, item := range row.GoTests {
 			assertMappedGoTest(t, root, item)
+		}
+		for _, source := range row.GoSources {
+			if strings.HasSuffix(source, "_test.go") {
+				t.Fatal("surface production mapping points to test", row.Name, source)
+			}
+			if info, err := os.Stat(filepath.Join(root, source)); err != nil || info.IsDir() {
+				t.Fatal("surface production mapping is absent", row.Name, source, err)
+			}
 		}
 	}
 	featureTags := readFeatureTags(t, filepath.Join(root, "testdata", "parity", "features"))
@@ -219,6 +348,42 @@ func TestPythonPublicSurfaceParityManifest(t *testing.T) {
 	assertCatalogSurface(t, root, names)
 	assertSurfaceSchemas(t, root, manifest)
 	assertAccessToolSurface(t, root, names)
+}
+
+func scanFeatureTags(t *testing.T, directory string) map[string]int {
+	t.Helper()
+	tags := map[string]int{}
+	err := filepath.WalkDir(directory, func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.IsDir() || !strings.HasSuffix(path, ".feature") {
+			return nil
+		}
+		raw, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		pending := []string{}
+		for _, line := range strings.Split(string(raw), "\n") {
+			line = strings.TrimSpace(line)
+			if strings.HasPrefix(line, "@") {
+				pending = strings.Fields(line)
+				continue
+			}
+			if strings.HasPrefix(line, "Scenario:") {
+				for _, tag := range pending {
+					tags[strings.TrimPrefix(tag, "@")]++
+				}
+				pending = nil
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return tags
 }
 
 func readFeatureTags(t *testing.T, directory string) map[string]int {

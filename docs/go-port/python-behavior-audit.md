@@ -42,7 +42,9 @@ Public-surface features under `testdata/parity/features/surfaces/` group MCP dis
 
 The independent uMCP features under `umcp/testdata/features/` group schema/tools/coercion, resources/prompts/completion, discovery/notifications/progress, context/errors, Streamable HTTP/sessions and transports/integrated servers.
 
-`tools/generate-python-parity-features.mjs` regenerates this layout and rejects unassigned or multiply assigned rows. Gherkin contains only domain behavior and stable row IDs. Python test filenames, Go test names, source paths, helper calls and implementation-specific tags remain in the JSON evidence manifests, not in feature prose. The Go gates reject their reintroduction, as well as missing logical directories, missing/duplicate scenario IDs, untagged scenarios, absent Given/When/Then clauses, missing Go test functions, changed source hashes, catalogue drift and access-tool drift.
+`tools/generate-python-parity-features.mjs` regenerates this layout and rejects unassigned or multiply assigned rows. Gherkin contains only domain behavior and stable row IDs. Python test filenames, Go test names, source paths, helper calls and implementation-specific tags remain in JSON evidence manifests, not in feature prose. `testdata/parity/gherkin-go-bindings.json` binds all 1,262 scenario tags to an evidence level, validation references, concrete Go test declarations and production Go source files. The Go gate rejects missing or duplicate bindings, missing tests or source files, test files presented as production code, and scenario/binding cardinality drift.
+
+For ordinary memory tools, discovery is controlled by the configured tool surface. It does not vary by principal role. An insufficient role therefore yields `discover_but_call_forbidden` when that tool is present. Access-administration tools are the exception: non-admin principals neither discover nor call them. The per-role Gherkin states this distinction explicitly.
 
 ## Native-Go final validation
 
@@ -74,7 +76,7 @@ The manifest does not label every Python node as one-to-one differential coverag
 
 uMCP has stronger direct cross-language evidence: 22 source-generated fixture families in addition to its 254-node test crosswalk.
 
-A mapped domain suite proves that the corresponding Go tests exist and execute under `go test ./...`; it does not by itself prove exact one-to-one assertion equivalence. The JSON behavior summary preserves the original Python assertions. Implementation-neutral Gherkin describes the expected domain outcome. Reviewers can add dedicated neutral fixtures without changing the stable row ID or losing inventory coverage.
+The binding retains the evidence level for each scenario. `exact_jsonrpc_replay`, `exact_protocol_fixture` and `executable_stateful_fixture` use retained inputs and expected results. `behavioral_go_test` names a focused Go behavior test. `mapped_domain_suite` binds a Python row to an executing Go domain suite but does not assert one-to-one differential equivalence. `intentional_replacement` identifies the reviewed Python/Rust-to-Go boundary changes listed below.
 
 ## Go defects corrected by the detailed audit
 

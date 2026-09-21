@@ -19,26 +19,26 @@ Feature: mcp/answer routing and execute
 
     @surface-8aaf8ef92f9f_role_reader
     Scenario: memory_answer as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_answer
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_answer
       Then the outcome is discover_and_call
 
     @surface-8aaf8ef92f9f_role_proposer
     Scenario: memory_answer as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_answer
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_answer
       Then the outcome is discover_and_call
 
     @surface-8aaf8ef92f9f_role_curator
     Scenario: memory_answer as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_answer
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_answer
       Then the outcome is discover_and_call
 
     @surface-8aaf8ef92f9f_role_admin
     Scenario: memory_answer as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_answer
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_answer
       Then the outcome is discover_and_call
 
     @surface-8aaf8ef92f9f_failure
@@ -65,26 +65,26 @@ Feature: mcp/answer routing and execute
 
     @surface-6d832731060b_role_reader
     Scenario: memory_route as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_route
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_route
       Then the outcome is discover_and_call
 
     @surface-6d832731060b_role_proposer
     Scenario: memory_route as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_route
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_route
       Then the outcome is discover_and_call
 
     @surface-6d832731060b_role_curator
     Scenario: memory_route as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_route
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_route
       Then the outcome is discover_and_call
 
     @surface-6d832731060b_role_admin
     Scenario: memory_route as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_route
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_route
       Then the outcome is discover_and_call
 
     @surface-6d832731060b_failure
@@ -111,26 +111,26 @@ Feature: mcp/answer routing and execute
 
     @surface-21962f513767_role_reader
     Scenario: memory_execute as reader
-      Given the canonical reader profile
-      When that principal discovers or invokes memory_execute
+      Given the operation is present on the configured tool surface and the canonical reader profile
+      When that principal lists and calls memory_execute
       Then the outcome is discover_and_call
 
     @surface-21962f513767_role_proposer
     Scenario: memory_execute as proposer
-      Given the canonical proposer profile
-      When that principal discovers or invokes memory_execute
+      Given the operation is present on the configured tool surface and the canonical proposer profile
+      When that principal lists and calls memory_execute
       Then the outcome is discover_and_call
 
     @surface-21962f513767_role_curator
     Scenario: memory_execute as curator
-      Given the canonical curator profile
-      When that principal discovers or invokes memory_execute
+      Given the operation is present on the configured tool surface and the canonical curator profile
+      When that principal lists and calls memory_execute
       Then the outcome is discover_and_call
 
     @surface-21962f513767_role_admin
     Scenario: memory_execute as admin
-      Given the canonical admin profile
-      When that principal discovers or invokes memory_execute
+      Given the operation is present on the configured tool surface and the canonical admin profile
+      When that principal lists and calls memory_execute
       Then the outcome is discover_and_call
 
     @surface-21962f513767_failure

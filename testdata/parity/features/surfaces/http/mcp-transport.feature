@@ -20,25 +20,25 @@ Feature: http/mcp transport
     @surface-cdbe1d5b6a22_role_reader
     Scenario: POST /mcp as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /mcp
+      When that principal uses POST /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-cdbe1d5b6a22_role_proposer
     Scenario: POST /mcp as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /mcp
+      When that principal uses POST /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-cdbe1d5b6a22_role_curator
     Scenario: POST /mcp as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /mcp
+      When that principal uses POST /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-cdbe1d5b6a22_role_admin
     Scenario: POST /mcp as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /mcp
+      When that principal uses POST /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-cdbe1d5b6a22_failure
@@ -64,25 +64,25 @@ Feature: http/mcp transport
     @surface-9bb9207af645_role_reader
     Scenario: GET /mcp as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /mcp
+      When that principal uses GET /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-9bb9207af645_role_proposer
     Scenario: GET /mcp as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /mcp
+      When that principal uses GET /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-9bb9207af645_role_curator
     Scenario: GET /mcp as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /mcp
+      When that principal uses GET /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-9bb9207af645_role_admin
     Scenario: GET /mcp as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /mcp
+      When that principal uses GET /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-9bb9207af645_failure
@@ -108,25 +108,25 @@ Feature: http/mcp transport
     @surface-8297b7f3e421_role_reader
     Scenario: DELETE /mcp as reader
       Given the canonical reader profile
-      When that principal discovers or invokes DELETE /mcp
+      When that principal uses DELETE /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-8297b7f3e421_role_proposer
     Scenario: DELETE /mcp as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes DELETE /mcp
+      When that principal uses DELETE /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-8297b7f3e421_role_curator
     Scenario: DELETE /mcp as curator
       Given the canonical curator profile
-      When that principal discovers or invokes DELETE /mcp
+      When that principal uses DELETE /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-8297b7f3e421_role_admin
     Scenario: DELETE /mcp as admin
       Given the canonical admin profile
-      When that principal discovers or invokes DELETE /mcp
+      When that principal uses DELETE /mcp
       Then the outcome is bearer-authenticated MCP transport; called tool applies the profile role and namespace policy
 
     @surface-8297b7f3e421_failure

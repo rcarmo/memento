@@ -20,25 +20,25 @@ Feature: http/staging
     @surface-29d4cebf9364_role_reader
     Scenario: POST /assets/staging/upload as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /assets/staging/upload
+      When that principal uses POST /assets/staging/upload
       Then the outcome is upload ticket authenticates the bounded application/zip request; ordinary bearer role is not used here
 
     @surface-29d4cebf9364_role_proposer
     Scenario: POST /assets/staging/upload as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /assets/staging/upload
+      When that principal uses POST /assets/staging/upload
       Then the outcome is upload ticket authenticates the bounded application/zip request; ordinary bearer role is not used here
 
     @surface-29d4cebf9364_role_curator
     Scenario: POST /assets/staging/upload as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /assets/staging/upload
+      When that principal uses POST /assets/staging/upload
       Then the outcome is upload ticket authenticates the bounded application/zip request; ordinary bearer role is not used here
 
     @surface-29d4cebf9364_role_admin
     Scenario: POST /assets/staging/upload as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /assets/staging/upload
+      When that principal uses POST /assets/staging/upload
       Then the outcome is upload ticket authenticates the bounded application/zip request; ordinary bearer role is not used here
 
     @surface-29d4cebf9364_failure
@@ -64,25 +64,25 @@ Feature: http/staging
     @surface-a2ae439ee3df_role_reader
     Scenario: POST /assets/staging as reader
       Given the canonical reader profile
-      When that principal discovers or invokes POST /assets/staging
+      When that principal uses POST /assets/staging
       Then the outcome is HTTP 401/403 proposer role required
 
     @surface-a2ae439ee3df_role_proposer
     Scenario: POST /assets/staging as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes POST /assets/staging
+      When that principal uses POST /assets/staging
       Then the outcome is authenticated proposer-scoped staging response
 
     @surface-a2ae439ee3df_role_curator
     Scenario: POST /assets/staging as curator
       Given the canonical curator profile
-      When that principal discovers or invokes POST /assets/staging
+      When that principal uses POST /assets/staging
       Then the outcome is authenticated proposer-scoped staging response
 
     @surface-a2ae439ee3df_role_admin
     Scenario: POST /assets/staging as admin
       Given the canonical admin profile
-      When that principal discovers or invokes POST /assets/staging
+      When that principal uses POST /assets/staging
       Then the outcome is authenticated proposer-scoped staging response
 
     @surface-a2ae439ee3df_failure
@@ -108,25 +108,25 @@ Feature: http/staging
     @surface-ea179a4b618b_role_reader
     Scenario: GET /assets/staging/{id} as reader
       Given the canonical reader profile
-      When that principal discovers or invokes GET /assets/staging/{id}
+      When that principal uses GET /assets/staging/{id}
       Then the outcome is HTTP 401/403 unless the principal owns the staged asset
 
     @surface-ea179a4b618b_role_proposer
     Scenario: GET /assets/staging/{id} as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes GET /assets/staging/{id}
+      When that principal uses GET /assets/staging/{id}
       Then the outcome is owner-scoped staged asset status
 
     @surface-ea179a4b618b_role_curator
     Scenario: GET /assets/staging/{id} as curator
       Given the canonical curator profile
-      When that principal discovers or invokes GET /assets/staging/{id}
+      When that principal uses GET /assets/staging/{id}
       Then the outcome is owner-scoped staged asset status
 
     @surface-ea179a4b618b_role_admin
     Scenario: GET /assets/staging/{id} as admin
       Given the canonical admin profile
-      When that principal discovers or invokes GET /assets/staging/{id}
+      When that principal uses GET /assets/staging/{id}
       Then the outcome is owner-scoped staged asset status
 
     @surface-ea179a4b618b_failure

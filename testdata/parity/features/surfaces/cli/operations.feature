@@ -20,25 +20,25 @@ Feature: cli/operations
     @surface-39eaef7c37c5_role_reader
     Scenario: serve as reader
       Given the canonical reader profile
-      When that principal discovers or invokes serve
+      When that principal uses serve
       Then the outcome is local_operator_not_role_scoped
 
     @surface-39eaef7c37c5_role_proposer
     Scenario: serve as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes serve
+      When that principal uses serve
       Then the outcome is local_operator_not_role_scoped
 
     @surface-39eaef7c37c5_role_curator
     Scenario: serve as curator
       Given the canonical curator profile
-      When that principal discovers or invokes serve
+      When that principal uses serve
       Then the outcome is local_operator_not_role_scoped
 
     @surface-39eaef7c37c5_role_admin
     Scenario: serve as admin
       Given the canonical admin profile
-      When that principal discovers or invokes serve
+      When that principal uses serve
       Then the outcome is local_operator_not_role_scoped
 
     @surface-39eaef7c37c5_failure
@@ -64,25 +64,25 @@ Feature: cli/operations
     @surface-43009273020f_role_reader
     Scenario: audit as reader
       Given the canonical reader profile
-      When that principal discovers or invokes audit
+      When that principal uses audit
       Then the outcome is local_operator_not_role_scoped
 
     @surface-43009273020f_role_proposer
     Scenario: audit as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes audit
+      When that principal uses audit
       Then the outcome is local_operator_not_role_scoped
 
     @surface-43009273020f_role_curator
     Scenario: audit as curator
       Given the canonical curator profile
-      When that principal discovers or invokes audit
+      When that principal uses audit
       Then the outcome is local_operator_not_role_scoped
 
     @surface-43009273020f_role_admin
     Scenario: audit as admin
       Given the canonical admin profile
-      When that principal discovers or invokes audit
+      When that principal uses audit
       Then the outcome is local_operator_not_role_scoped
 
     @surface-43009273020f_failure
@@ -108,25 +108,25 @@ Feature: cli/operations
     @surface-00d140452a2a_role_reader
     Scenario: rebuild-index as reader
       Given the canonical reader profile
-      When that principal discovers or invokes rebuild-index
+      When that principal uses rebuild-index
       Then the outcome is local_operator_not_role_scoped
 
     @surface-00d140452a2a_role_proposer
     Scenario: rebuild-index as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes rebuild-index
+      When that principal uses rebuild-index
       Then the outcome is local_operator_not_role_scoped
 
     @surface-00d140452a2a_role_curator
     Scenario: rebuild-index as curator
       Given the canonical curator profile
-      When that principal discovers or invokes rebuild-index
+      When that principal uses rebuild-index
       Then the outcome is local_operator_not_role_scoped
 
     @surface-00d140452a2a_role_admin
     Scenario: rebuild-index as admin
       Given the canonical admin profile
-      When that principal discovers or invokes rebuild-index
+      When that principal uses rebuild-index
       Then the outcome is local_operator_not_role_scoped
 
     @surface-00d140452a2a_failure
@@ -152,25 +152,25 @@ Feature: cli/operations
     @surface-09741af9a2d6_role_reader
     Scenario: backup as reader
       Given the canonical reader profile
-      When that principal discovers or invokes backup
+      When that principal uses backup
       Then the outcome is local_operator_not_role_scoped
 
     @surface-09741af9a2d6_role_proposer
     Scenario: backup as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes backup
+      When that principal uses backup
       Then the outcome is local_operator_not_role_scoped
 
     @surface-09741af9a2d6_role_curator
     Scenario: backup as curator
       Given the canonical curator profile
-      When that principal discovers or invokes backup
+      When that principal uses backup
       Then the outcome is local_operator_not_role_scoped
 
     @surface-09741af9a2d6_role_admin
     Scenario: backup as admin
       Given the canonical admin profile
-      When that principal discovers or invokes backup
+      When that principal uses backup
       Then the outcome is local_operator_not_role_scoped
 
     @surface-09741af9a2d6_failure
@@ -196,25 +196,25 @@ Feature: cli/operations
     @surface-6cc618194fbc_role_reader
     Scenario: restore as reader
       Given the canonical reader profile
-      When that principal discovers or invokes restore
+      When that principal uses restore
       Then the outcome is local_operator_not_role_scoped
 
     @surface-6cc618194fbc_role_proposer
     Scenario: restore as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes restore
+      When that principal uses restore
       Then the outcome is local_operator_not_role_scoped
 
     @surface-6cc618194fbc_role_curator
     Scenario: restore as curator
       Given the canonical curator profile
-      When that principal discovers or invokes restore
+      When that principal uses restore
       Then the outcome is local_operator_not_role_scoped
 
     @surface-6cc618194fbc_role_admin
     Scenario: restore as admin
       Given the canonical admin profile
-      When that principal discovers or invokes restore
+      When that principal uses restore
       Then the outcome is local_operator_not_role_scoped
 
     @surface-6cc618194fbc_failure
@@ -240,25 +240,25 @@ Feature: cli/operations
     @surface-fed523668854_role_reader
     Scenario: status as reader
       Given the canonical reader profile
-      When that principal discovers or invokes status
+      When that principal uses status
       Then the outcome is local_operator_not_role_scoped
 
     @surface-fed523668854_role_proposer
     Scenario: status as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes status
+      When that principal uses status
       Then the outcome is local_operator_not_role_scoped
 
     @surface-fed523668854_role_curator
     Scenario: status as curator
       Given the canonical curator profile
-      When that principal discovers or invokes status
+      When that principal uses status
       Then the outcome is local_operator_not_role_scoped
 
     @surface-fed523668854_role_admin
     Scenario: status as admin
       Given the canonical admin profile
-      When that principal discovers or invokes status
+      When that principal uses status
       Then the outcome is local_operator_not_role_scoped
 
     @surface-fed523668854_failure
@@ -284,25 +284,25 @@ Feature: cli/operations
     @surface-1354f1967675_role_reader
     Scenario: dream as reader
       Given the canonical reader profile
-      When that principal discovers or invokes dream
+      When that principal uses dream
       Then the outcome is local_operator_not_role_scoped
 
     @surface-1354f1967675_role_proposer
     Scenario: dream as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes dream
+      When that principal uses dream
       Then the outcome is local_operator_not_role_scoped
 
     @surface-1354f1967675_role_curator
     Scenario: dream as curator
       Given the canonical curator profile
-      When that principal discovers or invokes dream
+      When that principal uses dream
       Then the outcome is local_operator_not_role_scoped
 
     @surface-1354f1967675_role_admin
     Scenario: dream as admin
       Given the canonical admin profile
-      When that principal discovers or invokes dream
+      When that principal uses dream
       Then the outcome is local_operator_not_role_scoped
 
     @surface-1354f1967675_failure
@@ -328,25 +328,25 @@ Feature: cli/operations
     @surface-0334e05ca7bd_role_reader
     Scenario: rotate-master-key as reader
       Given the canonical reader profile
-      When that principal discovers or invokes rotate-master-key
+      When that principal uses rotate-master-key
       Then the outcome is local_operator_not_role_scoped
 
     @surface-0334e05ca7bd_role_proposer
     Scenario: rotate-master-key as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes rotate-master-key
+      When that principal uses rotate-master-key
       Then the outcome is local_operator_not_role_scoped
 
     @surface-0334e05ca7bd_role_curator
     Scenario: rotate-master-key as curator
       Given the canonical curator profile
-      When that principal discovers or invokes rotate-master-key
+      When that principal uses rotate-master-key
       Then the outcome is local_operator_not_role_scoped
 
     @surface-0334e05ca7bd_role_admin
     Scenario: rotate-master-key as admin
       Given the canonical admin profile
-      When that principal discovers or invokes rotate-master-key
+      When that principal uses rotate-master-key
       Then the outcome is local_operator_not_role_scoped
 
     @surface-0334e05ca7bd_failure
@@ -372,25 +372,25 @@ Feature: cli/operations
     @surface-8cf2b70cf50b_role_reader
     Scenario: healthcheck as reader
       Given the canonical reader profile
-      When that principal discovers or invokes healthcheck
+      When that principal uses healthcheck
       Then the outcome is local_operator_not_role_scoped
 
     @surface-8cf2b70cf50b_role_proposer
     Scenario: healthcheck as proposer
       Given the canonical proposer profile
-      When that principal discovers or invokes healthcheck
+      When that principal uses healthcheck
       Then the outcome is local_operator_not_role_scoped
 
     @surface-8cf2b70cf50b_role_curator
     Scenario: healthcheck as curator
       Given the canonical curator profile
-      When that principal discovers or invokes healthcheck
+      When that principal uses healthcheck
       Then the outcome is local_operator_not_role_scoped
 
     @surface-8cf2b70cf50b_role_admin
     Scenario: healthcheck as admin
       Given the canonical admin profile
-      When that principal discovers or invokes healthcheck
+      When that principal uses healthcheck
       Then the outcome is local_operator_not_role_scoped
 
     @surface-8cf2b70cf50b_failure
