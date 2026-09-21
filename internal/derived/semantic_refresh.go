@@ -27,6 +27,7 @@ type SemanticBatchClient interface {
 type SemanticRefreshConfig struct {
 	ModelID                             string
 	Dimensions, MaxInputChars, MaxBatch int
+	BeforeBatch                         func(context.Context) error // progressive admission between document chunks
 }
 
 func embeddingText(title string, description *string, body string) string {
@@ -72,6 +73,9 @@ func (i *Index) RefreshEmbeddingPaths(ctx context.Context, revision string, path
 	info := client.ModelInfo()
 	if info.ModelID != config.ModelID || info.Dimensions != config.Dimensions {
 		return errors.New("semantic embedding model metadata mismatch")
+	}
+	if chunked, ok := client.(SemanticChunkClient); ok {
+		return i.refreshChunks(ctx, revision, paths, config, chunked)
 	}
 	return i.withCore(ctx, true, func(s ContentStore) error {
 		type pendingEmbedding struct{ id, path, text, digest string }

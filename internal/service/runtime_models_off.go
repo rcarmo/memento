@@ -260,6 +260,8 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		if loadErr != nil {
 			return nil, nil, loadErr
 		}
+		_, index.ChunkEmbeddings = client.(derived.SemanticChunkClient)
+		index.ConfigureChunkModel(client.ModelInfo())
 		controls.SemanticClient = client
 		controls.RuntimeCapabilities.SemanticLoaded = true
 		controls.SemanticMaxCandidates = options.Semantic.MaxCandidates
@@ -275,7 +277,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		if options.Semantic.RefreshOnStartup {
 			state, _ := index.State(ctx)
 			embeddingRevision, _ := index.EmbeddingRevision(ctx)
-			if semanticRefreshNeeded(state.RepoRevision, embeddingRevision) {
+			if index.ChunkEmbeddings || semanticRefreshNeeded(state.RepoRevision, embeddingRevision) {
 				options.SemanticWorker.Enqueue(paths.Repository.CurrentDir, state.RepoRevision, nil, true)
 			}
 		}

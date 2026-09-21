@@ -33,6 +33,8 @@ type Index struct {
 	Path            string
 	DeferEmbeddings bool
 	MaxInputChars   int
+	ChunkEmbeddings bool // include legacy single-vector rows in the refresh queue
+	chunkModel      SemanticModelInfo
 	Now             func() time.Time
 	mu              sync.Mutex
 	identity        fs.FileInfo
@@ -71,7 +73,9 @@ func openIndexDBWith(ctx context.Context, path string, open func(string, string)
 	return db, nil
 }
 func (i *Index) withCore(ctx context.Context, write bool, fn func(ContentStore) error) error {
-	i.mu.Lock()
+	if err := lockIndex(ctx, &i.mu); err != nil {
+		return err
+	}
 	defer i.mu.Unlock()
 	return i.withCoreIO(ctx, write, fn, defaultIndexIO())
 }
@@ -240,6 +244,9 @@ func (i *Index) Status(ctx context.Context, policy access.EffectivePolicy) (Stat
 }
 func (i *Index) PendingEmbeddingPaths(ctx context.Context, limit int) ([]string, error) {
 	return i.pendingEmbeddingPaths(ctx, limit, func(ctx context.Context, db *sql.DB, limit int) (embeddingPathRows, error) {
+		if i.ChunkEmbeddings {
+			return i.pendingChunkRows(ctx, db, limit)
+		}
 		return db.QueryContext(ctx, `SELECT c.path FROM concepts AS c LEFT JOIN concept_embeddings AS e ON e.concept_id=c.id WHERE e.concept_id IS NULL OR e.status IN ('stale','pending') ORDER BY CASE WHEN e.status='stale' THEN 0 ELSE 1 END,c.path LIMIT ?`, limit)
 	})
 }

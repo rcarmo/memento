@@ -38,6 +38,27 @@ func (r *metricsRowsStub) Scan(values ...any) error {
 func (r *metricsRowsStub) Err() error   { return r.finalErr }
 func (r *metricsRowsStub) Close() error { return r.closeErr }
 
+type metricsEmbeddingRowsStub struct {
+	status    string
+	count     int64
+	remaining int
+}
+
+func (r *metricsEmbeddingRowsStub) Next() bool {
+	if r.remaining > 0 {
+		r.remaining--
+		return true
+	}
+	return false
+}
+func (r *metricsEmbeddingRowsStub) Scan(values ...any) error {
+	*values[0].(*string) = r.status
+	*values[1].(*int64) = r.count
+	return nil
+}
+func (r *metricsEmbeddingRowsStub) Err() error   { return nil }
+func (r *metricsEmbeddingRowsStub) Close() error { return nil }
+
 type metricsFileInfo struct{ size int64 }
 
 func (i metricsFileInfo) Name() string       { return "x" }
@@ -61,7 +82,11 @@ func TestReadEmbeddingMetricsFailures(t *testing.T) {
 		})
 	}
 	result, err := readEmbeddingMetrics(&metricsRowsStub{remaining: 1})
-	if err != nil || result["ready"] != 2 || result["pending"] != 0 {
+	if err != nil || result["ready"] != 2 || result["pending"] != 0 || result["missing"] != 0 || result["other"] != 0 {
+		t.Fatal(result, err)
+	}
+	result, err = readEmbeddingMetrics(&metricsEmbeddingRowsStub{status: "mystery", count: 3, remaining: 1})
+	if err != nil || result["other"] != 3 {
 		t.Fatal(result, err)
 	}
 }
@@ -102,16 +127,16 @@ func TestCollectSQLiteMetricsFailures(t *testing.T) {
 		return nil, os.ErrNotExist
 	}
 	queries := 0
-	value, err := collectSQLiteMetricsWith(nil, "x", stat, func(string, *int64) error { queries++; return nil })
+	value, err := collectSQLiteMetricsWith(context.Background(), "x", stat, func(context.Context, string, *int64) error { queries++; return nil })
 	if err != nil || value.MainBytes != 5 || value.WALBytes != 0 || queries != 2 {
 		t.Fatal(value, queries, err)
 	}
-	if _, err = collectSQLiteMetricsWith(nil, "x", func(string) (fs.FileInfo, error) { return nil, boom }, func(string, *int64) error { return nil }); !errors.Is(err, boom) {
+	if _, err = collectSQLiteMetricsWith(context.Background(), "x", func(string) (fs.FileInfo, error) { return nil, boom }, func(context.Context, string, *int64) error { return nil }); !errors.Is(err, boom) {
 		t.Fatal(err)
 	}
 	for _, failAt := range []int{1, 2} {
 		calls := 0
-		if _, err = collectSQLiteMetricsWith(nil, "x", stat, func(string, *int64) error {
+		if _, err = collectSQLiteMetricsWith(context.Background(), "x", stat, func(context.Context, string, *int64) error {
 			calls++
 			if calls == failAt {
 				return boom
@@ -129,31 +154,33 @@ func TestCollectLiveMetricsInjectedFailures(t *testing.T) {
 	defer db.Close()
 	service := &Runtime{DB: db, Paths: RuntimePaths{ControlDB: "c", DerivedDB: "d"}, Metrics: NewRuntimeMetrics()}
 	base := liveMetricsOps{
-		state: func(context.Context, *sql.DB) (derived.IndexState, error) {
+		state: func(context.Context, liveMetricsQueryer) (derived.IndexState, error) {
 			return derived.IndexState{Status: "ready", RepoRevision: "r", IndexRevision: "r"}, nil
 		},
-		control:        func(*sql.DB, string) (sqliteMetrics, error) { return sqliteMetrics{}, nil },
+		control:        func(context.Context, liveMetricsQueryer, string) (sqliteMetrics, error) { return sqliteMetrics{}, nil },
 		openDerived:    func(context.Context, string) (*sql.DB, error) { return sql.Open("sqlite", ":memory:") },
-		derived:        func(*sql.DB, string) (sqliteMetrics, error) { return sqliteMetrics{}, nil },
-		counts:         func(context.Context, *sql.DB, *liveMetricsSnapshot) error { return nil },
-		embeddings:     func(context.Context, *sql.DB) (map[string]int64, error) { return map[string]int64{}, nil },
+		derived:        func(context.Context, liveMetricsQueryer, string) (sqliteMetrics, error) { return sqliteMetrics{}, nil },
+		counts:         func(context.Context, liveMetricsQueryer, *liveMetricsSnapshot) error { return nil },
+		embeddings:     func(context.Context, liveMetricsQueryer) (map[string]int64, error) { return map[string]int64{}, nil },
 		processRuntime: func(*liveMetricsSnapshot) {},
 	}
 	for _, field := range []string{"state", "control", "open", "derived", "counts", "embeddings"} {
 		ops := base
 		switch field {
 		case "state":
-			ops.state = func(context.Context, *sql.DB) (derived.IndexState, error) { return derived.IndexState{}, boom }
+			ops.state = func(context.Context, liveMetricsQueryer) (derived.IndexState, error) {
+				return derived.IndexState{}, boom
+			}
 		case "control":
-			ops.control = func(*sql.DB, string) (sqliteMetrics, error) { return sqliteMetrics{}, boom }
+			ops.control = func(context.Context, liveMetricsQueryer, string) (sqliteMetrics, error) { return sqliteMetrics{}, boom }
 		case "open":
 			ops.openDerived = func(context.Context, string) (*sql.DB, error) { return nil, boom }
 		case "derived":
-			ops.derived = func(*sql.DB, string) (sqliteMetrics, error) { return sqliteMetrics{}, boom }
+			ops.derived = func(context.Context, liveMetricsQueryer, string) (sqliteMetrics, error) { return sqliteMetrics{}, boom }
 		case "counts":
-			ops.counts = func(context.Context, *sql.DB, *liveMetricsSnapshot) error { return boom }
+			ops.counts = func(context.Context, liveMetricsQueryer, *liveMetricsSnapshot) error { return boom }
 		case "embeddings":
-			ops.embeddings = func(context.Context, *sql.DB) (map[string]int64, error) { return nil, boom }
+			ops.embeddings = func(context.Context, liveMetricsQueryer) (map[string]int64, error) { return nil, boom }
 		}
 		if _, err := collectLiveMetricsWith(t.Context(), service, ops); !errors.Is(err, boom) {
 			t.Fatal(field, err)
@@ -166,6 +193,35 @@ func TestCollectLiveMetricsInjectedFailures(t *testing.T) {
 	snapshot, err := collectLiveMetricsWith(t.Context(), service, base)
 	if err != nil || snapshot.ServiceVersion != "unknown" || !snapshot.WorkerAvailable || !snapshot.Worker.Alive {
 		t.Fatal(snapshot, err)
+	}
+}
+
+func TestCollectLiveMetricsChangedRepoSnapshot(t *testing.T) {
+	db, _ := sql.Open("sqlite", ":memory:")
+	defer db.Close()
+	service := &Runtime{DB: db, Paths: RuntimePaths{ControlDB: "c", DerivedDB: "d"}, Metrics: NewRuntimeMetrics()}
+	service.Paths.Repository.BareDir = "repo"
+	calls := 0
+	ops := liveMetricsOps{
+		repoRevision: func(context.Context, RuntimePaths) (string, error) {
+			calls++
+			if calls == 1 {
+				return "before", nil
+			}
+			return "after", nil
+		},
+		state: func(context.Context, liveMetricsQueryer) (derived.IndexState, error) {
+			return derived.IndexState{Status: "ready", RepoRevision: "before", IndexRevision: "before"}, nil
+		},
+		control:        func(context.Context, liveMetricsQueryer, string) (sqliteMetrics, error) { return sqliteMetrics{}, nil },
+		openDerived:    func(context.Context, string) (*sql.DB, error) { return sql.Open("sqlite", ":memory:") },
+		derived:        func(context.Context, liveMetricsQueryer, string) (sqliteMetrics, error) { return sqliteMetrics{}, nil },
+		counts:         func(context.Context, liveMetricsQueryer, *liveMetricsSnapshot) error { return nil },
+		embeddings:     func(context.Context, liveMetricsQueryer) (map[string]int64, error) { return map[string]int64{}, nil },
+		processRuntime: func(*liveMetricsSnapshot) {},
+	}
+	if _, err := collectLiveMetricsWith(t.Context(), service, ops); !errors.Is(err, errLiveMetricsChangedSnapshot) {
+		t.Fatal(err)
 	}
 }
 

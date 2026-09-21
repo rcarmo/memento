@@ -62,12 +62,14 @@ Common secret-bearing keys such as `authorization`, `token`, `password`, `secret
 The live daemon exposes unauthenticated Prometheus text at `GET /metrics`. Keep it on a trusted network or protect it at the reverse proxy. Scrapes perform bounded file `stat`, SQLite `PRAGMA page_count`/`freelist_count`, aggregate row counts and Go runtime reads; they do not checkpoint WAL files or scan concept bodies. The endpoint includes:
 
 * service/build, scrape success and scrape duration;
-* repository/index revision labels, readiness and staleness;
-* concept, link, graph-metric and embedding-state row counts;
+* readiness and staleness against canonical Git HEAD (revision strings stay in status, not live metric labels);
+* concept, link, graph-metric and embedding-state row counts, including missing embeddings;
 * control/derived SQLite main, WAL and SHM bytes plus allocated/free pages;
-* embedding worker availability, running/pending state and completed count;
+* embedding worker availability, running/pending state and completed document-refresh count;
 * index rebuild/update success/error counters and latest duration;
 * Go heap bytes, heap objects and goroutine count.
+
+Collection admits one scrape at a time, waits at most 100 ms for admission and applies a two-second collection context. Related derived SQL reads share a read-only transaction; canonical revision changes during collection report failure. File sizes and Go process readings are separate observations. Heap metrics are not RSS; use a container exporter for CPU/RSS/cgroup counters.
 
 Prometheus can scrape `http://HOST:PORT/metrics`; Grafana should query the resulting Prometheus data source. A scrape interval of 30-60 seconds is sufficient for normal operations. Alert on collection failure, stale/not-ready indexes, sustained WAL growth, embedding error/stale growth, index-operation errors, or unexpected heap growth.
 

@@ -33,7 +33,7 @@ func TestRefreshEmbeddingPaths(t *testing.T) {
 	}
 	pending, _ := index.PendingEmbeddingPaths(ctx, 10)
 	client := &semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}, vector: []float32{3, 4}}
-	config := SemanticRefreshConfig{"m", 2, 4096, 16}
+	config := SemanticRefreshConfig{ModelID: "m", Dimensions: 2, MaxInputChars: 4096, MaxBatch: 16}
 	if err := index.RefreshEmbeddingPaths(ctx, "r1", pending, config, client); err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +73,7 @@ func TestRefreshEmbeddingSQLFailures(t *testing.T) {
 		if kind == "degraded" {
 			client.err = errors.New("embed")
 		}
-		if err := index.RefreshEmbeddingPaths(ctx, "r", pending, SemanticRefreshConfig{"m", 2, 0, 16}, client); err == nil {
+		if err := index.RefreshEmbeddingPaths(ctx, "r", pending, SemanticRefreshConfig{ModelID: "m", Dimensions: 2, MaxBatch: 16}, client); err == nil {
 			t.Fatal(kind)
 		}
 	}
@@ -92,7 +92,7 @@ func TestRefreshEmbeddingBatchIntegration(t *testing.T) {
 	}
 	paths, _ := index.PendingEmbeddingPaths(ctx, 10)
 	client := &semanticBatchStub{semanticClientStub: semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}}, batchVectors: [][]float32{{1, 0}, {0, 1}}}
-	if err := index.RefreshEmbeddingPaths(ctx, "r", paths, SemanticRefreshConfig{"m", 2, 4096, 10}, client); err != nil {
+	if err := index.RefreshEmbeddingPaths(ctx, "r", paths, SemanticRefreshConfig{ModelID: "m", Dimensions: 2, MaxInputChars: 4096, MaxBatch: 10}, client); err != nil {
 		t.Fatal(err)
 	}
 	if len(client.batches) != 1 || len(client.batches[0]) != 2 || len(client.singles) != 0 {
@@ -111,7 +111,7 @@ func TestRefreshEmbeddingFailures(t *testing.T) {
 	root := t.TempDir()
 	installConcept(t, root)
 	_ = index.Rebuild(ctx, root, "r")
-	config := SemanticRefreshConfig{"m", 2, 2, 16}
+	config := SemanticRefreshConfig{ModelID: "m", Dimensions: 2, MaxInputChars: 2, MaxBatch: 16}
 	if err := index.RefreshEmbeddingPaths(ctx, "r", nil, config, nil); err == nil {
 		t.Fatal("nil")
 	}

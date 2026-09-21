@@ -9,17 +9,23 @@ import (
 	"net/url"
 	"os"
 	"runtime"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/rcarmo/memento/internal/derived"
+	"github.com/rcarmo/memento/internal/repository"
 	"github.com/rcarmo/memento/umcp"
 )
 
-const liveMetricsPath = "/metrics"
+const (
+	liveMetricsPath             = "/metrics"
+	liveMetricsAdmissionTimeout = 100 * time.Millisecond
+	liveMetricsCollectTimeout   = 2 * time.Second
+)
+
+var errLiveMetricsChangedSnapshot = errors.New("live metrics snapshot changed during collection")
 
 type indexOperationMetric struct {
 	Success, Error uint64
@@ -27,12 +33,52 @@ type indexOperationMetric struct {
 }
 
 type RuntimeMetrics struct {
-	mu    sync.Mutex
-	index map[string]indexOperationMetric
+	mu     sync.Mutex
+	index  map[string]indexOperationMetric
+	scrape chan struct{}
 }
 
 func NewRuntimeMetrics() *RuntimeMetrics {
-	return &RuntimeMetrics{index: map[string]indexOperationMetric{"rebuild": {}, "update": {}}}
+	return &RuntimeMetrics{index: map[string]indexOperationMetric{"rebuild": {}, "update": {}}, scrape: newLiveMetricsGate()}
+}
+
+func newLiveMetricsGate() chan struct{} {
+	gate := make(chan struct{}, 1)
+	gate <- struct{}{}
+	return gate
+}
+
+func (m *RuntimeMetrics) ensureScrapeGate() chan struct{} {
+	if m == nil {
+		return nil
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if m.scrape == nil {
+		m.scrape = newLiveMetricsGate()
+	}
+	return m.scrape
+}
+
+func (m *RuntimeMetrics) admitScrape(ctx context.Context) (func(), error) {
+	if m == nil {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		return func() {}, nil
+	}
+	gate := m.ensureScrapeGate()
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-gate:
+		return func() {
+			select {
+			case gate <- struct{}{}:
+			default:
+			}
+		}, nil
+	}
 }
 
 func (m *RuntimeMetrics) ObserveIndex(operation string, duration time.Duration, err error) {
@@ -108,28 +154,59 @@ func (h LiveMetricsHTTP) Handle(ctx context.Context, method, path string, _ map[
 		now = time.Now
 	}
 	started := now()
-	snapshot, collectErr := collect(ctx, h.Runtime)
+	collectCtx, cancel := context.WithTimeout(ctx, liveMetricsCollectTimeout)
+	defer cancel()
+	var (
+		snapshot   liveMetricsSnapshot
+		collectErr error
+	)
+	release, err := h.admitScrape(collectCtx)
+	if err != nil {
+		collectErr = err
+	} else {
+		defer release()
+		snapshot, collectErr = collect(collectCtx, h.Runtime)
+	}
 	elapsed := now().Sub(started).Seconds()
 	text := renderLivePrometheus(snapshot, collectErr == nil, elapsed)
 	mime := "text/plain; version=0.0.4; charset=utf-8"
 	return &umcp.HTTPResponse{Status: 200, Body: []byte(text), ContentType: &mime, Headers: [][2]string{{"Cache-Control", "no-store"}, {"X-Content-Type-Options", "nosniff"}}}, nil
 }
 
+func (h LiveMetricsHTTP) admitScrape(ctx context.Context) (func(), error) {
+	var metrics *RuntimeMetrics
+	if h.Runtime != nil {
+		metrics = h.Runtime.Metrics
+	}
+	waitCtx, cancel := context.WithTimeout(ctx, liveMetricsAdmissionTimeout)
+	defer cancel()
+	return metrics.admitScrape(waitCtx)
+}
+
+type liveMetricsQueryer interface {
+	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
+	QueryRowContext(context.Context, string, ...any) *sql.Row
+}
+
 type liveMetricsOps struct {
-	state          func(context.Context, *sql.DB) (derived.IndexState, error)
-	control        func(*sql.DB, string) (sqliteMetrics, error)
+	repoRevision   func(context.Context, RuntimePaths) (string, error)
+	state          func(context.Context, liveMetricsQueryer) (derived.IndexState, error)
+	control        func(context.Context, liveMetricsQueryer, string) (sqliteMetrics, error)
 	openDerived    func(context.Context, string) (*sql.DB, error)
-	derived        func(*sql.DB, string) (sqliteMetrics, error)
-	counts         func(context.Context, *sql.DB, *liveMetricsSnapshot) error
-	embeddings     func(context.Context, *sql.DB) (map[string]int64, error)
+	derived        func(context.Context, liveMetricsQueryer, string) (sqliteMetrics, error)
+	counts         func(context.Context, liveMetricsQueryer, *liveMetricsSnapshot) error
+	embeddings     func(context.Context, liveMetricsQueryer) (map[string]int64, error)
 	processRuntime func(*liveMetricsSnapshot)
 }
 
 func defaultLiveMetricsOps() liveMetricsOps {
 	return liveMetricsOps{
-		state:   collectIndexStateMetrics,
-		control: collectSQLiteMetrics, openDerived: openReadOnlyMetricsDB, derived: collectSQLiteMetrics,
-		counts: func(ctx context.Context, db *sql.DB, snapshot *liveMetricsSnapshot) error {
+		repoRevision: collectMainRevisionMetrics,
+		state:        collectIndexStateMetrics,
+		control:      collectSQLiteMetrics,
+		openDerived:  openReadOnlyMetricsDB,
+		derived:      collectSQLiteMetrics,
+		counts: func(ctx context.Context, db liveMetricsQueryer, snapshot *liveMetricsSnapshot) error {
 			return db.QueryRowContext(ctx, `SELECT (SELECT COUNT(*) FROM concepts),(SELECT COUNT(*) FROM links),(SELECT COUNT(*) FROM graph_metrics)`).Scan(&snapshot.Concepts, &snapshot.Links, &snapshot.GraphMetrics)
 		},
 		embeddings: collectEmbeddingMetrics,
@@ -158,29 +235,56 @@ func collectLiveMetricsWith(ctx context.Context, service *Runtime, ops liveMetri
 		snapshot.ServiceVersion = "unknown"
 	}
 	var err error
-	if snapshot.Control, err = ops.control(service.DB, service.Paths.ControlDB); err != nil {
+	if snapshot.Control, err = ops.control(ctx, service.DB, service.Paths.ControlDB); err != nil {
 		return snapshot, err
+	}
+	repoBefore, repoAfter := "", ""
+	if ops.repoRevision != nil && service.Paths.Repository.BareDir != "" {
+		repoBefore, err = ops.repoRevision(ctx, service.Paths)
+		if err != nil {
+			return snapshot, err
+		}
 	}
 	derivedDB, err := ops.openDerived(ctx, service.Paths.DerivedDB)
 	if err != nil {
 		return snapshot, err
 	}
 	defer derivedDB.Close()
-	state, err := ops.state(ctx, derivedDB)
+	tx, err := derivedDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+	if err != nil {
+		return snapshot, err
+	}
+	defer func() { _ = tx.Rollback() }()
+	state, err := ops.state(ctx, tx)
 	if err != nil {
 		return snapshot, err
 	}
 	snapshot.RepoRevision = state.RepoRevision
+	if repoBefore != "" {
+		snapshot.RepoRevision = repoBefore
+	}
 	snapshot.IndexRevision = state.IndexRevision
 	snapshot.IndexReady = state.Status == "ready"
-	snapshot.IndexStale = state.RepoRevision != state.IndexRevision
-	if snapshot.Derived, err = ops.derived(derivedDB, service.Paths.DerivedDB); err != nil {
+	snapshot.IndexStale = snapshot.RepoRevision != snapshot.IndexRevision
+	if snapshot.Derived, err = ops.derived(ctx, tx, service.Paths.DerivedDB); err != nil {
 		return snapshot, err
 	}
-	if err = ops.counts(ctx, derivedDB, &snapshot); err != nil {
+	if err = ops.counts(ctx, tx, &snapshot); err != nil {
 		return snapshot, err
 	}
-	if snapshot.Embedding, err = ops.embeddings(ctx, derivedDB); err != nil {
+	if snapshot.Embedding, err = ops.embeddings(ctx, tx); err != nil {
+		return snapshot, err
+	}
+	if repoBefore != "" {
+		repoAfter, err = ops.repoRevision(ctx, service.Paths)
+		if err != nil {
+			return snapshot, err
+		}
+		if repoAfter != repoBefore {
+			return snapshot, errLiveMetricsChangedSnapshot
+		}
+	}
+	if err = tx.Commit(); err != nil {
 		return snapshot, err
 	}
 	if service.SemanticWorker != nil {
@@ -192,7 +296,14 @@ func collectLiveMetricsWith(ctx context.Context, service *Runtime, ops liveMetri
 	return snapshot, nil
 }
 
-func collectIndexStateMetrics(ctx context.Context, db *sql.DB) (derived.IndexState, error) {
+func collectMainRevisionMetrics(_ context.Context, paths RuntimePaths) (string, error) {
+	if paths.Repository.BareDir == "" {
+		return "", nil
+	}
+	return repository.GetMainRevision(paths.Repository)
+}
+
+func collectIndexStateMetrics(ctx context.Context, db liveMetricsQueryer) (derived.IndexState, error) {
 	rows, err := db.QueryContext(ctx, "SELECT key,value FROM index_state WHERE key IN ('repo_revision','index_revision','schema_version','status')")
 	if err != nil {
 		return derived.IndexState{}, err
@@ -232,8 +343,8 @@ type metricsRows interface {
 	Close() error
 }
 
-func collectEmbeddingMetrics(ctx context.Context, db *sql.DB) (map[string]int64, error) {
-	rows, err := db.QueryContext(ctx, "SELECT status,COUNT(*) FROM concept_embeddings GROUP BY status")
+func collectEmbeddingMetrics(ctx context.Context, db liveMetricsQueryer) (map[string]int64, error) {
+	rows, err := db.QueryContext(ctx, `SELECT COALESCE(e.status,'missing'),COUNT(*) FROM concepts AS c LEFT JOIN concept_embeddings AS e ON e.concept_id=c.id GROUP BY COALESCE(e.status,'missing')`)
 	if err != nil {
 		return nil, err
 	}
@@ -241,7 +352,7 @@ func collectEmbeddingMetrics(ctx context.Context, db *sql.DB) (map[string]int64,
 }
 
 func readEmbeddingMetrics(rows metricsRows) (map[string]int64, error) {
-	result := map[string]int64{"ready": 0, "pending": 0, "stale": 0, "error": 0}
+	result := map[string]int64{"ready": 0, "pending": 0, "stale": 0, "error": 0, "missing": 0, "other": 0}
 	for rows.Next() {
 		var status string
 		var count int64
@@ -249,7 +360,12 @@ func readEmbeddingMetrics(rows metricsRows) (map[string]int64, error) {
 			_ = rows.Close()
 			return nil, err
 		}
-		result[status] = count
+		switch status {
+		case "ready", "pending", "stale", "error", "missing":
+			result[status] += count
+		default:
+			result["other"] += count
+		}
 	}
 	if err := rows.Err(); err != nil {
 		_ = rows.Close()
@@ -282,11 +398,13 @@ func openReadOnlyMetricsDBWith(ctx context.Context, path string, open func(strin
 	return db, nil
 }
 
-func collectSQLiteMetrics(db *sql.DB, path string) (sqliteMetrics, error) {
-	return collectSQLiteMetricsWith(db, path, os.Stat, func(query string, target *int64) error { return db.QueryRow(query).Scan(target) })
+func collectSQLiteMetrics(ctx context.Context, db liveMetricsQueryer, path string) (sqliteMetrics, error) {
+	return collectSQLiteMetricsWith(ctx, path, os.Stat, func(ctx context.Context, query string, target *int64) error {
+		return db.QueryRowContext(ctx, query).Scan(target)
+	})
 }
 
-func collectSQLiteMetricsWith(_ *sql.DB, path string, stat func(string) (fs.FileInfo, error), query func(string, *int64) error) (sqliteMetrics, error) {
+func collectSQLiteMetricsWith(ctx context.Context, path string, stat func(string) (fs.FileInfo, error), query func(context.Context, string, *int64) error) (sqliteMetrics, error) {
 	var result sqliteMetrics
 	for suffix, target := range map[string]*int64{"": &result.MainBytes, "-wal": &result.WALBytes, "-shm": &result.SHMBytes} {
 		info, err := stat(path + suffix)
@@ -296,10 +414,10 @@ func collectSQLiteMetricsWith(_ *sql.DB, path string, stat func(string) (fs.File
 			return result, err
 		}
 	}
-	if err := query("PRAGMA page_count", &result.Pages); err != nil {
+	if err := query(ctx, "PRAGMA page_count", &result.Pages); err != nil {
 		return result, err
 	}
-	if err := query("PRAGMA freelist_count", &result.FreePages); err != nil {
+	if err := query(ctx, "PRAGMA freelist_count", &result.FreePages); err != nil {
 		return result, err
 	}
 	return result, nil
@@ -329,31 +447,23 @@ func renderLivePrometheus(snapshot liveMetricsSnapshot, success bool, elapsed fl
 	lines = append(lines,
 		"# HELP memento_build_info Memento build information.",
 		"# TYPE memento_build_info gauge",
-		fmt.Sprintf("memento_build_info{version=%q} 1", snapshot.ServiceVersion),
+		fmt.Sprintf("memento_build_info{version=\"%s\"} 1", prometheusLabelValue(snapshot.ServiceVersion)),
 		"# HELP memento_index_ready Whether the derived index reports ready.",
 		"# TYPE memento_index_ready gauge",
 		fmt.Sprintf("memento_index_ready %d", boolean(snapshot.IndexReady)),
 		"# HELP memento_index_stale Whether the derived index revision differs from the repository revision.",
 		"# TYPE memento_index_stale gauge",
 		fmt.Sprintf("memento_index_stale %d", boolean(snapshot.IndexStale)),
-		"# HELP memento_index_revision_info Repository and derived index revisions.",
-		"# TYPE memento_index_revision_info gauge",
-		fmt.Sprintf("memento_index_revision_info{repo_revision=%q,index_revision=%q} 1", snapshot.RepoRevision, snapshot.IndexRevision),
 		"# HELP memento_index_rows Number of rows in core derived-index tables.",
 		"# TYPE memento_index_rows gauge",
 		fmt.Sprintf("memento_index_rows{table=\"concepts\"} %d", snapshot.Concepts),
 		fmt.Sprintf("memento_index_rows{table=\"links\"} %d", snapshot.Links),
 		fmt.Sprintf("memento_index_rows{table=\"graph_metrics\"} %d", snapshot.GraphMetrics),
-		"# HELP memento_embedding_rows Number of embedding rows by state.",
+		"# HELP memento_embedding_rows Number of concepts by embedding refresh state.",
 		"# TYPE memento_embedding_rows gauge",
 	)
-	statuses := make([]string, 0, len(snapshot.Embedding))
-	for status := range snapshot.Embedding {
-		statuses = append(statuses, status)
-	}
-	sort.Strings(statuses)
-	for _, status := range statuses {
-		lines = append(lines, fmt.Sprintf("memento_embedding_rows{status=%q} %d", status, snapshot.Embedding[status]))
+	for _, status := range []string{"ready", "pending", "stale", "error", "missing", "other"} {
+		lines = append(lines, fmt.Sprintf("memento_embedding_rows{status=\"%s\"} %d", prometheusLabelValue(status), snapshot.Embedding[status]))
 	}
 	lines = append(lines,
 		"# HELP memento_sqlite_file_bytes SQLite main, WAL, and shared-memory file sizes.",
@@ -364,9 +474,9 @@ func renderLivePrometheus(snapshot liveMetricsSnapshot, success bool, elapsed fl
 		data sqliteMetrics
 	}{{"control", snapshot.Control}, {"derived", snapshot.Derived}} {
 		lines = append(lines,
-			fmt.Sprintf("memento_sqlite_file_bytes{database=%q,kind=\"main\"} %d", database.name, database.data.MainBytes),
-			fmt.Sprintf("memento_sqlite_file_bytes{database=%q,kind=\"wal\"} %d", database.name, database.data.WALBytes),
-			fmt.Sprintf("memento_sqlite_file_bytes{database=%q,kind=\"shm\"} %d", database.name, database.data.SHMBytes),
+			fmt.Sprintf("memento_sqlite_file_bytes{database=\"%s\",kind=\"main\"} %d", prometheusLabelValue(database.name), database.data.MainBytes),
+			fmt.Sprintf("memento_sqlite_file_bytes{database=\"%s\",kind=\"wal\"} %d", prometheusLabelValue(database.name), database.data.WALBytes),
+			fmt.Sprintf("memento_sqlite_file_bytes{database=\"%s\",kind=\"shm\"} %d", prometheusLabelValue(database.name), database.data.SHMBytes),
 		)
 	}
 	lines = append(lines,
@@ -376,13 +486,13 @@ func renderLivePrometheus(snapshot liveMetricsSnapshot, success bool, elapsed fl
 		fmt.Sprintf("memento_sqlite_pages{database=\"control\",state=\"free\"} %d", snapshot.Control.FreePages),
 		fmt.Sprintf("memento_sqlite_pages{database=\"derived\",state=\"allocated\"} %d", snapshot.Derived.Pages),
 		fmt.Sprintf("memento_sqlite_pages{database=\"derived\",state=\"free\"} %d", snapshot.Derived.FreePages),
-		"# HELP memento_embedding_worker Worker state and completed embeddings.",
+		"# HELP memento_embedding_worker Worker state and completed document refreshes.",
 		"# TYPE memento_embedding_worker gauge",
 		fmt.Sprintf("memento_embedding_worker{state=\"available\"} %d", boolean(snapshot.WorkerAvailable)),
 		fmt.Sprintf("memento_embedding_worker{state=\"alive\"} %d", boolean(snapshot.WorkerAvailable && snapshot.Worker.Alive)),
 		fmt.Sprintf("memento_embedding_worker{state=\"running\"} %d", boolean(snapshot.WorkerAvailable && snapshot.Worker.Running)),
 		fmt.Sprintf("memento_embedding_worker{state=\"pending\"} %d", boolean(snapshot.WorkerAvailable && snapshot.Worker.Pending)),
-		"# HELP memento_embedding_worker_completed_total Embeddings completed by this process.",
+		"# HELP memento_embedding_worker_completed_total Document embedding refreshes completed by this process.",
 		"# TYPE memento_embedding_worker_completed_total counter",
 		fmt.Sprintf("memento_embedding_worker_completed_total %d", snapshot.Worker.Completed),
 		"# HELP memento_index_operations_total Derived-index operations by operation and result.",
@@ -391,8 +501,8 @@ func renderLivePrometheus(snapshot liveMetricsSnapshot, success bool, elapsed fl
 	for _, operation := range []string{"rebuild", "update"} {
 		value := snapshot.IndexOperations[operation]
 		lines = append(lines,
-			fmt.Sprintf("memento_index_operations_total{operation=%q,result=\"success\"} %d", operation, value.Success),
-			fmt.Sprintf("memento_index_operations_total{operation=%q,result=\"error\"} %d", operation, value.Error),
+			fmt.Sprintf("memento_index_operations_total{operation=\"%s\",result=\"success\"} %d", prometheusLabelValue(operation), value.Success),
+			fmt.Sprintf("memento_index_operations_total{operation=\"%s\",result=\"error\"} %d", prometheusLabelValue(operation), value.Error),
 		)
 	}
 	lines = append(lines,
@@ -413,4 +523,9 @@ func renderLivePrometheus(snapshot liveMetricsSnapshot, success bool, elapsed fl
 		"",
 	)
 	return strings.Join(lines, "\n")
+}
+
+func prometheusLabelValue(value string) string {
+	replacer := strings.NewReplacer("\\", "\\\\", "\n", "\\n", "\"", "\\\"")
+	return replacer.Replace(value)
 }

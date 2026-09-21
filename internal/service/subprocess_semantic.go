@@ -17,6 +17,7 @@ import (
 
 	"github.com/rcarmo/memento/internal/derived"
 	"github.com/rcarmo/memento/internal/embedding"
+	"github.com/rcarmo/memento/internal/gte"
 )
 
 type subprocessSemanticClient struct {
@@ -65,6 +66,14 @@ func readerSHA256(reader io.Reader) (string, error) {
 	}
 	return fmt.Sprintf("%x", digest.Sum(nil)), nil
 }
+func (c *subprocessSemanticClient) Chunk(text string, tokens, overlap, chars int) ([]string, error) {
+	tokenizer, err := gte.LoadTokenizer(c.ModelPath)
+	if err != nil {
+		return nil, err
+	}
+	return tokenizer.Chunk(text, tokens, overlap, chars)
+}
+
 func (c *subprocessSemanticClient) ModelInfo() derived.SemanticModelInfo { return c.Info }
 func (c *subprocessSemanticClient) Embed(text string) ([]float32, error) {
 	values, err := c.EmbedBatch([]string{text})
@@ -74,6 +83,9 @@ func (c *subprocessSemanticClient) Embed(text string) ([]float32, error) {
 	return values[0], nil
 }
 func (c *subprocessSemanticClient) EmbedBatch(texts []string) ([][]float32, error) {
+	return c.EmbedBatchContext(context.Background(), texts)
+}
+func (c *subprocessSemanticClient) EmbedBatchContext(parent context.Context, texts []string) ([][]float32, error) {
 	if len(texts) == 0 {
 		return [][]float32{}, nil
 	}
@@ -90,7 +102,7 @@ func (c *subprocessSemanticClient) EmbedBatch(texts []string) ([][]float32, erro
 	wire := make([]byte, 4+len(raw))
 	binary.LittleEndian.PutUint32(wire, uint32(len(raw)))
 	copy(wire[4:], raw)
-	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout)
+	ctx, cancel := context.WithTimeout(parent, c.Timeout)
 	defer cancel()
 	var stdout, stderr []byte
 	var err error

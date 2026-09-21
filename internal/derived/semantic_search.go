@@ -16,6 +16,7 @@ type SemanticSearchOptions struct {
 	SearchOptions
 	Hybrid        bool
 	MaxCandidates int
+	model         *SemanticModelInfo
 }
 type semanticRow struct {
 	result SearchResult
@@ -27,7 +28,20 @@ func (i *Index) SearchSemantic(ctx context.Context, policy access.EffectivePolic
 	if client == nil {
 		return page, errors.New("semantic search embedding client is unavailable")
 	}
-	err = i.withCore(ctx, false, func(s ContentStore) error {
+	var chunkQuery []float32
+	_, chunked := client.(SemanticChunkClient)
+	if chunked {
+		result := embedChunkBatch(ctx, client, []string{options.Query})[0]
+		if result.Err != nil {
+			return page, result.Err
+		}
+		chunkQuery = result.Vector
+	}
+	withStore := func(fn func(ContentStore) error) error { return i.withCore(ctx, false, fn) }
+	if chunked {
+		withStore = func(fn func(ContentStore) error) error { return i.withChunkStore(ctx, fn) }
+	}
+	err = withStore(func(s ContentStore) error {
 		offset, e := decodeOffset(options.Cursor)
 		if e != nil {
 			return e
@@ -41,28 +55,45 @@ func (i *Index) SearchSemantic(ctx context.Context, policy access.EffectivePolic
 		if e != nil {
 			return e
 		}
-		queryVector, e := client.Embed(options.Query)
-		if e != nil {
-			return e
+		queryVector := chunkQuery
+		if !chunked {
+			queryVector, e = client.Embed(options.Query)
+			if e != nil {
+				return e
+			}
 		}
 		info := client.ModelInfo()
 		if _, _, e = validateSemanticVector(queryVector, info.Dimensions); e != nil {
 			return e
 		}
+		if _, chunked := client.(SemanticChunkClient); chunked {
+			options.model = &info
+		}
 		rows, e := semanticCandidateRows(ctx, s.DB, policy, options)
 		if e != nil {
 			return e
 		}
+		queryNorm, _ := semanticNorm(queryVector) // vector was validated above
+		rows, e = bestSemanticChunks(ctx, s.DB, rows, queryVector, queryNorm, info.Dimensions)
+		if e != nil {
+			return e
+		}
 		candidates := make([]SemanticCandidate, 0, len(rows))
+		best := map[string]SemanticCandidate{}
 		byID := map[string]SearchResult{}
-		queryNorm, _ := semanticNorm(queryVector) // validateSemanticVector already proved this finite and nonzero
 		for _, row := range rows {
 			cosine, e := semanticBlobCosine(queryVector, queryNorm, row.blob, row.norm, info.Dimensions)
 			if e != nil {
 				return e
 			}
-			candidates = append(candidates, SemanticCandidate{row.result.ConceptID, row.result.Path, cosine})
-			byID[row.result.ConceptID] = row.result
+			previous, found := best[row.result.ConceptID]
+			if !found || cosine > previous.Cosine {
+				best[row.result.ConceptID] = SemanticCandidate{row.result.ConceptID, row.result.Path, cosine}
+				byID[row.result.ConceptID] = row.result
+			}
+		}
+		for _, candidate := range best {
+			candidates = append(candidates, candidate)
 		}
 		lexicalIDs := []string{}
 		if options.Hybrid {
@@ -98,6 +129,10 @@ func semanticCandidateRows(ctx context.Context, db executor, policy access.Effec
 	scope, args := authorizedPrefixes(policy, "e")
 	conditions := []string{"e.status = 'ready'", scope}
 	parameters := append([]any{}, args...)
+	if options.model != nil {
+		conditions = append(conditions, "e.model_id = ?", "e.model_revision = ?", "e.dimensions = ?")
+		parameters = append(parameters, options.model.ModelID, options.model.Revision, options.model.Dimensions)
+	}
 	for _, filter := range []struct {
 		field string
 		value *string
@@ -122,6 +157,11 @@ func semanticCandidateRows(ctx context.Context, db executor, policy access.Effec
 	maxCandidates := options.MaxCandidates
 	if maxCandidates < 1 {
 		maxCandidates = 200
+	}
+	// Chunk-aware retrieval scores all authorized concepts before ranking.
+	// The legacy adapter keeps its captured candidate-limit contract.
+	if options.model != nil {
+		maxCandidates = -1
 	}
 	parameters = append(parameters, maxCandidates)
 	rows, err := db.QueryContext(ctx, `SELECT c.id,c.path,c.title,c.type,c.status,c.tags_json,c.title,e.embedding_blob,e.embedding_norm FROM concept_embeddings e JOIN concepts c ON c.id=e.concept_id WHERE `+strings.Join(conditions, " AND ")+` ORDER BY e.path,c.id LIMIT ?`, parameters...)

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"crypto/sha256"
 	"fmt"
 	"os"
@@ -55,6 +56,16 @@ func loadGTESemanticClient(path, modelID string, dimensions, maxBatch, maxInput 
 	digest := fmt.Sprintf("%x", sha256.Sum256(raw))
 	return &GTESemanticClient{Model: model, Info: derived.SemanticModelInfo{ModelID: modelID, Dimensions: dimensions, Revision: digest}, MaxBatch: maxBatch, MaxInputChars: maxInput}, nil
 }
+func (c *GTESemanticClient) Chunk(text string, tokens, overlap, chars int) ([]string, error) {
+	model, ok := c.Model.(interface {
+		Chunk(string, int, int, int) ([]string, error)
+	})
+	if !ok {
+		return nil, fmt.Errorf("embedding model does not support chunking")
+	}
+	return model.Chunk(text, tokens, overlap, chars)
+}
+
 func (c *GTESemanticClient) ModelInfo() derived.SemanticModelInfo { return c.Info }
 func (c *GTESemanticClient) Embed(text string) ([]float32, error) {
 	if c == nil || c.Model == nil {
@@ -66,6 +77,9 @@ func (c *GTESemanticClient) Embed(text string) ([]float32, error) {
 	return c.Model.Embed(text)
 }
 func (c *GTESemanticClient) EmbedBatch(texts []string) ([][]float32, error) {
+	return c.EmbedBatchContext(context.Background(), texts)
+}
+func (c *GTESemanticClient) EmbedBatchContext(ctx context.Context, texts []string) ([][]float32, error) {
 	if c == nil || c.Model == nil {
 		return nil, fmt.Errorf("embedding model is unavailable")
 	}
@@ -77,5 +91,5 @@ func (c *GTESemanticClient) EmbedBatch(texts []string) ([][]float32, error) {
 	maxBatch := c.MaxBatch
 	// Service limits are Unicode characters; the low-level GTE API retains its
 	// historical byte-limit option, which must not be reused for this setting.
-	return c.Model.EmbedBatch(texts, gte.BatchOptions{MaxBatch: &maxBatch}, nil)
+	return c.Model.EmbedBatch(texts, gte.BatchOptions{MaxBatch: &maxBatch}, func(string) error { return ctx.Err() })
 }

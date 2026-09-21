@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"strings"
 	"testing"
@@ -12,7 +13,7 @@ import (
 
 func TestLiveMetricsHTTP(t *testing.T) {
 	snapshot := liveMetricsSnapshot{
-		ServiceVersion: "1.0.3", RepoRevision: "repo\nrevision", IndexRevision: "index\\revision", IndexReady: true, IndexStale: true,
+		ServiceVersion: "1.0.3\"\n\\", RepoRevision: "repo\nrevision", IndexRevision: "index\\revision", IndexReady: true, IndexStale: true,
 		Concepts: 2, Links: 3, GraphMetrics: 2, Embedding: map[string]int64{"ready": 2, "error": 1},
 		Control:         sqliteMetrics{MainBytes: 10, WALBytes: 11, SHMBytes: 12, Pages: 13, FreePages: 14},
 		Derived:         sqliteMetrics{MainBytes: 20, WALBytes: 21, SHMBytes: 22, Pages: 23, FreePages: 24},
@@ -42,16 +43,18 @@ func TestLiveMetricsHTTP(t *testing.T) {
 	}
 	text := string(response.Body)
 	for _, want := range []string{
-		"memento_metrics_collect_success 1", "memento_metrics_collect_duration_seconds 0.25", `memento_build_info{version="1.0.3"} 1`,
-		`memento_index_revision_info{repo_revision="repo\nrevision",index_revision="index\\revision"} 1`, `memento_index_rows{table="links"} 3`,
-		`memento_embedding_rows{status="error"} 1`, `memento_sqlite_file_bytes{database="derived",kind="wal"} 21`,
-		`memento_sqlite_pages{database="control",state="free"} 14`, `memento_embedding_worker{state="running"} 1`,
+		"memento_metrics_collect_success 1", "memento_metrics_collect_duration_seconds 0.25", `memento_build_info{version="1.0.3\"\n\\"} 1`,
+		`memento_index_rows{table="links"} 3`, `memento_embedding_rows{status="ready"} 2`, `memento_embedding_rows{status="error"} 1`, `memento_embedding_rows{status="missing"} 0`, `memento_embedding_rows{status="other"} 0`,
+		`memento_sqlite_file_bytes{database="derived",kind="wal"} 21`, `memento_sqlite_pages{database="control",state="free"} 14`, `memento_embedding_worker{state="running"} 1`,
 		"memento_embedding_worker_completed_total 7", `memento_index_operations_total{operation="rebuild",result="error"} 2`,
 		`memento_index_operation_last_duration_seconds{operation="update"} 6`, `memento_go_memory_bytes{kind="alloc"} 30`, "memento_go_goroutines 33",
 	} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("missing %q in:\n%s", want, text)
 		}
+	}
+	if strings.Contains(text, "memento_index_revision_info") {
+		t.Fatalf("unexpected live revision labels:\n%s", text)
 	}
 }
 
@@ -67,6 +70,26 @@ func TestLiveMetricsHTTPCollectionFailure(t *testing.T) {
 	}
 }
 
+func TestLiveMetricsHTTPAdmissionBound(t *testing.T) {
+	metrics := NewRuntimeMetrics()
+	release, err := metrics.admitScrape(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer release()
+	calls := 0
+	handler := LiveMetricsHTTP{Runtime: &Runtime{Metrics: metrics}, Collect: func(context.Context, *Runtime) (liveMetricsSnapshot, error) {
+		calls++
+		return liveMetricsSnapshot{}, nil
+	}}
+	started := time.Now()
+	response, err := handler.Handle(t.Context(), "GET", liveMetricsPath, nil, nil, "")
+	elapsed := time.Since(started)
+	if err != nil || response.Status != 200 || calls != 0 || !strings.Contains(string(response.Body), "memento_metrics_collect_success 0") || elapsed > 500*time.Millisecond {
+		t.Fatal(response, calls, elapsed, err)
+	}
+}
+
 func TestCollectLiveMetrics(t *testing.T) {
 	ctx := context.Background()
 	var config RuntimeConfig
@@ -77,7 +100,7 @@ func TestCollectLiveMetrics(t *testing.T) {
 	}
 	defer service.Close(ctx)
 	snapshot, err := collectLiveMetrics(ctx, service)
-	if err != nil || !snapshot.IndexReady || snapshot.IndexStale || snapshot.Control.MainBytes == 0 || snapshot.Derived.MainBytes == 0 || snapshot.Embedding["ready"] != 0 || snapshot.Goroutines < 1 {
+	if err != nil || !snapshot.IndexReady || snapshot.IndexStale || snapshot.Control.MainBytes == 0 || snapshot.Derived.MainBytes == 0 || snapshot.Embedding["ready"] != 0 || snapshot.Embedding["missing"] != 0 || snapshot.Goroutines < 1 {
 		t.Fatal(snapshot, err)
 	}
 	if _, err = collectLiveMetrics(ctx, nil); err == nil {
@@ -109,5 +132,62 @@ func TestRuntimeMetrics(t *testing.T) {
 	snapshot := metrics.IndexSnapshot()
 	if snapshot["rebuild"].Success != 1 || snapshot["rebuild"].Error != 1 || snapshot["rebuild"].LastDuration != 2*time.Second || snapshot["update"].Success != 1 {
 		t.Fatal(snapshot)
+	}
+}
+
+func TestLiveMetricsGateInitialization(t *testing.T) {
+	var nilMetrics *RuntimeMetrics
+	if nilMetrics.ensureScrapeGate() != nil {
+		t.Fatal("nil")
+	}
+	empty := &RuntimeMetrics{}
+	if empty.ensureScrapeGate() == nil {
+		t.Fatal("gate")
+	}
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	if _, err := nilMetrics.admitScrape(ctx); err != context.Canceled {
+		t.Fatal(err)
+	}
+	if _, err := collectMainRevisionMetrics(t.Context(), RuntimePaths{}); err != nil {
+		t.Fatal(err)
+	}
+}
+func TestLiveMetricsSnapshotFailures(t *testing.T) {
+	for _, failure := range []string{"repo-before", "begin", "repo-after", "changed", "commit"} {
+		service := auditMetricsRuntime(t)
+		ops := defaultLiveMetricsOps()
+		switch failure {
+		case "repo-before":
+			ops.repoRevision = func(context.Context, RuntimePaths) (string, error) { return "", errors.New("repo") }
+		case "begin":
+			ops.openDerived = func(context.Context, string) (*sql.DB, error) {
+				db, _ := sql.Open("sqlite", ":memory:")
+				_ = db.Close()
+				return db, nil
+			}
+		case "repo-after", "changed":
+			calls := 0
+			ops.repoRevision = func(context.Context, RuntimePaths) (string, error) {
+				calls++
+				if calls == 1 {
+					return "r", nil
+				}
+				if failure == "changed" {
+					return "new", nil
+				}
+				return "", errors.New("repo")
+			}
+		case "commit":
+			original := ops.embeddings
+			ops.embeddings = func(ctx context.Context, q liveMetricsQueryer) (map[string]int64, error) {
+				data, err := original(ctx, q)
+				_ = q.(*sql.Tx).Rollback()
+				return data, err
+			}
+		}
+		if _, err := collectLiveMetricsWith(t.Context(), service, ops); err == nil {
+			t.Fatal(failure)
+		}
 	}
 }

@@ -39,6 +39,12 @@ type SemanticWorker struct {
 	lastError, pause, current *string
 	completed                 int
 	started, lastCompleted    time.Time
+	cancel                    context.CancelFunc
+	generation                uint64
+	pathGeneration            map[string]uint64
+	fullGeneration            uint64
+	ctx                       context.Context
+	stop                      context.CancelFunc
 }
 
 func NewSemanticWorker(index SemanticRefreshIndex, client SemanticClient, config SemanticRefreshConfig) *SemanticWorker {
@@ -49,6 +55,7 @@ func NewProgressiveSemanticWorker(index SemanticRefreshIndex, client SemanticCli
 		now = time.Now
 	}
 	w := &SemanticWorker{Index: index, Client: client, Config: config, Policy: policy, IdleSeconds: idle, CPUUsage: cpu, Now: now, wake: make(chan struct{}, 1), done: make(chan struct{})}
+	w.ctx, w.stop = context.WithCancel(context.Background())
 	w.started = now()
 	if policy.Enabled {
 		reason := "startup"
@@ -64,14 +71,20 @@ func (w *SemanticWorker) Enqueue(root, revision string, paths []string, full boo
 		return false
 	}
 	w.root, w.revision = root, revision
+	w.generation++
+	if w.pathGeneration == nil {
+		w.pathGeneration = map[string]uint64{}
+	}
 	if full {
 		w.full = true
+		w.fullGeneration = w.generation
 	}
 	seen := map[string]bool{}
 	for _, path := range w.paths {
 		seen[path] = true
 	}
 	for _, path := range paths {
+		w.pathGeneration[path] = w.generation
 		if !seen[path] {
 			w.paths = append(w.paths, path)
 			seen[path] = true
@@ -103,6 +116,10 @@ func (w *SemanticWorker) Close() {
 		return
 	}
 	w.closed = true
+	w.stop()
+	if w.cancel != nil {
+		w.cancel()
+	}
 	w.paths = nil
 	w.full = false
 	select {
@@ -138,6 +155,8 @@ func (w *SemanticWorker) loop() {
 			return
 		}
 		revision := w.revision
+		generation := w.generation
+		fullGeneration := w.fullGeneration
 		var path string
 		if len(w.paths) > 0 {
 			path = w.paths[0]
@@ -149,22 +168,33 @@ func (w *SemanticWorker) loop() {
 			<-w.wake
 			continue
 		}
-		if path == "*" {
-			pending, err := w.Index.PendingEmbeddingPaths(context.Background(), 1)
+		fromFull := path == "*"
+		if fromFull {
+			pending, err := w.Index.PendingEmbeddingPaths(w.ctx, 1)
 			if err != nil {
 				w.fail(err, "database-busy")
-				time.Sleep(time.Millisecond)
+				w.waitWake(250 * time.Millisecond)
 				continue
 			}
 			if len(pending) == 0 {
 				w.mu.Lock()
-				w.full = false
+				if w.fullGeneration == fullGeneration {
+					w.full = false
+				}
 				w.mu.Unlock()
 				continue
 			}
 			path = pending[0]
 		}
 		w.mu.Lock()
+		if w.closed {
+			w.mu.Unlock()
+			return
+		}
+		if w.generation != generation {
+			w.mu.Unlock()
+			continue
+		}
 		if reason, wait := w.pauseForWork(); reason != "" {
 			w.pause = &reason
 			w.mu.Unlock()
@@ -174,9 +204,17 @@ func (w *SemanticWorker) loop() {
 		w.running = true
 		w.current = &path
 		w.pause = nil
+		ctx, cancel := context.WithCancel(context.Background())
+		w.cancel = cancel
+		config := w.Config
+		if w.Policy.Enabled {
+			config.BeforeBatch = w.admitChunkBatch
+		}
 		w.mu.Unlock()
-		err := w.Index.RefreshEmbeddingPaths(context.Background(), revision, []string{path}, w.Config, w.Client)
+		err := w.Index.RefreshEmbeddingPaths(ctx, revision, []string{path}, config, w.Client)
+		cancel()
 		w.mu.Lock()
+		w.cancel = nil
 		w.running = false
 		w.current = nil
 		if err != nil {
@@ -190,24 +228,52 @@ func (w *SemanticWorker) loop() {
 				reason = "database-busy"
 			}
 			w.pause = &reason
-			if !transientSemanticError(err) && len(w.paths) > 0 && w.paths[0] == path {
-				w.paths = w.paths[1:]
+			if !transientSemanticError(err) {
+				if fromFull && w.fullGeneration == fullGeneration {
+					w.full = false
+				}
+				if len(w.paths) > 0 && w.paths[0] == path && w.pathGeneration[path] <= generation {
+					w.paths = w.paths[1:]
+					delete(w.pathGeneration, path)
+				}
 			}
 		} else {
 			w.lastError = nil
 			w.pause = nil
 			w.completed++
 			w.lastCompleted = w.Now()
-			if len(w.paths) > 0 && w.paths[0] == path {
+			if len(w.paths) > 0 && w.paths[0] == path && w.pathGeneration[path] <= generation {
 				w.paths = w.paths[1:]
+				delete(w.pathGeneration, path)
 			}
 		}
 		w.mu.Unlock()
-		if err != nil {
-			time.Sleep(time.Millisecond)
+		if err != nil && transientSemanticError(err) {
+			w.waitWake(250 * time.Millisecond)
 		}
 	}
 }
+
+// admitChunkBatch rechecks idle/CPU/pacing between chunks of a long document.
+func (w *SemanticWorker) admitChunkBatch(ctx context.Context) error {
+	w.mu.Lock()
+	w.lastCompleted = w.Now()
+	w.mu.Unlock()
+	for {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		w.mu.Lock()
+		reason, wait := w.pauseForWork()
+		w.pause = &reason
+		w.mu.Unlock()
+		if reason == "" {
+			return nil
+		}
+		w.waitWake(wait)
+	}
+}
+
 func (w *SemanticWorker) pauseForWork() (string, time.Duration) {
 	if !w.Policy.Enabled {
 		return "", 0

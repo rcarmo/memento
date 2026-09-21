@@ -61,6 +61,18 @@ The legacy FFI fields and `model_id` value are retained so the mounted productio
 
 Authorisation filters are applied before semantic scoring, so hidden concepts cannot influence visible scores or rank order. The optimized scorer reads vectors directly from SQLite blobs, uses their validated stored norms, and has an enforced zero-allocation kernel budget.
 
+## Document chunks (unreleased)
+
+The working tree embeds the complete title, description and body in windows of at most 384 content tokens, measured with the packaged GTE WordPiece vocabulary. Each request also keeps the 4,096-Unicode-character guard. Ordinary windows overlap by up to 64 tokens, rounded to basic-token boundaries. Paragraph boundaries are preferred; headings start clean sections without overlap from the preceding section. The model has 512 positions including CLS/SEP.
+
+Chunks are stored in an additive `concept_embedding_chunks` table. The first chunk remains in `concept_embeddings` for previous binaries and graph views. Search checks model identity and permissions, uses the highest chunk cosine per concept, and returns one result per concept. Chunk-aware semantic search scores all authorised concepts before ranking; it does not discard later paths at the old candidate cap. Chunk snippets use the existing bounded snippet format.
+
+A full-document fingerprint invalidates chunks on tail-only edits. Inference runs outside the index lock and SQLite transaction; publication rechecks document content and revision, then replaces a complete chunk set atomically. Failed refresh of an unchanged ready document retains its last good vectors. Deleting its parent embedding also deletes chunk text/vectors, including when an older binary performs the deletion.
+
+When a full refresh is requested, legacy single-vector rows and mismatched model/policy identities are eligible for chunk conversion. The policy identity includes model ID/digest/dimensions, chunk algorithm version, token budget, overlap and character guard. A terminal failure stops the current full run with an error; an explicit selected-path retry is required for an unchanged error row. Transient database failures back off and remain queued. Re-enqueued paths and full requests carry generations so older work cannot discard newer requests. `refresh_on_startup: false` still prevents automatic re-embedding at startup. Progressive workers recheck idle/CPU/pacing between batches and cancel in-flight subprocess inference on shutdown. No production refresh has been triggered for this change.
+
+Local tests include the actual GTE model, subprocess execution, tail retrieval, Unicode/token budgets, SQL fault injection, cancellation, model/policy invalidation, concurrent enqueue generations, and reopening disposable state with the actual `v1.0.2` binary. All eleven audit reproductions now pass; independent re-review found no remaining blocker in the reviewed worker, chunk publication and metrics paths. Production activation still requires the release and deployment gates.
+
 ## Progressive generation
 
 On shared or low-power hosts, progressive generation derives one missing or stale path at a time from `derived.sqlite`. It waits through startup grace, recent interactive activity, sampled CPU utilization and configured pacing. Manual selected/visible/full refresh requests enter the same queue and receive priority without bypassing those gates.

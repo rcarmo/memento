@@ -380,7 +380,7 @@ func (s ContentStore) markEmbeddingStaleness(ctx context.Context, db executor, e
 			n = max(0, len(runes)+n)
 		}
 		digest := sha256.Sum256([]byte(string(runes[:min(n, len(runes))])))
-		if _, err := db.ExecContext(ctx, `UPDATE concept_embeddings SET path=?,embedding_revision=?,status=CASE WHEN embedding_text_hash=? THEN status ELSE 'stale' END WHERE concept_id=?`, entry.BundlePath, revision, fmt.Sprintf("%x", digest), m.ID); err != nil {
+		if _, err := db.ExecContext(ctx, `UPDATE concept_embeddings SET path=?,embedding_revision=?,status=CASE WHEN embedding_text_hash=CASE WHEN embedding_text_hash LIKE 'chunks-v1:%' THEN ? ELSE ? END THEN status ELSE 'stale' END WHERE concept_id=?`, entry.BundlePath, revision, fullEmbeddingHash(embeddingText(m.Title, m.Description, entry.Document.Body)), fmt.Sprintf("%x", digest), m.ID); err != nil {
 			return err
 		}
 	}

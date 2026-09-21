@@ -380,101 +380,37 @@ jobs:
           Digest: \`${IMAGE_DIGEST}\`"
 
   cleanup:
-    name: Retain five releases, runs, and images
+    name: Retain releases without deleting live or rollback artifacts
     needs: release
     if: always() && needs.release.result == 'success'
     runs-on: ubuntu-24.04
     permissions:
       actions: write
       contents: write
-      packages: write
+      packages: read
     steps:
-      - name: Cleanup old releases, tags, runs, artifacts, and GHCR versions
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.1
+      - name: Validate retention policy
+        run: node --test tools/release-retention.test.cjs
+      - name: Cleanup unprotected releases and associated runs
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.RELEASES_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
-            const keep = 5;
+            const { retentionPlan } = require('./tools/release-retention.cjs');
             const { owner, repo } = context.repo;
-
-            // Runtime-model bundles and other asset releases are not application
-            // releases. Keep their immutable download URLs out of retention.
-            const releases = (await github.paginate(github.rest.repos.listReleases, {
-              owner, repo, per_page: 100,
-            })).filter(release => /^v\d+\.\d+\.\d+(?:[-+].*)?$/.test(release.tag_name));
-            releases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            for (const release of releases.slice(keep)) {
-              core.info(`Deleting release and tag ${release.tag_name}`);
-              await github.rest.repos.deleteRelease({ owner, repo, release_id: release.id });
-              if (release.tag_name) {
-                try {
-                  await github.rest.git.deleteRef({ owner, repo, ref: `tags/${release.tag_name}` });
-                } catch (error) {
-                  if (error.status !== 404) core.warning(`Could not delete tag ${release.tag_name}: ${error.message}`);
-                }
-              }
+            const releases = await github.paginate(github.rest.repos.listReleases, {owner, repo, per_page: 100});
+            const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {owner, repo, workflow_id: 'release.yml', per_page: 100});
+            const plan = retentionPlan(releases, runs);
+            core.info(JSON.stringify(plan));
+            for (const id of plan.releaseIDs) {
+              await github.rest.repos.deleteRelease({owner, repo, release_id: id});
             }
-
-            const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
-              owner, repo, workflow_id: 'release.yml', per_page: 100,
-            });
-            runs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            for (const run of runs.slice(keep)) {
-              const artifacts = await github.paginate(
-                github.rest.actions.listWorkflowRunArtifacts,
-                { owner, repo, run_id: run.id, per_page: 100 },
-              );
-              for (const artifact of artifacts.filter(a => !a.expired)) {
-                try {
-                  await github.rest.actions.deleteArtifact({ owner, repo, artifact_id: artifact.id });
-                } catch (error) {
-                  core.warning(`Could not delete release artifact ${artifact.id}: ${error.message}`);
-                }
-              }
-              try {
-                await github.rest.actions.deleteWorkflowRun({ owner, repo, run_id: run.id });
-              } catch (error) {
-                core.warning(`Could not delete workflow run ${run.id}: ${error.message}`);
-              }
+            for (const tag of plan.tags) {
+              try { await github.rest.git.deleteRef({owner, repo, ref: 'tags/' + tag}); }
+              catch (error) { if (error.status !== 404) throw error; }
             }
-
-            const ownerInfo = await github.rest.users.getByUsername({ username: owner });
-            const isOrg = ownerInfo.data.type === 'Organization';
-            const ownerArgs = isOrg ? { org: owner } : { username: owner };
-            const listVersions = isOrg
-              ? github.rest.packages.getAllPackageVersionsForPackageOwnedByOrg
-              : github.rest.packages.getAllPackageVersionsForPackageOwnedByUser;
-            const deleteVersion = isOrg
-              ? github.rest.packages.deletePackageVersionForOrg
-              : github.rest.packages.deletePackageVersionForUser;
-            try {
-              const versions = await github.paginate(listVersions, {
-                package_type: 'container', package_name: repo.toLowerCase(),
-                per_page: 100, state: 'active', ...ownerArgs,
-              });
-              const tagged = versions
-                .filter(v => v.metadata?.container?.tags?.length)
-                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-              const untagged = versions.filter(v => !v.metadata?.container?.tags?.length);
-              // Digest-first multi-arch builds create untagged platform manifests that
-              // remain referenced by the tagged index. Never reap fresh children; the
-              // seven-day grace period also covers delayed or retried release jobs.
-              const untaggedCutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-              const doomed = [
-                ...tagged.slice(keep),
-                ...untagged.filter(v => new Date(v.created_at) < untaggedCutoff),
-              ];
-              for (const version of doomed) {
-                try {
-                  await deleteVersion({
-                    package_type: 'container', package_name: repo.toLowerCase(),
-                    package_version_id: version.id, ...ownerArgs,
-                  });
-                } catch (error) {
-                  core.warning(`Could not delete GHCR version ${version.id}: ${error.message}`);
-                }
-              }
-            } catch (error) {
-              if (error.status === 404) core.info('No GHCR package exists yet.');
-              else throw error;
+            for (const id of plan.runIDs) {
+              await github.rest.actions.deleteWorkflowRun({owner, repo, run_id: id});
             }
+            core.info('All GHCR manifests retained: protected digest dependencies cannot be inferred from version age or tags.');

@@ -3,8 +3,10 @@ set -euo pipefail
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 IMAGE=${IMAGE:-memento-go:contract}
-VERSION=${VERSION:-1.0.4}
-ROLLBACK_IMAGE=${ROLLBACK_IMAGE:-ghcr.io/rcarmo/memento@sha256:98b7889043133089f4075803cda0b239094ab23642973cf1b1654199b1308bac}
+VERSION=${VERSION:-1.0.5}
+# Preserved exact NAS v1.0.2 amd64 image (config sha256:22e4bb5c...);
+# re-exported because the former registry index was deleted by retention.
+ROLLBACK_IMAGE=${ROLLBACK_IMAGE:-ghcr.io/rcarmo/memento@sha256:07cf50633a25a087242905091ca91755ae6683a88e5e0439e9b0196cb8106ea1}
 STATE=$(mktemp -d)
 ENV_FILE=$(mktemp)
 CONTAINER=memento-go-contract-$$

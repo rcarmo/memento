@@ -8,7 +8,7 @@ STATICCHECK := $(TOOLS_DIR)/staticcheck
 GOVULNCHECK := $(TOOLS_DIR)/govulncheck
 PREFIX ?= /usr/local
 DESTDIR ?=
-MEMENTO_VERSION ?= 1.0.4
+MEMENTO_VERSION ?= 1.0.5
 VERSION ?= $(MEMENTO_VERSION)
 SOURCE_DATE_EPOCH ?= 0
 GTE_MODEL_PATH ?= $(abspath models/gte/gte-small.gtemodel)
@@ -80,6 +80,8 @@ performance:
 model-test:
 	@test -n "$(GTE_MODEL_PATH)" || (echo 'Set GTE_MODEL_PATH to the digest-pinned public GTE1 model'; exit 1)
 	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(GO) test ./internal/gte -run TestRealGTEModel -count=1 -v
+	CGO_ENABLED=0 $(GO) build -o build/memento-embed-go ./cmd/memento-embed-go
+	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(GO) test ./internal/service -run TestRealChunk -count=1 -v
 	@test -n "$(NEEDLE_MODEL_PATH)" -a -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Set NEEDLE_MODEL_PATH and NEEDLE_TOKENIZER_PATH'; exit 1)
 	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./internal/needle -run 'TestRealNeedle(Model|Tokenizer|Generation|MappedGeneration)' -count=1 -v -timeout=10m
 simd-test:
@@ -115,7 +117,7 @@ cross: simd-test
 		done; \
 	done
 go-container-build:
-	docker build --build-arg VERSION="$(MEMENTO_VERSION)" --build-arg COMMIT="$$(git rev-parse HEAD)" --build-arg BUILD_DATE="$$(date -u +'%Y-%m-%dT%H:%M:%SZ')" -t memento-go:contract .
+	docker build --build-arg TARGETARCH="$$( $(GO) env GOARCH )" --build-arg VERSION="$(MEMENTO_VERSION)" --build-arg COMMIT="$$(git rev-parse HEAD)" --build-arg BUILD_DATE="$$(date -u +'%Y-%m-%dT%H:%M:%SZ')" -t memento-go:contract .
 go-container-contract: go-container-build
 	IMAGE=memento-go:contract VERSION="$(MEMENTO_VERSION)" tools/test_go_container_contract.sh
 clean:
