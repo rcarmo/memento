@@ -4,7 +4,7 @@ The state boundaries used by backup and recovery are recorded in [ADR 0003](deci
 
 Memento runs as a single authoritative writer. The daemon is the normal live interface. The local maintenance CLI is for offline or otherwise exclusive operator work.
 
-This document covers Docker, Compose, systemd and reverse-proxy deployments. The DiskStation container profile is the live shape, pinned to the immutable `v1.0.0` image digest; the generic Compose, systemd and reverse-proxy files are reference configurations.
+This document covers Docker, Compose, systemd and reverse-proxy deployments. The DiskStation container profile is the live shape and pins an immutable image digest; the generic Compose, systemd and reverse-proxy files are reference configurations.
 
 ## Operator decisions
 
@@ -57,7 +57,19 @@ Common secret-bearing keys such as `authorization`, `token`, `password`, `secret
 * `memento_proposal_backlog`
 * `memento_repo_revision_info`
 
-`status --format graphite` emits the five numeric operational gauges as Carbon plaintext with one Unix timestamp and a validated prefix (default `memento`). Because either CLI status path needs the writer lease, use it for offline inspection or one-shot scrape jobs against a stopped instance. For live status, use MCP.
+`status --format graphite` emits the five numeric operational gauges as Carbon plaintext with one Unix timestamp and a validated prefix (default `memento`). Because either CLI status path needs the writer lease, use it for offline inspection or one-shot scrape jobs against a stopped instance.
+
+The live daemon exposes unauthenticated Prometheus text at `GET /metrics`. Keep it on a trusted network or protect it at the reverse proxy. Scrapes perform bounded file `stat`, SQLite `PRAGMA page_count`/`freelist_count`, aggregate row counts and Go runtime reads; they do not checkpoint WAL files or scan concept bodies. The endpoint includes:
+
+* service/build, scrape success and scrape duration;
+* repository/index revision labels, readiness and staleness;
+* concept, link, graph-metric and embedding-state row counts;
+* control/derived SQLite main, WAL and SHM bytes plus allocated/free pages;
+* embedding worker availability, running/pending state and completed count;
+* index rebuild/update success/error counters and latest duration;
+* Go heap bytes, heap objects and goroutine count.
+
+Prometheus can scrape `http://HOST:PORT/metrics`; Grafana should query the resulting Prometheus data source. A scrape interval of 30-60 seconds is sufficient for normal operations. Alert on collection failure, stale/not-ready indexes, sustained WAL growth, embedding error/stale growth, index-operation errors, or unexpected heap growth.
 
 ## Asset-pack storage
 

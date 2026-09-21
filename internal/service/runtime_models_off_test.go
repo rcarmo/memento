@@ -146,6 +146,9 @@ func TestModelsOffRuntimeHTTPHooks(t *testing.T) {
 	if status := request("GET", "/graph/api/v1/status", "", nil); status != 200 {
 		t.Fatal(status)
 	}
+	if status := request("GET", liveMetricsPath, "", nil); status != 200 {
+		t.Fatal(status)
+	}
 	if status := request("GET", "/assets/staging/missing", "", nil); status != 401 {
 		t.Fatal(status)
 	}

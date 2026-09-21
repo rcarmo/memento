@@ -119,11 +119,19 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	paths := runtime.Paths
 	var revision string
 	index := &derived.Index{Path: paths.DerivedDB, DeferEmbeddings: options.Semantic.Enabled, MaxInputChars: options.Semantic.MaxInputChars}
+	runtime.Metrics = NewRuntimeMetrics()
 	manager := repository.TransactionManager{Paths: paths.Repository, Operations: control.Operations{DB: runtime.DB}, DerivedUpdate: func(ctx context.Context, root, revision string, changed []string) error {
+		started := time.Now()
+		operation := "update"
+		var updateErr error
 		if len(changed) == 0 {
-			return index.Rebuild(ctx, root, revision)
+			operation = "rebuild"
+			updateErr = index.Rebuild(ctx, root, revision)
+		} else {
+			updateErr = index.UpdatePaths(ctx, root, revision, changed)
 		}
-		return index.UpdatePaths(ctx, root, revision, changed)
+		runtime.Metrics.ObserveIndex(operation, time.Since(started), updateErr)
+		return updateErr
 	}}
 	recoveryManager := repository.TransactionManager{Paths: paths.Repository, Operations: control.Operations{DB: runtime.DB}}
 	if _, err = ops.recover(ctx, &recoveryManager); err != nil {
@@ -168,7 +176,10 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 	}
 	state, stateErr := ops.state(ctx, index)
 	if stateErr != nil || state.IndexRevision != revision || state.LinkResolutionVersion != derived.LinkResolutionVersion {
-		if err = ops.rebuild(ctx, index, paths.Repository.CurrentDir, revision); err != nil {
+		started := time.Now()
+		err = ops.rebuild(ctx, index, paths.Repository.CurrentDir, revision)
+		runtime.Metrics.ObserveIndex("rebuild", time.Since(started), err)
+		if err != nil {
 			return nil, nil, err
 		}
 	}
@@ -356,6 +367,7 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		runtime.GraphRefresh = coordinator
 	}
 	graphHTTP := GraphHTTP{Config: options.Graph, Snapshots: snapshotService, Refresh: coordinator, Policies: &GraphPolicyDirectory{Static: config.Authorization, Managed: graphManaged}}
+	metricsHTTP := LiveMetricsHTTP{Runtime: runtime}
 	adminHTTP := AdminHTTP{ProtectedReadPrefixes: config.Authorization.ProtectedReadPrefixes}
 	if managed != nil {
 		adminHTTP.Store = managed
@@ -366,6 +378,10 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 			return response, routeErr
 		}
 		response, routeErr = adminHTTP.Handle(ctx, method, path, headers, body, peer)
+		if response != nil || routeErr != nil {
+			return response, routeErr
+		}
+		response, routeErr = metricsHTTP.Handle(ctx, method, path, headers, body, peer)
 		if response != nil || routeErr != nil {
 			return response, routeErr
 		}

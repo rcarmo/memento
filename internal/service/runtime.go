@@ -30,6 +30,7 @@ type Runtime struct {
 	Dream                 DreamConfig
 	ModelClient           ModelClient
 	ModelProposals        ModelProposalsConfig
+	Metrics               *RuntimeMetrics
 
 	mu     sync.Mutex
 	closed bool
