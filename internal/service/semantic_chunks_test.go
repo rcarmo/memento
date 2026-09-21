@@ -1,7 +1,9 @@
 package service
 
 import (
+	"bytes"
 	"context"
+	"encoding/binary"
 	"os"
 	"path/filepath"
 	"strings"
@@ -38,9 +40,18 @@ func TestSemanticClientChunkAdapters(t *testing.T) {
 	if _, err = sub.Chunk("test", 384, 64, 4096); err == nil {
 		t.Fatal("missing model")
 	}
-	sub.ModelPath = "../../models/gte/gte-small.gtemodel"
-	if _, err = os.Stat(sub.ModelPath); err != nil {
-		t.Skip("model not installed")
+	var header bytes.Buffer
+	header.WriteString("GTE1")
+	for _, v := range []uint32{110, 384, 12, 12, 1536, 512} {
+		_ = binary.Write(&header, binary.LittleEndian, v)
+	}
+	for n := 0; n < 110; n++ {
+		_ = binary.Write(&header, binary.LittleEndian, uint16(4))
+		header.WriteString("word")
+	}
+	sub.ModelPath = filepath.Join(t.TempDir(), "tokenizer-only.gtemodel")
+	if err = os.WriteFile(sub.ModelPath, header.Bytes(), 0600); err != nil {
+		t.Fatal(err)
 	}
 	chunks, err = sub.Chunk(strings.Repeat("word ", 600)+"tailmarker", 384, 64, 4096)
 	if err != nil || len(chunks) < 2 || !strings.HasSuffix(chunks[len(chunks)-1], "tailmarker") {
