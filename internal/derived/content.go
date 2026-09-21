@@ -164,9 +164,6 @@ func (s ContentStore) Rebuild(ctx context.Context, root, revision string) error 
 			if err := upsertEntry(ctx, conn, entry, revision); err != nil {
 				return err
 			}
-			if err := commitEntry(ctx, conn); err != nil {
-				return err
-			}
 		}
 		assetPaths, err := assetPathsForBundle(root, bundle)
 		if err != nil {
