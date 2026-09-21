@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 IMAGE=${IMAGE:-memento-go:contract}
 VERSION=${VERSION:-1.0.3}
-ROLLBACK_IMAGE=${ROLLBACK_IMAGE:-ghcr.io/rcarmo/memento@sha256:bebc0a3eaf935a5b4f07c3e060fd8e22a11dacff90cd55532ec04306c30e81bc}
+ROLLBACK_IMAGE=${ROLLBACK_IMAGE:-ghcr.io/rcarmo/memento@sha256:98b7889043133089f4075803cda0b239094ab23642973cf1b1654199b1308bac}
 STATE=$(mktemp -d)
 ENV_FILE=$(mktemp)
 CONTAINER=memento-go-contract-$$
@@ -157,6 +157,14 @@ GRAPH_CODE=$(curl -sS -o "$BODY" -w '%{http_code}' \
 test "$GRAPH_CODE" = 200
 grep -q '<!doctype html>' "$BODY"
 
+METRICS_CODE=$(curl -sS -o "$BODY" -w '%{http_code}' "http://127.0.0.1:$PORT/metrics")
+test "$METRICS_CODE" = 200
+grep -q '^memento_metrics_collect_success 1$' "$BODY"
+grep -q '^memento_index_ready 1$' "$BODY"
+grep -q '^memento_sqlite_file_bytes{database="derived",kind="wal"} ' "$BODY"
+grep -q '^memento_embedding_rows{status="ready"} ' "$BODY"
+grep -q '^memento_index_operations_total{operation="rebuild",result="success"} ' "$BODY"
+
 docker inspect "$CONTAINER" --format '{{.State.OOMKilled}} {{.RestartCount}}' | grep -q '^false 0$'
 DAEMON_PID=$(docker inspect "$CONTAINER" --format '{{.State.Pid}}')
 DAEMON_RSS_KIB=$(awk '/^VmRSS:/ {print $2}' "/proc/$DAEMON_PID/status")
@@ -179,9 +187,9 @@ print(f'idle container memory: {mib:.1f} MiB; daemon RSS: {rss_mib:.1f} MiB')
 PY
 docker rm -f "$CONTAINER" >/dev/null
 
-# Prove the accepted on-disk formats remain usable in both directions. The old
-# image initializes the volume, v1 opens it without migration, then the old
-# image opens it again and observes the same Git/index revisions.
+# Prove the accepted on-disk formats remain usable in both directions. The
+# immutable predecessor initializes the volume, this image opens it without
+# migration, then the predecessor observes the same Git/index revisions.
 if test -n "$ROLLBACK_IMAGE"; then
     OLD_ENV=(
         -e MEMENTO_ADMIN_MASTER_KEY=contract-master
