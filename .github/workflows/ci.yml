@@ -110,4 +110,4 @@ jobs:
         run: make corpus-test
       - name: Build and test pure-Go image
         if: matrix.arch == 'amd64'
-        run: make go-container-contract MEMENTO_VERSION=1.0.3
+        run: make go-container-contract MEMENTO_VERSION=1.0.4

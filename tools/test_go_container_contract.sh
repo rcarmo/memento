@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 IMAGE=${IMAGE:-memento-go:contract}
-VERSION=${VERSION:-1.0.3}
+VERSION=${VERSION:-1.0.4}
 ROLLBACK_IMAGE=${ROLLBACK_IMAGE:-ghcr.io/rcarmo/memento@sha256:98b7889043133089f4075803cda0b239094ab23642973cf1b1654199b1308bac}
 STATE=$(mktemp -d)
 ENV_FILE=$(mktemp)

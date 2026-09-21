@@ -116,7 +116,7 @@ func (h LiveMetricsHTTP) Handle(ctx context.Context, method, path string, _ map[
 }
 
 type liveMetricsOps struct {
-	state          func(context.Context, string) (derived.IndexState, error)
+	state          func(context.Context, *sql.DB) (derived.IndexState, error)
 	control        func(*sql.DB, string) (sqliteMetrics, error)
 	openDerived    func(context.Context, string) (*sql.DB, error)
 	derived        func(*sql.DB, string) (sqliteMetrics, error)
@@ -127,9 +127,7 @@ type liveMetricsOps struct {
 
 func defaultLiveMetricsOps() liveMetricsOps {
 	return liveMetricsOps{
-		state: func(ctx context.Context, path string) (derived.IndexState, error) {
-			return (&derived.Index{Path: path}).State(ctx)
-		},
+		state:   collectIndexStateMetrics,
 		control: collectSQLiteMetrics, openDerived: openReadOnlyMetricsDB, derived: collectSQLiteMetrics,
 		counts: func(ctx context.Context, db *sql.DB, snapshot *liveMetricsSnapshot) error {
 			return db.QueryRowContext(ctx, `SELECT (SELECT COUNT(*) FROM concepts),(SELECT COUNT(*) FROM links),(SELECT COUNT(*) FROM graph_metrics)`).Scan(&snapshot.Concepts, &snapshot.Links, &snapshot.GraphMetrics)
@@ -159,14 +157,7 @@ func collectLiveMetricsWith(ctx context.Context, service *Runtime, ops liveMetri
 	if snapshot.ServiceVersion == "" {
 		snapshot.ServiceVersion = "unknown"
 	}
-	state, err := ops.state(ctx, service.Paths.DerivedDB)
-	if err != nil {
-		return snapshot, err
-	}
-	snapshot.RepoRevision = state.RepoRevision
-	snapshot.IndexRevision = state.IndexRevision
-	snapshot.IndexReady = state.Status == "ready"
-	snapshot.IndexStale = state.RepoRevision != state.IndexRevision
+	var err error
 	if snapshot.Control, err = ops.control(service.DB, service.Paths.ControlDB); err != nil {
 		return snapshot, err
 	}
@@ -175,6 +166,14 @@ func collectLiveMetricsWith(ctx context.Context, service *Runtime, ops liveMetri
 		return snapshot, err
 	}
 	defer derivedDB.Close()
+	state, err := ops.state(ctx, derivedDB)
+	if err != nil {
+		return snapshot, err
+	}
+	snapshot.RepoRevision = state.RepoRevision
+	snapshot.IndexRevision = state.IndexRevision
+	snapshot.IndexReady = state.Status == "ready"
+	snapshot.IndexStale = state.RepoRevision != state.IndexRevision
 	if snapshot.Derived, err = ops.derived(derivedDB, service.Paths.DerivedDB); err != nil {
 		return snapshot, err
 	}
@@ -191,6 +190,39 @@ func collectLiveMetricsWith(ctx context.Context, service *Runtime, ops liveMetri
 	snapshot.IndexOperations = service.Metrics.IndexSnapshot()
 	ops.processRuntime(&snapshot)
 	return snapshot, nil
+}
+
+func collectIndexStateMetrics(ctx context.Context, db *sql.DB) (derived.IndexState, error) {
+	rows, err := db.QueryContext(ctx, "SELECT key,value FROM index_state WHERE key IN ('repo_revision','index_revision','schema_version','status')")
+	if err != nil {
+		return derived.IndexState{}, err
+	}
+	return readIndexStateMetrics(rows)
+}
+
+func readIndexStateMetrics(rows metricsRows) (derived.IndexState, error) {
+	values := map[string]string{}
+	for rows.Next() {
+		var key, value string
+		if err := rows.Scan(&key, &value); err != nil {
+			_ = rows.Close()
+			return derived.IndexState{}, err
+		}
+		values[key] = value
+	}
+	if err := rows.Err(); err != nil {
+		_ = rows.Close()
+		return derived.IndexState{}, err
+	}
+	if err := rows.Close(); err != nil {
+		return derived.IndexState{}, err
+	}
+	for _, key := range []string{"repo_revision", "index_revision", "schema_version", "status"} {
+		if values[key] == "" {
+			return derived.IndexState{}, fmt.Errorf("derived index state is missing %s", key)
+		}
+	}
+	return derived.IndexState{RepoRevision: values["repo_revision"], IndexRevision: values["index_revision"], SchemaVersion: values["schema_version"], Status: values["status"]}, nil
 }
 
 type metricsRows interface {

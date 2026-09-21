@@ -66,6 +66,21 @@ func TestReadEmbeddingMetricsFailures(t *testing.T) {
 	}
 }
 
+func TestReadIndexStateMetricsFailures(t *testing.T) {
+	boom := errors.New("boom")
+	for name, rows := range map[string]*metricsRowsStub{
+		"scan":  {remaining: 1, scanErr: boom},
+		"rows":  {finalErr: boom},
+		"close": {closeErr: boom},
+	} {
+		t.Run(name, func(t *testing.T) {
+			if _, err := readIndexStateMetrics(rows); !errors.Is(err, boom) {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
 func TestOpenReadOnlyMetricsDBFailures(t *testing.T) {
 	boom := errors.New("boom")
 	if _, err := openReadOnlyMetricsDBWith(t.Context(), "/x", func(string, string) (*sql.DB, error) { return nil, boom }); !errors.Is(err, boom) {
@@ -114,7 +129,7 @@ func TestCollectLiveMetricsInjectedFailures(t *testing.T) {
 	defer db.Close()
 	service := &Runtime{DB: db, Paths: RuntimePaths{ControlDB: "c", DerivedDB: "d"}, Metrics: NewRuntimeMetrics()}
 	base := liveMetricsOps{
-		state: func(context.Context, string) (derived.IndexState, error) {
+		state: func(context.Context, *sql.DB) (derived.IndexState, error) {
 			return derived.IndexState{Status: "ready", RepoRevision: "r", IndexRevision: "r"}, nil
 		},
 		control:        func(*sql.DB, string) (sqliteMetrics, error) { return sqliteMetrics{}, nil },
@@ -128,7 +143,7 @@ func TestCollectLiveMetricsInjectedFailures(t *testing.T) {
 		ops := base
 		switch field {
 		case "state":
-			ops.state = func(context.Context, string) (derived.IndexState, error) { return derived.IndexState{}, boom }
+			ops.state = func(context.Context, *sql.DB) (derived.IndexState, error) { return derived.IndexState{}, boom }
 		case "control":
 			ops.control = func(*sql.DB, string) (sqliteMetrics, error) { return sqliteMetrics{}, boom }
 		case "open":
@@ -163,6 +178,27 @@ func TestCollectEmbeddingMetricsQueryFailure(t *testing.T) {
 	defer db.Close()
 	if _, err = collectEmbeddingMetrics(t.Context(), db); err == nil {
 		t.Fatal("missing table")
+	}
+}
+
+func TestCollectIndexStateMetrics(t *testing.T) {
+	db, _ := sql.Open("sqlite", ":memory:")
+	defer db.Close()
+	if _, err := collectIndexStateMetrics(t.Context(), db); err == nil {
+		t.Fatal("missing table")
+	}
+	if _, err := db.Exec("CREATE TABLE index_state(key TEXT,value TEXT); INSERT INTO index_state VALUES('repo_revision','r'),('index_revision','i'),('schema_version','2'),('status','ready')"); err != nil {
+		t.Fatal(err)
+	}
+	state, err := collectIndexStateMetrics(t.Context(), db)
+	if err != nil || state.RepoRevision != "r" || state.IndexRevision != "i" || state.SchemaVersion != "2" || state.Status != "ready" {
+		t.Fatal(state, err)
+	}
+	if _, err = db.Exec("DELETE FROM index_state WHERE key='status'"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = collectIndexStateMetrics(t.Context(), db); err == nil {
+		t.Fatal("missing status")
 	}
 }
 
