@@ -2,8 +2,8 @@
 
 **Status:** current-state debugger implemented and deployed on the trusted-LAN DiskStation; revision playback deferred
 **Decision:** [ADR 0011](decisions/0011-embed-a-gated-visual-memory-debugger.md)
-**Current deployment:** [Go v1.0.6 on the trusted-LAN DiskStation](evidence/release-1.0.6.md)
-**Latest graph-specific acceptance:** [Diagnostics/UI audit](evidence/diagnostics-ui-audit-2026-09-21.md), repeated Chromium/WebKit CI and live API/Chromium validation
+**Current deployment:** [Go v1.0.8 on the trusted-LAN DiskStation](evidence/release-1.0.8.md); legacy embedding conversion in progress
+**Latest graph-specific acceptance:** [Item-relative embeddings and persisted similarities](evidence/item-relative-embeddings-2026-09-22.md), repeated Chromium/WebKit CI and live API/Chromium validation
 
 The visual debugger is a built-in `/graph` view for understanding how Memento creates, links and maintains shared memory. This document records the implemented API, rendering, validation and release details, then collects the deferred history features at the end.
 
@@ -13,7 +13,7 @@ The global setting is `observability.graph_explorer.enabled`, default `false`. E
 
 The graph may read Git knowledge, operation/proposal records and derived indexes. Its only write-like action is rebuilding embeddings through the existing short-lived worker. It does not create, patch, rename, review or apply concepts.
 
-Explicit Markdown links are relationship data. Semantic similarity is a derived overlay. APIs and exports omit bearer tokens, token environment names, raw embedding vectors and asset bodies. Overview responses contain no Markdown body; detail previews are sanitised and bounded.
+Explicit Markdown links are relationship data. Semantic similarity is a derived overlay. Item aggregates and pair scores are persisted in SQLite and incrementally updated on embedding publication; web reads filter and rank those scores without recomputing vectors. APIs and exports omit bearer tokens, token environment names, raw embedding vectors and asset bodies. Overview responses contain no Markdown body; detail previews are sanitised and bounded.
 
 The browser application uses committed Three.js and Preact ES modules. Their manifest records pinned source URLs and digests; Go tests verify every embedded asset and licence file. Release assets remain native modules rather than a generated bundle.
 

@@ -34,6 +34,6 @@ Local checks passed:
 
 The retained Python fixtures are unchanged. Tests explicitly supersede their old repository-relative embedding revisions and partial-update commit behaviour; other captured fields remain compared.
 
-Independent review identified partial update commits and excessive chunk-pair graph work; both were corrected. A later cache review timed out and was not counted as approval. A bounded design review raised pair-backfill completeness; the implementation uses full item-and-pairs publication during startup, and the clarified review found no remaining blocker in that protocol. Exact-commit CI and semantic-cache canary/production qualification passed for v1.0.7. Corrective metrics release and completion of production legacy migration are still required.
+Independent review identified partial update commits and excessive chunk-pair graph work; both were corrected. A later cache review timed out and was not counted as approval. A bounded design review raised pair-backfill completeness; the implementation uses full item-and-pairs publication during startup, and the clarified review found no remaining blocker in that protocol. Exact-commit CI and semantic-cache canary/production qualification passed for v1.0.7. [v1.0.8](release-1.0.8.md) corrects the metrics defect and is deployed with passing canary/production checks. Production legacy conversion is running; its final completion and persistence checks are still required.
 
 Raw evidence is under `/workspace/tmp/memento-diagnostics-20260922/`.
