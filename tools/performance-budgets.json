@@ -25,6 +25,10 @@
       "max_allocs_per_op": 2,
       "max_bytes_per_op": 2400
     },
+    "BenchmarkRealGTEColdWorkspace": {
+      "max_allocs_per_op": 18,
+      "max_bytes_per_op": 155000
+    },
     "BenchmarkSearchLexical100": {
       "max_allocs_per_op": 875,
       "max_bytes_per_op": 43500

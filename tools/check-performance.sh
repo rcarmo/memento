@@ -11,7 +11,7 @@ mkdir -p "$(dirname "$OUT")"
   CGO_ENABLED=0 go test -run '^$' -bench 'BenchmarkTokenizerVocabularyLookups' -benchmem -count=3 ./internal/needle
   CGO_ENABLED=0 go test -run '^$' -bench 'Benchmark(DotSelected|DotRowsSelected|AXPYRowsSelected)$' -benchmem -count=3 ./internal/simd
   if test -n "${GTE_MODEL_PATH:-}"; then
-    CGO_ENABLED=0 GTE_MODEL_PATH="$GTE_MODEL_PATH" go test -run '^$' -bench 'BenchmarkRealGTEEmbed' -benchmem -benchtime=2s -count=3 ./internal/gte
+    CGO_ENABLED=0 GTE_MODEL_PATH="$GTE_MODEL_PATH" go test -run '^$' -bench 'BenchmarkRealGTE(Embed|ColdWorkspace)$' -benchmem -benchtime=2s -count=3 ./internal/gte
   fi
   if test -n "${NEEDLE_MODEL_PATH:-}" -a -n "${NEEDLE_TOKENIZER_PATH:-}"; then
     CGO_ENABLED=0 NEEDLE_MODEL_PATH="$NEEDLE_MODEL_PATH" NEEDLE_TOKENIZER_PATH="$NEEDLE_TOKENIZER_PATH" go test -run '^$' -bench 'BenchmarkRealNeedleGenerate' -benchmem -benchtime=20x -count=3 ./internal/needle

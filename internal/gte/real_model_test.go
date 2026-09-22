@@ -7,6 +7,7 @@ import (
 	"math"
 	"os"
 	"reflect"
+	"sync"
 	"testing"
 )
 
@@ -23,9 +24,43 @@ func BenchmarkRealGTEEmbed(b *testing.B) {
 		b.Fatal(err)
 	}
 	output := make([]float32, model.Dim())
+	// This gate measures steady-state reuse. Charging the first workspace to
+	// b.N made B/op depend on host speed; cold allocation is measured separately.
+	if err = model.EmbedTo("Memento semantic search allocation profile", output, nil); err != nil {
+		b.Fatal(err)
+	}
 	b.ReportAllocs()
 	b.ResetTimer()
 	for range b.N {
+		if err = model.EmbedTo("Memento semantic search allocation profile", output, nil); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+// BenchmarkRealGTEColdWorkspace measures first-call workspace allocation without
+// model loading. Keep it separate from the steady-state allocation budget.
+func BenchmarkRealGTEColdWorkspace(b *testing.B) {
+	path := os.Getenv("GTE_MODEL_PATH")
+	if path == "" {
+		b.Skip("set GTE_MODEL_PATH")
+	}
+	model, err := Load(path)
+	if err != nil {
+		b.Fatal(err)
+	}
+	if err = model.SetSIMD("auto"); err != nil {
+		b.Fatal(err)
+	}
+	output := make([]float32, model.Dim())
+	b.ReportAllocs()
+	b.ResetTimer()
+	for range b.N {
+		b.StopTimer()
+		// Empty pools retain their New factories but discard every reusable buffer.
+		model.workspaces = sync.Pool{New: model.workspaces.New}
+		model.tokenBuffers = sync.Pool{New: model.tokenBuffers.New}
+		b.StartTimer()
 		if err = model.EmbedTo("Memento semantic search allocation profile", output, nil); err != nil {
 			b.Fatal(err)
 		}
