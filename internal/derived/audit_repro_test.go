@@ -135,7 +135,9 @@ func TestAuditFailedDocumentNotCountedCompleted(t *testing.T) {
 	worker := NewSemanticWorker(index, client, chunkConfig)
 	defer worker.Close()
 	worker.Enqueue("root", "main", []string{"/a.md"}, false)
-	ctx, cancel := context.WithTimeout(t.Context(), time.Second)
+	// This checks error accounting, not storage latency. Shared CI runners can
+	// spend over a second committing the failure and invalidating derived caches.
+	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
 	defer cancel()
 	if err := worker.WaitIdle(ctx); err != nil {
 		t.Fatal(err)
@@ -148,7 +150,7 @@ func TestAuditFailedDocumentNotCountedCompleted(t *testing.T) {
 	}
 	state := worker.State()
 	t.Logf("stored=%s worker_completed=%d worker_error=%v", status, state.Completed, state.LastError)
-	if status == "error" && (state.Completed != 0 || state.LastError == nil) {
+	if status != "error" || state.Completed != 0 || state.LastError == nil {
 		t.Fatal("worker reports successful completion for persisted embedding error")
 	}
 }
