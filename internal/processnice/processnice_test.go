@@ -3,6 +3,7 @@ package processnice
 import (
 	"errors"
 	"strings"
+	"syscall"
 	"testing"
 )
 
@@ -115,17 +116,31 @@ func FuzzParse(f *testing.F) {
 }
 
 func TestLinuxPrioritySyscalls(t *testing.T) {
-	current, err := getPriorityImpl()
-	if err != nil {
-		t.Fatal(err)
+	oldGet, oldAll := getPrioritySyscall, allThreadsSyscall
+	t.Cleanup(func() {
+		getPrioritySyscall = oldGet
+		allThreadsSyscall = oldAll
+	})
+	getPrioritySyscall = func(int, int) (int, error) { return 5, nil }
+	if current, err := getPriorityImpl(); err != nil || current != 15 {
+		t.Fatal(current, err)
 	}
-	if current < -20 || current > 19 {
-		t.Fatal(current)
+	getPrioritySyscall = func(int, int) (int, error) { return 0, errors.New("get") }
+	if _, err := getPriorityImpl(); err == nil {
+		t.Fatal("get error")
 	}
-	if err := setPriorityImpl(current); err != nil {
-		if errors.Is(err, errors.ErrUnsupported) || strings.Contains(err.Error(), "operation not supported") {
-			t.Skip("test binary uses cgo; release workers are CGO_ENABLED=0")
-		}
+	var trap, class, who, priority uintptr
+	allThreadsSyscall = func(a, b, c, d uintptr) (uintptr, uintptr, syscall.Errno) {
+		trap, class, who, priority = a, b, c, d
+		return 0, 0, 0
+	}
+	if err := setPriorityImpl(19); err != nil || trap != syscall.SYS_SETPRIORITY || class != syscall.PRIO_PROCESS || who != 0 || priority != 19 {
+		t.Fatal(err, trap, class, who, priority)
+	}
+	allThreadsSyscall = func(uintptr, uintptr, uintptr, uintptr) (uintptr, uintptr, syscall.Errno) {
+		return 0, 0, syscall.EPERM
+	}
+	if err := setPriorityImpl(19); !errors.Is(err, syscall.EPERM) {
 		t.Fatal(err)
 	}
 }

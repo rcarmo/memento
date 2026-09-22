@@ -61,11 +61,39 @@ func TestSemanticWorkerBatchAdmissionDoesNotPaceChunks(t *testing.T) {
 	if reason, _ := worker.pauseForBatch(); reason != "" {
 		t.Fatal(reason)
 	}
-	if err := worker.admitChunkBatch(t.Context()); err != nil {
-		t.Fatal(err)
+	if err := worker.admitChunkBatch(t.Context()); err != nil || worker.pause != nil {
+		t.Fatal(err, worker.pause)
 	}
 	if !worker.lastCompleted.Equal(now) {
 		t.Fatal(worker.lastCompleted)
+	}
+
+	worker.Policy.Enabled = false
+	if reason, _ := worker.pauseForBatch(); reason != "" {
+		t.Fatal(reason)
+	}
+	worker.Policy.Enabled = true
+	idle = 0
+	ctx, cancel := context.WithCancel(t.Context())
+	result := make(chan error, 1)
+	go func() { result <- worker.admitChunkBatch(ctx) }()
+	deadline := time.Now().Add(time.Second)
+	for {
+		worker.mu.Lock()
+		paused := worker.pause != nil && *worker.pause == "interactive"
+		worker.mu.Unlock()
+		if paused {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("batch admission did not pause")
+		}
+		time.Sleep(time.Millisecond)
+	}
+	cancel()
+	worker.wake <- struct{}{}
+	if err := <-result; err != context.Canceled {
+		t.Fatal(err)
 	}
 }
 
