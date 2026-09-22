@@ -361,7 +361,7 @@ func readEmbeddingMetrics(rows metricsRows) (map[string]int64, error) {
 			return nil, err
 		}
 		switch status {
-		case "ready", "pending", "stale", "error", "missing":
+		case "ready", "pending", "stale", "error", "missing", "legacy":
 			result[status] += count
 		default:
 			result["other"] += count

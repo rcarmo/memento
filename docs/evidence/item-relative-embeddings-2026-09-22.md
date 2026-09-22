@@ -1,6 +1,6 @@
 # Item-relative embeddings and persisted graph similarities
 
-The v1.0.6 graph suppressed semantic connections after an unrelated repository update. Item-relative, chunk-only eligibility and persisted semantic scores replace that behaviour in the working tree. Production has not yet been changed.
+The v1.0.6 graph suppressed semantic connections after an unrelated repository update. Item-relative, chunk-only eligibility and persisted semantic scores replace that behaviour in v1.0.7. Canary and production semantics passed, but a legacy metrics count defect required [rollback and a corrective release](release-1.0.7.md).
 
 ## Reproduction
 
@@ -34,6 +34,6 @@ Local checks passed:
 
 The retained Python fixtures are unchanged. Tests explicitly supersede their old repository-relative embedding revisions and partial-update commit behaviour; other captured fields remain compared.
 
-Independent review identified partial update commits and excessive chunk-pair graph work; both were corrected. A later cache review timed out and was not counted as approval. A bounded design review raised pair-backfill completeness; the implementation uses full item-and-pairs publication during startup, and the clarified review found no remaining blocker in that protocol. Exact-commit CI, image canary and production migration qualification are still required.
+Independent review identified partial update commits and excessive chunk-pair graph work; both were corrected. A later cache review timed out and was not counted as approval. A bounded design review raised pair-backfill completeness; the implementation uses full item-and-pairs publication during startup, and the clarified review found no remaining blocker in that protocol. Exact-commit CI and semantic-cache canary/production qualification passed for v1.0.7. Corrective metrics release and completion of production legacy migration are still required.
 
 Raw evidence is under `/workspace/tmp/memento-diagnostics-20260922/`.

@@ -265,3 +265,28 @@ func TestLiveMetricsDefaultHandlerFailure(t *testing.T) {
 		t.Fatal(response, err)
 	}
 }
+
+func TestEmbeddingMetricsStatusBuckets(t *testing.T) {
+	for _, status := range []string{"ready", "pending", "stale", "error", "missing", "legacy", "unknown-future-status"} {
+		t.Run(status, func(t *testing.T) {
+			counts, err := readEmbeddingMetrics(&metricsEmbeddingRowsStub{status: status, count: 253, remaining: 1})
+			if err != nil {
+				t.Fatal(err)
+			}
+			want := status
+			if status == "unknown-future-status" {
+				want = "other"
+			}
+			var total int64
+			for key, count := range counts {
+				total += count
+				if key == want && count != 253 || key != want && count != 0 {
+					t.Fatal(status, counts)
+				}
+			}
+			if total != 253 {
+				t.Fatal(total)
+			}
+		})
+	}
+}

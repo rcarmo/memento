@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -188,6 +189,36 @@ func TestLiveMetricsSnapshotFailures(t *testing.T) {
 		}
 		if _, err := collectLiveMetricsWith(t.Context(), service, ops); err == nil {
 			t.Fatal(failure)
+		}
+	}
+}
+
+func TestLiveMetricsLegacyMigrationExposition(t *testing.T) {
+	var config RuntimeConfig
+	config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
+	seed := t.TempDir()
+	installMutationFiles(t, seed, map[string]string{"/a.md": mutationConcept})
+	runtime, _, err := BuildModelsOffRuntime(t.Context(), config, ModelsOffRuntimeOptions{Surface: "standard", Tokens: []BearerPrincipal{}, BootstrapSeed: seed})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Close(t.Context())
+	db, err := sql.Open("sqlite", runtime.Paths.DerivedDB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	if _, err = db.Exec(`INSERT INTO concept_embeddings(concept_id,path,embedding_text_hash,model_id,dimensions,embedding_revision,status,model_revision,embedding_blob,embedding_norm,updated_at,error_message) SELECT id,path,'legacy','m',2,'old','legacy','v',NULL,NULL,'now',NULL FROM concepts`); err != nil {
+		t.Fatal(err)
+	}
+	response, err := runtime.HTTPHooks.Route(t.Context(), "GET", liveMetricsPath, nil, nil, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(response.Body)
+	for _, expected := range []string{`memento_metrics_collect_success 1`, `memento_embedding_rows{status="legacy"} 1`, `memento_embedding_rows{status="other"} 0`, `memento_embedding_rows{status="ready"} 0`} {
+		if !strings.Contains(text, expected) {
+			t.Fatal(expected, text)
 		}
 	}
 }
