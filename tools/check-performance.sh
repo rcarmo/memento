@@ -30,7 +30,7 @@ errors=[]
 for name,budget in budgets.items():
     values=rows[name]
     if len(values)<3:
-        if name in {'BenchmarkRealGTEEmbed','BenchmarkRealNeedleGenerate'} and not values:
+        if name in {'BenchmarkRealGTEEmbed','BenchmarkRealGTEColdWorkspace','BenchmarkRealNeedleGenerate'} and not values:
             continue
         errors.append(f'{name}: expected 3 benchmark samples, found {len(values)}')
         continue
