@@ -11,7 +11,7 @@ func TestOverviewSemanticFailure(t *testing.T) {
 	root, path := nodeDB(t)
 	control := emptyControlDB(t)
 	db, _ := sql.Open("sqlite", path)
-	_, _ = db.Exec("UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision'; DROP TABLE concept_embeddings; CREATE TABLE concept_embeddings(concept_id TEXT,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT)")
+	_, _ = db.Exec("UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision'; DROP TABLE concept_embedding_chunks;CREATE TABLE concept_embedding_chunks(concept_id TEXT); DROP TABLE concept_embeddings; CREATE TABLE concept_embeddings(concept_id TEXT,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT)")
 	db.Close()
 	s := NewSnapshotService(root, path, control)
 	if _, err := s.Overview(context.Background(), nil, OverviewOptions{DirectNodeLimit: 10, EdgeLimit: 10, Semantic: SemanticConfig{NodeLimit: 10, EdgeLimit: 10, Neighbours: 1}}); err == nil {
@@ -22,7 +22,7 @@ func TestOverviewAggregateSemanticFailure(t *testing.T) {
 	root, path := nodeDB(t)
 	control := emptyControlDB(t)
 	db, _ := sql.Open("sqlite", path)
-	_, _ = db.Exec("UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision';DROP TABLE concept_embeddings;CREATE TABLE concept_embeddings(concept_id TEXT,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT)")
+	_, _ = db.Exec("UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision';DROP TABLE concept_embedding_chunks;CREATE TABLE concept_embedding_chunks(concept_id TEXT,document_hash TEXT,model_revision TEXT,embedding_blob BLOB,embedding_norm REAL,ordinal INTEGER);DROP TABLE concept_embeddings;CREATE TABLE concept_embeddings(concept_id TEXT,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT)")
 	db.Close()
 	s := NewSnapshotService(root, path, control)
 	if _, err := s.Overview(context.Background(), nil, OverviewOptions{DirectNodeLimit: 1, EdgeLimit: 10, Semantic: SemanticConfig{NodeLimit: 10, EdgeLimit: 10, Neighbours: 1}}); err == nil {

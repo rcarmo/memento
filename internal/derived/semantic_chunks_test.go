@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -51,7 +52,7 @@ func (c *chunkClientStub) Embed(text string) ([]float32, error) {
 }
 func chunkFixture(t *testing.T) (*Index, *chunkClientStub, string) {
 	t.Helper()
-	index := semanticSearchIndex(t)
+	index := legacySemanticSearchIndex(t)
 	vocab := make([]string, 110)
 	for i := range vocab {
 		vocab[i] = "unused"
@@ -95,13 +96,13 @@ func TestChunkRefreshTailSearchAndRollback(t *testing.T) {
 	}
 	options := SemanticSearchOptions{SearchOptions: SearchOptions{Query: "tailmarker", Syntax: "plain", Limit: 10}, MaxCandidates: 10}
 	page, err := index.SearchSemantic(ctx, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, options, client)
-	if err != nil || len(page.Results) != 2 || page.Results[0].Path != "/a.md" || page.Results[0].Score < .99 {
+	if err != nil || len(page.Results) != 1 || page.Results[0].Path != "/a.md" || page.Results[0].Score < .99 {
 		t.Fatal(page, err)
 	}
 	// No duplicate results even though multiple chunks match the opening text.
 	options.Query = "word"
 	page, err = index.SearchSemantic(ctx, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, options, client)
-	if err != nil || len(page.Results) != 2 {
+	if err != nil || len(page.Results) != 1 {
 		t.Fatal(page, err)
 	}
 	denied := access.EffectivePolicy{ReadPrefixes: []string{"/b.md"}}
@@ -126,7 +127,7 @@ func TestChunkRefreshTailSearchAndRollback(t *testing.T) {
 	}
 	options.Query = "tailmarker"
 	page, err = index.SearchSemantic(ctx, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, options, client)
-	if err != nil || page.Results[0].Score != 0 {
+	if err != nil || len(page.Results) != 0 {
 		t.Fatal(page, err)
 	}
 }
@@ -171,7 +172,7 @@ func TestChunkRefreshFailureIsAtomic(t *testing.T) {
 	}
 	var status string
 	_ = db.QueryRow("SELECT status FROM concept_embeddings WHERE path='/a.md'").Scan(&status)
-	_ = db.QueryRow("SELECT count(*) FROM concept_embedding_chunks").Scan(&after)
+	_ = db.QueryRow("SELECT count(*) FROM concept_embedding_chunks WHERE concept_id IN (SELECT concept_id FROM concept_embeddings WHERE path='/a.md')").Scan(&after)
 	if status != "error" || after != 0 {
 		t.Fatal(status, after)
 	}
@@ -335,4 +336,43 @@ func TestChunkPacingAndAdmission(t *testing.T) {
 		t.Fatal(err)
 	}
 	worker.Close()
+}
+
+func TestChunkStartupClassifiesLegacyAndPreservesReady(t *testing.T) {
+	index := legacySemanticSearchIndex(t)
+	if err := index.PrepareChunkEmbeddings(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	db, err := sql.Open("sqlite", index.Path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	var legacy int
+	if err = db.QueryRow("SELECT COUNT(*) FROM concept_embeddings WHERE status='legacy'").Scan(&legacy); err != nil || legacy != 2 {
+		t.Fatal(legacy, err)
+	}
+	client := &semanticChunkClientStub{semanticClientStub: semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}, vector: []float32{1, 0}}}
+	paths, err := index.PendingEmbeddingPaths(t.Context(), 10)
+	if err != nil || len(paths) != 2 {
+		t.Fatal(paths, err)
+	}
+	if err = index.RefreshEmbeddingPaths(t.Context(), "main", paths, chunkConfig, client); err != nil {
+		t.Fatal(err)
+	}
+	before := readItemVector(t, index, "id")
+	if err = index.PrepareChunkEmbeddings(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	after := readItemVector(t, index, "id")
+	if !reflect.DeepEqual(before, after) {
+		t.Fatal("startup changed valid chunks", before, after)
+	}
+	index.MaxInputChars = 512
+	if err = index.PrepareChunkEmbeddings(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	if got := readItemVector(t, index, "id"); got.Status != "stale" {
+		t.Fatal(got)
+	}
 }

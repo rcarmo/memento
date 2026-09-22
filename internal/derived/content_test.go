@@ -117,6 +117,7 @@ func TestContentReference(t *testing.T) {
 		if err = s.Migrate(ctx); err != nil {
 			t.Fatal(err)
 		}
+		var previous map[string]any
 		for _, step := range sequence.Steps {
 			for path, text := range step.Files {
 				target := filepath.Join(root, path)
@@ -168,6 +169,46 @@ func TestContentReference(t *testing.T) {
 					break
 				}
 			}
+			// Preserve the Python fixture; explicitly supersede its repo-relative
+			// embedding expectations with item-relative provenance and retention.
+			if step.Revision >= "r2" {
+				seed := fixture.Sequences[0].Steps[1].Snapshot["concept_embeddings"].([]any)
+				retained := []any{}
+				for _, value := range seed {
+					row := value.(map[string]any)
+					id := row["concept_id"]
+					if id == "gone" {
+						continue
+					}
+					copy := map[string]any{}
+					for k, v := range row {
+						copy[k] = v
+					}
+					copy["status"] = "legacy"
+					if id == "a" {
+						copy["status"] = "legacy"
+						if step.Revision == "r9" {
+							copy["path"] = "/duplicate.md"
+						}
+					}
+					if id == "z" && step.Revision >= "r3" {
+						copy["path"] = "/0.md"
+					}
+					retained = append(retained, copy)
+				}
+				step.Snapshot["concept_embeddings"] = retained
+				for _, value := range step.Snapshot["index_state"].([]any) {
+					row := value.(map[string]any)
+					if row["key"] == "semantic_embedding_revision" && sequence.Defer {
+						row["value"] = ""
+					}
+				}
+			}
+			// Atomic failed updates/rebuilds now retain the preceding complete
+			// snapshot instead of the Python implementation's partial commit.
+			if step.ErrorType != "" {
+				step.Snapshot = previous
+			}
 			if !reflect.DeepEqual(normal(got), step.Snapshot) {
 				for table, want := range step.Snapshot {
 					if !reflect.DeepEqual(normal(got[table]), want) {
@@ -176,6 +217,7 @@ func TestContentReference(t *testing.T) {
 				}
 				t.FailNow()
 			}
+			previous = step.Snapshot
 		}
 	}
 	for _, c := range fixture.Migrations {

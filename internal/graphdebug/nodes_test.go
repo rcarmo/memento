@@ -50,6 +50,7 @@ func nodeDB(t *testing.T) (string, string) {
 	if _, e = db.Exec(sql); e != nil {
 		t.Fatal(e)
 	}
+	seedGraphChunks(t, db)
 	files := map[string]string{"a.md": "---\nschema_version: 1\nid: '5c8fd31c-35f4-4fb2-a9b7-dd2e5935443d'\ntype: concept\ntitle: Alpha\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-02T00:00:00Z\nupdated_by: alice\n---\nBody\n", "b.md": "---\nschema_version: 1\nid: '6d9fe42d-46a5-4fc3-b8c8-ee3f6046554e'\ntype: concept\ntitle: Beta\nstatus: active\ncreated_at: 2026-01-01T00:00:00Z\nupdated_at: 2026-01-03T00:00:00Z\nupdated_by: bob\n---\nBody\n"}
 	for name, text := range files {
 		if e = os.WriteFile(filepath.Join(root, name), []byte(text), 0600); e != nil {
@@ -109,6 +110,7 @@ func TestNodeQueryVariants(t *testing.T) {
 	root, path := nodeDB(t)
 	db, _ := sql.Open("sqlite", path)
 	_, _ = db.Exec("INSERT INTO concepts VALUES('trash','/trash/a.md','concept','Trash','active','[]','now','main','Body','h'),('root','','concept','Root','active','[]','now','main','Body','h')")
+	seedGraphChunks(t, db)
 	db.Close()
 	s := NewSnapshotService(root, path, emptyControlDB(t))
 	nodes, err := s.Nodes(context.Background(), nil, 10, nil, false)
@@ -195,4 +197,34 @@ func TestNodesFixture(t *testing.T) {
 	if len(overlays) != 1 || !reflect.DeepEqual(overlays[0], fixture.Overview.Edges[2]) {
 		t.Fatal(overlays, fixture.Overview.Edges)
 	}
+}
+
+func TestNodeChunkMigrationAndPolicy(t *testing.T) {
+	root, path := nodeDB(t)
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	service := NewSnapshotService(root, path, emptyControlDB(t))
+	get := func(want string) {
+		t.Helper()
+		nodes, e := service.Nodes(t.Context(), []string{alphaNodeID}, 1, nil, false)
+		if e != nil || len(nodes) != 1 || nodes[0].Embedding.Status != want {
+			t.Fatal(nodes, e)
+		}
+	}
+	get("ready")
+	service.EmbeddingPolicy = "new-model-policy"
+	get("stale")
+	service.EmbeddingPolicy = "test-policy"
+	get("ready")
+	if _, err = db.Exec("DELETE FROM concept_embedding_chunks"); err != nil {
+		t.Fatal(err)
+	}
+	get("legacy")
+	if _, err = db.Exec("DROP TABLE concept_embedding_chunks; DROP TABLE concept_embedding_policy"); err != nil {
+		t.Fatal(err)
+	}
+	get("legacy")
 }

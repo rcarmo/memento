@@ -17,6 +17,7 @@ type SemanticSearchOptions struct {
 	Hybrid        bool
 	MaxCandidates int
 	model         *SemanticModelInfo
+	policy        string
 }
 type semanticRow struct {
 	result SearchResult
@@ -28,20 +29,22 @@ func (i *Index) SearchSemantic(ctx context.Context, policy access.EffectivePolic
 	if client == nil {
 		return page, errors.New("semantic search embedding client is unavailable")
 	}
-	var chunkQuery []float32
-	_, chunked := client.(SemanticChunkClient)
-	if chunked {
-		result := embedChunkBatch(ctx, client, []string{options.Query})[0]
-		if result.Err != nil {
-			return page, result.Err
-		}
-		chunkQuery = result.Vector
+	if _, ok := client.(SemanticChunkClient); !ok {
+		return page, errors.New("semantic embedding client does not support chunking")
 	}
-	withStore := func(fn func(ContentStore) error) error { return i.withCore(ctx, false, fn) }
-	if chunked {
-		withStore = func(fn func(ContentStore) error) error { return i.withChunkStore(ctx, fn) }
+	info := client.ModelInfo()
+	results := embedChunkBatch(ctx, client, []string{options.Query})
+	if results[0].Err != nil {
+		return page, results[0].Err
 	}
-	err = withStore(func(s ContentStore) error {
+	queryVector := results[0].Vector
+	if _, _, err = validateSemanticVector(queryVector, info.Dimensions); err != nil {
+		return page, err
+	}
+	queryNorm, _ := semanticNorm(queryVector)
+	options.model = &info
+	options.policy = ChunkPolicy(info, i.MaxInputChars)
+	err = i.withChunkStore(ctx, func(s ContentStore) error {
 		offset, e := decodeOffset(options.Cursor)
 		if e != nil {
 			return e
@@ -55,26 +58,7 @@ func (i *Index) SearchSemantic(ctx context.Context, policy access.EffectivePolic
 		if e != nil {
 			return e
 		}
-		queryVector := chunkQuery
-		if !chunked {
-			queryVector, e = client.Embed(options.Query)
-			if e != nil {
-				return e
-			}
-		}
-		info := client.ModelInfo()
-		if _, _, e = validateSemanticVector(queryVector, info.Dimensions); e != nil {
-			return e
-		}
-		if _, chunked := client.(SemanticChunkClient); chunked {
-			options.model = &info
-		}
 		rows, e := semanticCandidateRows(ctx, s.DB, policy, options)
-		if e != nil {
-			return e
-		}
-		queryNorm, _ := semanticNorm(queryVector) // vector was validated above
-		rows, e = bestSemanticChunks(ctx, s.DB, rows, queryVector, queryNorm, info.Dimensions)
 		if e != nil {
 			return e
 		}
@@ -126,9 +110,16 @@ func (i *Index) SearchSemantic(ctx context.Context, policy access.EffectivePolic
 	return page, err
 }
 func semanticCandidateRows(ctx context.Context, db executor, policy access.EffectivePolicy, options SemanticSearchOptions) ([]semanticRow, error) {
+	var tables int
+	if err := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('concept_embedding_chunks','concept_embedding_policy')").Scan(&tables); err != nil {
+		return nil, err
+	}
+	if tables != 2 {
+		return []semanticRow{}, nil
+	}
 	scope, args := authorizedPrefixes(policy, "e")
-	conditions := []string{"e.status = 'ready'", scope}
-	parameters := append([]any{}, args...)
+	conditions := []string{"e.status = 'ready'", scope, "EXISTS(SELECT 1 FROM concept_embedding_policy p WHERE p.concept_id=e.concept_id AND p.policy=?)"}
+	parameters := append(append([]any{}, args...), options.policy)
 	if options.model != nil {
 		conditions = append(conditions, "e.model_id = ?", "e.model_revision = ?", "e.dimensions = ?")
 		parameters = append(parameters, options.model.ModelID, options.model.Revision, options.model.Dimensions)
@@ -154,17 +145,9 @@ func semanticCandidateRows(ctx context.Context, db executor, policy access.Effec
 	for index := range conditions {
 		conditions[index] = "(" + conditions[index] + ")"
 	}
-	maxCandidates := options.MaxCandidates
-	if maxCandidates < 1 {
-		maxCandidates = 200
-	}
-	// Chunk-aware retrieval scores all authorized concepts before ranking.
-	// The legacy adapter keeps its captured candidate-limit contract.
-	if options.model != nil {
-		maxCandidates = -1
-	}
-	parameters = append(parameters, maxCandidates)
-	rows, err := db.QueryContext(ctx, `SELECT c.id,c.path,c.title,c.type,c.status,c.tags_json,c.title,e.embedding_blob,e.embedding_norm FROM concept_embeddings e JOIN concepts c ON c.id=e.concept_id WHERE `+strings.Join(conditions, " AND ")+` ORDER BY e.path,c.id LIMIT ?`, parameters...)
+	// Score all authorized chunks before taking the best per item and ranking.
+	parameters = append(parameters, -1)
+	rows, err := db.QueryContext(ctx, `SELECT c.id,c.path,c.title,c.type,c.status,c.tags_json,k.text,k.embedding_blob,k.embedding_norm FROM concept_embeddings e JOIN concepts c ON c.id=e.concept_id JOIN concept_embedding_chunks k ON k.concept_id=c.id AND k.document_hash=e.embedding_text_hash AND k.model_revision=e.model_revision WHERE `+strings.Join(conditions, " AND ")+` ORDER BY e.path,c.id,k.ordinal LIMIT ?`, parameters...)
 	if err != nil {
 		return nil, err
 	}

@@ -7,7 +7,7 @@ import (
 )
 
 func TestClusterExpansionFailureStages(t *testing.T) {
-	for _, failure := range []int{1, 2, 3, 4, 5} {
+	for _, failure := range []int{1, 2, 3, 4, 5, 6} {
 		root, path := nodeDB(t)
 		s := NewSnapshotService(root, path, emptyControlDB(t))
 		base := s.open
@@ -28,7 +28,7 @@ func TestClusterExpansionFailureStages(t *testing.T) {
 func TestClusterExpansionSemanticFailure(t *testing.T) {
 	root, path := nodeDB(t)
 	db, _ := sql.Open("sqlite", path)
-	_, _ = db.Exec("UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision';DROP TABLE concept_embeddings;CREATE TABLE concept_embeddings(concept_id TEXT,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT)")
+	_, _ = db.Exec("UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision';DROP TABLE concept_embedding_chunks;CREATE TABLE concept_embedding_chunks(concept_id TEXT,document_hash TEXT,model_revision TEXT,embedding_blob BLOB,embedding_norm REAL,ordinal INTEGER);DROP TABLE concept_embeddings;CREATE TABLE concept_embeddings(concept_id TEXT,status TEXT,model_id TEXT,dimensions INTEGER,embedding_revision TEXT,model_revision TEXT,updated_at TEXT,error_message TEXT)")
 	db.Close()
 	s := NewSnapshotService(root, path, emptyControlDB(t))
 	o := ClusterOptions{RefreshMaxPaths: 10, EdgeLimit: 10, ExpansionNodeLimit: 10, ClusterLimit: 1, Semantic: SemanticConfig{NodeLimit: 10, EdgeLimit: 10, Neighbours: 1}}

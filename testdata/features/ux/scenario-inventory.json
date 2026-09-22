@@ -90,7 +90,7 @@
         "docs/evidence/ui-audit-2026-09-20.md",
         "internal/service/graph_static/app.js"
       ],
-      "notes": "Current direct evidence is browser-side. No Go test currently asserts the client-state preservation path." 
+      "notes": "Current direct evidence is browser-side. No Go test currently asserts the client-state preservation path."
     },
     {
       "id": "ux-graph-005",
@@ -297,7 +297,7 @@
       "evidence_paths": [
         "docs/evidence/ui-audit-2026-09-20.md"
       ],
-      "notes": "WebGL fallback is browser-only. Go tests cover the degraded HTTP states that feed the UI." 
+      "notes": "WebGL fallback is browser-only. Go tests cover the degraded HTTP states that feed the UI."
     },
     {
       "id": "ux-graph-013",
@@ -402,7 +402,7 @@
         "docs/access-management.md",
         "internal/service/admin_static/app.js"
       ],
-      "notes": "The browser case proves the principals view renders after login. The Go test proves warning and lifecycle payloads, but no browser case checks every rendered pill." 
+      "notes": "The browser case proves the principals view renders after login. The Go test proves warning and lifecycle payloads, but no browser case checks every rendered pill."
     },
     {
       "id": "ux-admin-004",
@@ -523,6 +523,42 @@
         "docs/access-management.md"
       ],
       "notes": "The live create-form summary and admin warning are implemented and documented, but no direct automated assertion currently checks the changing summary text."
+    },
+    {
+      "id": "ux-graph-016",
+      "feature": "testdata/features/ux/graph/visual-debugger.feature",
+      "title": "Repeated web loads reuse item-relative persisted semantic connections",
+      "status": "automated",
+      "browser_cases": [
+        "real Go startup, filtering, metrics, semantics, forces and viewport"
+      ],
+      "go_tests": [
+        {
+          "file": "internal/graphdebug/semantic_test.go",
+          "name": "TestSemanticWebLoadsReadCachedScoresOnly"
+        },
+        {
+          "file": "internal/graphdebug/semantic_test.go",
+          "name": "TestCachedRankingMatchesVectorOracle"
+        },
+        {
+          "file": "internal/derived/semantic_graph_cache_test.go",
+          "name": "TestSemanticGraphCachePersistsAndInvalidates"
+        },
+        {
+          "file": "internal/derived/semantic_graph_cache_test.go",
+          "name": "TestSemanticGraphCacheUsesAllChunksAndSurvivesRestart"
+        },
+        {
+          "file": "internal/graphdebug/nodes_test.go",
+          "name": "TestNodeChunkMigrationAndPolicy"
+        }
+      ],
+      "evidence_paths": [
+        "docs/evidence/item-relative-embeddings-2026-09-22.md",
+        "docs/semantic-search.md"
+      ],
+      "notes": "Browser validates rendered semantic edges; Go API tests prohibit vector-column reads and verify persistent score reuse, scoped ranking and invalidation. Startup cache materialization computes pairs for every backfilled item."
     }
   ]
 }

@@ -11,8 +11,8 @@ import (
 	"time"
 )
 
-// SemanticChunkClient uses the embedding model's actual, untruncated tokenizer.
-// Clients without it keep the legacy single-vector format/behavior.
+// SemanticChunkClient exposes tokenizer-aware document chunking for the
+// derived semantic runtime.
 type SemanticChunkClient interface {
 	SemanticClient
 	Chunk(string, int, int, int) ([]string, error)
@@ -61,8 +61,8 @@ func fullEmbeddingHash(text string) string {
 }
 
 // The optional additive table leaves schema-v2 concept_embeddings readable by
-// prior images. Its first chunk is mirrored in that table for old readers and
-// graph views. Other chunks are used only if the parent hash/model still match.
+// prior images. Its first chunk is mirrored in that table for rollback readers
+// only. Current graph/search readers use matching chunk input/model and policy.
 const chunkSchema = `CREATE TABLE IF NOT EXISTS concept_embedding_chunks (
  concept_id TEXT NOT NULL, ordinal INTEGER NOT NULL,
  document_hash TEXT NOT NULL, model_revision TEXT NOT NULL,
@@ -145,7 +145,7 @@ func (i *Index) refreshChunks(ctx context.Context, revision string, paths []stri
 			first = last
 		}
 		err = i.withChunkStore(ctx, func(s ContentStore) error {
-			return publishChunks(ctx, s.DB, chunkDocument{id: id, path: path, digest: digest, contentHash: contentHash, revision: revision, info: info, chunks: chunks, vectors: vectors, embedErr: embedErr, policy: chunkPolicy(info, limit)})
+			return publishChunks(ctx, s.DB, chunkDocument{id: id, path: path, digest: digest, contentHash: contentHash, revision: revision, info: info, chunks: chunks, vectors: vectors, embedErr: embedErr, policy: ChunkPolicy(info, limit)})
 		})
 		if err != nil {
 			return err
@@ -164,7 +164,7 @@ func publishChunks(ctx context.Context, db *sql.DB, doc chunkDocument) error {
 		return err
 	}
 	defer conn.Close()
-	if _, err := conn.ExecContext(ctx, chunkSchema); err != nil {
+	if _, err := conn.ExecContext(ctx, chunkSchema+";"+semanticGraphSchema); err != nil {
 		return err
 	}
 	return stateTransaction(ctx, conn, func() error {
@@ -178,12 +178,12 @@ func publishChunks(ctx context.Context, db *sql.DB, doc chunkDocument) error {
 		}
 		revision = currentRevision
 		if embedErr != nil {
-			var previousHash, previousModel, previousStatus string
-			err := conn.QueryRowContext(ctx, "SELECT embedding_text_hash,model_revision,status FROM concept_embeddings WHERE concept_id=?", id).Scan(&previousHash, &previousModel, &previousStatus)
+			var previousHash, previousModel, previousStatus, previousPolicy string
+			err := conn.QueryRowContext(ctx, "SELECT e.embedding_text_hash,e.model_revision,e.status,COALESCE(p.policy,'') FROM concept_embeddings e LEFT JOIN concept_embedding_policy p ON p.concept_id=e.concept_id WHERE e.concept_id=?", id).Scan(&previousHash, &previousModel, &previousStatus, &previousPolicy)
 			if err != nil && !errors.Is(err, sql.ErrNoRows) {
 				return err
 			}
-			if previousHash == digest && previousModel == info.Revision && previousStatus == "ready" {
+			if previousHash == digest && previousModel == info.Revision && previousStatus == "ready" && previousPolicy == doc.policy {
 				return embedErr // keep last-known-good vectors for an unchanged document
 			}
 		}
@@ -213,46 +213,11 @@ func publishChunks(ctx context.Context, db *sql.DB, doc chunkDocument) error {
 		if _, err = conn.ExecContext(ctx, "DELETE FROM concept_embedding_chunks WHERE concept_id NOT IN (SELECT concept_id FROM concept_embeddings)"); err != nil {
 			return err
 		}
+		if err := refreshSemanticGraphItem(ctx, conn, id); err != nil {
+			return err
+		}
 		return setEmbeddingRevision(ctx, conn, revision)
 	})
-}
-
-func bestSemanticChunks(ctx context.Context, db executor, rows []semanticRow, query []float32, norm float64, dimensions int) ([]semanticRow, error) {
-	exists, err := chunkTableExists(ctx, db)
-	if err != nil || !exists {
-		return rows, err
-	}
-	// Rows were already authorization-filtered, before LIMIT and vector reads.
-	// Bound candidates by concepts, not chunks, to avoid losing later documents.
-	result := []semanticRow{}
-	for _, parent := range rows {
-		chunks, err := db.QueryContext(ctx, `SELECT c.id,c.path,c.title,c.type,c.status,c.tags_json,k.text,k.embedding_blob,k.embedding_norm
- FROM concept_embedding_chunks k JOIN concepts c ON c.id=k.concept_id JOIN concept_embeddings e ON e.concept_id=c.id
- WHERE c.id=? AND e.status='ready' AND k.document_hash=e.embedding_text_hash AND k.model_revision=e.model_revision ORDER BY k.ordinal`, parent.result.ConceptID)
-		if err != nil {
-			return nil, err
-		}
-		items, err := readSemanticRows(chunks)
-		if err != nil {
-			return nil, err
-		}
-		if len(items) == 0 {
-			result = append(result, parent)
-		} else {
-			best, score := items[0], -2.0
-			for _, item := range items {
-				value, err := semanticBlobCosine(query, norm, item.blob, item.norm, dimensions)
-				if err != nil {
-					return nil, err
-				}
-				if value > score {
-					best, score = item, value
-				}
-			}
-			result = append(result, best)
-		}
-	}
-	return result, nil
 }
 
 // Chunk publication errors (constraint, cancellation, full disk) must roll back,
@@ -293,7 +258,7 @@ func lockIndex(ctx context.Context, mu *sync.Mutex) error {
 	}
 }
 
-func chunkPolicy(info SemanticModelInfo, chars int) string {
+func ChunkPolicy(info SemanticModelInfo, chars int) string {
 	if chars <= 0 {
 		chars = 4096
 	}
@@ -303,6 +268,36 @@ func chunkPolicy(info SemanticModelInfo, chars int) string {
 		Model                  SemanticModelInfo
 	}{"chunks-v1", 384, 64, chars, info})
 	return string(raw)
+}
+
+// PrepareChunkEmbeddings classifies stored rows before serving searches. Legacy
+// rows keep their rollback-readable bytes but are queued for chunk regeneration.
+// A policy change invalidates only affected items; repository revision is unused.
+func (i *Index) PrepareChunkEmbeddings(ctx context.Context) error {
+	return i.withChunkStore(ctx, func(s ContentStore) error { return prepareChunkEmbeddings(ctx, s.DB, i.chunkModel, i.MaxInputChars) })
+}
+func prepareChunkEmbeddings(ctx context.Context, db *sql.DB, model SemanticModelInfo, maxInputChars int) error {
+	conn, err := db.Conn(ctx)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	if _, err = conn.ExecContext(ctx, chunkSchema+";"+semanticGraphSchema); err != nil {
+		return err
+	}
+	return stateTransaction(ctx, conn, func() error {
+		if _, err = conn.ExecContext(ctx, `UPDATE concept_embeddings SET status=CASE WHEN embedding_text_hash NOT LIKE 'chunks-v1:%' OR NOT EXISTS(SELECT 1 FROM concept_embedding_chunks k WHERE k.concept_id=concept_embeddings.concept_id AND k.document_hash=concept_embeddings.embedding_text_hash AND k.model_revision=concept_embeddings.model_revision) THEN 'legacy' ELSE 'stale' END WHERE status='ready' AND (embedding_text_hash NOT LIKE 'chunks-v1:%' OR model_id!=? OR model_revision!=? OR dimensions!=? OR NOT EXISTS(SELECT 1 FROM concept_embedding_policy p WHERE p.concept_id=concept_embeddings.concept_id AND p.policy=?) OR NOT EXISTS(SELECT 1 FROM concept_embedding_chunks k WHERE k.concept_id=concept_embeddings.concept_id AND k.document_hash=concept_embeddings.embedding_text_hash AND k.model_revision=concept_embeddings.model_revision))`, model.ModelID, model.Revision, model.Dimensions, ChunkPolicy(model, maxInputChars)); err != nil {
+			return err
+		}
+		revision, err := requiredState(ctx, conn, "repo_revision")
+		if err != nil {
+			return err
+		}
+		if err := prepareSemanticGraphCache(ctx, conn); err != nil {
+			return err
+		}
+		return setEmbeddingRevision(ctx, conn, revision)
+	})
 }
 
 // ConfigureChunkModel sets immutable runtime model identity before the worker starts.
@@ -319,5 +314,5 @@ func (i *Index) pendingChunkRows(ctx context.Context, db *sql.DB, limit int) (em
 	if count == 0 {
 		return db.QueryContext(ctx, `SELECT path FROM concepts ORDER BY path LIMIT ?`, limit)
 	}
-	return db.QueryContext(ctx, `SELECT c.path FROM concepts c LEFT JOIN concept_embeddings e ON e.concept_id=c.id LEFT JOIN concept_embedding_policy p ON p.concept_id=c.id WHERE e.concept_id IS NULL OR e.status IN ('stale','pending') OR e.model_id!=? OR e.model_revision!=? OR e.dimensions!=? OR COALESCE(p.policy,'')!=? ORDER BY CASE WHEN e.status='stale' THEN 0 ELSE 1 END,c.path LIMIT ?`, i.chunkModel.ModelID, i.chunkModel.Revision, i.chunkModel.Dimensions, chunkPolicy(i.chunkModel, i.MaxInputChars), limit)
+	return db.QueryContext(ctx, `SELECT c.path FROM concepts c LEFT JOIN concept_embeddings e ON e.concept_id=c.id LEFT JOIN concept_embedding_policy p ON p.concept_id=c.id WHERE e.concept_id IS NULL OR e.status IN ('stale','pending','legacy') OR e.model_id!=? OR e.model_revision!=? OR e.dimensions!=? OR COALESCE(p.policy,'')!=? OR (e.status='ready' AND NOT EXISTS (SELECT 1 FROM concept_embedding_chunks k WHERE k.concept_id=c.id AND k.document_hash=e.embedding_text_hash AND k.model_revision=e.model_revision)) ORDER BY CASE WHEN e.status='stale' THEN 0 ELSE 1 END,c.path LIMIT ?`, i.chunkModel.ModelID, i.chunkModel.Revision, i.chunkModel.Dimensions, ChunkPolicy(i.chunkModel, i.MaxInputChars), limit)
 }

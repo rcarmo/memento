@@ -49,7 +49,10 @@ func (snapshotFaultConn) QueryContext(_ context.Context, query string, _ []drive
 	if strings.HasPrefix(query, "SELECT proposal_id,") {
 		return &snapshotFaultRows{mode: "summaries-" + mode}, nil
 	}
-	if strings.HasPrefix(query, "SELECT concept_id,embedding_blob") {
+	if strings.HasPrefix(query, "SELECT COUNT(*) FROM sqlite_master") {
+		return &snapshotFaultRows{mode: "chunk-tables"}, nil
+	}
+	if strings.HasPrefix(query, "SELECT pair.source_id") || strings.HasPrefix(query, "SELECT concept_id,embedding_blob") {
 		return &snapshotFaultRows{mode: "semantic-" + mode}, nil
 	}
 	if strings.HasPrefix(query, "SELECT c.id,c.path,c.title,c.type,c.tags_json,snippet") {
@@ -64,6 +67,9 @@ func (snapshotFaultConn) QueryContext(_ context.Context, query string, _ []drive
 	return &snapshotFaultRows{mode: "revisions-" + mode}, nil
 }
 func (r *snapshotFaultRows) Columns() []string {
+	if r.mode == "chunk-tables" {
+		return []string{"count"}
+	}
 	if len(r.mode) >= 6 && r.mode[:6] == "paths-" {
 		return []string{"id", "path"}
 	}
@@ -80,7 +86,7 @@ func (r *snapshotFaultRows) Columns() []string {
 		return make([]string, 9)
 	}
 	if len(r.mode) >= 9 && r.mode[:9] == "semantic-" {
-		return []string{"concept_id", "embedding_blob", "embedding_norm", "model_id", "embedding_revision"}
+		return []string{"source_id", "target_id", "similarity", "model_id", "embedding_revision"}
 	}
 	if len(r.mode) >= 7 && r.mode[:7] == "search-" {
 		return []string{"id", "path", "title", "type", "tags_json", "snippet"}
@@ -102,6 +108,10 @@ func (r *snapshotFaultRows) Next(values []driver.Value) error {
 	}
 	r.emitted = true
 	r.count++
+	if r.mode == "chunk-tables" {
+		values[0] = int64(2)
+		return nil
+	}
 	if r.mode == "revisions-scan" || r.mode == "paths-scan" || r.mode == "edges-scan" || r.mode == "nodes-scan" || r.mode == "proposals-scan" || r.mode == "semantic-scan" || r.mode == "search-scan" || r.mode == "summaries-scan" || r.mode == "hashes-scan" {
 		values[0] = nil
 		values[1] = "value"
@@ -127,7 +137,7 @@ func (r *snapshotFaultRows) Next(values []driver.Value) error {
 		values[5] = ""
 	} else if len(r.mode) >= 9 && r.mode[:9] == "semantic-" {
 		values[0] = "a"
-		values[1] = blob(1, 0)
+		values[1] = "b"
 		values[2] = float64(1)
 		values[3] = "m"
 		values[4] = "main"

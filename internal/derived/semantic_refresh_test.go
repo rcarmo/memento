@@ -32,7 +32,7 @@ func TestRefreshEmbeddingPaths(t *testing.T) {
 		t.Fatal(err)
 	}
 	pending, _ := index.PendingEmbeddingPaths(ctx, 10)
-	client := &semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}, vector: []float32{3, 4}}
+	client := &semanticChunkClientStub{semanticClientStub: semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}, vector: []float32{3, 4}}}
 	config := SemanticRefreshConfig{ModelID: "m", Dimensions: 2, MaxInputChars: 4096, MaxBatch: 16}
 	if err := index.RefreshEmbeddingPaths(ctx, "r1", pending, config, client); err != nil {
 		t.Fatal(err)
@@ -46,8 +46,11 @@ func TestRefreshEmbeddingPaths(t *testing.T) {
 		t.Fatal(status, blob, norm, err)
 	}
 	client.err = errors.New("failed")
-	if err := index.RefreshEmbeddingPaths(ctx, "r2", pending, config, client); err != nil {
-		t.Fatal(err)
+	// An unchanged refresh failure preserves prior ready chunks. Change the item
+	// first so this case exercises error publication instead.
+	_, _ = db.Exec("UPDATE concepts SET body='changed input'")
+	if err := index.RefreshEmbeddingPaths(ctx, "r2", pending, config, client); err == nil {
+		t.Fatal("expected inference error")
 	}
 	var message string
 	if err := db.QueryRow("SELECT status,error_message FROM concept_embeddings").Scan(&status, &message); err != nil || status != "error" || message != "failed" {
@@ -64,12 +67,12 @@ func TestRefreshEmbeddingSQLFailures(t *testing.T) {
 		pending, _ := index.PendingEmbeddingPaths(ctx, 1)
 		db, _ := sql.Open("sqlite", index.Path)
 		if kind == "advance" {
-			_, _ = db.Exec(`CREATE TRIGGER fail_advance BEFORE UPDATE OF embedding_revision ON concept_embeddings WHEN NEW.status='ready' BEGIN SELECT RAISE(ABORT,'advance');END`)
+			_, _ = db.Exec(`CREATE TRIGGER fail_advance BEFORE UPDATE ON index_state WHEN NEW.key='semantic_embedding_revision' BEGIN SELECT RAISE(ABORT,'advance');END`)
 		} else {
 			_, _ = db.Exec("DROP TABLE concept_embeddings")
 		}
 		_ = db.Close()
-		client := &semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}, vector: []float32{1, 1}}
+		client := &semanticChunkClientStub{semanticClientStub: semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}, vector: []float32{1, 1}}}
 		if kind == "degraded" {
 			client.err = errors.New("embed")
 		}
@@ -91,11 +94,11 @@ func TestRefreshEmbeddingBatchIntegration(t *testing.T) {
 		t.Fatal(err)
 	}
 	paths, _ := index.PendingEmbeddingPaths(ctx, 10)
-	client := &semanticBatchStub{semanticClientStub: semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}}, batchVectors: [][]float32{{1, 0}, {0, 1}}}
+	client := &itemChunkBatch{semanticBatchStub: semanticBatchStub{semanticClientStub: semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}}, batchVectors: [][]float32{{1, 0}}}}
 	if err := index.RefreshEmbeddingPaths(ctx, "r", paths, SemanticRefreshConfig{ModelID: "m", Dimensions: 2, MaxInputChars: 4096, MaxBatch: 10}, client); err != nil {
 		t.Fatal(err)
 	}
-	if len(client.batches) != 1 || len(client.batches[0]) != 2 || len(client.singles) != 0 {
+	if len(client.batches) != 2 || len(client.batches[0]) != 1 || len(client.singles) != 0 {
 		t.Fatal(client.batches, client.singles)
 	}
 	db, _ := sql.Open("sqlite", index.Path)
@@ -146,5 +149,27 @@ func TestEmbeddingTextAndVector(t *testing.T) {
 	blob, norm, err := validateSemanticVector([]float32{3, 4}, 2)
 	if err != nil || len(blob) != 8 || norm != 5 {
 		t.Fatal(blob, norm, err)
+	}
+}
+
+type itemChunkBatch struct{ semanticBatchStub }
+
+func (c *itemChunkBatch) Chunk(text string, _, _, _ int) ([]string, error) {
+	return []string{text}, nil
+}
+
+func TestRefreshRejectsLegacyClient(t *testing.T) {
+	i := semanticSearchIndex(t)
+	client := &semanticClientStub{info: SemanticModelInfo{"m", 2, "v"}, vector: []float32{1, 0}}
+	if err := i.RefreshEmbeddingPaths(t.Context(), "main", []string{"/a.md"}, chunkConfig, client); err == nil {
+		t.Fatal("single-vector adapter accepted")
+	}
+}
+
+func TestNonFiniteChunkVectorRejected(t *testing.T) {
+	for _, value := range []float32{float32(math.NaN()), float32(math.Inf(1))} {
+		if _, _, err := validateSemanticVector([]float32{value}, 1); err == nil {
+			t.Fatal(value)
+		}
 	}
 }

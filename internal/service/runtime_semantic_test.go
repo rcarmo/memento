@@ -17,10 +17,8 @@ func (runtimeSemanticClient) ModelInfo() derived.SemanticModelInfo {
 	return derived.SemanticModelInfo{ModelID: "m", Dimensions: 2, Revision: "v"}
 }
 func (runtimeSemanticClient) Embed(string) ([]float32, error) { return []float32{1, 1}, nil }
-func TestSemanticRefreshNeeded(t *testing.T) {
-	if semanticRefreshNeeded("r", "r") || !semanticRefreshNeeded("r", "") {
-		t.Fatal("needed")
-	}
+func (runtimeSemanticClient) Chunk(text string, _, _, _ int) ([]string, error) {
+	return []string{text}, nil
 }
 func TestSemanticPathRequired(t *testing.T) {
 	ctx := context.Background()
@@ -90,5 +88,27 @@ func TestBuildSemanticEnabledRuntime(t *testing.T) {
 	}
 	if err = runtime.Close(ctx); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestChunkPreparationFailureStopsRuntime(t *testing.T) {
+	var config RuntimeConfig
+	config.Repository.RootPath = filepath.Join(t.TempDir(), "runtime")
+	options := ModelsOffRuntimeOptions{Surface: "standard", Tokens: []BearerPrincipal{}}
+	options.Semantic = DefaultSemanticSearchConfig()
+	options.Semantic.Enabled = true
+	options.Semantic.ModelID = "m"
+	options.Semantic.Dimensions = 2
+	modelPath := "unused"
+	options.Semantic.ModelPath = &modelPath
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	ops := defaultModelsOffBuildOps()
+	ops.buildSemantic = func(SemanticSearchConfig) (derived.SemanticClient, error) {
+		cancel()
+		return runtimeSemanticClient{}, nil
+	}
+	if _, _, err := buildModelsOffRuntime(ctx, config, options, ops); err == nil {
+		t.Fatal("migration error ignored")
 	}
 }

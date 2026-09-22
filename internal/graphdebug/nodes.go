@@ -164,7 +164,16 @@ func (s *SnapshotService) Nodes(ctx context.Context, ids []string, limit int, po
 		clauses = append(clauses, scope)
 		args = append(args, scopeArgs...)
 	}
-	query := "SELECT c.id,c.path,c.title,c.type,c.status,c.tags_json,c.updated_at,COALESCE(g.inbound_degree,0),COALESCE(g.outbound_degree,0),COALESCE(g.broken_link_count,0),COALESCE(g.orphan_flag,0),e.status,e.model_id,e.dimensions,e.embedding_revision,e.model_revision,e.updated_at,e.error_message FROM concepts c LEFT JOIN graph_metrics g ON g.concept_id=c.id LEFT JOIN concept_embeddings e ON e.concept_id=c.id"
+	var chunkTable int
+	if err := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('concept_embedding_chunks','concept_embedding_policy')").Scan(&chunkTable); err != nil {
+		return nil, err
+	}
+	embeddingStatus := "CASE WHEN e.status='ready' THEN 'legacy' ELSE e.status END"
+	if chunkTable == 2 {
+		embeddingStatus = "CASE WHEN e.status='ready' AND NOT EXISTS(SELECT 1 FROM concept_embedding_chunks k JOIN concept_embedding_policy p ON p.concept_id=k.concept_id WHERE k.concept_id=c.id AND k.document_hash=e.embedding_text_hash AND k.model_revision=e.model_revision) THEN 'legacy' WHEN e.status='ready' AND ?!='' AND NOT EXISTS(SELECT 1 FROM concept_embedding_policy p WHERE p.concept_id=c.id AND p.policy=?) THEN 'stale' ELSE e.status END"
+		args = append([]any{s.EmbeddingPolicy, s.EmbeddingPolicy}, args...)
+	}
+	query := "SELECT c.id,c.path,c.title,c.type,c.status,c.tags_json,c.updated_at,COALESCE(g.inbound_degree,0),COALESCE(g.outbound_degree,0),COALESCE(g.broken_link_count,0),COALESCE(g.orphan_flag,0)," + embeddingStatus + ",e.model_id,e.dimensions,e.embedding_revision,e.model_revision,e.updated_at,e.error_message FROM concepts c LEFT JOIN graph_metrics g ON g.concept_id=c.id LEFT JOIN concept_embeddings e ON e.concept_id=c.id"
 	if len(clauses) > 0 {
 		query += " WHERE " + strings.Join(clauses, " AND ")
 	}

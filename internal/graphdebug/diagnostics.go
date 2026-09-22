@@ -130,10 +130,12 @@ func DiagnoseFoundation(nodes []Node, edges []Edge, revisions Revisions) []Diagn
 		e := node.Embedding
 		if e.Status == "error" {
 			out = append(out, diagnostic("embedding_failed", "warning", []string{node.ID}, "Derived embedding generation failed.", map[string]any{"status": e.Status, "error": e.Error}, map[string]any{}, true))
+		} else if e.Status == "legacy" {
+			out = append(out, diagnostic("embedding_legacy", "info", []string{node.ID}, "Legacy single-vector embedding needs item-level chunk regeneration; explicit relationships are unaffected.", map[string]any{"status": e.Status}, map[string]any{}, true))
+		} else if e.Status == "stale" {
+			out = append(out, diagnostic("embedding_stale", "warning", []string{node.ID}, "Embedding input or model configuration changed for this item; explicit relationships are unaffected.", map[string]any{"status": e.Status}, map[string]any{}, true))
 		} else if e.Status != "ready" {
 			out = append(out, diagnostic("embedding_missing", "info", []string{node.ID}, "No current ready embedding is available; explicit relationships are unaffected.", map[string]any{"status": e.Status}, map[string]any{}, true))
-		} else if e.EmbeddingRevision == nil || *e.EmbeddingRevision != revisions.Repository {
-			out = append(out, diagnostic("embedding_stale", "warning", []string{node.ID}, "Embedding revision differs from the repository revision; explicit relationships are unaffected.", map[string]any{"embedding_revision": e.EmbeddingRevision, "repository_revision": revisions.Repository}, map[string]any{}, true))
 		}
 		if node.PendingProposalCount > 0 {
 			out = append(out, diagnostic("pending_proposals", "info", []string{node.ID}, "Memory has pending proposal or review state.", map[string]any{"pending_proposal_count": node.PendingProposalCount}, map[string]any{"maximum": 0}, false))

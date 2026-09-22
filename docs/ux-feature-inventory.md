@@ -21,6 +21,7 @@
 | `ux-graph-013` | The sidebar keeps legend and live telemetry visible during graph inspection | documented_only | none | none |
 | `ux-graph-014` | Named controls and keyboard activation remain available for non-canvas navigation | partial | `diagnostic scope, target navigation, retry, versions and alignment`; `real Go startup, filtering, metrics, semantics, forces and viewport`; `real Go PNG SVG JSON exports, metadata boundaries and URL cleanup` | none |
 | `ux-graph-015` | Re-entering the debugger does not retain stale overlay UI from a previous session | automated | `scene disposal stops animation and removes overlay DOM` | none |
+| `ux-graph-016` | Repeated web loads reuse item-relative persisted semantic connections | automated | Browser: semantic startup; Go: cached-score-only reads, oracle ranking, invalidation and restart | Vector columns are unavailable in the HTTP regression; no query-time vector work is permitted. |
 
 ## Access manager
 

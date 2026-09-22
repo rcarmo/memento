@@ -99,7 +99,6 @@ func defaultModelsOffBuildOps() modelsOffBuildOps {
 		return jobs.RegisterConfiguredServer(server, ConfiguredServerOptions{Catalog: catalogConfig, Limits: options.Limits, ModelHandlers: map[string]CatalogHandler{"memory_answer": answer.Call, "memory_route": route.Call, "memory_propose_freeform": proposals.Freeform, "memory_propose_update": proposals.Update}})
 	}, LoadGTESemanticClient, nil, derived.NewSemanticWorker, derived.NewProgressiveSemanticWorker}
 }
-func semanticRefreshNeeded(repo, embedding string) bool { return repo != embedding }
 func BuildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options ModelsOffRuntimeOptions) (*Runtime, *umcp.Server, error) {
 	return buildModelsOffRuntime(ctx, config, options, defaultModelsOffBuildOps())
 }
@@ -260,8 +259,10 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		if loadErr != nil {
 			return nil, nil, loadErr
 		}
-		_, index.ChunkEmbeddings = client.(derived.SemanticChunkClient)
 		index.ConfigureChunkModel(client.ModelInfo())
+		if err := index.PrepareChunkEmbeddings(ctx); err != nil {
+			return nil, nil, err
+		}
 		controls.SemanticClient = client
 		controls.RuntimeCapabilities.SemanticLoaded = true
 		controls.SemanticMaxCandidates = options.Semantic.MaxCandidates
@@ -276,10 +277,8 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		}
 		if options.Semantic.RefreshOnStartup {
 			state, _ := index.State(ctx)
-			embeddingRevision, _ := index.EmbeddingRevision(ctx)
-			if index.ChunkEmbeddings || semanticRefreshNeeded(state.RepoRevision, embeddingRevision) {
-				options.SemanticWorker.Enqueue(paths.Repository.CurrentDir, state.RepoRevision, nil, true)
-			}
+			// Pending items are determined by input/model/policy, never repository equality.
+			options.SemanticWorker.Enqueue(paths.Repository.CurrentDir, state.RepoRevision, nil, true)
 		}
 	}
 	server = umcp.NewServer("memento")

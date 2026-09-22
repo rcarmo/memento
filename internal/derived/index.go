@@ -33,7 +33,6 @@ type Index struct {
 	Path            string
 	DeferEmbeddings bool
 	MaxInputChars   int
-	ChunkEmbeddings bool // include legacy single-vector rows in the refresh queue
 	chunkModel      SemanticModelInfo
 	Now             func() time.Time
 	mu              sync.Mutex
@@ -243,12 +242,7 @@ func (i *Index) Status(ctx context.Context, policy access.EffectivePolicy) (Stat
 	return result, err
 }
 func (i *Index) PendingEmbeddingPaths(ctx context.Context, limit int) ([]string, error) {
-	return i.pendingEmbeddingPaths(ctx, limit, func(ctx context.Context, db *sql.DB, limit int) (embeddingPathRows, error) {
-		if i.ChunkEmbeddings {
-			return i.pendingChunkRows(ctx, db, limit)
-		}
-		return db.QueryContext(ctx, `SELECT c.path FROM concepts AS c LEFT JOIN concept_embeddings AS e ON e.concept_id=c.id WHERE e.concept_id IS NULL OR e.status IN ('stale','pending') ORDER BY CASE WHEN e.status='stale' THEN 0 ELSE 1 END,c.path LIMIT ?`, limit)
-	})
+	return i.pendingEmbeddingPaths(ctx, limit, i.pendingChunkRows)
 }
 func (i *Index) pendingEmbeddingPaths(ctx context.Context, limit int, query func(context.Context, *sql.DB, int) (embeddingPathRows, error)) (paths []string, err error) {
 	if limit < 1 {

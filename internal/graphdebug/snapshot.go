@@ -24,6 +24,7 @@ func (e *SnapshotError) Error() string { return e.Message }
 
 type SnapshotService struct {
 	DerivedDBPath, ControlDBPath, RepositoryRoot string
+	EmbeddingPolicy                              string // active item/model/chunk-policy identity; empty permits stored policies
 	open                                         func(context.Context, string) (*sql.DB, error)
 }
 

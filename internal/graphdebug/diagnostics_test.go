@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -42,7 +43,7 @@ func TestApplyDiagnosticIDs(t *testing.T) {
 func TestDiagnosticFoundationBranches(t *testing.T) {
 	stale := "old"
 	failed := "boom"
-	nodes := []Node{{ID: "a", Namespace: "/a/", Orphan: true, Embedding: EmbeddingState{Status: "error", Error: &failed}}, {ID: "b", Namespace: "/b/", ExplicitOutDegree: 30, Embedding: EmbeddingState{Status: "ready", EmbeddingRevision: &stale}}}
+	nodes := []Node{{ID: "a", Namespace: "/a/", Orphan: true, Embedding: EmbeddingState{Status: "error", Error: &failed}}, {ID: "b", Namespace: "/b/", ExplicitOutDegree: 30, Embedding: EmbeddingState{Status: "stale", EmbeddingRevision: &stale}}}
 	for i := 0; i < 20; i++ {
 		nodes = append(nodes, Node{ID: fmt.Sprintf("low-%02d", i), Namespace: "/a/", ExplicitOutDegree: 1, Embedding: EmbeddingState{Status: "ready", EmbeddingRevision: ptr("main")}})
 	}
@@ -63,5 +64,27 @@ func TestDiagnosticFoundationBranches(t *testing.T) {
 	d := diagnostic("x", "info", []string{"b", "a"}, "m", map[string]any{}, map[string]any{}, false)
 	if !reflect.DeepEqual(d.ConceptIDs, []string{"a", "b"}) {
 		t.Fatal(d)
+	}
+}
+
+func TestEmbeddingDiagnosticsAreItemRelative(t *testing.T) {
+	nodes := []Node{
+		{ID: "old-ready", Embedding: EmbeddingState{Status: "ready", EmbeddingRevision: ptr("old")}},
+		{ID: "ready-no-provenance", Embedding: EmbeddingState{Status: "ready"}},
+		{ID: "changed", Embedding: EmbeddingState{Status: "stale", EmbeddingRevision: ptr("old")}},
+		{ID: "missing", Embedding: EmbeddingState{Status: "missing"}},
+		{ID: "legacy", Embedding: EmbeddingState{Status: "legacy"}},
+	}
+	findings := DiagnoseFoundation(nodes, nil, Revisions{Repository: "new"})
+	seen := map[string]string{}
+	for _, d := range findings {
+		if strings.HasPrefix(d.Rule, "embedding_") {
+			for _, id := range d.ConceptIDs {
+				seen[id] = d.Rule
+			}
+		}
+	}
+	if len(seen) != 3 || seen["legacy"] != "embedding_legacy" || seen["changed"] != "embedding_stale" || seen["missing"] != "embedding_missing" {
+		t.Fatal(seen)
 	}
 }

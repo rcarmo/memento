@@ -352,7 +352,7 @@ func collectEmbeddingMetrics(ctx context.Context, db liveMetricsQueryer) (map[st
 }
 
 func readEmbeddingMetrics(rows metricsRows) (map[string]int64, error) {
-	result := map[string]int64{"ready": 0, "pending": 0, "stale": 0, "error": 0, "missing": 0, "other": 0}
+	result := map[string]int64{"ready": 0, "pending": 0, "stale": 0, "error": 0, "missing": 0, "legacy": 0, "other": 0}
 	for rows.Next() {
 		var status string
 		var count int64
@@ -462,7 +462,7 @@ func renderLivePrometheus(snapshot liveMetricsSnapshot, success bool, elapsed fl
 		"# HELP memento_embedding_rows Number of concepts by embedding refresh state.",
 		"# TYPE memento_embedding_rows gauge",
 	)
-	for _, status := range []string{"ready", "pending", "stale", "error", "missing", "other"} {
+	for _, status := range []string{"ready", "pending", "stale", "error", "missing", "legacy", "other"} {
 		lines = append(lines, fmt.Sprintf("memento_embedding_rows{status=\"%s\"} %d", prometheusLabelValue(status), snapshot.Embedding[status]))
 	}
 	lines = append(lines,

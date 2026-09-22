@@ -13,7 +13,6 @@ import (
 	"sort"
 	"strings"
 	"time"
-	"unicode"
 
 	"github.com/rcarmo/memento/internal/control"
 	"github.com/rcarmo/memento/internal/pyjson"
@@ -218,7 +217,6 @@ func (s ContentStore) UpdatePaths(ctx context.Context, root, revision string, pa
 				return err
 			}
 		}
-		documents := 0
 		for _, path := range ordered {
 			if !strings.HasSuffix(path, ".md") || repository.IsReservedBundlePath(path) {
 				continue
@@ -243,12 +241,17 @@ func (s ContentStore) UpdatePaths(ctx context.Context, root, revision string, pa
 			if err != nil {
 				return err
 			}
-			documents++
 			if err = upsertEntry(ctx, conn, entry, revision); err != nil {
 				return err
 			}
-			if err = commitEntry(ctx, conn); err != nil {
+			// Invalidate this item's changed input in the same entry commit.
+			if err = s.markEmbeddingStaleness(ctx, conn, []repository.BundleEntry{entry}, revision); err != nil {
 				return err
+			}
+			if !s.DeferEmbeddings {
+				if err = setState(ctx, conn, "semantic_embedding_revision", "disabled"); err != nil {
+					return err
+				}
 			}
 		}
 		if _, err := conn.ExecContext(ctx, "UPDATE concepts SET repo_revision=?", revision); err != nil {
@@ -264,17 +267,15 @@ func (s ContentStore) UpdatePaths(ctx context.Context, root, revision string, pa
 		if err := recomputeMetrics(ctx, conn); err != nil {
 			return err
 		}
+		if _, err := conn.ExecContext(ctx, "DELETE FROM concept_embeddings WHERE concept_id NOT IN (SELECT id FROM concepts)"); err != nil {
+			return err
+		}
 		if !s.DeferEmbeddings {
 			if err := setState(ctx, conn, "semantic_embedding_revision", "disabled"); err != nil {
 				return err
 			}
-		} else if documents == 0 {
-			if _, err := conn.ExecContext(ctx, "UPDATE concept_embeddings SET embedding_revision=? WHERE status='ready'", revision); err != nil {
-				return err
-			}
-			if err := setEmbeddingRevision(ctx, conn, revision); err != nil {
-				return err
-			}
+		} else if err := setEmbeddingRevision(ctx, conn, revision); err != nil {
+			return err
 		}
 		return finishContent(ctx, conn, revision)
 	})
@@ -286,13 +287,6 @@ func (s ContentStore) contentTransaction(ctx context.Context, fn func(*sql.Conn)
 	}
 	defer conn.Close()
 	return stateTransaction(ctx, conn, func() error { return fn(conn) })
-}
-func commitEntry(ctx context.Context, conn executor) error {
-	if _, err := conn.ExecContext(ctx, "COMMIT"); err != nil {
-		return err
-	}
-	_, err := conn.ExecContext(ctx, "BEGIN")
-	return err
 }
 func finishContent(ctx context.Context, conn executor, revision string) error {
 	if err := setState(ctx, conn, "link_resolution_version", LinkResolutionVersion); err != nil {
@@ -344,7 +338,11 @@ func deletePath(ctx context.Context, db executor, path string) error {
 	if err != nil {
 		return err
 	}
-	for _, query := range []string{"DELETE FROM concept_fts WHERE concept_id=?", "DELETE FROM links WHERE source_id=? OR target_id=?", "DELETE FROM graph_metrics WHERE concept_id=?", "DELETE FROM concept_embeddings WHERE concept_id=?", "DELETE FROM concepts WHERE id=?"} {
+	// Keep vectors until all touched paths have been reconciled. A rename or
+	// metadata-only edit keeps the same item input; final orphan cleanup handles
+	// actual deletion/ID replacement and markEmbeddingStaleness handles edits.
+	queries := []string{"DELETE FROM concept_fts WHERE concept_id=?", "DELETE FROM links WHERE source_id=? OR target_id=?", "DELETE FROM graph_metrics WHERE concept_id=?", "DELETE FROM concepts WHERE id=?"}
+	for _, query := range queries {
 		args := []any{id}
 		if strings.Contains(query, "OR") {
 			args = append(args, id)
@@ -356,31 +354,9 @@ func deletePath(ctx context.Context, db executor, path string) error {
 	return nil
 }
 func (s ContentStore) markEmbeddingStaleness(ctx context.Context, db executor, entries []repository.BundleEntry, revision string) error {
-	limit := s.MaxInputChars
-	if limit == 0 {
-		limit = 4096
-	}
 	for _, entry := range entries {
 		m := entry.Document.Frontmatter
-		parts := []string{m.Title}
-		if m.Description != nil && *m.Description != "" {
-			parts = append(parts, *m.Description)
-		}
-		parts = append(parts, entry.Document.Body)
-		text := []string{}
-		for _, part := range parts {
-			part = strings.TrimFunc(part, func(r rune) bool { return unicode.IsSpace(r) || r >= 0x1c && r <= 0x1f })
-			if part != "" {
-				text = append(text, part)
-			}
-		}
-		runes := []rune(strings.Join(text, "\n\n"))
-		n := limit
-		if n < 0 {
-			n = max(0, len(runes)+n)
-		}
-		digest := sha256.Sum256([]byte(string(runes[:min(n, len(runes))])))
-		if _, err := db.ExecContext(ctx, `UPDATE concept_embeddings SET path=?,embedding_revision=?,status=CASE WHEN embedding_text_hash=CASE WHEN embedding_text_hash LIKE 'chunks-v1:%' THEN ? ELSE ? END THEN status ELSE 'stale' END WHERE concept_id=?`, entry.BundlePath, revision, fullEmbeddingHash(embeddingText(m.Title, m.Description, entry.Document.Body)), fmt.Sprintf("%x", digest), m.ID); err != nil {
+		if _, err := db.ExecContext(ctx, `UPDATE concept_embeddings SET path=?,status=CASE WHEN embedding_text_hash NOT LIKE 'chunks-v1:%' THEN 'legacy' WHEN embedding_text_hash=? THEN status ELSE 'stale' END WHERE concept_id=?`, entry.BundlePath, fullEmbeddingHash(embeddingText(m.Title, m.Description, entry.Document.Body)), m.ID); err != nil {
 			return err
 		}
 	}

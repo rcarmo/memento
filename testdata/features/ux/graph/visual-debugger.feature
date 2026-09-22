@@ -110,3 +110,15 @@ Feature: ux/graph visual debugger
       When the debugger is entered again
       Then transient hover and cluster overlays from the previous session are gone
       And the new session starts with only the current graph state
+
+  @ux-graph-016
+  Scenario: Repeated web loads reuse item-relative persisted semantic connections
+    Given compatible chunk embeddings and semantic connections have been persisted
+    When I reload the debugger or inspect a neighbourhood
+    Then it ranks stored similarity scores without recomputing vector operations
+    And unrelated repository commits do not invalidate those connections
+    And permission filtering happens before neighbour selection
+    When an item's embedding input or model policy changes
+    Then its old connections are excluded until that item's chunks and scores are republished
+    And unaffected items retain their connections
+    And legacy single-vector embeddings are identified for regeneration rather than rendered

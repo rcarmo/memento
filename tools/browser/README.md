@@ -46,6 +46,6 @@ cd tools/browser
 npx --no-install playwright show-trace ../../build/ui-audit/chromium/run-<id>/failure-<n>-trace.zip
 ```
 
-The [UX inventory](../../docs/ux-feature-inventory.md) maps 24 Gherkin scenarios to existing evidence. `make ux-check` rejects missing/duplicate scenarios, renamed browser cases, missing Go tests and broken evidence paths. It validates bindings; it does not execute Gherkin steps. Partial and documented-only scenarios remain labelled as coverage gaps.
+The [UX inventory](../../docs/ux-feature-inventory.md) maps 25 Gherkin scenarios to existing evidence. `make ux-check` rejects missing/duplicate scenarios, renamed browser cases, missing Go tests and broken evidence paths. It validates bindings; it does not execute Gherkin steps. Partial and documented-only scenarios remain labelled as coverage gaps.
 
 `live-diagnostics-probe.mjs` is a separate opt-in production observation tool. It is not invoked by the reproducible suite.

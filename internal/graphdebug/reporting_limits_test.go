@@ -194,13 +194,14 @@ func TestClusterSemanticEdgesAndTrashScope(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if _, err = db.Exec(`UPDATE concept_embeddings SET status='ready',embedding_revision='main',model_id='model',embedding_blob=?,embedding_norm=1; UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision'`, blob(1, 0)); err != nil {
+	if _, err = db.Exec(`UPDATE concept_embeddings SET status='ready',embedding_revision='main',model_id='model',embedding_blob=?,embedding_norm=1,dimensions=2; UPDATE index_state SET value='main' WHERE key='semantic_embedding_revision'`, blob(1, 0)); err != nil {
 		t.Fatal(err)
 	}
 	if _, err = db.Exec(`INSERT INTO concept_embeddings(concept_id,status,model_id,dimensions,embedding_revision,model_revision,updated_at,embedding_blob,embedding_norm) SELECT id,'ready','model',2,'main','v1','now',?,1 FROM concepts WHERE id NOT IN (SELECT concept_id FROM concept_embeddings)`, blob(1, 0)); err != nil {
 		t.Fatal(err)
 	}
 	// Exercise nonempty semantic edges while explicit edges also exist.
+	seedGraphChunks(t, db)
 	options := ClusterOptions{RefreshMaxPaths: 10, EdgeLimit: 100, ExpansionNodeLimit: 10, ClusterLimit: 1, Semantic: SemanticConfig{Neighbours: 12, MinSimilarity: -1, NodeLimit: 10, EdgeLimit: 100}}
 	overview, err := s.Overview(ctx, nil, OverviewOptions{DirectNodeLimit: 1, EdgeLimit: 100, RefreshMaxPaths: 10, ClusterLimit: 1, Semantic: options.Semantic})
 	if err != nil {

@@ -2,13 +2,11 @@ package derived
 
 import (
 	"context"
-	"crypto/sha256"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"math"
 	"strings"
-	"time"
 )
 
 type SemanticModelInfo struct {
@@ -74,54 +72,13 @@ func (i *Index) RefreshEmbeddingPaths(ctx context.Context, revision string, path
 	if info.ModelID != config.ModelID || info.Dimensions != config.Dimensions {
 		return errors.New("semantic embedding model metadata mismatch")
 	}
-	if chunked, ok := client.(SemanticChunkClient); ok {
-		return i.refreshChunks(ctx, revision, paths, config, chunked)
+	chunked, ok := client.(SemanticChunkClient)
+	if !ok {
+		return errors.New("semantic embedding client does not support chunking")
 	}
-	return i.withCore(ctx, true, func(s ContentStore) error {
-		type pendingEmbedding struct{ id, path, text, digest string }
-		pending := make([]pendingEmbedding, 0, len(paths))
-		texts := make([]string, 0, len(paths))
-		for _, path := range paths {
-			var id, title, body string
-			var description *string
-			if err := s.DB.QueryRowContext(ctx, "SELECT id,title,description,body FROM concepts WHERE path=?", path).Scan(&id, &title, &description, &body); err != nil {
-				return fmt.Errorf("embedding refresh path is unavailable: %s", path)
-			}
-			text := []rune(embeddingText(title, description, body))
-			limit := config.MaxInputChars
-			if limit <= 0 {
-				limit = 4096
-			}
-			if len(text) > limit {
-				text = text[:limit]
-			}
-			content := string(text)
-			pending = append(pending, pendingEmbedding{id, path, content, fmt.Sprintf("%x", sha256.Sum256([]byte(content)))})
-			texts = append(texts, content)
-		}
-		results := EmbedSemanticBatch(client, texts, config.MaxBatch)
-		for index, item := range pending {
-			vector, embedErr := results[index].Vector, results[index].Err
-			id, path, digest := item.id, item.path, item.digest
-			now := time.Now().UTC().Truncate(time.Second).Format(time.RFC3339)
-			if embedErr != nil {
-				if _, err := s.DB.ExecContext(ctx, `INSERT INTO concept_embeddings(concept_id,path,embedding_text_hash,model_id,dimensions,embedding_revision,status,model_revision,embedding_blob,embedding_norm,updated_at,error_message) VALUES(?,?,?,?,?,?,'error',?,NULL,NULL,?,?) ON CONFLICT(concept_id) DO UPDATE SET path=excluded.path,embedding_text_hash=excluded.embedding_text_hash,model_id=excluded.model_id,dimensions=excluded.dimensions,embedding_revision=excluded.embedding_revision,status='error',model_revision=excluded.model_revision,embedding_blob=NULL,embedding_norm=NULL,updated_at=excluded.updated_at,error_message=excluded.error_message`, id, path, digest, config.ModelID, config.Dimensions, revision, info.Revision, now, embedErr.Error()); err != nil {
-					return err
-				}
-				continue
-			}
-			blob, norm, validationErr := validateSemanticVector(vector, config.Dimensions)
-			if validationErr != nil {
-				return validationErr
-			}
-			if _, err := s.DB.ExecContext(ctx, `INSERT INTO concept_embeddings(concept_id,path,embedding_text_hash,model_id,dimensions,embedding_revision,status,model_revision,embedding_blob,embedding_norm,updated_at,error_message) VALUES(?,?,?,?,?,?,'ready',?,?,?,?,NULL) ON CONFLICT(concept_id) DO UPDATE SET path=excluded.path,embedding_text_hash=excluded.embedding_text_hash,model_id=excluded.model_id,dimensions=excluded.dimensions,embedding_revision=excluded.embedding_revision,status='ready',model_revision=excluded.model_revision,embedding_blob=excluded.embedding_blob,embedding_norm=excluded.embedding_norm,updated_at=excluded.updated_at,error_message=NULL`, id, path, digest, config.ModelID, config.Dimensions, revision, info.Revision, blob, norm, now); err != nil {
-				return err
-			}
-		}
-		_, err := s.DB.ExecContext(ctx, "UPDATE concept_embeddings SET embedding_revision=? WHERE status='ready'", revision)
-		if err != nil {
-			return err
-		}
-		return setEmbeddingRevision(ctx, s.DB, revision)
-	})
+	i.mu.Lock()
+	i.chunkModel = info
+	i.MaxInputChars = config.MaxInputChars
+	i.mu.Unlock()
+	return i.refreshChunks(ctx, revision, paths, config, chunked)
 }

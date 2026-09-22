@@ -70,6 +70,13 @@ func TestUIAuditServer(t *testing.T) {
 	if _, err = db.Exec(`INSERT INTO concept_embeddings(concept_id,path,embedding_text_hash,model_id,dimensions,embedding_revision,status,model_revision,embedding_blob,embedding_norm,updated_at) SELECT id,path,'fixture','test',2,?,'ready','test',?,1,'now' FROM concepts; UPDATE index_state SET value=? WHERE key='semantic_embedding_revision'`, revision, vector, revision); err != nil {
 		t.Fatal(err)
 	}
+
+	if _, err = db.Exec(`CREATE TABLE concept_embedding_policy(concept_id TEXT PRIMARY KEY,policy TEXT);INSERT INTO concept_embedding_policy SELECT concept_id,'fixture' FROM concept_embeddings;CREATE TABLE concept_embedding_chunks(concept_id TEXT,ordinal INTEGER,document_hash TEXT,model_revision TEXT,text TEXT,embedding_blob BLOB,embedding_norm REAL); INSERT INTO concept_embedding_chunks SELECT concept_id,0,embedding_text_hash,model_revision,'fixture',embedding_blob,embedding_norm FROM concept_embeddings`); err != nil {
+		t.Fatal(err)
+	}
+	if err = derived.PrepareSemanticGraphCache(ctx, db); err != nil {
+		t.Fatal(err)
+	}
 	db.Close()
 	// Use real snapshot/HTTP dispatch for all graph reads; the no-worker response
 	// is deliberate. Refresh-success/failure cases use controlled browser routes.

@@ -2,8 +2,6 @@ package graphdebug
 
 import (
 	"context"
-	"database/sql"
-	"encoding/binary"
 	"math"
 	"sort"
 	"strings"
@@ -14,9 +12,9 @@ type SemanticConfig struct {
 	MinSimilarity        float64
 	NodeLimit, EdgeLimit int
 }
-type semanticVector struct {
-	values          []float64
-	norm            float64
+type semanticScore struct {
+	source, target  string
+	score           float64
 	model, revision string
 }
 type scoredTarget struct {
@@ -24,49 +22,29 @@ type scoredTarget struct {
 	target string
 }
 
-func selectSemantic(vectors map[string]semanticVector, revisions Revisions, config SemanticConfig, limit int) []Edge {
-	if limit <= 0 || len(vectors) < 2 || len(vectors) > config.NodeLimit || revisions.Embedding == nil || (*revisions.Embedding != revisions.Repository && *revisions.Embedding != "partial") {
+func selectSemanticScores(scores []semanticScore, revisions Revisions, config SemanticConfig, limit int) []Edge {
+	if limit <= 0 {
 		return []Edge{}
 	}
-	ids := make([]string, 0, len(vectors))
-	for id := range vectors {
-		ids = append(ids, id)
-	}
-	sort.Strings(ids)
 	directed := map[string][]scoredTarget{}
-	sets := map[string]map[string]bool{}
-	for _, source := range ids {
-		a := vectors[source]
-		if a.revision != revisions.Repository {
+	metadata := map[string]semanticScore{}
+	for _, pair := range scores {
+		if pair.score < config.MinSimilarity {
 			continue
 		}
-		candidates := []scoredTarget{}
-		for _, target := range ids {
-			if target == source {
-				continue
-			}
-			b := vectors[target]
-			if a.model != b.model || a.revision != b.revision || len(a.values) != len(b.values) {
-				continue
-			}
-			dot := 0.0
-			for i := range a.values {
-				dot += a.values[i] * b.values[i]
-			}
-			score := dot / (a.norm * b.norm)
-			if score >= config.MinSimilarity {
-				candidates = append(candidates, scoredTarget{score, target})
-			}
-		}
+		directed[pair.source] = append(directed[pair.source], scoredTarget{pair.score, pair.target})
+		directed[pair.target] = append(directed[pair.target], scoredTarget{pair.score, pair.source})
+		metadata[pair.source+"\x00"+pair.target] = pair
+	}
+	sets := map[string]map[string]bool{}
+	for source, candidates := range directed {
 		sort.Slice(candidates, func(i, j int) bool {
 			if candidates[i].score != candidates[j].score {
 				return candidates[i].score > candidates[j].score
 			}
 			return candidates[i].target < candidates[j].target
 		})
-		if len(candidates) > config.Neighbours {
-			candidates = candidates[:config.Neighbours]
-		}
+		candidates = candidates[:min(len(candidates), max(0, config.Neighbours))]
 		directed[source] = candidates
 		sets[source] = map[string]bool{}
 		for _, item := range candidates {
@@ -115,13 +93,14 @@ func selectSemantic(vectors map[string]semanticVector, revisions Revisions, conf
 	}
 	out := make([]Edge, 0, len(ordered))
 	for _, item := range ordered {
-		v := vectors[item.source]
+		v := metadata[item.source+"\x00"+item.target]
 		target := item.target
 		score := math.Round(item.score*1e6) / 1e6
 		out = append(out, Edge{ID: "semantic:" + item.source + ":" + item.target, Source: item.source, Target: &target, RawTarget: "cosine:" + float4(item.score), Kind: "semantic_similarity", Canonical: false, Resolution: "derived", FirstSeenRevision: revisions.Repository, LastCheckedRevision: revisions.Repository, Similarity: &score, ModelID: &v.model, EmbeddingRevision: &v.revision})
 	}
 	return out
 }
+
 func float4(value float64) string {
 	value = math.Round(value*1e4) / 1e4
 	text := fmtFloat(value, 4)
@@ -136,8 +115,12 @@ func fmtFloat(value float64, places int) string {
 	}
 	return sign + integerText(whole) + "." + strings.Repeat("0", places-len(integerText(fraction))) + integerText(fraction)
 }
+
+// SemanticEdges reads immutable item-relative scores. No vector blobs or dot
+// products are loaded/computed on the HTTP path; permissions are applied before
+// neighbour selection so hidden nodes cannot influence visible ranking.
 func (s *SnapshotService) SemanticEdges(ctx context.Context, nodes []Node, revisions Revisions, config SemanticConfig, limit int) ([]Edge, error) {
-	if limit <= 0 || len(nodes) < 2 || len(nodes) > config.NodeLimit || revisions.Embedding == nil || (*revisions.Embedding != revisions.Repository && *revisions.Embedding != "partial") {
+	if limit <= 0 || len(nodes) < 2 || len(nodes) > config.NodeLimit {
 		return []Edge{}, nil
 	}
 	db, err := s.open(ctx, s.DerivedDBPath)
@@ -145,50 +128,59 @@ func (s *SnapshotService) SemanticEdges(ctx context.Context, nodes []Node, revis
 		return nil, err
 	}
 	defer db.Close()
+	var tables int
+	if err = db.QueryRowContext(ctx, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('semantic_graph_items','semantic_graph_pairs')").Scan(&tables); err != nil {
+		return nil, err
+	}
+	if tables != 2 {
+		return []Edge{}, nil
+	}
 	ids := make([]string, len(nodes))
-	for i, node := range nodes {
-		ids[i] = node.ID
+	for i, n := range nodes {
+		ids[i] = n.ID
 	}
 	sort.Strings(ids)
-	query := "SELECT concept_id,embedding_blob,embedding_norm,model_id,embedding_revision FROM concept_embeddings WHERE status='ready' AND embedding_revision=? AND concept_id IN (" + strings.TrimSuffix(strings.Repeat("?,", len(ids)), ",") + ") ORDER BY concept_id"
-	args := make([]any, len(ids)+1)
-	args[0] = revisions.Repository
-	for i, id := range ids {
-		args[i+1] = id
+	marks := strings.TrimSuffix(strings.Repeat("?,", len(ids)), ",")
+	args := []any{s.EmbeddingPolicy, s.EmbeddingPolicy}
+	for _, id := range ids {
+		args = append(args, id)
 	}
-	rows, err := db.QueryContext(ctx, query, args...)
+	for _, id := range ids {
+		args = append(args, id)
+	}
+	rows, err := db.QueryContext(ctx, `SELECT pair.source_id,pair.target_id,pair.similarity,a.model_id,ea.embedding_revision
+ FROM semantic_graph_pairs pair
+ JOIN semantic_graph_items a ON a.concept_id=pair.source_id
+ JOIN semantic_graph_items b ON b.concept_id=pair.target_id
+ JOIN concept_embeddings ea ON ea.concept_id=a.concept_id
+ JOIN concept_embeddings eb ON eb.concept_id=b.concept_id
+ JOIN concept_embedding_policy pa ON pa.concept_id=a.concept_id
+ JOIN concept_embedding_policy pb ON pb.concept_id=b.concept_id
+ WHERE ea.status='ready' AND eb.status='ready'
+ AND a.algorithm='mean-normalized-chunks-v1' AND b.algorithm=a.algorithm
+ AND a.document_hash=ea.embedding_text_hash AND b.document_hash=eb.embedding_text_hash
+ AND a.model_id=ea.model_id AND b.model_id=eb.model_id AND a.model_id=b.model_id
+ AND a.model_revision=ea.model_revision AND b.model_revision=eb.model_revision AND a.model_revision=b.model_revision
+ AND a.dimensions=ea.dimensions AND b.dimensions=eb.dimensions AND a.dimensions=b.dimensions
+ AND a.policy=pa.policy AND b.policy=pb.policy AND a.policy=b.policy
+ AND (?='' OR a.policy=?) AND a.concept_id IN (`+marks+`) AND b.concept_id IN (`+marks+`) ORDER BY pair.source_id,pair.target_id`, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	vectors := map[string]semanticVector{}
+	scores := []semanticScore{}
 	for rows.Next() {
-		var id, model, revision string
-		var blob []byte
-		var stored sql.NullFloat64
-		if err = rows.Scan(&id, &blob, &stored, &model, &revision); err != nil {
+		var row semanticScore
+		if err = rows.Scan(&row.source, &row.target, &row.score, &row.model, &row.revision); err != nil {
 			return nil, err
 		}
-		if len(blob) == 0 || len(blob)%4 != 0 {
+		if math.IsNaN(row.score) || math.IsInf(row.score, 0) {
 			continue
 		}
-		values := make([]float64, len(blob)/4)
-		sum := 0.0
-		for i := range values {
-			values[i] = float64(math.Float32frombits(binary.LittleEndian.Uint32(blob[i*4:])))
-			sum += values[i] * values[i]
-		}
-		norm := math.Sqrt(sum)
-		if stored.Valid && stored.Float64 != 0 {
-			norm = stored.Float64
-		}
-		if norm <= 0 {
-			continue
-		}
-		vectors[id] = semanticVector{values, norm, model, revision}
+		scores = append(scores, row)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	return selectSemantic(vectors, revisions, config, limit), nil
+	return selectSemanticScores(scores, revisions, config, limit), nil
 }

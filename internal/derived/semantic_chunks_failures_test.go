@@ -77,16 +77,16 @@ func TestChunkStoreAndSearchFailures(t *testing.T) {
 	}
 	db, _ := sql.Open("sqlite", index.Path)
 	defer db.Close()
-	rows := []semanticRow{{result: SearchResult{ConceptID: "id"}}}
+	info := client.ModelInfo()
+	opts := SemanticSearchOptions{model: &info, policy: ChunkPolicy(info, 4096)}
 	_, _ = db.Exec("ALTER TABLE concept_embedding_chunks RENAME COLUMN text TO missing")
-	if _, err := bestSemanticChunks(t.Context(), db, rows, []float32{1, 0}, 1, 2); err == nil {
+	if _, err := semanticCandidateRows(t.Context(), db, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, opts); err == nil {
 		t.Fatal("query")
 	}
 	if _, err := index.SearchSemantic(t.Context(), access.EffectivePolicy{ReadPrefixes: []string{"/"}}, SemanticSearchOptions{SearchOptions: SearchOptions{Query: "word", Limit: 1}}, client); err == nil {
 		t.Fatal("broken chunk query")
 	}
-	// Search errors currently quarantine the index through the legacy lifecycle.
-	// Restore this fixture's path to inspect the decode-failure leg separately.
+	// Use an independent fixture to inspect the decode-failure leg.
 	index, client, _ = chunkFixture(t)
 	if err := index.RefreshEmbeddingPaths(t.Context(), "main", []string{"/a.md"}, chunkConfig, client); err != nil {
 		t.Fatal(err)
@@ -96,17 +96,17 @@ func TestChunkStoreAndSearchFailures(t *testing.T) {
 	defer db.Close()
 	_, _ = db.Exec("ALTER TABLE concept_embedding_chunks RENAME COLUMN text TO missing")
 	_, _ = db.Exec("ALTER TABLE concept_embedding_chunks RENAME COLUMN missing TO text; UPDATE concepts SET tags_json='bad' WHERE id='id'")
-	if _, err := bestSemanticChunks(t.Context(), db, rows, []float32{1, 0}, 1, 2); err == nil {
+	if _, err := semanticCandidateRows(t.Context(), db, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, opts); err == nil {
 		t.Fatal("decode")
 	}
 	_ = db.Close()
-	if _, err := bestSemanticChunks(t.Context(), db, rows, []float32{1, 0}, 1, 2); err == nil {
+	if _, err := semanticCandidateRows(t.Context(), db, access.EffectivePolicy{ReadPrefixes: []string{"/"}}, opts); err == nil {
 		t.Fatal("closed")
 	}
 }
 func TestChunkQueueAndCleanup(t *testing.T) {
 	index, client, _ := chunkFixture(t)
-	index.ChunkEmbeddings = true
+
 	paths, err := index.PendingEmbeddingPaths(t.Context(), 10)
 	if err != nil || len(paths) != 2 {
 		t.Fatal(paths, err)
@@ -175,7 +175,7 @@ func TestChunkInvalidVectorRead(t *testing.T) {
 	if _, err := db.Exec("UPDATE concept_embedding_chunks SET embedding_blob=x'00'"); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := bestSemanticChunks(t.Context(), db, []semanticRow{{result: SearchResult{ConceptID: "id"}}}, []float32{1, 0}, 1, 2); err == nil {
+	if _, err := index.SearchSemantic(t.Context(), access.EffectivePolicy{ReadPrefixes: []string{"/"}}, SemanticSearchOptions{SearchOptions: SearchOptions{Query: "word", Limit: 1}}, client); err == nil {
 		t.Fatal("invalid vector")
 	}
 }
@@ -183,7 +183,7 @@ func TestChunkInvalidVectorRead(t *testing.T) {
 func TestChunkPolicyAndPendingFailures(t *testing.T) {
 	index, client, _ := chunkFixture(t)
 	index.ConfigureChunkModel(client.ModelInfo())
-	if chunkPolicy(client.ModelInfo(), 0) != chunkPolicy(client.ModelInfo(), 4096) {
+	if ChunkPolicy(client.ModelInfo(), 0) != ChunkPolicy(client.ModelInfo(), 4096) {
 		t.Fatal("default policy")
 	}
 	db, _ := sql.Open("sqlite", index.Path)
@@ -299,5 +299,36 @@ func TestChunkSearchInferenceAndConnectFailure(t *testing.T) {
 	}
 	if err := bad.withChunkStore(t.Context(), func(ContentStore) error { return nil }); err == nil {
 		t.Fatal("corrupt connect")
+	}
+}
+
+func TestChunkPreparationSQLFaults(t *testing.T) {
+	s, fault := faultStore(t)
+	if err := s.Migrate(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	db := s.DB
+	info := SemanticModelInfo{"m", 2, "v"}
+	fault.count = 0
+	if err := prepareChunkEmbeddings(t.Context(), db, info, 4096); err != nil {
+		t.Fatal(err)
+	}
+	stages := fault.count
+	for n := 1; n <= stages; n++ {
+		fault.fired = false
+		fault.remaining = n
+		err := prepareChunkEmbeddings(t.Context(), db, info, 4096)
+		fault.remaining = 0
+		if !fault.fired {
+			t.Fatal("unreached SQL stage", n)
+		}
+		// The final rollback is cleanup after a successful commit.
+		if err == nil && n < stages {
+			t.Fatal("ignored failure", n)
+		}
+	}
+	db.Close()
+	if err := prepareChunkEmbeddings(t.Context(), db, info, 4096); err == nil {
+		t.Fatal("closed DB")
 	}
 }

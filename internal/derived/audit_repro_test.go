@@ -107,7 +107,7 @@ func TestAuditNewFullRequestNotCleared(t *testing.T) {
 }
 func TestAuditModelChangeQueuesReadyChunks(t *testing.T) {
 	index, client, _ := chunkFixture(t)
-	index.ChunkEmbeddings = true
+
 	paths, err := index.PendingEmbeddingPaths(t.Context(), 10)
 	if err != nil {
 		t.Fatal(err)
@@ -155,7 +155,7 @@ func TestAuditFailedDocumentNotCountedCompleted(t *testing.T) {
 func TestAuditFullHashIncludesChunkPolicy(t *testing.T) {
 	// Verify a character-limit change cannot leave a ready row unselected.
 	index, client, _ := chunkFixture(t)
-	index.ChunkEmbeddings = true
+
 	first := chunkConfig
 	first.MaxInputChars = 512
 	paths, err := index.PendingEmbeddingPaths(t.Context(), 10)
