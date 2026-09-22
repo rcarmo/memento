@@ -12,12 +12,14 @@ import (
 	"math"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 	"unicode/utf8"
 
 	"github.com/rcarmo/memento/internal/derived"
 	"github.com/rcarmo/memento/internal/embedding"
 	"github.com/rcarmo/memento/internal/gte"
+	"github.com/rcarmo/memento/internal/processnice"
 )
 
 type subprocessSemanticClient struct {
@@ -25,6 +27,7 @@ type subprocessSemanticClient struct {
 	Info                    derived.SemanticModelInfo
 	MaxBatch, MaxInputChars int
 	Timeout                 time.Duration
+	Nice                    int
 	command                 func(context.Context, string, ...string) *exec.Cmd
 	run                     func(context.Context, []byte) ([]byte, []byte, error)
 }
@@ -32,6 +35,9 @@ type subprocessSemanticClient struct {
 func LoadSubprocessSemanticClient(config SemanticSearchConfig) (*subprocessSemanticClient, error) {
 	if config.ModelPath == nil {
 		return nil, errors.New("semantic model path is required")
+	}
+	if err := processnice.Validate(config.ProgressiveNice); err != nil {
+		return nil, fmt.Errorf("semantic subprocess nice priority is invalid: %w", err)
 	}
 	revision, err := fileSHA256(*config.ModelPath)
 	if err != nil {
@@ -48,9 +54,11 @@ func LoadSubprocessSemanticClient(config SemanticSearchConfig) (*subprocessSeman
 		MaxBatch:      config.MaxBatchSize,
 		MaxInputChars: config.MaxInputChars,
 		Timeout:       time.Duration(config.WorkerTimeoutSeconds * float64(time.Second)),
+		Nice:          config.ProgressiveNice,
 		command:       exec.CommandContext,
 	}, nil
 }
+
 func fileSHA256(path string) (string, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -59,6 +67,7 @@ func fileSHA256(path string) (string, error) {
 	defer file.Close()
 	return readerSHA256(file)
 }
+
 func readerSHA256(reader io.Reader) (string, error) {
 	digest := sha256.New()
 	if _, err := io.Copy(digest, reader); err != nil {
@@ -66,6 +75,7 @@ func readerSHA256(reader io.Reader) (string, error) {
 	}
 	return fmt.Sprintf("%x", digest.Sum(nil)), nil
 }
+
 func (c *subprocessSemanticClient) Chunk(text string, tokens, overlap, chars int) ([]string, error) {
 	tokenizer, err := gte.LoadTokenizer(c.ModelPath)
 	if err != nil {
@@ -75,6 +85,7 @@ func (c *subprocessSemanticClient) Chunk(text string, tokens, overlap, chars int
 }
 
 func (c *subprocessSemanticClient) ModelInfo() derived.SemanticModelInfo { return c.Info }
+
 func (c *subprocessSemanticClient) Embed(text string) ([]float32, error) {
 	values, err := c.EmbedBatch([]string{text})
 	if err != nil {
@@ -82,9 +93,11 @@ func (c *subprocessSemanticClient) Embed(text string) ([]float32, error) {
 	}
 	return values[0], nil
 }
+
 func (c *subprocessSemanticClient) EmbedBatch(texts []string) ([][]float32, error) {
 	return c.EmbedBatchContext(context.Background(), texts)
 }
+
 func (c *subprocessSemanticClient) EmbedBatchContext(parent context.Context, texts []string) ([][]float32, error) {
 	if len(texts) == 0 {
 		return [][]float32{}, nil
@@ -110,6 +123,7 @@ func (c *subprocessSemanticClient) EmbedBatchContext(parent context.Context, tex
 		stdout, stderr, err = c.run(ctx, wire)
 	} else {
 		command := c.command(ctx, c.WorkerPath, c.ModelPath)
+		command.Env = setCommandEnv(command.Env, processnice.EnvVar, fmt.Sprintf("%d", c.Nice))
 		command.Stdin = bytes.NewReader(wire)
 		var output, errors bytes.Buffer
 		command.Stdout, command.Stderr = &output, &errors
@@ -124,6 +138,23 @@ func (c *subprocessSemanticClient) EmbedBatchContext(parent context.Context, tex
 	}
 	return decodeEmbeddingResponse(stdout, len(texts), c.Info.Dimensions)
 }
+
+func setCommandEnv(current []string, key, value string) []string {
+	prefix := key + "="
+	if current == nil {
+		current = os.Environ()
+	} else {
+		current = append([]string{}, current...)
+	}
+	for index, entry := range current {
+		if strings.HasPrefix(entry, prefix) {
+			current[index] = prefix + value
+			return current
+		}
+	}
+	return append(current, prefix+value)
+}
+
 func decodeEmbeddingResponse(wire []byte, count, dimensions int) ([][]float32, error) {
 	if len(wire) < 8 {
 		return nil, errors.New("embedding worker returned a truncated frame")
@@ -145,6 +176,7 @@ func decodeEmbeddingResponse(wire []byte, count, dimensions int) ([][]float32, e
 	payload := wire[8+headerLength:]
 	return decodeEmbeddingPayload(payload, header.PayloadLength, count, dimensions)
 }
+
 func decodeEmbeddingPayload(payload []byte, headerLength, count, dimensions int) ([][]float32, error) {
 	if err := validatePayloadLength(headerLength, len(payload), count, dimensions); err != nil {
 		return nil, err
@@ -163,12 +195,14 @@ func decodeEmbeddingPayload(payload []byte, headerLength, count, dimensions int)
 	}
 	return result, nil
 }
+
 func validatePayloadLength(headerLength, actual, count, dimensions int) error {
 	if headerLength != actual || actual != count*dimensions*4 {
 		return errors.New("embedding worker payload length mismatch")
 	}
 	return nil
 }
+
 func finiteFloat32(value float32) bool {
 	return !math.IsNaN(float64(value)) && !math.IsInf(float64(value), 0)
 }

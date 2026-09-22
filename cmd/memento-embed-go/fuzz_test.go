@@ -10,7 +10,7 @@ import (
 )
 
 func FuzzEmbedCommandArguments(f *testing.F) {
-	for _, raw := range []string{"", "model", "a\x00b", "\x00"} {
+	for _, raw := range []string{"", "model", "a\x00b", "\x00", "--nice\x0019\x00model"} {
 		f.Add(raw)
 	}
 	f.Fuzz(func(t *testing.T, raw string) {
@@ -21,7 +21,7 @@ func FuzzEmbedCommandArguments(f *testing.F) {
 		if raw != "" {
 			args = strings.Split(raw, "\x00")
 		}
-		code := run(args, strings.NewReader(""), io.Discard, io.Discard, func(string) (*gte.Model, error) {
+		code := runWith(args, strings.NewReader(""), io.Discard, io.Discard, nil, func(int) error { return nil }, func(string) (*gte.Model, error) {
 			return nil, errors.New("load")
 		})
 		if code != 1 && code != 2 {

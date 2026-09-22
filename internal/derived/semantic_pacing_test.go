@@ -2,6 +2,7 @@ package derived
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 )
@@ -42,17 +43,54 @@ func TestSemanticWorkerPacingReasons(t *testing.T) {
 		t.Fatal(reason)
 	}
 }
+func TestSemanticWorkerBatchAdmissionDoesNotPaceChunks(t *testing.T) {
+	now := time.Unix(100, 0)
+	idle := 10 * time.Second
+	free := 10.0
+	worker := &SemanticWorker{
+		Policy:        SemanticWorkerPolicy{Enabled: true, InteractiveIdle: 5 * time.Second, Delay: 30 * time.Second, CPUBusyLimit: 75},
+		IdleSeconds:   func() time.Duration { return idle },
+		CPUUsage:      func() *float64 { return &free },
+		Now:           func() time.Time { return now },
+		wake:          make(chan struct{}, 1),
+		lastCompleted: now,
+	}
+	if reason, _ := worker.pauseForWork(); reason != "pacing" {
+		t.Fatal(reason)
+	}
+	if reason, _ := worker.pauseForBatch(); reason != "" {
+		t.Fatal(reason)
+	}
+	if err := worker.admitChunkBatch(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	if !worker.lastCompleted.Equal(now) {
+		t.Fatal(worker.lastCompleted)
+	}
+}
+
 func TestSemanticWorkerProgressiveExecution(t *testing.T) {
 	now := time.Unix(100, 0)
+	var clockMu sync.RWMutex
+	clock := func() time.Time {
+		clockMu.RLock()
+		defer clockMu.RUnlock()
+		return now
+	}
+	advance := func(duration time.Duration) {
+		clockMu.Lock()
+		now = now.Add(duration)
+		clockMu.Unlock()
+	}
 	free := 0.0
 	index := &semanticWorkerIndex{}
-	worker := NewProgressiveSemanticWorker(index, &semanticClientStub{}, SemanticRefreshConfig{}, SemanticWorkerPolicy{Enabled: true, StartupDelay: time.Hour, CPUBusyLimit: 75}, func() time.Duration { return time.Hour }, func() *float64 { return &free }, func() time.Time { return now })
+	worker := NewProgressiveSemanticWorker(index, &semanticClientStub{}, SemanticRefreshConfig{}, SemanticWorkerPolicy{Enabled: true, StartupDelay: time.Hour, CPUBusyLimit: 75}, func() time.Duration { return time.Hour }, func() *float64 { return &free }, clock)
 	worker.Enqueue("root", "r", []string{"/a"}, false)
 	time.Sleep(5 * time.Millisecond)
 	if state := worker.State(); state.PauseReason == nil || *state.PauseReason != "startup" {
 		t.Fatal(state)
 	}
-	now = now.Add(2 * time.Hour)
+	advance(2 * time.Hour)
 	worker.Enqueue("root", "r", nil, false)
 	waitCtx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

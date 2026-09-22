@@ -41,7 +41,7 @@ The 16 broken explicit-link occurrences are [pre-existing imported references](b
 
 A single selected-scope request queued 253 incompatible items, including two trash items. The seven already-ready items were deliberately excluded. The original IDs, paths and embedding provenance are retained in `production/migration-targets.json` for comparison at completion.
 
-Configuration is unchanged: `refresh_on_startup: false`, progressive generation enabled, 30-second pacing between batches, startup grace, interactive-idle checks and CPU admission limits. The selected queue is in memory; an unexpected restart must be followed by reconciliation of remaining incompatible IDs rather than replaying the original set.
+Configuration is unchanged: `refresh_on_startup: false`, progressive generation enabled, 30-second pacing, startup grace, interactive-idle checks and CPU admission limits. This v1.0.8 build incorrectly applied the 30-second delay between chunk batches inside an entry. The selected queue is in memory; an unexpected restart must be followed by reconciliation of remaining incompatible IDs rather than replaying the original set.
 
 At the checkpoint, metrics reported ready=12, legacy=247, missing=1, pending=0, stale=0, error=0 and other=0. Five queued items had completed; the worker was alive and pacing through `/skills/piclaw/addon-work-map.md`. Zero pending embedding rows does not mean an empty worker queue. The worker's `queued_paths` field records the submitted scope; completion must be judged from live row counts and worker state.
 

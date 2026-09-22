@@ -5,15 +5,26 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"io"
 	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
+	"strconv"
+	"strings"
+	"syscall"
 	"testing"
 	"time"
 
 	"github.com/rcarmo/memento/internal/derived"
 	"github.com/rcarmo/memento/internal/embedding"
+	"github.com/rcarmo/memento/internal/processnice"
+)
+
+const (
+	subprocessSemanticHelperEnv      = "MEMENTO_TEST_SUBPROCESS_SEMANTIC_HELPER"
+	subprocessSemanticHelperNiceFile = "MEMENTO_TEST_SUBPROCESS_SEMANTIC_NICE_FILE"
 )
 
 func subprocessFrame(t *testing.T, count, dimensions int, values []float32) []byte {
@@ -32,6 +43,42 @@ func subprocessFrame(t *testing.T, count, dimensions int, values []float32) []by
 	copy(wire[8:], headerRaw)
 	copy(wire[8+len(headerRaw):], payload)
 	return wire
+}
+
+func TestSubprocessSemanticNiceHelper(t *testing.T) {
+	if os.Getenv(subprocessSemanticHelperEnv) != "1" {
+		return
+	}
+	if _, err := io.Copy(io.Discard, os.Stdin); err != nil {
+		_, _ = io.WriteString(os.Stderr, err.Error())
+		os.Exit(11)
+	}
+	priority, err := processnice.Resolve(os.LookupEnv)
+	if err != nil {
+		_, _ = io.WriteString(os.Stderr, err.Error())
+		os.Exit(12)
+	}
+	if err = processnice.Apply(priority); err != nil {
+		_, _ = io.WriteString(os.Stderr, err.Error())
+		os.Exit(13)
+	}
+	kernelPriority, err := syscall.Getpriority(syscall.PRIO_PROCESS, 0)
+	if err != nil {
+		_, _ = io.WriteString(os.Stderr, err.Error())
+		os.Exit(14)
+	}
+	nice := 20 - kernelPriority
+	if path := os.Getenv(subprocessSemanticHelperNiceFile); path != "" {
+		if err = os.WriteFile(path, []byte(strconv.Itoa(nice)), 0600); err != nil {
+			_, _ = io.WriteString(os.Stderr, err.Error())
+			os.Exit(15)
+		}
+	}
+	if _, err = os.Stdout.Write(subprocessFrame(t, 1, 1, []float32{1})); err != nil {
+		_, _ = io.WriteString(os.Stderr, err.Error())
+		os.Exit(16)
+	}
+	os.Exit(0)
 }
 
 func TestDecodeEmbeddingResponse(t *testing.T) {
@@ -70,7 +117,7 @@ func TestLoadSubprocessSemanticClient(t *testing.T) {
 	config.Enabled = true
 	config.ModelPath = &model
 	client, err := LoadSubprocessSemanticClient(config)
-	if err != nil || client.Info.Dimensions != 384 || client.Info.Revision == "" {
+	if err != nil || client.Info.Dimensions != 384 || client.Info.Revision == "" || client.Nice != config.ProgressiveNice {
 		t.Fatal(client, err)
 	}
 	config.ModelPath = nil
@@ -81,6 +128,11 @@ func TestLoadSubprocessSemanticClient(t *testing.T) {
 	config.ModelPath = &missing
 	if _, err = LoadSubprocessSemanticClient(config); err == nil {
 		t.Fatal("missing model")
+	}
+	config.ModelPath = &model
+	config.ProgressiveNice = 20
+	if _, err = LoadSubprocessSemanticClient(config); err == nil {
+		t.Fatal("invalid nice")
 	}
 }
 
@@ -127,10 +179,67 @@ func TestSubprocessSemanticExecPath(t *testing.T) {
 	if err := os.WriteFile(worker, []byte("#!/bin/sh\nexit 7\n"), 0700); err != nil {
 		t.Fatal(err)
 	}
-	client := subprocessSemanticClient{WorkerPath: worker, ModelPath: "model", Info: derived.SemanticModelInfo{Dimensions: 1}, MaxBatch: 1, MaxInputChars: 10, Timeout: time.Second, command: exec.CommandContext}
+	client := subprocessSemanticClient{WorkerPath: worker, ModelPath: "model", Info: derived.SemanticModelInfo{Dimensions: 1}, MaxBatch: 1, MaxInputChars: 10, Timeout: time.Second, Nice: 15, command: exec.CommandContext}
 	if _, err := client.Embed("x"); err == nil {
 		t.Fatal("worker failure")
 	}
+}
+
+func TestSetCommandEnv(t *testing.T) {
+	key := processnice.EnvVar
+	values := setCommandEnv([]string{"A=1", key + "=4"}, key, "9")
+	if got := commandEnvValue(values, key); got != "9" {
+		t.Fatal(got)
+	}
+	values = setCommandEnv([]string{"A=1"}, key, "7")
+	if got := commandEnvValue(values, key); got != "7" {
+		t.Fatal(got)
+	}
+	values = setCommandEnv(nil, key, "5")
+	if got := commandEnvValue(values, key); got != "5" {
+		t.Fatal(got)
+	}
+}
+
+func TestSubprocessSemanticChildEffectiveNice(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("Linux nice semantics")
+	}
+	niceFile := filepath.Join(t.TempDir(), "nice")
+	client := subprocessSemanticClient{WorkerPath: os.Args[0], ModelPath: "model", Info: derived.SemanticModelInfo{Dimensions: 1}, MaxBatch: 1, MaxInputChars: 10, Timeout: 5 * time.Second, Nice: 19,
+		command: func(ctx context.Context, _ string, _ ...string) *exec.Cmd {
+			cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=TestSubprocessSemanticNiceHelper")
+			cmd.Env = setCommandEnv(os.Environ(), subprocessSemanticHelperEnv, "1")
+			cmd.Env = setCommandEnv(cmd.Env, subprocessSemanticHelperNiceFile, niceFile)
+			cmd.Env = setCommandEnv(cmd.Env, processnice.EnvVar, "1")
+			return cmd
+		},
+	}
+	values, err := client.Embed("x")
+	if err != nil && strings.Contains(err.Error(), "operation not supported") {
+		t.Skip("test binary uses cgo; release workers are CGO_ENABLED=0")
+	}
+	if err != nil || values[0] != 1 {
+		t.Fatal(values, err)
+	}
+	raw, err := os.ReadFile(niceFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	nice, err := strconv.Atoi(strings.TrimSpace(string(raw)))
+	if err != nil || nice != 19 {
+		t.Fatal(nice, err)
+	}
+}
+
+func commandEnvValue(values []string, key string) string {
+	prefix := key + "="
+	for _, value := range values {
+		if strings.HasPrefix(value, prefix) {
+			return strings.TrimPrefix(value, prefix)
+		}
+	}
+	return ""
 }
 
 func TestDecodeEmbeddingResponseFailures(t *testing.T) {

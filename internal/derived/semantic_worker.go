@@ -254,18 +254,20 @@ func (w *SemanticWorker) loop() {
 	}
 }
 
-// admitChunkBatch rechecks idle/CPU/pacing between chunks of a long document.
+// admitChunkBatch rechecks cancellation, interactive idle and CPU pressure
+// between batches of one document. Entry pacing belongs only between documents.
 func (w *SemanticWorker) admitChunkBatch(ctx context.Context) error {
-	w.mu.Lock()
-	w.lastCompleted = w.Now()
-	w.mu.Unlock()
 	for {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
 		w.mu.Lock()
-		reason, wait := w.pauseForWork()
-		w.pause = &reason
+		reason, wait := w.pauseForBatch()
+		if reason == "" {
+			w.pause = nil
+		} else {
+			w.pause = &reason
+		}
 		w.mu.Unlock()
 		if reason == "" {
 			return nil
@@ -282,6 +284,21 @@ func (w *SemanticWorker) pauseForWork() (string, time.Duration) {
 	if remaining := w.Policy.StartupDelay - now.Sub(w.started); remaining > 0 {
 		return "startup", remaining
 	}
+	if reason, wait := w.pauseForBatch(); reason != "" {
+		return reason, wait
+	}
+	if !w.lastCompleted.IsZero() {
+		if remaining := w.Policy.Delay - now.Sub(w.lastCompleted); remaining > 0 {
+			return "pacing", remaining
+		}
+	}
+	return "", 0
+}
+
+func (w *SemanticWorker) pauseForBatch() (string, time.Duration) {
+	if !w.Policy.Enabled {
+		return "", 0
+	}
 	if w.IdleSeconds != nil {
 		if remaining := w.Policy.InteractiveIdle - w.IdleSeconds(); remaining > 0 {
 			return "interactive", remaining
@@ -294,11 +311,6 @@ func (w *SemanticWorker) pauseForWork() (string, time.Duration) {
 		}
 		if *cpu > w.Policy.CPUBusyLimit {
 			return "cpu", time.Second
-		}
-	}
-	if !w.lastCompleted.IsZero() {
-		if remaining := w.Policy.Delay - now.Sub(w.lastCompleted); remaining > 0 {
-			return "pacing", remaining
 		}
 	}
 	return "", 0
