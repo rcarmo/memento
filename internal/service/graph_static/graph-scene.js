@@ -1,15 +1,5 @@
 import * as THREE from "./vendor/three.module.min.js";
-
-const nonRingDiagnostics = [
-  "diagnostic:embedding_missing:",
-  "diagnostic:embedding_stale:",
-  "diagnostic:orphan:",
-  "diagnostic:pending_proposals:",
-];
-
-export function isActionableAnomaly(id) {
-  return !nonRingDiagnostics.some((prefix) => id.includes(prefix));
-}
+import { diagnosticSummary } from "./diagnostics.js";
 
 const colours = {
   project: 0x2b6cb0, instance: 0x2a7a3a, person: 0xc87020, service: 0xc05050,
@@ -56,6 +46,7 @@ export class GraphScene {
     this.drawHalos(); this.drawEdges(); this.drawSelectedEdges(); this.createClusterLabels(); this.restartLayout();
   }
   setEdges(edges){this.edges=edges;this.drawEdges();this.drawSelectedEdges();this.restartLayout();}
+  setDiagnosticMarkers(markers){this.diagnosticMarkers=markers;this.drawHalos();}
   restartLayout(){this.layoutSettled=false;this.worker.postMessage({type:"layout",layoutId:++this.layoutId,nodes:this.nodes,edges:this.edges,forces:this.settings?.forces});}
   createClusterLabels(){
     this.clusterLabels.forEach(({element})=>element.remove());this.clusterLabels=[];
@@ -72,12 +63,33 @@ export class GraphScene {
   drawEdges(){this.disposeGroup(this.edgeGroup);const map=new Map(this.nodes.map(n=>[n.id,n.coarse_position]));const explicit=[],semantic=[[],[],[]],tags=[],context=[];const dense=this.nodes.length>1000,maxEdges=dense?Math.min(2600,this.edges.length):12000;let kept=0;for(const e of this.edges){if(kept>=maxEdges)break;const a=map.get(e.source),b=map.get(e.target);if(!a||!b)continue;const semanticEdge=e.kind==="semantic_similarity";const start=new THREE.Vector3(a.x,a.y,a.z),end=new THREE.Vector3(b.x,b.y,b.z);if(start.distanceTo(this.target)>this.distance*1.7&&end.distanceTo(this.target)>this.distance*1.7)continue;const mid=start.clone().add(end).multiplyScalar(.5);mid.z+=Math.min(2.4,start.distanceTo(end)*.22);const points=new THREE.QuadraticBezierCurve3(start,mid,end).getPoints(dense?5:10),semanticBand=e.similarity>=.92?2:e.similarity>=.85?1:0,target=semanticEdge?semantic[semanticBand]:e.kind==="shared_tag"?tags:e.kind==="shared_namespace"||e.kind==="shared_type"||e.kind==="shared_provenance"?context:explicit;for(let i=0;i<points.length-1;i++)target.push(points[i],points[i+1]);kept++;}const add=(vertices,color,opacity,dashed=false)=>{if(!vertices.length)return;const geo=new THREE.BufferGeometry().setFromPoints(vertices),material=dashed?new THREE.LineDashedMaterial({color,transparent:true,opacity,depthWrite:false,dashSize:.22,gapSize:.14,blending:THREE.AdditiveBlending}):new THREE.LineBasicMaterial({color,transparent:true,opacity,depthWrite:false,blending:THREE.AdditiveBlending}),lines=new THREE.LineSegments(geo,material);if(dashed)lines.computeLineDistances();this.edgeGroup.add(lines);};add(explicit,0x4d7894,dense?.24:.42);add(tags,0x50b0a0,dense?.12:.28);add(context,0x7250a0,dense?.09:.2);add(semantic[0],0x3f9f68,.32*this.semanticAlpha(),true);add(semantic[1],0x50b878,.5*this.semanticAlpha(),true);add(semantic[2],0x60c870,.72*this.semanticAlpha(),true);this.visibleEdgeCount=kept;}
   clearSelectedEdges(){for(const child of this.selectedEdgeGroup.children){child.geometry?.dispose();if(Array.isArray(child.material))child.material.forEach(material=>material.dispose());else child.material?.dispose();}this.selectedEdgeGroup.clear();this.selectedEdgeGroup.userData={incoming:0,outgoing:0};}
   drawSelectedEdges(){this.clearSelectedEdges();if(!this.selectedId)return;const map=new Map(this.nodes.map(n=>[n.id,n.coarse_position]));let incoming=0,outgoing=0,semantic=0;for(const edge of this.edges){const isIncoming=edge.target===this.selectedId,isOutgoing=edge.source===this.selectedId;if(!isIncoming&&!isOutgoing)continue;const a=map.get(edge.source),b=map.get(edge.target);if(!a||!b)continue;const start=new THREE.Vector3(a.x,a.y,a.z),end=new THREE.Vector3(b.x,b.y,b.z),mid=start.clone().add(end).multiplyScalar(.5);mid.z+=Math.min(2.4,start.distanceTo(end)*.22);const curve=new THREE.QuadraticBezierCurve3(start,mid,end),isSemantic=edge.kind==="semantic_similarity",radius=isSemantic?.012+Math.max(0,(edge.similarity||.75)-.75)*.05:.022,geometry=new THREE.TubeGeometry(curve,10,radius,5,false),material=new THREE.MeshBasicMaterial({color:isSemantic?0x60c870:isIncoming?0x55aee8:0xe66b5b,transparent:true,opacity:isSemantic?.52*this.semanticAlpha():.92,depthWrite:false,blending:THREE.AdditiveBlending});const mesh=new THREE.Mesh(geometry,material);mesh.userData.direction=isSemantic?"semantic":isIncoming?"incoming":"outgoing";this.selectedEdgeGroup.add(mesh);if(isSemantic)semantic++;else if(isIncoming)incoming++;else outgoing++;}this.selectedEdgeGroup.userData={incoming,outgoing,semantic};}
-  drawHalos(){this.disposeGroup(this.haloGroup);const ring=new THREE.RingGeometry(1.18,1.34,40);for(const n of this.nodes){const selected=n.id===this.selectedId,actionable=n.anomaly_ids?.some(isActionableAnomaly);if(!selected&&!actionable)continue;const p=n.coarse_position,s=this.radius(n);const mesh=new THREE.Mesh(ring,new THREE.MeshBasicMaterial({color:selected?0x50b0a0:0xe08050,transparent:true,opacity:selected?.88:.5,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));mesh.position.set(p.x,p.y,p.z);mesh.scale.setScalar(s*(selected?1.18:1));mesh.lookAt(this.camera.position);this.haloGroup.add(mesh);}}
+  drawHalos(){
+    this.disposeGroup(this.haloGroup);
+    for(const n of this.nodes){
+      const selected=n.id===this.selectedId,marker=this.diagnosticMarkers?.get(n.id),finding=marker?.primary;
+      if(!selected&&!finding)continue;
+      const p=n.coarse_position,s=this.radius(n),group=new THREE.Group();
+      group.position.set(p.x,p.y,p.z);group.scale.setScalar(s);group.lookAt(this.camera.position);
+      const material=(color,opacity=1)=>new THREE.MeshBasicMaterial({color,transparent:true,opacity,side:THREE.DoubleSide,depthWrite:false,depthTest:false});
+      if(finding?.severity==="error"){
+        group.add(new THREE.Mesh(new THREE.RingGeometry(1.24,1.34,32),material(0xd9685c,.9)));
+      }else if(finding){
+        const size=finding.rule==="size_outlier",failed=finding.rule==="embedding_failed",info=finding.severity==="info";
+        const shape=size?new THREE.PlaneGeometry(.31,.31):new THREE.CircleGeometry(info?.14:.23,failed?3:info?12:4);
+        const icon=new THREE.Mesh(shape,material(size?0xa996d9:info?0x8799ab:0xe0a840,info?.7:.9));
+        icon.position.set(.94,.94,.06);if(!size&&!failed&&!info)icon.rotation.z=Math.PI/4;
+        group.add(icon);
+      }
+      if(marker?.count>1){const dot=new THREE.Mesh(new THREE.CircleGeometry(.095,10),material(0xe8edf1,.9));dot.position.set(1.18,.75,.07);group.add(dot);}
+      if(selected){const outline=new THREE.Mesh(new THREE.RingGeometry(1.42,1.53,32),material(0x50b0a0,.95));outline.position.z=.09;group.add(outline);}
+      this.haloGroup.add(group);
+    }
+  }
   applyPositions(positions,progress=1){const by=new Map(positions.map(p=>[p.id,p]));this.nodes.forEach(n=>{const p=by.get(n.id);if(p)n.coarse_position={x:p.x,y:p.y,z:p.z};});if(this.largePoints){const attribute=this.largePoints.geometry.getAttribute("position");this.nodes.forEach((n,i)=>attribute.setXYZ(i,n.coarse_position.x,n.coarse_position.y,n.coarse_position.z));attribute.needsUpdate=true;this.largePoints.geometry.computeBoundingSphere();}else{const m=new THREE.Matrix4();for(const mesh of this.meshes||[]){mesh.userData.globalIndices.forEach((globalIndex,i)=>{const n=this.nodes[globalIndex],p=n.coarse_position,s=this.radius(n);m.compose(new THREE.Vector3(p.x,p.y,p.z),new THREE.Quaternion(),new THREE.Vector3(s,s,s));mesh.setMatrixAt(i,m);});mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();}}this.drawHalos();this.drawEdges();this.drawSelectedEdges();}
   disposeGroup(group){group.traverse(child=>{child.geometry?.dispose();(Array.isArray(child.material)?child.material:[child.material]).forEach(material=>material?.dispose());});group.clear();}
   clear(){this.layoutId++;this.worker.postMessage({type:"stop"});this.disposeGroup(this.nodeGroup);this.disposeGroup(this.edgeGroup);this.clearSelectedEdges();this.disposeGroup(this.haloGroup);}
   hit(e){const r=this.canvas.getBoundingClientRect();this.pointer.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height*2-1));this.raycaster.setFromCamera(this.pointer,this.camera);return this.meshes?.length&&this.raycaster.intersectObjects(this.meshes)[0];}
-  hover(e){const hit=this.hit(e);const index=hit?(hit.instanceId??hit.index):null;if(index==null){this.label.hidden=true;return;}const n=this.nodes[hit.object.userData.globalIndices[index]];this.label.textContent=n.title||n.label||n.id;this.label.style.left=`${e.clientX-this.canvas.getBoundingClientRect().left+14}px`;this.label.style.top=`${e.clientY-this.canvas.getBoundingClientRect().top+14}px`;this.label.hidden=false;}
+  hover(e){const hit=this.hit(e);const index=hit?(hit.instanceId??hit.index):null;if(index==null){this.label.hidden=true;return;}const n=this.nodes[hit.object.userData.globalIndices[index]],findings=this.diagnosticMarkers?.get(n.id)?.findings||[];this.label.textContent=[n.title||n.label||n.id,diagnosticSummary(findings)].filter(Boolean).join("\n");this.label.style.left=`${e.clientX-this.canvas.getBoundingClientRect().left+14}px`;this.label.style.top=`${e.clientY-this.canvas.getBoundingClientRect().top+14}px`;this.label.hidden=false;}
   pick(e){const hit=this.hit(e);const index=hit?(hit.instanceId??hit.index):null;if(index!=null){const globalIndex=hit.object.userData.globalIndices[index],node=this.nodes[globalIndex];this.selectedId=node.id;this.callbacks.select?.(node);}else{this.selectedId=null;this.callbacks.select?.(null);}this.drawHalos();this.drawSelectedEdges();}
   updateFocus(now=performance.now()){const tween=this.focusTween;if(!tween)return;const progress=Math.min(1,(now-tween.startedAt)/tween.duration),eased=progress*progress*(3-2*progress);this.target.lerpVectors(tween.fromTarget,tween.toTarget,eased);this.distance=THREE.MathUtils.lerp(tween.fromDistance,tween.toDistance,eased);if(progress>=1){this.focusTween=null;this.drawEdges();}}
   cancelFocus(now=performance.now()){if(!this.focusTween)return;this.updateFocus(now);this.focusTween=null;}

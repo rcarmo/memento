@@ -1,5 +1,32 @@
 // Diagnostics retain their full-snapshot meaning, but the displayed targets
 // must stay inside the user's declared selection/view scope.
+export function diagnosticMarkers(nodes, diagnostics, level = "warnings", showOrphans = false) {
+  const visible = new Set(nodes.filter(node => !node.member_count).map(node => node.id));
+  const byNode = new Map();
+  const priority = { error: 0, warning: 1, info: 2 };
+  for (const diagnostic of diagnostics || []) {
+    for (const id of diagnostic.concept_ids || []) {
+      if (!visible.has(id)) continue;
+      if (!byNode.has(id)) byNode.set(id, []);
+      byNode.get(id).push(diagnostic);
+    }
+  }
+  const markers = new Map();
+  for (const [id, findings] of byNode) {
+    findings.sort((a, b) => (priority[a.severity] ?? 3) - (priority[b.severity] ?? 3) || a.rule.localeCompare(b.rule));
+    const displayed = findings.filter(d => d.severity === "error" ||
+      (level !== "errors" && d.severity === "warning" && (showOrphans || d.rule !== "orphan")) ||
+      (level === "all" && d.severity === "info"));
+    if (level !== "none" && displayed.length) markers.set(id, { primary: displayed[0], count: displayed.length, findings });
+    else markers.set(id, { primary: null, count: 0, findings });
+  }
+  return markers;
+}
+
+export function diagnosticSummary(findings) {
+  return (findings || []).map(d => `${d.severity}: ${d.rule.replaceAll("_", " ")} — ${d.message}`).join("\n");
+}
+
 export function scopedDiagnostics(graph, selected, visibleNodes) {
   const visible = new Set(visibleNodes.map(node => node.id));
   let ids;

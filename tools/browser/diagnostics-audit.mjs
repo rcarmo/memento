@@ -8,7 +8,8 @@ export async function auditDiagnostics(page) {
   const semantic={id:'audit-semantic',kind:'semantic_similarity',source:a.id,target:b.id,similarity:.99,canonical:false,weight:.99};
   const broken={id:'audit-broken',rule:'broken_links',severity:'error',message:'A specific missing target.',concept_ids:[a.id],measured:{broken_link_count:1}};
   const other={id:'audit-orphan',rule:'orphan',severity:'warning',message:'No explicit inbound or outbound links.',concept_ids:[c.id],measured:{explicit_degree:0}};
-  const snapshot={...fixture,mode:'direct',nodes,edges:[explicit,semantic],clusters:[],cluster_edges:[],memberships:[],diagnostics:[broken,broken,other],truncated:false};
+  const info={id:'audit-tag',rule:'tag_drift',severity:'info',message:'Tag drift.',concept_ids:[b.id],measured:{}};
+  const snapshot={...fixture,mode:'direct',nodes,edges:[explicit,semantic],clusters:[],cluster_edges:[],memberships:[],diagnostics:[broken,broken,other,info],truncated:false};
   let failDetail=false;
   const overviewRoute=async route=>route.fulfill({json:snapshot});
   const detailRoute=async route=>{
@@ -22,19 +23,34 @@ export async function auditDiagnostics(page) {
   try {
     await page.getByRole('button',{name:'Overview',exact:true}).click();
     await page.waitForFunction(()=>window.__mementoGraphScene.nodes.length===3);
-    await page.waitForFunction(()=>document.querySelectorAll('.diagnostics li').length===2);
-    assert.equal(await page.locator('.diagnostics li').count(),2,'deduplicate diagnostic IDs');
+    await page.waitForFunction(()=>document.querySelectorAll('.diagnostics li').length===3);
+    assert.equal(await page.locator('.diagnostics li').count(),3,'deduplicate diagnostic IDs');
+    assert.equal(await page.evaluate(id=>window.__mementoGraphScene.diagnosticMarkers?.get(id)?.primary,b.id),null,'info markers hidden by default');
+    await page.getByLabel('Canvas diagnostic markers').selectOption('all');
+    await page.waitForFunction(id=>window.__mementoGraphScene.diagnosticMarkers?.get(id)?.primary?.rule==='tag_drift',b.id);
+    await page.getByLabel('Canvas diagnostic markers').selectOption('warnings');
+    await page.waitForFunction(id=>window.__mementoGraphScene.diagnosticMarkers?.get(id)?.primary?.rule==='broken_links',a.id);
+    assert.equal(await page.evaluate(id=>window.__mementoGraphScene.diagnosticMarkers.get(id)?.primary,c.id),null,'orphan marker hidden by default');
+    await page.getByLabel('Mark unlinked (orphan) nodes').check();
+    await page.waitForFunction(id=>window.__mementoGraphScene.diagnosticMarkers?.get(id)?.primary?.rule==='orphan',c.id);
+    await page.getByLabel('Mark unlinked (orphan) nodes').uncheck();
+    await page.getByLabel('Canvas diagnostic markers').selectOption('none');
+    await page.waitForFunction(id=>window.__mementoGraphScene.diagnosticMarkers?.get(id)?.primary===null,a.id);
+    await page.getByLabel('Canvas diagnostic markers').selectOption('warnings');
+    await page.waitForFunction(id=>window.__mementoGraphScene.diagnosticMarkers?.get(id)?.primary?.rule==='broken_links',a.id);
     await page.locator(`[data-diagnostic-id="audit-broken"] button`).click();
     await page.waitForFunction(()=>document.querySelector('.inspector h2')?.textContent==='Website Device Screenshots');
     await page.waitForFunction(()=>document.querySelector('[data-testid="relationship-summary"]')?.textContent.includes('1 outbound'));
     assert.equal(await page.locator('.diagnostics li').count(),1,'selected diagnostics scoped to node');
+    assert.match(await page.locator('.node-findings').innerText(),/error: broken links — A specific missing target/);
+    assert(await page.evaluate(id=>{const s=window.__mementoGraphScene;return s.selectedId===id && s.haloGroup.children.some(g=>g.children.length===2);},a.id),'selected node retains error and selection outlines');
     assert.equal(await page.locator('[data-diagnostic-id="audit-orphan"]').count(),0,'unrelated orphan hidden');
     assert(await page.locator('[data-testid="relationship-summary"]').textContent().then(t=>t.includes('0 inbound / 1 outbound')));
     await page.getByLabel('Show semantic layer',{exact:true}).check();
     await page.locator('.inspector').getByRole('button',{name:b.title,exact:true}).click();
     await page.waitForFunction(title=>document.querySelector('.inspector h2')?.textContent===title,b.title);
     await page.waitForFunction(id=>window.__mementoGraphScene.selectedId===id,b.id);
-    assert.equal(await page.locator('.diagnostics li').count(),0,'target has no diagnostic');
+    assert.equal(await page.locator('.diagnostics li').count(),0,'detail snapshot has no target diagnostics');
     failDetail=true;
     await page.evaluate(id=>{const s=window.__mementoGraphScene;s.callbacks.select(s.nodes.find(n=>n.id===id));},a.id);
     await page.getByTestId('inspector-error').waitFor();
@@ -49,7 +65,7 @@ export async function auditDiagnostics(page) {
     const aligns=await page.locator('.controls button,.inspector button').evaluateAll(items=>items.map(el=>getComputedStyle(el).textAlign));
     assert(aligns.every(a=>a==='left'),'sidebar buttons left aligned');
     await page.getByRole('button',{name:'Show current view diagnostics'}).click();
-    await page.waitForFunction(()=>document.querySelectorAll('.diagnostics li').length===2);
+    await page.waitForFunction(()=>document.querySelectorAll('.diagnostics li').length===3);
     await page.locator('[data-diagnostic-id="audit-orphan"] button').focus();
     await page.keyboard.press('Enter');
     await page.waitForFunction(title=>document.querySelector('.inspector h2')?.textContent===title,c.title);

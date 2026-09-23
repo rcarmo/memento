@@ -84,13 +84,15 @@ Cluster names are projected over the graph. Force controls expose strength, repu
 
 Each diagnostic has a stable ID, severity, rule, concept IDs, explanation, measured values and thresholds. The sidebar names its scope: selected node, selected cluster or current filtered view. Entries are deduplicated by ID and contain node-navigation buttons. Findings spanning a larger snapshot label their clipped target list. Detail, cluster and neighbourhood responses supply fresh scoped diagnostics.
 
+The canvas defaults to errors and warnings, with orphan warnings hidden until enabled. The marker filter can show errors only, all severities or no diagnostic markers without hiding the diagnostic list. Error nodes have a red outline; warnings use small rule-aware glyphs (a square for size outliers, a triangle for embedding failures, and an amber diamond for other warnings). Informational findings use a muted dot when enabled. A white dot denotes multiple visible findings. Selection adds an independent teal outline. Hover and the selected-node inspector give the full rule, severity and explanation. The sidebar shows severity counts and a marker key; clusters do not receive concept markers.
+
 Explicit orphan/degree and broken-link calculations use the permitted explicit link set before display edge limits. Accepted asset links and external URLs are excluded from broken/orphan connectivity; semantic overlays do not establish explicit connectivity. Truncated displays are marked. Failed relationship requests show unavailable data with retry, not empty counts. Successful node detail remains available when only neighbourhood loading fails. Asset versions are grouped by kind and newest semantic version first, before applying the summary limit. Sidebar controls and inspector content are left aligned.
 
 The initial rules cover:
 
 * orphan and broken-link state;
 * high degree and isolated namespace/community groups;
-* repository/index lag and embedding failure or staleness; transient missing/stale embedding diagnostics remain visible in filters/status but do not draw per-node gold action rings;
+* repository/index lag and embedding failure or staleness; missing/stale embedding diagnostics remain visible in filters/status, and stale embeddings use a warning marker when enabled;
 * pending proposal state;
 * exact duplicates and compatible-embedding near-duplicates;
 * Markdown/asset size outliers;

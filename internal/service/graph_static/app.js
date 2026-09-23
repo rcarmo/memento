@@ -2,7 +2,7 @@ import { h, render } from "./vendor/preact.module.js";
 import { useEffect, useMemo, useRef, useState } from "./vendor/preact-hooks.module.js";
 import { graphApi } from "./api.js";
 import { GraphScene } from "./graph-scene.js";
-import { scopedDiagnostics, diagnosticTargets, relationshipSummary } from "./diagnostics.js";
+import { scopedDiagnostics, diagnosticTargets, relationshipSummary, diagnosticMarkers, diagnosticSummary } from "./diagnostics.js";
 
 const forceDefaults = {
   explicit: 0.06,
@@ -140,6 +140,8 @@ function App() {
   const [searching, setSearching] = useState(false);
   const [type, setType] = useState("all");
   const [sizeMetric, setSizeMetric] = useState("combined_bytes");
+  const [markerLevel, setMarkerLevel] = useState("warnings");
+  const [showOrphans, setShowOrphans] = useState(false);
   const [forces, setForces] = useState(forceDefaults);
   const [semanticEnabled, setSemanticEnabled] = useState(false);
   const [semanticAlpha, setSemanticAlpha] = useState(0.6);
@@ -446,6 +448,11 @@ function App() {
   useEffect(() => { scene.current?.setSemanticAlpha(semanticAlpha); }, [semanticAlpha]);
 
   useEffect(redrawFiltered, [filtered, sizeMetric, forces, semanticEnabled, semanticThreshold, semanticNeighbours, selected?.id]);
+  useEffect(() => {
+    const findings = new Map((graph?.diagnostics || []).map(d => [d.id, d]));
+    for (const d of detail?.diagnostics || []) if (d.concept_ids?.includes(selected?.id)) findings.set(d.id, d);
+    scene.current?.setDiagnosticMarkers(diagnosticMarkers(filtered, [...findings.values()], markerLevel, showOrphans));
+  }, [filtered, graph, selected?.id, detail?.diagnostics, markerLevel, showOrphans]);
 
   useEffect(() => {
     if (graph && !availableSizeMetrics(graph).includes(sizeMetric)) setSizeMetric("combined_bytes");
@@ -561,6 +568,8 @@ function App() {
   const diagnosticGraph = selected && detail?.diagnostics ? { ...graph, diagnostics: detail.diagnostics } : graph;
   const diagnostics = scopedDiagnostics(diagnosticGraph, selected, selected?.member_count && detail?.nodes ? detail.nodes : filtered);
   const diagnosticsScope = selected ? (selected.member_count ? "Selected cluster" : "Selected node") : "Current view";
+  const diagnosticCounts = { error: 0, warning: 0, info: 0 };
+  for (const finding of diagnostics) if (finding.severity in diagnosticCounts) diagnosticCounts[finding.severity]++;
   const activePrincipal = principals.find((principal) => principal.name === simulatedPrincipal) || null;
   const refreshUnavailable = refresh?.available === false
     ? refresh.last_error || "Semantic embedding refresh is unavailable on this Memento instance."
@@ -719,7 +728,21 @@ function App() {
         ),
       ]),
       h("details", { open: true }, [
-        h("summary", {}, `${diagnosticsScope} diagnostics (${diagnostics.length})`),
+        h("summary", {}, `Diagnostics (${diagnostics.length})`),
+        h("small", { class: "selection-detail" }, `${diagnosticsScope}: ${diagnosticCounts.error} errors · ${diagnosticCounts.warning} warnings · ${diagnosticCounts.info} info`),
+        h("label", { class: "marker-control" }, ["Canvas markers", h("select", { value: markerLevel, onChange: event => setMarkerLevel(event.currentTarget.value), "aria-label": "Canvas diagnostic markers" }, [
+          h("option", { value: "none" }, "None"), h("option", { value: "errors" }, "Errors only"),
+          h("option", { value: "warnings" }, "Errors + warnings"), h("option", { value: "all" }, "Errors + warnings + info"),
+        ])]),
+        h("label", { class: "check" }, [h("input", { type: "checkbox", checked: showOrphans, onChange: event => setShowOrphans(event.currentTarget.checked) }), "Mark unlinked (orphan) nodes"]),
+        h("div", { class: "marker-key", "aria-label": "Diagnostic marker key" }, [
+          h("span", {}, [h("i", { class: "marker error" }), "error outline"]),
+          h("span", {}, [h("i", { class: "marker warning" }), "warning"]),
+          h("span", {}, [h("i", { class: "marker size" }), "size"]),
+          h("span", {}, [h("i", { class: "marker info" }), "info (optional)"]),
+          h("span", {}, [h("i", { class: "marker selected" }), "selected"]),
+          h("small", {}, "A white dot means multiple findings; hover or select for details."),
+        ]),
         diagnostics.length > 50 && h("small", {}, `Showing 50 of ${diagnostics.length} diagnostics; narrow the view or select a node.`),
         h("small", { class: "selection-detail" }, "Orphan means no resolved concept links; semantic, external and asset links do not count."),
         graph?.truncated && h("p", {}, "Graph display is truncated; diagnostics use the available scoped snapshot."),
@@ -853,6 +876,7 @@ function App() {
             detail,
             selected,
             semanticEdges: selectedSemanticEdges,
+            diagnostics: diagnostics,
             referenceNodes: graph?.nodes || [],
             onTag: (tag) => {
               setType("all");
@@ -874,7 +898,7 @@ export function uniqueReferences(edges = [], direction) {
   });
 }
 
-function Inspector({ detail, selected, semanticEdges, referenceNodes = [], onTag, onMemory }) {
+function Inspector({ detail, selected, semanticEdges, diagnostics = [], referenceNodes = [], onTag, onMemory }) {
   const node = detail.node || selected;
   const inbound = uniqueReferences(detail.inbound, "source");
   const outbound = uniqueReferences(detail.outbound, "target");
@@ -919,6 +943,10 @@ function Inspector({ detail, selected, semanticEdges, referenceNodes = [], onTag
     h("h2", {}, node.title || node.label),
     h("code", {}, node.path || node.namespace),
     tags.length ? h("p", { class: "tags" }, tags.map(tagButton)) : null,
+    !node.member_count && diagnostics.length ? h("section", { class: "node-findings", "aria-label": "Node diagnostics" }, [
+      h("h3", {}, `Diagnostics (${diagnostics.length})`),
+      h("ul", {}, diagnostics.map(d => h("li", { class: d.severity, title: diagnosticSummary([d]) }, `${d.severity}: ${d.rule.replaceAll("_", " ")} — ${d.message}`))),
+    ]) : null,
     h(
       "dl",
       {},

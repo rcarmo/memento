@@ -8,3 +8,23 @@
 .controls input, .controls select, .inspector code { text-align: left; }
 .controls .actions, .controls .force, .inspector .link-lists { justify-content: flex-start; }
 .controls .diagnostic-target { display: block; padding-left: 0; overflow-wrap: anywhere; }
+
+/* Diagnostic glyphs are separate from the node's type colour and selection outline. */
+.node-label{white-space:pre-line;max-width:min(380px,70vw);line-height:1.4}
+.marker-control{display:grid;gap:5px;margin:8px 0;color:var(--muted);font-size:11px}
+.marker-control select{width:100%;padding:6px 8px}
+.controls .check{margin:8px 0;text-transform:none;letter-spacing:0}
+.legend{max-width:calc(100% - 32px);flex-wrap:wrap;justify-content:center;border-radius:12px}
+.marker{display:inline-block;width:10px;height:10px;flex:none}
+.marker.error{border:2px solid var(--red);border-radius:50%}
+.marker.warning{background:var(--gold);transform:rotate(45deg);width:8px;height:8px}
+.marker.size{background:#a996d9}
+.marker.info{background:#8799ab;border-radius:50%}
+.marker.selected{border:2px solid var(--teal);border-radius:50%}
+.node-findings ul{margin:5px 0 12px;padding-left:18px;font-size:11px}
+.node-findings li{margin:4px 0;color:var(--muted)}
+.node-findings li.error{color:#edaca6}.node-findings li.warning{color:#e5c37b}
+@media(max-width:900px){.legend{gap:7px;bottom:6px;font-size:8px}}
+.marker-key{display:flex;flex-wrap:wrap;gap:6px 10px;margin:7px 0;color:var(--muted);font-size:10px}
+.marker-key span{display:flex;align-items:center;gap:5px}
+.marker-key small{flex-basis:100%;color:var(--muted)}
