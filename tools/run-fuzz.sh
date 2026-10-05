@@ -16,7 +16,7 @@ mapfile -t targets < <(
   find "${find_args[@]}" -print | sort |
     while IFS= read -r file; do
       pkg=./$(dirname "${file#./}")
-      grep -hE '^func Fuzz[A-Za-z0-9_]+' "$file" |
+      { grep -hE '^func Fuzz[A-Za-z0-9_]+' "$file" || true; } |
         sed -E 's/^func (Fuzz[A-Za-z0-9_]+).*/\1/' |
         while IFS= read -r fuzz; do
           printf '%s\t%s\n' "$pkg" "$fuzz"

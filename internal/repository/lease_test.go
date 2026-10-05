@@ -63,6 +63,7 @@ func TestWriterLeaseCrossProcess(t *testing.T) {
 			t.Fatal(err)
 		}
 		defer lease.Release()
+		checkpointChildProfiles(t)
 		if _, err = os.Stdout.WriteString("locked\n"); err != nil {
 			t.Fatal(err)
 		}

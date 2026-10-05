@@ -60,6 +60,15 @@ jobs:
           make audit
           make release-check VERSION="${GITHUB_REF_NAME#v}" SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)"
           git diff --exit-code
+      - name: Retain release CPU and allocation profiles
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: release-test-profiles
+          path: build/profiles
+          retention-days: 7
+          if-no-files-found: warn
+          compression-level: 6
 
   runtime-models:
     name: Prepare cached runtime models

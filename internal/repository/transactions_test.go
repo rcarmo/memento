@@ -472,6 +472,7 @@ func TestTransactionProcessDeathRecovery(t *testing.T) {
 		m := &TransactionManager{Paths: config.Paths, Operations: control.Operations{DB: db, Now: func() time.Time { return stamp }}, Now: func() time.Time { return stamp }}
 		m.Checkpoint = func(name string) error {
 			if name == config.Checkpoint {
+				checkpointChildProfiles(t)
 				if _, err = os.Stdout.WriteString("ready\n"); err != nil {
 					return err
 				}

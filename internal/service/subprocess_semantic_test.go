@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"runtime/pprof"
 	"strconv"
 	"strings"
 	"syscall"
@@ -51,34 +52,55 @@ func TestSubprocessSemanticNiceHelper(t *testing.T) {
 	}
 	if _, err := io.Copy(io.Discard, os.Stdin); err != nil {
 		_, _ = io.WriteString(os.Stderr, err.Error())
-		os.Exit(11)
+		subprocessHelperExit(t, 11)
 	}
 	priority, err := processnice.Resolve(os.LookupEnv)
 	if err != nil {
 		_, _ = io.WriteString(os.Stderr, err.Error())
-		os.Exit(12)
+		subprocessHelperExit(t, 12)
 	}
 	if err = processnice.Apply(priority); err != nil {
 		_, _ = io.WriteString(os.Stderr, err.Error())
-		os.Exit(13)
+		subprocessHelperExit(t, 13)
 	}
 	kernelPriority, err := syscall.Getpriority(syscall.PRIO_PROCESS, 0)
 	if err != nil {
 		_, _ = io.WriteString(os.Stderr, err.Error())
-		os.Exit(14)
+		subprocessHelperExit(t, 14)
 	}
 	nice := 20 - kernelPriority
 	if path := os.Getenv(subprocessSemanticHelperNiceFile); path != "" {
 		if err = os.WriteFile(path, []byte(strconv.Itoa(nice)), 0600); err != nil {
 			_, _ = io.WriteString(os.Stderr, err.Error())
-			os.Exit(15)
+			subprocessHelperExit(t, 15)
 		}
 	}
 	if _, err = os.Stdout.Write(subprocessFrame(t, 1, 1, []float32{1})); err != nil {
 		_, _ = io.WriteString(os.Stderr, err.Error())
-		os.Exit(16)
+		subprocessHelperExit(t, 16)
 	}
-	os.Exit(0)
+	subprocessHelperExit(t, 0)
+}
+
+func subprocessHelperExit(t *testing.T, code int) {
+	t.Helper()
+	// This protocol helper must not let testing append PASS to stdout. Flush
+	// profiles before its intentional os.Exit instead of changing that protocol.
+	if directory := os.Getenv("MEMENTO_TEST_PROFILE_PROCESS_DIR"); directory != "" {
+		pprof.StopCPUProfile()
+		runtime.GC()
+		file, err := os.Create(filepath.Join(directory, "heap.pprof"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = pprof.Lookup("allocs").WriteTo(file, 0); err != nil {
+			t.Fatal(err)
+		}
+		if err = file.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}
+	os.Exit(code)
 }
 
 func TestDecodeEmbeddingResponse(t *testing.T) {

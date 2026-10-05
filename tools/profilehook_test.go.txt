@@ -1,0 +1,116 @@
+package __MEMENTO_TEST_PACKAGE__
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+func init() {
+	root := os.Getenv("MEMENTO_TEST_PROFILE_DIR")
+	if root == "" {
+		return
+	}
+
+	pid := os.Getpid()
+	procDir := filepath.Join(root, fmt.Sprintf("pid-%d", pid))
+	if err := os.MkdirAll(procDir, 0o755); err != nil {
+		fmt.Fprintf(os.Stderr, "memento profile hook: mkdir %s: %v\n", procDir, err)
+		return
+	}
+
+	if err := os.Setenv("MEMENTO_TEST_PROFILE_PROCESS_DIR", procDir); err != nil {
+		panic(err)
+	}
+	kind := "process"
+	fuzzWorker := ""
+	if value, ok := mementoProfileFlagValue(os.Args, "-test.fuzzworker"); ok {
+		kind = "fuzzworker"
+		fuzzWorker = value
+	}
+
+	memRate := os.Getenv("MEMENTO_TEST_MEMPROFILERATE")
+	if memRate == "" {
+		memRate = "524288"
+	}
+
+	cpuPath := filepath.Join(procDir, "cpu.pprof")
+	heapPath := filepath.Join(procDir, "heap.pprof")
+	args := append([]string(nil), os.Args...)
+	args = mementoProfileSetFlag(args, "-test.cpuprofile", cpuPath)
+	args = mementoProfileSetFlag(args, "-test.memprofile", heapPath)
+	args = mementoProfileSetFlag(args, "-test.memprofilerate", memRate)
+	os.Args = args
+
+	exe, _ := os.Executable()
+	cwd, _ := os.Getwd()
+	var meta strings.Builder
+	fmt.Fprintf(&meta, "pid=%d\n", pid)
+	fmt.Fprintf(&meta, "parent=%d\n", os.Getppid())
+	fmt.Fprintf(&meta, "kind=%s\n", kind)
+	if fuzzWorker != "" {
+		fmt.Fprintf(&meta, "fuzzworker=%s\n", fuzzWorker)
+	}
+	fmt.Fprintf(&meta, "path=%s\n", exe)
+	fmt.Fprintf(&meta, "cwd=%s\n", cwd)
+	fmt.Fprintf(&meta, "cpuprofile=%s\n", cpuPath)
+	fmt.Fprintf(&meta, "memprofile=%s\n", heapPath)
+	fmt.Fprintf(&meta, "memprofilerate=%s\n", memRate)
+	for i, arg := range args {
+		fmt.Fprintf(&meta, "arg[%d]=%s\n", i, arg)
+	}
+	if err := os.WriteFile(filepath.Join(procDir, "metadata.txt"), []byte(meta.String()), 0o644); err != nil {
+		fmt.Fprintf(os.Stderr, "memento profile hook: write metadata: %v\n", err)
+	}
+}
+
+func mementoProfileSetFlag(args []string, name, value string) []string {
+	prefix := name + "="
+	insertAt := len(args)
+	for i, arg := range args {
+		if arg == "--" {
+			insertAt = i
+			break
+		}
+		if arg == name {
+			if i+1 < len(args) && args[i+1] != "--" {
+				args[i+1] = value
+				return args
+			}
+			out := make([]string, 0, len(args)+1)
+			out = append(out, args[:i+1]...)
+			out = append(out, value)
+			out = append(out, args[i+1:]...)
+			return out
+		}
+		if strings.HasPrefix(arg, prefix) {
+			args[i] = prefix + value
+			return args
+		}
+	}
+	out := make([]string, 0, len(args)+1)
+	out = append(out, args[:insertAt]...)
+	out = append(out, prefix+value)
+	out = append(out, args[insertAt:]...)
+	return out
+}
+
+func mementoProfileFlagValue(args []string, name string) (string, bool) {
+	prefix := name + "="
+	for i, arg := range args {
+		if arg == "--" {
+			break
+		}
+		if arg == name {
+			if i+1 < len(args) && args[i+1] != "--" {
+				return args[i+1], true
+			}
+			return "", true
+		}
+		if strings.HasPrefix(arg, prefix) {
+			return strings.TrimPrefix(arg, prefix), true
+		}
+	}
+	return "", false
+}

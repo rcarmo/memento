@@ -4,14 +4,14 @@ export GOTOOLCHAIN
 TOOLS_DIR ?= build/tools
 STATICCHECK_VERSION ?= v0.6.1
 GOVULNCHECK_VERSION ?= v1.1.4
-PROFILE_ROOT ?= build/profiles
+PROFILE_ROOT ?= $(abspath build/profiles)
 PROFILE_MEM_RATE ?= 524288
 STATICCHECK := $(TOOLS_DIR)/staticcheck
 GOVULNCHECK := $(TOOLS_DIR)/govulncheck
 PROFILE_TEST = GO="$(GO)" PROFILE_ROOT="$(PROFILE_ROOT)" PROFILE_MEM_RATE="$(PROFILE_MEM_RATE)" ./tools/test-profile.sh
 PREFIX ?= /usr/local
 DESTDIR ?=
-MEMENTO_VERSION ?= 1.0.5
+MEMENTO_VERSION ?= 1.0.11
 VERSION ?= $(MEMENTO_VERSION)
 SOURCE_DATE_EPOCH ?= 0
 GTE_MODEL_PATH ?= $(abspath models/gte/gte-small.gtemodel)
@@ -105,8 +105,8 @@ performance:
 model-test:
 	@test -n "$(GTE_MODEL_PATH)" || (echo 'Set GTE_MODEL_PATH to the digest-pinned public GTE1 model'; exit 1)
 	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(PROFILE_TEST) ./internal/gte -- -run '^TestRealGTEModel$$' -v
-	CGO_ENABLED=0 $(GO) build -o build/memento-embed-go ./cmd/memento-embed-go
-	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(PROFILE_TEST) ./internal/service -- -run '^TestRealChunk$$' -v
+	GO="$(GO)" ./tools/profile-worker-build.sh
+	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(PROFILE_TEST) ./internal/service -- -run '^TestRealChunk' -v
 	@test -n "$(NEEDLE_MODEL_PATH)" -a -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Set NEEDLE_MODEL_PATH and NEEDLE_TOKENIZER_PATH'; exit 1)
 	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(PROFILE_TEST) ./internal/needle -- -run '^TestRealNeedle(Model|Tokenizer|Generation|MappedGeneration)$$' -v -timeout=10m
 simd-test:

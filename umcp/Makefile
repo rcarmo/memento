@@ -34,7 +34,7 @@ race:
 	CGO_ENABLED=1 $(PROFILE_TEST) ./... -- -race
 coverage:
 	@mkdir -p ../build
-	CGO_ENABLED=0 COVERAGE_FILE=../build/umcp-coverage.out $(PROFILE_TEST) ./... -- -covermode=atomic -coverpkg="$$( $(GO) list ./... | paste -sd, - )"
+	CGO_ENABLED=0 COVERAGE_FILE=../build/umcp-coverage.out $(PROFILE_TEST) . -- -covermode=atomic
 	@awk 'NR>1 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' ../build/umcp-coverage.out
 fuzz:
 	GO="$(GO)" PROFILE_ROOT="$(PROFILE_ROOT)" PROFILE_MEM_RATE="$(PROFILE_MEM_RATE)" FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}" ../tools/run-fuzz.sh

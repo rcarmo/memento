@@ -1,5 +1,7 @@
 # Validation reports
 
+[Release 1.0.11 qualification](release-1.0.11.md) records the proposal-list/backlog patch and final per-process CPU/allocation profiling gates.
+
 The original reports below were generated on 2026-07-17 from a Linux x86_64 development host. Thresholds are bounded regression checks for that environment, not production service-level objectives.
 
 * `load-operational-local.json` -- 250 concepts, 16 workers and 1,000 direct requests, followed by same-base write contention, an idempotent replay storm, proposal concurrency and a backup/restore drill. All scenarios passed.
