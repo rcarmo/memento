@@ -1,6 +1,6 @@
 # Release 1.0.11 qualification
 
-The proposal backlog/listing fix passed the local release gates on 5 October 2026. Production publication and deployment are recorded separately after completion. The earlier limits in [the initial proposal investigation](proposal-list-backlog-2026-10-05.md) describe the state before worker profiling was added; the results below supersede those limits.
+The proposal backlog/listing fix passed local and GitHub release gates and was deployed on 5 October 2026. Publication and production verification are recorded below. The earlier limits in [the initial proposal investigation](proposal-list-backlog-2026-10-05.md) describe the state before worker profiling was added; the results below supersede those limits.
 
 ## Changes
 
@@ -50,4 +50,26 @@ Independent review attempts timed out, including the final read-only attempt. No
 
 ## Deployment contract
 
-Retain the current production rollback image `ghcr.io/rcarmo/memento@sha256:34ba60106ec745c7cc9eee340abbe52a6e345ad409a237ba796af8c29e209857`. Portainer endpoint 18, stack 111 uses the existing `/volume1/docker/memento/state` bind mount, read-only configuration/secret mounts and preserved external model volume. Change only the image digest after CI publication; do not migrate or erase production data.
+Retain the current production rollback image `ghcr.io/rcarmo/memento@sha256:34ba60106ec745c7cc9eee340abbe52a6e345ad409a237ba796af8c29e209857`. Portainer endpoint 18, stack 111 uses the existing `/volume1/docker/memento/state` bind mount, read-only configuration/secret mounts and preserved external model volume. Only the image reference changed; production data was not migrated or erased.
+
+## Publication and production verification
+
+Tag `v1.0.11` points to `8f53c4ecf1f517652d53fc2b823684af6d105b7f`. [CI run 37353118541](https://github.com/rcarmo/memento/actions/runs/37353118541) and [release run 37353149955](https://github.com/rcarmo/memento/actions/runs/37353149955) passed, including native amd64/arm64 model gates, ARM64 corpus, no-AVX compatibility, UI audits, provenance and SBOM publication.
+
+[Release 1.0.11](https://github.com/rcarmo/memento/releases/tag/v1.0.11) records multi-architecture digest `sha256:8b24b9cbff8da335ca3a15d08cf880f24a89e5695d6b2b2fc987ff2035e6bca2`. The SBOM SHA-256 is `2786364bc366133d6dd774eee84024a6dd11428835b8ca784666b290fe315daf`.
+
+NAS Docker pull requests timed out without making the digest reference available. A local pull verified the published digest; Docker save/load transferred that exact amd64 image. Although the load and stack-update HTTP calls also exceeded their wait limits, subsequent inspection reconciled their successful effects. The NAS stack is pinned to immutable image ID `sha256:10d04fa937cc2a801024815b90b7a42d35dec9a9bc89f53c1ee4f27e770bc3b2`, matching the locally verified release image. It does not rely on a mutable tag or an absent NAS registry digest mapping. The previous pinned image and rollback compose are retained. A future host must pull the registry digest or import this image before using its local image-ID pin.
+
+The new container `4194e2a7e9ab14529e995695c7991ee12cff88f12e54c4567807a03c1e082271` is running and healthy with zero restarts. Config/secret mounts remain read-only, state and preserved model volume are unchanged, and the original user, limits, capabilities, port and healthcheck remain in force. Deployment receipts are in workspace notes `notes/projects/memento-release-1.0.11/`.
+
+Live MCP reports version 1.0.11, 264 visible concepts, backlog zero, unresolved zero and counts `{applied:340, expired:105, rejected:15}`. Repository and index both read `e4aa94b3b6af9b18a037221286ff027f35181611`, with `index_stale:false`. Default/pending and unresolved lists are empty; history exclusions, created-at descending order and cursor continuation returned expected distinct records. Reusing an updated-at descending cursor with ascending order was rejected as invalid/stale. Accepted 1.0.2 skill assets and preserved CCK were verified during proposal cleanup.
+
+Semantic search still reports embedding revision `partial`, `ready:false` and SQLite vector support disabled, as it did before deployment. Needle routing is loaded. Deployment did not repair or claim full semantic readiness.
+
+## GitHub profile review
+
+Retained artifacts include `release-test-profiles` (1,252,481,074 bytes), `go-test-profiles` (1,255,518,433), amd64 model profiles (95,504,930), ARM64 model profiles (91,880,868) and UI audit evidence (6,330,960). Release and both model artifacts were downloaded to retained evidence. Release capture has 327 processes, including 122 fuzz workers, with no nonzero capture statuses and 66 short-process CPU warnings. Empty CPU captures remain unsuitable for performance claims.
+
+The equivalent offline service CI run has 20.97s CPU samples and 4,052.08 MiB allocated versus the local 4,046.39 MiB workload; allocation objects are 29.19 million versus 29.92 million. JSON/runtime setup and SQLite remain the principal costs; sampled variation does not establish a regression. The CI race workload has 142.75s CPU samples and instrumentation overhead and is not a latency baseline. AMD64 model CPU remains attention/AXPY-dominated; model tests allocate 786.86 MiB and 167,424 objects, with tokenizer construction prominent. Core allocation budgets and native model parity passed without wider budgets.
+
+The separately committed project-path policy is post-release tooling work; it does not move this immutable release tag or alter the deployed binary. Its focused profiling and unresolved local visual-audit limits are recorded in `project-paths-2026-10-05.md`.
