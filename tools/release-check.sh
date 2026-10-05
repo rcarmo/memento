@@ -1,7 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env bash
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/project-env.sh" || exit 1
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-OUT=${RELEASE_DIR:-$ROOT/build/release}
+OUT=${RELEASE_DIR:-$BUILD_ROOT/release}
 VERSION=${VERSION:-development}
 GO=${GO:-go}
 cd "$OUT"

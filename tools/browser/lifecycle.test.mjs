@@ -8,12 +8,12 @@ import path from 'node:path';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 test('interruption stops the disposable Go fixture and writes failure evidence', {timeout:120000}, async()=>{
   const child=spawn(process.execPath,['tools/browser/audit.mjs'],{
-    cwd:root,env:{...process.env,UI_BROWSER:'chromium'},stdio:['ignore','pipe','pipe']
+    cwd:root,env:{...process.env,UI_BROWSER:'chromium',UI_LIFECYCLE_ONLY:'1'},stdio:['ignore','pipe','pipe']
   });
   let output='',interrupted=false;
   child.stdout.on('data',data=>{
     output+=data;
-    if(!interrupted&&output.includes('PASS ')){interrupted=true;child.kill('SIGTERM')}
+    if(!interrupted&&output.includes('FIXTURE_READY ')){interrupted=true;child.kill('SIGTERM')}
   });
   child.stderr.on('data',data=>output+=data);
   const watchdog=setTimeout(()=>child.kill('SIGKILL'),100000);

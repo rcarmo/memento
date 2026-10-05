@@ -1,10 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env bash
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/project-env.sh" || exit 1
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-OUT=${RELEASE_DIR:-$ROOT/build/release}
+OUT=${RELEASE_DIR:-$BUILD_ROOT/release}
 VERSION=${VERSION:-development}
 EPOCH=${SOURCE_DATE_EPOCH:-0}
 GO=${GO:-go}
+case "$OUT" in "$BUILD_ROOT"/*|"$MEMENTO_RUN_ROOT"/*) project_path_usable "$OUT" || exit 1;; *) echo "Release output must be beneath BUILD_ROOT or isolated MEMENTO_RUN_ROOT" >&2; exit 1;; esac
 rm -rf "$OUT"
 mkdir -p "$OUT"
 for ARCH in amd64 arm64; do

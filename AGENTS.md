@@ -26,6 +26,19 @@ The NAS target is CPU-only. Do not package or enable Vulkan for NAS without an e
 
 Do not recreate a `go/` source subtree or add root-level `.go` files. Avoid `pkg/`: this repository does not promise public application-package APIs. Only the nested `umcp` module is independently reusable.
 
+## Project cache and temporary paths
+
+The canonical project is `memento-go`; Python's historical `memento` worktree has a separate root. Source `tools/project-env.sh` before direct build/test commands, or run `tools/project-env.sh <command>`. Make recipes use the same vendored helper. CI requires no `/workspace/Makefile`.
+
+Resolution occurs before changing child temporary variables. Absolute `PROJECT_TMP_BASE` selects `<base>/memento-go`; absolute `PROJECT_TMP_ROOT` is a compatibility override whose final component must be `memento-go`. If both are supplied they must agree. Invalid, symlinked or unusable overrides fail. CI uses writable `RUNNER_TEMP`, then the original inherited `TMPDIR`, then `/tmp`, appending `memento-go` even if `/workspace/tmp` exists. Local execution prefers usable `/workspace/tmp`, then `/tmp`. `PROJECT_ORIGINAL_TMPDIR` snapshots the original value and the resolved `PROJECT_TMP_ROOT` propagates to children without recursive nesting.
+
+- `cache/{go-build,go-mod,go-tools,xdg,bun,npm,pip,uv,python,playwright}` contains rebuildable caches. The helper sets the applicable Go, XDG, Bun, npm, Python and Playwright variables.
+- `build/<worktree-path-checksum>/` contains disposable binaries, coverage and release archives. The stable checksum separates checkouts; it is not a generated-output correctness gate.
+- `runs/<purpose>/run-<time>-<unique>/` owns isolated scratch; `TMPDIR`, `TMP`, `TEMP` and `GOTMPDIR` point beneath it. `tests/` and `logs/` are reserved for disposable test/log scratch.
+- `build/profiles/`, `build/release-*-evidence/`, `build/ui-audit/`, `docs/evidence/` and workspace notes retain profiles, matching binaries, logs and publication evidence separately. Do not delete or relocate existing evidence as part of cache cleanup. Model assets and installed dependencies are durable inputs.
+
+`make clean` removes only this checkout's disposable `BUILD_ROOT`, never the project root, another checkout, caches or retained evidence. Do not clean while a job uses it. No automatic migration or deletion of historical paths is authorised. Runtime container `/tmp` mounts and production state/configuration are unchanged.
+
 ## Required gates
 
 Use root Make targets rather than ad-hoc commands:

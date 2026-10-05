@@ -29,7 +29,7 @@ func TestReleaseScripts(t *testing.T) {
 	}
 	first, second := filepath.Join(t.TempDir(), "first"), filepath.Join(t.TempDir(), "second")
 	run := func(script, out string) {
-		command := exec.Command("sh", filepath.Join(root, "tools", script))
+		command := exec.Command("bash", filepath.Join(root, "tools", script))
 		command.Dir = root
 		command.Env = append(os.Environ(), "RELEASE_DIR="+out, "VERSION=test", "SOURCE_DATE_EPOCH=0")
 		raw, runErr := command.CombinedOutput()

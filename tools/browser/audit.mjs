@@ -1,3 +1,4 @@
+import "../project-env.mjs";
 import { chromium, firefox, webkit } from 'playwright';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -13,7 +14,7 @@ const parent=path.join(root,'build/ui-audit',engine);await mkdir(parent,{recursi
 // Readiness files, exports, logs and screenshots belong to this invocation only.
 const output=await mkdtemp(path.join(parent,'run-'));
 const ready=path.join(output,'ready');
-const child=spawn('go',['test','./internal/service','-run','^TestUIAuditServer$','-count=1','-v','-timeout=14m'],{cwd:root,env:{...process.env,CGO_ENABLED:'0',GOTOOLCHAIN:'go1.26.6',MEMENTO_UI_AUDIT_READY:ready},detached:process.platform!=='win32',stdio:['ignore','pipe','pipe']});
+const child=spawn('bash',[path.join(root,'tools/test-profile.sh'),'./internal/service','--','-run','^TestUIAuditServer$','-v','-timeout=14m'],{cwd:root,env:{...process.env,CGO_ENABLED:'0',GOTOOLCHAIN:'go1.26.6',MEMENTO_UI_AUDIT_READY:ready},detached:process.platform!=='win32',stdio:['ignore','pipe','pipe']});
 let logs='';child.stdout.on('data',b=>logs+=b);child.stderr.on('data',b=>logs+=b);
 let exited=false;const exit=new Promise(resolve=>{child.on('error',error=>{logs+=error.stack;exited=true;resolve(-1)});child.on('exit',code=>{exited=true;resolve(code)})});
 let browser,base,webgl2,stopping;const results=[];const delay=ms=>new Promise(r=>setTimeout(r,ms));
@@ -35,6 +36,8 @@ for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{process.exitCo
 async function eventually(fn, timeout=120000){const deadline=Date.now()+timeout;while(Date.now()<deadline){if(exited)throw new Error(logs);try{return await fn()}catch{}await delay(100)}throw new Error(`condition timed out after ${timeout}ms\n${logs}`)}
 try {
  base=await eventually(()=>readFile(ready,'utf8'));
+ console.log('FIXTURE_READY '+output);
+ if(process.env.UI_LIFECYCLE_ONLY==='1'){while(!stopping)await delay(50);throw new Error('Lifecycle-only audit interrupted')}
  browser=await ({chromium,firefox,webkit}[engine]).launch({headless:true,...(engine==='chromium'?{args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']}:{})});
  const lock=await readFile(path.join(root,'tools/browser/package-lock.json'));
  await writeFile(path.join(output,'environment.json'),JSON.stringify({engine,browserVersion:browser.version(),node:process.version,platform:process.platform,arch:process.arch,goToolchain:'go1.26.6',lockSHA256:createHash('sha256').update(lock).digest('hex')},null,2));

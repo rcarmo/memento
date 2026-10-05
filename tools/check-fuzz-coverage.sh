@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/project-env.sh" || exit 1
 set -eu
 
 GO=${GO:-go}

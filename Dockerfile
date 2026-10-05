@@ -3,6 +3,13 @@ FROM golang:1.26.6-bookworm@sha256:116d58cbd88c1297624acc6e967a060012422bacf9930
 ARG TARGETARCH
 ARG VERSION=dev
 WORKDIR /src
+# Builder-only paths; the final runtime contract below is unchanged.
+ENV GOCACHE=/tmp/memento-go/cache/go-build \
+    GOMODCACHE=/tmp/memento-go/cache/go-mod \
+    TMPDIR=/tmp/memento-go/runs/container-build/tmp \
+    TMP=/tmp/memento-go/runs/container-build/tmp \
+    TEMP=/tmp/memento-go/runs/container-build/tmp
+RUN mkdir -p "$GOCACHE" "$GOMODCACHE" "$TMPDIR" /tmp/memento-go/build
 COPY go.mod go.sum ./
 COPY umcp/go.mod umcp/go.sum ./umcp/
 RUN go mod download
@@ -18,17 +25,17 @@ RUN case "$TARGETARCH" in \
     esac \
     && CGO_ENABLED=0 GOOS=linux GOARCH="$TARGETARCH" go build -trimpath -buildvcs=false \
         -ldflags="-s -w -X 'main.version=$VERSION' -X 'github.com/rcarmo/memento/internal/service.BuildVersion=$VERSION'" \
-        -o /out/memento-go ./cmd/memento-go \
+        -o /tmp/memento-go/build/memento-go ./cmd/memento-go \
     && CGO_ENABLED=0 GOOS=linux GOARCH="$TARGETARCH" go build -trimpath -buildvcs=false \
-        -ldflags="-s -w" -o /out/memento-embed-go ./cmd/memento-embed-go \
+        -ldflags="-s -w" -o /tmp/memento-go/build/memento-embed-go ./cmd/memento-embed-go \
     && CGO_ENABLED=0 GOOS=linux GOARCH="$TARGETARCH" go build -trimpath -buildvcs=false \
-        -ldflags="-s -w" -o /out/memento-needle-go ./cmd/memento-needle-go \
+        -ldflags="-s -w" -o /tmp/memento-go/build/memento-needle-go ./cmd/memento-needle-go \
     && CGO_ENABLED=0 GOOS=linux GOARCH="$TARGETARCH" go build -trimpath -buildvcs=false \
-        -ldflags="-s -w" -o /out/memento-needle-model-go ./cmd/memento-needle-model-go \
+        -ldflags="-s -w" -o /tmp/memento-go/build/memento-needle-model-go ./cmd/memento-needle-model-go \
     && CGO_ENABLED=0 GOOS=linux GOARCH="$TARGETARCH" go build -trimpath -buildvcs=false \
-        -ldflags="-s -w" -o /out/memento-skill-import-go ./cmd/memento-skill-import-go \
-    && /out/memento-needle-model-go /src/models/needle/memento-router.ndl /out/memento-router.nfp32 \
-    && mkdir -p /out/rootfs/var/lib/memento/tmp /out/rootfs/models
+        -ldflags="-s -w" -o /tmp/memento-go/build/memento-skill-import-go ./cmd/memento-skill-import-go \
+    && /tmp/memento-go/build/memento-needle-model-go /src/models/needle/memento-router.ndl /tmp/memento-go/build/memento-router.nfp32 \
+    && mkdir -p /tmp/memento-go/build/rootfs/var/lib/memento/tmp /tmp/memento-go/build/rootfs/models
 
 FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
 
@@ -42,16 +49,16 @@ LABEL org.opencontainers.image.title="Memento" \
     org.opencontainers.image.revision="$COMMIT" \
     org.opencontainers.image.created="$BUILD_DATE"
 
-COPY --from=go-builder /out/memento-go /usr/local/bin/memento-go
-COPY --from=go-builder /out/memento-embed-go /usr/local/bin/memento-embed-go
-COPY --from=go-builder /out/memento-embed-go /usr/local/bin/memento-embed
-COPY --from=go-builder /out/memento-needle-go /usr/local/bin/memento-needle-go
-COPY --from=go-builder /out/memento-needle-model-go /usr/local/bin/memento-needle-model-go
-COPY --from=go-builder /out/memento-skill-import-go /usr/local/bin/memento-skill-import-go
-COPY --from=go-builder --chown=65532:65532 /out/rootfs/ /
+COPY --from=go-builder /tmp/memento-go/build/memento-go /usr/local/bin/memento-go
+COPY --from=go-builder /tmp/memento-go/build/memento-embed-go /usr/local/bin/memento-embed-go
+COPY --from=go-builder /tmp/memento-go/build/memento-embed-go /usr/local/bin/memento-embed
+COPY --from=go-builder /tmp/memento-go/build/memento-needle-go /usr/local/bin/memento-needle-go
+COPY --from=go-builder /tmp/memento-go/build/memento-needle-model-go /usr/local/bin/memento-needle-model-go
+COPY --from=go-builder /tmp/memento-go/build/memento-skill-import-go /usr/local/bin/memento-skill-import-go
+COPY --from=go-builder --chown=65532:65532 /tmp/memento-go/build/rootfs/ /
 COPY models/gte/gte-small.gtemodel /usr/local/share/memento/models/gte-small.gtemodel
 COPY models/needle/memento-router.ndl /usr/local/share/memento/models/memento-router.ndl
-COPY --from=go-builder /out/memento-router.nfp32 /usr/local/share/memento/models/memento-router.nfp32
+COPY --from=go-builder /tmp/memento-go/build/memento-router.nfp32 /usr/local/share/memento/models/memento-router.nfp32
 COPY models/needle/needle.model /usr/local/share/memento/models/needle.model
 
 ENV MEMENTO_GTE_MODEL=/usr/local/share/memento/models/gte-small.gtemodel \

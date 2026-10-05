@@ -73,7 +73,7 @@ func TestChunkActualPredecessorRollback(t *testing.T) {
 		t.Fatal(err)
 	}
 	if model := os.Getenv("GTE_MODEL_PATH"); model != "" {
-		worker, _ := filepath.Abs("../../build/memento-embed-go")
+		worker, _ := filepath.Abs(filepath.Join(os.Getenv("BUILD_ROOT"), "memento-embed-go"))
 		raw, _ = json.Marshal(map[string]any{"schema_version": 2, "repository": map[string]any{"root_path": config.Repository.RootPath}, "authorization": map[string]any{"principals": map[string]any{}}, "intelligent_tiers": map[string]any{"semantic_search": map[string]any{"enabled": true, "model_path": model, "worker_mode": "subprocess", "worker_path": worker, "refresh_on_startup": false}}})
 		if err = os.WriteFile(file, raw, 0600); err != nil {
 			t.Fatal(err)

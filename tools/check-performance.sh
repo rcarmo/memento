@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/project-env.sh" || exit 1
 set -euo pipefail
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 GO=${GO:-go}
-OUT=${PERF_OUT:-$ROOT/build/performance.txt}
+OUT=${PERF_OUT:-$BUILD_ROOT/performance.txt}
 BUDGETS=$ROOT/tools/performance-budgets.json
 PROFILE_SCRIPT=${PROFILE_SCRIPT:-$ROOT/tools/test-profile.sh}
 mkdir -p "$(dirname "$OUT")"

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/project-env.sh" || exit 1
 # Build a separately profiled embedding worker for model-test only. Release
 # builds never use this overlay or its environment switch.
 set -euo pipefail
 root=$(cd -- "$(dirname "$0")/.." && pwd)
 cd "$root"
 GO=${GO:-go}
-mkdir -p build
-work=$(mktemp -d "$root/build/profile-worker-XXXXXX")
+mkdir -p "$BUILD_ROOT"
+work=$(mktemp -d "$MEMENTO_RUN_ROOT/profile-worker-XXXXXX")
 source="$root/cmd/memento-embed-go/main.go"
 sed 's/func main() {/func main() { exit = profiledWorkerExit;/' "$source" > "$work/main.go.txt"
 cat > "$work/hook.go.txt" <<'GO'
@@ -35,5 +36,5 @@ func profiledWorkerExit(code int){
 }
 GO
 printf '{"Replace":{"%s":"%s","%s":"%s"}}\n' "$source" "$work/main.go.txt" "$root/cmd/memento-embed-go/zz_profile_worker.go" "$work/hook.go.txt" > "$work/overlay.json"
-CGO_ENABLED=0 "$GO" build -overlay="$work/overlay.json" -o build/memento-embed-go ./cmd/memento-embed-go
+CGO_ENABLED=0 "$GO" build -overlay="$work/overlay.json" -o "$BUILD_ROOT/memento-embed-go" ./cmd/memento-embed-go
 printf 'Profiled model-test worker overlay: %s\n' "$work"

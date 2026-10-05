@@ -115,7 +115,7 @@ func TestRealChunkSubprocessRefresh(t *testing.T) {
 	if path == "" {
 		t.Skip("set GTE_MODEL_PATH")
 	}
-	worker, err := filepath.Abs("../../build/memento-embed-go")
+	worker, err := filepath.Abs(filepath.Join(os.Getenv("BUILD_ROOT"), "memento-embed-go"))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -21,9 +21,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.1
+      - name: Initialise project scratch
+        run: |
+          source tools/project-env.sh
+          for key in PROJECT_TMP_ROOT PROJECT_ORIGINAL_TMPDIR MEMENTO_RUN_ROOT TMPDIR TMP TEMP GOTMPDIR GOCACHE GOMODCACHE XDG_CACHE_HOME BUN_INSTALL_CACHE_DIR npm_config_cache PIP_CACHE_DIR UV_CACHE_DIR PYTHONPYCACHEPREFIX PLAYWRIGHT_BROWSERS_PATH; do
+            echo "$key=${!key}" >> "$GITHUB_ENV"
+          done
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version: '1.26.6'
+          cache: false
           cache-dependency-path: |
             go.sum
             umcp/go.sum
@@ -97,6 +104,12 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.1
+      - name: Initialise project scratch
+        run: |
+          source tools/project-env.sh
+          for key in PROJECT_TMP_ROOT PROJECT_ORIGINAL_TMPDIR MEMENTO_RUN_ROOT TMPDIR TMP TEMP GOTMPDIR GOCACHE GOMODCACHE XDG_CACHE_HOME BUN_INSTALL_CACHE_DIR npm_config_cache PIP_CACHE_DIR UV_CACHE_DIR PYTHONPYCACHEPREFIX PLAYWRIGHT_BROWSERS_PATH; do
+            echo "$key=${!key}" >> "$GITHUB_ENV"
+          done
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version: '1.26.6'

@@ -1,6 +1,7 @@
+import "../project-env.mjs";
 import {chromium} from 'playwright';
 import fs from 'node:fs/promises';
-const out='/workspace/tmp/memento-link-audit';
+const out=process.env.MEMENTO_RUN_ROOT;
 const browser=await chromium.launch({headless:true,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--disable-web-security']});
 try {
  const page=await browser.newPage({viewport:{width:1500,height:1050}});

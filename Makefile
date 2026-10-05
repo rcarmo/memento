@@ -1,7 +1,15 @@
+# Canonical project scratch: resolved by vendored tools/project-env.sh.
+# Retained build/profiles is outside disposable BUILD_ROOT and clean.
+SHELL := $(abspath tools/project-env.sh)
+BUILD_ROOT := $(shell bash tools/project-env.sh --print-build)
+ifeq ($(strip $(BUILD_ROOT)),)
+$(error Invalid project temporary root; see tools/project-tmp.sh)
+endif
+TOOLS_DIR := $(shell bash tools/project-env.sh --print-tools)
+export BUILD_ROOT TOOLS_DIR
 GO ?= go
 GOTOOLCHAIN ?= go1.26.6
 export GOTOOLCHAIN
-TOOLS_DIR ?= build/tools
 STATICCHECK_VERSION ?= v0.6.1
 GOVULNCHECK_VERSION ?= v1.1.4
 PROFILE_ROOT ?= $(abspath build/profiles)
@@ -20,7 +28,7 @@ NEEDLE_TOKENIZER_PATH ?= $(abspath models/needle/needle.model)
 
 .PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check fuzz-coverage build race cross release release-check install coverage fuzz performance performance-core model-test simd-test corpus-test go-container-build go-container-contract clean
 help:
-	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz, model-independent performance and cross-build gates' 'performance run allocation gates including pinned real models' 'performance-core run model-independent allocation gates' 'tools       install pinned static-analysis tools under build/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install all host binaries under DESTDIR/PREFIX/bin'
+	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz, model-independent performance and cross-build gates' 'performance run allocation gates including pinned real models' 'performance-core run model-independent allocation gates' 'tools       install pinned static-analysis tools under $(BUILD_ROOT)/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install all host binaries under DESTDIR/PREFIX/bin'
 tools: $(STATICCHECK) $(GOVULNCHECK)
 $(STATICCHECK):
 	@mkdir -p $(TOOLS_DIR)
@@ -70,20 +78,20 @@ ux-check:
 	CGO_ENABLED=0 $(PROFILE_TEST) ./tools -- -run '^TestUXFeatureInventory$$'
 
 ui-unit:
-	node --test tools/browser/diagnostics-unit.test.mjs
+	bash tools/node-profile.sh --test tools/browser/diagnostics-unit.test.mjs
 
 ui-lifecycle:
-	node --test tools/browser/lifecycle.test.mjs
+	bash tools/node-profile.sh --test tools/browser/lifecycle.test.mjs
 
 ui-test: ux-check ui-unit ui-lifecycle
 	@set -eu; for iteration in $$(seq 1 $(UI_REPEAT)); do \
 		for browser in $(if $(UI_BROWSER),$(UI_BROWSER),$(UI_BROWSERS)); do \
 			echo "UI audit $$browser ($$iteration/$(UI_REPEAT))"; \
-			UI_BROWSER=$$browser node tools/browser/audit.mjs; \
+			UI_BROWSER=$$browser bash tools/node-profile.sh tools/browser/audit.mjs; \
 		done; \
 	done
 graph-test:
-	node --test tools/graph-semantic.test.mjs
+	bash tools/node-profile.sh --test tools/graph-semantic.test.mjs
 # Focused startup/wire contracts plus the standalone transport contract suite.
 mcp-contract:
 	CGO_ENABLED=0 $(PROFILE_TEST) ./internal/service -- -run '^TestMCPContract'
@@ -91,10 +99,10 @@ mcp-contract:
 umcp-check:
 	$(MAKE) -C umcp check
 coverage:
-	@mkdir -p build
-	CGO_ENABLED=0 COVERAGE_FILE=build/coverage.out $(PROFILE_TEST) ./... -- -covermode=atomic -coverpkg="$$( $(GO) list ./... | paste -sd, - )"
-	$(GO) tool cover -func=build/coverage.out
-	@awk 'NR>1 && $$2>0 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' build/coverage.out
+	@mkdir -p "$(BUILD_ROOT)"
+	CGO_ENABLED=0 COVERAGE_FILE=$(BUILD_ROOT)/coverage.out $(PROFILE_TEST) ./... -- -covermode=atomic -coverpkg="$$( $(GO) list ./... | paste -sd, - )"
+	$(GO) tool cover -func=$(BUILD_ROOT)/coverage.out
+	@awk 'NR>1 && $$2>0 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' $(BUILD_ROOT)/coverage.out
 fuzz:
 	GO="$(GO)" FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}" ./tools/run-fuzz.sh
 	$(MAKE) -C umcp fuzz FUZZ_COUNT="$${FUZZ_COUNT:-10000x}" FUZZ_TIMEOUT="$${FUZZ_TIMEOUT:-120s}" FUZZ_PARALLEL="$${FUZZ_PARALLEL:-2}"
@@ -110,35 +118,35 @@ model-test:
 	@test -n "$(NEEDLE_MODEL_PATH)" -a -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Set NEEDLE_MODEL_PATH and NEEDLE_TOKENIZER_PATH'; exit 1)
 	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(PROFILE_TEST) ./internal/needle -- -run '^TestRealNeedle(Model|Tokenizer|Generation|MappedGeneration)$$' -v -timeout=10m
 simd-test:
-	CGO_ENABLED=0 GOAMD64=v1 $(GO) build -o build/memento-simd-check ./cmd/memento-simd-check
-	GODEBUG=cpu.avx=off,cpu.avx2=off,cpu.fma=off build/memento-simd-check | grep -E '^arch=amd64 backend=sse2 sse2=true avx2_fma=false '
+	CGO_ENABLED=0 GOAMD64=v1 $(GO) build -o $(BUILD_ROOT)/memento-simd-check ./cmd/memento-simd-check
+	GODEBUG=cpu.avx=off,cpu.avx2=off,cpu.fma=off $(BUILD_ROOT)/memento-simd-check | grep -E '^arch=amd64 backend=sse2 sse2=true avx2_fma=false '
 corpus-test:
 	@test -n "$(NEEDLE_MODEL_PATH)" -a -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Corpus gate requires pinned Needle model and tokenizer paths'; exit 1)
 	CGO_ENABLED=0 NEEDLE_FULL_CORPUS=1 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(PROFILE_TEST) ./internal/needle -- -run '^TestRealNeedleCorpus$$' -v -timeout=80m
 build:
-	@mkdir -p build
-	CGO_ENABLED=0 $(GO) build -o build/memento-go ./cmd/memento-go
-	CGO_ENABLED=0 $(GO) build -o build/memento-embed-go ./cmd/memento-embed-go
-	CGO_ENABLED=0 $(GO) build -o build/memento-needle-go ./cmd/memento-needle-go
-	CGO_ENABLED=0 $(GO) build -o build/memento-needle-model-go ./cmd/memento-needle-model-go
-	CGO_ENABLED=0 $(GO) build -o build/memento-skill-import-go ./cmd/memento-skill-import-go
+	@mkdir -p "$(BUILD_ROOT)"
+	CGO_ENABLED=0 $(GO) build -o $(BUILD_ROOT)/memento-go ./cmd/memento-go
+	CGO_ENABLED=0 $(GO) build -o $(BUILD_ROOT)/memento-embed-go ./cmd/memento-embed-go
+	CGO_ENABLED=0 $(GO) build -o $(BUILD_ROOT)/memento-needle-go ./cmd/memento-needle-go
+	CGO_ENABLED=0 $(GO) build -o $(BUILD_ROOT)/memento-needle-model-go ./cmd/memento-needle-model-go
+	CGO_ENABLED=0 $(GO) build -o $(BUILD_ROOT)/memento-skill-import-go ./cmd/memento-skill-import-go
 race:
 	CGO_ENABLED=1 $(PROFILE_TEST) ./... -- -race
 	$(MAKE) -C umcp race
 install: build
 	install -d "$(DESTDIR)$(PREFIX)/bin"
-	for name in memento-go memento-embed-go memento-needle-go memento-needle-model-go memento-skill-import-go; do install -m 0755 "build/$$name" "$(DESTDIR)$(PREFIX)/bin/$$name"; done
+	for name in memento-go memento-embed-go memento-needle-go memento-needle-model-go memento-skill-import-go; do install -m 0755 "$(BUILD_ROOT)/$$name" "$(DESTDIR)$(PREFIX)/bin/$$name"; done
 release:
 	GO="$(GO)" VERSION="$(VERSION)" SOURCE_DATE_EPOCH="$(SOURCE_DATE_EPOCH)" ./tools/release.sh
 release-check: release
 	GO="$(GO)" VERSION="$(VERSION)" ./tools/release-check.sh
 cross: simd-test
 	$(MAKE) -C umcp cross
-	@mkdir -p build
+	@mkdir -p "$(BUILD_ROOT)"
 	@for arch in amd64 arm64; do \
 		amd=; test "$$arch" != amd64 || amd=GOAMD64=v1; \
 		for name in memento-go memento-embed-go memento-needle-go memento-needle-model-go memento-skill-import-go; do \
-			env CGO_ENABLED=0 GOOS=linux GOARCH="$$arch" $$amd $(GO) build -o "build/$$name-linux-$$arch" "./cmd/$$name" || exit; \
+			env CGO_ENABLED=0 GOOS=linux GOARCH="$$arch" $$amd $(GO) build -o "$(BUILD_ROOT)/$$name-linux-$$arch" "./cmd/$$name" || exit; \
 		done; \
 	done
 go-container-build:
@@ -146,4 +154,4 @@ go-container-build:
 go-container-contract: go-container-build
 	IMAGE=memento-go:contract VERSION="$(MEMENTO_VERSION)" tools/test_go_container_contract.sh
 clean:
-	rm -rf build
+	@./tools/project-env.sh --clean-build
