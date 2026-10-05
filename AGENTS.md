@@ -42,7 +42,16 @@ make go-container-contract MEMENTO_VERSION=1.0.0
 
 Every production statement must remain covered, and every package containing production Go code must retain at least one meaningful fuzz target. Run formatting, vet, pinned Staticcheck, govulncheck, race, fuzz, cross-build and release checks before pushing.
 
-Performance work must be profile-led. Preserve pprof evidence under ignored `build/profiles/` during investigation, minimize allocations in hot paths, and update `tools/performance-budgets.json` only with measured evidence. CI enforces allocation/byte ceilings; do not add flaky wall-clock gates across heterogeneous runners.
+## Mandatory Go test and pre-release profiling
+
+Every Go test run must capture CPU and heap/allocation profiles and receive post-run analysis. This applies to ordinary feature and bug-fix work, focused/full tests, coverage, race, benchmarks, fuzzing, model/corpus runs, nested `umcp` tests, delegated work and failed runs. Overall pre-release checks must include the same profiling and analysis.
+
+* Use profiling-aware Make targets. Update existing unprofiled targets/scripts before using them; direct `go test` is allowed only with CPU/memory capture and subsequent analysis. `-benchmem` and coverage alone are insufficient.
+* Capture per-package profiles without filename collisions, normally with `-cpuprofile` and `-memprofile`, and retain matching test binaries and logs under ignored `build/profiles/<run>/<package>/`. Record the revision, toolchain, command, workload and sampling settings. Ensure caching does not substitute an old test result for a profiled execution. Multi-process tests and fuzz workers need explicit coverage of the relevant child workload; coordinator-only profiles do not describe child allocations.
+* Inspect cumulative CPU time, `alloc_space` and `alloc_objects` after every run. Separate application hotspots from test setup/runtime overhead, identify avoidable allocations or repeated work, and compare equivalent workloads before accepting an optimisation. Record latency/throughput, bytes/op and allocs/op where benchmarks apply. Profile generation alone does not complete the analysis.
+* If a build failure, timeout or abrupt exit prevents capture, retain the logs and report the missing profiles. Empty CPU samples also need an explicit note and a representative profiled workload before drawing performance conclusions. Failed or missing capture cannot pass the profiling gate.
+* Include profiling results and engineering analysis in `quality`, `audit`, performance and overall pre-release validation. Record baseline comparisons, improvements and unresolved hotspots. Minimise allocations and improve measured performance without weakening correctness, authorisation, cancellation, corruption/recovery behaviour or numerical contracts.
+* Update `tools/performance-budgets.json` only with measured evidence and a documented reason. Do not widen a ceiling to hide a regression or add flaky wall-clock gates across heterogeneous runners.
 
 ## Engineering rules
 

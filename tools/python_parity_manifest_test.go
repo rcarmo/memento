@@ -104,7 +104,7 @@ func TestFinalPythonParityTargetIsNativeGo(t *testing.T) {
 			t.Fatal("final parity target invokes non-Go runtime", forbidden, commands)
 		}
 	}
-	if !strings.Contains(commands, "$(GO) test ./...") || !strings.Contains(commands, "$(MAKE) -C umcp test") {
+	if !strings.Contains(commands, "$(PROFILE_TEST) ./...") || !strings.Contains(commands, "$(MAKE) -C umcp test") {
 		t.Fatal("final parity target does not run both Go modules", commands)
 	}
 }

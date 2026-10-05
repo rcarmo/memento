@@ -4,8 +4,11 @@ export GOTOOLCHAIN
 TOOLS_DIR ?= build/tools
 STATICCHECK_VERSION ?= v0.6.1
 GOVULNCHECK_VERSION ?= v1.1.4
+PROFILE_ROOT ?= build/profiles
+PROFILE_MEM_RATE ?= 524288
 STATICCHECK := $(TOOLS_DIR)/staticcheck
 GOVULNCHECK := $(TOOLS_DIR)/govulncheck
+PROFILE_TEST = GO="$(GO)" PROFILE_ROOT="$(PROFILE_ROOT)" PROFILE_MEM_RATE="$(PROFILE_MEM_RATE)" ./tools/test-profile.sh
 PREFIX ?= /usr/local
 DESTDIR ?=
 MEMENTO_VERSION ?= 1.0.5
@@ -48,11 +51,11 @@ lint: $(STATICCHECK)
 vuln: $(GOVULNCHECK)
 	CGO_ENABLED=0 $(GOVULNCHECK) ./...
 test:
-	CGO_ENABLED=0 $(GO) test ./...
+	CGO_ENABLED=0 $(PROFILE_TEST) ./...
 .PHONY: mcp-contract graph-test ui-test python-parity
 # Native-Go final parity gate. JavaScript/Python tools only regenerate oracle artifacts.
 python-parity:
-	CGO_ENABLED=0 $(GO) test ./... -count=1
+	CGO_ENABLED=0 $(PROFILE_TEST) ./...
 	$(MAKE) -C umcp test
 # Setup: make ui-setup; repeatability gate: make ui-test UI_REPEAT=2
 .PHONY: ui-setup ui-unit ui-lifecycle ux-check ui-test
@@ -64,7 +67,7 @@ ui-setup:
 	cd tools/browser && npx --no-install playwright install $(UI_INSTALL_FLAGS) $(UI_BROWSERS)
 
 ux-check:
-	CGO_ENABLED=0 $(GO) test ./tools -run '^TestUXFeatureInventory$$' -count=1
+	CGO_ENABLED=0 $(PROFILE_TEST) ./tools -- -run '^TestUXFeatureInventory$$'
 
 ui-unit:
 	node --test tools/browser/diagnostics-unit.test.mjs
@@ -83,13 +86,13 @@ graph-test:
 	node --test tools/graph-semantic.test.mjs
 # Focused startup/wire contracts plus the standalone transport contract suite.
 mcp-contract:
-	CGO_ENABLED=0 $(GO) test ./internal/service -run '^TestMCPContract' -count=1
+	CGO_ENABLED=0 $(PROFILE_TEST) ./internal/service -- -run '^TestMCPContract'
 	$(MAKE) -C umcp test
 umcp-check:
 	$(MAKE) -C umcp check
 coverage:
 	@mkdir -p build
-	CGO_ENABLED=0 $(GO) test -coverpkg="$$( $(GO) list ./... | paste -sd, - )" -covermode=atomic -coverprofile=build/coverage.out ./...
+	CGO_ENABLED=0 COVERAGE_FILE=build/coverage.out $(PROFILE_TEST) ./... -- -covermode=atomic -coverpkg="$$( $(GO) list ./... | paste -sd, - )"
 	$(GO) tool cover -func=build/coverage.out
 	@awk 'NR>1 && $$2>0 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' build/coverage.out
 fuzz:
@@ -101,17 +104,17 @@ performance:
 	GTE_MODEL_PATH="$(GTE_MODEL_PATH)" NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" ./tools/check-performance.sh
 model-test:
 	@test -n "$(GTE_MODEL_PATH)" || (echo 'Set GTE_MODEL_PATH to the digest-pinned public GTE1 model'; exit 1)
-	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(GO) test ./internal/gte -run TestRealGTEModel -count=1 -v
+	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(PROFILE_TEST) ./internal/gte -- -run '^TestRealGTEModel$$' -v
 	CGO_ENABLED=0 $(GO) build -o build/memento-embed-go ./cmd/memento-embed-go
-	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(GO) test ./internal/service -run TestRealChunk -count=1 -v
+	CGO_ENABLED=0 GTE_MODEL_PATH="$(GTE_MODEL_PATH)" $(PROFILE_TEST) ./internal/service -- -run '^TestRealChunk$$' -v
 	@test -n "$(NEEDLE_MODEL_PATH)" -a -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Set NEEDLE_MODEL_PATH and NEEDLE_TOKENIZER_PATH'; exit 1)
-	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./internal/needle -run 'TestRealNeedle(Model|Tokenizer|Generation|MappedGeneration)' -count=1 -v -timeout=10m
+	CGO_ENABLED=0 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(PROFILE_TEST) ./internal/needle -- -run '^TestRealNeedle(Model|Tokenizer|Generation|MappedGeneration)$$' -v -timeout=10m
 simd-test:
 	CGO_ENABLED=0 GOAMD64=v1 $(GO) build -o build/memento-simd-check ./cmd/memento-simd-check
 	GODEBUG=cpu.avx=off,cpu.avx2=off,cpu.fma=off build/memento-simd-check | grep -E '^arch=amd64 backend=sse2 sse2=true avx2_fma=false '
 corpus-test:
 	@test -n "$(NEEDLE_MODEL_PATH)" -a -n "$(NEEDLE_TOKENIZER_PATH)" || (echo 'Corpus gate requires pinned Needle model and tokenizer paths'; exit 1)
-	CGO_ENABLED=0 NEEDLE_FULL_CORPUS=1 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(GO) test ./internal/needle -run TestRealNeedleCorpus -count=1 -v -timeout=80m
+	CGO_ENABLED=0 NEEDLE_FULL_CORPUS=1 NEEDLE_MODEL_PATH="$(NEEDLE_MODEL_PATH)" NEEDLE_TOKENIZER_PATH="$(NEEDLE_TOKENIZER_PATH)" $(PROFILE_TEST) ./internal/needle -- -run '^TestRealNeedleCorpus$$' -v -timeout=80m
 build:
 	@mkdir -p build
 	CGO_ENABLED=0 $(GO) build -o build/memento-go ./cmd/memento-go
@@ -120,7 +123,7 @@ build:
 	CGO_ENABLED=0 $(GO) build -o build/memento-needle-model-go ./cmd/memento-needle-model-go
 	CGO_ENABLED=0 $(GO) build -o build/memento-skill-import-go ./cmd/memento-skill-import-go
 race:
-	CGO_ENABLED=1 $(GO) test -race ./...
+	CGO_ENABLED=1 $(PROFILE_TEST) ./... -- -race
 	$(MAKE) -C umcp race
 install: build
 	install -d "$(DESTDIR)$(PREFIX)/bin"
