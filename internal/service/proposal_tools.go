@@ -77,7 +77,7 @@ func registerProposalToolsWithDiscovery(server *umcp.Server, call func(context.C
 				kind = umcp.IntegerParam
 			case "match", "plan":
 				kind = umcp.ObjectParam
-			case "changes", "selected_change_indexes", "tags", "aliases", "fields", "items", "operations", "returns":
+			case "changes", "selected_change_indexes", "tags", "aliases", "fields", "items", "operations", "returns", "exclude_statuses":
 				kind = umcp.ArrayParam
 			}
 			parameters = append(parameters, umcp.Parameter{Name: parameter.Name, Types: []umcp.ParamType{kind}, HasDefault: !parameter.Required, Default: parameter.Default})
@@ -170,10 +170,27 @@ func runProposalTool(ctx context.Context, c *ProposalControls, actor ProposalAct
 		data, err = c.getProposal(ctx, actor, id, view, defaultProposalRepository())
 	case "memory_proposal_list":
 		status, limit, cursor := a.optional("status"), a.integer("limit"), a.optional("cursor")
+		sortBy, sortOrder := a.optional("sort_by"), a.optional("sort_order")
+		listOptions := ProposalListOptions{}
+		if sortBy != nil {
+			listOptions.SortBy = *sortBy
+		}
+		if sortOrder != nil {
+			listOptions.SortOrder = *sortOrder
+		}
+		if args["exclude_statuses"] != nil {
+			for _, raw := range a.array("exclude_statuses") {
+				value, ok := raw.(string)
+				if !ok {
+					return nil, options, &Error{"validation_error", "exclude_statuses must contain strings"}
+				}
+				listOptions.ExcludeStatuses = append(listOptions.ExcludeStatuses, value)
+			}
+		}
 		if a.err != nil {
 			return nil, options, a.err
 		}
-		data, err = c.listProposals(ctx, actor, status, limit, cursor, defaultProposalRepository())
+		data, err = c.listProposals(ctx, actor, status, limit, cursor, defaultProposalRepository(), listOptions)
 	case "memory_proposal_asset_get":
 		id, asset, file, offset, limit := a.text("proposal_id"), a.text("asset_id"), a.optional("file_path"), a.integer("offset"), a.integer("limit")
 		if a.err != nil {

@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http/httptest"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -86,7 +87,7 @@ func TestRegisteredModelsOffStatusHTTP(t *testing.T) {
 		t.Fatal(status)
 	}
 	data := status["data"].(map[string]any)
-	if data["proposal_backlog"] != float64(1) || data["visible_concepts"] != float64(1) || data["readiness"].(map[string]any)["needle_router"].(map[string]any)["runtime"] != nil {
+	if data["proposal_backlog"] != float64(1) || data["proposal_unresolved"] != float64(1) || !reflect.DeepEqual(data["proposal_counts"], map[string]any{"approved": float64(1)}) || data["visible_concepts"] != float64(1) || data["readiness"].(map[string]any)["needle_router"].(map[string]any)["runtime"] != nil {
 		t.Fatal(data)
 	}
 	help := call("memory_help", nil)
@@ -216,8 +217,11 @@ func TestStatusConcurrentSnapshots(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			data, _, err := j.Controls.Status(ctx, actor)
-			if err == nil && data["proposal_backlog"] != 1 {
-				err = io.ErrUnexpectedEOF
+			if err == nil {
+				counts, ok := data["proposal_counts"].(map[string]int)
+				if data["proposal_backlog"] != 1 || data["proposal_unresolved"] != 1 || !ok || !reflect.DeepEqual(counts, map[string]int{"approved": 1}) {
+					err = io.ErrUnexpectedEOF
+				}
 			}
 			results <- err
 		}()

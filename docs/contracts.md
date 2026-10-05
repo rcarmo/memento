@@ -465,7 +465,9 @@ Proposal records live in `control.sqlite`. Use the [proposal guide](proposals.md
 * `conflicted` -- affected paths overlap repository changes
 * `expired`
 
-Legacy persisted `stale` is classified on refresh. `proposal_list(status="stale")` aliases `needs_rebase`; `status="unresolved"` selects draft/submitted/approved/needs-rebase/conflicted records. These unresolved records count towards `proposal_backlog` under caller visibility rules.
+Legacy persisted `stale` is classified on refresh; `status="stale"` aliases `needs_rebase`. `proposal_list` defaults to `status="pending"` (submitted/approved), sorted by `created_at` descending. `status="all"` includes historical records; `status="unresolved"` adds draft/needs-rebase/conflicted records. `exclude_statuses` accepts stored status names. `sort_by` accepts `created_at`, `updated_at` or `proposal_id`; `sort_order` accepts `asc` or `desc`, with proposal ID as the tie-breaker in the same direction. Cursor tokens bind caller permissions, revision, filters and order. Existing cursors from the previous listing format must be restarted. Lists are not snapshots across concurrent mutations.
+
+Under caller visibility rules, `proposal_backlog` counts submitted/approved proposals; `proposal_unresolved` counts all unresolved states; `proposal_counts` maps visible status names to counts (legacy stale is normalised to needs-rebase). Approved proposals still await application; applied proposals are completed history.
 
 ### Proposal payload fields
 

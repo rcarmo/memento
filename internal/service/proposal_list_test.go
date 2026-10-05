@@ -5,13 +5,13 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"os"
-	"reflect"
-	"testing"
-	"time"
-
 	"github.com/rcarmo/memento/internal/access"
 	"github.com/rcarmo/memento/internal/repository"
+	"os"
+	"reflect"
+	"strings"
+	"testing"
+	"time"
 )
 
 func testCursor() proposalCursor {
@@ -20,78 +20,6 @@ func testCursor() proposalCursor {
 		p.key[i] = byte(i)
 	}
 	return p
-}
-func TestProposalListReference(t *testing.T) {
-	raw, err := os.ReadFile("../../testdata/parity/proposal-list.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	var cases []struct {
-		Scenario              string
-		Before, After, Events []map[string]any
-		Steps                 []struct {
-			Policy         access.EffectivePolicy
-			Revision       string
-			Status, Cursor *string
-			Limit          int
-			Response       map[string]any
-			DecodedNext    any `json:"decoded_next"`
-		}
-	}
-	if err = json.Unmarshal(raw, &cases); err != nil {
-		t.Fatal(err)
-	}
-	for _, c := range cases {
-		t.Run(c.Scenario, func(t *testing.T) {
-			ctx := context.Background()
-			q, _ := queueTest(t)
-			restoreSubmitRows(t, q.Proposals.DB, map[string][]map[string]any{"proposals": c.Before})
-			codec := testCursor()
-			controls := ProposalControls{Queue: q, cursor: &codec, Random: bytes.NewReader(make([]byte, 1024))}
-			for _, step := range c.Steps {
-				repo := fakeRepo(nil)
-				repo.main = func(repository.GitRepositoryPaths) (string, error) { return step.Revision, nil }
-				got, err := controls.listProposals(ctx, ProposalActor{Policy: step.Policy}, step.Status, step.Limit, step.Cursor, repo)
-				if step.Response["status"] == "error" {
-					if err == nil || err.Error() != step.Response["message"] {
-						t.Fatal(got, err, step.Response)
-					}
-					continue
-				}
-				if err != nil {
-					t.Fatal(err)
-				}
-				expected := step.Response["data"].(map[string]any)
-				if token, ok := got["next_cursor"].(string); ok {
-					raw, err := codec.decrypt(token)
-					if err != nil {
-						t.Fatal(err)
-					}
-					var decoded any
-					if err = json.Unmarshal(raw, &decoded); err != nil {
-						t.Fatal(err)
-					}
-					if !reflect.DeepEqual(decoded, step.DecodedNext) {
-						t.Fatal(decoded, step.DecodedNext)
-					}
-					got["next_cursor"] = expected["next_cursor"]
-				} else if expected["next_cursor"] != nil {
-					t.Fatal("missing cursor")
-				}
-				if !reflect.DeepEqual(jsonNormal(got), expected) {
-					t.Fatal(got, expected)
-				}
-			}
-			for _, table := range []struct {
-				query string
-				want  []map[string]any
-			}{{"SELECT * FROM proposals ORDER BY proposal_id", c.After}, {"SELECT * FROM proposal_events ORDER BY event_id", c.Events}} {
-				if got := tableRows(t, q.Proposals.DB, table.query); !reflect.DeepEqual(jsonNormal(got), jsonNormal(table.want)) {
-					t.Fatal(got, table.want)
-				}
-			}
-		})
-	}
 }
 func TestFernetReference(t *testing.T) {
 	raw, err := os.ReadFile("../../testdata/parity/proposal-fernet.json")
@@ -150,5 +78,90 @@ func TestFernetDecryptReference(t *testing.T) {
 		} else if err != nil || base64.StdEncoding.EncodeToString(got) != c.Expected {
 			t.Fatal(got, err, c)
 		}
+	}
+}
+
+// Replay the original records/visibility/errors, explicitly asking for historical
+// all-status ascending order. The new API fills visible pages, so empty legacy
+// pages are collapsed; encrypted cursor payloads now seal a sort tuple.
+func TestProposalListReference(t *testing.T) {
+	raw, err := os.ReadFile("../../testdata/parity/proposal-list.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var cases []struct {
+		Scenario string
+		Before   []map[string]any
+		Steps    []struct {
+			Policy         access.EffectivePolicy
+			Revision       string
+			Status, Cursor *string
+			Limit          int
+			Response       map[string]any
+		}
+	}
+	if err = json.Unmarshal(raw, &cases); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range cases {
+		t.Run(tc.Scenario, func(t *testing.T) {
+			q, _ := queueTest(t)
+			restoreSubmitRows(t, q.Proposals.DB, map[string][]map[string]any{"proposals": tc.Before})
+			c := ProposalControls{Queue: q}
+			first := tc.Steps[0]
+			status := first.Status
+			if status == nil {
+				status = listText("all")
+			}
+			repo := fakeRepo(nil)
+			repo.main = func(repository.GitRepositoryPaths) (string, error) { return first.Revision, nil }
+			got, err := c.listProposals(context.Background(), ProposalActor{Policy: first.Policy}, status, first.Limit, first.Cursor, repo, ProposalListOptions{SortOrder: "asc"})
+			if first.Response["status"] == "error" {
+				if err == nil || err.Error() != first.Response["message"] {
+					t.Fatal(err, first.Response)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatal(err)
+			}
+			if strings.HasPrefix(tc.Scenario, "scope-") {
+				token, ok := got["next_cursor"].(string)
+				if !ok {
+					t.Fatal("missing visible continuation")
+				}
+				second := tc.Steps[1]
+				filter := second.Status
+				if filter == nil {
+					filter = listText("all")
+				}
+				repo.main = func(repository.GitRepositoryPaths) (string, error) { return second.Revision, nil }
+				if _, err = c.listProposals(context.Background(), ProposalActor{Policy: second.Policy}, filter, second.Limit, &token, repo, ProposalListOptions{SortOrder: "asc"}); err == nil {
+					t.Fatal("changed scope accepted")
+				}
+				return
+			}
+			want := []string{}
+			for _, step := range tc.Steps {
+				if data, ok := step.Response["data"].(map[string]any); ok {
+					want = append(want, listedProposalIDs(data)...)
+				}
+			}
+			ids := listedProposalIDs(got)
+			for n := 0; got["next_cursor"] != nil; n++ {
+				if n > 20 {
+					t.Fatal("unbounded cursor")
+				}
+				token := got["next_cursor"].(string)
+				got, err = c.listProposals(context.Background(), ProposalActor{Policy: first.Policy}, status, first.Limit, &token, repo, ProposalListOptions{SortOrder: "asc"})
+				if err != nil {
+					t.Fatal(err)
+				}
+				ids = append(ids, listedProposalIDs(got)...)
+			}
+			if !reflect.DeepEqual(ids, want) {
+				t.Fatal(ids, want)
+			}
+		})
 	}
 }

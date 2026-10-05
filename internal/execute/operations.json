@@ -172,7 +172,10 @@
     "fields": [
       "status",
       "limit",
-      "cursor"
+      "cursor",
+      "exclude_statuses",
+      "sort_by",
+      "sort_order"
     ],
     "name": "proposal_list",
     "required": []

@@ -209,12 +209,36 @@ type ProposalQuery struct {
 	Status               *ProposalStatus
 	AuthorPrincipal      *string
 	Unresolved           bool
+	Pending              bool
+	ExcludeStatuses      []ProposalStatus
+	SortBy, SortOrder    string
+	After                *ProposalPosition
 	CurrentRevision, Now *string
 	Limit                *int
 	Cursor               *string
 }
 
+type ProposalPosition struct {
+	Value string `json:"value"`
+	ID    string `json:"id"`
+}
+
 func (p Proposals) List(ctx context.Context, q ProposalQuery) ([]ProposalRecord, error) {
+	column, direction, comparison := "created_at", "ASC", ">"
+	switch q.SortBy {
+	case "", "created_at":
+	case "updated_at", "proposal_id":
+		column = q.SortBy
+	default:
+		return nil, errors.New("invalid proposal sort field")
+	}
+	switch q.SortOrder {
+	case "", "asc":
+	case "desc":
+		direction, comparison = "DESC", "<"
+	default:
+		return nil, errors.New("invalid proposal sort order")
+	}
 	conditions := []string{}
 	args := []any{}
 	if q.Status != nil {
@@ -235,6 +259,24 @@ func (p Proposals) List(ctx context.Context, q ProposalQuery) ([]ProposalRecord,
 		}
 		conditions = append(conditions, "status IN ("+strings.Join(marks, ",")+")")
 	}
+	if q.Pending {
+		conditions = append(conditions, "status IN ('submitted','approved')")
+	}
+	if len(q.ExcludeStatuses) > 0 {
+		marks := make([]string, len(q.ExcludeStatuses))
+		for i, status := range q.ExcludeStatuses {
+			if !validProposalStatus(status) {
+				return nil, errors.New("invalid excluded proposal status")
+			}
+			marks[i] = "?"
+			args = append(args, status)
+		}
+		conditions = append(conditions, "status NOT IN ("+strings.Join(marks, ",")+")")
+	}
+	if q.After != nil {
+		conditions = append(conditions, "("+column+",proposal_id) "+comparison+" (?,?)")
+		args = append(args, q.After.Value, q.After.ID)
+	}
 	if q.Cursor != nil {
 		var created, id string
 		err := p.DB.QueryRowContext(ctx, "SELECT created_at,proposal_id FROM proposals WHERE proposal_id=?", *q.Cursor).Scan(&created, &id)
@@ -251,7 +293,7 @@ func (p Proposals) List(ctx context.Context, q ProposalQuery) ([]ProposalRecord,
 		conditions = append(conditions, "author_principal = ?")
 		args = append(args, *q.AuthorPrincipal)
 	}
-	query := "SELECT " + proposalColumns + " FROM proposals" + whereClause(conditions) + " ORDER BY created_at, proposal_id"
+	query := "SELECT " + proposalColumns + " FROM proposals" + whereClause(conditions) + " ORDER BY " + column + " " + direction + ", proposal_id " + direction
 	if q.Limit != nil {
 		if *q.Limit < 1 {
 			return nil, errors.New("proposal query limit must be positive")
@@ -264,7 +306,11 @@ func (p Proposals) List(ctx context.Context, q ProposalQuery) ([]ProposalRecord,
 		return nil, err
 	}
 	defer rows.Close()
-	return scanProposals(rows)
+	capacity := 0
+	if q.Limit != nil {
+		capacity = min(*q.Limit, 200)
+	}
+	return scanProposalsCapacity(rows, capacity)
 }
 func whereClause(conditions []string) string {
 	if len(conditions) == 0 {
@@ -273,7 +319,10 @@ func whereClause(conditions []string) string {
 	return " WHERE " + strings.Join(conditions, " AND ")
 }
 func scanProposals(rows operationRows) ([]ProposalRecord, error) {
-	out := []ProposalRecord{}
+	return scanProposalsCapacity(rows, 0)
+}
+func scanProposalsCapacity(rows operationRows, capacity int) ([]ProposalRecord, error) {
+	out := make([]ProposalRecord, 0, capacity)
 	for rows.Next() {
 		r, err := scanProposal(rows)
 		if err != nil {

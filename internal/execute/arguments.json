@@ -380,6 +380,41 @@
         "nullable": true,
         "required": false,
         "type": "string"
+      },
+      {
+        "name": "exclude_statuses",
+        "type": "array",
+        "required": false,
+        "nullable": false,
+        "default": [],
+        "items": {
+          "type": "string",
+          "required": true,
+          "nullable": false
+        }
+      },
+      {
+        "name": "sort_by",
+        "type": "string",
+        "required": false,
+        "nullable": false,
+        "default": "created_at",
+        "enum": [
+          "created_at",
+          "updated_at",
+          "proposal_id"
+        ]
+      },
+      {
+        "name": "sort_order",
+        "type": "string",
+        "required": false,
+        "nullable": false,
+        "default": "desc",
+        "enum": [
+          "asc",
+          "desc"
+        ]
       }
     ],
     "operation": "proposal_list"

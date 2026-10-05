@@ -39,6 +39,49 @@ func loadCatalogFixture(t *testing.T) catalogFixture {
 	if err = json.Unmarshal(raw, &f); err != nil {
 		t.Fatal(err)
 	}
+	// Preserve historical oracle; adapt only the deliberately extended proposal
+	// list schema/description, then compare the complete remaining catalog.
+	var definitions []map[string]any
+	if err = json.Unmarshal(catalogToolDefinitions, &definitions); err != nil {
+		t.Fatal(err)
+	}
+	var current map[string]any
+	for _, d := range definitions {
+		if d["name"] == "memory_proposal_list" {
+			current = d
+		}
+	}
+	var adapt func(any)
+	adapt = func(v any) {
+		switch x := v.(type) {
+		case map[string]any:
+			if defs, ok := x["$defs"].(map[string]any); ok {
+				if _, ok := defs["ProposalListArgs"]; ok {
+					defs["ProposalListArgs"] = current["inputSchema"]
+				}
+			}
+			if x["name"] == "memory_proposal_list" || x["tool_name"] == "memory_proposal_list" || x["tool"] == "memory_proposal_list" {
+				x["description"] = current["description"]
+				if _, ok := x["inputSchema"]; ok {
+					x["inputSchema"] = current["inputSchema"]
+				}
+				if _, ok := x["input_schema"]; ok {
+					x["input_schema"] = current["inputSchema"]
+				}
+			}
+			for _, child := range x {
+				adapt(child)
+			}
+		case []any:
+			for _, child := range x {
+				adapt(child)
+			}
+		}
+	}
+	for i := range f.Cases {
+		adapt(f.Cases[i].Catalog)
+		adapt(f.Cases[i].Tools)
+	}
 	return f
 }
 func TestCatalogReference(t *testing.T) {

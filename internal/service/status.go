@@ -108,22 +108,9 @@ func (c *ProposalControls) statusWithList(ctx context.Context, actor ProposalAct
 	if err != nil {
 		return nil, options, err
 	}
-	unresolved := map[control.ProposalStatus]bool{}
-	for _, status := range control.UnresolvedProposalStatuses() {
-		unresolved[status] = true
-	}
-	backlog := 0
-	for _, proposal := range proposals {
-		if !unresolved[proposal.Status] {
-			continue
-		}
-		visible, err := CanAccessProposal(actor.Policy, proposal, false)
-		if err != nil {
-			return nil, options, err
-		}
-		if visible {
-			backlog++
-		}
+	backlog, unresolved, proposalCounts, err := summarizeVisibleProposalStatuses(actor.Policy, proposals)
+	if err != nil {
+		return nil, options, err
 	}
 	limits := copyCatalogObject(c.Metadata.Limits)
 	limits["assets"] = assets.RetrievalLimits()
@@ -157,9 +144,20 @@ func (c *ProposalControls) statusWithList(ctx context.Context, actor ProposalAct
 		needlePath = c.Metadata.NeedleModelPath
 	}
 	data := map[string]any{
-		"service_version": c.Metadata.ServiceVersion, "schema_version": c.Metadata.SchemaVersion, "repo_revision": revision, "index_revision": state.IndexRevision, "index_stale": stale, "principal": actor.Policy.Principal, "visible_concepts": count, "proposal_backlog": backlog, "limits": limits, "roles": append([]string{}, actor.Policy.Roles...),
-		"features":  map[string]any{"resources": true, "streamable_http": true, "proposal_rebase": true, "model_proposals": false, "dream_mode": "disabled", "semantic_search": capabilities.SemanticEnabled, "needle_router": capabilities.NeedleEnabled},
-		"readiness": map[string]any{"semantic_search": map[string]any{"ready": semanticReady, "model_id": semanticModel, "dimensions": semanticDimensions, "embedding_revision": embeddingRevision, "sqlite_vector_enabled": false}, "needle_router": map[string]any{"enabled": capabilities.NeedleEnabled, "loaded": capabilities.NeedleLoaded, "runtime": needleRuntime, "model_path": needlePath}},
+		"service_version":     c.Metadata.ServiceVersion,
+		"schema_version":      c.Metadata.SchemaVersion,
+		"repo_revision":       revision,
+		"index_revision":      state.IndexRevision,
+		"index_stale":         stale,
+		"principal":           actor.Policy.Principal,
+		"visible_concepts":    count,
+		"proposal_backlog":    backlog,
+		"proposal_unresolved": unresolved,
+		"proposal_counts":     proposalCounts,
+		"limits":              limits,
+		"roles":               append([]string{}, actor.Policy.Roles...),
+		"features":            map[string]any{"resources": true, "streamable_http": true, "proposal_rebase": true, "model_proposals": false, "dream_mode": "disabled", "semantic_search": capabilities.SemanticEnabled, "needle_router": capabilities.NeedleEnabled},
+		"readiness":           map[string]any{"semantic_search": map[string]any{"ready": semanticReady, "model_id": semanticModel, "dimensions": semanticDimensions, "embedding_revision": embeddingRevision, "sqlite_vector_enabled": false}, "needle_router": map[string]any{"enabled": capabilities.NeedleEnabled, "loaded": capabilities.NeedleLoaded, "runtime": needleRuntime, "model_path": needlePath}},
 	}
 	options.RepoRevision = &revision
 	options.IndexRevision = &state.IndexRevision
@@ -168,6 +166,40 @@ func (c *ProposalControls) statusWithList(ctx context.Context, actor ProposalAct
 		options.Warnings = []string{"derived_index_stale"}
 	}
 	return data, options, nil
+}
+
+func summarizeVisibleProposalStatuses(policy access.EffectivePolicy, proposals []control.ProposalRecord) (int, int, map[string]int, error) {
+	unresolved := map[control.ProposalStatus]bool{}
+	for _, status := range control.UnresolvedProposalStatuses() {
+		unresolved[normalizeStoredProposalStatus(status)] = true
+	}
+	backlog := 0
+	proposalUnresolved := 0
+	proposalCounts := map[string]int{}
+	for _, proposal := range proposals {
+		visible, err := CanAccessProposal(policy, proposal, false)
+		if err != nil {
+			return 0, 0, nil, err
+		}
+		if !visible {
+			continue
+		}
+		status := normalizeStoredProposalStatus(proposal.Status)
+		proposalCounts[string(status)]++
+		if status == control.Submitted || status == control.Approved {
+			backlog++
+		}
+		if unresolved[status] {
+			proposalUnresolved++
+		}
+	}
+	return backlog, proposalUnresolved, proposalCounts, nil
+}
+func normalizeStoredProposalStatus(status control.ProposalStatus) control.ProposalStatus {
+	if status == control.Stale {
+		return control.NeedsRebase
+	}
+	return status
 }
 
 // RegisterStatusTools adds real models-off help/status to the 28-tool subset.

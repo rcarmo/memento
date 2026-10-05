@@ -40,7 +40,12 @@ func TestArgumentReference(t *testing.T) {
 		t.Fatal("argument model count changed")
 	}
 	for _, definition := range fixture.Definitions {
-		if !reflect.DeepEqual(validator.contracts[definition.Operation], definition.Fields) {
+		current := validator.contracts[definition.Operation]
+		if definition.Operation == "proposal_list" {
+			// Immutable oracle predates the three additive list options.
+			current = current[:len(definition.Fields)]
+		}
+		if !reflect.DeepEqual(current, definition.Fields) {
 			t.Fatal("runtime definition differs from source", definition.Operation)
 		}
 	}
@@ -56,6 +61,11 @@ func TestArgumentReference(t *testing.T) {
 					t.Fatal(tc.Arguments, validation.Issues, tc.Issues)
 				}
 				return
+			}
+			if tc.Operation == "proposal_list" && tc.Expected != nil {
+				tc.Expected["exclude_statuses"] = []any{}
+				tc.Expected["sort_by"] = "created_at"
+				tc.Expected["sort_order"] = "desc"
 			}
 			if err != nil || !reflect.DeepEqual(got, tc.Expected) {
 				t.Fatal(tc.Arguments, got, err, tc.Expected)
@@ -148,5 +158,29 @@ func TestArgumentValidationIntegration(t *testing.T) {
 	got, err := validator.Validate("inventory", nil, false)
 	if err != nil || got["fields"].([]any)[0] != "path" {
 		t.Fatal(got, err)
+	}
+}
+
+func TestProposalListOptionArguments(t *testing.T) {
+	a, err := NewArguments()
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := a.Validate("proposal_list", map[string]any{"status": "all", "exclude_statuses": []any{"applied"}, "sort_by": "updated_at", "sort_order": "asc"}, false)
+	if err != nil || got["sort_by"] != "updated_at" {
+		t.Fatal(got, err)
+	}
+	for _, args := range []map[string]any{{"sort_by": "injected"}, {"sort_order": "sideways"}, {"exclude_statuses": []any{12}}} {
+		if _, err = a.Validate("proposal_list", args, true); err == nil {
+			t.Fatal("accepted invalid options", args)
+		}
+	}
+	p, _ := NewPlanner()
+	plan, err := p.ParsePlan(map[string]any{"operations": []any{map[string]any{"op": "proposal_list", "args": map[string]any{"sort_order": "$saved.order"}}}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = p.Preflight(plan, 12, a.Validate); err != nil {
+		t.Fatal(err)
 	}
 }

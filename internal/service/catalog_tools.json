@@ -1344,7 +1344,7 @@
         "proposer"
       ]
     },
-    "description": "List bounded, cursor-paginated summaries of visible proposal records.",
+    "description": "List visible proposals. Defaults to pending (submitted/approved), newest first. Use status=unresolved for repair/drafts or all for history; exclude_statuses removes individual states. Cursor binds filters and ordering.",
     "inputSchema": {
       "additionalProperties": false,
       "properties": {
@@ -1377,7 +1377,32 @@
             }
           ],
           "default": null,
-          "title": "Status"
+          "title": "Status",
+          "description": "pending (default), unresolved, all, or one stored status. approved still awaits application; applied is completed history."
+        },
+        "exclude_statuses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "sort_by": {
+          "type": "string",
+          "enum": [
+            "created_at",
+            "updated_at",
+            "proposal_id"
+          ],
+          "default": "created_at"
+        },
+        "sort_order": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "default": "desc"
         }
       },
       "title": "ProposalListArgs",
@@ -1399,6 +1424,21 @@
         "default": null,
         "name": "cursor",
         "required": false
+      },
+      {
+        "name": "exclude_statuses",
+        "required": false,
+        "default": []
+      },
+      {
+        "name": "sort_by",
+        "required": false,
+        "default": "created_at"
+      },
+      {
+        "name": "sort_order",
+        "required": false,
+        "default": "desc"
       }
     ]
   },
@@ -4605,63 +4645,58 @@
             "cursor": {
               "anyOf": [
                 {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "default": null,
-                  "title": "Cursor"
+                  "type": "string"
                 },
                 {
-                  "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
-                  "maxLength": 256,
-                  "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
-                  "type": "string"
+                  "type": "null"
                 }
-              ]
+              ],
+              "default": null,
+              "title": "Cursor"
             },
             "limit": {
-              "anyOf": [
-                {
-                  "default": 50,
-                  "maximum": 200,
-                  "minimum": 1,
-                  "title": "Limit",
-                  "type": "integer"
-                },
-                {
-                  "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
-                  "maxLength": 256,
-                  "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
-                  "type": "string"
-                }
-              ]
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
             },
             "status": {
               "anyOf": [
                 {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "default": null,
-                  "title": "Status"
+                  "type": "string"
                 },
                 {
-                  "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
-                  "maxLength": 256,
-                  "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
-                  "type": "string"
+                  "type": "null"
                 }
-              ]
+              ],
+              "default": null,
+              "title": "Status",
+              "description": "pending (default), unresolved, all, or one stored status. approved still awaits application; applied is completed history."
+            },
+            "exclude_statuses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            "sort_by": {
+              "type": "string",
+              "enum": [
+                "created_at",
+                "updated_at",
+                "proposal_id"
+              ],
+              "default": "created_at"
+            },
+            "sort_order": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
             }
           },
           "title": "ProposalListArgs",
@@ -8705,63 +8740,58 @@
                 "cursor": {
                   "anyOf": [
                     {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ],
-                      "default": null,
-                      "title": "Cursor"
+                      "type": "string"
                     },
                     {
-                      "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
-                      "maxLength": 256,
-                      "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
-                      "type": "string"
+                      "type": "null"
                     }
-                  ]
+                  ],
+                  "default": null,
+                  "title": "Cursor"
                 },
                 "limit": {
-                  "anyOf": [
-                    {
-                      "default": 50,
-                      "maximum": 200,
-                      "minimum": 1,
-                      "title": "Limit",
-                      "type": "integer"
-                    },
-                    {
-                      "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
-                      "maxLength": 256,
-                      "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
-                      "type": "string"
-                    }
-                  ]
+                  "default": 50,
+                  "maximum": 200,
+                  "minimum": 1,
+                  "title": "Limit",
+                  "type": "integer"
                 },
                 "status": {
                   "anyOf": [
                     {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ],
-                      "default": null,
-                      "title": "Status"
+                      "type": "string"
                     },
                     {
-                      "description": "Saved result reference, resolved then validated against this argument type before dispatch.",
-                      "maxLength": 256,
-                      "pattern": "^\\$[A-Za-z][A-Za-z0-9_]{0,31}(?:\\.(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+))*$",
-                      "type": "string"
+                      "type": "null"
                     }
-                  ]
+                  ],
+                  "default": null,
+                  "title": "Status",
+                  "description": "pending (default), unresolved, all, or one stored status. approved still awaits application; applied is completed history."
+                },
+                "exclude_statuses": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "default": []
+                },
+                "sort_by": {
+                  "type": "string",
+                  "enum": [
+                    "created_at",
+                    "updated_at",
+                    "proposal_id"
+                  ],
+                  "default": "created_at"
+                },
+                "sort_order": {
+                  "type": "string",
+                  "enum": [
+                    "asc",
+                    "desc"
+                  ],
+                  "default": "desc"
                 }
               },
               "title": "ProposalListArgs",

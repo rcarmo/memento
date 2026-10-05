@@ -44,7 +44,11 @@ sequenceDiagram
 
 Memento stores the review result. Agents arrange hand-off through their approved messaging channel or inspect `proposal_list`; proposal creation does not send a peer message. An author can read their own accessible proposals. Curators can inspect other authors' proposals within their namespace grants. A curator can review their own proposal when policy permits it; keep the actual author and reviewer identities.
 
-Use `proposal_list(status="unresolved")` for the review queue: it includes draft, submitted, approved, needs-rebase and conflicted records. `memory_status.proposal_backlog` counts the same unresolved records visible to the caller. Use `status="submitted"` only when you need that exact state; `pending` is not a valid status. Follow `next_cursor` until null when reviewing more than one page.
+`proposal_list` defaults to `status="pending"` (submitted or approved), `sort_by="created_at"` and `sort_order="desc"`. Applied, rejected and expired history is omitted. An approved proposal still needs application; use `exclude_statuses=["approved"]` for a review-only queue. `status="all"` includes history; `status="unresolved"` also includes draft, needs-rebase and conflicted records. An individual stored status selects that state. Legacy `stale` aliases `needs_rebase`.
+
+`sort_by` accepts `created_at`, `updated_at` or `proposal_id`; `sort_order` accepts `asc` or `desc`. Proposal ID breaks timestamp ties in the same direction. `exclude_statuses` removes specified stored states. Cursors bind caller permissions, repository revision, filters and ordering; keep those unchanged while paging. The cursor retains its sort boundary if the anchor record is deleted. Concurrent edits with `updated_at` sorting can move records between pages; use `created_at` for stable creation order. Restart pagination after upgrading from the old cursor format.
+
+`memory_status.proposal_backlog` counts visible submitted/approved records. `proposal_unresolved` also includes draft, needs-rebase, conflicted and legacy stale; `proposal_counts` provides per-status visible totals, with stale normalised to needs-rebase. Filters never review, reject or delete proposals. Follow `next_cursor` until null.
 
 An explicit patch submission through `memory_execute`:
 

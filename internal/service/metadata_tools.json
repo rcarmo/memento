@@ -1013,7 +1013,7 @@
         "proposer"
       ]
     },
-    "description": "List bounded, cursor-paginated summaries of visible proposal records.",
+    "description": "List visible proposals. Defaults to pending (submitted/approved), newest first. Use status=unresolved for repair/drafts or all for history; exclude_statuses removes individual states. Cursor binds filters and ordering.",
     "inputSchema": {
       "additionalProperties": false,
       "properties": {
@@ -1046,7 +1046,32 @@
             }
           ],
           "default": null,
-          "title": "Status"
+          "title": "Status",
+          "description": "pending (default), unresolved, all, or one stored status. approved still awaits application; applied is completed history."
+        },
+        "exclude_statuses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "sort_by": {
+          "type": "string",
+          "enum": [
+            "created_at",
+            "updated_at",
+            "proposal_id"
+          ],
+          "default": "created_at"
+        },
+        "sort_order": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "default": "desc"
         }
       },
       "title": "ProposalListArgs",
@@ -1068,6 +1093,21 @@
         "default": null,
         "name": "cursor",
         "required": false
+      },
+      {
+        "name": "exclude_statuses",
+        "required": false,
+        "default": []
+      },
+      {
+        "name": "sort_by",
+        "required": false,
+        "default": "created_at"
+      },
+      {
+        "name": "sort_order",
+        "required": false,
+        "default": "desc"
       }
     ]
   },

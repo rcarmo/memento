@@ -62,8 +62,24 @@ func testToolReference(t *testing.T, file string, definitions []byte) {
 		}
 		normalizeText(got)
 		normalizeText(c.Expected)
+		// Legacy oracle has no list sorting/exclusion arguments. Account only
+		// for the additive defaults; all remaining wire values stay exact.
+		addListDefaults(c.Expected)
 		if !reflect.DeepEqual(got, c.Expected) {
 			t.Fatal(c.Request, got, c.Expected)
+		}
+	}
+	var currentDefinitions []map[string]any
+	if err := json.Unmarshal(definitions, &currentDefinitions); err != nil {
+		t.Fatal(err)
+	}
+	for i, d := range fixture.Definitions {
+		if d["name"] == "memory_proposal_list" {
+			for _, current := range currentDefinitions {
+				if current["name"] == d["name"] {
+					fixture.Definitions[i] = current
+				}
+			}
 		}
 	}
 	expected := []any{}
@@ -88,5 +104,25 @@ func testToolReference(t *testing.T, file string, definitions []byte) {
 	}
 	if err := registerProposalTools(server, nil, nil, []byte("{")); err == nil {
 		t.Fatal("bad metadata")
+	}
+}
+
+func addListDefaults(v any) {
+	switch x := v.(type) {
+	case map[string]any:
+		if x["method"] == "memory_proposal_list" {
+			if args, ok := x["arguments"].(map[string]any); ok {
+				args["exclude_statuses"] = []any{}
+				args["sort_by"] = "created_at"
+				args["sort_order"] = "desc"
+			}
+		}
+		for _, child := range x {
+			addListDefaults(child)
+		}
+	case []any:
+		for _, child := range x {
+			addListDefaults(child)
+		}
 	}
 }
