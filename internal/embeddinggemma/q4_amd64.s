@@ -1,0 +1,79 @@
+// Copyright 2026 Rui Carmo. MIT.
+// Leaf kernels: packed 32-value Q4_K group, independent FP32 multiply/subtract.
+#include "textflag.h"
+
+TEXT ·q4GroupSSE2(SB), NOSPLIT, $0-36
+ MOVQ q+0(FP), SI
+ MOVQ x+8(FP), DI
+ MOVSS scale+16(FP), X4
+ SHUFPS $0, X4, X4
+ MOVSS minimum+20(FP), X5
+ SHUFPS $0, X5, X5
+ PCMPEQL X6, X6
+ PSRLL $28, X6
+ PXOR X7, X7
+ PXOR X8, X8
+ MOVBLZX high+24(FP), AX
+ MOVQ $8, CX
+q4s_loop:
+ MOVL (SI), AX
+ MOVD AX, X0
+ CMPB high+24(FP), $0
+ JE q4s_low
+ PSRLW $4, X0
+q4s_low:
+ PUNPCKLBW X7, X0
+ PUNPCKLWL X7, X0
+ PAND X6, X0
+ CVTPL2PS X0, X0
+ MULPS X4, X0
+ SUBPS X5, X0
+ MOVUPS (DI), X1
+ MULPS X1, X0
+ ADDPS X0, X8
+ ADDQ $4, SI
+ ADDQ $16, DI
+ DECQ CX
+ JNZ q4s_loop
+ MOVAPS X8, X0
+ MOVAPS X0, X1
+ SHUFPS $0x4e, X1, X1
+ ADDPS X1, X0
+ MOVAPS X0, X1
+ SHUFPS $0xb1, X1, X1
+ ADDPS X1, X0
+ MOVSS X0, ret+32(FP)
+ RET
+
+TEXT ·q4GroupAVX2(SB), NOSPLIT, $0-36
+ MOVQ q+0(FP), SI
+ MOVQ x+8(FP), DI
+ VBROADCASTSS scale+16(FP), Y4
+ VBROADCASTSS minimum+20(FP), Y5
+ VPCMPEQD Y6, Y6, Y6
+ VPSRLD $28, Y6, Y6
+ VXORPS Y7, Y7, Y7
+ MOVQ $4, CX
+q4a_loop:
+ VPMOVZXBD (SI), Y0
+ CMPB high+24(FP), $0
+ JE q4a_low
+ VPSRLD $4, Y0, Y0
+q4a_low:
+ VPAND Y6, Y0, Y0
+ VCVTDQ2PS Y0, Y0
+ VMULPS Y4, Y0, Y0
+ VSUBPS Y5, Y0, Y0
+ VMULPS (DI), Y0, Y0
+ VADDPS Y0, Y7, Y7
+ ADDQ $8, SI
+ ADDQ $32, DI
+ DECQ CX
+ JNZ q4a_loop
+ VEXTRACTF128 $1, Y7, X1
+ VADDPS X1, X7, X0
+ VHADDPS X0, X0, X0
+ VHADDPS X0, X0, X0
+ VMOVSS X0, ret+32(FP)
+ VZEROUPPER
+ RET

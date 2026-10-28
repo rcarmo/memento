@@ -26,6 +26,17 @@ GTE_MODEL_PATH ?= $(abspath models/gte/gte-small.gtemodel)
 NEEDLE_MODEL_PATH ?= $(abspath models/needle/memento-router.ndl)
 NEEDLE_TOKENIZER_PATH ?= $(abspath models/needle/needle.model)
 
+.PHONY: gemma-test gemma-bench gemma-inspect
+# Experimental CPU-only foundation; not linked into production or release archives.
+EMBEDDINGGEMMA_MODEL ?= $(abspath models/embeddinggemma/embeddinggemma-2-UD-Q4_K_XL.gguf)
+gemma-test:
+	CGO_ENABLED=0 EMBEDDINGGEMMA_MODEL="$(EMBEDDINGGEMMA_MODEL)" $(GO) test ./internal/embeddinggemma ./cmd/memento-gemma-inspect -count=1
+gemma-bench:
+	CGO_ENABLED=0 $(GO) test ./internal/embeddinggemma -run '^$$' -bench '^BenchmarkQuantProjection' -benchmem -count=5
+gemma-inspect:
+	CGO_ENABLED=0 $(GO) build -o "$(BUILD_ROOT)/memento-gemma-inspect" ./cmd/memento-gemma-inspect
+	"$(BUILD_ROOT)/memento-gemma-inspect" "$(EMBEDDINGGEMMA_MODEL)"
+
 .PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check fuzz-coverage build race cross release release-check install coverage fuzz performance performance-core model-test simd-test corpus-test go-container-build go-container-contract clean
 help:
 	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz, model-independent performance and cross-build gates' 'performance run allocation gates including pinned real models' 'performance-core run model-independent allocation gates' 'tools       install pinned static-analysis tools under $(BUILD_ROOT)/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install all host binaries under DESTDIR/PREFIX/bin'
