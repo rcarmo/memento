@@ -26,16 +26,21 @@ GTE_MODEL_PATH ?= $(abspath models/gte/gte-small.gtemodel)
 NEEDLE_MODEL_PATH ?= $(abspath models/needle/memento-router.ndl)
 NEEDLE_TOKENIZER_PATH ?= $(abspath models/needle/needle.model)
 
-.PHONY: gemma-test gemma-bench gemma-inspect
-# Experimental CPU-only foundation; not linked into production or release archives.
+.PHONY: gemma-test gemma-bench gemma-inspect gemma-embed gemma-reference
+# Offline CPU-only engine; not linked into production or release archives.
 EMBEDDINGGEMMA_MODEL ?= $(abspath models/embeddinggemma/embeddinggemma-2-UD-Q4_K_XL.gguf)
 gemma-test:
-	CGO_ENABLED=0 EMBEDDINGGEMMA_MODEL="$(EMBEDDINGGEMMA_MODEL)" $(GO) test ./internal/embeddinggemma ./cmd/memento-gemma-inspect -count=1
+	CGO_ENABLED=0 EMBEDDINGGEMMA_MODEL="$(EMBEDDINGGEMMA_MODEL)" $(GO) test ./internal/embeddinggemma ./cmd/memento-gemma-inspect ./cmd/memento-gemma-embed -count=1
 gemma-bench:
-	CGO_ENABLED=0 $(GO) test ./internal/embeddinggemma -run '^$$' -bench '^BenchmarkQuantProjection' -benchmem -count=5
+	CGO_ENABLED=0 EMBEDDINGGEMMA_MODEL="$(EMBEDDINGGEMMA_MODEL)" $(GO) test ./internal/embeddinggemma -run '^$$' -bench '^Benchmark(QuantProjection|Embedding)$$' -benchmem -count=5
 gemma-inspect:
 	CGO_ENABLED=0 $(GO) build -o "$(BUILD_ROOT)/memento-gemma-inspect" ./cmd/memento-gemma-inspect
 	"$(BUILD_ROOT)/memento-gemma-inspect" "$(EMBEDDINGGEMMA_MODEL)"
+gemma-embed:
+	CGO_ENABLED=0 $(GO) build -o "$(BUILD_ROOT)/memento-gemma-embed" ./cmd/memento-gemma-embed
+# Optional independent servers: see docs/embeddinggemma-native.md.
+gemma-reference: gemma-embed
+	GEMMA_NATIVE="$(BUILD_ROOT)/memento-gemma-embed" GEMMA_MODEL="$(EMBEDDINGGEMMA_MODEL)" bun tools/gemma-reference.mjs
 
 .PHONY: help tools check quality audit-fast audit test vet lint vuln format format-check layout-check fuzz-coverage build race cross release release-check install coverage fuzz performance performance-core model-test simd-test corpus-test go-container-build go-container-contract clean
 help:

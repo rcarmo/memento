@@ -11,5 +11,5 @@
   "tensor_counts": {"F32": 194, "Q8_0": 48, "Q4_K": 169, "Q5_K": 1, "Q6_K": 1},
   "reference_model": "google/embeddinggemma-2",
   "reference_revision": "f9972ac22e696a105c482202646979e33e4b5a1e",
-  "reference_scope": "model card/config only; independent full-model inference validation outstanding"
+  "reference_scope": "text encoder checked against independent CPU llama.cpp c3df4b7e22a1ac38da663552d19e649dd97ca936 using all-F32 dequantized identical weights; see docs/embeddinggemma-native.md for reference patches and limits"
 }

@@ -27,7 +27,7 @@ func Inspect(w io.Writer, path string) error {
 		Metadata map[string]any `json:"metadata"`
 		Tensors  []Tensor       `json:"tensors"`
 		Status   string         `json:"status"`
-	}{meta, f.Tensors(), "quantized-kernel-foundation; tokenizer/encoder not yet implemented"}
+	}{meta, f.Tensors(), "native-cpu-text-encoder; offline only, not production-integrated"}
 	e := json.NewEncoder(w)
 	e.SetIndent("", "  ")
 	return e.Encode(summary)

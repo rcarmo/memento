@@ -186,6 +186,7 @@ type parser struct {
 	remaining     int64
 	pos           uint64
 	arrayElements uint64
+	word          [8]byte // fixed storage prevents one escaping allocation per scalar
 }
 
 func (p *parser) read(b []byte) error {
@@ -198,7 +199,7 @@ func (p *parser) read(b []byte) error {
 	return err
 }
 func (p *parser) uint(n int) (uint64, error) {
-	var b [8]byte
+	b := p.word[:]
 	if err := p.read(b[:n]); err != nil {
 		return 0, err
 	}
@@ -221,6 +222,20 @@ func (p *parser) text() (string, error) {
 	}
 	if n > maxStringBytes || n > uint64(p.remaining) {
 		return "", errors.New("string length exceeds header bounds")
+	}
+	// Avoid an intermediate allocated byte slice for ordinary vocab strings.
+	if n <= uint64(p.r.Size()) {
+		b, e := p.r.Peek(int(n))
+		if e != nil {
+			return "", e
+		}
+		s := string(b)
+		if _, e = p.r.Discard(int(n)); e != nil {
+			return "", e
+		}
+		p.remaining -= int64(n)
+		p.pos += n
+		return s, nil
 	}
 	b := make([]byte, int(n))
 	if err = p.read(b); err != nil {

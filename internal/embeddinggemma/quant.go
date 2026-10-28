@@ -62,6 +62,13 @@ func (m *Matrix) ProjectTo(ctx context.Context, dst, x, scratch []float32, engin
 	if m.owner.data == nil {
 		return errors.New("embeddinggemma: model closed")
 	}
+	return m.projectLocked(ctx, dst, x, scratch, engine)
+}
+
+// The encoder holds the owner read lock for the entire forward pass. Avoid
+// recursively acquiring it when Close is waiting for that request to finish.
+func (m *Matrix) projectLocked(ctx context.Context, dst, x, scratch []float32, engine simd.Engine) error {
+	scratch = scratch[:m.columns]
 	for row := 0; row < m.rows; row++ {
 		if row&15 == 0 {
 			if err := ctx.Err(); err != nil {
@@ -70,6 +77,12 @@ func (m *Matrix) ProjectTo(ctx context.Context, dst, x, scratch []float32, engin
 		}
 		if m.tensor.Type == Q4_K {
 			if value, ok := fusedQ4Dot(m.rawRow(row), x, engine.Backend()); ok {
+				dst[row] = value
+				continue
+			}
+		}
+		if m.tensor.Type == Q5_K {
+			if value, ok := fusedQ5Dot(m.rawRow(row), x, engine.Backend()); ok {
 				dst[row] = value
 				continue
 			}
