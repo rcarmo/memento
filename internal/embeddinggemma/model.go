@@ -84,7 +84,9 @@ func NewModel(f *File, backend string) (*Model, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(tok.vocab) != 262144 { return nil, errors.New("embeddinggemma: unsupported vocabulary size") }
+	if len(tok.vocab) != 262144 {
+		return nil, errors.New("embeddinggemma: unsupported vocabulary size")
+	}
 	m := &Model{file: f, tokenizer: tok, engine: eng}
 	integer := func(key string, want uint64) error {
 		v, ok := f.metadata["gemma-embedding2."+key]
@@ -220,10 +222,11 @@ func (m *Model) Tokenize(ctx context.Context, text string, opts Options) ([]int,
 // Workspace grows to a bounded high-water mark, is reusable, and contains no
 // model weights. Release it when a caller no longer needs its reserved memory.
 type Workspace struct {
-	mu                                            sync.Mutex
-	capacity                                      int
-	initial, hidden, norm, q, k, v, attn          []float32
-	scratch, tmp, ffGate, ffUp, ple, gate, scores []float32
+	mu                                                                  sync.Mutex
+	capacity                                                            int
+	initial, hidden, q, k, v, attn                                      []float32
+	scratch, tmp, scores                                                []float32
+	tileNorm, tileOut, tileGate, tileUp, tilePLE, tilePLEGate, tileSums []float32
 }
 
 func (w *Workspace) prepare(n int) {
@@ -231,7 +234,6 @@ func (w *Workspace) prepare(n int) {
 		w.capacity = n
 		w.initial = make([]float32, n*512)
 		w.hidden = make([]float32, n*512)
-		w.norm = make([]float32, n*512)
 		w.q = make([]float32, n*2048)
 		w.k = make([]float32, n*512)
 		w.v = make([]float32, n*512)
@@ -241,10 +243,13 @@ func (w *Workspace) prepare(n int) {
 	if w.scratch == nil {
 		w.scratch = make([]float32, 2048)
 		w.tmp = make([]float32, 512)
-		w.ffGate = make([]float32, 2048)
-		w.ffUp = make([]float32, 2048)
-		w.ple = make([]float32, 512)
-		w.gate = make([]float32, 512)
+		w.tileNorm = make([]float32, projectionTile*512)
+		w.tileOut = make([]float32, projectionTile*512)
+		w.tileGate = make([]float32, projectionTile*2048)
+		w.tileUp = make([]float32, projectionTile*2048)
+		w.tilePLE = make([]float32, projectionTile*512)
+		w.tilePLEGate = make([]float32, projectionTile*512)
+		w.tileSums = make([]float32, projectionTile)
 	}
 }
 
@@ -317,82 +322,109 @@ func (m *Model) EmbedTokens(ctx context.Context, ids []int, dimensions int, w *W
 		qwidth := head * 4
 		kvwidth := head * l.kv
 		q, k, v, attn := w.q[:n*qwidth], w.k[:n*kvwidth], w.v[:n*kvwidth], w.attn[:n*qwidth]
-		for t := 0; t < n; t++ {
-			x := hidden[t*512 : (t+1)*512]
-			norm := w.norm[t*512 : (t+1)*512]
-			rms(norm, x, l.attnNorm)
-			qt, kt, vt := q[t*qwidth:(t+1)*qwidth], k[t*kvwidth:(t+1)*kvwidth], v[t*kvwidth:(t+1)*kvwidth]
-			if err := project(l.q, qt, norm); err != nil {
-				return nil, err
+		for base := 0; base < n; base += projectionTile {
+			count := min(projectionTile, n-base)
+			norm := w.tileNorm[:count*512]
+			for t := 0; t < count; t++ {
+				rms(norm[t*512:(t+1)*512], hidden[(base+t)*512:(base+t+1)*512], l.attnNorm)
 			}
-			if err := project(l.k, kt, norm); err != nil {
-				return nil, err
+			for _, p := range []struct {
+				m   *Matrix
+				dst []float32
+			}{{l.q, q[base*qwidth : (base+count)*qwidth]}, {l.k, k[base*kvwidth : (base+count)*kvwidth]}, {l.v, v[base*kvwidth : (base+count)*kvwidth]}} {
+				if err := p.m.projectTokensLocked(ctx, p.dst, norm, count, w.scratch, w.tileSums, m.engine); err != nil {
+					return nil, err
+				}
 			}
-			if err := project(l.v, vt, norm); err != nil {
-				return nil, err
-			}
-			for h := 0; h < 4; h++ {
-				z := qt[h*head : (h+1)*head]
-				rms(z, z, l.qNorm)
-				rope(z, t, li%6 == 5)
-			}
-			for h := 0; h < l.kv; h++ {
-				z := kt[h*head : (h+1)*head]
-				rms(z, z, l.kNorm)
-				rope(z, t, li%6 == 5)
-				z = vt[h*head : (h+1)*head]
-				rms(z, z, nil)
+			for local := 0; local < count; local++ {
+				t := base + local
+				qt, kt, vt := q[t*qwidth:(t+1)*qwidth], k[t*kvwidth:(t+1)*kvwidth], v[t*kvwidth:(t+1)*kvwidth]
+				for h := 0; h < 4; h++ {
+					z := qt[h*head : (h+1)*head]
+					rms(z, z, l.qNorm)
+					rope(z, t, li%6 == 5)
+				}
+				for h := 0; h < l.kv; h++ {
+					z := kt[h*head : (h+1)*head]
+					rms(z, z, l.kNorm)
+					rope(z, t, li%6 == 5)
+					z = vt[h*head : (h+1)*head]
+					rms(z, z, nil)
+				}
 			}
 		}
 		if err := attention(ctx, attn, q, k, v, n, head, l.kv, li%6 != 5, w.scores, m.engine); err != nil {
 			return nil, err
 		}
-		for t := 0; t < n; t++ {
-			x := hidden[t*512 : (t+1)*512]
-			norm := w.norm[t*512 : (t+1)*512]
-			if err := project(l.o, w.tmp, attn[t*qwidth:(t+1)*qwidth]); err != nil {
+		for base := 0; base < n; base += projectionTile {
+			count := min(projectionTile, n-base)
+			batch := func(p *Matrix, dst, input []float32) error {
+				return p.projectTokensLocked(ctx, dst, input, count, w.scratch, w.tileSums, m.engine)
+			}
+			out := w.tileOut[:count*512]
+			norm := w.tileNorm[:count*512]
+			gate := w.tileGate[:count*2048]
+			up := w.tileUp[:count*2048]
+			ple := w.tilePLE[:count*512]
+			pg := w.tilePLEGate[:count*512]
+			if err := batch(l.o, out, attn[base*qwidth:(base+count)*qwidth]); err != nil {
 				return nil, err
 			}
-			rms(w.tmp, w.tmp, l.attnPost)
-			for j := range x {
-				x[j] += w.tmp[j]
+			for t := 0; t < count; t++ {
+				x := hidden[(base+t)*512 : (base+t+1)*512]
+				y := out[t*512 : (t+1)*512]
+				rms(y, y, l.attnPost)
+				for j := range x {
+					x[j] += y[j]
+				}
+				rms(norm[t*512:(t+1)*512], x, l.ffnNorm)
 			}
-			rms(norm, x, l.ffnNorm)
-			if err := project(l.gate, w.ffGate, norm); err != nil {
+			if err := batch(l.gate, gate, norm); err != nil {
 				return nil, err
 			}
-			if err := project(l.up, w.ffUp, norm); err != nil {
+			if err := batch(l.up, up, norm); err != nil {
 				return nil, err
 			}
-			for j := range w.ffGate {
-				w.ffGate[j] = gelu(w.ffGate[j]) * w.ffUp[j]
+			for j := range gate {
+				gate[j] = gelu(gate[j]) * up[j]
 			}
-			if err := project(l.down, w.tmp, w.ffGate); err != nil {
+			if err := batch(l.down, out, gate); err != nil {
 				return nil, err
 			}
-			rms(w.tmp, w.tmp, l.ffnPost)
-			for j := range x {
-				x[j] += w.tmp[j]
+			for t := 0; t < count; t++ {
+				x := hidden[(base+t)*512 : (base+t+1)*512]
+				y := out[t*512 : (t+1)*512]
+				rms(y, y, l.ffnPost)
+				for j := range x {
+					x[j] += y[j]
+				}
 			}
-			if err := project(l.pleInput, w.ple, initial[t*512:(t+1)*512]); err != nil {
+			if err := batch(l.pleInput, ple, initial[base*512:(base+count)*512]); err != nil {
 				return nil, err
 			}
-			for j := range w.ple {
-				w.ple[j] /= scale
+			for t := 0; t < count; t++ {
+				y := ple[t*512 : (t+1)*512]
+				for j := range y {
+					y[j] /= scale
+				}
+				rms(y, y, m.pleNorm)
 			}
-			rms(w.ple, w.ple, m.pleNorm)
-			if err := project(l.pleGate, w.gate, x); err != nil {
+			if err := batch(l.pleGate, pg, hidden[base*512:(base+count)*512]); err != nil {
 				return nil, err
 			}
-			for j := range w.gate {
-				w.gate[j] = gelu(w.gate[j]) * w.ple[j]
+			for j := range pg {
+				pg[j] = gelu(pg[j]) * ple[j]
 			}
-			if err := project(l.pleOut, w.tmp, w.gate); err != nil {
+			if err := batch(l.pleOut, out, pg); err != nil {
 				return nil, err
 			}
-			rms(w.tmp, w.tmp, l.plePost)
-			for j := range x {
-				x[j] = (x[j] + w.tmp[j]) * l.scalar
+			for t := 0; t < count; t++ {
+				x := hidden[(base+t)*512 : (base+t+1)*512]
+				y := out[t*512 : (t+1)*512]
+				rms(y, y, l.plePost)
+				for j := range x {
+					x[j] = (x[j] + y[j]) * l.scalar
+				}
 			}
 		}
 	}
