@@ -81,6 +81,12 @@ func (m *Matrix) projectLocked(ctx context.Context, dst, x, scratch []float32, e
 				continue
 			}
 		}
+		if m.tensor.Type == Q8_0 {
+			if value, ok := fusedQ8Dot(m.rawRow(row), x, engine.Backend()); ok {
+				dst[row] = value
+				continue
+			}
+		}
 		if m.tensor.Type == Q5_K {
 			if value, ok := fusedQ5Dot(m.rawRow(row), x, engine.Backend()); ok {
 				dst[row] = value
