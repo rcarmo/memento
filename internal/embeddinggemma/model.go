@@ -222,10 +222,11 @@ func (m *Model) Tokenize(ctx context.Context, text string, opts Options) ([]int,
 // Workspace grows to a bounded high-water mark, is reusable, and contains no
 // model weights. Release it when a caller no longer needs its reserved memory.
 type Workspace struct {
+	ropeCache                                                           ropeTile
 	mu                                                                  sync.Mutex
 	capacity                                                            int
 	initial, hidden, q, k, v, attn                                      []float32
-	scratch, tmp, scores                                                []float32
+	scratch, tmp, scores, tilePacked                                    []float32
 	tileNorm, tileOut, tileGate, tileUp, tilePLE, tilePLEGate, tileSums []float32
 }
 
@@ -241,7 +242,7 @@ func (w *Workspace) prepare(n int) {
 		w.scores = make([]float32, n)
 	}
 	if w.scratch == nil {
-		w.scratch = make([]float32, 2048)
+		w.scratch = make([]float32, 8*2048)
 		w.tmp = make([]float32, 512)
 		w.tileNorm = make([]float32, projectionTile*512)
 		w.tileOut = make([]float32, projectionTile*512)
@@ -249,7 +250,8 @@ func (w *Workspace) prepare(n int) {
 		w.tileUp = make([]float32, projectionTile*2048)
 		w.tilePLE = make([]float32, projectionTile*512)
 		w.tilePLEGate = make([]float32, projectionTile*512)
-		w.tileSums = make([]float32, projectionTile)
+		w.tileSums = make([]float32, 8*projectionTile)
+		w.tilePacked = make([]float32, projectionTile*2048)
 	}
 }
 
@@ -332,22 +334,23 @@ func (m *Model) EmbedTokens(ctx context.Context, ids []int, dimensions int, w *W
 				m   *Matrix
 				dst []float32
 			}{{l.q, q[base*qwidth : (base+count)*qwidth]}, {l.k, k[base*kvwidth : (base+count)*kvwidth]}, {l.v, v[base*kvwidth : (base+count)*kvwidth]}} {
-				if err := p.m.projectTokensLocked(ctx, p.dst, norm, count, w.scratch, w.tileSums, m.engine); err != nil {
+				if err := p.m.projectPackedLocked(ctx, p.dst, norm, count, w.scratch, w.tilePacked, w.tileSums, m.engine); err != nil {
 					return nil, err
 				}
 			}
+			w.ropeCache.prepare(base, count, li%6 == 5)
 			for local := 0; local < count; local++ {
 				t := base + local
 				qt, kt, vt := q[t*qwidth:(t+1)*qwidth], k[t*kvwidth:(t+1)*kvwidth], v[t*kvwidth:(t+1)*kvwidth]
 				for h := 0; h < 4; h++ {
 					z := qt[h*head : (h+1)*head]
 					rms(z, z, l.qNorm)
-					rope(z, t, li%6 == 5)
+					w.ropeCache.apply(z, t)
 				}
 				for h := 0; h < l.kv; h++ {
 					z := kt[h*head : (h+1)*head]
 					rms(z, z, l.kNorm)
-					rope(z, t, li%6 == 5)
+					w.ropeCache.apply(z, t)
 					z = vt[h*head : (h+1)*head]
 					rms(z, z, nil)
 				}
@@ -359,7 +362,7 @@ func (m *Model) EmbedTokens(ctx context.Context, ids []int, dimensions int, w *W
 		for base := 0; base < n; base += projectionTile {
 			count := min(projectionTile, n-base)
 			batch := func(p *Matrix, dst, input []float32) error {
-				return p.projectTokensLocked(ctx, dst, input, count, w.scratch, w.tileSums, m.engine)
+				return p.projectPackedLocked(ctx, dst, input, count, w.scratch, w.tilePacked, w.tileSums, m.engine)
 			}
 			out := w.tileOut[:count*512]
 			norm := w.tileNorm[:count*512]

@@ -26,9 +26,10 @@ func TestProjectionTiles(t *testing.T) {
 					x[i] = float32(i%37-18) / 13
 				}
 				dst := make([]float32, n*rows)
-				scratch := make([]float32, cols)
-				sums := make([]float32, n)
-				if err := m.projectTokensLocked(context.Background(), dst, x, n, scratch, sums, engine); err != nil {
+				scratch := make([]float32, 8*cols)
+				sums := make([]float32, 8*projectionTile)
+				packed := make([]float32, projectionTile*cols)
+				if err := m.projectPackedLocked(context.Background(), dst, x, n, scratch, packed, sums, engine); err != nil {
 					t.Fatal(typ, backend, n, err)
 				}
 				for token := 0; token < n; token++ {
@@ -44,7 +45,7 @@ func TestProjectionTiles(t *testing.T) {
 					}
 				}
 				if allocs := testing.AllocsPerRun(2, func() {
-					if err := m.projectTokensLocked(context.Background(), dst, x, n, scratch, sums, engine); err != nil {
+					if err := m.projectPackedLocked(context.Background(), dst, x, n, scratch, packed, sums, engine); err != nil {
 						panic(err)
 					}
 				}); allocs != 0 {
@@ -53,12 +54,12 @@ func TestProjectionTiles(t *testing.T) {
 			}
 		}
 		engine, _ := simd.New("scalar")
-		if err := m.projectTokensLocked(context.Background(), nil, nil, 0, nil, nil, engine); err == nil {
+		if err := m.projectPackedLocked(context.Background(), nil, nil, 0, nil, nil, nil, engine); err == nil {
 			t.Fatal("bounds")
 		}
 		ctx, cancel := context.WithCancel(context.Background())
 		cancel()
-		if err := m.projectTokensLocked(ctx, make([]float32, 2*rows), make([]float32, 2*cols), 2, make([]float32, cols), make([]float32, 2), engine); err != context.Canceled {
+		if err := m.projectPackedLocked(ctx, make([]float32, 2*rows), make([]float32, 2*cols), 2, make([]float32, cols), nil, make([]float32, 2), engine); err != context.Canceled {
 			t.Fatal(err)
 		}
 	}

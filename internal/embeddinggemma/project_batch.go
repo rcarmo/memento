@@ -43,3 +43,49 @@ func (m *Matrix) projectTokensLocked(ctx context.Context, dst, x []float32, n in
 	}
 	return ctx.Err()
 }
+
+// Eight-row decoded panel and token-packed activation panel are bounded by the
+// existing tile size. Buffers belong to the locked request workspace.
+func (m *Matrix) projectPackedLocked(ctx context.Context, dst, x []float32, n int, decoded, packed, sums []float32, engine simd.Engine) error {
+	if n < 1 || n > projectionTile || len(dst) != n*m.rows || len(x) != n*m.columns || len(decoded) < m.columns || len(sums) < n {
+		return fmt.Errorf("embeddinggemma: invalid packed projection tile")
+	}
+	if !packedProjectionSupported(engine.Backend()) || n < 8 {
+		return m.projectTokensLocked(ctx, dst, x, n, decoded, sums, engine)
+	}
+	nt := (n + 7) &^ 7
+	if len(decoded) < 8*m.columns || len(packed) < nt*m.columns || len(sums) < 8*nt {
+		return fmt.Errorf("embeddinggemma: short packed scratch")
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	packed = packed[:m.columns*nt]
+	clear(packed)
+	for t := 0; t < n; t++ {
+		for col := 0; col < m.columns; col++ {
+			packed[col*nt+t] = x[t*m.columns+col]
+		}
+	}
+	for row := 0; row < m.rows; row += 8 {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		count := min(8, m.rows-row)
+		for r := 0; r < count; r++ {
+			if err := decodeTileRow(decoded[r*m.columns:(r+1)*m.columns], m.rawRow(row+r), m.tensor.Type, engine.Backend()); err != nil {
+				return err
+			}
+		}
+		if count < 8 {
+			clear(decoded[count*m.columns : 8*m.columns])
+		}
+		packedRows(decoded[:8*m.columns], packed, sums[:8*nt], m.columns, nt)
+		for r := 0; r < count; r++ {
+			for t := 0; t < n; t++ {
+				dst[t*m.rows+row+r] = sums[r*nt+t]
+			}
+		}
+	}
+	return ctx.Err()
+}
