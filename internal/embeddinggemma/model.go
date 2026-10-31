@@ -356,8 +356,17 @@ func (m *Model) EmbedTokens(ctx context.Context, ids []int, dimensions int, w *W
 				}
 			}
 		}
-		if err := attention(ctx, attn, q, k, v, n, head, l.kv, li%6 != 5, w.scores, m.engine); err != nil {
-			return nil, err
+		if n < 128 {
+			if err := attention(ctx, attn, q, k, v, n, head, l.kv, li%6 != 5, w.scores, m.engine); err != nil {
+				return nil, err
+			}
+		} else {
+			// Reuse attention output as temporary storage for head-major KV rows.
+			transposeKV(k, attn[:len(k)], n, head, l.kv)
+			transposeKV(v, attn[:len(v)], n, head, l.kv)
+			if err := attentionContiguous(ctx, attn, q, k, v, n, head, l.kv, li%6 != 5, w.scores, m.engine); err != nil {
+				return nil, err
+			}
 		}
 		for base := 0; base < n; base += projectionTile {
 			count := min(projectionTile, n-base)
@@ -476,6 +485,7 @@ func rms(dst, x, weight []float32) {
 	}
 }
 func gelu(x float32) float32 {
+
 	return .5 * x * (1 + float32(math.Tanh(.7978845608028654*float64(x)*(1+.044715*float64(x)*float64(x)))))
 }
 func rope(x []float32, pos int, global bool) {
