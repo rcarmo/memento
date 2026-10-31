@@ -409,7 +409,7 @@ func (m *Model) EmbedTokens(ctx context.Context, ids []int, dimensions int, w *W
 				return nil, err
 			}
 			for j := range gate {
-				gate[j] = gelu(gate[j]) * up[j]
+				gate[j] = fastGELU(gate[j]) * up[j]
 			}
 			if err := batch(l.down, out, gate); err != nil {
 				return nil, err
@@ -436,7 +436,7 @@ func (m *Model) EmbedTokens(ctx context.Context, ids []int, dimensions int, w *W
 				return nil, err
 			}
 			for j := range pg {
-				pg[j] = gelu(pg[j]) * ple[j]
+				pg[j] = fastGELU(pg[j]) * ple[j]
 			}
 			if err := batch(l.pleOut, out, pg); err != nil {
 				return nil, err

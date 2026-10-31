@@ -62,7 +62,7 @@ func (m *Matrix) projectPackedLocked(ctx context.Context, dst, x []float32, n in
 	}
 	packed = packed[:m.columns*nt]
 	clear(packed)
-	packTokens(x, packed, m.columns, n, nt)
+	packBlocked(x, packed, m.columns, n, nt)
 	return m.projectPanels(ctx, dst, n, nt, decoded, packed, sums, engine, 0, m.rows)
 }
 
@@ -81,10 +81,10 @@ func (m *Matrix) projectPanels(ctx context.Context, dst []float32, n, nt int, de
 			clear(decoded[count*m.columns : 8*m.columns])
 		}
 		if count == 8 {
-			packedRowsScatter(decoded[:8*m.columns], packed, dst[row:], m.columns, nt, m.rows, n)
+			blockedScatter(decoded[:8*m.columns], packed, dst[row:], m.columns, nt, m.rows, n)
 			continue
 		}
-		packedRows(decoded[:8*m.columns], packed, sums[:8*nt], m.columns, nt)
+		blockedRows(decoded[:8*m.columns], packed, sums[:8*nt], m.columns, nt)
 		for r := 0; r < count; r++ {
 			for t := 0; t < n; t++ {
 				dst[t*m.rows+row+r] = sums[r*nt+t]

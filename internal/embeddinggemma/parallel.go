@@ -100,7 +100,7 @@ func (t *projectionTeam) project(m *Matrix, dst, x []float32, n int, w *Workspac
 	nt := (n + 7) &^ 7
 	packed := w.tilePacked[:nt*m.columns]
 	clear(packed)
-	packTokens(x, packed, m.columns, n, nt)
+	packBlocked(x, packed, m.columns, n, nt)
 	panels := (m.rows + 7) / 8
 	step := (panels + len(t.workers) - 1) / len(t.workers)
 	for i := range t.workers {
