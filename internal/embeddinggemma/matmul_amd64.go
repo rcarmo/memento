@@ -15,3 +15,12 @@ func packedRows(weights, packed, output []float32, cols, tokens int) {
 	}
 	matmul8AVX2(&weights[0], &packed[0], &output[0], cols, tokens)
 }
+
+//go:noescape
+func matmulScatterAVX2(weights, packed, output *float32, cols, tokens, rows int)
+func packedRowsScatter(weights, packed, output []float32, cols, tokens, rows int) {
+	if cols < 1 || cols > 2048 || tokens < 8 || tokens > projectionTile || tokens%8 != 0 || rows < 8 || rows > 12288 || len(weights) < 8*cols || len(packed) < cols*tokens || len(output) < (tokens-1)*rows+8 {
+		panic("embeddinggemma: invalid scatter kernel panel")
+	}
+	matmulScatterAVX2(&weights[0], &packed[0], &output[0], cols, tokens, rows)
+}

@@ -62,11 +62,7 @@ func (m *Matrix) projectPackedLocked(ctx context.Context, dst, x []float32, n in
 	}
 	packed = packed[:m.columns*nt]
 	clear(packed)
-	for t := 0; t < n; t++ {
-		for col := 0; col < m.columns; col++ {
-			packed[col*nt+t] = x[t*m.columns+col]
-		}
-	}
+	packTokens(x, packed, m.columns, n, nt)
 	for row := 0; row < m.rows; row += 8 {
 		if err := ctx.Err(); err != nil {
 			return err
@@ -79,6 +75,10 @@ func (m *Matrix) projectPackedLocked(ctx context.Context, dst, x []float32, n in
 		}
 		if count < 8 {
 			clear(decoded[count*m.columns : 8*m.columns])
+		}
+		if count == 8 && n == nt {
+			packedRowsScatter(decoded[:8*m.columns], packed, dst[row:], m.columns, nt, m.rows)
+			continue
 		}
 		packedRows(decoded[:8*m.columns], packed, sums[:8*nt], m.columns, nt)
 		for r := 0; r < count; r++ {

@@ -16,7 +16,7 @@ func TestPackedMultiplePanels(t *testing.T) {
 	}
 	const cols = 256
 	for _, rows := range []int{8, 9, 15, 16, 17} {
-		for _, n := range []int{9, 15, 64} {
+		for _, n := range []int{8, 9, 15, 16, 32, 64} {
 			raw := encodedRows(Q4_K, cols, rows)
 			f := &File{data: raw}
 			m := &Matrix{owner: f, tensor: Tensor{Type: Q4_K, Bytes: uint64(len(raw))}, columns: cols, rows: rows}
