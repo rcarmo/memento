@@ -10,7 +10,7 @@ import (
 )
 
 func TestRunInvalid(t *testing.T) {
-	for _, args := range [][]string{nil, {"-bad"}, {"-model", "missing"}, {"-model", "missing", "-role", "invalid"}, {"-model", "missing", "-dimensions", "17"}, {"-model", "missing", "extra"}} {
+	for _, args := range [][]string{nil, {"-bad"}, {"-model", "missing"}, {"-model", "missing", "-role", "invalid"}, {"-model", "missing", "-dimensions", "17"}, {"-model", "missing", "extra"}, {"-model", "missing", "-workers", "0"}, {"-model", "missing", "-workers", "9"}} {
 		var out, err bytes.Buffer
 		if run(context.Background(), args, &out, &err) == 0 || out.Len() != 0 || err.Len() == 0 {
 			t.Fatal(args, out.String(), err.String())
@@ -23,7 +23,7 @@ func TestRunReal(t *testing.T) {
 		t.Skip("no model")
 	}
 	var out, stderr bytes.Buffer
-	if code := run(context.Background(), []string{"-model", path, "-text", "hello", "-dimensions", "128", "-role", "query"}, &out, &stderr); code != 0 {
+	if code := run(context.Background(), []string{"-model", path, "-text", "hello", "-dimensions", "128", "-role", "query", "-workers", "2"}, &out, &stderr); code != 0 {
 		t.Fatal(code, stderr.String())
 	}
 	var result struct {

@@ -58,7 +58,7 @@ func TestScatterInvalidPanel(t *testing.T) {
 					t.Error("invalid scatter panel accepted", c)
 				}
 			}()
-			packedRowsScatter(make([]float32, c.w), make([]float32, c.p), make([]float32, c.out), c.cols, c.tokens, c.rows)
+			packedRowsScatter(make([]float32, c.w), make([]float32, c.p), make([]float32, c.out), c.cols, c.tokens, c.rows, c.tokens)
 		}()
 	}
 }

@@ -222,6 +222,10 @@ func (m *Model) Tokenize(ctx context.Context, text string, opts Options) ([]int,
 // Workspace grows to a bounded high-water mark, is reusable, and contains no
 // model weights. Release it when a caller no longer needs its reserved memory.
 type Workspace struct {
+	Workers                                                             int
+	parallelBuffers                                                     []projectionWorker
+	requestContext                                                      context.Context
+	requestEngine                                                       simd.Engine
 	ropeCache                                                           ropeTile
 	mu                                                                  sync.Mutex
 	capacity                                                            int
@@ -301,7 +305,14 @@ func (m *Model) EmbedTokens(ctx context.Context, ids []int, dimensions int, w *W
 	if m.file.data == nil {
 		return nil, errors.New("embeddinggemma: model closed")
 	}
+	if w.Workers < 0 || w.Workers > 8 {
+		return nil, errors.New("embeddinggemma: workers must be between 0 and 8")
+	}
 	w.prepare(n)
+	w.requestContext, w.requestEngine = ctx, m.engine
+	defer func() { w.requestContext = nil }()
+	team := startProjectionTeam(ctx, w, m.engine)
+	defer team.close()
 	initial, hidden := w.initial[:n*512], w.hidden[:n*512]
 	const scale = float32(22.627416997969522)
 	for t, id := range ids {
@@ -334,7 +345,7 @@ func (m *Model) EmbedTokens(ctx context.Context, ids []int, dimensions int, w *W
 				m   *Matrix
 				dst []float32
 			}{{l.q, q[base*qwidth : (base+count)*qwidth]}, {l.k, k[base*kvwidth : (base+count)*kvwidth]}, {l.v, v[base*kvwidth : (base+count)*kvwidth]}} {
-				if err := p.m.projectPackedLocked(ctx, p.dst, norm, count, w.scratch, w.tilePacked, w.tileSums, m.engine); err != nil {
+				if err := team.project(p.m, p.dst, norm, count, w); err != nil {
 					return nil, err
 				}
 			}
@@ -371,7 +382,7 @@ func (m *Model) EmbedTokens(ctx context.Context, ids []int, dimensions int, w *W
 		for base := 0; base < n; base += projectionTile {
 			count := min(projectionTile, n-base)
 			batch := func(p *Matrix, dst, input []float32) error {
-				return p.projectPackedLocked(ctx, dst, input, count, w.scratch, w.tilePacked, w.tileSums, m.engine)
+				return team.project(p, dst, input, count, w)
 			}
 			out := w.tileOut[:count*512]
 			norm := w.tileNorm[:count*512]

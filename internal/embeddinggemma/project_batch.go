@@ -63,7 +63,11 @@ func (m *Matrix) projectPackedLocked(ctx context.Context, dst, x []float32, n in
 	packed = packed[:m.columns*nt]
 	clear(packed)
 	packTokens(x, packed, m.columns, n, nt)
-	for row := 0; row < m.rows; row += 8 {
+	return m.projectPanels(ctx, dst, n, nt, decoded, packed, sums, engine, 0, m.rows)
+}
+
+func (m *Matrix) projectPanels(ctx context.Context, dst []float32, n, nt int, decoded, packed, sums []float32, engine simd.Engine, start, end int) error {
+	for row := start; row < end; row += 8 {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
@@ -76,8 +80,8 @@ func (m *Matrix) projectPackedLocked(ctx context.Context, dst, x []float32, n in
 		if count < 8 {
 			clear(decoded[count*m.columns : 8*m.columns])
 		}
-		if count == 8 && n == nt {
-			packedRowsScatter(decoded[:8*m.columns], packed, dst[row:], m.columns, nt, m.rows)
+		if count == 8 {
+			packedRowsScatter(decoded[:8*m.columns], packed, dst[row:], m.columns, nt, m.rows, n)
 			continue
 		}
 		packedRows(decoded[:8*m.columns], packed, sums[:8*nt], m.columns, nt)

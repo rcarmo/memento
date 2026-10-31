@@ -74,7 +74,7 @@ mm_col:
  RET
 
 // Store real full token panels directly in token-major result order.
-TEXT ·matmulScatterAVX2(SB), NOSPLIT, $0-48
+TEXT ·matmulScatterAVX2(SB), NOSPLIT, $0-56
  MOVQ weights+0(FP), R12
  MOVQ packed+8(FP), R13
  MOVQ output+16(FP), R8
@@ -94,6 +94,9 @@ TEXT ·matmulScatterAVX2(SB), NOSPLIT, $0-48
  IMULQ R9, R11
  XORQ CX, CX
 sc_token:
+ LEAQ (R9)(R9*2),AX
+ MOVQ $4,BX
+ IMULQ R9,BX
  MOVQ R12, SI
  LEAQ (R13)(CX*1), DI
  MOVQ cols+24(FP), DX
@@ -157,22 +160,43 @@ sc_col:
  LEAQ (R8)(DX*4),DI
  MOVQ rows+40(FP),DX
  SHLQ $2,DX
+ MOVQ CX,AX
+ SHRQ $2,AX
+ MOVQ valid+48(FP),BX
+ SUBQ AX,BX
+ CMPQ BX,$0
+ JLE sc_stored
  VMOVUPS Y0,(DI)
  ADDQ DX,DI
+ CMPQ BX,$1
+ JLE sc_stored
  VMOVUPS Y1,(DI)
  ADDQ DX,DI
+ CMPQ BX,$2
+ JLE sc_stored
  VMOVUPS Y2,(DI)
  ADDQ DX,DI
+ CMPQ BX,$3
+ JLE sc_stored
  VMOVUPS Y3,(DI)
  ADDQ DX,DI
+ CMPQ BX,$4
+ JLE sc_stored
  VMOVUPS Y4,(DI)
  ADDQ DX,DI
+ CMPQ BX,$5
+ JLE sc_stored
  VMOVUPS Y5,(DI)
  ADDQ DX,DI
+ CMPQ BX,$6
+ JLE sc_stored
  VMOVUPS Y6,(DI)
  ADDQ DX,DI
+ CMPQ BX,$7
+ JLE sc_stored
  VMOVUPS Y7,(DI)
  ADDQ DX,DI
+sc_stored:
  ADDQ $32,CX
  CMPQ CX, R10
  JL sc_token

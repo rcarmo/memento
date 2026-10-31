@@ -21,8 +21,13 @@ func run(ctx context.Context, args []string, out, stderr io.Writer) int {
 	role := flags.String("role", "raw", "raw, query or document")
 	title := flags.String("title", "", "document title")
 	backend := flags.String("backend", "auto", "SIMD backend")
+	workers := flags.Int("workers", 1, "bounded intra-request CPU workers (1..8)")
 	dims := flags.Int("dimensions", 768, "768, 512, 256 or 128")
 	if err := flags.Parse(args); err != nil {
+		return 2
+	}
+	if *workers < 1 || *workers > 8 {
+		fmt.Fprintln(stderr, "invalid worker count")
 		return 2
 	}
 	if *model == "" || flags.NArg() != 0 {
@@ -49,7 +54,7 @@ func run(ctx context.Context, args []string, out, stderr io.Writer) int {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	v, err := m.EmbedTokens(ctx, ids, *dims, &embeddinggemma.Workspace{})
+	v, err := m.EmbedTokens(ctx, ids, *dims, &embeddinggemma.Workspace{Workers: *workers})
 	if err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1

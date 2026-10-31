@@ -8,6 +8,6 @@ func packedProjectionSupported(backend simd.Backend) bool { return false }
 func packedRows(weights, packed, output []float32, cols, tokens int) {
 	panic("embeddinggemma: unavailable packed projection")
 }
-func packedRowsScatter(weights, packed, output []float32, cols, tokens, rows int) {
+func packedRowsScatter(weights, packed, output []float32, cols, tokens, rows, valid int) {
 	panic("embeddinggemma: unavailable packed scatter projection")
 }

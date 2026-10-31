@@ -63,6 +63,7 @@ type hit struct {
 	Score float64
 }
 type report struct {
+	GemmaWorkers                                                    int
 	Engine, Revision, Toolchain, Backend, CorpusSHA256, ModelSHA256 string
 	ModelBytes                                                      int64
 	GOMAXPROCS                                                      int
@@ -178,6 +179,9 @@ func run() error {
 	profileDir := flag.String("profiles", "", "optional project-owned CPU/heap scratch directory")
 	revision := flag.String("revision", "", "source revision")
 	mode := flag.String("mode", "all", "all, performance or retrieval")
+	// Flags for an explicit shared CPU budget.
+	threads := flag.Int("threads", 1, "CPU scheduler budget")
+	workers := flag.Int("gemma-workers", 1, "Gemma projection workers")
 	flag.Parse()
 	if *engine != "gte" && *engine != "gemma" {
 		return fmt.Errorf("invalid engine")
@@ -185,7 +189,10 @@ func run() error {
 	if *mode != "all" && *mode != "performance" && *mode != "retrieval" {
 		return fmt.Errorf("invalid mode")
 	}
-	runtime.GOMAXPROCS(1)
+	if *threads < 1 || *threads > 64 || *workers < 1 || *workers > 8 {
+		return fmt.Errorf("invalid CPU worker budget")
+	}
+	runtime.GOMAXPROCS(*threads)
 	raw, err := os.ReadFile(*corpusPath)
 	if err != nil {
 		return err
@@ -199,7 +206,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	r := report{Engine: *engine, Revision: *revision, Toolchain: runtime.Version(), GOMAXPROCS: runtime.GOMAXPROCS(0), Backend: "auto/avx2", CorpusSHA256: hex.EncodeToString(ch[:]), ModelSHA256: hash, ModelBytes: size}
+	r := report{GemmaWorkers: *workers, Engine: *engine, Revision: *revision, Toolchain: runtime.Version(), GOMAXPROCS: runtime.GOMAXPROCS(0), Backend: "auto/avx2", CorpusSHA256: hex.EncodeToString(ch[:]), ModelSHA256: hash, ModelBytes: size}
 	var embed func(string, string, string) ([]float32, error)
 	var tokenize func(string, string, string) ([]int, error)
 	dimensions := 384
@@ -233,7 +240,7 @@ func run() error {
 		r.LoadMS = ms(time.Since(start))
 		r.Config = map[string]int{"layers": 24, "hidden": 512, "dimensions": 768, "max_tokens": 8192}
 		dimensions = 768
-		w := &embeddinggemma.Workspace{}
+		w := &embeddinggemma.Workspace{Workers: *workers}
 		embed = func(s, role, title string) ([]float32, error) {
 			return m.Embed(ctx, s, embeddinggemma.Options{Role: embeddinggemma.Role(role), Title: title}, w)
 		}

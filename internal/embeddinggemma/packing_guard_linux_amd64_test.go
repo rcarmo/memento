@@ -53,9 +53,7 @@ func TestPackingScatterGuardPages(t *testing.T) {
 					}
 				}
 			}
-			if n != nt {
-				continue
-			}
+
 			const rows = 17
 			w, out := alloc(8*cols), alloc((n-1)*rows+8)
 			for i := range w {
@@ -64,7 +62,7 @@ func TestPackingScatterGuardPages(t *testing.T) {
 			for i := range out {
 				out[i] = 12345
 			}
-			packedRowsScatter(w, p, out, cols, n, rows)
+			packedRowsScatter(w, p, out, cols, nt, rows, n)
 			for token := 0; token < n; token++ {
 				for r := 0; r < 8; r++ {
 					var want float64
