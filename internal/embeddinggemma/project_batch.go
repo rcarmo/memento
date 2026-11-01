@@ -44,7 +44,7 @@ func (m *Matrix) projectTokensLocked(ctx context.Context, dst, x []float32, n in
 	return ctx.Err()
 }
 
-// Eight-row decoded panel and token-packed activation panel are bounded by the
+// Six-row decoded panel and sixteen-token activation blocks are bounded by the
 // existing tile size. Buffers belong to the locked request workspace.
 func (m *Matrix) projectPackedLocked(ctx context.Context, dst, x []float32, n int, decoded, packed, sums []float32, engine simd.Engine) error {
 	if n < 1 || n > projectionTile || len(dst) != n*m.rows || len(x) != n*m.columns || len(decoded) < m.columns || len(sums) < n {
@@ -53,8 +53,8 @@ func (m *Matrix) projectPackedLocked(ctx context.Context, dst, x []float32, n in
 	if !packedProjectionSupported(engine.Backend()) || n < 8 {
 		return m.projectTokensLocked(ctx, dst, x, n, decoded, sums, engine)
 	}
-	nt := (n + 7) &^ 7
-	if len(decoded) < 8*m.columns || len(packed) < nt*m.columns || len(sums) < 8*nt {
+	nt := (n + 15) &^ 15
+	if len(decoded) < 6*m.columns || len(packed) < nt*m.columns || len(sums) < 6*nt {
 		return fmt.Errorf("embeddinggemma: short packed scratch")
 	}
 	if err := ctx.Err(); err != nil {
@@ -62,29 +62,29 @@ func (m *Matrix) projectPackedLocked(ctx context.Context, dst, x []float32, n in
 	}
 	packed = packed[:m.columns*nt]
 	clear(packed)
-	packBlocked(x, packed, m.columns, n, nt)
+	packWide(x, packed, m.columns, n, nt)
 	return m.projectPanels(ctx, dst, n, nt, decoded, packed, sums, engine, 0, m.rows)
 }
 
 func (m *Matrix) projectPanels(ctx context.Context, dst []float32, n, nt int, decoded, packed, sums []float32, engine simd.Engine, start, end int) error {
-	for row := start; row < end; row += 8 {
+	for row := start; row < end; row += 6 {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
-		count := min(8, m.rows-row)
+		count := min(6, end-row)
 		for r := 0; r < count; r++ {
 			if err := decodeTileRow(decoded[r*m.columns:(r+1)*m.columns], m.rawRow(row+r), m.tensor.Type, engine.Backend()); err != nil {
 				return err
 			}
 		}
-		if count < 8 {
-			clear(decoded[count*m.columns : 8*m.columns])
+		if count < 6 {
+			clear(decoded[count*m.columns : 6*m.columns])
 		}
-		if count == 8 {
-			blockedScatter(decoded[:8*m.columns], packed, dst[row:], m.columns, nt, m.rows, n)
+		if count == 6 {
+			wideScatter(decoded[:6*m.columns], packed, dst[row:], m.columns, nt, m.rows, n)
 			continue
 		}
-		blockedRows(decoded[:8*m.columns], packed, sums[:8*nt], m.columns, nt)
+		wideRows(decoded[:6*m.columns], packed, sums[:6*nt], m.columns, nt)
 		for r := 0; r < count; r++ {
 			for t := 0; t < n; t++ {
 				dst[t*m.rows+row+r] = sums[r*nt+t]
