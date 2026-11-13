@@ -24,12 +24,12 @@ jobs:
       - name: Initialise project scratch
         run: |
           source tools/project-env.sh
-          for key in PROJECT_TMP_ROOT PROJECT_ORIGINAL_TMPDIR MEMENTO_RUN_ROOT TMPDIR TMP TEMP GOTMPDIR GOCACHE GOMODCACHE XDG_CACHE_HOME BUN_INSTALL_CACHE_DIR npm_config_cache PIP_CACHE_DIR UV_CACHE_DIR PYTHONPYCACHEPREFIX PLAYWRIGHT_BROWSERS_PATH; do
+          for key in PROJECT_TMP_ROOT PROJECT_ORIGINAL_TMPDIR MEMENTO_RUN_ROOT PROFILE_ROOT TMPDIR TMP TEMP GOTMPDIR GOCACHE GOMODCACHE XDG_CACHE_HOME BUN_INSTALL_CACHE_DIR npm_config_cache PIP_CACHE_DIR UV_CACHE_DIR PYTHONPYCACHEPREFIX PLAYWRIGHT_BROWSERS_PATH; do
             echo "$key=${!key}" >> "$GITHUB_ENV"
           done
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
-          go-version: '1.26.6'
+          go-version: '1.26.11'
           cache: false
           cache-dependency-path: |
             go.sum
@@ -47,16 +47,20 @@ jobs:
         with:
           name: ui-audit-results
           path: build/ui-audit
-          retention-days: 7
-      - name: Retain CPU and allocation profiles
+          retention-days: 1
+      - name: Upload CPU and allocation profiles for analysis
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: go-test-profiles
-          path: build/profiles
-          retention-days: 7
+          path: ${{ env.PROFILE_ROOT }}
+          retention-days: 1
           if-no-files-found: warn
           compression-level: 6
+      - name: Remove analysed runner profile scratch
+        if: always()
+        run: |
+          case "$PROFILE_ROOT" in "$PROJECT_TMP_ROOT"/runs/profiles) rm -rf -- "$PROFILE_ROOT" ;; *) echo "Invalid profile cleanup scope" >&2; exit 1 ;; esac
 
   runtime-models:
     name: Prepare cached runtime models
@@ -107,12 +111,12 @@ jobs:
       - name: Initialise project scratch
         run: |
           source tools/project-env.sh
-          for key in PROJECT_TMP_ROOT PROJECT_ORIGINAL_TMPDIR MEMENTO_RUN_ROOT TMPDIR TMP TEMP GOTMPDIR GOCACHE GOMODCACHE XDG_CACHE_HOME BUN_INSTALL_CACHE_DIR npm_config_cache PIP_CACHE_DIR UV_CACHE_DIR PYTHONPYCACHEPREFIX PLAYWRIGHT_BROWSERS_PATH; do
+          for key in PROJECT_TMP_ROOT PROJECT_ORIGINAL_TMPDIR MEMENTO_RUN_ROOT PROFILE_ROOT TMPDIR TMP TEMP GOTMPDIR GOCACHE GOMODCACHE XDG_CACHE_HOME BUN_INSTALL_CACHE_DIR npm_config_cache PIP_CACHE_DIR UV_CACHE_DIR PYTHONPYCACHEPREFIX PLAYWRIGHT_BROWSERS_PATH; do
             echo "$key=${!key}" >> "$GITHUB_ENV"
           done
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
-          go-version: '1.26.6'
+          go-version: '1.26.11'
           cache: false
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
@@ -128,13 +132,17 @@ jobs:
         run: make corpus-test
       - name: Build and test pure-Go image
         if: matrix.arch == 'amd64'
-        run: make go-container-contract MEMENTO_VERSION=1.0.11
+        run: make go-container-contract MEMENTO_VERSION=1.0.12
       - name: Retain model CPU and allocation profiles
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: model-test-profiles-${{ matrix.arch }}
-          path: build/profiles
-          retention-days: 7
+          path: ${{ env.PROFILE_ROOT }}
+          retention-days: 1
           if-no-files-found: warn
           compression-level: 6
+      - name: Remove analysed runner profile scratch
+        if: always()
+        run: |
+          case "$PROFILE_ROOT" in "$PROJECT_TMP_ROOT"/runs/profiles) rm -rf -- "$PROFILE_ROOT" ;; *) echo "Invalid profile cleanup scope" >&2; exit 1 ;; esac

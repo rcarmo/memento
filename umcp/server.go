@@ -57,7 +57,7 @@ func NewServer(name string) *Server {
 	s.Completions.Prompts = &s.Prompts
 	s.Completions.Resources = &s.Resources
 	s.dispatcher = Dispatcher{Handlers: map[string]Handler{
-		"initialize": s.initialize, "tools/list": s.Tools.List, "tools/call": s.Tools.Call,
+		"initialize": s.initialize, "ping": ping, "tools/list": s.Tools.List, "tools/call": s.Tools.Call,
 		"prompts/list": s.Prompts.List, "prompts/get": s.Prompts.Get,
 		"resources/list": s.Resources.List, "resources/templates/list": s.Resources.ListTemplates, "resources/read": s.Resources.Read,
 		"resources/subscribe": s.Resources.Subscribe, "resources/unsubscribe": s.Resources.Unsubscribe,
@@ -66,6 +66,12 @@ func NewServer(name string) *Server {
 	s.Tools.Notify = s.send
 	s.Prompts.Notify = s.send
 	return s
+}
+
+// ping is a protocol liveness request. Transport authentication, session
+// ownership and authorization run before dispatch; no tool is invoked.
+func ping(_ context.Context, _ map[string]any) (any, *RPCError, error) {
+	return map[string]any{}, nil, nil
 }
 
 // SetHandler replaces a protocol handler during server construction, mirroring

@@ -363,7 +363,18 @@ func TestBootstrapSeedIOFailures(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer out.Close()
-	if err = copySeedTree(context.Background(), seedOSRoot{in}, faultSeedFS{seedOSRoot{out}, "create"}, "."); err == nil {
+	// Keep this fault independent of the FIFO above: filesystem directory
+	// order may visit dir/fifo first and mask the regular-file copy error.
+	fileOnly := t.TempDir()
+	if err = os.WriteFile(filepath.Join(fileOnly, "file"), []byte("text"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	fileRoot, err := os.OpenRoot(fileOnly)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer fileRoot.Close()
+	if err = copySeedTree(context.Background(), seedOSRoot{fileRoot}, faultSeedFS{seedOSRoot{out}, "create"}, "."); err == nil {
 		t.Fatal("copy error")
 	}
 }

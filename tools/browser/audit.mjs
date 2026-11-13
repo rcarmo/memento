@@ -14,7 +14,7 @@ const parent=path.join(root,'build/ui-audit',engine);await mkdir(parent,{recursi
 // Readiness files, exports, logs and screenshots belong to this invocation only.
 const output=await mkdtemp(path.join(parent,'run-'));
 const ready=path.join(output,'ready');
-const child=spawn('bash',[path.join(root,'tools/test-profile.sh'),'./internal/service','--','-run','^TestUIAuditServer$','-v','-timeout=14m'],{cwd:root,env:{...process.env,CGO_ENABLED:'0',GOTOOLCHAIN:'go1.26.6',MEMENTO_UI_AUDIT_READY:ready},detached:process.platform!=='win32',stdio:['ignore','pipe','pipe']});
+const child=spawn('bash',[path.join(root,'tools/test-profile.sh'),'./internal/service','--','-run','^TestUIAuditServer$','-v','-timeout=14m'],{cwd:root,env:{...process.env,CGO_ENABLED:'0',GOTOOLCHAIN:'go1.26.11',MEMENTO_UI_AUDIT_READY:ready},detached:process.platform!=='win32',stdio:['ignore','pipe','pipe']});
 let logs='';child.stdout.on('data',b=>logs+=b);child.stderr.on('data',b=>logs+=b);
 let exited=false;const exit=new Promise(resolve=>{child.on('error',error=>{logs+=error.stack;exited=true;resolve(-1)});child.on('exit',code=>{exited=true;resolve(code)})});
 let browser,base,webgl2,stopping;const results=[];const delay=ms=>new Promise(r=>setTimeout(r,ms));
@@ -40,7 +40,7 @@ try {
  if(process.env.UI_LIFECYCLE_ONLY==='1'){while(!stopping)await delay(50);throw new Error('Lifecycle-only audit interrupted')}
  browser=await ({chromium,firefox,webkit}[engine]).launch({headless:true,...(engine==='chromium'?{args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']}:{})});
  const lock=await readFile(path.join(root,'tools/browser/package-lock.json'));
- await writeFile(path.join(output,'environment.json'),JSON.stringify({engine,browserVersion:browser.version(),node:process.version,platform:process.platform,arch:process.arch,goToolchain:'go1.26.6',lockSHA256:createHash('sha256').update(lock).digest('hex')},null,2));
+ await writeFile(path.join(output,'environment.json'),JSON.stringify({engine,browserVersion:browser.version(),node:process.version,platform:process.platform,arch:process.arch,goToolchain:'go1.26.11',lockSHA256:createHash('sha256').update(lock).digest('hex')},null,2));
  const probe=await browser.newPage();webgl2=await probe.evaluate(()=>!!document.createElement('canvas').getContext('webgl2'));await probe.close();
  // Chromium/WebKit are required gates. Firefox is explicitly fallback/admin only.
  if(!webgl2&&engine!=='firefox')throw new Error(engine+' requires WebGL2; graph cases must not silently skip');
