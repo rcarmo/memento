@@ -8,7 +8,7 @@ endif
 TOOLS_DIR := $(shell bash ../tools/project-env.sh --print-tools)
 export BUILD_ROOT TOOLS_DIR
 GO ?= go
-GOTOOLCHAIN ?= go1.26.6
+GOTOOLCHAIN ?= go1.26.11
 export GOTOOLCHAIN
 STATICCHECK_VERSION ?= v0.6.1
 GOVULNCHECK_VERSION ?= v1.1.4

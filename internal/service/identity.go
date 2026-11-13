@@ -76,14 +76,23 @@ func copyAuthorization(config access.AuthorizationConfig) access.AuthorizationCo
 	return config
 }
 
-// AuthenticateHeaders expects lowercase header keys supplied by the transport,
-// and the case-sensitive, untrimmed "Bearer " prefix used by Python.
+// bearerToken matches the ASCII case-insensitive HTTP authentication scheme
+// (RFC 9110), preserving the literal separator and all credential bytes. Token
+// validation remains the responsibility of the configured identity store.
+func bearerToken(value string) (string, bool) {
+	if len(value) < 7 || !strings.EqualFold(value[:6], "Bearer") || value[6] != ' ' {
+		return "", false
+	}
+	return value[7:], true
+}
+
+// AuthenticateHeaders expects lowercase header keys supplied by the transport.
+// Only the scheme is case-insensitive; credentials are never trimmed or folded.
 func (i *Identity) AuthenticateHeaders(ctx context.Context, headers map[string]string) (*access.Principal, error) {
-	authorization := headers["authorization"]
-	if !strings.HasPrefix(authorization, "Bearer ") {
+	token, ok := bearerToken(headers["authorization"])
+	if !ok {
 		return nil, nil
 	}
-	token := strings.TrimPrefix(authorization, "Bearer ")
 	if i.managed != nil {
 		return i.managed.Authenticate(ctx, token)
 	}

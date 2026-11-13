@@ -101,11 +101,11 @@ func (h AdminHTTP) principal(item access.ManagedPrincipal) map[string]any {
 	return payload
 }
 func (h AdminHTTP) authenticate(ctx context.Context, headers map[string]string) (*access.Principal, error) {
-	value := headers["authorization"]
-	if !strings.HasPrefix(value, "Bearer ") || h.Store == nil {
+	token, ok := bearerToken(headers["authorization"])
+	if !ok || h.Store == nil {
 		return nil, nil
 	}
-	return h.Store.Authenticate(ctx, strings.TrimPrefix(value, "Bearer "))
+	return h.Store.Authenticate(ctx, token)
 }
 func (h AdminHTTP) principalAction(ctx context.Context, actor, path string, payload map[string]any) (any, error) {
 	parts := strings.Split(strings.TrimPrefix(path, adminRoutePrefix+"/api/principals/"), "/")

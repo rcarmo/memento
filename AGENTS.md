@@ -12,7 +12,6 @@ Rui's explicit rule: **profile and tune during pre-release tests; remove profili
 <!-- /RUI-PROFILE-LIFECYCLE-20261005 -->
 
 
-
 # Memento pure-Go replacement
 
 ## Product boundary

@@ -8,18 +8,18 @@ endif
 TOOLS_DIR := $(shell bash tools/project-env.sh --print-tools)
 export BUILD_ROOT TOOLS_DIR
 GO ?= go
-GOTOOLCHAIN ?= go1.26.6
+GOTOOLCHAIN ?= go1.26.11
 export GOTOOLCHAIN
 STATICCHECK_VERSION ?= v0.6.1
 GOVULNCHECK_VERSION ?= v1.1.4
-PROFILE_ROOT ?= $(abspath build/profiles)
+PROFILE_ROOT ?= $(PROJECT_TMP_ROOT)/runs/profiles
 PROFILE_MEM_RATE ?= 524288
 STATICCHECK := $(TOOLS_DIR)/staticcheck
 GOVULNCHECK := $(TOOLS_DIR)/govulncheck
 PROFILE_TEST = GO="$(GO)" PROFILE_ROOT="$(PROFILE_ROOT)" PROFILE_MEM_RATE="$(PROFILE_MEM_RATE)" ./tools/test-profile.sh
 PREFIX ?= /usr/local
 DESTDIR ?=
-MEMENTO_VERSION ?= 1.0.11
+MEMENTO_VERSION ?= 1.0.12
 VERSION ?= $(MEMENTO_VERSION)
 SOURCE_DATE_EPOCH ?= 0
 GTE_MODEL_PATH ?= $(abspath models/gte/gte-small.gtemodel)
