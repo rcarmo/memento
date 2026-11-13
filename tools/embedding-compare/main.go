@@ -21,6 +21,7 @@ import (
 
 	"github.com/rcarmo/memento/internal/embeddinggemma"
 	"github.com/rcarmo/memento/internal/gte"
+	"github.com/rcarmo/memento/internal/simd"
 )
 
 type document struct{ ID, Title, Text string }
@@ -275,7 +276,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	r := report{GemmaWorkers: *workers, Engine: *engine, Revision: *revision, Toolchain: runtime.Version(), GOMAXPROCS: runtime.GOMAXPROCS(0), Backend: "auto/avx2", CorpusSHA256: hex.EncodeToString(ch[:]), ModelSHA256: hash, ModelBytes: size}
+	r := report{GemmaWorkers: *workers, Engine: *engine, Revision: *revision, Toolchain: runtime.Version(), GOMAXPROCS: runtime.GOMAXPROCS(0), Backend: "auto", CorpusSHA256: hex.EncodeToString(ch[:]), ModelSHA256: hash, ModelBytes: size}
 	r.Description = c.Description
 	_, _, r.CPUAccountingAvailable = processCPU()
 	if status, e := os.ReadFile("/proc/self/status"); e == nil {
@@ -310,6 +311,11 @@ func run() error {
 		embed = func(s, role, title string) ([]float32, error) { return m.Embed(text(s, title)) }
 		tokenize = func(s, role, title string) ([]int, error) { return m.Tokenize(text(s, title)) }
 	} else {
+		selected, e := simd.New("auto")
+		if e != nil {
+			return e
+		}
+		r.Backend = string(selected.Backend())
 		m, e := embeddinggemma.Load(*modelPath, "auto")
 		if e != nil {
 			return e
