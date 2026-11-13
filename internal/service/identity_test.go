@@ -89,6 +89,12 @@ func TestIdentityReference(t *testing.T) {
 		// Python fixture adds an empty token alias after name-map construction.
 		i.tokens[""] = i.tokens["token"]
 		if c.Kind == "authenticate" {
+			// Issue #44 intentionally supersedes Python's case-sensitive scheme.
+			// Keep the immutable reference fixture and its other contracts intact.
+			if !c.Managed && c.Headers["authorization"] == "bearer token" {
+				principal := copyPrincipal(i.tokens["token"])
+				c.Expected = &principal
+			}
 			got, err := i.AuthenticateHeaders(context.Background(), c.Headers)
 			if err != nil || !reflect.DeepEqual(got, c.Expected) {
 				t.Fatal(c, got, err)
