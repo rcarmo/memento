@@ -24,7 +24,10 @@ import (
 )
 
 type document struct{ ID, Title, Text string }
-type query struct{ ID, Language, Text, Relevant string }
+type query struct {
+	ID, Language, Text, Relevant, Category string
+	HardNegatives                          []string
+}
 type workload struct {
 	Name, Role, Text string
 	Repeats          int
@@ -37,9 +40,10 @@ type corpus struct {
 }
 type memory struct{ HeapBytes, HeapObjects, RSSBytes, PeakRSSBytes uint64 }
 type timing struct {
-	SamplesMS                     []float64
-	MedianMS, MinMS, MaxMS, P95MS float64
-	AllocBytesPerOp, AllocsPerOp  float64
+	SamplesMS                        []float64
+	MedianMS, MinMS, MaxMS, P95MS    float64
+	AllocBytesPerOp, AllocsPerOp     float64
+	CPUUserMSPerOp, CPUSystemMSPerOp float64
 }
 type workResult struct {
 	Name                           string
@@ -48,15 +52,15 @@ type workResult struct {
 	Memory                         memory
 }
 type retrievalResult struct {
-	Dimensions                                                 int
-	Queries, EnglishQueries, MultilingualQueries               int
-	Recall1, Recall3, MRR, EnglishRecall1, MultilingualRecall1 float64
-	Ranks                                                      []rank
+	Dimensions                                                                   int
+	Queries, EnglishQueries, MultilingualQueries                                 int
+	Recall1, Recall3, Recall10, MRR, NDCG10, EnglishRecall1, MultilingualRecall1 float64
+	Ranks                                                                        []rank
 }
 type rank struct {
-	Query, Language, Relevant string
-	Rank                      int
-	Top                       []hit
+	Query, Language, Relevant, Category string
+	Rank                                int
+	Top                                 []hit
 }
 type hit struct {
 	ID    string
@@ -64,6 +68,8 @@ type hit struct {
 }
 type report struct {
 	GemmaWorkers                                                    int
+	Description, AllowedCPUs                                        string
+	CPUAccountingAvailable                                          bool
 	Engine, Revision, Toolchain, Backend, CorpusSHA256, ModelSHA256 string
 	ModelBytes                                                      int64
 	GOMAXPROCS                                                      int
@@ -73,7 +79,57 @@ type report struct {
 	Workloads                                                       []workResult
 	Retrieval                                                       []retrievalResult
 	RetrievalEmbedMS                                                float64
+	RetrievalCPUUserMS, RetrievalCPUSystemMS                        float64
 	EmbeddedTexts                                                   int
+}
+
+// Reject invalid fixtures before loading either model. Labels are frozen inputs,
+// never inferred from model rankings.
+func validateCorpus(c corpus) error {
+	if len(c.Documents) == 0 || len(c.Queries) == 0 || len(c.Workloads) == 0 {
+		return fmt.Errorf("corpus requires documents, queries and workloads")
+	}
+	ids := map[string]bool{}
+	for _, d := range c.Documents {
+		if d.ID == "" || strings.TrimSpace(d.Text) == "" || ids[d.ID] {
+			return fmt.Errorf("invalid or duplicate document %q", d.ID)
+		}
+		ids[d.ID] = true
+	}
+	queries := map[string]bool{}
+	for _, q := range c.Queries {
+		if q.ID == "" || q.Language == "" || strings.TrimSpace(q.Text) == "" || queries[q.ID] || !ids[q.Relevant] {
+			return fmt.Errorf("invalid query or relevance label %q", q.ID)
+		}
+		queries[q.ID] = true
+		seen := map[string]bool{}
+		for _, id := range q.HardNegatives {
+			if !ids[id] || id == q.Relevant || seen[id] {
+				return fmt.Errorf("invalid hard negative %q for %q", id, q.ID)
+			}
+			seen[id] = true
+		}
+	}
+	for _, w := range c.Workloads {
+		if w.Name == "" || w.Text == "" || w.Repeats < 3 || (w.Role != "query" && w.Role != "document") {
+			return fmt.Errorf("invalid workload %q", w.Name)
+		}
+	}
+	return nil
+}
+
+func validVector(v []float32, dimensions int) error {
+	if len(v) != dimensions {
+		return fmt.Errorf("output dimension mismatch: %d != %d", len(v), dimensions)
+	}
+	var norm float64
+	for _, x := range v {
+		norm += float64(x) * float64(x)
+	}
+	if math.IsNaN(norm) || math.IsInf(norm, 0) || math.Abs(norm-1) > .0001 {
+		return fmt.Errorf("invalid embedding norm: %g", norm)
+	}
+	return nil
 }
 
 func mem() memory {
@@ -145,6 +201,10 @@ func evaluate(c corpus, docs, qs [][]float32, dim int) retrievalResult {
 		if position <= 3 {
 			r.Recall3++
 		}
+		if position <= 10 {
+			r.Recall10++
+			r.NDCG10 += 1 / math.Log2(float64(position)+1)
+		}
 		r.MRR += 1 / float64(position)
 		if q.Language == "en" {
 			r.EnglishQueries++
@@ -157,13 +217,19 @@ func evaluate(c corpus, docs, qs [][]float32, dim int) retrievalResult {
 				r.MultilingualRecall1++
 			}
 		}
-		r.Ranks = append(r.Ranks, rank{Query: q.ID, Language: q.Language, Relevant: q.Relevant, Rank: position, Top: hits[:min(3, len(hits))]})
+		r.Ranks = append(r.Ranks, rank{Query: q.ID, Language: q.Language, Relevant: q.Relevant, Category: q.Category, Rank: position, Top: hits[:min(10, len(hits))]})
 	}
 	r.Recall1 /= float64(r.Queries)
 	r.Recall3 /= float64(r.Queries)
+	r.Recall10 /= float64(r.Queries)
+	r.NDCG10 /= float64(r.Queries)
 	r.MRR /= float64(r.Queries)
-	r.EnglishRecall1 /= float64(r.EnglishQueries)
-	r.MultilingualRecall1 /= float64(r.MultilingualQueries)
+	if r.EnglishQueries != 0 {
+		r.EnglishRecall1 /= float64(r.EnglishQueries)
+	}
+	if r.MultilingualQueries != 0 {
+		r.MultilingualRecall1 /= float64(r.MultilingualQueries)
+	}
 	return r
 }
 func main() {
@@ -201,12 +267,24 @@ func run() error {
 	if err = json.Unmarshal(raw, &c); err != nil {
 		return err
 	}
+	if err = validateCorpus(c); err != nil {
+		return err
+	}
 	ch := sha256.Sum256(raw)
 	hash, size, err := digest(*modelPath)
 	if err != nil {
 		return err
 	}
 	r := report{GemmaWorkers: *workers, Engine: *engine, Revision: *revision, Toolchain: runtime.Version(), GOMAXPROCS: runtime.GOMAXPROCS(0), Backend: "auto/avx2", CorpusSHA256: hex.EncodeToString(ch[:]), ModelSHA256: hash, ModelBytes: size}
+	r.Description = c.Description
+	_, _, r.CPUAccountingAvailable = processCPU()
+	if status, e := os.ReadFile("/proc/self/status"); e == nil {
+		for _, line := range strings.Split(string(status), "\n") {
+			if strings.HasPrefix(line, "Cpus_allowed_list:") {
+				r.AllowedCPUs = strings.TrimSpace(strings.TrimPrefix(line, "Cpus_allowed_list:"))
+			}
+		}
+	}
 	var embed func(string, string, string) ([]float32, error)
 	var tokenize func(string, string, string) ([]int, error)
 	dimensions := 384
@@ -256,8 +334,8 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	if len(v) != dimensions {
-		return fmt.Errorf("output dimension mismatch")
+	if err = validVector(v, dimensions); err != nil {
+		return err
 	}
 	r.FirstEmbedMS = ms(time.Since(start))
 	if *profileDir != "" {
@@ -302,6 +380,7 @@ func run() error {
 		}
 		var a, b runtime.MemStats
 		runtime.ReadMemStats(&a)
+		userBefore, systemBefore, _ := processCPU()
 		for i := range samples {
 			start = time.Now()
 			v, e = embed(w.Text, w.Role, "")
@@ -309,26 +388,30 @@ func run() error {
 			if e != nil {
 				return e
 			}
-			var norm float64
-			for _, x := range v {
-				norm += float64(x) * float64(x)
-			}
-			if math.IsNaN(norm) || math.Abs(norm-1) > .0001 {
-				return fmt.Errorf("invalid embedding norm")
+			if err = validVector(v, dimensions); err != nil {
+				return err
 			}
 		}
+		userAfter, systemAfter, _ := processCPU()
 		runtime.ReadMemStats(&b)
-		r.Workloads = append(r.Workloads, workResult{Name: w.Name, Characters: len([]rune(w.Text)), Tokens: len(ids), Dimensions: dimensions, Warm: distribution(samples, b.TotalAlloc-a.TotalAlloc, b.Mallocs-a.Mallocs), Memory: mem()})
+		warm := distribution(samples, b.TotalAlloc-a.TotalAlloc, b.Mallocs-a.Mallocs)
+		warm.CPUUserMSPerOp = ms(userAfter-userBefore) / float64(w.Repeats)
+		warm.CPUSystemMSPerOp = ms(systemAfter-systemBefore) / float64(w.Repeats)
+		r.Workloads = append(r.Workloads, workResult{Name: w.Name, Characters: len([]rune(w.Text)), Tokens: len(ids), Dimensions: dimensions, Warm: warm, Memory: mem()})
 		fmt.Fprintf(os.Stderr, "%s %s tokens=%d median_ms=%.3f\n", *engine, w.Name, len(ids), r.Workloads[len(r.Workloads)-1].Warm.MedianMS)
 	}
 	if *mode != "performance" {
 		docs := make([][]float32, len(c.Documents))
 		qs := make([][]float32, len(c.Queries))
 		start = time.Now()
+		userBefore, systemBefore, _ := processCPU()
 		for i, d := range c.Documents {
 			docs[i], err = embed(d.Text, "document", d.Title)
 			if err != nil {
 				return err
+			}
+			if err = validVector(docs[i], dimensions); err != nil {
+				return fmt.Errorf("document %s: %w", d.ID, err)
 			}
 		}
 		for i, q := range c.Queries {
@@ -336,12 +419,18 @@ func run() error {
 			if err != nil {
 				return err
 			}
+			if err = validVector(qs[i], dimensions); err != nil {
+				return fmt.Errorf("query %s: %w", q.ID, err)
+			}
 		}
+		userAfter, systemAfter, _ := processCPU()
+		r.RetrievalCPUUserMS = ms(userAfter - userBefore)
+		r.RetrievalCPUSystemMS = ms(systemAfter - systemBefore)
 		r.RetrievalEmbedMS = ms(time.Since(start))
 		r.EmbeddedTexts = len(docs) + len(qs)
 		r.Retrieval = append(r.Retrieval, evaluate(c, docs, qs, dimensions))
 		if dimensions == 768 {
-			for _, d := range []int{512, 256, 128} {
+			for _, d := range []int{512, 384, 256, 128} {
 				r.Retrieval = append(r.Retrieval, evaluate(c, docs, qs, d))
 			}
 		}

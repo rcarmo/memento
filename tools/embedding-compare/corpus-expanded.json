@@ -1,0 +1,1207 @@
+{
+  "description": "Authored 2026-11-13 before any model run. Synthetic Memento-adjacent infrastructure and delivery diagnostic, not held-out external or production evidence. 20 topic groups, 60 English documents, 40 English queries and 40 paired translations across pt/es/fr/de/ja. Each group has two targets and a third distractor. Exactly one labelled answer per query; all 60 candidates searched globally. Hard-negative labels name the other two same-topic documents; not claims of measured difficulty. No labels or texts may change after observing rankings.",
+  "documents": [
+    {
+      "id": "memory-2",
+      "title": "Mapped resident memory",
+      "text": "Memory-mapped model weights may occupy resident pages without appearing as Go heap objects. Measure process RSS and peak RSS alongside heap statistics. A small language-runtime heap is not evidence that the whole model uses little physical memory."
+    },
+    {
+      "id": "memory-3",
+      "title": "Memory leak diagnosis",
+      "text": "Repeatedly measure live objects after equivalent completed work and garbage collection. Sustained retained growth may indicate a leak. High cumulative allocation alone is not proof of a leak if objects are promptly reclaimed."
+    },
+    {
+      "id": "dns-1",
+      "title": "Negative DNS caching",
+      "text": "A resolver may cache an NXDOMAIN answer after a missing DNS record is created. Wait for the negative cache lifetime or flush the affected resolver cache. Check the authoritative server directly first; lowering a positive record TTL will not remove an already cached negative response."
+    },
+    {
+      "id": "http-auth-2",
+      "title": "Authenticated but forbidden",
+      "text": "Return HTTP 403 when a known authenticated caller does not have permission for the requested resource. Grant the narrow required role only after authorisation review. Reissuing an identical token will not add the missing role."
+    },
+    {
+      "id": "oauth-1",
+      "title": "Refresh an access token",
+      "text": "When a short-lived access token expires, exchange a valid refresh token at the token endpoint. Store the replacement securely and handle rotated refresh tokens atomically. Do not ask the user to enter a password for every normal access-token expiry."
+    },
+    {
+      "id": "observability-1",
+      "title": "Counter rate",
+      "text": "A cumulative request counter grows until the process resets. Calculate a reset-aware rate over a time window to estimate requests per second. Plotting the raw total as traffic rate confuses accumulated history with current activity."
+    },
+    {
+      "id": "indexing-2",
+      "title": "Stale planner statistics",
+      "text": "After a major data distribution change, refresh query planner statistics if estimates are far from actual row counts. Inspect an actual execution plan first. Adding another index without checking cardinality estimates can waste space and write cost."
+    },
+    {
+      "id": "containers-1",
+      "title": "Image tags and digests",
+      "text": "A container image tag can move to a new manifest. Pin the deployment to an immutable digest to reproduce the exact image. Record the resolved platform image as well as a multi-platform manifest; a tag alone is not rollback identity."
+    },
+    {
+      "id": "cancellation-1",
+      "title": "Cancellation propagation",
+      "text": "Pass cancellation through nested work and check it before publishing output. Join request-owned workers before returning so abandoned work cannot mutate reused buffers. Returning an error to the caller alone does not stop child goroutines."
+    },
+    {
+      "id": "containers-3",
+      "title": "Container health checks",
+      "text": "A health check tests whether a running process can serve its intended function. A running process is not necessarily ready. Changing the image tag or restarting repeatedly does not diagnose a failed dependency."
+    },
+    {
+      "id": "containers-2",
+      "title": "Persistent container data",
+      "text": "Replacing a container removes its writable layer but should preserve data mounted from a named volume or host directory. Verify mounts before recreating the container. Pulling an image does not back up application data or migrate the database."
+    },
+    {
+      "id": "storage-1",
+      "title": "Exhausted inodes",
+      "text": "A filesystem can refuse new files despite free data bytes when all inodes are used. Check inode utilisation and remove confirmed disposable small files at a safe boundary. Increasing a directory size limit will not create more inodes."
+    },
+    {
+      "id": "oauth-3",
+      "title": "OAuth consent scopes",
+      "text": "Ask for only the scopes required by the application. Consent grants requested capabilities but does not refresh an expired token or revoke a stolen session. Expanded scopes may require a new consent prompt."
+    },
+    {
+      "id": "memory-1",
+      "title": "Retained heap versus allocations",
+      "text": "A heap that remains small after collection can still hide heavy temporary allocation churn. Inspect allocation bytes and object counts over the workload, not just live retained memory. Reusing bounded scratch can reduce collector work without changing the model."
+    },
+    {
+      "id": "certificates-3",
+      "title": "Client certificate authentication",
+      "text": "Mutual TLS requires the client to present a certificate trusted by the server. Installing the server certificate alone does not grant a client identity. Protect client private keys and revoke lost client certificates."
+    },
+    {
+      "id": "transactions-2",
+      "title": "Optimistic concurrency",
+      "text": "Use a record version or entity tag as a precondition on updates. Reject a stale version instead of silently overwriting a concurrent edit. The client must reload and reconcile conflicting changes before retrying."
+    },
+    {
+      "id": "time-1",
+      "title": "Monotonic elapsed time",
+      "text": "Measure timeouts and durations using a monotonic clock so wall-clock corrections do not change elapsed intervals. Store civil timestamps separately for human audit. A clock synchronisation jump must not make a short operation appear to run backwards."
+    },
+    {
+      "id": "queues-2",
+      "title": "Dead letter queues",
+      "text": "Move repeatedly failing messages to a dead letter queue after bounded retries. Preserve failure metadata for diagnosis and controlled replay. Do not discard poison messages silently or retry them forever at the front of the live queue."
+    },
+    {
+      "id": "certificates-2",
+      "title": "Incomplete certificate chain",
+      "text": "When a server certificate names the correct host and is not expired but clients cannot build a trust path, check for missing intermediate certificates. Serve the full chain in the correct order. Do not distribute the server private key to clients."
+    },
+    {
+      "id": "search-1",
+      "title": "Embedding model migration",
+      "text": "Vectors from different embedding models do not share a comparable coordinate space, even with equal dimensions. Build a separate candidate index and re-embed documents before switching models. Never mix old and new vectors in one cosine index merely because their lengths match."
+    },
+    {
+      "id": "observability-2",
+      "title": "Latency percentiles",
+      "text": "Compute fleet latency percentiles from merged histogram buckets or raw observations. Averaging the p95 values from individual servers does not produce the fleet p95. Preserve compatible bucket boundaries when aggregating histograms."
+    },
+    {
+      "id": "certificates-1",
+      "title": "Hostname mismatch",
+      "text": "An HTTPS certificate must include the requested hostname in its subject alternative names. A certificate for another name remains invalid even if its issuing authority is trusted. Issue a certificate covering the intended name rather than disabling hostname verification."
+    },
+    {
+      "id": "billing-1",
+      "title": "Recurring versus implementation costs",
+      "text": "Separate recurring subscription and resource charges from one-time implementation effort. State currency, billing period and usage assumptions in the estimate. A low setup fee does not imply a low monthly operating cost."
+    },
+    {
+      "id": "billing-2",
+      "title": "Reserved capacity commitments",
+      "text": "A capacity reservation or savings commitment exchanges a usage obligation for discounted prices. Check term, cancellation rules and expected utilisation before purchase. It is not automatically cheaper for a workload that will stop soon."
+    },
+    {
+      "id": "billing-3",
+      "title": "Cost allocation tags",
+      "text": "Apply consistent owner and cost-centre tags to resources for chargeback reporting. Tags attribute spending but do not cap usage or guarantee a discount. Reconcile untagged resources before reporting totals by department."
+    },
+    {
+      "id": "search-2",
+      "title": "Query document prefixes",
+      "text": "An asymmetric embedding model may require distinct query and document prefixes. Apply each role consistently with the checkpoint contract. Missing or swapped prefixes can reduce retrieval quality even when output dimensions and norms are valid."
+    },
+    {
+      "id": "cancellation-2",
+      "title": "Bounded parallelism",
+      "text": "Limit worker count and concurrent requests under an explicit CPU and memory budget. More workers may reduce elapsed latency while increasing total CPU time and contention. Measure both wall time and process CPU rather than treating speedup as free capacity."
+    },
+    {
+      "id": "contracts-1",
+      "title": "Acceptance criteria",
+      "text": "Define measurable acceptance criteria for each deliverable before work begins. Identify who approves the outcome and the evidence required. A progress update is not customer acceptance and should not silently change the agreed scope."
+    },
+    {
+      "id": "deployment-1",
+      "title": "Canary release",
+      "text": "Send a small share of production traffic to the candidate while monitoring errors and latency against the stable version. Increase exposure only after defined checks pass. A canary limits impact but still needs a rollback plan and compatible state."
+    },
+    {
+      "id": "time-2",
+      "title": "Daylight saving schedules",
+      "text": "A local civil time may occur twice or not at all during daylight saving transitions. A recurring local appointment must record its time zone and define an ambiguity policy. A fixed UTC offset is not a complete time-zone rule."
+    },
+    {
+      "id": "storage-3",
+      "title": "Filesystem quotas",
+      "text": "A user or project quota may reject writes even when the filesystem has free blocks and inodes. Check the relevant quota and adjust the assigned allowance under policy. Global free-space reports alone do not diagnose a quota limit."
+    },
+    {
+      "id": "cancellation-3",
+      "title": "Mutex critical sections",
+      "text": "Protect shared mutable state with a clear locking protocol and keep critical sections bounded. A mutex is not a request cancellation mechanism or a scheduler capacity limit. Avoid blocking external calls while holding a global lock."
+    },
+    {
+      "id": "replication-2",
+      "title": "Promoting a standby",
+      "text": "When the primary database is permanently unavailable, fence it before promoting the standby. Redirect clients to the newly elected writer and check replication lag to estimate lost transactions. Do not start two writable primaries; this procedure restores availability, not historical records."
+    },
+    {
+      "id": "indexing-3",
+      "title": "Unique constraints",
+      "text": "Enforce business-key uniqueness with a database constraint. Checking for an existing value in application code is racy under concurrent inserts. A non-unique performance index does not prevent duplicate records."
+    },
+    {
+      "id": "search-3",
+      "title": "Approximate nearest neighbours",
+      "text": "An approximate vector index trades exhaustive search work for recall and latency. Tune its search parameters against exact nearest-neighbour results. Better approximation settings cannot repair vectors generated by an incompatible model."
+    },
+    {
+      "id": "contracts-3",
+      "title": "Risk register",
+      "text": "Record risks with likelihood, impact, mitigation and a named owner. Review them as conditions change. A risk register tracks uncertainty rather than replacing signed scope or acceptance decisions."
+    },
+    {
+      "id": "oauth-2",
+      "title": "Revoke a compromised credential",
+      "text": "If a refresh token is exposed, revoke the affected session or token family and require fresh authentication. Merely waiting for the current access token to expire leaves the stolen refresh capability usable. Audit recent activity before restoring access."
+    },
+    {
+      "id": "contracts-2",
+      "title": "Change requests",
+      "text": "When new work falls outside the agreed scope, document a change request with impact on price, schedule and responsibilities. Obtain approval before committing delivery. Recording a new idea in meeting minutes does not authorise additional scope."
+    },
+    {
+      "id": "dns-3",
+      "title": "DNS round robin",
+      "text": "Publish multiple address records to distribute clients across servers. DNS round robin is not an active health check: resolvers may return an address for an unhealthy server until records and caches change."
+    },
+    {
+      "id": "indexing-1",
+      "title": "Composite index order",
+      "text": "A composite index on tenant and creation time supports filtering by tenant followed by a time range. Its leading-column order matters; it may not efficiently serve a global query on creation time alone. Confirm the plan with representative parameters."
+    },
+    {
+      "id": "queues-1",
+      "title": "Visibility timeout",
+      "text": "A queue hides a leased message temporarily while a worker handles it. If processing exceeds that visibility timeout, another worker may receive the same message. Extend the lease or reduce task size, and make processing idempotent."
+    },
+    {
+      "id": "replication-3",
+      "title": "Read replicas",
+      "text": "Send read-only reports to a replica to reduce load on the primary. Replica data may lag behind committed writes. Keep operations requiring read-after-write consistency on the primary. Routing reports does not establish a disaster recovery point."
+    },
+    {
+      "id": "observability-3",
+      "title": "High cardinality labels",
+      "text": "Do not put unique request identifiers in metric labels. Unbounded label combinations create too many time series. Store per-request detail in logs or traces and keep metric dimensions bounded."
+    },
+    {
+      "id": "deployment-2",
+      "title": "Expand contract migrations",
+      "text": "For a rolling database schema change, add compatible structures first, migrate readers and writers, then remove obsolete structures after old versions are gone. Dropping a column before old binaries stop using it breaks rollback and mixed-version operation."
+    },
+    {
+      "id": "transactions-1",
+      "title": "Idempotency keys",
+      "text": "Attach an idempotency key to a retried payment request and persist its result transactionally. Reusing the key returns the original outcome instead of charging again. A timeout does not prove that the first request failed before committing."
+    },
+    {
+      "id": "dns-2",
+      "title": "Split DNS",
+      "text": "Internal clients should resolve the application hostname to its private address, while public clients receive the public address. Configure separate internal and external DNS views. A successful external lookup does not prove that the private view is correct."
+    },
+    {
+      "id": "files-2",
+      "title": "Symlink safe cleanup",
+      "text": "Before recursive cleanup, validate ownership and physical path boundaries and reject symlink escapes. A lexical path prefix alone does not prove that deletion stays inside the owned directory. Do not follow links into live application data."
+    },
+    {
+      "id": "deployment-3",
+      "title": "Blue green environments",
+      "text": "Maintain separate old and new service environments and switch traffic between them. Database compatibility remains necessary if both environments share state. Separate servers do not automatically make destructive migrations reversible."
+    },
+    {
+      "id": "transactions-3",
+      "title": "Read committed isolation",
+      "text": "Read committed transactions do not read uncommitted changes but may see different committed values on repeated reads. Choose stronger isolation when a stable transaction snapshot is required. Isolation alone does not deduplicate network retries."
+    },
+    {
+      "id": "files-1",
+      "title": "Atomic file publication",
+      "text": "Write a complete replacement file in the same filesystem, flush as required, then rename it over the target. Readers should see either the old or the complete new content, not a partially written configuration. Atomic visibility is distinct from durable crash recovery."
+    },
+    {
+      "id": "replication-1",
+      "title": "Replication is not a backup",
+      "text": "A standby database receives changes from the primary, including accidental deletes. Use point-in-time recovery from a base backup and archived transaction logs to undo a bad change. Replication improves availability but cannot recover a record deleted on every replica."
+    },
+    {
+      "id": "http-auth-3",
+      "title": "Rate limited HTTP requests",
+      "text": "Return HTTP 429 when a client exceeds its request allowance. Honour Retry-After and apply bounded exponential backoff. A rate limit is not an authentication failure and should not cause credential rotation."
+    },
+    {
+      "id": "storage-2",
+      "title": "Deleted files held open",
+      "text": "Deleting a large log may not release space while a process still holds its descriptor open. Find deleted open files and ask the owning service to reopen logs safely. Do not kill unrelated services or remove active data just to reclaim space."
+    },
+    {
+      "id": "network-2",
+      "title": "TCP timeout",
+      "text": "A TCP connection attempt that expires without a reply may indicate dropped packets, routing failure or an unreachable host. Check the route and firewall path. Increasing an application read timeout does not create a missing TCP connection."
+    },
+    {
+      "id": "network-1",
+      "title": "TCP refusal",
+      "text": "An immediate TCP connection refusal usually means the address was reached but no listener accepted the destination port, or an active reject rule responded. Verify the service listener and port mapping. Do not diagnose it as an HTTP authorisation response."
+    },
+    {
+      "id": "time-3",
+      "title": "UTC storage",
+      "text": "Store event instants in UTC with adequate precision and convert for display. Preserve the original zone when future civil scheduling depends on it. UTC storage alone does not resolve an ambiguous future local appointment."
+    },
+    {
+      "id": "network-3",
+      "title": "HTTP gateway timeout",
+      "text": "A gateway may accept the client connection but return HTTP 504 when its upstream fails to answer in time. Inspect upstream health and gateway deadlines. This is different from the client never establishing a TCP connection."
+    },
+    {
+      "id": "http-auth-1",
+      "title": "Unauthenticated HTTP requests",
+      "text": "Return HTTP 401 when a protected API request has no valid authentication credential. Include the appropriate authentication challenge. A missing or expired credential differs from a valid identity lacking permission; do not reveal protected data in either response."
+    },
+    {
+      "id": "queues-3",
+      "title": "Queue acknowledgement",
+      "text": "Acknowledge a message only after its durable side effect completes. Acknowledging before committing can lose work on a crash. This ordering still requires idempotency because a crash between commit and acknowledgement may cause redelivery."
+    },
+    {
+      "id": "files-3",
+      "title": "Advisory file locks",
+      "text": "An advisory file lock coordinates only participants that honour the locking protocol. It does not prevent an unrelated process from rewriting the file. Define lock ownership and release on cancellation or process exit."
+    }
+  ],
+  "queries": [
+    {
+      "id": "oauth-a-es",
+      "language": "es",
+      "text": "El token de acceso caducó pero el de renovación sigue siendo válido. ¿Cómo debe continuar el cliente?",
+      "relevant": "oauth-1",
+      "category": "Credential lifecycle",
+      "hardNegatives": [
+        "oauth-2",
+        "oauth-3"
+      ]
+    },
+    {
+      "id": "certificates-a-de",
+      "language": "de",
+      "text": "Der Aussteller wird vertraut, aber das HTTPS-Zertifikat gilt für einen anderen Namen. Was muss korrigiert werden?",
+      "relevant": "certificates-1",
+      "category": "Transport security",
+      "hardNegatives": [
+        "certificates-2",
+        "certificates-3"
+      ]
+    },
+    {
+      "id": "queues-a-de",
+      "language": "de",
+      "text": "Ein Auftrag läuft noch, aber ein zweiter Worker erhält dieselbe Nachricht. Welche Zeitbegrenzung ist zu prüfen?",
+      "relevant": "queues-1",
+      "category": "Asynchronous processing",
+      "hardNegatives": [
+        "queues-2",
+        "queues-3"
+      ]
+    },
+    {
+      "id": "transactions-a-en",
+      "language": "en",
+      "text": "A payment request timed out after it may have committed. How can retrying avoid a second charge?",
+      "relevant": "transactions-1",
+      "category": "Database semantics",
+      "hardNegatives": [
+        "transactions-2",
+        "transactions-3"
+      ]
+    },
+    {
+      "id": "contracts-a-en",
+      "language": "en",
+      "text": "Where should we define the evidence and approver needed to declare a deliverable accepted?",
+      "relevant": "contracts-1",
+      "category": "Delivery governance",
+      "hardNegatives": [
+        "contracts-2",
+        "contracts-3"
+      ]
+    },
+    {
+      "id": "certificates-a-en",
+      "language": "en",
+      "text": "HTTPS trusts the issuer, but says the certificate belongs to a different site. What needs fixing?",
+      "relevant": "certificates-1",
+      "category": "Transport security",
+      "hardNegatives": [
+        "certificates-2",
+        "certificates-3"
+      ]
+    },
+    {
+      "id": "certificates-b-en",
+      "language": "en",
+      "text": "The site name and dates are correct, yet some clients cannot build the issuer chain. What may the server be missing?",
+      "relevant": "certificates-2",
+      "category": "Transport security",
+      "hardNegatives": [
+        "certificates-1",
+        "certificates-3"
+      ]
+    },
+    {
+      "id": "oauth-b-fr",
+      "language": "fr",
+      "text": "Un attaquant a copié le jeton de renouvellement. Suffit-il d’attendre l’expiration du jeton d’accès ?",
+      "relevant": "oauth-2",
+      "category": "Credential lifecycle",
+      "hardNegatives": [
+        "oauth-1",
+        "oauth-3"
+      ]
+    },
+    {
+      "id": "dns-a-fr",
+      "language": "fr",
+      "text": "Un nom auparavant inexistant vient d’être créé, mais le résolveur répond encore NXDOMAIN. Que vérifier ?",
+      "relevant": "dns-1",
+      "category": "Network diagnosis",
+      "hardNegatives": [
+        "dns-2",
+        "dns-3"
+      ]
+    },
+    {
+      "id": "queues-a-en",
+      "language": "en",
+      "text": "A long-running job is still active when a second worker receives the same queue message. Which timeout should be checked?",
+      "relevant": "queues-1",
+      "category": "Asynchronous processing",
+      "hardNegatives": [
+        "queues-2",
+        "queues-3"
+      ]
+    },
+    {
+      "id": "indexing-a-en",
+      "language": "en",
+      "text": "An index starts with tenant ID then timestamp. Why might an all-tenants time-range query still scan many rows?",
+      "relevant": "indexing-1",
+      "category": "Database performance",
+      "hardNegatives": [
+        "indexing-2",
+        "indexing-3"
+      ]
+    },
+    {
+      "id": "oauth-a-en",
+      "language": "en",
+      "text": "A short-lived bearer credential expired, but we still have a valid renewal credential. How should the client continue?",
+      "relevant": "oauth-1",
+      "category": "Credential lifecycle",
+      "hardNegatives": [
+        "oauth-2",
+        "oauth-3"
+      ]
+    },
+    {
+      "id": "memory-a-en",
+      "language": "en",
+      "text": "The live heap looks small, yet the collector is busy making temporary objects disappear. What profile should I inspect?",
+      "relevant": "memory-1",
+      "category": "Runtime diagnosis",
+      "hardNegatives": [
+        "memory-2",
+        "memory-3"
+      ]
+    },
+    {
+      "id": "containers-a-fr",
+      "language": "fr",
+      "text": "Comment reproduire exactement un déploiement si une étiquette d’image peut changer de cible ?",
+      "relevant": "containers-1",
+      "category": "Container lifecycle",
+      "hardNegatives": [
+        "containers-2",
+        "containers-3"
+      ]
+    },
+    {
+      "id": "http-auth-a-ja",
+      "language": "ja",
+      "text": "APIへのアクセス認証情報が期限切れの場合、どのHTTPステータスを返すべきですか。",
+      "relevant": "http-auth-1",
+      "category": "Access controls",
+      "hardNegatives": [
+        "http-auth-2",
+        "http-auth-3"
+      ]
+    },
+    {
+      "id": "time-a-en",
+      "language": "en",
+      "text": "Clock synchronisation changed the system time during a request. Which clock should measure its duration?",
+      "relevant": "time-1",
+      "category": "Time and ordering",
+      "hardNegatives": [
+        "time-2",
+        "time-3"
+      ]
+    },
+    {
+      "id": "transactions-a-ja",
+      "language": "ja",
+      "text": "決済要求がタイムアウトしましたが、既に確定した可能性があります。再送で二重請求を防ぐにはどうすればよいですか。",
+      "relevant": "transactions-1",
+      "category": "Database semantics",
+      "hardNegatives": [
+        "transactions-2",
+        "transactions-3"
+      ]
+    },
+    {
+      "id": "certificates-b-ja",
+      "language": "ja",
+      "text": "ホスト名と有効期限は正しいのに、一部のクライアントで証明書チェーンを検証できません。サーバー側で何を確認すべきですか。",
+      "relevant": "certificates-2",
+      "category": "Transport security",
+      "hardNegatives": [
+        "certificates-1",
+        "certificates-3"
+      ]
+    },
+    {
+      "id": "storage-a-en",
+      "language": "en",
+      "text": "Creating tiny files fails although the disk has plenty of free bytes. Which resource may be exhausted?",
+      "relevant": "storage-1",
+      "category": "Storage capacity",
+      "hardNegatives": [
+        "storage-2",
+        "storage-3"
+      ]
+    },
+    {
+      "id": "network-a-en",
+      "language": "en",
+      "text": "The connection is rejected immediately before any HTTP exchange. What should we check first?",
+      "relevant": "network-1",
+      "category": "Connectivity diagnosis",
+      "hardNegatives": [
+        "network-2",
+        "network-3"
+      ]
+    },
+    {
+      "id": "replication-a-pt",
+      "language": "pt",
+      "text": "Um operador apagou linhas e a eliminação chegou à réplica. Como recuperar os dados anteriores?",
+      "relevant": "replication-1",
+      "category": "Recovery and availability",
+      "hardNegatives": [
+        "replication-2",
+        "replication-3"
+      ]
+    },
+    {
+      "id": "replication-b-es",
+      "language": "es",
+      "text": "El servidor principal ha fallado definitivamente. ¿Cómo convertir la réplica en el único servidor de escritura?",
+      "relevant": "replication-2",
+      "category": "Recovery and availability",
+      "hardNegatives": [
+        "replication-1",
+        "replication-3"
+      ]
+    },
+    {
+      "id": "indexing-a-es",
+      "language": "es",
+      "text": "Un índice empieza por cliente y luego fecha. ¿Por qué una búsqueda por fecha sin cliente puede seguir siendo lenta?",
+      "relevant": "indexing-1",
+      "category": "Database performance",
+      "hardNegatives": [
+        "indexing-2",
+        "indexing-3"
+      ]
+    },
+    {
+      "id": "files-a-en",
+      "language": "en",
+      "text": "How can a reader avoid seeing a half-written configuration while another process replaces it?",
+      "relevant": "files-1",
+      "category": "Filesystem safety",
+      "hardNegatives": [
+        "files-2",
+        "files-3"
+      ]
+    },
+    {
+      "id": "billing-a-de",
+      "language": "de",
+      "text": "Ein Kunde möchte monatliche Betriebskosten getrennt vom einmaligen Einrichtungsaufwand sehen. Wie ist das Angebot zu gliedern?",
+      "relevant": "billing-1",
+      "category": "Commercial planning",
+      "hardNegatives": [
+        "billing-2",
+        "billing-3"
+      ]
+    },
+    {
+      "id": "contracts-a-pt",
+      "language": "pt",
+      "text": "Onde definir as provas e o responsável necessários para aceitar formalmente uma entrega?",
+      "relevant": "contracts-1",
+      "category": "Delivery governance",
+      "hardNegatives": [
+        "contracts-2",
+        "contracts-3"
+      ]
+    },
+    {
+      "id": "storage-b-es",
+      "language": "es",
+      "text": "Se borró un archivo de registro enorme, pero no se liberó espacio. ¿Qué puede seguir reteniéndolo?",
+      "relevant": "storage-2",
+      "category": "Storage capacity",
+      "hardNegatives": [
+        "storage-1",
+        "storage-3"
+      ]
+    },
+    {
+      "id": "transactions-b-pt",
+      "language": "pt",
+      "text": "Dois utilizadores editaram o mesmo registo. Como impedir que uma versão antiga substitua uma alteração mais recente?",
+      "relevant": "transactions-2",
+      "category": "Database semantics",
+      "hardNegatives": [
+        "transactions-1",
+        "transactions-3"
+      ]
+    },
+    {
+      "id": "dns-a-en",
+      "language": "en",
+      "text": "We created a formerly nonexistent hostname, yet the resolver still says it does not exist. What should we check?",
+      "relevant": "dns-1",
+      "category": "Network diagnosis",
+      "hardNegatives": [
+        "dns-2",
+        "dns-3"
+      ]
+    },
+    {
+      "id": "observability-a-fr",
+      "language": "fr",
+      "text": "Le compteur de requêtes augmente puis revient à zéro au redémarrage. Comment en tirer le débit actuel ?",
+      "relevant": "observability-1",
+      "category": "Operational metrics",
+      "hardNegatives": [
+        "observability-2",
+        "observability-3"
+      ]
+    },
+    {
+      "id": "http-auth-b-pt",
+      "language": "pt",
+      "text": "A credencial é válida, mas falta a permissão necessária. Que resposta deve a API devolver e como corrigir?",
+      "relevant": "http-auth-2",
+      "category": "Access controls",
+      "hardNegatives": [
+        "http-auth-1",
+        "http-auth-3"
+      ]
+    },
+    {
+      "id": "search-a-en",
+      "language": "en",
+      "text": "Both models output the same number of coordinates. Can we reuse the old document vectors when switching models?",
+      "relevant": "search-1",
+      "category": "Retrieval operations",
+      "hardNegatives": [
+        "search-2",
+        "search-3"
+      ]
+    },
+    {
+      "id": "storage-a-pt",
+      "language": "pt",
+      "text": "Não consigo criar ficheiros pequenos apesar de haver muitos bytes livres. Que recurso pode estar esgotado?",
+      "relevant": "storage-1",
+      "category": "Storage capacity",
+      "hardNegatives": [
+        "storage-2",
+        "storage-3"
+      ]
+    },
+    {
+      "id": "http-auth-b-en",
+      "language": "en",
+      "text": "The credential is valid but the caller lacks the required role. Which response and remedy apply?",
+      "relevant": "http-auth-2",
+      "category": "Access controls",
+      "hardNegatives": [
+        "http-auth-1",
+        "http-auth-3"
+      ]
+    },
+    {
+      "id": "replication-a-en",
+      "language": "en",
+      "text": "An operator erased rows and the deletion reached the standby. Which recovery method can undo it?",
+      "relevant": "replication-1",
+      "category": "Recovery and availability",
+      "hardNegatives": [
+        "replication-2",
+        "replication-3"
+      ]
+    },
+    {
+      "id": "replication-b-en",
+      "language": "en",
+      "text": "The database writer has failed permanently. How do we safely make the replica writable?",
+      "relevant": "replication-2",
+      "category": "Recovery and availability",
+      "hardNegatives": [
+        "replication-1",
+        "replication-3"
+      ]
+    },
+    {
+      "id": "dns-b-de",
+      "language": "de",
+      "text": "Derselbe Anwendungsname soll im Büro eine private und im Internet eine öffentliche Adresse liefern. Welche DNS-Konfiguration ist nötig?",
+      "relevant": "dns-2",
+      "category": "Network diagnosis",
+      "hardNegatives": [
+        "dns-1",
+        "dns-3"
+      ]
+    },
+    {
+      "id": "billing-b-ja",
+      "language": "ja",
+      "text": "短期間だけ使う実験サービスで、利用率を確認せず長期クラウド割引契約を購入すべきですか。",
+      "relevant": "billing-2",
+      "category": "Commercial planning",
+      "hardNegatives": [
+        "billing-1",
+        "billing-3"
+      ]
+    },
+    {
+      "id": "http-auth-a-en",
+      "language": "en",
+      "text": "What response should an API give when an access credential has expired?",
+      "relevant": "http-auth-1",
+      "category": "Access controls",
+      "hardNegatives": [
+        "http-auth-2",
+        "http-auth-3"
+      ]
+    },
+    {
+      "id": "search-b-fr",
+      "language": "fr",
+      "text": "Les vecteurs sont normalisés, mais le modèle exige des consignes différentes pour requêtes et documents. Que faut-il vérifier ?",
+      "relevant": "search-2",
+      "category": "Retrieval operations",
+      "hardNegatives": [
+        "search-1",
+        "search-3"
+      ]
+    },
+    {
+      "id": "billing-a-en",
+      "language": "en",
+      "text": "A customer wants the monthly running bill separated from the initial engineering work. How should the estimate be structured?",
+      "relevant": "billing-1",
+      "category": "Commercial planning",
+      "hardNegatives": [
+        "billing-2",
+        "billing-3"
+      ]
+    },
+    {
+      "id": "memory-b-en",
+      "language": "en",
+      "text": "Why does a model process use far more resident memory than its Go heap reports?",
+      "relevant": "memory-2",
+      "category": "Runtime diagnosis",
+      "hardNegatives": [
+        "memory-1",
+        "memory-3"
+      ]
+    },
+    {
+      "id": "containers-b-de",
+      "language": "de",
+      "text": "Ein Dienstcontainer muss neu erstellt werden, ohne seine Datenbank zu verlieren. Welche Speicherzuordnung ist zu prüfen?",
+      "relevant": "containers-2",
+      "category": "Container lifecycle",
+      "hardNegatives": [
+        "containers-1",
+        "containers-3"
+      ]
+    },
+    {
+      "id": "time-b-en",
+      "language": "en",
+      "text": "A recurring local appointment falls during the daylight-saving transition. Why is a fixed offset insufficient?",
+      "relevant": "time-2",
+      "category": "Time and ordering",
+      "hardNegatives": [
+        "time-1",
+        "time-3"
+      ]
+    },
+    {
+      "id": "observability-b-en",
+      "language": "en",
+      "text": "Can we average each server’s 95th-percentile latency to obtain the service-wide 95th percentile?",
+      "relevant": "observability-2",
+      "category": "Operational metrics",
+      "hardNegatives": [
+        "observability-1",
+        "observability-3"
+      ]
+    },
+    {
+      "id": "transactions-b-en",
+      "language": "en",
+      "text": "Two editors saved the same record; how can the server prevent the stale edit from overwriting the newer one?",
+      "relevant": "transactions-2",
+      "category": "Database semantics",
+      "hardNegatives": [
+        "transactions-1",
+        "transactions-3"
+      ]
+    },
+    {
+      "id": "contracts-b-en",
+      "language": "en",
+      "text": "The customer requested extra functionality beyond the signed scope. What approval process should precede delivery?",
+      "relevant": "contracts-2",
+      "category": "Delivery governance",
+      "hardNegatives": [
+        "contracts-1",
+        "contracts-3"
+      ]
+    },
+    {
+      "id": "contracts-b-es",
+      "language": "es",
+      "text": "El cliente pidió funciones fuera del alcance firmado. ¿Qué aprobación debe obtenerse antes de comprometer la entrega?",
+      "relevant": "contracts-2",
+      "category": "Delivery governance",
+      "hardNegatives": [
+        "contracts-1",
+        "contracts-3"
+      ]
+    },
+    {
+      "id": "files-b-en",
+      "language": "en",
+      "text": "A cleanup directory is beneath the expected path by name, but contains a link outside it. What validation is missing?",
+      "relevant": "files-2",
+      "category": "Filesystem safety",
+      "hardNegatives": [
+        "files-1",
+        "files-3"
+      ]
+    },
+    {
+      "id": "files-a-es",
+      "language": "es",
+      "text": "¿Cómo evitar que un lector vea una configuración escrita solo a medias durante su sustitución?",
+      "relevant": "files-1",
+      "category": "Filesystem safety",
+      "hardNegatives": [
+        "files-2",
+        "files-3"
+      ]
+    },
+    {
+      "id": "storage-b-en",
+      "language": "en",
+      "text": "A huge log was deleted, but disk usage did not fall. What might still be holding its storage?",
+      "relevant": "storage-2",
+      "category": "Storage capacity",
+      "hardNegatives": [
+        "storage-1",
+        "storage-3"
+      ]
+    },
+    {
+      "id": "network-b-pt",
+      "language": "pt",
+      "text": "O estabelecimento da ligação TCP não recebe resposta e expira. Que caminho deve ser investigado?",
+      "relevant": "network-2",
+      "category": "Connectivity diagnosis",
+      "hardNegatives": [
+        "network-1",
+        "network-3"
+      ]
+    },
+    {
+      "id": "network-a-ja",
+      "language": "ja",
+      "text": "HTTP通信の前にTCP接続が即座に拒否されます。最初に何を確認すべきですか。",
+      "relevant": "network-1",
+      "category": "Connectivity diagnosis",
+      "hardNegatives": [
+        "network-2",
+        "network-3"
+      ]
+    },
+    {
+      "id": "memory-b-pt",
+      "language": "pt",
+      "text": "Porque é que um processo com pesos mapeados ocupa muito mais memória residente do que o heap de Go indica?",
+      "relevant": "memory-2",
+      "category": "Runtime diagnosis",
+      "hardNegatives": [
+        "memory-1",
+        "memory-3"
+      ]
+    },
+    {
+      "id": "observability-a-en",
+      "language": "en",
+      "text": "The request metric only increases and resets on restart. How do I derive current throughput from it?",
+      "relevant": "observability-1",
+      "category": "Operational metrics",
+      "hardNegatives": [
+        "observability-2",
+        "observability-3"
+      ]
+    },
+    {
+      "id": "files-b-fr",
+      "language": "fr",
+      "text": "Un répertoire à nettoyer paraît dans la bonne arborescence mais contient un lien vers des données externes. Quelle vérification manque ?",
+      "relevant": "files-2",
+      "category": "Filesystem safety",
+      "hardNegatives": [
+        "files-1",
+        "files-3"
+      ]
+    },
+    {
+      "id": "time-a-pt",
+      "language": "pt",
+      "text": "A sincronização alterou a hora do sistema durante um pedido. Que relógio deve medir a duração?",
+      "relevant": "time-1",
+      "category": "Time and ordering",
+      "hardNegatives": [
+        "time-2",
+        "time-3"
+      ]
+    },
+    {
+      "id": "deployment-b-de",
+      "language": "de",
+      "text": "Alte und neue Programmversionen laufen während einer Schemaänderung gleichzeitig. Wann dürfen alte Spalten entfernt werden?",
+      "relevant": "deployment-2",
+      "category": "Release safety",
+      "hardNegatives": [
+        "deployment-1",
+        "deployment-3"
+      ]
+    },
+    {
+      "id": "search-a-es",
+      "language": "es",
+      "text": "Dos modelos producen vectores de igual longitud. ¿Se pueden reutilizar los vectores antiguos al cambiar de modelo?",
+      "relevant": "search-1",
+      "category": "Retrieval operations",
+      "hardNegatives": [
+        "search-2",
+        "search-3"
+      ]
+    },
+    {
+      "id": "billing-b-en",
+      "language": "en",
+      "text": "Should a short-lived experimental service buy a long-term cloud discount commitment without checking utilisation?",
+      "relevant": "billing-2",
+      "category": "Commercial planning",
+      "hardNegatives": [
+        "billing-1",
+        "billing-3"
+      ]
+    },
+    {
+      "id": "containers-a-en",
+      "language": "en",
+      "text": "How do we make a deployment reproducible when an image tag can be reassigned?",
+      "relevant": "containers-1",
+      "category": "Container lifecycle",
+      "hardNegatives": [
+        "containers-2",
+        "containers-3"
+      ]
+    },
+    {
+      "id": "cancellation-b-ja",
+      "language": "ja",
+      "text": "4ワーカーで埋め込み要求の経過時間が短くなりました。効率向上と判断する前に、どの追加資源指標を測るべきですか。",
+      "relevant": "cancellation-2",
+      "category": "Concurrency controls",
+      "hardNegatives": [
+        "cancellation-1",
+        "cancellation-3"
+      ]
+    },
+    {
+      "id": "deployment-a-fr",
+      "language": "fr",
+      "text": "Comment exposer une nouvelle version à une faible part du trafic réel avant un déploiement complet ?",
+      "relevant": "deployment-1",
+      "category": "Release safety",
+      "hardNegatives": [
+        "deployment-2",
+        "deployment-3"
+      ]
+    },
+    {
+      "id": "deployment-a-en",
+      "language": "en",
+      "text": "How can we expose a new release to a small fraction of real traffic before full rollout?",
+      "relevant": "deployment-1",
+      "category": "Release safety",
+      "hardNegatives": [
+        "deployment-2",
+        "deployment-3"
+      ]
+    },
+    {
+      "id": "dns-b-en",
+      "language": "en",
+      "text": "The same application name needs private addresses inside the office and public ones outside. What configuration fits?",
+      "relevant": "dns-2",
+      "category": "Network diagnosis",
+      "hardNegatives": [
+        "dns-1",
+        "dns-3"
+      ]
+    },
+    {
+      "id": "queues-b-ja",
+      "language": "ja",
+      "text": "不正なメッセージが毎回失敗して処理を妨げています。回数を制限した再試行の後、どこへ移すべきですか。",
+      "relevant": "queues-2",
+      "category": "Asynchronous processing",
+      "hardNegatives": [
+        "queues-1",
+        "queues-3"
+      ]
+    },
+    {
+      "id": "memory-a-ja",
+      "language": "ja",
+      "text": "生存ヒープは小さいのに、一時オブジェクトの回収でGCが忙しいです。何を調べるべきですか。",
+      "relevant": "memory-1",
+      "category": "Runtime diagnosis",
+      "hardNegatives": [
+        "memory-2",
+        "memory-3"
+      ]
+    },
+    {
+      "id": "indexing-b-en",
+      "language": "en",
+      "text": "A query became slow after a huge data import and the plan badly underestimates rows. What should we refresh?",
+      "relevant": "indexing-2",
+      "category": "Database performance",
+      "hardNegatives": [
+        "indexing-1",
+        "indexing-3"
+      ]
+    },
+    {
+      "id": "deployment-b-en",
+      "language": "en",
+      "text": "Old and new binaries will run together during a schema migration. In what order should incompatible structures be removed?",
+      "relevant": "deployment-2",
+      "category": "Release safety",
+      "hardNegatives": [
+        "deployment-1",
+        "deployment-3"
+      ]
+    },
+    {
+      "id": "containers-b-en",
+      "language": "en",
+      "text": "We must recreate a service container without losing its database. What storage arrangement must be verified?",
+      "relevant": "containers-2",
+      "category": "Container lifecycle",
+      "hardNegatives": [
+        "containers-1",
+        "containers-3"
+      ]
+    },
+    {
+      "id": "observability-b-de",
+      "language": "de",
+      "text": "Darf man die 95. Latenzperzentile einzelner Server mitteln, um das 95. Perzentil des Gesamtdienstes zu erhalten?",
+      "relevant": "observability-2",
+      "category": "Operational metrics",
+      "hardNegatives": [
+        "observability-1",
+        "observability-3"
+      ]
+    },
+    {
+      "id": "cancellation-b-en",
+      "language": "en",
+      "text": "Four workers shorten one embedding request. Which additional resource metric is needed before calling this more efficient?",
+      "relevant": "cancellation-2",
+      "category": "Concurrency controls",
+      "hardNegatives": [
+        "cancellation-1",
+        "cancellation-3"
+      ]
+    },
+    {
+      "id": "time-b-es",
+      "language": "es",
+      "text": "Una cita local recurrente cae en el cambio de horario de verano. ¿Por qué no basta un desplazamiento UTC fijo?",
+      "relevant": "time-2",
+      "category": "Time and ordering",
+      "hardNegatives": [
+        "time-1",
+        "time-3"
+      ]
+    },
+    {
+      "id": "indexing-b-fr",
+      "language": "fr",
+      "text": "Après une importation massive, le plan sous-estime fortement le nombre de lignes. Que faut-il actualiser ?",
+      "relevant": "indexing-2",
+      "category": "Database performance",
+      "hardNegatives": [
+        "indexing-1",
+        "indexing-3"
+      ]
+    },
+    {
+      "id": "network-b-en",
+      "language": "en",
+      "text": "The TCP handshake never receives a response and eventually expires. Which path should be investigated?",
+      "relevant": "network-2",
+      "category": "Connectivity diagnosis",
+      "hardNegatives": [
+        "network-1",
+        "network-3"
+      ]
+    },
+    {
+      "id": "cancellation-a-en",
+      "language": "en",
+      "text": "A cancelled request returns, but its child workers still write into scratch reused by the next request. What lifecycle rule is missing?",
+      "relevant": "cancellation-1",
+      "category": "Concurrency controls",
+      "hardNegatives": [
+        "cancellation-2",
+        "cancellation-3"
+      ]
+    },
+    {
+      "id": "search-b-en",
+      "language": "en",
+      "text": "All vectors have valid lengths and unit norms, but the model expects different instructions for searches and stored pages. What may be wrong?",
+      "relevant": "search-2",
+      "category": "Retrieval operations",
+      "hardNegatives": [
+        "search-1",
+        "search-3"
+      ]
+    },
+    {
+      "id": "cancellation-a-de",
+      "language": "de",
+      "text": "Nach Abbruch schreibt ein Kind-Worker noch in wiederverwendete Puffer. Welche Lebenszyklusregel fehlt?",
+      "relevant": "cancellation-1",
+      "category": "Concurrency controls",
+      "hardNegatives": [
+        "cancellation-2",
+        "cancellation-3"
+      ]
+    },
+    {
+      "id": "oauth-b-en",
+      "language": "en",
+      "text": "An attacker copied the long-lived renewal credential. Is waiting for the access credential to expire enough?",
+      "relevant": "oauth-2",
+      "category": "Credential lifecycle",
+      "hardNegatives": [
+        "oauth-1",
+        "oauth-3"
+      ]
+    },
+    {
+      "id": "queues-b-en",
+      "language": "en",
+      "text": "One malformed message fails on every attempt and blocks useful work. Where should it go after bounded retries?",
+      "relevant": "queues-2",
+      "category": "Asynchronous processing",
+      "hardNegatives": [
+        "queues-1",
+        "queues-3"
+      ]
+    }
+  ],
+  "workloads": [
+    {
+      "name": "short-query",
+      "role": "query",
+      "text": "Where is the project documentation?",
+      "repeats": 17
+    },
+    {
+      "name": "paragraph",
+      "role": "document",
+      "text": "The semantic search worker reads documents, splits their contents into bounded overlapping chunks and generates an embedding for each chunk. Missing or stale vectors are refreshed in the background. The service keeps the existing index available during this work and checks cancellation before publishing new output. Operators should measure representative CPU workloads before changing concurrency limits.",
+      "repeats": 13
+    },
+    {
+      "name": "long-chunk",
+      "role": "document",
+      "text": "A production service needs a recovery procedure that can be tested independently of the running deployment. Backups must preserve the data, configuration and access policy needed to restore service. Before changing the active model, validate a separate candidate with a fixed set of inputs. Measure load time, warm inference latency, allocation counts and peak memory on the intended host. Compare retrieval rankings against relevance labels written before inspecting the model outputs. Keep the existing worker and vector index available while the candidate is evaluated. A faster kernel does not necessarily make the complete request faster, because tokenisation, attention and memory allocation also contribute to elapsed time. Reuse bounded scratch buffers, honour cancellation and avoid silently truncating documents when the input limit is exceeded. A process using mapped weights may have a small initial heap while its resident memory grows as pages are touched. Record both the retained heap and the process resident memory. Test shorter vectors by renormalising the retained prefix before cosine search. Preserve independent reference checks whenever an optimisation changes numerical reduction order. After the experiment finishes, remove temporary profiles, expanded weights and build artifacts, keeping the source, original checkpoint and concise measured conclusions. Deployment still requires a separate decision based on retrieval quality, operational limits and the target machine's resource budget.",
+      "repeats": 9
+    }
+  ]
+}
