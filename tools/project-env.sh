@@ -9,7 +9,7 @@ _memento_env_main() {
   project_tmp_init "$root" || return
   export PROJECT_TMP_ROOT="$root"
   export MEMENTO_REPO_ROOT="$repo"
-  export GOTOOLCHAIN=${GOTOOLCHAIN:-go1.26.6}
+  export GOTOOLCHAIN=${GOTOOLCHAIN:-go1.26.11}
   # Checkouts get distinct output directories; caches are safely tool-shared.
   export BUILD_ROOT="$root/build/$(printf '%s' "$repo" | cksum | cut -d' ' -f1)"
   if [[ -z ${MEMENTO_RUN_ROOT:-} ]]; then
@@ -32,7 +32,7 @@ _memento_env_main() {
   export PLAYWRIGHT_BROWSERS_PATH="$root/cache/playwright" PYTHONPYCACHEPREFIX="$root/cache/python"
   export TOOLS_DIR="$root/cache/go-tools"
   # Retained evidence is deliberately outside cleanable build/scratch.
-  export PROFILE_ROOT=${PROFILE_ROOT:-$repo/build/profiles}
+  export PROFILE_ROOT=${PROFILE_ROOT:-$PROJECT_TMP_ROOT/runs/profiles}
   for path in "$BUILD_ROOT" "$TMPDIR" "$GOTMPDIR" "$GOCACHE" "$GOMODCACHE" "$XDG_CACHE_HOME" "$BUN_INSTALL_CACHE_DIR" "$npm_config_cache" "$PIP_CACHE_DIR" "$UV_CACHE_DIR" "$PLAYWRIGHT_BROWSERS_PATH" "$PYTHONPYCACHEPREFIX" "$TOOLS_DIR"; do
     project_path_usable "$path" || { echo "Unsafe project path: $path" >&2; return 1; }
     mkdir -p "$path" || return
