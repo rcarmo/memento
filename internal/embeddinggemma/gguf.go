@@ -29,9 +29,9 @@ const (
 	F32  Type = 0
 	F16  Type = 1
 	Q8_0 Type = 8
-	Q4_K Type = 12
-	Q5_K Type = 13
-	Q6_K Type = 14
+	Q4K  Type = 12
+	Q5K  Type = 13
+	Q6K  Type = 14
 	BF16 Type = 30
 )
 
@@ -43,11 +43,11 @@ func (t Type) String() string {
 		return "F16"
 	case Q8_0:
 		return "Q8_0"
-	case Q4_K:
+	case Q4K:
 		return "Q4_K"
-	case Q5_K:
+	case Q5K:
 		return "Q5_K"
-	case Q6_K:
+	case Q6K:
 		return "Q6_K"
 	case BF16:
 		return "BF16"
@@ -62,11 +62,11 @@ func (t Type) layout() (elements, bytes int, err error) {
 		return 1, 2, nil
 	case Q8_0:
 		return 32, 34, nil
-	case Q4_K:
+	case Q4K:
 		return 256, 144, nil
-	case Q5_K:
+	case Q5K:
 		return 256, 176, nil
-	case Q6_K:
+	case Q6K:
 		return 256, 210, nil
 	}
 	return 0, 0, fmt.Errorf("unsupported tensor type %d", t)

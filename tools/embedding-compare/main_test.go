@@ -158,3 +158,35 @@ func TestRetrievalCutoffAndStableTies(t *testing.T) {
 		t.Fatal(r)
 	}
 }
+
+func FuzzCorpusValidation(f *testing.F) {
+	f.Add([]byte(`{"documents":[{"id":"a","text":"answer"}],"queries":[{"id":"q","language":"en","text":"question","relevant":"a"}],"workloads":[{"name":"query","role":"query","text":"text","repeats":3}]}`))
+	f.Add([]byte(`{}`))
+	f.Fuzz(func(t *testing.T, raw []byte) {
+		if len(raw) > 64<<10 {
+			t.Skip()
+		}
+		var c corpus
+		if json.Unmarshal(raw, &c) != nil {
+			return
+		}
+		if err := validateCorpus(c); err != nil {
+			return
+		}
+		if len(c.Documents) == 0 || len(c.Queries) == 0 || len(c.Workloads) == 0 {
+			t.Fatal("accepted empty fixture")
+		}
+		ids := map[string]bool{}
+		for _, d := range c.Documents {
+			if ids[d.ID] || d.ID == "" {
+				t.Fatal(d.ID)
+			}
+			ids[d.ID] = true
+		}
+		for _, q := range c.Queries {
+			if !ids[q.Relevant] {
+				t.Fatal(q.ID)
+			}
+		}
+	})
+}

@@ -31,12 +31,12 @@ func fixture(t *testing.T, mutate func(*bytes.Buffer)) string {
 	put(uint32(2))
 	put(uint64(256))
 	put(uint64(2))
-	put(uint32(Q4_K))
+	put(uint32(Q4K))
 	put(uint64(0))
 	for b.Len()%32 != 0 {
 		b.WriteByte(0)
 	}
-	b.Write(encodedRows(Q4_K, 256, 2))
+	b.Write(encodedRows(Q4K, 256, 2))
 	if mutate != nil {
 		mutate(&b)
 	}

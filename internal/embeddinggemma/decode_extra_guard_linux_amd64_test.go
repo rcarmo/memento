@@ -42,7 +42,7 @@ func TestExtraDecodeGuardPages(t *testing.T) {
 		}
 		return b[start : start+n : start+n]
 	}
-	for _, typ := range []Type{Q5_K, Q8_0} {
+	for _, typ := range []Type{Q5K, Q8_0} {
 		for _, cols := range extraDecodeColumns(typ) {
 			for _, atEnd := range []bool{false, true} {
 				t.Run(fmt.Sprintf("%s/%d/end=%t", typ, cols, atEnd), func(t *testing.T) {

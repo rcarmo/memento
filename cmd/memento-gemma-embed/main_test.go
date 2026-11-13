@@ -39,3 +39,20 @@ func TestRunReal(t *testing.T) {
 		t.Fatal(code)
 	}
 }
+
+// Invalid roles must fail during admission, before touching the supplied path.
+func FuzzArguments(f *testing.F) {
+	for _, s := range []string{"", "query", "document", "raw", "--model", "日本語"} {
+		f.Add(s)
+	}
+	f.Fuzz(func(t *testing.T, value string) {
+		if len(value) > 4096 {
+			t.Skip()
+		}
+		var out, stderr bytes.Buffer
+		code := run(context.Background(), []string{"-model", value, "-role", "invalid"}, &out, &stderr)
+		if code != 2 || out.Len() != 0 || stderr.Len() == 0 {
+			t.Fatal(code, out.String(), stderr.String())
+		}
+	})
+}

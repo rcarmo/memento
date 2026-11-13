@@ -68,7 +68,7 @@ func headerFixture(t *testing.T, meta []metaPair, ts []testTensor, data []byte) 
 }
 func TestParserValidation(t *testing.T) {
 	valid := []metaPair{{"general.architecture", 8, "gemma-embedding2"}}
-	tensor := testTensor{"w", []uint64{256, 1}, Q4_K, 0}
+	tensor := testTensor{"w", []uint64{256, 1}, Q4K, 0}
 	for _, tc := range []struct {
 		name string
 		meta []metaPair
@@ -81,15 +81,15 @@ func TestParserValidation(t *testing.T) {
 		{"bad-alignment", append(append([]metaPair{}, valid...), metaPair{"general.alignment", 4, uint32(3)}), []testTensor{tensor}, 144},
 		{"big-alignment", append(append([]metaPair{}, valid...), metaPair{"general.alignment", 4, uint32(8192)}), []testTensor{tensor}, 144},
 		{"duplicate-tensor", valid, []testTensor{tensor, tensor}, 288},
-		{"empty-tensor", valid, []testTensor{{"", []uint64{256}, Q4_K, 0}}, 144},
+		{"empty-tensor", valid, []testTensor{{"", []uint64{256}, Q4K, 0}}, 144},
 		{"rank-zero", valid, []testTensor{{"w", nil, F32, 0}}, 144},
 		{"rank-five", valid, []testTensor{{"w", []uint64{1, 1, 1, 1, 1}, F32, 0}}, 144},
 		{"dim-zero", valid, []testTensor{{"w", []uint64{0}, F32, 0}}, 144},
 		{"dim-overflow", valid, []testTensor{{"w", []uint64{1 << 30, 2}, F32, 0}}, 144},
-		{"row-unaligned", valid, []testTensor{{"w", []uint64{255}, Q4_K, 0}}, 144},
+		{"row-unaligned", valid, []testTensor{{"w", []uint64{255}, Q4K, 0}}, 144},
 		{"encoding", valid, []testTensor{{"w", []uint64{256}, 99, 0}}, 144},
-		{"offset-unaligned", valid, []testTensor{{"w", []uint64{256}, Q4_K, 1}}, 145},
-		{"overlap", valid, []testTensor{tensor, {"v", []uint64{256}, Q4_K, 32}}, 288},
+		{"offset-unaligned", valid, []testTensor{{"w", []uint64{256}, Q4K, 1}}, 145},
+		{"overlap", valid, []testTensor{tensor, {"v", []uint64{256}, Q4K, 32}}, 288},
 		{"file-bounds", valid, []testTensor{tensor}, 32},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -175,10 +175,10 @@ func TestMappedLifecycleAndErrors(t *testing.T) {
 	}
 	defer f.Close()
 	m, _ := f.Matrix("test.weight")
-	if rows, cols := m.Shape(); rows != 2 || cols != 256 || m.Type() != Q4_K {
+	if rows, cols := m.Shape(); rows != 2 || cols != 256 || m.Type() != Q4K {
 		t.Fatal(rows, cols, m.Type())
 	}
-	f.tensors["vector"] = Tensor{Name: "vector", Shape: []uint64{256}, Type: Q4_K}
+	f.tensors["vector"] = Tensor{Name: "vector", Shape: []uint64{256}, Type: Q4K}
 	if _, err := f.Matrix("vector"); err == nil {
 		t.Fatal("vector matrix")
 	}
@@ -211,7 +211,7 @@ func TestMappedLifecycleAndErrors(t *testing.T) {
 	if Type(97).String() != "unknown(97)" {
 		t.Fatal("type string")
 	}
-	for _, typ := range []Type{F32, F16, Q8_0, Q4_K, Q5_K, Q6_K, BF16} {
+	for _, typ := range []Type{F32, F16, Q8_0, Q4K, Q5K, Q6K, BF16} {
 		if typ.String() == "" {
 			t.Fatal(typ)
 		}

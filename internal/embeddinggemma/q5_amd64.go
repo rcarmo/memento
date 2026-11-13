@@ -8,9 +8,9 @@ import (
 	"github.com/rcarmo/memento/internal/simd"
 )
 
-// q5GroupSSE2 and q5GroupAVX2 dequantize one packed Q5_K group while
+// q5GroupSSE2 and q5GroupAVX2 dequantize one packed Q5K group while
 // accumulating its dot product. highMask selects the group's bit plane in the
-// 32-byte Q5_K high-bit area.
+// 32-byte Q5K high-bit area.
 //
 //go:noescape
 func q5GroupSSE2(q, high *byte, x *float32, scale, minimum float32, highNibble bool, highMask uint32) float32

@@ -44,7 +44,7 @@ func referenceRow(raw []byte, typ Type, n int) []float64 {
 			out[i] = float64(math.Float32frombits(uint32(binary.LittleEndian.Uint16(r[j*2:])) << 16))
 		case Q8_0:
 			out[i] = referenceHalf(binary.LittleEndian.Uint16(r)) * float64(int8(r[j+2]))
-		case Q4_K, Q5_K:
+		case Q4K, Q5K:
 			g := j / 32
 			idx := j % 32
 			var scale, minval uint8
@@ -56,15 +56,15 @@ func referenceRow(raw []byte, typ Type, n int) []float64 {
 				minval = (r[8+g] >> 4) + ((r[4+g] >> 6) << 4)
 			}
 			off := 16
-			if typ == Q5_K {
+			if typ == Q5K {
 				off = 48
 			}
 			v := (r[off+(g/2)*32+idx] >> uint((g%2)*4)) & 15
-			if typ == Q5_K {
+			if typ == Q5K {
 				v |= ((r[16+idx] >> g) & 1) << 4
 			}
 			out[i] = referenceHalf(binary.LittleEndian.Uint16(r))*float64(scale)*float64(v) - referenceHalf(binary.LittleEndian.Uint16(r[2:]))*float64(minval)
-		case Q6_K:
+		case Q6K:
 			h := j / 128
 			local := j % 128
 			g := local / 32
@@ -96,10 +96,10 @@ func encodedRows(typ Type, n, rows int) []byte {
 			binary.LittleEndian.PutUint16(b[i:], 0x3e80)
 		case Q8_0:
 			binary.LittleEndian.PutUint16(b[i:], 0x2000)
-		case Q4_K, Q5_K:
+		case Q4K, Q5K:
 			binary.LittleEndian.PutUint16(b[i:], 0x1400)
 			binary.LittleEndian.PutUint16(b[i+2:], 0x1000)
-		case Q6_K:
+		case Q6K:
 			binary.LittleEndian.PutUint16(b[i+208:], 0x1400)
 		}
 	}
@@ -119,7 +119,7 @@ func TestHalfExhaustive(t *testing.T) {
 	}
 }
 func TestQuantizedRowsAndProjection(t *testing.T) {
-	for _, typ := range []Type{F32, F16, BF16, Q8_0, Q4_K, Q5_K, Q6_K} {
+	for _, typ := range []Type{F32, F16, BF16, Q8_0, Q4K, Q5K, Q6K} {
 		t.Run(typ.String(), func(t *testing.T) {
 			const n, rows = 512, 7
 			raw := encodedRows(typ, n, rows)
@@ -179,6 +179,7 @@ func TestQuantizedRowsAndProjection(t *testing.T) {
 			if err := m.ProjectTo(ctx, dst, x, row, scalarEngine()); err != context.Canceled {
 				t.Fatal(err)
 			}
+			//lint:ignore SA1012 deliberately verify rejection of a nil caller context
 			if err := m.ProjectTo(nil, dst, x, row, scalarEngine()); err == nil {
 				t.Fatal("nil context")
 			}
@@ -193,14 +194,14 @@ func TestQuantizedRowsAndProjection(t *testing.T) {
 	}
 }
 func TestDecodeErrors(t *testing.T) {
-	for _, typ := range []Type{F32, F16, BF16, Q8_0, Q4_K, Q5_K, Q6_K, 99} {
+	for _, typ := range []Type{F32, F16, BF16, Q8_0, Q4K, Q5K, Q6K, 99} {
 		if err := decodeRow(make([]float32, 257), nil, typ); err == nil {
 			t.Fatal(typ)
 		}
 	}
 }
 func BenchmarkQuantProjection(b *testing.B) {
-	for _, typ := range []Type{Q4_K, Q5_K, Q6_K, Q8_0} {
+	for _, typ := range []Type{Q4K, Q5K, Q6K, Q8_0} {
 		for _, backend := range []string{"scalar", "sse2", "avx2", "neon"} {
 			e, err := simd.New(backend)
 			if err != nil {

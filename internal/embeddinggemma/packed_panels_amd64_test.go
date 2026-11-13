@@ -17,9 +17,9 @@ func TestPackedMultiplePanels(t *testing.T) {
 	const cols = 256
 	for _, rows := range []int{8, 9, 15, 16, 17} {
 		for _, n := range []int{8, 9, 15, 16, 32, 64} {
-			raw := encodedRows(Q4_K, cols, rows)
+			raw := encodedRows(Q4K, cols, rows)
 			f := &File{data: raw}
-			m := &Matrix{owner: f, tensor: Tensor{Type: Q4_K, Bytes: uint64(len(raw))}, columns: cols, rows: rows}
+			m := &Matrix{owner: f, tensor: Tensor{Type: Q4K, Bytes: uint64(len(raw))}, columns: cols, rows: rows}
 			x := make([]float32, n*cols)
 			for i := range x {
 				x[i] = float32(i%29-14) / 29
@@ -29,7 +29,7 @@ func TestPackedMultiplePanels(t *testing.T) {
 				t.Fatal(err)
 			}
 			for r := 0; r < rows; r++ {
-				v := referenceRow(m.rawRow(r), Q4_K, cols)
+				v := referenceRow(m.rawRow(r), Q4K, cols)
 				for token := 0; token < n; token++ {
 					var want float64
 					for j, a := range v {

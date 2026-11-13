@@ -18,8 +18,8 @@ func TestWideInteriorSpan(t *testing.T) {
 	const cols = 256
 	const n = 17
 	const nt = 32
-	raw := encodedRows(Q4_K, cols, rows)
-	m := &Matrix{owner: &File{data: raw}, tensor: Tensor{Type: Q4_K, Bytes: uint64(len(raw))}, rows: rows, columns: cols}
+	raw := encodedRows(Q4K, cols, rows)
+	m := &Matrix{owner: &File{data: raw}, tensor: Tensor{Type: Q4K, Bytes: uint64(len(raw))}, rows: rows, columns: cols}
 	x, p := make([]float32, n*cols), make([]float32, nt*cols)
 	for i := range x {
 		x[i] = float32(i%29-14) / 29
@@ -41,7 +41,7 @@ func TestWideInteriorSpan(t *testing.T) {
 					}
 					continue
 				}
-				ref := referenceRow(m.rawRow(r), Q4_K, cols)
+				ref := referenceRow(m.rawRow(r), Q4K, cols)
 				var want float64
 				for col, v := range ref {
 					want += v * float64(x[tok*cols+col])

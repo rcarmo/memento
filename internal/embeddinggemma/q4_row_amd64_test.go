@@ -30,7 +30,7 @@ func TestQ4RowAVX2(t *testing.T) {
 			x[i] = float32(rng.NormFloat64())
 		}
 		want := 0.0
-		decoded := referenceRow(raw, Q4_K, len(x))
+		decoded := referenceRow(raw, Q4K, len(x))
 		for i, a := range x {
 			want += decoded[i] * float64(a)
 		}

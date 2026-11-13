@@ -84,8 +84,8 @@ func TestParallelOversubscribedPanels(t *testing.T) {
 	const rows = 137
 	const cols = 512
 	const n = 15
-	raw := encodedRows(Q4_K, cols, rows)
-	m := &Matrix{owner: &File{data: raw}, tensor: Tensor{Type: Q4_K, Bytes: uint64(len(raw))}, rows: rows, columns: cols}
+	raw := encodedRows(Q4K, cols, rows)
+	m := &Matrix{owner: &File{data: raw}, tensor: Tensor{Type: Q4K, Bytes: uint64(len(raw))}, rows: rows, columns: cols}
 	w := &Workspace{Workers: 8}
 	w.prepare(n)
 	ctx := &parallelErrorContext{Context: context.Background()}

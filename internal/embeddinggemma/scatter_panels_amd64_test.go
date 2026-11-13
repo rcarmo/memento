@@ -14,7 +14,7 @@ func TestScatterDecoderIntegration(t *testing.T) {
 	if err != nil {
 		t.Skip(err)
 	}
-	for _, typ := range []Type{Q5_K, Q8_0} {
+	for _, typ := range []Type{Q5K, Q8_0} {
 		for _, cols := range []int{512, 2048} {
 			const rows = 17
 			const n = 16
@@ -67,11 +67,11 @@ func TestQ4DecodeValidation(t *testing.T) {
 	if err != nil {
 		t.Skip(err)
 	}
-	if err := decodeTileRow(nil, nil, Q4_K, e.Backend()); err != nil {
+	if err := decodeTileRow(nil, nil, Q4K, e.Backend()); err != nil {
 		t.Fatal(err)
 	}
 	for _, c := range []struct{ dst, raw int }{{255, 144}, {256, 143}, {256, 145}} {
-		if err := decodeTileRow(make([]float32, c.dst), make([]byte, c.raw), Q4_K, e.Backend()); err == nil {
+		if err := decodeTileRow(make([]float32, c.dst), make([]byte, c.raw), Q4K, e.Backend()); err == nil {
 			t.Fatal(c)
 		}
 	}

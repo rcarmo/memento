@@ -20,6 +20,8 @@ Go-port records include the [final pure-Go v1.0.0 validation](go-v1-validation-2
 
 ## Native embedding comparison
 
+[Optional Gemma on main](gemma-main-option-2026-11-13.md) records the source integration, explicit opt-in commands, default-off build/runtime guards and verification. Production continues to use GTE.
+
 [Refreshed GTE/Gemma comparison](gte-gemma-refresh-2026-11-13.md) records the frozen 60-document/80-query multilingual diagnostic, paired one/four-core timings, memory and process CPU cost, and profile-driven parked-worker trade-off. Production remains on GTE; the synthetic quality result is not a deployment gate. The [NAS comparison](gte-gemma-nas-2026-11-13.md) measures the same frozen workloads on the non-AVX2 Celeron J3455: GTE remains substantially faster, while Gemma preserves the multilingual diagnostic gain.
 
 ## Proposal listing and profiling

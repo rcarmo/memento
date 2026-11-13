@@ -12,7 +12,6 @@ import (
 
 // MaxTokens is the published embedding context, not the GGUF positional capacity.
 const MaxTokens = 8192
-const width = 512
 
 // Role chooses the model-card retrieval prompt. Raw leaves text unchanged.
 type Role string

@@ -25,7 +25,7 @@ func (m *Matrix) projectTokensLocked(ctx context.Context, dst, x []float32, n in
 				return err
 			}
 		}
-		if m.tensor.Type == Q4_K && n < 32 && projectFewQ4(m.rawRow(row), x, sums[:n], n, m.columns, engine.Backend()) {
+		if m.tensor.Type == Q4K && n < 32 && projectFewQ4(m.rawRow(row), x, sums[:n], n, m.columns, engine.Backend()) {
 			for t := 0; t < n; t++ {
 				dst[t*m.rows+row] = sums[t]
 			}

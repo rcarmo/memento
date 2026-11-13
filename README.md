@@ -59,6 +59,10 @@ A fine-tuned 26M-parameter [Needle][needle] model can route a small set of natur
 
 Model setup and search behaviour are documented in [`docs/semantic-search.md`](docs/semantic-search.md); retained Needle training and performance results live under [`docs/evidence/needle/`](docs/evidence/needle/).
 
+### Optional EmbeddingGemma
+
+[Native EmbeddingGemma 2](docs/embeddinggemma-native.md) is available in source as an offline CPU engine and CLI. It is **off by default**: normal builds, release archives, containers and service startup keep GTE and do not download or load Gemma. Build it explicitly with `make gemma-embed` and supply the separately verified checkpoint. The [NAS comparison](docs/evidence/gte-gemma-nas-2026-11-13.md) supports keeping GTE on the current NAS. A live backend/index migration requires a separate decision.
+
 ## Assets And Skills
 
 A concept can include an immutable versioned asset pack as an ordinary Git blob. The Markdown remains searchable while diagrams, templates, datasets or a complete agent skill travel in an attached ZIP. Packs that fit the configured MCP request ceiling use `attach_asset_pack.zip_base64`, keeping proposal creation inside MCP. Larger packs can use `memory_asset_stage_begin`/`memory_asset_stage_status`; the begin call returns a one-time raw-upload ticket so the upload command does not need the principal's bearer token.

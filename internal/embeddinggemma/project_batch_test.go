@@ -9,7 +9,7 @@ import (
 )
 
 func TestProjectionTiles(t *testing.T) {
-	for _, typ := range []Type{F32, F16, BF16, Q4_K, Q5_K, Q6_K, Q8_0} {
+	for _, typ := range []Type{F32, F16, BF16, Q4K, Q5K, Q6K, Q8_0} {
 		const cols = 512
 		const rows = 7
 		raw := encodedRows(typ, cols, rows)

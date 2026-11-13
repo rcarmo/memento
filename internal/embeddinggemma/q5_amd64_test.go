@@ -9,7 +9,7 @@ import (
 	"github.com/rcarmo/memento/internal/simd"
 )
 
-// q5ReferenceDot deliberately reads the Q5_K bit planes directly. It does
+// q5ReferenceDot deliberately reads the Q5K bit planes directly. It does
 // not use production half/scale/decode helpers, so the high-plane layout is
 // checked independently of the fused kernels.
 func q5ReferenceDot(raw []byte, x []float32) float32 {

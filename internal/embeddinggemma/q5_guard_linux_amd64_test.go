@@ -12,7 +12,7 @@ import (
 )
 
 // The packed values, high-bit plane and activations all terminate at a guard
-// page. This catches wide loads that cross the Q5_K group boundaries.
+// page. This catches wide loads that cross the Q5K group boundaries.
 func TestQ5SIMDGuardPages(t *testing.T) {
 	size := os.Getpagesize()
 	alloc := func() []byte {

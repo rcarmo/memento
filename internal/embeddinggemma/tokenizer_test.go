@@ -88,6 +88,7 @@ func TestTokenizerValidationLimitsAndCancellation(t *testing.T) {
 	if _, err := tok.Encode(ctx, "hello", 10); !errors.Is(err, context.Canceled) {
 		t.Fatal(err)
 	}
+	//lint:ignore SA1012 deliberately verify rejection of a nil caller context
 	if _, err := tok.Encode(nil, "hello", 10); err == nil {
 		t.Fatal("accepted nil context")
 	}

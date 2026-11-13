@@ -1,6 +1,10 @@
 # Native EmbeddingGemma 2 engine
 
-`internal/embeddinggemma` generates text embeddings on CPU from the pinned text-only GGUF, using Go and small Go-assembler SIMD kernels. It implements the tokenizer, all 24 transformer layers, mean pooling, output projection and L2 normalisation. The offline CLI is separate from production GTE, its worker protocol, Docker image and existing index.
+`internal/embeddinggemma` generates text embeddings on CPU from the pinned text-only GGUF, using Go and small Go-assembler SIMD kernels. It implements the tokenizer, all 24 transformer layers, mean pooling, output projection and L2 normalisation. The engine and offline CLI are preserved on `main` as an explicit option, **off by default**. Service startup still uses the configured GTE worker. Gemma has no automatic fallback, environment-triggered activation or service backend selector. Production GTE, its worker protocol, Docker image and existing index are unchanged.
+
+Plain `make` prints help. Standard `make build`, `install`, release archives and container builds exclude the Gemma commands and checkpoint. Default builds and startup never download or load Gemma. Run `make gemma-embed` explicitly, then provide the separately acquired, manifest-verified checkpoint. The `gemma-test`, `gemma-inspect`, `gemma-bench` and `gemma-reference` targets are also explicit opt-ins. Normal source tests, vet, lint and race checks include model-independent Gemma tests; real-checkpoint tests require `EMBEDDINGGEMMA_MODEL`. `make gemma-coverage` reports coverage for the optional engine/commands/comparison separately. The service's zero-uncovered-statement gate retains its existing production package set; checkpoint-dependent offline packages are excluded from that gate, with no exclusion for the production GTE engine.
+
+The [NAS measurements](evidence/gte-gemma-nas-2026-11-13.md) favour retaining GTE on the Celeron J3455. Production backend selection requires separate integration and deployment approval, a rebuilt candidate vector index and retrieval validation. Equal vector dimensions do not make different models compatible.
 
 ## Checkpoint
 

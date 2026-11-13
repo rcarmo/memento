@@ -53,7 +53,7 @@ func TestQ4SIMDGuardPages(t *testing.T) {
 			activations[i] = float32(i%19-9) / 8
 		}
 		var want float64
-		decoded := referenceRow(raw, Q4_K, len(activations))
+		decoded := referenceRow(raw, Q4K, len(activations))
 		for i, a := range activations {
 			want += decoded[i] * float64(a)
 		}

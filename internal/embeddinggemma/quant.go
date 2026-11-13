@@ -1,6 +1,6 @@
 package embeddinggemma
 
-// GGUF Q4_K/Q5_K/Q6_K layouts adapted from rcarmo/go-pherence
+// GGUF Q4K/Q5K/Q6K layouts adapted from rcarmo/go-pherence
 // loader/gguf/quant_matrix.go at 2c283159 (MIT, Copyright 2026 Rui Carmo).
 // Unlike a full dequantized model, one bounded row scratch is caller-owned.
 import (
@@ -75,7 +75,7 @@ func (m *Matrix) projectLocked(ctx context.Context, dst, x, scratch []float32, e
 				return err
 			}
 		}
-		if m.tensor.Type == Q4_K {
+		if m.tensor.Type == Q4K {
 			if value, ok := fusedQ4Dot(m.rawRow(row), x, engine.Backend()); ok {
 				dst[row] = value
 				continue
@@ -87,7 +87,7 @@ func (m *Matrix) projectLocked(ctx context.Context, dst, x, scratch []float32, e
 				continue
 			}
 		}
-		if m.tensor.Type == Q5_K {
+		if m.tensor.Type == Q5K {
 			if value, ok := fusedQ5Dot(m.rawRow(row), x, engine.Backend()); ok {
 				dst[row] = value
 				continue
@@ -168,14 +168,14 @@ func decodeRow(dst []float32, raw []byte, t Type) error {
 				dst[b*32+i] = d * float32(int8(r[i+2]))
 			}
 		}
-	case Q4_K, Q5_K:
+	case Q4K, Q5K:
 		for b := 0; b < len(dst)/256; b++ {
 			r := raw[b*bytes:]
 			d, dm := half(binary.LittleEndian.Uint16(r)), half(binary.LittleEndian.Uint16(r[2:]))
 			sc := r[4:16]
 			qs := r[16:]
 			var high []byte
-			if t == Q5_K {
+			if t == Q5K {
 				high = qs[:32]
 				qs = qs[32:]
 			}
@@ -189,14 +189,14 @@ func decodeRow(dst []float32, raw []byte, t Type) error {
 					if g&1 != 0 {
 						v = q >> 4
 					}
-					if t == Q5_K && high[i]&(1<<g) != 0 {
+					if t == Q5K && high[i]&(1<<g) != 0 {
 						v += 16
 					}
 					dst[b*256+g*32+i] = s*float32(v) - m
 				}
 			}
 		}
-	case Q6_K:
+	case Q6K:
 		for b := 0; b < len(dst)/256; b++ {
 			r := raw[b*210:]
 			ql, qh, sc := r[:128], r[128:192], r[192:208]

@@ -7,14 +7,14 @@ import "github.com/rcarmo/memento/internal/simd"
 //go:noescape
 func q4DecodeAVX2(raw *byte, dst *float32, blocks int, halfTable *float32)
 func decodeTileRow(dst []float32, raw []byte, typ Type, backend simd.Backend) error {
-	if typ == Q4_K && backend == simd.AVX2 && len(dst) > 0 && len(dst)%256 == 0 && len(raw) == len(dst)/256*144 {
+	if typ == Q4K && backend == simd.AVX2 && len(dst) > 0 && len(dst)%256 == 0 && len(raw) == len(dst)/256*144 {
 		q4DecodeAVX2(&raw[0], &dst[0], len(dst)/256, &quantHalfTable[0])
 		return nil
 	}
 	// Invalid/empty rows retain decodeRow validation and never reach assembly.
 	if backend == simd.AVX2 && len(dst) > 0 {
 		switch typ {
-		case Q5_K:
+		case Q5K:
 			if len(dst)%256 == 0 && len(raw) == len(dst)/256*176 {
 				q5DecodeAVX2(&raw[0], &dst[0], len(dst)/256, &quantHalfTable[0])
 				return nil

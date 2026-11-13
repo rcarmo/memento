@@ -1,4 +1,6 @@
 # Canonical project scratch: resolved by vendored tools/project-env.sh.
+# Gemma targets are explicit opt-ins; plain make only prints help.
+.DEFAULT_GOAL := help
 # Retained build/profiles is outside disposable BUILD_ROOT and clean.
 SHELL := $(abspath tools/project-env.sh)
 BUILD_ROOT := $(shell bash tools/project-env.sh --print-build)
@@ -26,11 +28,16 @@ GTE_MODEL_PATH ?= $(abspath models/gte/gte-small.gtemodel)
 NEEDLE_MODEL_PATH ?= $(abspath models/needle/memento-router.ndl)
 NEEDLE_TOKENIZER_PATH ?= $(abspath models/needle/needle.model)
 
-.PHONY: gemma-test gemma-bench gemma-inspect gemma-embed gemma-reference
-# Offline CPU-only engine; not linked into production or release archives.
+.PHONY: gemma-test gemma-coverage gemma-bench gemma-inspect gemma-embed gemma-reference
+# Optional CPU-only engine preserved on main. Explicit gemma-* targets only;
+# standard build/install/release/container paths keep GTE and never fetch Gemma.
 EMBEDDINGGEMMA_MODEL ?= $(abspath models/embeddinggemma/embeddinggemma-2-UD-Q4_K_XL.gguf)
 gemma-test:
 	CGO_ENABLED=0 EMBEDDINGGEMMA_MODEL="$(EMBEDDINGGEMMA_MODEL)" $(GO) test ./internal/embeddinggemma ./cmd/memento-gemma-inspect ./cmd/memento-gemma-embed -count=1
+gemma-coverage:
+	@mkdir -p "$(BUILD_ROOT)"
+	CGO_ENABLED=0 EMBEDDINGGEMMA_MODEL="$(EMBEDDINGGEMMA_MODEL)" $(GO) test ./internal/embeddinggemma ./cmd/memento-gemma-inspect ./cmd/memento-gemma-embed ./tools/embedding-compare -coverprofile="$(BUILD_ROOT)/gemma-coverage.out" -count=1
+	$(GO) tool cover -func="$(BUILD_ROOT)/gemma-coverage.out"
 gemma-bench:
 	CGO_ENABLED=0 EMBEDDINGGEMMA_MODEL="$(EMBEDDINGGEMMA_MODEL)" $(GO) test ./internal/embeddinggemma -run '^$$' -bench '^Benchmark(QuantProjection|Embedding)$$' -benchmem -count=5
 gemma-inspect:
@@ -114,9 +121,12 @@ mcp-contract:
 	$(MAKE) -C umcp test
 umcp-check:
 	$(MAKE) -C umcp check
+# Preserve the service's zero-uncovered-statement gate. Optional offline Gemma
+# packages have separate real-checkpoint tests and are not release dependencies.
 coverage:
 	@mkdir -p "$(BUILD_ROOT)"
-	CGO_ENABLED=0 COVERAGE_FILE=$(BUILD_ROOT)/coverage.out $(PROFILE_TEST) ./... -- -covermode=atomic -coverpkg="$$( $(GO) list ./... | paste -sd, - )"
+	@packages="$$( $(GO) list ./... | grep -vE '/internal/embeddinggemma$$|/cmd/memento-gemma-(embed|inspect)$$|/tools/embedding-compare$$' )"; \
+	CGO_ENABLED=0 COVERAGE_FILE=$(BUILD_ROOT)/coverage.out $(PROFILE_TEST) $$packages -- -covermode=atomic -coverpkg="$$(printf '%s\n' "$$packages" | paste -sd, - )"
 	$(GO) tool cover -func=$(BUILD_ROOT)/coverage.out
 	@awk 'NR>1 && $$2>0 { count[$$1] += $$3 } END { bad=0; for (block in count) if (count[block]==0) { print "UNCOVERED:",block; bad=1 } exit bad }' $(BUILD_ROOT)/coverage.out
 fuzz:

@@ -12,7 +12,7 @@ import (
 )
 
 func extraDecodeColumns(typ Type) []int {
-	if typ == Q5_K {
+	if typ == Q5K {
 		return []int{256, 512, 2048}
 	}
 	return []int{32, 512, 2048}
@@ -58,7 +58,7 @@ func TestExtraDecodeRows(t *testing.T) {
 		if err != nil {
 			continue
 		}
-		for _, typ := range []Type{Q5_K, Q8_0} {
+		for _, typ := range []Type{Q5K, Q8_0} {
 			for _, cols := range extraDecodeColumns(typ) {
 				t.Run(fmt.Sprintf("%s/%s/%d", name, typ, cols), func(t *testing.T) {
 					block, size, _ := typ.layout()
@@ -71,7 +71,7 @@ func TestExtraDecodeRows(t *testing.T) {
 							for b := 0; b < cols/block; b++ {
 								r := raw[b*size:]
 								binary.LittleEndian.PutUint16(r, halves[(pass+b+row)%len(halves)])
-								if typ == Q5_K {
+								if typ == Q5K {
 									binary.LittleEndian.PutUint16(r[2:], halves[(pass+3*b+row+5)%len(halves)])
 									for i := 0; i < 12; i++ {
 										r[4+i] = byte(pass*59 + i*47 + b*31 + row*97)
@@ -103,15 +103,15 @@ func TestExtraDecodeHighPlanes(t *testing.T) {
 	if _, err := simd.New("avx2"); err != nil {
 		t.Skip(err)
 	}
-	for _, cols := range extraDecodeColumns(Q5_K) {
-		raw := encodedRows(Q5_K, cols, 1)
+	for _, cols := range extraDecodeColumns(Q5K) {
+		raw := encodedRows(Q5K, cols, 1)
 		for pattern := 0; pattern < 256; pattern++ {
 			for b := 0; b < cols/256; b++ {
 				for i := 0; i < 32; i++ {
 					raw[b*176+16+i] = byte(pattern) ^ byte(i*13+b*7)
 				}
 			}
-			checkExtraDecode(t, raw, Q5_K, make([]float32, cols), simd.AVX2)
+			checkExtraDecode(t, raw, Q5K, make([]float32, cols), simd.AVX2)
 		}
 	}
 }
@@ -120,7 +120,7 @@ func TestExtraDecodeValidationAndAllocations(t *testing.T) {
 	if _, err := simd.New("avx2"); err != nil {
 		t.Skip(err)
 	}
-	for _, typ := range []Type{Q5_K, Q8_0} {
+	for _, typ := range []Type{Q5K, Q8_0} {
 		block, size, _ := typ.layout()
 		raw, dst := encodedRows(typ, block, 1), make([]float32, block)
 		for _, bad := range []struct {
@@ -150,7 +150,7 @@ func TestExtraDecodeValidationAndAllocations(t *testing.T) {
 }
 
 func BenchmarkExtraDecode(b *testing.B) {
-	for _, typ := range []Type{Q5_K, Q8_0} {
+	for _, typ := range []Type{Q5K, Q8_0} {
 		for _, cols := range extraDecodeColumns(typ) {
 			for _, name := range []string{"scalar", "avx2"} {
 				e, err := simd.New(name)

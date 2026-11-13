@@ -133,6 +133,7 @@ func TestModelValidation(t *testing.T) {
 			t.Fatal("invalid IDs accepted")
 		}
 	}
+	//lint:ignore SA1012 deliberately verify rejection of a nil caller context
 	if _, err := m.EmbedTokens(nil, []int{2}, 768, w); err == nil {
 		t.Fatal("nil context")
 	}

@@ -34,7 +34,7 @@ func TestQ4TileGuardPages(t *testing.T) {
 	}
 	page := alloc()
 	raw := page[len(page)-144:]
-	copy(raw, encodedRows(Q4_K, 256, 1))
+	copy(raw, encodedRows(Q4K, 256, 1))
 	xp := alloc()
 	x := unsafe.Slice((*float32)(unsafe.Pointer(&xp[len(xp)-4096])), 1024)
 	for i := range x {
@@ -42,10 +42,10 @@ func TestQ4TileGuardPages(t *testing.T) {
 	}
 	dp := alloc()
 	dst := unsafe.Slice((*float32)(unsafe.Pointer(&dp[len(dp)-1024])), 256)
-	if err := decodeTileRow(dst, raw, Q4_K, simd.AVX2); err != nil {
+	if err := decodeTileRow(dst, raw, Q4K, simd.AVX2); err != nil {
 		t.Fatal(err)
 	}
-	ref := referenceRow(raw, Q4_K, 256)
+	ref := referenceRow(raw, Q4K, 256)
 	for i, v := range ref {
 		if math.Abs(float64(dst[i])-v) > 1e-6*math.Max(1, math.Abs(v)) {
 			t.Fatal(i)
