@@ -16,6 +16,10 @@ Graph evidence includes the 2,000-node fixture performance record and a DiskStat
 
 Go-port records include the [final pure-Go v1.0.0 validation](go-v1-validation-2026-09-19.md), [Go/Python 1,000-concept benchmark](go-python-models-off-benchmark-2026-09-19.json), [x86-64 and ARM64 scalar/SIMD model results](go-real-model-simd-2026-09-19.json), and the retained [NAS Bookworm Vulkan route](vulkan-nas-bookworm-2026-09-19.md). The final validation covers the root module, five-command static archives, mapped Needle worker/sidecar, model-independent audit split, native amd64/ARM64 CI and container RSS. The Vulkan report belongs to the separate Rust/wgpu experiment: it preserves a working dependency recipe but does not claim Go parity, warm benefit or full-service memory suitability.
 
+## Native embedding comparison
+
+[Refreshed GTE/Gemma comparison](gte-gemma-refresh-2026-11-13.md) records the frozen 60-document/80-query multilingual diagnostic, paired one/four-core timings, memory and process CPU cost, and profile-driven parked-worker trade-off. Production remains on GTE; the synthetic quality result is not a deployment gate.
+
 ## Proposal listing and profiling
 
 [Proposal backlog and listing correction](proposal-list-backlog-2026-10-05.md) records the live eleven-record mismatch, local count/filter/sort changes, profiled regression results, allocation reduction and incomplete pre-release profiling work. It is not a deployment report.

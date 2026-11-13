@@ -4,16 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/rcarmo/memento/internal/simd"
-	"runtime"
 	"sync"
-	"sync/atomic"
 )
 
-// A team belongs to one locked request. Atomic generation publication orders
-// job writes before worker reads; done's atomic RMW chain publishes every error
-// and output write before the caller reads them. All jobs drain before reuse.
-// Idle polling trades CPU for latency; yields also allow oversubscribed teams
-// to finish. Workers are joined before releasing the model read lock.
+// A team belongs to one locked request. Channel publication orders job writes
+// before worker reads, and completion receives publish errors and output writes.
+// Workers park between projections instead of consuming CPU during serial work.
+// All jobs drain before reuse; workers join before releasing the model read lock.
 type projectionJob struct {
 	matrix            *Matrix
 	dst, packed       []float32
@@ -23,14 +20,14 @@ type projectionWorker struct {
 	decoded, sums []float32
 	job           projectionJob
 	err           error
+	wake          chan struct{}
 }
 type projectionTeam struct {
-	workers          []projectionWorker
-	ctx              context.Context
-	engine           simd.Engine
-	generation, done atomic.Uint64
-	stop             atomic.Bool
-	joined           sync.WaitGroup
+	workers []projectionWorker
+	ctx     context.Context
+	engine  simd.Engine
+	done    chan struct{}
+	joined  sync.WaitGroup
 }
 
 func startProjectionTeam(ctx context.Context, w *Workspace, engine simd.Engine) *projectionTeam {
@@ -44,7 +41,7 @@ func startProjectionTeam(ctx context.Context, w *Workspace, engine simd.Engine) 
 			w.parallelBuffers[i].sums = make([]float32, 8*projectionTile)
 		}
 	}
-	t := &projectionTeam{workers: make([]projectionWorker, w.Workers), ctx: ctx, engine: engine}
+	t := &projectionTeam{workers: make([]projectionWorker, w.Workers), ctx: ctx, engine: engine, done: make(chan struct{}, w.Workers-1)}
 	for i := range t.workers {
 		worker := &t.workers[i]
 		worker.decoded = w.parallelBuffers[i].decoded
@@ -52,29 +49,18 @@ func startProjectionTeam(ctx context.Context, w *Workspace, engine simd.Engine) 
 		if i == len(t.workers)-1 {
 			continue
 		}
+		worker.wake = make(chan struct{}, 1)
 		t.joined.Add(1)
 		go func() {
 			defer t.joined.Done()
-			var seen uint64
-			idle := 0
-			for !t.stop.Load() {
-				g := t.generation.Load()
-				if g == seen {
-					idle++
-					if idle%128 == 0 {
-						runtime.Gosched()
-					}
-					continue
-				}
-				seen = g
-				idle = 0
+			for range worker.wake {
 				j := worker.job
 				if j.start < j.end {
 					worker.err = j.matrix.projectPanels(ctx, j.dst, j.n, j.nt, worker.decoded, j.packed, worker.sums, engine, j.start, j.end)
 				} else {
 					worker.err = nil
 				}
-				t.done.Add(1)
+				t.done <- struct{}{}
 			}
 		}()
 	}
@@ -84,7 +70,9 @@ func (t *projectionTeam) close() {
 	if t == nil {
 		return
 	}
-	t.stop.Store(true)
+	for i := 0; i < len(t.workers)-1; i++ {
+		close(t.workers[i].wake)
+	}
 	t.joined.Wait()
 }
 func (t *projectionTeam) project(m *Matrix, dst, x []float32, n int, w *Workspace) error {
@@ -108,8 +96,9 @@ func (t *projectionTeam) project(m *Matrix, dst, x []float32, n int, w *Workspac
 		end := min(m.rows, start+step*8)
 		t.workers[i].job = projectionJob{m, dst, packed, n, nt, start, end}
 	}
-	t.done.Store(0)
-	t.generation.Add(1)
+	for i := 0; i < len(t.workers)-1; i++ {
+		t.workers[i].wake <- struct{}{}
+	}
 	last := &t.workers[len(t.workers)-1]
 	j := last.job
 	if j.start < j.end {
@@ -117,12 +106,8 @@ func (t *projectionTeam) project(m *Matrix, dst, x []float32, n int, w *Workspac
 	} else {
 		last.err = nil
 	}
-	idle := 0
-	for t.done.Load() != uint64(len(t.workers)-1) {
-		idle++
-		if idle%128 == 0 {
-			runtime.Gosched()
-		}
+	for i := 0; i < len(t.workers)-1; i++ {
+		<-t.done
 	}
 	for i := range t.workers {
 		if err := t.workers[i].err; err != nil {
