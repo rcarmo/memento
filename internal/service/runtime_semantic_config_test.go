@@ -7,7 +7,7 @@ import (
 
 func TestSemanticSearchConfig(t *testing.T) {
 	c := DefaultSemanticSearchConfig()
-	if c.Enabled || c.WorkerMode != "subprocess" || c.WorkerPath != "/usr/local/bin/memento-embed" || c.Dimensions != 384 || c.MaxBatchSize != 16 || !c.RefreshOnStartup {
+	if c.Enabled || c.WorkerMode != "subprocess" || c.WorkerPath != "/usr/local/bin/memento-embed" || c.ModelID != "rust-gte" || c.Dimensions != 384 || c.MaxBatchSize != 16 || !c.RefreshOnStartup {
 		t.Fatal(c)
 	}
 	raw := json.RawMessage(`{"enabled":true,"model_path":" /model ","dimensions":2,"max_batch_size":3}`)
@@ -21,6 +21,20 @@ func TestSemanticSearchConfig(t *testing.T) {
 		t.Fatal(c, err)
 	}
 }
+
+// The offline Gemma checkpoint variable is not a service activation switch.
+func TestGemmaDoesNotActivateService(t *testing.T) {
+	c, err := DecodeSemanticSearchConfig(nil, func(name string) (string, bool) {
+		return "/not-a-service-model/gemma.gguf", name == "EMBEDDINGGEMMA_MODEL"
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if c.Enabled || c.ModelPath != nil || c.ModelID != "rust-gte" || c.Dimensions != 384 || c.WorkerPath != "/usr/local/bin/memento-embed" {
+		t.Fatal(c)
+	}
+}
+
 func TestSemanticSearchConfigFailures(t *testing.T) {
 	bad := []string{`{"extra":1}`, `{"worker_mode":"bad"}`, `{"worker_path":""}`, `{"model_id":""}`, `{"dimensions":0}`, `{"default_search_mode":"bad"}`, `{"progressive_nice":20}`, `{"progressive_cpu_busy_limit_percent":101}`, `{"model_path":""}`, `{"enabled":true}`}
 	for _, raw := range bad {

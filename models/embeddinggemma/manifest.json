@@ -1,0 +1,15 @@
+{
+  "purpose": "experimental CPU-only EmbeddingGemma2 text inference, not production GTE",
+  "repository": "unsloth/embeddinggemma-2-GGUF",
+  "revision": "031f0d4b35536f69ab3509d4893c923264fcf253",
+  "file": "embeddinggemma-2-UD-Q4_K_XL.gguf",
+  "url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF/resolve/031f0d4b35536f69ab3509d4893c923264fcf253/embeddinggemma-2-UD-Q4_K_XL.gguf",
+  "sha256": "ea905fd08e8061db77a0031cbb5096d459d7cfd2bdd0ad2ba66e483f16719493",
+  "bytes": 175673856,
+  "license": "Apache-2.0",
+  "architecture": "gemma-embedding2",
+  "tensor_counts": {"F32": 194, "Q8_0": 48, "Q4_K": 169, "Q5_K": 1, "Q6_K": 1},
+  "reference_model": "google/embeddinggemma-2",
+  "reference_revision": "f9972ac22e696a105c482202646979e33e4b5a1e",
+  "reference_scope": "text encoder checked against independent CPU llama.cpp c3df4b7e22a1ac38da663552d19e649dd97ca936 using all-F32 dequantized identical weights; see docs/embeddinggemma-native.md for reference patches and limits"
+}

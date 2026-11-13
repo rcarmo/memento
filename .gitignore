@@ -17,6 +17,7 @@ dist/
 rust/target/
 
 # Release-hosted runtime models and training artefacts
+/models/embeddinggemma/*.gguf
 /models/gte/*.gtemodel
 /models/needle/*.ndl
 /models/needle/*.model

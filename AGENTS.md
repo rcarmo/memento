@@ -11,6 +11,7 @@ Rui's explicit rule: **profile and tune during pre-release tests; remove profili
 - Existing no-agent-contact and execution-pause rules remain unchanged. This policy grants no unsolicited coordination or automatic job restart.
 <!-- /RUI-PROFILE-LIFECYCLE-20261005 -->
 
+
 # Memento pure-Go replacement
 
 ## Product boundary
@@ -35,7 +36,7 @@ The NAS target is CPU-only. Do not package or enable Vulkan for NAS without an e
 - `testdata/parity/` -- immutable compatibility fixtures shared by internal package tests.
 - `deploy/` -- container deployment examples.
 - `models/runtime-models.json` and `tools/prepare_runtime_models.py` -- CI-only model bundle retrieval and digest verification. Python is allowed here only as build tooling and is never shipped.
-- `docs/evidence/` -- retained immutable acceptance evidence.
+- `docs/evidence/` -- concise acceptance conclusions; raw profiling artifacts are deleted after use.
 
 Do not recreate a `go/` source subtree or add root-level `.go` files. Avoid `pkg/`: this repository does not promise public application-package APIs. Only the nested `umcp` module is independently reusable.
 
@@ -48,9 +49,10 @@ Resolution occurs before changing child temporary variables. Absolute `PROJECT_T
 - `cache/{go-build,go-mod,go-tools,xdg,bun,npm,pip,uv,python,playwright}` contains rebuildable caches. The helper sets the applicable Go, XDG, Bun, npm, Python and Playwright variables.
 - `build/<worktree-path-checksum>/` contains disposable binaries, coverage and release archives. The stable checksum separates checkouts; it is not a generated-output correctness gate.
 - `runs/<purpose>/run-<time>-<unique>/` owns isolated scratch; `TMPDIR`, `TMP`, `TEMP` and `GOTMPDIR` point beneath it. `tests/` and `logs/` are reserved for disposable test/log scratch.
-- `build/profiles/`, `build/release-*-evidence/`, `build/ui-audit/`, `docs/evidence/` and workspace notes retain profiles, matching binaries, logs and publication evidence separately. Do not delete or relocate existing evidence as part of cache cleanup. Model assets and installed dependencies are durable inputs.
+- build/profiles, release-evidence, ui-audit and workspace notes must not accumulate raw captures or test binaries: remove them immediately after analysis. Preserve durable models, installed dependencies, concise conclusions and intentional release artifacts.
 
-`make clean` removes only this checkout's disposable `BUILD_ROOT`, never the project root, another checkout, caches or retained evidence. Do not clean while a job uses it. No automatic migration or deletion of historical paths is authorised. Runtime container `/tmp` mounts and production state/configuration are unchanged.
+
+`make clean` and explicit cleanup must target only owned inactive disposable build/cache/run/profiling output; remove it promptly after use. Preserve source, durable model/data assets, concise conclusions, intentional releases and other checkouts. Do not remove active-job files or production state/configuration.
 
 ## Required gates
 
@@ -68,16 +70,13 @@ make go-container-contract MEMENTO_VERSION=1.0.0
 
 Every production statement must remain covered, and every package containing production Go code must retain at least one meaningful fuzz target. Run formatting, vet, pinned Staticcheck, govulncheck, race, fuzz, cross-build and release checks before pushing.
 
-## Mandatory Go test and pre-release profiling
+## Pre-release profiling and tuning
 
-Every Go test run must capture CPU and heap/allocation profiles and receive post-run analysis. This applies to ordinary feature and bug-fix work, focused/full tests, coverage, race, benchmarks, fuzzing, model/corpus runs, nested `umcp` tests, delegated work and failed runs. Overall pre-release checks must include the same profiling and analysis.
+During pre-release tests, capture CPU and heap/allocation behaviour, analyse hotspots and tune avoidable work using equivalent workloads. Ordinary development tests do not require profiling. Delete raw captures, matching binaries, traces and disposable logs immediately after analysis/use; retain only concise conclusions and measured results. Missing or incomplete capture is a limitation, not a profiling pass. Preserve active-job files until a safe boundary, source, durable datasets/checkpoints and intentional release artifacts.
 
-* Use profiling-aware Make targets. Update existing unprofiled targets/scripts before using them; direct `go test` is allowed only with CPU/memory capture and subsequent analysis. `-benchmem` and coverage alone are insufficient.
-* Capture per-package profiles without filename collisions, normally with `-cpuprofile` and `-memprofile`, and retain matching test binaries and logs under ignored `build/profiles/<run>/<package>/`. Record the revision, toolchain, command, workload and sampling settings. Ensure caching does not substitute an old test result for a profiled execution. Multi-process tests and fuzz workers need explicit coverage of the relevant child workload; coordinator-only profiles do not describe child allocations.
-* Inspect cumulative CPU time, `alloc_space` and `alloc_objects` after every run. Separate application hotspots from test setup/runtime overhead, identify avoidable allocations or repeated work, and compare equivalent workloads before accepting an optimisation. Record latency/throughput, bytes/op and allocs/op where benchmarks apply. Profile generation alone does not complete the analysis.
-* If a build failure, timeout or abrupt exit prevents capture, retain the logs and report the missing profiles. Empty CPU samples also need an explicit note and a representative profiled workload before drawing performance conclusions. Failed or missing capture cannot pass the profiling gate.
-* Include profiling results and engineering analysis in `quality`, `audit`, performance and overall pre-release validation. Record baseline comparisons, improvements and unresolved hotspots. Minimise allocations and improve measured performance without weakening correctness, authorisation, cancellation, corruption/recovery behaviour or numerical contracts.
-* Update `tools/performance-budgets.json` only with measured evidence and a documented reason. Do not widen a ceiling to hide a regression or add flaky wall-clock gates across heterogeneous runners.
+* During pre-release verification use CPU/heap-capable Make targets and analyse cumulative CPU/alloc_space/alloc_objects; coverage/benchmem alone are insufficient. Relevant nested modules and subprocess/fuzz workloads need explicit coverage or a stated limitation. Ordinary development tests may run without profiles.
+* Capture per-package CPU/heap without collisions and record source/toolchain/command/workload/sampling details for the current comparison. Analyse and tune application hotspots against equivalent workloads without weakening correctness/security/cancellation/numerics or budgets.
+* Immediately after analysis/use, delete raw profiles, matching binaries, copied sources and full logs, including failed captures after diagnosis. Keep concise conclusions and missing/empty-capture limitations only. No raw evidence archives or random exports.
 
 ## Engineering rules
 
