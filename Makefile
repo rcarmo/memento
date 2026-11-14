@@ -21,7 +21,7 @@ GOVULNCHECK := $(TOOLS_DIR)/govulncheck
 PROFILE_TEST = GO="$(GO)" PROFILE_ROOT="$(PROFILE_ROOT)" PROFILE_MEM_RATE="$(PROFILE_MEM_RATE)" ./tools/test-profile.sh
 PREFIX ?= /usr/local
 DESTDIR ?=
-MEMENTO_VERSION ?= 1.0.12
+MEMENTO_VERSION ?= 1.1.0
 VERSION ?= $(MEMENTO_VERSION)
 SOURCE_DATE_EPOCH ?= 0
 GTE_MODEL_PATH ?= $(abspath models/gte/gte-small.gtemodel)
