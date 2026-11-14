@@ -33,9 +33,22 @@ func testToolReference(t *testing.T, file string, definitions []byte) {
 	}
 	server := umcp.NewServer("proposal-tools-test")
 	server.SetNotificationOutput(nil)
+	// Historical fixtures isolate input coercion/dispatch with synthetic
+	// non-service outputs. Real runtime tests enforce the new output contract.
+	var inputDefinitions []proposalToolDefinition
+	if err := json.Unmarshal(definitions, &inputDefinitions); err != nil {
+		t.Fatal(err)
+	}
+	for i := range inputDefinitions {
+		inputDefinitions[i].OutputSchemaRef = ""
+	}
+	inputRaw, err := json.Marshal(inputDefinitions)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := registerProposalTools(server, func(_ context.Context, method string, args map[string]any) (any, error) {
 		return map[string]any{"method": method, "arguments": args, "context": "trusted"}, nil
-	}, nil, definitions); err != nil {
+	}, nil, inputRaw); err != nil {
 		t.Fatal(err)
 	}
 	for _, c := range fixture.Calls {

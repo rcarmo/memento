@@ -17,6 +17,8 @@ require (
 	modernc.org/sqlite v1.38.2
 )
 
+require github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
+
 require (
 	github.com/ProtonMail/go-crypto v1.1.6 // indirect
 	github.com/cloudflare/circl v1.6.3 // indirect

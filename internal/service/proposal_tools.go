@@ -29,11 +29,12 @@ func (j *Jobs) RegisterReadProposalTools(server *umcp.Server, notify ProposalNot
 type ProposalNotifier func(context.Context, string, map[string]any, []string) error
 
 type proposalToolDefinition struct {
-	Name        string         `json:"name"`
-	Description string         `json:"description"`
-	Schema      map[string]any `json:"inputSchema"`
-	Annotations map[string]any `json:"annotations"`
-	Parameters  []struct {
+	Name            string         `json:"name"`
+	Description     string         `json:"description"`
+	Schema          map[string]any `json:"inputSchema"`
+	OutputSchemaRef string         `json:"outputSchemaRef,omitempty"`
+	Annotations     map[string]any `json:"annotations"`
+	Parameters      []struct {
 		Name     string `json:"name"`
 		Required bool   `json:"required"`
 		Default  any    `json:"default"`
@@ -82,7 +83,7 @@ func registerProposalToolsWithDiscovery(server *umcp.Server, call func(context.C
 			}
 			parameters = append(parameters, umcp.Parameter{Name: parameter.Name, Types: []umcp.ParamType{kind}, HasDefault: !parameter.Required, Default: parameter.Default})
 		}
-		tool := umcp.Tool{Name: name, Description: definition.Description, InputSchema: definition.Schema, Annotations: definition.Annotations, Parameters: parameters, Call: func(ctx context.Context, args map[string]any) (any, error) {
+		tool := umcp.Tool{Name: name, Description: definition.Description, InputSchema: definition.Schema, OutputSchema: toolOutputSchema(definition.OutputSchemaRef), Annotations: definition.Annotations, Parameters: parameters, Call: func(ctx context.Context, args map[string]any) (any, error) {
 			result, err := call(ctx, name, args)
 			if err != nil {
 				return nil, err

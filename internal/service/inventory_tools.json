@@ -102,7 +102,8 @@
         "name": "query_syntax",
         "required": false
       }
-    ]
+    ],
+    "outputSchemaRef": "memory_search"
   },
   {
     "annotations": {
@@ -132,7 +133,8 @@
         "name": "id_or_path",
         "required": true
       }
-    ]
+    ],
+    "outputSchemaRef": "memory_read"
   },
   {
     "annotations": {
@@ -161,7 +163,8 @@
         "name": "path_prefix",
         "required": false
       }
-    ]
+    ],
+    "outputSchemaRef": "memory_list"
   },
   {
     "annotations": {

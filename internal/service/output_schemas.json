@@ -1,0 +1,1018 @@
+{
+  "memory_status": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "service_version": {
+                "type": "string"
+              },
+              "schema_version": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "repo_revision": {
+                "type": "string"
+              },
+              "index_revision": {
+                "type": "string"
+              },
+              "index_stale": {
+                "type": "boolean"
+              },
+              "principal": {
+                "type": "string"
+              },
+              "visible_concepts": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "proposal_backlog": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "proposal_unresolved": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "proposal_counts": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "limits": {
+                "type": "object"
+              },
+              "roles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "features": {
+                "type": "object",
+                "properties": {
+                  "resources": {
+                    "type": "boolean"
+                  },
+                  "streamable_http": {
+                    "type": "boolean"
+                  },
+                  "proposal_rebase": {
+                    "type": "boolean"
+                  },
+                  "model_proposals": {
+                    "type": "boolean"
+                  },
+                  "dream_mode": {
+                    "type": "string"
+                  },
+                  "semantic_search": {
+                    "type": "boolean"
+                  },
+                  "needle_router": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "resources",
+                  "streamable_http",
+                  "proposal_rebase",
+                  "model_proposals",
+                  "dream_mode",
+                  "semantic_search",
+                  "needle_router"
+                ],
+                "additionalProperties": false
+              },
+              "readiness": {
+                "type": "object",
+                "properties": {
+                  "semantic_search": {
+                    "type": "object",
+                    "properties": {
+                      "ready": {
+                        "type": "boolean"
+                      },
+                      "model_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "dimensions": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 1
+                      },
+                      "embedding_revision": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "sqlite_vector_enabled": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "ready",
+                      "model_id",
+                      "dimensions",
+                      "embedding_revision",
+                      "sqlite_vector_enabled"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "needle_router": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "loaded": {
+                        "type": "boolean"
+                      },
+                      "runtime": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "model_path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "enabled",
+                      "loaded",
+                      "runtime",
+                      "model_path"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "semantic_search",
+                  "needle_router"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "service_version",
+              "schema_version",
+              "repo_revision",
+              "index_revision",
+              "index_stale",
+              "principal",
+              "visible_concepts",
+              "proposal_backlog",
+              "proposal_unresolved",
+              "proposal_counts",
+              "limits",
+              "roles",
+              "features",
+              "readiness"
+            ],
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "next_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": "string"
+          },
+          "index_revision": {
+            "type": "string"
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "data",
+          "warnings",
+          "next_tools",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "error_class": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "error_class",
+          "message",
+          "warnings",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  },
+  "memory_help": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "goals": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "formats": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "answer_sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "search_modes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "catalog": {
+                "type": "object",
+                "properties": {
+                  "resources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "templates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "operation_values": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "workflow_values": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "asset_publication": {
+                    "type": "object",
+                    "properties": {
+                      "workflow": {
+                        "type": "string"
+                      },
+                      "proposal_contract": {
+                        "type": "string"
+                      },
+                      "prompt": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "workflow",
+                      "proposal_contract",
+                      "prompt"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "resources",
+                  "templates",
+                  "operation_values",
+                  "workflow_values",
+                  "asset_publication"
+                ],
+                "additionalProperties": false
+              },
+              "mcp": {
+                "type": "object",
+                "properties": {
+                  "tool_surface": {
+                    "type": "string"
+                  },
+                  "direct_tools": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "compact_instructions": {
+                    "type": "string"
+                  },
+                  "execute_limits": {
+                    "type": "object"
+                  },
+                  "execute_only_operations": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "tool_surface",
+                  "direct_tools",
+                  "compact_instructions",
+                  "execute_limits",
+                  "execute_only_operations"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "goals",
+              "formats",
+              "answer_sources",
+              "search_modes",
+              "catalog",
+              "mcp"
+            ],
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "next_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": "string"
+          },
+          "index_revision": {
+            "type": "string"
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "data",
+          "warnings",
+          "next_tools",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "error_class": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "error_class",
+          "message",
+          "warnings",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  },
+  "memory_read": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "frontmatter": {
+                "type": "object"
+              },
+              "body": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "frontmatter",
+              "body"
+            ],
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "next_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": "string"
+          },
+          "index_revision": {
+            "type": "string"
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "data",
+          "warnings",
+          "next_tools",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "error_class": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "error_class",
+          "message",
+          "warnings",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  },
+  "memory_list": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "entries": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "aliases": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "id",
+                    "title",
+                    "type",
+                    "status",
+                    "description",
+                    "aliases",
+                    "tags"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "entries"
+            ],
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "next_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": "string"
+          },
+          "index_revision": {
+            "type": "string"
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "data",
+          "warnings",
+          "next_tools",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "error_class": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "error_class",
+          "message",
+          "warnings",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  },
+  "memory_search": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "search_mode": {
+                "type": "string",
+                "enum": [
+                  "lexical",
+                  "semantic",
+                  "hybrid"
+                ]
+              },
+              "query_syntax": {
+                "type": "string"
+              },
+              "results": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "score": {
+                      "type": "number"
+                    },
+                    "snippet": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "id",
+                    "title",
+                    "type",
+                    "status",
+                    "tags",
+                    "score",
+                    "snippet"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "search_mode",
+              "query_syntax",
+              "results",
+              "next_cursor"
+            ],
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "next_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": "string"
+          },
+          "index_revision": {
+            "type": "string"
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "data",
+          "warnings",
+          "next_tools",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "error_class": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "repo_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index_stale": {
+            "type": "boolean"
+          },
+          "operation_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "error_class",
+          "message",
+          "warnings",
+          "repo_revision",
+          "index_revision",
+          "index_stale",
+          "operation_id"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}
