@@ -182,3 +182,24 @@ func FuzzStableOutputSchemas(f *testing.F) {
 		}
 	})
 }
+
+func BenchmarkStableOutputCatalogRegistration(b *testing.B) {
+	catalog, err := NewCatalog(CatalogConfig{Surface: "compact"})
+	if err != nil {
+		b.Fatal(err)
+	}
+	handlers := map[string]CatalogHandler{}
+	for _, op := range catalog.source.Operations {
+		handlers[op.Tool] = func(context.Context, map[string]any) (any, error) { return nil, nil }
+	}
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		server := umcp.NewServer("registration-benchmark")
+		server.SetNotificationOutput(nil)
+		if err := catalog.Register(server, handlers, nil); err != nil {
+			b.Fatal(err)
+		}
+
+	}
+}

@@ -16,6 +16,12 @@ Real storage/auth/runtime contract tests cover all five discovery surfaces, succ
 
 The historical catalog/tool fixtures remain unchanged. Tests compare historical input/annotation/discovery-order metadata independently of the new output-schema metadata. No acceptance threshold or numerical contract was widened.
 
+## Measured registration tuning
+
+Profiling found repeated schema copies during catalog construction: visible tools were registered twice solely to replace discovery. The patch registers callbacks once, then sets the visible discovery order independently. Hidden callbacks remain callable subject to the same authorisation; all surface and input/order contracts pass.
+
+Equivalent `BenchmarkStableOutputCatalogRegistration` on Go1.26.11/i7-12700, three 1-second runs: median9.197ms →6.252ms (-32.0%), about8.37MB →5.20MB allocated per construction (-37.9%),82,409 →48,396 objects (-41.3%). Schemas still receive registry-owned deep copies; no shared mutable metadata was introduced. This removes repeated work rather than weakening validation. Targeted CPU/alloc_space/alloc_objects profiles were inspected; raw captures are removed after comparison.
+
 ## Issue triage
 
 Current NAS v1.1.0 compact discovery was live-verified with Needle enabled/loaded: search, read, execute and asset retrieval are advertised; authenticated search/read pass. Closed #41 as already shipped. Current proposal backlog/unresolved counts are both zero; pending-only status semantics, filtering/sorting and visibility-bound pagination were shipped in1.0.11 and remain covered. Closed #42 with that evidence.
