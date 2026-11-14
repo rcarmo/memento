@@ -303,7 +303,6 @@ func (c *Catalog) register(server *umcp.Server, handlers map[string]CatalogHandl
 			selected = append(selected, definition)
 		}
 	}
-	encoded, _ := json.Marshal(selected) // fixed JSON-domain definitions
 	// Capture caller callbacks; mutating the caller map later cannot swap auth.
 	owned := map[string]CatalogHandler{}
 	for name, handler := range handlers {
@@ -314,10 +313,12 @@ func (c *Catalog) register(server *umcp.Server, handlers map[string]CatalogHandl
 	_ = registerProposalTools(server, func(ctx context.Context, name string, args map[string]any) (any, error) {
 		return owned[name](ctx, args)
 	}, notify, raw)
-	// A successfully decoded definition list re-encodes to a valid JSON array;
-	// registerProposalTools has no other failure path for generated definitions.
-	_ = registerProposalTools(server, func(ctx context.Context, name string, args map[string]any) (any, error) {
-		return owned[name](ctx, args)
-	}, notify, encoded)
+	// Every callback is already registered. Set discovery alone instead of
+	// decoding and cloning visible tool schemas a second time.
+	order := make([]string, len(selected))
+	for i, definition := range selected {
+		order[i] = definition.Name
+	}
+	_ = server.Tools.SetDiscoveryOrder(order) // names are from registered definitions
 	return c.registerCatalogResources(server, owned)
 }

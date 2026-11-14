@@ -49,6 +49,12 @@ Each concept is one UTF-8 Markdown file with YAML frontmatter.
 
 Every tool returns one of the following envelopes.
 
+### MCP output schemas
+
+`memory_status`, `memory_help`, `memory_read`, `memory_list` and `memory_search` advertise an object-root `outputSchema` in `tools/list`. It describes the complete `structuredContent` envelope, with separate success and domain-error branches, required fields and explicit nullable readiness/revision values. Existing text content and response fields are unchanged. Consumers may use these schemas for validation and generated bindings.
+
+Known envelope/data fields are checked; flexible frontmatter, limit and per-status maps retain their documented extension points. Dynamic route/execute and mutation results remain schema-less in this patch. Schemas are validated against real runtime responses across every discovery surface and an independent JSON Schema validator; the full validator is test-only and is not linked into production commands.
+
 ### Success envelope
 
 ```json

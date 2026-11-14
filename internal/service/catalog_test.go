@@ -110,8 +110,24 @@ func TestCatalogReference(t *testing.T) {
 				t.Fatal(err)
 			}
 			result, err := server.Process(context.Background(), []byte(`{"jsonrpc":"2.0","id":1,"method":"tools/list"}`), umcp.RequestContext{Principal: "reader"})
-			if err != nil || !reflect.DeepEqual(jsonNormal(result.Result).(map[string]any)["tools"], tc.Tools) {
-				t.Fatal(result, tc.Tools, err)
+			if err != nil {
+				t.Fatal(err)
+			}
+			// Keep historical input/annotation/order parity separate from additive
+			// output metadata, whose shape is checked by its own contract tests.
+			tools := jsonNormal(result.Result).(map[string]any)["tools"].([]any)
+			for _, item := range tools {
+				tool := item.(map[string]any)
+				name := tool["name"].(string)
+				if want := toolOutputSchema(name); want != nil {
+					if !reflect.DeepEqual(tool["outputSchema"], jsonNormal(want)) {
+						t.Fatalf("missing output schema for %s", name)
+					}
+					delete(tool, "outputSchema")
+				}
+			}
+			if !reflect.DeepEqual(tools, tc.Tools) {
+				t.Fatal(tools, tc.Tools)
 			}
 		})
 	}

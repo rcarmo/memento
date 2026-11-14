@@ -369,6 +369,12 @@ func TestMCPContractEveryToolSchemaDefaultsAndValidation(t *testing.T) {
 		name := op.Tool
 		handlers[name] = func(_ context.Context, args map[string]any) (any, error) {
 			received[name] = args
+			// This test isolates input dispatch using synthetic handlers. Stable
+			// output tools return a valid domain-error envelope; their real success
+			// payloads are exercised by runtime/output-schema contracts separately.
+			if toolOutputSchema(name) != nil {
+				return FailureEnvelope(&Error{Class: "validation_error", Message: "synthetic input-dispatch test"})
+			}
 			return map[string]any{"status": "success", "data": map[string]any{}, "warnings": []any{}, "next_tools": []any{}}, nil
 		}
 	}
@@ -429,7 +435,10 @@ func TestMCPContractEveryToolSchemaDefaultsAndValidation(t *testing.T) {
 					args[parameter.Name] = "synthetic"
 				}
 			}
-			contractTool(t, server, "actor", definition.Name, args)
+			response := contractRPC(t, server, "actor", "tools/call", map[string]any{"name": definition.Name, "arguments": args})
+			if response["error"] != nil {
+				t.Fatal("input dispatch transport error", response)
+			}
 			got := received[definition.Name]
 			if len(got) != len(definition.Parameters) {
 				t.Fatal("parameter shape", got)
@@ -456,7 +465,7 @@ func TestMCPContractEveryToolSchemaDefaultsAndValidation(t *testing.T) {
 			}
 			args["unexpected_contract_field"] = true
 			delete(received, definition.Name)
-			response := contractRPC(t, server, "actor", "tools/call", map[string]any{"name": definition.Name, "arguments": args})
+			response = contractRPC(t, server, "actor", "tools/call", map[string]any{"name": definition.Name, "arguments": args})
 			if response["error"] == nil || received[definition.Name] != nil {
 				t.Fatal("unknown argument reached handler", response)
 			}

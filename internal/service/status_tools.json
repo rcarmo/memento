@@ -14,7 +14,8 @@
       "type": "object"
     },
     "name": "memory_help",
-    "parameters": []
+    "parameters": [],
+    "outputSchemaRef": "memory_help"
   },
   {
     "annotations": {
@@ -31,7 +32,8 @@
       "type": "object"
     },
     "name": "memory_status",
-    "parameters": []
+    "parameters": [],
+    "outputSchemaRef": "memory_status"
   },
   {
     "annotations": {
@@ -136,7 +138,8 @@
         "name": "query_syntax",
         "required": false
       }
-    ]
+    ],
+    "outputSchemaRef": "memory_search"
   },
   {
     "annotations": {
@@ -166,7 +169,8 @@
         "name": "id_or_path",
         "required": true
       }
-    ]
+    ],
+    "outputSchemaRef": "memory_read"
   },
   {
     "annotations": {
@@ -195,7 +199,8 @@
         "name": "path_prefix",
         "required": false
       }
-    ]
+    ],
+    "outputSchemaRef": "memory_list"
   },
   {
     "annotations": {
