@@ -1,6 +1,6 @@
-# Memento 1.1.1 release reconciliation and rollback
+# Memento 1.1.1 release qualification and NAS deployment
 
-Version [1.1.1](https://github.com/rcarmo/memento/releases/tag/v1.1.1) is published and qualified by CI. The 16 November 2026 NAS update was rolled back after slow stack orchestration exceeded the update request's timeout. **Production is healthy on 1.1.0.** No automatic upgrade retry is scheduled.
+Version [1.1.1](https://github.com/rcarmo/memento/releases/tag/v1.1.1) is published and **production is healthy on 1.1.1**. Rui explicitly authorised the successful image-only activation at 21:25 UTC on 16 November 2026. An earlier attempt that day was rolled back after slow stack orchestration exceeded the request timeout; that history and the later verified activation are recorded separately below.
 
 ## Published release
 
@@ -34,7 +34,7 @@ The schema patch already addressed measured repeated registration: equivalent re
 
 Downloaded logs and inactive local raw profiles, matching binaries and disposable fixtures are removed after this review. Concise measurements and intentional rollback records are retained. The unrelated older CI run 37366347422 still has no recoverable profiles; no retrospective profiling certification is inferred for it.
 
-## NAS update and recovery
+## Earlier NAS attempt and recovery
 
 Portainer endpoint 18, stack 111. Initial production was healthy 1.1.0, pinned index `67b2474c…`, image `23a3ada8…`. A fresh read-only baseline covered inventory, semantic ranking, read/help/list, domain-error output, repository/index/model identity and runtime limits.
 
@@ -42,7 +42,7 @@ Two registry-pull paths stalled without making the new digest reference availabl
 
 Only the compose image field changed, with `Prune:false`, `PullImage:false` and existing stack environment preserved. The update request timed out. The replacement container remained `created` during initial checks and MCP was unavailable, so rollback was requested. Subsequent Docker events show the 1.1.1 container did start and reached healthy state before the rollback took effect. It was then stopped cleanly. This sequence does not establish an application regression: the slow orchestration/start interval and request timeout need investigation before another deployment attempt. The incident included service interruptions; it was not a zero-downtime update.
 
-Rollback container `58da99d997b987d35b133b0881421c6ab49b68d98c3ec631aa54d4e6661de0c3` started at `2026-11-16T14:16:54.032015466Z`. At the completed live comparison, it was running/healthy, with zero restarts and no OOM. The original pinned 1.1.0 compose is restored. The loaded 1.1.1 image is retained unused; no further upgrade is authorised by this record.
+Rollback container `58da99d997b987d35b133b0881421c6ab49b68d98c3ec631aa54d4e6661de0c3` started at `2026-11-16T14:16:54.032015466Z`. At the completed live comparison, it was running/healthy, with zero restarts and no OOM. At that point the original pinned 1.1.0 compose was restored and the loaded 1.1.1 image remained unused. The later explicit upgrade authorisation superseded that hold.
 
 Verified after rollback:
 
@@ -53,7 +53,31 @@ Verified after rollback:
 - Same top-three semantic result IDs/order for the fixed query; measured maximum score difference zero.
 - Four Bearer scheme capitalisations initialise as 1.1.0 and return `{}` from ping; unauthenticated ping returns 401.
 
-No canonical repository write, index migration, model switch or forced refresh was performed. Workspace rollback receipts live under `notes/projects/memento-release-1.1.1/`. Production activation of 1.1.1 and its output-schema metadata remains uncompleted.
+No canonical repository write, index migration, model switch or forced refresh was performed. Workspace rollback receipts live under `notes/projects/memento-release-1.1.1/`. Those checks qualified the earlier rollback. The later activation and its live output-schema checks follow below.
+
+## Authorised activation at 21:25 UTC
+
+Rui requested `upgrade now`. A fresh baseline again verified healthy 1.1.0, 111 shared-reader concepts, unchanged repository/index/model identity and read/help/list/search/ping/domain-error contracts. The already loaded published image was checked against the exact registry manifest/config digests and canonical layer identities. No image was rebuilt or pulled again on the NAS.
+
+Preflight initially stopped before mutation because Docker 24 on the NAS reported 329,266,781 image bytes, versus 329,271,043 on the Docker 29 build host. Exact config/image and layer identities matched. The control was corrected to use canonical asset identity plus the unchanged 512 MiB image cap, rather than cross-version equality of Docker's size-accounting field.
+
+Exactly one image-only stack update was submitted at `2026-11-16T21:32:36.702Z`, with stack environment preserved and `Prune:false`, `PullImage:false`. Docker health was observed independently of the long-lived HTTP response for a bounded 600-second window. The stack request returned normally. The container started at `2026-11-16T21:36:54.187928378Z` and was observed healthy at 21:38:52 UTC, 376 seconds after submission. This was a disruptive recreate, not a zero-downtime deployment. The orchestration/start interval is measured; its underlying cause has not been isolated.
+
+Active container: `2416cf46d9aabb55604570f6478bd25213e369828cf6ca4448c304fd4a65896e`. Active immutable image: `sha256:eef135e3f6fe6cfabc17218d65e695cb7478c355a8fadf3d8a461032aff2374d`, published version 1.1.1/source `61c43cb8b44c401f49d5fc30a54ee58e259584f4`. Final inspection confirmed healthy state, zero restarts and no OOM.
+
+The live before/after comparison verified:
+
+- Unchanged state/config/env/model mounts, environment, command, healthcheck, security, ports, resource limits and persisted compose; only the image reference changed.
+- Same 111 concepts across two inventory pages, same inventory order and unchanged repository/index/embedding revision `c9c3bb7eca06868b23aeae1b356c0c9f53349bd1`.
+- Schema 2, non-stale index, GTE ready at `rust-gte`/384, Needle loaded and proposal backlog zero; no migration or forced refresh.
+- Same input schemas, annotations and discovery order; successful read/help/list/search/ping and expected missing-read domain-error responses.
+- Advertised `outputSchema` on the stable visible help/status/search/read tools. The existing hidden list callback's runtime contract also passed; discovery was not expanded to advertise it.
+- Identical top-three semantic IDs/order for the fixed query, maximum and mean score differences zero.
+- Four Bearer capitalisations initialise as 1.1.1 and ping returns `{}`; unauthenticated ping returns 401.
+
+The only changes on main after the published release were tests and documentation. The deterministic test fix `a1a3d57` also passed [CI 43956596732](https://github.com/rcarmo/memento/actions/runs/43956596732); it changes no production code. The deployed release therefore contains the latest production changes without rebuilding an immutable release for a test-only correction.
+
+Rollback image `23a3ada8…` and the original 1.1.0 compose remain available with the same state/model/config mounts. Concise receipts are under `notes/projects/memento-release-1.1.1/deployment.json` and `upgrade-2026-11-16.md`. Temporary comparison IDs/scores, schema fixtures, scripts and logs were removed after analysis and safe owner checks. No GPU, Gemma activation, worker-reuse implementation or Needle 3 deployment occurred.
 
 ## Issue triage
 
