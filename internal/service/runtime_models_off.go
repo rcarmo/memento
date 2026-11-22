@@ -358,12 +358,12 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		runtime.AuditPrincipals = StaticAuditPrincipals(config.Authorization)
 	}
 	runtime.HTTPHooks = identity.HTTPHooks()
-	var files *FileTransfers
 	if config.MCP.ExperimentalFiles {
-		files, err = NewFileTransfers(ctx, jobs, server, options.Surface != "read_only")
+		files, err := NewFileTransfers(ctx, jobs, server, options.Surface != "read_only")
 		if err != nil {
 			return nil, nil, err
 		}
+		runtime.HTTPHooks.BodyRoute = files.HTTPRoute()
 	}
 	stagingHTTP := StagingHTTP{Store: staging, Authenticate: identity.AuthenticateHeaders}
 	snapshotService := graphdebug.NewSnapshotService(paths.Repository.CurrentDir, paths.DerivedDB, paths.ControlDB)
@@ -381,12 +381,6 @@ func buildModelsOffRuntime(ctx context.Context, config RuntimeConfig, options Mo
 		adminHTTP.Store = managed
 	}
 	runtime.HTTPHooks.Route = func(ctx context.Context, method, path string, headers map[string]string, body []byte, peer string) (*umcp.HTTPResponse, error) {
-		if files != nil {
-			response, routeErr := files.Handle(ctx, method, path, headers, body, peer)
-			if response != nil || routeErr != nil {
-				return response, routeErr
-			}
-		}
 		response, routeErr := stagingHTTP.Handle(ctx, method, path, headers, body, peer)
 		if response != nil || routeErr != nil {
 			return response, routeErr

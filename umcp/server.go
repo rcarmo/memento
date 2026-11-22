@@ -139,7 +139,9 @@ func (s *Server) initialize(_ context.Context, params map[string]any) (any, *RPC
 		accepted = &v
 	}
 	config["protocolVersion"] = ExactOrFallback(accepted, ProtocolVersions()[0])
-	if accepted != nil && s.SupportsProtocolVersion(*accepted) {
+	// Stateless revisions are discovered per HTTP request, never negotiated
+	// into a legacy initialize session or a non-HTTP transport.
+	if accepted != nil && *accepted != StatelessHTTPVersion && s.SupportsProtocolVersion(*accepted) {
 		config["protocolVersion"] = *accepted
 	}
 	return config, nil, nil

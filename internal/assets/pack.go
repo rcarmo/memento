@@ -107,15 +107,15 @@ func ValidateAssetPack(kind, version string, raw []byte, rootPath, rootText stri
 	if kind == "skill" {
 		name = "skill-pack"
 	}
-	return validatePack(name, version, rootText, raw, rootPath)
+	return validatePack(name, version, rootText, raw, rootPath, true)
 }
 func ValidateSkillPack(name, version, skillMD string, raw []byte) (ValidatedPack, error) {
 	if !kindPattern.MatchString(name) {
 		return ValidatedPack{}, invalid("skill_name must be lowercase alphanumeric words joined by hyphens")
 	}
-	return validatePack(name, version, skillMD, raw, "SKILL.md")
+	return validatePack(name, version, skillMD, raw, "SKILL.md", true)
 }
-func validatePack(name, version, rootText string, raw []byte, required string) (ValidatedPack, error) {
+func validatePack(name, version, rootText string, raw []byte, required string, copyZIP bool) (ValidatedPack, error) {
 	fail := func(err error) (ValidatedPack, error) { return ValidatedPack{}, err }
 	if _, err := ParseStableSemver(version); err != nil {
 		return fail(err)
@@ -184,7 +184,11 @@ func validatePack(name, version, rootText string, raw []byte, required string) (
 		return fail(invalid("archive must contain root " + required))
 	}
 	manifest.FileCount = len(manifest.Entries)
-	return ValidatedPack{SkillName: name, Version: version, SkillMD: rootText, ZIPBytes: append([]byte{}, raw...), Manifest: manifest}, nil
+	var ownedZIP []byte
+	if copyZIP {
+		ownedZIP = append([]byte{}, raw...)
+	}
+	return ValidatedPack{SkillName: name, Version: version, SkillMD: rootText, ZIPBytes: ownedZIP, Manifest: manifest}, nil
 }
 func accountMember(manifest *Manifest, size uint64, name string) error {
 	if size > MaxFileBytes {

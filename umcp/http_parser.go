@@ -44,6 +44,8 @@ type ParsedHTTPRequest struct {
 	Body                    []byte
 	KeepAlive               bool
 	Origin                  string
+	deferredSize            int64
+	deferredBody            bool
 }
 
 // HTTPParseError gives the source HTTP status and CORS origin. Status zero
@@ -77,6 +79,10 @@ func ascii(raw string) bool {
 // ParseAsyncHTTPRequest reads exactly one request, leaving pipelined bytes in
 // reader. It matches the two pinned parsers rather than net/http's RFC policy.
 func ParseAsyncHTTPRequest(reader *bufio.Reader, options AsyncHTTPParserOptions) (*ParsedHTTPRequest, error) {
+	return parseAsyncHTTPRequest(reader, options, nil)
+}
+
+func parseAsyncHTTPRequest(reader *bufio.Reader, options AsyncHTTPParserOptions, deferBody func(string) bool) (*ParsedHTTPRequest, error) {
 	if options.Mode > AsyncSSEParser || options.MaxRequestBytes <= 0 || options.ReadTimeout <= 0 {
 		return nil, errors.New("invalid HTTP parser options")
 	}
@@ -192,6 +198,11 @@ func ParseAsyncHTTPRequest(reader *bufio.Reader, options AsyncHTTPParserOptions)
 		return fail(status, request.Origin)
 	}
 	request.Body = []byte{}
+	if !legacy && deferBody != nil && deferBody(request.Target) {
+		request.deferredBody, request.deferredSize = true, size
+		request.KeepAlive = false
+		return request, nil
+	}
 	if size > 0 {
 		if err := deadline(); err != nil {
 			return fail(400, request.Origin)

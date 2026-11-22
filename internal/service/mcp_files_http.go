@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -18,21 +19,20 @@ import (
 	"github.com/rcarmo/memento/umcp"
 )
 
-// Handle exposes fixed, same-MCP-address targets. It never accepts client URLs
-// or filename paths. Credentials are reauthenticated on every transfer.
-func (f *FileTransfers) Handle(ctx context.Context, method, target string, headers map[string]string, body []byte, _ string) (*umcp.HTTPResponse, error) {
-	route, err := umcp.SplitRequestTarget(target)
-	if err != nil {
-		return nil, err
-	}
-	base := strings.TrimRight(umcp.AuxiliaryMCPPath(ctx), "/")
-	if route.Path != base+"/files/upload" && route.Path != base+"/files/download" {
-		return nil, nil
-	}
+// HTTPRoute exposes only fixed children of the configured MCP endpoint. The
+// transport passes an unread, length-limited body on both reference servers.
+func (f *FileTransfers) HTTPRoute() *umcp.HTTPBodyRoute {
+	return &umcp.HTTPBodyRoute{Match: func(path string) bool { return path == "/files/upload" || path == "/files/download" }, Handle: f.handle}
+}
+
+func (f *FileTransfers) handle(ctx context.Context, method, path string, headers map[string]string, size int64, body io.Reader) (*umcp.HTTPResponse, error) {
 	fail := func(status int) (*umcp.HTTPResponse, error) {
 		return stagingJSON(map[string]any{"error": "file transfer unavailable"}, status)
 	}
-	upload := route.Path == base+"/files/upload"
+	upload := path == "/files/upload"
+	if (!upload || method == "OPTIONS") && size != 0 {
+		return fail(400)
+	}
 	if method == "OPTIONS" {
 		return &umcp.HTTPResponse{Status: 204, Headers: [][2]string{{"Access-Control-Allow-Methods", "GET, POST, OPTIONS"}, {"Access-Control-Allow-Headers", "Authorization, Content-Type, X-Memento-File-Token"}, {"Cache-Control", "no-store"}}}, nil
 	}
@@ -56,12 +56,8 @@ func (f *FileTransfers) Handle(ctx context.Context, method, target string, heade
 	}
 	select {
 	case f.gate <- struct{}{}:
-	case <-ctx.Done():
-		return nil, ctx.Err()
-	}
-	if f.now().Unix() >= r.Expires {
-		<-f.gate
-		return fail(404)
+	default:
+		return fail(429)
 	}
 	release := true
 	defer func() {
@@ -84,31 +80,58 @@ func (f *FileTransfers) Handle(ctx context.Context, method, target string, heade
 			return fail(400)
 		}
 		input, _, err := parseFileArguments(args)
-		if err != nil || int64(len(body)) != input.Size || len(body) > assets.MaxZIPBytes {
-			return fail(400)
-		}
-		digest := sha256.Sum256(body)
-		if hex.EncodeToString(digest[:]) != input.Digest {
+		if err != nil || size != input.Size || size != r.Size {
 			return fail(400)
 		}
 		if f.now().Unix() >= r.Expires {
 			return fail(404)
 		}
-		// Put validates the ZIP structure and manifest before retaining any pack.
-		// Its principal/key/digest identity makes concurrent/repeated identical transfers safe.
-		staged, _, err := f.jobs.Controls.Staging.Put(ctx, principal.Name, "mcp-files:"+args["idempotency_key"].(string), args["asset_kind"].(string), args["version"].(string), body)
-		if err != nil {
+		// Allocate exactly the already-authorized size, once, after admission.
+		raw := make([]byte, int(size))
+		if _, err := io.ReadFull(checkedFileReader{ctx, body}, raw); err != nil {
 			return fail(400)
 		}
-		result, err := f.jobs.Controls.Staging.DB.ExecContext(ctx, `UPDATE mcp_file_transfers SET staged_id=? WHERE token_digest=? AND expires>?`, staged.StagedAssetID, transferDigest(token), f.now().Unix())
-		if err != nil {
-			return fail(400)
-		}
-		if n, err := result.RowsAffected(); err != nil || n != 1 {
+		if f.now().Unix() >= r.Expires {
 			return fail(404)
+		}
+		active, err := f.jobs.Identity.AuthenticateHeaders(ctx, headers)
+		if err != nil || active == nil || active.Name != principal.Name || !hasFileRole(active.Roles, "proposer") {
+			return fail(403)
+		}
+		// A completed logical call may accept the same bytes again even after
+		// its staged asset is consumed. It does not write another asset.
+		if r.Result != "" {
+			digest := sha256.Sum256(raw)
+			if hex.EncodeToString(digest[:]) != input.Digest {
+				return fail(400)
+			}
+			return stagingJSON(map[string]any{"uploaded": true}, 200)
+		}
+		err = f.jobs.Controls.Staging.PutReadyAndBind(ctx, principal.Name, "mcp-files:"+args["idempotency_key"].(string), args["asset_kind"].(string), args["version"].(string), raw, input.Digest, func(tx *sql.Tx, stagedID string) error {
+			result, err := tx.ExecContext(ctx, `UPDATE mcp_file_transfers SET staged_id=? WHERE token_digest=? AND expires>?`, stagedID, transferDigest(token), f.now().Unix())
+			if err != nil {
+				return err
+			}
+			n, err := result.RowsAffected()
+			if err != nil {
+				return err
+			}
+			if n != 1 {
+				return errExpiredFileTransfer
+			}
+			return nil
+		})
+		if errors.Is(err, errExpiredFileTransfer) {
+			return fail(404)
+		}
+		if err != nil {
+			return fail(400)
 		}
 		// Do not expose staged_asset_id before MCP confirms the upload on retry.
 		return stagingJSON(map[string]any{"uploaded": true}, 200)
+	}
+	if f.now().Unix() >= r.Expires {
+		return fail(404)
 	}
 	policy, err := f.jobs.Identity.ResolvePolicy(ctx, *principal)
 	if err != nil {
@@ -122,10 +145,16 @@ func (f *FileTransfers) Handle(ctx context.Context, method, target string, heade
 	if err != nil {
 		return fail(404)
 	}
+	if f.now().Unix() >= r.Expires {
+		_ = stream.Close()
+		return fail(404)
+	}
 	release = false
 	contentType := "application/zip"
 	return &umcp.HTTPResponse{Status: 200, BodyStream: &fileTransferStream{ReadCloser: stream, release: func() { <-f.gate }}, BodyLength: r.Size, ContentType: &contentType, Headers: [][2]string{{"Cache-Control", "no-store"}, {"X-Content-Type-Options", "nosniff"}, {"Content-Disposition", "attachment; filename=asset.zip"}}}, nil
 }
+
+var errExpiredFileTransfer = errors.New("file transfer expired before staging commit")
 
 type fileTransferStream struct {
 	io.ReadCloser

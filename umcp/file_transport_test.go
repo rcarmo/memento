@@ -32,7 +32,7 @@ func TestExperimentalVersionIsolation(t *testing.T) {
 			t.Fatal(r, err)
 		}
 		expected := version
-		if version == "2099-01-01" {
+		if version == "2099-01-01" || version == StatelessHTTPVersion {
 			expected = "2025-03-26"
 		}
 		if r.Result.(map[string]any)["protocolVersion"] != expected {

@@ -58,7 +58,7 @@ func newFileHarness(t *testing.T, async ...bool) *fileHarness {
 		t.Fatal(err)
 	}
 	hooks := j.Identity.HTTPHooks()
-	hooks.Route = f.Handle
+	hooks.BodyRoute = f.HTTPRoute()
 	options := umcp.DefaultHTTPOptions()
 	options.AsyncReference = len(async) > 0 && async[0]
 	options.MaxRequestBytes = 72 << 20
@@ -80,7 +80,7 @@ func (h *fileHarness) request(method, path, principal string, body []byte, heade
 	if principal != "" {
 		req.Header.Set("Authorization", "Bearer "+principal)
 	}
-	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept", "application/json, text/event-stream")
 	req.Header.Set("Mcp-Protocol-Version", fileProtocol)
 	for key, value := range headers {
 		req.Header.Set(key, value)
@@ -98,8 +98,8 @@ func (h *fileHarness) request(method, path, principal string, body []byte, heade
 }
 func (h *fileHarness) rpc(method, principal string, params map[string]any) map[string]any {
 	h.t.Helper()
-	raw, _ := json.Marshal(map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": params})
-	status, body := h.request("POST", "/mcp", principal, raw, map[string]string{"Content-Type": "application/json"})
+	raw, headers := modernFileRequest(method, params)
+	status, body := h.request("POST", "/mcp", principal, raw, headers)
 	if status != 200 {
 		h.t.Fatalf("HTTP%d %s", status, body)
 	}
@@ -109,6 +109,28 @@ func (h *fileHarness) rpc(method, principal string, params map[string]any) map[s
 	}
 	return result
 }
+func modernFileRequest(method string, params map[string]any) ([]byte, map[string]string) {
+	wire := make(map[string]any, len(params)+1)
+	for key, value := range params {
+		wire[key] = value
+	}
+	metadata := map[string]any{"io.modelcontextprotocol/protocolVersion": fileProtocol}
+	if meta, ok := params["_meta"].(map[string]any); ok {
+		for key, value := range meta {
+			metadata[key] = value
+		}
+	}
+	wire["_meta"] = metadata
+	headers := map[string]string{"Content-Type": "application/json", "Mcp-Method": method}
+	if method == "tools/call" {
+		if name, ok := params["name"].(string); ok {
+			headers["Mcp-Name"] = name
+		}
+	}
+	raw, _ := json.Marshal(map[string]any{"jsonrpc": "2.0", "id": 1, "method": method, "params": wire})
+	return raw, headers
+}
+
 func fileMeta(upload, download bool) map[string]any {
 	settings := map[string]any{}
 	if upload {

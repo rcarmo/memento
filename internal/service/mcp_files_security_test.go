@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"io"
 	"net/http/httptest"
 	"strings"
@@ -39,7 +38,7 @@ func TestMCPFilesReadOnlyAndCustomEndpoint(t *testing.T) {
 	if _, exists := settings["upload"]; exists {
 		t.Fatal(settings)
 	}
-	r, err := f.Handle(ctx, "POST", "/mcp/files/upload", map[string]string{"authorization": "Bearer actor"}, nil, "")
+	r, err := f.handle(ctx, "POST", "/files/upload", map[string]string{"authorization": "Bearer actor"}, 0, nil)
 	if err != nil || r.Status != 403 {
 		t.Fatal(r, err)
 	}
@@ -48,7 +47,7 @@ func TestMCPFilesReadOnlyAndCustomEndpoint(t *testing.T) {
 	options.Endpoint = "/nested/mcp"
 	options.MaxRequestBytes = 72 << 20
 	hooks := h.jobs.Identity.HTTPHooks()
-	hooks.Route = h.files.Handle
+	hooks.BodyRoute = h.files.HTTPRoute()
 	transport, err := umcp.NewStreamableHTTP(h.server, options, hooks)
 	if err != nil {
 		t.Fatal(err)
@@ -58,11 +57,11 @@ func TestMCPFilesReadOnlyAndCustomEndpoint(t *testing.T) {
 	defer host.Close()
 	raw := submitZIP(t)
 	state, headers := h.begin(fileArguments(raw, "custom-path"))
-	body, _ := json.Marshal(map[string]any{"jsonrpc": "2.0", "id": 1, "method": "server/discover"})
+	body, discoverHeaders := modernFileRequest("server/discover", nil)
 	// Reuse the harness request helper against the second host.
 	other := *h
 	other.host = host
-	status, _ := other.request("POST", "/nested/mcp", "actor", body, map[string]string{"Content-Type": "application/json"})
+	status, _ := other.request("POST", "/nested/mcp", "actor", body, discoverHeaders)
 	if status != 200 {
 		t.Fatal(status)
 	}
@@ -123,11 +122,10 @@ func TestMCPFilesProtocolAndCancellationFailures(t *testing.T) {
 	h.files.gate <- struct{}{}
 	cancelled, cancel := context.WithCancel(ctx)
 	cancel()
-	_, err = h.files.Handle(cancelled, "POST", "/mcp/files/upload", map[string]string{"authorization": "Bearer actor", fileTokenHeader: headers["X-Memento-File-Token"]}, submitZIP(t), "")
+	rejected, err := h.files.handle(cancelled, "POST", "/files/upload", map[string]string{"authorization": "Bearer actor", fileTokenHeader: headers["X-Memento-File-Token"]}, 0, nil)
 	<-h.files.gate
-	// A cancelled SQL lookup may fail before admission, which is also closed.
-	if err != nil && !errors.Is(err, context.Canceled) {
-		t.Fatal(err)
+	if err != nil || rejected.Status < 400 {
+		t.Fatal(rejected, err)
 	}
 }
 

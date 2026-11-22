@@ -13,6 +13,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // AsyncHTTPConnectionOptions supplies the reference parser and connection
@@ -42,11 +43,15 @@ func ServeAsyncHTTPConnection(ctx context.Context, conn net.Conn, handler http.H
 	options.Parser.SetReadDeadline = conn.SetReadDeadline
 	reader := bufio.NewReader(conn)
 	legacy := options.Parser.Mode == AsyncSSEParser
+	var deferBody func(string) bool
+	if route, ok := handler.(interface{ deferBody(string) bool }); ok {
+		deferBody = route.deferBody
+	}
 	for number := 1; ; number++ {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
-		parsed, err := ParseAsyncHTTPRequest(reader, options.Parser)
+		parsed, err := parseAsyncHTTPRequest(reader, options.Parser, deferBody)
 		if err != nil {
 			var failure *HTTPParseError
 			if errors.As(err, &failure) && failure.Status != 0 {
@@ -63,7 +68,20 @@ func ServeAsyncHTTPConnection(ctx context.Context, conn net.Conn, handler http.H
 			return err
 		}
 		request := parsed.request(ctx, conn.RemoteAddr().String())
-		output := newHTTPWireWriter(conn, parsed.KeepAlive && number < options.MaxRequests, legacy, parsed.Version)
+		if parsed.deferredBody {
+			request.ContentLength = parsed.deferredSize
+			if parsed.deferredSize > 0 {
+				request.Body = io.NopCloser(&deadlineReader{reader: io.LimitReader(reader, parsed.deferredSize), deadline: func() error { return conn.SetReadDeadline(time.Now().Add(options.Parser.ReadTimeout)) }})
+				if strings.EqualFold(request.Header.Get("Expect"), "100-continue") {
+					request.Body = continueOnRead(request.Body, socketTimeout{Conn: conn, timeout: options.Parser.ReadTimeout})
+				}
+			}
+		}
+		var outputConn io.Writer = conn
+		if parsed.deferredBody {
+			outputConn = socketTimeout{Conn: conn, timeout: options.Parser.ReadTimeout}
+		}
+		output := newHTTPWireWriter(outputConn, parsed.KeepAlive && number < options.MaxRequests, legacy, parsed.Version)
 		if err = serveHTTPConnectionHandler(handler, output, request); err != nil {
 			return err
 		}
@@ -92,7 +110,44 @@ func serveHTTPConnectionHandler(handler http.Handler, w http.ResponseWriter, r *
 	return nil
 }
 
+type deadlineReader struct {
+	reader   io.Reader
+	deadline func() error
+	started  bool
+}
+
+func (r *deadlineReader) Read(p []byte) (int, error) {
+	if !r.started {
+		if err := r.deadline(); err != nil {
+			return 0, err
+		}
+		r.started = true
+	}
+	return r.reader.Read(p)
+}
+
+type continueBody struct {
+	io.ReadCloser
+	output io.Writer
+}
+
+func continueOnRead(body io.ReadCloser, output io.Writer) io.ReadCloser {
+	return &continueBody{ReadCloser: body, output: output}
+}
+
+func (r *continueBody) Read(p []byte) (int, error) {
+	if r.output != nil {
+		output := r.output
+		r.output = nil
+		if _, err := io.WriteString(output, "HTTP/1.1 100 Continue\r\n\r\n"); err != nil {
+			return 0, err
+		}
+	}
+	return r.ReadCloser.Read(p)
+}
+
 type rawTargetKey struct{}
+type asyncHeaderCountsKey struct{}
 
 func requestTarget(r *http.Request) string {
 	if target, ok := r.Context().Value(rawTargetKey{}).(string); ok {
@@ -111,6 +166,9 @@ func (p *ParsedHTTPRequest) request(ctx context.Context, remote string) *http.Re
 	// Opaque preserves targets and percent escapes byte-for-byte, including
 	// malformed escapes which Python deliberately leaves for route parsing.
 	target, query, hasQuery := strings.Cut(p.Target, "?")
+	if p.HeaderCounts != nil {
+		ctx = context.WithValue(ctx, asyncHeaderCountsKey{}, p.HeaderCounts)
+	}
 	return (&http.Request{Method: p.Method, URL: &url.URL{Opaque: target, RawQuery: query, ForceQuery: hasQuery}, RequestURI: p.Target, Proto: p.Version, ProtoMajor: 1, ProtoMinor: int(p.Version[len(p.Version)-1] - '0'), Header: headers, Host: p.Headers["host"], RemoteAddr: remote, ContentLength: int64(len(p.Body)), Body: io.NopCloser(bytes.NewReader(p.Body))}).WithContext(context.WithValue(ctx, rawTargetKey{}, p.Target))
 }
 

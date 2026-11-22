@@ -94,7 +94,14 @@ func ServeSyncHTTPConnection(ctx context.Context, conn net.Conn, handler http.Ha
 			return err
 		}
 		w := newSyncWireWriter(stream, options.Legacy, parsed.Version, parsed.KeepAlive, !options.Legacy && number >= options.MaxRequests)
-		if parsed.ExpectContinue {
+		deferred := false
+		if route, ok := handler.(interface{ deferBody(string) bool }); ok && !options.Legacy {
+			deferred = route.deferBody(parsed.Target)
+		}
+		if deferred {
+			w.forceClose = true
+		}
+		if parsed.ExpectContinue && !deferred {
 			if _, err = io.WriteString(stream, "HTTP/1.1 100 Continue\r\n\r\n"); err != nil {
 				return err
 			}
@@ -103,7 +110,11 @@ func ServeSyncHTTPConnection(ctx context.Context, conn net.Conn, handler http.Ha
 		if !supported {
 			w.writeError(syncHTTPError(501, "Unsupported method ("+pythonRepr(parsed.Method)+")", "", parsed.Version), parsed.Method)
 		} else {
-			if err = serveHTTPConnectionHandler(handler, w, parsed.request(ctx, reader, conn.RemoteAddr().String())); err != nil {
+			request := parsed.request(ctx, reader, conn.RemoteAddr().String())
+			if deferred && request.ContentLength > 0 && parsed.ExpectContinue {
+				request.Body = continueOnRead(request.Body, stream)
+			}
+			if err = serveHTTPConnectionHandler(handler, w, request); err != nil {
 				return err
 			}
 		}

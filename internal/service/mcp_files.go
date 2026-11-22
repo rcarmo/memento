@@ -25,7 +25,7 @@ import (
 )
 
 const fileExtension = "io.modelcontextprotocol/files"
-const fileProtocol = "2026-07-28"
+const fileProtocol = umcp.StatelessHTTPVersion
 const fileUploadTool = "memory_asset_upload"
 const fileDownloadTool = "memory_asset_download"
 const fileTokenHeader = "x-memento-file-token"
@@ -108,27 +108,32 @@ func newFileTransfers(ctx context.Context, jobs *Jobs, server *umcp.Server, allo
 		}
 	}
 	server.SetHandler("tools/list", func(ctx context.Context, p map[string]any) (any, *umcp.RPCError, error) {
-		return server.Tools.List(context.WithValue(ctx, fileCapabilitiesKey{}, readFileCapabilities(p)), p)
+		result, rpcErr, err := server.Tools.List(context.WithValue(ctx, fileCapabilitiesKey{}, readFileCapabilities(p)), p)
+		if fileContext(ctx) && rpcErr == nil && err == nil {
+			if listing, ok := result.(map[string]any); ok {
+				addFileDiscoveryMetadata(listing)
+			}
+		}
+		return result, rpcErr, err
 	})
 	server.SetHandler("server/discover", func(ctx context.Context, _ map[string]any) (any, *umcp.RPCError, error) {
 		if !fileContext(ctx) {
 			return nil, &umcp.RPCError{Code: -32601, Message: "Method not found: server/discover"}, nil
 		}
-		config := server.Config()
-		caps := config["capabilities"].(map[string]any)
 		settings := map[string]any{"maxInlineBytes": 0}
 		if f.allowUpload {
 			settings["upload"] = map[string]any{}
 		}
-		caps["extensions"] = map[string]any{fileExtension: settings}
-		return map[string]any{"serverInfo": config["serverInfo"], "instructions": config["instructions"], "supportedVersions": append(umcp.ProtocolVersions(), fileProtocol), "capabilities": caps}, nil, nil
+		result := map[string]any{"instructions": server.Instructions, "supportedVersions": append([]string{fileProtocol}, umcp.ProtocolVersions()...), "capabilities": map[string]any{"tools": map[string]any{}, "extensions": map[string]any{fileExtension: settings}}}
+		addFileDiscoveryMetadata(result)
+		return result, nil, nil
 	})
 	server.SetHandler("tools/call", func(ctx context.Context, p map[string]any) (any, *umcp.RPCError, error) {
 		name, _ := p["name"].(string)
 		if name == fileUploadTool || name == fileDownloadTool {
 			return f.call(ctx, p)
 		}
-		if _, exists := p["requestState"]; exists {
+		if _, exists := p["requestState"]; exists && fileContext(ctx) {
 			return nil, invalidFileState(), nil
 		}
 		result, rpcErr, err := server.Tools.Call(ctx, p)
@@ -141,6 +146,12 @@ func newFileTransfers(ctx context.Context, jobs *Jobs, server *umcp.Server, allo
 	})
 	return f, nil
 }
+func addFileDiscoveryMetadata(result map[string]any) {
+	result["resultType"] = "complete"
+	result["ttlMs"] = 0 // Capability- and principal-sensitive; do not cache.
+	result["cacheScope"] = "private"
+}
+
 func fileContext(ctx context.Context) bool {
 	c := umcp.Context(ctx)
 	return c.Transport == "streamable-http" && c.ProtocolVersion == fileProtocol
@@ -348,11 +359,11 @@ func parseFileArguments(args map[string]any) (fileInput, string, error) {
 	if !ok {
 		return in, "", bad
 	}
-	decoded, err := base64.RawURLEncoding.Strict().DecodeString(value)
-	if err != nil || len(decoded) != sha256.Size {
+	decoded, ok := decodeFileDigest(value)
+	if !ok {
 		return in, "", bad
 	}
-	in.Digest = hex.EncodeToString(decoded)
+	in.Digest = hex.EncodeToString(decoded[:])
 	// Every other accepted field is a string/object. Normalize the sole numeric
 	// field for JSON Schema instance equality (e.g. 10, 10.0 and 1e1).
 	canonical := canonicalFileArgument{ID: in.ID, MimeType: "application/zip", Size: in.Size}
@@ -365,6 +376,21 @@ func parseFileArguments(args map[string]any) (fileInput, string, error) {
 	raw, err := json.Marshal(canonicalUploadArguments{Kind: kind, File: canonical, Key: key, Version: version})
 	return in, string(raw), err
 }
+func decodeFileDigest(value string) ([sha256.Size]byte, bool) {
+	var digest [sha256.Size]byte
+	if len(value) != base64.RawURLEncoding.EncodedLen(len(digest)) {
+		return digest, false
+	}
+	for i := range len(value) {
+		c := value[i]
+		if !(c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '-' || c == '_') {
+			return digest, false
+		}
+	}
+	n, err := base64.RawURLEncoding.Strict().Decode(digest[:], []byte(value))
+	return digest, err == nil && n == len(digest)
+}
+
 func onlyFileKeys(m map[string]any, keys ...string) bool {
 	for key := range m {
 		found := false
@@ -383,11 +409,8 @@ func transferDigest(token string) string {
 }
 func (f *FileTransfers) record(ctx context.Context, token string) (transferRecord, error) {
 	var r transferRecord
-	if len(token) != 43 {
+	if _, ok := decodeFileDigest(token); !ok {
 		return r, errors.New("invalid token")
-	}
-	if _, err := base64.RawURLEncoding.Strict().DecodeString(token); err != nil {
-		return r, err
 	}
 	err := f.jobs.Controls.Staging.DB.QueryRowContext(ctx, `SELECT principal,tool,arguments,capabilities,expires,size,staged_id,result_json FROM mcp_file_transfers WHERE token_digest=? AND expires>?`, transferDigest(token), f.now().Unix()).Scan(&r.Principal, &r.Tool, &r.Arguments, &r.Capabilities, &r.Expires, &r.Size, &r.StagedID, &r.Result)
 	return r, err

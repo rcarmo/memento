@@ -330,18 +330,69 @@ func (s *StagingStore) put(ctx context.Context, db stageExecutor, principal, key
 		}
 		return existing, true, nil
 	}
-	id, err := s.id()
+	staged, err := s.insert(ctx, db, principal, key, kind, version, raw, pack.Manifest)
 	if err != nil {
 		return StagedAsset{}, false, err
 	}
+	staged.BlobBytes = append([]byte{}, raw...)
+	return staged, false, nil
+}
+
+// PutReadyAndBind commits a validated immutable asset and its caller's receipt
+// together. Existing bytes may be reused only while the matching pack is ready.
+// The binder must use tx for its writes and return an error to roll back both.
+func (s *StagingStore) PutReadyAndBind(ctx context.Context, principal, key, kind, version string, raw []byte, digest string, bind func(*sql.Tx, string) error) error {
+	if blank(key) || bind == nil {
+		return stagingError("missing upload binding")
+	}
+	if err := ValidateKind(kind); err != nil {
+		return err
+	}
+	// This path borrows the admitted body until the transaction returns; the
+	// validator need not return a second owned ZIP copy to the caller.
+	pack, err := validatePack(kind, version, "", raw, "", false)
+	if err != nil {
+		return err
+	}
+	if pack.Manifest.SHA256 != digest {
+		return stagingError("upload digest mismatch")
+	}
+	return control.WithTransaction(ctx, s.DB, func(tx *sql.Tx) error {
+		var id, storedKind, storedVersion, storedDigest, state, expires string
+		var size int64
+		err := tx.QueryRowContext(ctx, `SELECT staged_asset_id,asset_kind,version,sha256,state,expires_at,length(blob_bytes) FROM staged_assets WHERE principal=? AND idempotency_key=?`, principal, key).Scan(&id, &storedKind, &storedVersion, &storedDigest, &state, &expires, &size)
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			staged, err := s.insert(ctx, tx, principal, key, kind, version, raw, pack.Manifest)
+			if err != nil {
+				return err
+			}
+			id = staged.StagedAssetID
+		case err != nil:
+			return err
+		default:
+			expiry, err := parseTimestamp(expires)
+			if err != nil || state != "ready" || !expiry.After(s.now()) || size != int64(len(raw)) || storedKind != kind || storedVersion != version || storedDigest != digest {
+				return stagingError("idempotency key has no matching ready asset")
+			}
+		}
+		return bind(tx, id)
+	})
+}
+
+func (s *StagingStore) insert(ctx context.Context, db stageExecutor, principal, key, kind, version string, raw []byte, verified Manifest) (StagedAsset, error) {
+	id, err := s.id()
+	if err != nil {
+		return StagedAsset{}, err
+	}
 	now := s.now()
-	staged := StagedAsset{StagedAssetID: id, Principal: principal, AssetKind: kind, Version: version, MediaType: "application/zip", SHA256: pack.Manifest.SHA256, BlobBytes: append([]byte{}, raw...), Manifest: pack.Manifest, State: "ready", CreatedAt: timestamp(now), ExpiresAt: timestamp(now.Add(StagingTTL))}
+	staged := StagedAsset{StagedAssetID: id, Principal: principal, AssetKind: kind, Version: version, MediaType: "application/zip", SHA256: verified.SHA256, Manifest: verified, State: "ready", CreatedAt: timestamp(now), ExpiresAt: timestamp(now.Add(StagingTTL))}
 	manifest := manifestJSON(staged.Manifest)
 	_, err = db.ExecContext(ctx, `INSERT INTO staged_assets(staged_asset_id,principal,idempotency_key,asset_kind,version,media_type,sha256,blob_bytes,manifest_json,state,proposal_id,created_at,expires_at,consumed_at) VALUES(?,?,?,?,?,?,?,?,?,?,NULL,?,?,NULL)`, id, principal, key, kind, version, staged.MediaType, staged.SHA256, raw, manifest, staged.State, staged.CreatedAt, staged.ExpiresAt)
 	if err != nil {
-		return StagedAsset{}, false, err
+		return StagedAsset{}, err
 	}
-	return staged, false, nil
+	return staged, nil
 }
 func (s *StagingStore) PutWithTicket(ctx context.Context, token string, raw []byte) (StagedAsset, bool, error) {
 	digest := tokenDigest(token)

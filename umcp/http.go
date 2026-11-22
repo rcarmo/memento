@@ -21,6 +21,16 @@ type HTTPHooks struct {
 	Authenticate func(context.Context, string, string, map[string]string, string) (*Principal, error)
 	Authorize    func(context.Context, *Principal, any, any) (bool, error)
 	Route        func(context.Context, string, string, map[string]string, []byte, string) (*HTTPResponse, error)
+	BodyRoute    *HTTPBodyRoute
+}
+
+// HTTPBodyRoute handles selected children of the MCP endpoint. Match receives
+// the path relative to that endpoint. Handle must authenticate and admit the
+// request before reading bytes. The reader is limited to Content-Length and
+// must not be retained after Handle returns.
+type HTTPBodyRoute struct {
+	Match  func(path string) bool
+	Handle func(ctx context.Context, method, path string, headers map[string]string, size int64, body io.Reader) (*HTTPResponse, error)
 }
 
 // HTTPOptions configures the source Streamable HTTP defaults. The caller must
@@ -286,13 +296,57 @@ func (h *StreamableHTTP) auxiliary(w http.ResponseWriter, r *http.Request, path,
 		response, err = hookCall(func() (*HTTPResponse, error) {
 			return h.hooks.Route(ctx, r.Method, path, headersLower(r), body, peer(r))
 		})
-		if response != nil && response.BodyStream != nil {
-			defer response.BodyStream.Close()
-		}
-		if err != nil {
-			emptyHTTP(w, 500, origin)
-			return
-		}
+	}
+	h.writeAuxiliary(w, response, err, origin)
+}
+
+func (h *StreamableHTTP) bodyRoutePath(path string) (string, bool) {
+	route := h.hooks.BodyRoute
+	if route == nil || route.Match == nil || route.Handle == nil {
+		return "", false
+	}
+	base := strings.TrimRight(h.options.Endpoint, "/")
+	relative, ok := strings.CutPrefix(path, base)
+	return relative, ok && strings.HasPrefix(relative, "/") && route.Match(relative)
+}
+
+func (h *StreamableHTTP) deferBody(target string) bool {
+	path, err := RequestTargetPath(target)
+	if err != nil {
+		return false
+	}
+	_, match := h.bodyRoutePath(path)
+	return match
+}
+
+func (h *StreamableHTTP) serveBodyRoute(w http.ResponseWriter, r *http.Request, path, origin string) {
+	// Rejections can leave unread bytes. Never reuse a transfer connection.
+	w.Header().Set("Connection", "close")
+	if len(r.TransferEncoding) > 0 || r.Header.Get("Transfer-Encoding") != "" || r.ContentLength < 0 {
+		emptyHTTP(w, 400, origin)
+		return
+	}
+	if r.ContentLength > h.options.MaxRequestBytes {
+		emptyHTTP(w, 413, origin)
+		return
+	}
+	body := r.Body
+	if body == nil {
+		body = http.NoBody
+	}
+	response, err := hookCall(func() (*HTTPResponse, error) {
+		return h.hooks.BodyRoute.Handle(r.Context(), r.Method, path, headersLower(r), r.ContentLength, io.LimitReader(body, r.ContentLength))
+	})
+	h.writeAuxiliary(w, response, err, origin)
+}
+
+func (h *StreamableHTTP) writeAuxiliary(w http.ResponseWriter, response *HTTPResponse, err error, origin string) {
+	if response != nil && response.BodyStream != nil {
+		defer response.BodyStream.Close()
+	}
+	if err != nil {
+		emptyHTTP(w, 500, origin)
+		return
 	}
 	if response == nil {
 		w.Header().Set("Allow", "GET, POST, DELETE, OPTIONS")
@@ -355,6 +409,10 @@ func (h *StreamableHTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		emptyHTTP(w, 400, origin)
 		return
 	}
+	if relative, match := h.bodyRoutePath(path); match {
+		h.serveBodyRoute(w, r, relative, origin)
+		return
+	}
 	if h.options.AsyncReference {
 		body, ok := h.body(w, r, origin)
 		if !ok {
@@ -379,7 +437,11 @@ func (h *StreamableHTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		cors(w, origin)
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Accept, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID, Authorization")
+		allowedHeaders := "Content-Type, Accept, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID, Authorization"
+		if h.server.SupportsProtocolVersion(StatelessHTTPVersion) {
+			allowedHeaders += ", Mcp-Method, Mcp-Name"
+		}
+		w.Header().Set("Access-Control-Allow-Headers", allowedHeaders)
 		emptyHTTP(w, 204, origin)
 		return
 	}
@@ -394,6 +456,11 @@ func (h *StreamableHTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if path != h.options.Endpoint {
 		h.auxiliary(w, r, path, origin)
+		return
+	}
+	if r.Method != http.MethodPost && r.Header.Get("Mcp-Protocol-Version") == StatelessHTTPVersion && h.server.SupportsProtocolVersion(StatelessHTTPVersion) {
+		w.Header().Set("Allow", "POST, OPTIONS")
+		emptyHTTP(w, 405, origin)
 		return
 	}
 	var principal *Principal
@@ -443,16 +510,35 @@ func (h *StreamableHTTP) post(w http.ResponseWriter, r *http.Request, origin str
 		return
 	}
 	method := request["method"]
+	params, _ := request["params"].(map[string]any)
+	modern := h.modernRequest(r, params)
+	if modern {
+		if rpcErr := h.validateModernRequest(r, request, params); rpcErr != nil {
+			jsonHTTP(w, 400, modernFailure(request, rpcErr), origin)
+			return
+		}
+		if !modernMethodSupported(method) {
+			jsonHTTP(w, 404, modernFailure(request, &RPCError{Code: -32601, Message: "Method not found"}), origin)
+			return
+		}
+		if value, ok := request["id"]; !ok || value == nil || !validID(value) {
+			jsonHTTP(w, 400, failure(nil, -32600, "Invalid or missing request ID"), origin)
+			return
+		}
+	}
 	initialize := method == "initialize"
-	if !initialize && !h.version(w, r, origin) {
+	if !modern && !initialize && !h.version(w, r, origin) {
 		return
 	}
 	id := r.Header.Get("Mcp-Session-Id")
+	if modern {
+		id = ""
+	} // Modern requests cannot depend on a legacy session.
 	if initialize && id != "" {
 		emptyHTTP(w, 400, origin)
 		return
 	}
-	if !initialize {
+	if !modern && !initialize {
 		if _, ok = h.validated(w, r, principal, false, origin); !ok {
 			return
 		}
@@ -461,7 +547,6 @@ func (h *StreamableHTTP) post(w http.ResponseWriter, r *http.Request, origin str
 		emptyHTTP(w, 202, origin)
 		return
 	}
-	params, _ := request["params"].(map[string]any)
 	var tool any
 	if method == "tools/call" {
 		tool = params["name"]
@@ -505,6 +590,9 @@ func (h *StreamableHTTP) post(w http.ResponseWriter, r *http.Request, origin str
 				w.Header().Set("Mcp-Session-Id", created)
 			}
 		}
+	}
+	if modern && response.Error == nil && method == "ping" {
+		response.Result = map[string]any{"resultType": "complete"}
 	}
 	jsonHTTP(w, 200, response, origin)
 }
