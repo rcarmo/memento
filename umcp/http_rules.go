@@ -2,6 +2,7 @@ package umcp
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -159,8 +160,12 @@ func HTTPStatusLine(status int) string {
 // HTTPResponse is the Go equivalent of the immutable typed MCPHTTPResponse.
 // Body bytes and header strings are never interpreted as trusted routing data.
 type HTTPResponse struct {
-	Status      int
-	Body        []byte
+	Status int
+	Body   []byte
+	// BodyStream is an optional bounded auxiliary response. The HTTP transport
+	// owns closing it, including validation and write failures. Body must be nil.
+	BodyStream  io.ReadCloser
+	BodyLength  int64
 	ContentType *string
 	Headers     [][2]string
 }
@@ -172,7 +177,14 @@ func ValidateHTTPResponse(response *HTTPResponse, maxBytes int) bool {
 	if response == nil || response.Status < 100 || response.Status > 599 || maxBytes < 0 {
 		return false
 	}
-	remaining := maxBytes - len(response.Body)
+	length := int64(len(response.Body))
+	if response.BodyStream != nil {
+		if len(response.Body) != 0 || response.BodyLength < 0 || response.BodyLength > int64(maxBytes) {
+			return false
+		}
+		length = response.BodyLength
+	}
+	remaining := maxBytes - int(length)
 	if remaining < 0 {
 		return false
 	}

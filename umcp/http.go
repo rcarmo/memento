@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 	"unicode/utf8"
 )
@@ -113,14 +114,11 @@ func jsonHTTP(w http.ResponseWriter, status int, value any, origin string) {
 	w.WriteHeader(status)
 	_, _ = w.Write(raw)
 }
-func protocolSupported(version string) bool {
-	for _, v := range ProtocolVersions() {
-		if version == v {
-			return true
-		}
-	}
-	return false
-}
+
+// One bounded buffer per active streamed auxiliary response; do not retain file
+// bytes between principals. The default byte-response path is unchanged.
+var auxiliaryStreamBuffers = sync.Pool{New: func() any { return new([32 * 1024]byte) }}
+
 func headersLower(r *http.Request) map[string]string {
 	out := map[string]string{}
 	if parsed := syncRequest(r); parsed != nil {
@@ -215,16 +213,23 @@ func (h *StreamableHTTP) body(w http.ResponseWriter, r *http.Request, origin str
 	}
 	return data, true
 }
+func (h *StreamableHTTP) protocolVersionError(version *string) map[string]any {
+	result := ProtocolVersionError(version)
+	if len(h.server.AdditionalProtocolVersions) > 0 {
+		result["supported"] = append(ProtocolVersions(), h.server.AdditionalProtocolVersions...)
+	}
+	return result
+}
 func (h *StreamableHTTP) version(w http.ResponseWriter, r *http.Request, origin string) bool {
 	value := r.Header.Get("Mcp-Protocol-Version")
-	if protocolSupported(value) {
+	if h.server.SupportsProtocolVersion(value) {
 		return true
 	}
 	var version *string
 	if _, exists := r.Header[http.CanonicalHeaderKey("Mcp-Protocol-Version")]; exists {
 		version = &value
 	}
-	jsonHTTP(w, 400, ProtocolVersionError(version), origin)
+	jsonHTTP(w, 400, h.protocolVersionError(version), origin)
 	return false
 }
 func (h *StreamableHTTP) principal(w http.ResponseWriter, r *http.Request, origin string) (*Principal, bool) {
@@ -245,7 +250,7 @@ func (h *StreamableHTTP) validated(w http.ResponseWriter, r *http.Request, p *Pr
 	if status != 200 {
 		if status == 400 && r.Header.Get("Mcp-Session-Id") != "" {
 			version := r.Header.Get("Mcp-Protocol-Version")
-			jsonHTTP(w, 400, ProtocolVersionError(&version), origin)
+			jsonHTTP(w, 400, h.protocolVersionError(&version), origin)
 		} else {
 			emptyHTTP(w, status, origin)
 		}
@@ -253,6 +258,18 @@ func (h *StreamableHTTP) validated(w http.ResponseWriter, r *http.Request, p *Pr
 	}
 	return session, true
 }
+
+type auxiliaryEndpointKey struct{}
+
+// AuxiliaryMCPPath returns the server-configured MCP path for same-address
+// transfer targets. It never comes from client headers or tool arguments.
+func AuxiliaryMCPPath(ctx context.Context) string {
+	if path, ok := ctx.Value(auxiliaryEndpointKey{}).(string); ok {
+		return path
+	}
+	return "/mcp"
+}
+
 func (h *StreamableHTTP) auxiliary(w http.ResponseWriter, r *http.Request, path, origin string) {
 	body, ok := h.body(w, r, origin)
 	if !ok {
@@ -262,9 +279,16 @@ func (h *StreamableHTTP) auxiliary(w http.ResponseWriter, r *http.Request, path,
 	var err error
 	var response *HTTPResponse
 	if h.hooks.Route != nil {
+		ctx := r.Context()
+		if h.options.Endpoint != "/mcp" {
+			ctx = context.WithValue(ctx, auxiliaryEndpointKey{}, h.options.Endpoint)
+		}
 		response, err = hookCall(func() (*HTTPResponse, error) {
-			return h.hooks.Route(r.Context(), r.Method, path, headersLower(r), body, peer(r))
+			return h.hooks.Route(ctx, r.Method, path, headersLower(r), body, peer(r))
 		})
+		if response != nil && response.BodyStream != nil {
+			defer response.BodyStream.Close()
+		}
 		if err != nil {
 			emptyHTTP(w, 500, origin)
 			return
@@ -286,8 +310,23 @@ func (h *StreamableHTTP) auxiliary(w http.ResponseWriter, r *http.Request, path,
 	for _, header := range response.Headers {
 		w.Header().Add(header[0], header[1])
 	}
-	w.Header().Set("Content-Length", strconv.Itoa(len(response.Body)))
+	length := int64(len(response.Body))
+	if response.BodyStream != nil {
+		length = response.BodyLength
+	}
+	w.Header().Set("Content-Length", strconv.FormatInt(length, 10))
 	w.WriteHeader(response.Status)
+	if response.BodyStream != nil {
+		buffer := auxiliaryStreamBuffers.Get().(*[32 * 1024]byte)
+		defer func() { clear(buffer[:]); auxiliaryStreamBuffers.Put(buffer) }()
+		// Hide ReaderFrom so the bounded pool is used instead of net/http's
+		// per-response fallback buffer. Do not buffer the complete file.
+		n, err := io.CopyBuffer(struct{ io.Writer }{w}, io.LimitReader(response.BodyStream, length), buffer[:])
+		if err != nil || n != length {
+			panic(http.ErrAbortHandler)
+		}
+		return
+	}
 	_, _ = w.Write(response.Body)
 }
 
@@ -457,7 +496,7 @@ func (h *StreamableHTTP) post(w http.ResponseWriter, r *http.Request, origin str
 	}
 	if initialize && response.Error == nil {
 		if result, ok := response.Result.(map[string]any); ok {
-			if version, ok := result["protocolVersion"].(string); ok && protocolSupported(version) {
+			if version, ok := result["protocolVersion"].(string); ok && h.server.SupportsProtocolVersion(version) {
 				created, status, err := h.sessions.create(principal.Name, version)
 				if err != nil || status != 200 {
 					emptyHTTP(w, status, origin)

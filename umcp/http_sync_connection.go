@@ -103,7 +103,9 @@ func ServeSyncHTTPConnection(ctx context.Context, conn net.Conn, handler http.Ha
 		if !supported {
 			w.writeError(syncHTTPError(501, "Unsupported method ("+pythonRepr(parsed.Method)+")", "", parsed.Version), parsed.Method)
 		} else {
-			handler.ServeHTTP(w, parsed.request(ctx, reader, conn.RemoteAddr().String()))
+			if err = serveHTTPConnectionHandler(handler, w, parsed.request(ctx, reader, conn.RemoteAddr().String())); err != nil {
+				return err
+			}
 		}
 		if err = w.FlushError(); err != nil {
 			return err

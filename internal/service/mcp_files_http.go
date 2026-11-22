@@ -1,0 +1,196 @@
+package service
+
+import (
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"io"
+	"mime"
+	"os"
+	"strings"
+	"sync"
+
+	"github.com/rcarmo/memento/internal/access"
+	"github.com/rcarmo/memento/internal/assets"
+	"github.com/rcarmo/memento/internal/repository"
+	"github.com/rcarmo/memento/umcp"
+)
+
+// Handle exposes fixed, same-MCP-address targets. It never accepts client URLs
+// or filename paths. Credentials are reauthenticated on every transfer.
+func (f *FileTransfers) Handle(ctx context.Context, method, target string, headers map[string]string, body []byte, _ string) (*umcp.HTTPResponse, error) {
+	route, err := umcp.SplitRequestTarget(target)
+	if err != nil {
+		return nil, err
+	}
+	base := strings.TrimRight(umcp.AuxiliaryMCPPath(ctx), "/")
+	if route.Path != base+"/files/upload" && route.Path != base+"/files/download" {
+		return nil, nil
+	}
+	fail := func(status int) (*umcp.HTTPResponse, error) {
+		return stagingJSON(map[string]any{"error": "file transfer unavailable"}, status)
+	}
+	upload := route.Path == base+"/files/upload"
+	if method == "OPTIONS" {
+		return &umcp.HTTPResponse{Status: 204, Headers: [][2]string{{"Access-Control-Allow-Methods", "GET, POST, OPTIONS"}, {"Access-Control-Allow-Headers", "Authorization, Content-Type, X-Memento-File-Token"}, {"Cache-Control", "no-store"}}}, nil
+	}
+	if (upload && method != "POST") || (!upload && method != "GET") {
+		return fail(405)
+	}
+	principal, err := f.jobs.Identity.AuthenticateHeaders(ctx, headers)
+	if err != nil || principal == nil {
+		return fail(401)
+	}
+	if upload && !f.allowUpload {
+		return fail(403)
+	}
+	token := headers[fileTokenHeader]
+	r, err := f.record(ctx, token)
+	if err != nil || r.Principal != principal.Name {
+		return fail(404)
+	}
+	if (upload && r.Tool != fileUploadTool) || (!upload && r.Tool != fileDownloadTool) {
+		return fail(404)
+	}
+	select {
+	case f.gate <- struct{}{}:
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
+	if f.now().Unix() >= r.Expires {
+		<-f.gate
+		return fail(404)
+	}
+	release := true
+	defer func() {
+		if release {
+			<-f.gate
+		}
+	}()
+	if upload {
+		if !hasFileRole(principal.Roles, "proposer") {
+			return fail(403)
+		}
+		content, _, err := mime.ParseMediaType(headers["content-type"])
+		if err != nil || content != "application/zip" {
+			return fail(415)
+		}
+		var args map[string]any
+		decoder := json.NewDecoder(strings.NewReader(r.Arguments))
+		decoder.UseNumber()
+		if decoder.Decode(&args) != nil {
+			return fail(400)
+		}
+		input, _, err := parseFileArguments(args)
+		if err != nil || int64(len(body)) != input.Size || len(body) > assets.MaxZIPBytes {
+			return fail(400)
+		}
+		digest := sha256.Sum256(body)
+		if hex.EncodeToString(digest[:]) != input.Digest {
+			return fail(400)
+		}
+		if f.now().Unix() >= r.Expires {
+			return fail(404)
+		}
+		// Put validates the ZIP structure and manifest before retaining any pack.
+		// Its principal/key/digest identity makes concurrent/repeated identical transfers safe.
+		staged, _, err := f.jobs.Controls.Staging.Put(ctx, principal.Name, "mcp-files:"+args["idempotency_key"].(string), args["asset_kind"].(string), args["version"].(string), body)
+		if err != nil {
+			return fail(400)
+		}
+		result, err := f.jobs.Controls.Staging.DB.ExecContext(ctx, `UPDATE mcp_file_transfers SET staged_id=? WHERE token_digest=? AND expires>?`, staged.StagedAssetID, transferDigest(token), f.now().Unix())
+		if err != nil {
+			return fail(400)
+		}
+		if n, err := result.RowsAffected(); err != nil || n != 1 {
+			return fail(404)
+		}
+		// Do not expose staged_asset_id before MCP confirms the upload on retry.
+		return stagingJSON(map[string]any{"uploaded": true}, 200)
+	}
+	policy, err := f.jobs.Identity.ResolvePolicy(ctx, *principal)
+	if err != nil {
+		return fail(403)
+	}
+	var args downloadArguments
+	if json.Unmarshal([]byte(r.Arguments), &args) != nil {
+		return fail(400)
+	}
+	stream, err := f.openArchive(ctx, ProposalActor{Policy: policy}, args, r.Size)
+	if err != nil {
+		return fail(404)
+	}
+	release = false
+	contentType := "application/zip"
+	return &umcp.HTTPResponse{Status: 200, BodyStream: &fileTransferStream{ReadCloser: stream, release: func() { <-f.gate }}, BodyLength: r.Size, ContentType: &contentType, Headers: [][2]string{{"Cache-Control", "no-store"}, {"X-Content-Type-Options", "nosniff"}, {"Content-Disposition", "attachment; filename=asset.zip"}}}, nil
+}
+
+type fileTransferStream struct {
+	io.ReadCloser
+	once    sync.Once
+	release func()
+}
+
+func (s *fileTransferStream) Close() error {
+	var err error
+	s.once.Do(func() { err = s.ReadCloser.Close(); s.release() })
+	return err
+}
+
+type checkedFileReader struct {
+	ctx    context.Context
+	reader io.Reader
+}
+
+func (r checkedFileReader) Read(p []byte) (int, error) {
+	if err := r.ctx.Err(); err != nil {
+		return 0, err
+	}
+	return r.reader.Read(p)
+}
+
+func (f *FileTransfers) openArchive(ctx context.Context, actor ProposalActor, args downloadArguments, size int64) (*os.File, error) {
+	if err := access.RequireRole(actor.Policy, "reader"); err != nil {
+		return nil, err
+	}
+	var file *os.File
+	err := repository.WithTransactionLock(ctx, f.jobs.Controls.Queue.Paths, func() error {
+		c := f.jobs.Controls
+		data, err := c.readAcceptedAsset(actor, AssetGetOptions{IDOrPath: args.Path, AssetKind: args.Kind, Version: &args.Version, ExpectedSHA256: &args.Digest, View: "manifest"}, 0, os.Stat, func(path string) (assetSource, error) { return os.Open(path) })
+		if err != nil {
+			return err
+		}
+		if data["zip_bytes"] != size {
+			return errors.New("asset size changed")
+		}
+		_, path, err := assets.AssetVersionPaths(data["concept_id"].(string), args.Kind, args.Version)
+		if err != nil {
+			return err
+		}
+		resolved, err := repository.ValidateRepositoryReadPath(c.Queue.Paths.CurrentDir, path)
+		if err != nil {
+			return err
+		}
+		file, err = os.Open(resolved.AbsolutePath)
+		if err != nil {
+			return err
+		}
+		hash := sha256.New()
+		n, err := io.Copy(hash, checkedFileReader{ctx, io.LimitReader(file, size+1)})
+		if err != nil {
+			return err
+		}
+		if n != size || hex.EncodeToString(hash.Sum(nil)) != args.Digest {
+			return errors.New("asset integrity changed")
+		}
+		_, err = file.Seek(0, io.SeekStart)
+		return err
+	})
+	if err != nil && file != nil {
+		_ = file.Close()
+		file = nil
+	}
+	return file, err
+}

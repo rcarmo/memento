@@ -64,7 +64,9 @@ func ServeAsyncHTTPConnection(ctx context.Context, conn net.Conn, handler http.H
 		}
 		request := parsed.request(ctx, conn.RemoteAddr().String())
 		output := newHTTPWireWriter(conn, parsed.KeepAlive && number < options.MaxRequests, legacy, parsed.Version)
-		handler.ServeHTTP(output, request)
+		if err = serveHTTPConnectionHandler(handler, output, request); err != nil {
+			return err
+		}
 		if err = output.FlushError(); err != nil {
 			return err
 		}
@@ -72,6 +74,22 @@ func ServeAsyncHTTPConnection(ctx context.Context, conn net.Conn, handler http.H
 			return nil
 		}
 	}
+}
+
+// Match net/http.Server's special abort semantics on the reference wire
+// adapters too: a truncated file response closes only this connection.
+func serveHTTPConnectionHandler(handler http.Handler, w http.ResponseWriter, r *http.Request) (err error) {
+	defer func() {
+		if value := recover(); value != nil {
+			if value == http.ErrAbortHandler {
+				err = http.ErrAbortHandler
+			} else {
+				panic(value)
+			}
+		}
+	}()
+	handler.ServeHTTP(w, r)
+	return nil
 }
 
 type rawTargetKey struct{}

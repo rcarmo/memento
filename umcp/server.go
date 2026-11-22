@@ -35,17 +35,20 @@ func (c StreamableHTTPSettings) validate() error {
 
 type Server struct {
 	Name, Version, Instructions string
-	StreamableHTTP              StreamableHTTPSettings
-	Tools                       ToolRegistry
-	Prompts                     PromptRegistry
-	Resources                   ResourceRegistry
-	Completions                 Completions
-	dispatcher                  Dispatcher
-	mu                          sync.RWMutex
-	loggingLevel                string
-	notify                      func(string, map[string]any) error
-	notificationMu              sync.Mutex
-	notificationOutput          io.Writer
+	// AdditionalProtocolVersions enables explicitly implemented experimental adapters.
+	// Set only during construction; default negotiation remains unchanged.
+	AdditionalProtocolVersions []string
+	StreamableHTTP             StreamableHTTPSettings
+	Tools                      ToolRegistry
+	Prompts                    PromptRegistry
+	Resources                  ResourceRegistry
+	Completions                Completions
+	dispatcher                 Dispatcher
+	mu                         sync.RWMutex
+	loggingLevel               string
+	notify                     func(string, map[string]any) error
+	notificationMu             sync.Mutex
+	notificationOutput         io.Writer
 }
 
 // NewServer uses the pinned uMCP defaults and wires only implemented methods.
@@ -136,7 +139,25 @@ func (s *Server) initialize(_ context.Context, params map[string]any) (any, *RPC
 		accepted = &v
 	}
 	config["protocolVersion"] = ExactOrFallback(accepted, ProtocolVersions()[0])
+	if accepted != nil && s.SupportsProtocolVersion(*accepted) {
+		config["protocolVersion"] = *accepted
+	}
 	return config, nil, nil
+}
+
+// SupportsProtocolVersion includes opt-in revisions without changing package defaults.
+func (s *Server) SupportsProtocolVersion(version string) bool {
+	for _, v := range ProtocolVersions() {
+		if v == version {
+			return true
+		}
+	}
+	for _, v := range s.AdditionalProtocolVersions {
+		if v == version {
+			return true
+		}
+	}
+	return false
 }
 
 var logLevels = []string{"debug", "info", "notice", "warning", "error", "critical", "alert", "emergency"}
@@ -160,13 +181,20 @@ func (s *Server) setLoggingLevel(_ context.Context, params map[string]any) (any,
 	return map[string]any{}, nil, nil
 }
 
-var secretKey = regexp.MustCompile(`(?i)(?:pass(word)?|secret|token|api[_-]?key|auth(orization)?|cookie|session|credential)`)
+var secretKey = regexp.MustCompile(`(?i)(?:pass(word)?|secret|token|api[_-]?key|auth(orization)?|cookie|session|credential|requeststate|^data$|^uploads$|^downloads$|^form$)`)
 var secretValue = regexp.MustCompile(`(?i)(bearer\s+[A-Za-z0-9._~+/=-]+|sk-[A-Za-z0-9]+|api[_-]?key\s*[:=]\s*\S+|token\s*[:=]\s*\S+)`)
 
 // SanitizeLogData recursively redacts the same key/value patterns as uMCP.
 func SanitizeLogData(value any) any {
 	switch v := value.(type) {
 	case map[string]any:
+		if _, ok := v["credentials"]; ok {
+			_, url := v["url"]
+			_, path := v["path"]
+			if url || path {
+				return "[redacted file target]"
+			}
+		}
 		out := map[string]any{}
 		for key, item := range v {
 			if secretKey.MatchString(key) {
@@ -177,6 +205,13 @@ func SanitizeLogData(value any) any {
 		}
 		return out
 	case OrderedObject:
+		if _, ok := lookup(v, "credentials"); ok {
+			_, url := lookup(v, "url")
+			_, path := lookup(v, "path")
+			if url || path {
+				return "[redacted file target]"
+			}
+		}
 		out := make(OrderedObject, len(v))
 		for i, m := range v {
 			out[i] = Member{Name: m.Name}

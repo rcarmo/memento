@@ -1,5 +1,7 @@
 # Reading accepted assets
 
+Clients implementing the experimental MCP files extension can use the opt-in [file-transfer adapter](mcp-files.md) for whole-archive downloads. The retrieval API below keeps its existing behaviour.
+
 `memory_asset_get` supports archive, manifest and file views. These are read-only and available directly or as `asset_get` inside `memory_execute`. Every view resolves the concept under the caller's current read permissions and selects an accepted version; omitted `version` selects the highest stable version. An explicit Trash path is readable under the original namespace permissions. Purged or pruned versions are unavailable; retrieval never falls back to Git history or staged proposals.
 
 [Documentation index](README.md) · [Asset recall diagram](agent-workflows.md#retrieve-an-accepted-skill-or-asset) · [Proposal and skill review](proposals.md#review-a-skill-or-asset-update)

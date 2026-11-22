@@ -275,6 +275,34 @@ func (s *StagingStore) Get(ctx context.Context, principal, id string, requireRea
 	}
 	return staged, nil
 }
+
+// Metadata confirms an immutable staging write without materialising its BLOB.
+// SHA256 was computed by ValidateAssetPack before Put stored the bytes. Existing
+// records never replace those bytes; expiry clears them and changes their length.
+// Byte consumers still use Get and validate the pack before canonical changes.
+func (s *StagingStore) Metadata(ctx context.Context, principal, id string) (StagedAsset, int64, error) {
+	if _, err := s.Expire(ctx); err != nil {
+		return StagedAsset{}, 0, err
+	}
+	columns := strings.Replace(stagedColumns, ",blob_bytes,", ",X'',", 1)
+	row := s.DB.QueryRowContext(ctx, "SELECT "+columns+",length(blob_bytes) FROM staged_assets WHERE staged_asset_id=? AND principal=?", id, principal)
+	var size int64
+	staged, err := scanStaged(stagedMetadataRow{row, &size}, s.now())
+	if errors.Is(err, sql.ErrNoRows) {
+		err = stagingError("staged asset not found")
+	}
+	return staged, size, err
+}
+
+type stagedMetadataRow struct {
+	scanner
+	size *int64
+}
+
+func (row stagedMetadataRow) Scan(dest ...any) error {
+	return row.scanner.Scan(append(dest, row.size)...)
+}
+
 func (s *StagingStore) Put(ctx context.Context, principal, key, kind, version string, raw []byte) (StagedAsset, bool, error) {
 	if blank(key) {
 		return StagedAsset{}, false, stagingError("Idempotency-Key header is required")

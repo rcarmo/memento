@@ -23,6 +23,7 @@ type MCPExecuteConfig struct {
 	MaxTimeSeconds   float64 `json:"max_time_seconds"`
 }
 type MCPConfig struct {
+	ExperimentalFiles    bool             `json:"experimental_files,omitempty"`
 	ToolSurface          string           `json:"tool_surface"`
 	CompactAnswerEnabled bool             `json:"compact_answer_enabled"`
 	MaxRequestBytes      int64            `json:"max_request_bytes"`
@@ -51,6 +52,9 @@ func (c MCPConfig) Validate() error {
 	}
 	if c.MaxRequestBytes < 4*1024*1024 {
 		return errors.New("max_request_bytes must be at least 4194304")
+	}
+	if c.ExperimentalFiles && c.MaxRequestBytes < 50*1024*1024+1024 {
+		return errors.New("experimental_files requires max_request_bytes of at least 52429824")
 	}
 	e := c.Execute
 	if e.MaxOperations < 1 || e.MaxOperations > 32 || e.MaxIntermediates < 1 || e.MaxIntermediates > 64 || e.MaxRecords < 1 || e.MaxRecords > 500 || e.MaxOutputBytes < 512 || e.MaxTimeSeconds <= 0 || e.MaxTimeSeconds > 30 {
