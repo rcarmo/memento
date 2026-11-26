@@ -121,6 +121,33 @@ func TestMCPFilesInactiveKeyAndCompletedReplay(t *testing.T) {
 	}
 }
 
+func TestMCPFilesReadyPackHasOneContinuation(t *testing.T) {
+	h := newFileHarness(t)
+	raw := submitZIP(t)
+	args := fileArguments(raw, "one-owner")
+	first, put := h.begin(args)
+	if status, _ := h.request("POST", "/mcp/files/upload", "actor", raw, put); status != 200 {
+		t.Fatal(status)
+	}
+	// The pack is still ready, but belongs to a different logical call.
+	second, putSecond := h.begin(args)
+	if status, _ := h.request("POST", "/mcp/files/upload", "actor", raw, putSecond); status < 400 {
+		t.Fatal("second continuation reused the first pack", status)
+	}
+	var id string
+	if err := h.jobs.Controls.Staging.DB.QueryRow(`SELECT staged_id FROM mcp_file_transfers WHERE token_digest=?`, transferDigest(second)).Scan(&id); err != nil || id != "" {
+		t.Fatal(id, err)
+	}
+	if status, _ := h.request("POST", "/mcp/files/upload", "actor", raw, put); status != 200 {
+		t.Fatal("same continuation could not retry", status)
+	}
+	params := fileParams(fileUploadTool, args)
+	params["requestState"] = first
+	if result := fileResult(t, h.rpc("tools/call", "actor", params)); result["isError"] == true {
+		t.Fatal(result)
+	}
+}
+
 func TestMCPFilesModernWireContract(t *testing.T) {
 	h := newFileHarness(t)
 	discover := fileResult(t, h.rpc("server/discover", "actor", nil))

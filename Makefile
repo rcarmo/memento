@@ -12,16 +12,16 @@ export BUILD_ROOT TOOLS_DIR
 GO ?= go
 GOTOOLCHAIN ?= go1.26.11
 export GOTOOLCHAIN
-STATICCHECK_VERSION ?= v0.6.1
-GOVULNCHECK_VERSION ?= v1.1.4
+STATICCHECK_VERSION ?= v0.8.2
+GOVULNCHECK_VERSION ?= v1.10.0
 PROFILE_ROOT ?= $(PROJECT_TMP_ROOT)/runs/profiles
 PROFILE_MEM_RATE ?= 524288
-STATICCHECK := $(TOOLS_DIR)/staticcheck
-GOVULNCHECK := $(TOOLS_DIR)/govulncheck
+STATICCHECK := $(TOOLS_DIR)/$(STATICCHECK_VERSION)/staticcheck
+GOVULNCHECK := $(TOOLS_DIR)/$(GOVULNCHECK_VERSION)/govulncheck
 PROFILE_TEST = GO="$(GO)" PROFILE_ROOT="$(PROFILE_ROOT)" PROFILE_MEM_RATE="$(PROFILE_MEM_RATE)" ./tools/test-profile.sh
 PREFIX ?= /usr/local
 DESTDIR ?=
-MEMENTO_VERSION ?= 1.1.1
+MEMENTO_VERSION ?= 1.2.0
 VERSION ?= $(MEMENTO_VERSION)
 SOURCE_DATE_EPOCH ?= 0
 GTE_MODEL_PATH ?= $(abspath models/gte/gte-small.gtemodel)
@@ -54,11 +54,11 @@ help:
 	@printf '%s\n' 'quality     format-check, layout, vet, staticcheck, tests, coverage and build' 'audit-fast  quality plus vulnerability scan' 'audit       audit-fast plus race, fuzz, model-independent performance and cross-build gates' 'performance run allocation gates including pinned real models' 'performance-core run model-independent allocation gates' 'tools       install pinned static-analysis tools under $(BUILD_ROOT)/tools' 'format      apply gofmt' 'test        run offline pure-Go tests' 'coverage    require zero uncovered Go statements' 'lint        run pinned staticcheck' 'vuln        run pinned govulncheck' 'fuzz        discover and run every Go fuzz target' 'race        run all tests with the race detector' 'cross       build Linux amd64 and arm64 commands' 'release     build reproducible static amd64/arm64 archives' 'release-check verify release checksums/layout/ELF metadata and smoke test' 'install     install all host binaries under DESTDIR/PREFIX/bin'
 tools: $(STATICCHECK) $(GOVULNCHECK)
 $(STATICCHECK):
-	@mkdir -p $(TOOLS_DIR)
-	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
+	@mkdir -p "$(@D)"
+	GOBIN="$(abspath $(@D))" $(GO) install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
 $(GOVULNCHECK):
-	@mkdir -p $(TOOLS_DIR)
-	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
+	@mkdir -p "$(@D)"
+	GOBIN="$(abspath $(@D))" $(GO) install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 check: quality
 quality: format-check layout-check fuzz-coverage vet lint test graph-test python-parity coverage umcp-check build
 audit-fast: quality vuln

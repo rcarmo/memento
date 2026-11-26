@@ -95,8 +95,12 @@ while IFS= read -r -d '' file; do
   cp -- "$repo_root/$file" "$run/untracked/$file.snapshot" || exit 1
 done < <(git -C "$repo_root" ls-files --others --exclude-standard -z)
 
-echo "Profiles and analysis: $run"
-printf '%s\n' "$run" > "$PROFILE_ROOT/latest-run.txt"
+# The wrapper emits analysed hotspots and copies requested coverage out before
+# deleting its private scratch (also on failures and normal interruption).
+trap 'rm -rf -- "$run"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+echo "Profile scratch (removed on exit): $run"
 {
   printf 'revision=%s\n' "$revision"
   printf 'cpu_sampling=Go testing default 100Hz\n'
@@ -395,5 +399,5 @@ if [[ -n ${COVERAGE_FILE:-} ]]; then
   cp "$run/coverage.out" "$COVERAGE_FILE" || failed=1
 fi
 
-echo "Result: $failed; profiles: $run"
+echo "Result: $failed (profile scratch removed on exit)"
 exit "$failed"

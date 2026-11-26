@@ -77,15 +77,6 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      - name: Upload release CPU and allocation profiles for analysis
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: release-test-profiles
-          path: ${{ env.PROFILE_ROOT }}
-          retention-days: 1
-          if-no-files-found: warn
-          compression-level: 6
       - name: Remove analysed runner profile scratch
         if: always()
         run: |

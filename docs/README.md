@@ -29,6 +29,7 @@ The [pure-Go port index](go-port/README.md) documents the completed CGO-free dae
 | Rebase a clean proposal or resolve conflicts without losing the queue | [Rebase and conflict handling](proposals.md#handle-a-stale-or-expired-proposal) |
 | Publish or update a packaged skill | [Skill review](proposals.md#review-a-skill-or-asset-update) |
 | Retrieve accepted asset files or ZIPs | [Asset recall](agent-workflows.md#retrieve-an-accepted-skill-or-asset) and [range contract](accepted-assets.md) |
+| Stage or download a ZIP with a draft-capable MCP client | [Experimental MCP files](mcp-files.md) |
 | Resolve a lost mutation response | [Reconciliation](agent-workflows.md#reconcile-an-interrupted-write) |
 | Archive, restore or purge a concept | [Trash](trash.md) |
 

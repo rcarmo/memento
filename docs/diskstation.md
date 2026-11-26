@@ -63,6 +63,12 @@ The existing production configuration has not yet opted into `authorization.prot
 
 Docker inspection still reports `PidsLimit: null` despite the template's `pids_limit: 128`; operators must resolve that Synology/Compose discrepancy before treating the limit as enforced. The live `v1.0.0` image has passed native amd64/ARM64, no-AVX, 512 MiB, old->Go->old rollback, target backup, restart and authenticated model checks.
 
+## Optional MCP files extension
+
+Memento 1.2.0 adds [draft MCP file transfers](mcp-files.md). Existing clients keep the same tools and sessions. Enable the extension with `mcp.experimental_files: true` and keep the original configuration for rollback. Use a client that supports the pinned draft and either HTTPS or an explicit allowlist for the trusted-LAN HTTP endpoint. Do not send bearer credentials to an unverified origin.
+
+When returning to 1.1.1, restore the original configuration before starting the old image. Removing the key is required; setting it to `false` still fails old config validation. Keep the existing state and models mounts. Accepted assets use the same format; draft transfer continuations are unavailable on the older binary.
+
 ## Progressive embeddings
 
 The DiskStation profile uses one low-priority concept every 30 seconds after a two-minute startup grace and 15 seconds of interactive idle time. Work pauses when sampled CPU utilization exceeds 75% over a 15-second window. Linux I/O wait is treated as idle, so normal NAS storage load does not block progress. The Go service starts each embedding worker with `nice 15`; the worker itself does not create Python/Rust/BLAS thread pools. The `/volume1/docker/memento/state:/var/lib/memento` mount preserves `derived.sqlite` and completed vectors across image upgrades.

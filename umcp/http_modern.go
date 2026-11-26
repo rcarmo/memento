@@ -48,9 +48,6 @@ func (h *StreamableHTTP) validateModernRequest(r *http.Request, request, params 
 	if !h.server.SupportsProtocolVersion(header) {
 		return &RPCError{Code: -32022, Message: "Unsupported protocol version", Data: map[string]any{"requested": header, "supported": append([]string{StatelessHTTPVersion}, ProtocolVersions()...)}}
 	}
-	if version != StatelessHTTPVersion {
-		return mismatch("Mcp-Protocol-Version")
-	}
 	method, _ := request["method"].(string)
 	if method == "" || r.Header.Get("Mcp-Method") != method {
 		return mismatch("Mcp-Method")

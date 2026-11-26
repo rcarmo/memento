@@ -10,23 +10,23 @@ export BUILD_ROOT TOOLS_DIR
 GO ?= go
 GOTOOLCHAIN ?= go1.26.11
 export GOTOOLCHAIN
-STATICCHECK_VERSION ?= v0.6.1
-GOVULNCHECK_VERSION ?= v1.1.4
-PROFILE_ROOT ?= $(abspath ../build/profiles)
+STATICCHECK_VERSION ?= v0.8.2
+GOVULNCHECK_VERSION ?= v1.10.0
+PROFILE_ROOT ?= $(PROJECT_TMP_ROOT)/runs/profiles
 PROFILE_MEM_RATE ?= 524288
-STATICCHECK := $(TOOLS_DIR)/staticcheck
-GOVULNCHECK := $(TOOLS_DIR)/govulncheck
+STATICCHECK := $(TOOLS_DIR)/$(STATICCHECK_VERSION)/staticcheck
+GOVULNCHECK := $(TOOLS_DIR)/$(GOVULNCHECK_VERSION)/govulncheck
 PROFILE_TEST = GO="$(GO)" PROFILE_ROOT="$(PROFILE_ROOT)" PROFILE_MEM_RATE="$(PROFILE_MEM_RATE)" ../tools/test-profile.sh
 .PHONY: check audit tools format-check vet lint vuln test race coverage fuzz cross
 check: format-check vet lint test coverage cross
 audit: check vuln
 tools: $(STATICCHECK) $(GOVULNCHECK)
 $(STATICCHECK):
-	@mkdir -p $(TOOLS_DIR)
-	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
+	@mkdir -p "$(@D)"
+	GOBIN="$(abspath $(@D))" $(GO) install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
 $(GOVULNCHECK):
-	@mkdir -p $(TOOLS_DIR)
-	GOBIN="$(abspath $(TOOLS_DIR))" $(GO) install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
+	@mkdir -p "$(@D)"
+	GOBIN="$(abspath $(@D))" $(GO) install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 format-check:
 	@test -z "$$(gofmt -l $$(find . -name '*.go'))" || (echo 'Run gofmt before checking'; exit 1)
 	@$(GO) mod tidy -diff

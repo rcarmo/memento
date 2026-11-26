@@ -2,7 +2,7 @@ module github.com/rcarmo/memento
 
 go 1.26.0
 
-require golang.org/x/text v0.39.0
+require golang.org/x/text v0.40.0
 
 require (
 	github.com/go-git/go-billy/v5 v5.9.0
@@ -11,9 +11,9 @@ require (
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/yuin/goldmark v1.7.16
 	go.yaml.in/yaml/v3 v3.0.4
-	golang.org/x/crypto v0.53.0
-	golang.org/x/net v0.56.0
-	golang.org/x/sys v0.46.0
+	golang.org/x/crypto v0.54.0
+	golang.org/x/net v0.57.0
+	golang.org/x/sys v0.47.0
 	modernc.org/sqlite v1.38.2
 )
 

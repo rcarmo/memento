@@ -1,6 +1,6 @@
 ## Experimental MCP file transfers
 
-Memento can stage ZIP asset packs and download accepted ZIP versions through the experimental `io.modelcontextprotocol/files` extension. Enable it with `mcp.experimental_files: true`; the default is false. This development implementation follows the [draft at 8a859b8f][draft]. The published 1.1.1 image does not include it.
+Memento can stage ZIP asset packs and download accepted ZIP versions through the experimental `io.modelcontextprotocol/files` extension. Enable it with `mcp.experimental_files: true`; the default is false. The adapter is new in 1.2.0 and follows the [pinned experimental draft][draft].
 
 The server adapter requires a client that implements the draft. It adds no file picker, client transfer helper or gateway relay. Existing staging tools, `memory_asset_get` and proposal workflows keep their signatures and behaviour.
 
@@ -48,7 +48,7 @@ The authenticated principal needs the proposer role. The initial call checks met
 
 After a successful transfer, repeat `tools/call` with the same tool arguments and put `requestState` in the request parameters, alongside `name` and `arguments`. Do not place it inside `arguments`. The retry checks the actual stored length and the SHA-256 receipt computed by the validated, immutable staging write, then returns its `staged_asset_id` and manifest. The normal proposal/review/apply workflow attaches the pack; upload never edits the accepted repository.
 
-Continuation records live in shared control SQLite for one hour. They bind the principal, tool name, all accepted arguments, recognised capability settings and transfer target. JSON object order and equivalent integer spellings do not change the binding; absent and empty optional fields remain distinct. The staging write and transfer binding commit together. A new call can reuse an idempotency key only while its matching pack is ready. Retries of a completed call still return its original receipt after a proposal consumes the staged bytes; that receipt describes the completed staging operation, not current staging status. A new adapter instance can confirm an existing call without an MCP session or process-local signing key.
+Continuation records live in shared control SQLite for one hour. They bind the principal, tool name, all accepted arguments, recognised capability settings and transfer target. JSON object order and equivalent integer spellings do not change the binding; absent and empty optional fields remain distinct. The staging write and transfer binding commit together. Use a new idempotency key for each new logical call. Only the continuation that staged a pack can repeat its upload against those bytes. Retries of a completed call still return its original receipt after a proposal consumes the staged bytes; that receipt describes the completed staging operation, not current staging status. A new adapter instance can confirm an existing call without an MCP session or process-local signing key.
 
 There can be 64 live transfer records, four unconfirmed uploads per principal and 100 MiB of reserved unconfirmed upload bytes. Expired records are pruned on issuance. Staged packs retain the existing 24-hour staging expiry. The server buffers only an admitted upload's declared bytes and uses the existing ZIP validator. A transfer that finds the slot busy returns HTTP `429` without reading the body.
 
@@ -68,7 +68,7 @@ Use HTTPS, loopback, or an explicit client operator allowlist for a trusted-LAN 
 
 Modern HTTP metadata mismatches return HTTP `400` with JSON-RPC `-32020`; a matching but unsupported revision returns `-32022`. Unsupported modern methods return HTTP `404` with `-32601`. Missing upload/download capabilities return JSON-RPC `-32021`. Invalid, expired or differently bound continuation state returns `-32602`; metadata, storage or integrity failures return completed tool errors. Clients follow the draft's unknown-outcome rules and must not automatically restart a failed logical call.
 
-The new control table is additive and leaves existing schema/versioned asset data intact. Before running an older binary, remove the optional configuration key: older configuration readers reject unknown fields. Production has not been changed.
+Enabling the extension preserves the existing tool catalogue and session behaviour for MCP `2025-03-26` and `2024-11-05`. To roll back to 1.1.1, restore the original config or remove `mcp.experimental_files` entirely, even if it is `false`; the older parser rejects unknown keys. The new control table is additive. A disposable 1.1.1 -> 1.2.0 -> 1.1.1 test preserved the repository revision and an accepted ZIP added through the extension. Finish or abandon in-flight draft transfers before downgrading.
 
 [Development measurements](evidence/mcp-files-2026-11-22.md) cover CPU and allocation profiling. The draft can change before standardisation.
 

@@ -339,9 +339,9 @@ func (s *StagingStore) put(ctx context.Context, db stageExecutor, principal, key
 }
 
 // PutReadyAndBind commits a validated immutable asset and its caller's receipt
-// together. Existing bytes may be reused only while the matching pack is ready.
-// The binder must use tx for its writes and return an error to roll back both.
-func (s *StagingStore) PutReadyAndBind(ctx context.Context, principal, key, kind, version string, raw []byte, digest string, bind func(*sql.Tx, string) error) error {
+// together. The binder receives whether the row already existed. It must use
+// tx and may reject reuse so an existing pack cannot acquire a second owner.
+func (s *StagingStore) PutReadyAndBind(ctx context.Context, principal, key, kind, version string, raw []byte, digest string, bind func(*sql.Tx, string, bool) error) error {
 	if blank(key) || bind == nil {
 		return stagingError("missing upload binding")
 	}
@@ -361,6 +361,7 @@ func (s *StagingStore) PutReadyAndBind(ctx context.Context, principal, key, kind
 		var id, storedKind, storedVersion, storedDigest, state, expires string
 		var size int64
 		err := tx.QueryRowContext(ctx, `SELECT staged_asset_id,asset_kind,version,sha256,state,expires_at,length(blob_bytes) FROM staged_assets WHERE principal=? AND idempotency_key=?`, principal, key).Scan(&id, &storedKind, &storedVersion, &storedDigest, &state, &expires, &size)
+		reused := err == nil
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
 			staged, err := s.insert(ctx, tx, principal, key, kind, version, raw, pack.Manifest)
@@ -376,7 +377,7 @@ func (s *StagingStore) PutReadyAndBind(ctx context.Context, principal, key, kind
 				return stagingError("idempotency key has no matching ready asset")
 			}
 		}
-		return bind(tx, id)
+		return bind(tx, id, reused)
 	})
 }
 

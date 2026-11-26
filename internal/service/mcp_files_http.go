@@ -14,7 +14,6 @@ import (
 	"sync"
 
 	"github.com/rcarmo/memento/internal/access"
-	"github.com/rcarmo/memento/internal/assets"
 	"github.com/rcarmo/memento/internal/repository"
 	"github.com/rcarmo/memento/umcp"
 )
@@ -107,16 +106,16 @@ func (f *FileTransfers) handle(ctx context.Context, method, path string, headers
 			}
 			return stagingJSON(map[string]any{"uploaded": true}, 200)
 		}
-		err = f.jobs.Controls.Staging.PutReadyAndBind(ctx, principal.Name, "mcp-files:"+args["idempotency_key"].(string), args["asset_kind"].(string), args["version"].(string), raw, input.Digest, func(tx *sql.Tx, stagedID string) error {
-			result, err := tx.ExecContext(ctx, `UPDATE mcp_file_transfers SET staged_id=? WHERE token_digest=? AND expires>?`, stagedID, transferDigest(token), f.now().Unix())
+		err = f.jobs.Controls.Staging.PutReadyAndBind(ctx, principal.Name, "mcp-files:"+args["idempotency_key"].(string), args["asset_kind"].(string), args["version"].(string), raw, input.Digest, func(tx *sql.Tx, stagedID string, reused bool) error {
+			// Only retries of the logical call that owns these bytes can reuse
+			// them. The old pack could otherwise expire or be consumed before
+			// the new call confirms, even if it is ready right now.
+			result, err := tx.ExecContext(ctx, `UPDATE mcp_file_transfers SET staged_id=? WHERE token_digest=? AND expires>? AND (NOT ? OR staged_id=?)`, stagedID, transferDigest(token), f.now().Unix(), reused, stagedID)
 			if err != nil {
 				return err
 			}
-			n, err := result.RowsAffected()
-			if err != nil {
-				return err
-			}
-			if n != 1 {
+			// modernc SQLite returns a concrete affected-row count on success.
+			if n, _ := result.RowsAffected(); n != 1 {
 				return errExpiredFileTransfer
 			}
 			return nil
@@ -187,39 +186,40 @@ func (f *FileTransfers) openArchive(ctx context.Context, actor ProposalActor, ar
 	var file *os.File
 	err := repository.WithTransactionLock(ctx, f.jobs.Controls.Queue.Paths, func() error {
 		c := f.jobs.Controls
-		data, err := c.readAcceptedAsset(actor, AssetGetOptions{IDOrPath: args.Path, AssetKind: args.Kind, Version: &args.Version, ExpectedSHA256: &args.Digest, View: "manifest"}, 0, os.Stat, func(path string) (assetSource, error) { return os.Open(path) })
+		var archivePath string
+		stat := func(path string) (os.FileInfo, error) {
+			archivePath = path // Already validated by readAcceptedAsset, under this lock.
+			return os.Stat(path)
+		}
+		data, err := c.readAcceptedAsset(actor, AssetGetOptions{IDOrPath: args.Path, AssetKind: args.Kind, Version: &args.Version, ExpectedSHA256: &args.Digest, View: "manifest"}, 0, stat, nil)
 		if err != nil {
 			return err
 		}
 		if data["zip_bytes"] != size {
 			return errors.New("asset size changed")
 		}
-		_, path, err := assets.AssetVersionPaths(data["concept_id"].(string), args.Kind, args.Version)
-		if err != nil {
-			return err
-		}
-		resolved, err := repository.ValidateRepositoryReadPath(c.Queue.Paths.CurrentDir, path)
-		if err != nil {
-			return err
-		}
-		file, err = os.Open(resolved.AbsolutePath)
-		if err != nil {
-			return err
-		}
-		hash := sha256.New()
-		n, err := io.Copy(hash, checkedFileReader{ctx, io.LimitReader(file, size+1)})
-		if err != nil {
-			return err
-		}
-		if n != size || hex.EncodeToString(hash.Sum(nil)) != args.Digest {
-			return errors.New("asset integrity changed")
-		}
-		_, err = file.Seek(0, io.SeekStart)
+		file, err = openCheckedArchive(ctx, archivePath, size, args.Digest)
 		return err
 	})
-	if err != nil && file != nil {
-		_ = file.Close()
-		file = nil
-	}
 	return file, err
+}
+
+func openCheckedArchive(ctx context.Context, path string, size int64, digest string) (*os.File, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	hash := sha256.New()
+	n, err := io.Copy(hash, checkedFileReader{ctx, io.LimitReader(file, size+1)})
+	if err == nil && (n != size || hex.EncodeToString(hash.Sum(nil)) != digest) {
+		err = errors.New("asset integrity changed")
+	}
+	if err == nil {
+		_, err = file.Seek(0, io.SeekStart)
+	}
+	if err != nil {
+		_ = file.Close()
+		return nil, err
+	}
+	return file, nil
 }

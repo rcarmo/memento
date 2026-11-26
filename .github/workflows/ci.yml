@@ -48,15 +48,6 @@ jobs:
           name: ui-audit-results
           path: build/ui-audit
           retention-days: 1
-      - name: Upload CPU and allocation profiles for analysis
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: go-test-profiles
-          path: ${{ env.PROFILE_ROOT }}
-          retention-days: 1
-          if-no-files-found: warn
-          compression-level: 6
       - name: Remove analysed runner profile scratch
         if: always()
         run: |
@@ -132,16 +123,7 @@ jobs:
         run: make corpus-test
       - name: Build and test pure-Go image
         if: matrix.arch == 'amd64'
-        run: make go-container-contract MEMENTO_VERSION=1.1.1
-      - name: Retain model CPU and allocation profiles
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: model-test-profiles-${{ matrix.arch }}
-          path: ${{ env.PROFILE_ROOT }}
-          retention-days: 1
-          if-no-files-found: warn
-          compression-level: 6
+        run: make go-container-contract
       - name: Remove analysed runner profile scratch
         if: always()
         run: |

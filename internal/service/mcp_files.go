@@ -243,27 +243,20 @@ func (f *FileTransfers) call(ctx context.Context, p map[string]any) (any, *umcp.
 		if err != nil || size != input.Size || staged.SHA256 != input.Digest {
 			// Another instance may have completed this call before a proposal
 			// consumed the staged BLOB. Its immutable result is still valid.
-			if latest, lookupErr := f.record(ctx, token); lookupErr == nil && latest.Result != "" {
-				return completedFileTransfer(latest.Result)
-			}
-			return fileFailure("Uploaded pack could not be verified")
+			return f.confirmationFallback(ctx, token, false)
 		}
 		// The immutable staging write verified these exact bytes and computed the
 		// digest. Confirm storage metadata instead of loading a second ZIP copy.
 		result := fileComplete(stagedPayload(staged))
-		encoded, err := json.Marshal(result)
-		if err != nil {
-			return fileFailure("Upload confirmation unavailable")
-		}
+		// The fixed response consists only of strings, booleans and values
+		// decoded from a validated manifest; all are JSON encodable.
+		encoded, _ := json.Marshal(result)
 		updated, err := f.jobs.Controls.Staging.DB.ExecContext(ctx, "UPDATE mcp_file_transfers SET finalized=1,result_json=? WHERE token_digest=? AND expires>? AND finalized=0", string(encoded), transferDigest(token), f.now().Unix())
 		if err != nil {
 			return fileFailure("Upload confirmation unavailable")
 		}
 		if count, err := updated.RowsAffected(); err != nil || count != 1 {
-			if latest, lookupErr := f.record(ctx, token); lookupErr == nil && latest.Result != "" {
-				return completedFileTransfer(latest.Result)
-			}
-			return nil, invalidFileState(), nil
+			return f.confirmationFallback(ctx, token, true)
 		}
 		// Staging is idempotent: retries return the same identity, even if a proposal
 		// has since consumed it. No canonical mutation or second upload is performed.
@@ -281,6 +274,16 @@ func (f *FileTransfers) call(ctx context.Context, p map[string]any) (any, *umcp.
 	}
 	return map[string]any{"resultType": "upload_required", "requestState": token, "uploads": []any{map[string]any{"fileId": input.ID, "path": "/files/upload", "method": "POST", "credentials": "include", "expiresAt": time.Unix(record.Expires, 0).UTC().Format(time.RFC3339), "headers": map[string]string{"Content-Type": "application/zip", "X-Memento-File-Token": token}}}}, nil, nil
 }
+func (f *FileTransfers) confirmationFallback(ctx context.Context, token string, invalidState bool) (any, *umcp.RPCError, error) {
+	if latest, err := f.record(ctx, token); err == nil && latest.Result != "" {
+		return completedFileTransfer(latest.Result)
+	}
+	if invalidState {
+		return nil, invalidFileState(), nil
+	}
+	return fileFailure("Uploaded pack could not be verified")
+}
+
 func completedFileTransfer(encoded string) (any, *umcp.RPCError, error) {
 	var result map[string]any
 	if err := json.Unmarshal([]byte(encoded), &result); err != nil || result == nil {
